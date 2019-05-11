@@ -37,5 +37,7 @@ package net.vpc.app.nuts;
 public enum NutsOutputFormat {
     JSON,
     PROPS,
+    TABLE,
+    TREE,
     PLAIN
 }

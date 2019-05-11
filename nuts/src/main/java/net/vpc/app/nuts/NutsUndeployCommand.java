@@ -40,51 +40,15 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand{
 
     NutsUndeployCommand setRepository(String repository);
 
-    NutsUndeployCommand session(NutsSession session);
-
-    NutsUndeployCommand setSession(NutsSession session);
-
     String getRepository();
 
-    boolean isForce();
-
-    boolean isTrace();
-
     boolean isTransitive();
-
-    NutsUndeployCommand force();
-
-    NutsUndeployCommand force(boolean force);
-
-    NutsUndeployCommand setForce(boolean force);
-
-    NutsUndeployCommand trace();
-
-    NutsUndeployCommand trace(boolean trace);
-
-    NutsUndeployCommand setTrace(boolean trace);
 
     NutsUndeployCommand transitive();
 
     NutsUndeployCommand transitive(boolean transitive);
 
     NutsUndeployCommand setTransitive(boolean transitive);
-
-    NutsUndeployCommand outputFormat(NutsOutputFormat outputFormat);
-
-    NutsUndeployCommand setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsUndeployCommand json();
-
-    NutsUndeployCommand plain();
-
-    NutsUndeployCommand props();
-
-    NutsOutputFormat getOutputFormat();
-
-    NutsUndeployCommand run();
-
-    NutsSession getSession();
 
     NutsId[] getIds();
 
@@ -114,6 +78,15 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand{
 
     NutsUndeployCommand clearIds();
 
+    @Override
+    NutsUndeployCommand session(NutsSession session);
+
+    @Override
+    NutsUndeployCommand setSession(NutsSession session);
+
+    @Override
     NutsUndeployCommand parseOptions(String... args);
 
+    @Override
+    NutsUndeployCommand run();
 }

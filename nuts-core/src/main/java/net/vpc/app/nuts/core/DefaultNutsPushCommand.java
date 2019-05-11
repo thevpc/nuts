@@ -27,7 +27,6 @@ import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsPushCommand;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
@@ -262,7 +261,13 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                         NutsId id2 = ws.config().createComponentFaceId(dws.resolveEffectiveId(descr,
                                 ws.fetch().setTransitive(true).session(session)), descr);
                         try {
-                            repo.push(id2, this, rsession);
+
+                            repo.push().id(id2)
+                                    .setOffline(offline)
+                                    .setRepository(getRepository())
+                                    .addArgs(args)
+                                    .session(rsession)
+                                    .run();
                             ok = true;
                             break;
                         } catch (Exception e) {
@@ -284,16 +289,14 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                     throw new NutsIllegalArgumentException("Repository " + repo.config().getName() + " is disabled");
                 }
                 NutsId effId = ws.config().createComponentFaceId(id.unsetQuery(), file.getDescriptor()).setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()));
-                NutsRepositoryDeploymentOptions dep = new DefaultNutsRepositoryDeploymentOptions()
+                repo.deploy().setSession(rsession)
                         .setId(effId)
                         .setContent(file.getPath())
                         .setDescriptor(file.getDescriptor())
                         .setRepository(repo.config().getName())
-                        .setTrace(this.isTrace())
-                        .setForce(this.isForce())
                         .setOffline(this.isOffline())
-                        .setTransitive(true);
-                repo.deploy(dep, rsession);
+                        .setTransitive(true)
+                        .run();
             }
         }
         return this;

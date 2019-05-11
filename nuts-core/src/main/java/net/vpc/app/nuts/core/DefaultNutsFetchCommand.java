@@ -335,9 +335,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         .dependenciesOnly().getResultDefinitions();
 
             }
-            if (isTrace()) {
+            if (getValidSession().isTrace()) {
                 final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-                getTraceFormat().formatElement(foundDefinition, -1, out, ws);
+                NutsOutputCustomFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession());
+                ff.formatStart(out, ws);
+                ff.formatElement(foundDefinition, -1, out, ws);
+                ff.formatEnd(1, out, ws);
             }
             return foundDefinition;
         }

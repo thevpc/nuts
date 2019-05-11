@@ -38,7 +38,7 @@ import java.nio.file.Path;
  */
 public class NutsContentEvent {
 
-    private final NutsRepositoryDeploymentOptions deployment;
+    private final NutsDeployRepositoryCommand deployment;
     /**
      * stored deployment Path, this is Repository dependent
      */
@@ -46,7 +46,7 @@ public class NutsContentEvent {
     private final NutsWorkspace workspace;
     private final NutsRepository repository;
 
-    public NutsContentEvent(Path path, NutsRepositoryDeploymentOptions deployment, NutsWorkspace workspace, NutsRepository repository) {
+    public NutsContentEvent(Path path, NutsDeployRepositoryCommand deployment, NutsWorkspace workspace, NutsRepository repository) {
         this.path = path;
         this.deployment = deployment;
         this.workspace = workspace;
@@ -57,7 +57,7 @@ public class NutsContentEvent {
         return path;
     }
 
-    public NutsRepositoryDeploymentOptions getDeployment() {
+    public NutsDeployRepositoryCommand getDeployment() {
         return deployment;
     }
 

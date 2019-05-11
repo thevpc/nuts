@@ -11,27 +11,21 @@ package net.vpc.app.nuts;
  */
 public interface NutsRemoveUserCommand extends NutsWorkspaceCommand{
 
-    NutsSession getSession();
-
-    boolean isTrace();
-
-    NutsRemoveUserCommand session(NutsSession session);
-
-    NutsRemoveUserCommand setSession(NutsSession session);
-
-    NutsRemoveUserCommand setTrace(boolean trace);
-
-    NutsRemoveUserCommand trace();
-
-    NutsRemoveUserCommand trace(boolean trace);
-
     String getLogin();
 
     NutsRemoveUserCommand login(String login);
 
     NutsRemoveUserCommand setLogin(String login);
 
+    @Override
+    NutsRemoveUserCommand session(NutsSession session);
+
+    @Override
+    NutsRemoveUserCommand setSession(NutsSession session);
+
+    @Override
     NutsRemoveUserCommand parseOptions(String... args);
-    
+
+    @Override
     NutsRemoveUserCommand run();
 }

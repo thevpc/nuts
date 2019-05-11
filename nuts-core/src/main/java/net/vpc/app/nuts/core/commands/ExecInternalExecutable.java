@@ -20,7 +20,6 @@ public class ExecInternalExecutable extends InternalExecutable {
 
     public ExecInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
         super("exec", args, ws, session);
-        this.session = session;
         this.execCommand = execCommand;
     }
 
@@ -30,7 +29,7 @@ public class ExecInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        execCommand.copy().session(session).clearCommand().parseOptions(args).failFast().run();
+        execCommand.copy().session(getSession(true)).clearCommand().parseOptions(args).failFast().run();
     }
     
 }

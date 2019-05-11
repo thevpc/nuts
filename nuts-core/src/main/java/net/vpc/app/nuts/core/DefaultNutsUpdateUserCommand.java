@@ -531,6 +531,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
         return this;
     }
 
+    @Override
     public NutsUpdateUserCommand parseOptions(String... args) {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;

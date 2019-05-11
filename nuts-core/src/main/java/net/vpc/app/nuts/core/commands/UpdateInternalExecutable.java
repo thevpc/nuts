@@ -25,7 +25,7 @@ public class UpdateInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.update().setAsk(true).session(session).trace().parseOptions(args).update();
+        ws.update().session(getSession(true).ask().trace()).parseOptions(args).update();
 
     }
 

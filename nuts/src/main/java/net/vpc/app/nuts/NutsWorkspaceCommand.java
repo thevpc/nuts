@@ -10,5 +10,23 @@ package net.vpc.app.nuts;
  * @author vpc
  */
 public interface NutsWorkspaceCommand {
+
+    /**
+     * 
+     * @param autoCreate
+     * @return 
+     */
+    NutsSession getSession(boolean autoCreate);
     
+    NutsSession getSession();
+
+    NutsWorkspaceCommand session(NutsSession session);
+
+    NutsWorkspaceCommand setSession(NutsSession session);
+
+    NutsWorkspaceCommand parseOptions(String... args);
+
+    NutsWorkspaceCommand run();
+
+
 }

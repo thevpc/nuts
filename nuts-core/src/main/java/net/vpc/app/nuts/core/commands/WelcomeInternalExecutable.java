@@ -26,7 +26,7 @@ public class WelcomeInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        session.getTerminal().fout().println(NutsWorkspaceExt.of(ws).getWelcomeText());
+        getSession().getTerminal().fout().println(NutsWorkspaceExt.of(ws).getWelcomeText());
     }
     
 }

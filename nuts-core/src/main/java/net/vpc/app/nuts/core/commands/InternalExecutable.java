@@ -18,13 +18,26 @@ public abstract class InternalExecutable extends AbstractExecutable {
 
     protected String[] args;
     protected NutsWorkspace ws;
-    protected NutsSession session;
+    private NutsSession session;
 
     public InternalExecutable(String name, String[] args, NutsWorkspace ws, NutsSession session) {
         super(name, NutsExecutableType.INTERNAL);
         this.args = args;
         this.ws = ws;
         this.session = session;
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsSession getSession(boolean autoCreate) {
+        if (session == null) {
+            if (autoCreate) {
+                session = ws.createSession();
+            }
+        }
+        return session;
     }
 
     @Override

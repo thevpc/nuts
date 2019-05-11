@@ -25,7 +25,7 @@ public class InstallInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.install().session(session).trace().parseOptions(args).run();
+        ws.install().session(getSession(true).trace()).parseOptions(args).run();
     }
     
 }

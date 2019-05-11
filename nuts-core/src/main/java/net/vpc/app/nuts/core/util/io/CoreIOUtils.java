@@ -551,6 +551,13 @@ public class CoreIOUtils {
                 Path temp = ws.io().createTempFile(contentFile.getName());
                 contentFile.copyTo(temp);
                 c.contentFile = createInputSource(temp).multi();
+                if (c.descriptor == null && c.contentFile.isURL()) {
+                    try {
+                        c.descriptor = ws.parser().parseDescriptor(CoreIOUtils.createInputSource(c.contentFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    } catch (Exception ex) {
+                        //ignore
+                    }
+                }
                 c.addTemp(temp);
                 return characterize(ws, createInputSource(temp).multi(), options, session);
             }
@@ -559,11 +566,13 @@ public class CoreIOUtils {
                 throw new NutsIllegalArgumentException("File does not exists " + fileSource);
             }
             if (Files.isDirectory(fileSource)) {
-                Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-                if (Files.exists(ext)) {
-                    c.descriptor = ws.parser().parseDescriptor(ext);
-                } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                if (c.descriptor == null) {
+                    Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
+                    if (Files.exists(ext)) {
+                        c.descriptor = ws.parser().parseDescriptor(ext);
+                    } else {
+                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    }
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
@@ -576,11 +585,13 @@ public class CoreIOUtils {
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
-                File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
-                if (ext.exists()) {
-                    c.descriptor = ws.parser().parseDescriptor(ext);
-                } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                if (c.descriptor == null) {
+                    File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
+                    if (ext.exists()) {
+                        c.descriptor = ws.parser().parseDescriptor(ext);
+                    } else {
+                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    }
                 }
             } else {
                 throw new NutsIllegalArgumentException("Path does not denote a valid file or folder " + c.contentFile);
@@ -976,7 +987,7 @@ public class CoreIOUtils {
     public static String getURLName(URL url) {
         return getURLName(url.getFile());
     }
-    
+
     public static String getURLName(String path) {
         String name;
         int index = path.lastIndexOf('/');
@@ -1329,7 +1340,7 @@ public class CoreIOUtils {
         return toHexString(evalMD5(input));
     }
 
-    public static byte[] evalHash(InputStream input,String algo) {
+    public static byte[] evalHash(InputStream input, String algo) {
 
         try {
             MessageDigest md;
@@ -1350,7 +1361,7 @@ public class CoreIOUtils {
             throw new UncheckedIOException(new IOException(e));
         }
     }
-    
+
     public static byte[] evalMD5(InputStream input) {
 
         try {

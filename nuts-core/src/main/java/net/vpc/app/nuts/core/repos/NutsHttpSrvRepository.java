@@ -60,7 +60,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
+    public void pushImpl(NutsPushRepositoryCommand options) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -80,8 +80,9 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+    public void deployImpl(NutsDeployRepositoryCommand deployment) {
+        CoreNutsUtils.checkSession(deployment.getSession());
+        if (deployment.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsIllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
@@ -92,7 +93,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 new NutsTransportParamBinaryFilePart("content", deployment.getContent().getFileName().toString(), deployment.getContent()),
                 new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString()),
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(deployment.getContent())),
-                new NutsTransportParamParamPart("force", String.valueOf(deployment.isForce()))
+                new NutsTransportParamParamPart("force", String.valueOf(deployment.getSession().getSession().isForce()))
         );
         //TODO should read the id
     }
@@ -266,7 +267,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
+    public void undeployImpl(NutsRepositoryUndeployCommand options) {
         throw new NutsUnsupportedOperationException();
     }
 

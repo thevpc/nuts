@@ -31,6 +31,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class FileVersionMain extends NutsApplication {
+
     public static void main(String[] args) {
         new FileVersionMain().runAndExit(args);
     }
@@ -39,6 +40,8 @@ public class FileVersionMain extends NutsApplication {
     public void run(NutsApplicationContext context) {
         NutsWorkspace ws = context.getWorkspace();
         Set<String> unsupportedFileTypes = new HashSet<>();
+        Set<String> jarFiles = new HashSet<>();
+        Set<String> exeFiles = new HashSet<>();
         Map<String, Set<VersionDescriptor>> results = new HashMap<>();
         boolean maven = false;
         boolean winPE = false;
@@ -81,37 +84,44 @@ public class FileVersionMain extends NutsApplication {
                 a = commandLine.read();
                 String arg = a.getStringExpression();
                 if (maven || arg.endsWith(".jar") || arg.endsWith(".war") || arg.endsWith(".ear")) {
-                    if (commandLine.isExecMode()) {
-                        Set<VersionDescriptor> value = null;
-                        try {
-                            processed++;
-                            value = detectJarWarEarVersions(context.getWorkspace().io().expandPath(arg), context, ws);
-                        } catch (IOException e) {
-                            throw new NutsExecutionException(e, 2);
-                        }
-                        if (!value.isEmpty()) {
-                            results.put(arg, value);
-                        }
-                    }
+                    jarFiles.add(arg);
                 } else if (winPE || arg.endsWith(".exe") || arg.endsWith(".dll")) {
-                    if (commandLine.isExecMode()) {
-                        Set<VersionDescriptor> value = null;
-                        try {
-                            processed++;
-                            value = detectExeVersions(context.getWorkspace().io().expandPath(arg), context, ws);
-                        } catch (IOException e) {
-                            throw new NutsExecutionException(e, 2);
-                        }
-                        if (!value.isEmpty()) {
-                            results.put(arg, value);
-                        }
-                    }
+                    exeFiles.add(arg);
                 } else {
                     unsupportedFileTypes.add(arg);
                 }
             }
         }
         if (commandLine.isExecMode()) {
+            if (unsupportedFileTypes.size() > 0) {
+                throw new NutsExecutionException("file-version: unsupported files : " + unsupportedFileTypes, 2);
+            }
+            for (String arg : jarFiles) {
+                Set<VersionDescriptor> value = null;
+                try {
+                    processed++;
+                    value = detectJarWarEarVersions(context.getWorkspace().io().expandPath(arg), context, ws);
+                } catch (IOException e) {
+                    throw new NutsExecutionException(e, 2);
+                }
+                if (!value.isEmpty()) {
+                    results.put(arg, value);
+                }
+            }
+            for (String arg : exeFiles) {
+                if (commandLine.isExecMode()) {
+                    Set<VersionDescriptor> value = null;
+                    try {
+                        processed++;
+                        value = detectExeVersions(context.getWorkspace().io().expandPath(arg), context, ws);
+                    } catch (IOException e) {
+                        throw new NutsExecutionException(e, 2);
+                    }
+                    if (!value.isEmpty()) {
+                        results.put(arg, value);
+                    }
+                }
+            }
             if (processed == 0) {
                 throw new NutsExecutionException("file-version: Missing file", 2);
             }
@@ -204,8 +214,8 @@ public class FileVersionMain extends NutsApplication {
         }
     }
 
-
     public static class VersionDescriptor {
+
         private NutsId id;
         private Properties properties;
 
@@ -224,11 +234,15 @@ public class FileVersionMain extends NutsApplication {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             VersionDescriptor that = (VersionDescriptor) o;
-            return Objects.equals(id, that.id) &&
-                    Objects.equals(properties, that.properties);
+            return Objects.equals(id, that.id)
+                    && Objects.equals(properties, that.properties);
         }
 
         @Override
@@ -343,11 +357,9 @@ public class FileVersionMain extends NutsApplication {
                         }
                         properties.setProperty("nuts.version-provider", "OSGI");
                         //OSGI
-                        if (
-                                !StringUtils.isEmpty(Bundle_SymbolicName)
-                                        && !StringUtils.isEmpty(Bundle_Name)
-                                        && !StringUtils.isEmpty(Bundle_Version)
-                        ) {
+                        if (!StringUtils.isEmpty(Bundle_SymbolicName)
+                                && !StringUtils.isEmpty(Bundle_Name)
+                                && !StringUtils.isEmpty(Bundle_Version)) {
                             all.add(new VersionDescriptor(
                                     ws.createIdBuilder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties
@@ -408,8 +420,8 @@ public class FileVersionMain extends NutsApplication {
                                     ws.createIdBuilder().setGroup(d.getPomId().getGroupId())
                                             .setNamespace(d.getPomId().getArtifactId())
                                             .setVersion(d.getPomId().getVersion())
-                                            .build()
-                                    , properties));
+                                            .build(),
+                                    properties));
                         } catch (Exception e) {
                             //e.printStackTrace();
                         }

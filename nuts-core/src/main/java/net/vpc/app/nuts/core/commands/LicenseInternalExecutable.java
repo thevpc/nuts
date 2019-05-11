@@ -26,7 +26,7 @@ public class LicenseInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        session.getTerminal().fout().println(NutsWorkspaceExt.of(ws).getLicenseText());
+        getSession(true).getTerminal().fout().println(NutsWorkspaceExt.of(ws).getLicenseText());
     }
     
 }

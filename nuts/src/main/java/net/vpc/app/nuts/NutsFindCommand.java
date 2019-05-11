@@ -274,12 +274,6 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     NutsFindCommand transitive();
 
-    NutsFindCommand setTrace(boolean trace);
-
-    NutsFindCommand trace(boolean trace);
-
-    NutsFindCommand trace();
-
     /**
      * cache enabled
      *
@@ -325,10 +319,6 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     NutsFindCommand anyWhere();
 
-    NutsFindCommand session(NutsSession session);
-
-    NutsFindCommand setSession(NutsSession session);
-
     NutsFindCommand clearScopes();
 
     NutsFindCommand scope(NutsDependencyScope scope);
@@ -350,7 +340,7 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
      * @return 
      * @since v0.5.5
      */
-    NutsFindCommand  acceptDefaultVersion() ;
+    NutsFindCommand  defaultVersions();
 
     /**
      * 
@@ -358,7 +348,7 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
      * @since v0.5.5
      * @return 
      */
-    NutsFindCommand acceptDefaultVersion(Boolean acceptDefaultVersion) ;
+    NutsFindCommand defaultVersions(Boolean acceptDefaultVersion);
 
     /**
      * 
@@ -366,7 +356,7 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
      * @return 
      * @since v0.5.5
      */
-    NutsFindCommand setAcceptDefaultVersion(Boolean acceptDefaultVersion) ;
+    NutsFindCommand setDefaultVersions(Boolean acceptDefaultVersion);
 
     NutsFindCommand acceptOptional();
 
@@ -438,8 +428,6 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     Boolean getAcceptOptional();
 
-    NutsSession getSession();
-
     boolean isIncludeContent();
 
     boolean isIncludeInstallInformation();
@@ -450,8 +438,6 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     boolean isTransitive();
 
-    boolean isTrace();
-
     boolean isCached();
 
     /**
@@ -459,21 +445,23 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
      * @since v0.5.5
      * @return 
      */
-    Boolean getAcceptDefaultVersion() ;
+    Boolean getDefaultVersions();
+
+
+    //
+    // NutsWorkspaceCommand overridden methods
+    //    
     
-    NutsFindCommand outputFormat(NutsOutputFormat outputFormat);
+    
+    @Override
+    NutsFindCommand session(NutsSession session);
 
-    NutsFindCommand setOutputFormat(NutsOutputFormat outputFormat);
+    @Override
+    NutsFindCommand setSession(NutsSession session);
 
-    NutsOutputFormat getOutputFormat();
-
+    @Override
     NutsFindCommand parseOptions(String... args);
 
-    NutsFindCommand setTraceFormat(NutsTraceFormat traceFormat);
-
-    NutsFindCommand traceFormat(NutsTraceFormat traceFormat);
-
-    NutsTraceFormat getTraceFormat();
-
+    @Override
     NutsFindCommand run();
 }

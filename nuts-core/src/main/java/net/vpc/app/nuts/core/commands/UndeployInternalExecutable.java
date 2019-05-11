@@ -25,7 +25,7 @@ public class UndeployInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.undeploy().trace().parseOptions(args).run();
+        ws.undeploy().session(getSession(true).trace()).parseOptions(args).run();
     }
     
 }

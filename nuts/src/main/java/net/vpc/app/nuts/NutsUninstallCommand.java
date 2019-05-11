@@ -36,7 +36,7 @@ import java.util.Collection;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsUninstallCommand extends NutsWorkspaceCommand{
+public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     NutsUninstallCommand id(NutsId id);
 
@@ -74,30 +74,6 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand{
 
     String[] getArgs();
 
-    NutsUninstallCommand ask();
-
-    NutsUninstallCommand ask(boolean ask);
-
-    NutsUninstallCommand setAsk(boolean ask);
-
-    boolean isAsk();
-
-    NutsUninstallCommand force();
-
-    NutsUninstallCommand force(boolean forceInstall);
-
-    NutsUninstallCommand setForce(boolean forceInstall);
-
-    boolean isForce();
-
-    NutsUninstallCommand trace();
-
-    NutsUninstallCommand trace(boolean trace);
-
-    NutsUninstallCommand setTrace(boolean trace);
-
-    boolean isTrace();
-
     NutsUninstallCommand erase();
 
     NutsUninstallCommand erase(boolean erase);
@@ -106,26 +82,16 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand{
 
     boolean isErase();
 
+    @Override
     NutsUninstallCommand session(NutsSession session);
 
+    @Override
     NutsUninstallCommand setSession(NutsSession session);
 
-    NutsSession getSession();
-
+    @Override
     NutsUninstallCommand parseOptions(String... args);
 
+    @Override
     NutsUninstallCommand run();
-
-    NutsOutputFormat getOutputFormat();
-
-    NutsUninstallCommand props();
-
-    NutsUninstallCommand plain();
-
-    NutsUninstallCommand json();
-
-    NutsUninstallCommand setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsUninstallCommand outputFormat(NutsOutputFormat outputFormat);
-
+//
 }

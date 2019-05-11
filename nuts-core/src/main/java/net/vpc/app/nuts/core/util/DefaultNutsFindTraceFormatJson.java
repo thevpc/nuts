@@ -7,14 +7,14 @@ package net.vpc.app.nuts.core.util;
 
 import java.io.PrintStream;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsOutputCustomFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsFindTraceFormatJson implements NutsTraceFormat {
+public class DefaultNutsFindTraceFormatJson implements NutsOutputCustomFormat {
 
     CanonicalBuilder canonicalBuilder;
 

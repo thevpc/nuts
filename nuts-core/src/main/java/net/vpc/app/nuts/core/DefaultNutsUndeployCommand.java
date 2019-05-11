@@ -1,14 +1,11 @@
 package net.vpc.app.nuts.core;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -152,17 +149,15 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .lenient(false)
                     .getResultDefinitions().required();
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
-            p.getRepository().undeploy(new DefaultNutsRepositoryUndeploymentOptions()
-                    .id(p.getId())
-                    .force(isForce())
-                    .trace(isTrace()),
-                    rsession);
+            p.getRepository().undeploy()
+                    .id(p.getId()).session(rsession)
+                    .run();
             addResult(id);
         }
-        if (isTrace()) {
-            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
-                    switch (getOutputFormat()) {
+        if (getValidSession().isTrace()) {
+            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
+                if (getValidSession().getOutputFormat() != null && getValidSession().getOutputFormat() != NutsOutputFormat.PLAIN) {
+                    switch (getValidSession().getOutputFormat()) {
                         case JSON: {
                             getValidSession().getTerminal().out().printf(ws.io().json().pretty().toJsonString(result));
                             break;
@@ -188,9 +183,9 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
             result = new ArrayList<>();
         }
         result.add(id);
-        if (isTrace()) {
-            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
+        if (getValidSession().isTrace()) {
+            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
+                if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                     getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.formatter().createIdFormat().toString(id));
                 }
             }

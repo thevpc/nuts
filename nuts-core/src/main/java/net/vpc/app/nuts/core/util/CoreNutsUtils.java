@@ -910,4 +910,35 @@ public class CoreNutsUtils {
         }
         return false;
     }
+    
+    public static NutsOutputCustomFormat getValidOutputFormat(NutsWorkspace ws,NutsSession session) {
+        NutsOutputCustomFormat f = session.getOutputCustomFormat();
+        if (f == null) {
+            switch (session.getOutputFormat()) {
+                case JSON: {
+                    return new DefaultNutsFindTraceFormatJson();
+                }
+                case PROPS: {
+                    return new DefaultNutsFindTraceFormatProps();
+                }
+                case PLAIN: {
+                    return new DefaultNutsFindTraceFormatPlain(new DefaultNutsFindCommand(ws), session);
+                }
+                default:
+                    throw new NutsUnsupportedArgumentException("Unsupported " + String.valueOf(session.getOutputFormat()));
+            }
+        }
+        return f;
+    }
+    
+    public static void checkSession(NutsSession session) {
+        if (session == null) {
+            throw new NutsIllegalArgumentException("Missing Session");
+        }
+    }
+    public static void checkSession(NutsRepositorySession session) {
+        if (session == null) {
+            throw new NutsIllegalArgumentException("Missing Session");
+        }
+    }
 }

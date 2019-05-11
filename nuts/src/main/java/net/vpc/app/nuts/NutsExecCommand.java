@@ -36,11 +36,11 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsExecCommand extends NutsWorkspaceCommand{
+public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand failFast();
 
@@ -62,12 +62,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
      * @return true if failFast is armed
      */
     boolean isFailFast();
-
-    NutsSession getSession();
-
-    NutsExecCommand setSession(NutsSession session);
-
-    NutsExecCommand session(NutsSession session);
 
     String[] getCommand();
 
@@ -100,7 +94,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
     NutsExecCommand env(Map<String, String> env);
 
     NutsExecCommand addEnv(Properties env);
-    
+
     NutsExecCommand addEnv(Map<String, String> env);
 
     NutsExecCommand env(String k, String val);
@@ -153,8 +147,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
 
     PrintStream err();
 
-    NutsExecCommand run();
-
     NutsExecutionType getExecutionType();
 
     boolean isRedirectErrorStream();
@@ -168,14 +160,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
     NutsExecCommand setExecutionType(NutsExecutionType executionType);
 
     NutsExecCommand executionType(NutsExecutionType executionType);
-    
+
     NutsExecCommand embedded();
 
     public NutsExecCommand copyFrom(NutsExecCommand other);
-    
-    public NutsExecCommand copy();
 
-    NutsExecCommand parseOptions(String... args);
+    public NutsExecCommand copy();
 
     int getResult();
 
@@ -185,8 +175,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
 
     String[] getExecutorOptions();
 
-    boolean isAsk();
-    
     NutsExecutionException getResultException();
 
     NutsExecCommand syscall();
@@ -196,5 +184,18 @@ public interface NutsExecCommand extends NutsWorkspaceCommand{
     NutsCommandStringFormatter getCommandStringFormatter();
 
     NutsExecCommand setCommandStringFormatter(NutsCommandStringFormatter commandStringFormatter);
+
+    
+    @Override
+    NutsExecCommand session(NutsSession session);
+
+    @Override
+    NutsExecCommand setSession(NutsSession session);
+
+    @Override
+    NutsExecCommand parseOptions(String... args);
+
+    @Override
+    NutsExecCommand run();
 
 }

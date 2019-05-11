@@ -314,6 +314,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         return result.toArray(new NutsId[0]);
     }
 
+    @Override
     protected void invalidateResult() {
         result = null;
     }
@@ -334,11 +335,11 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         if (result == null || result.isEmpty()) {
             throw new NutsIllegalArgumentException("Missing component to Deploy");
         }
-        if (isTrace()) {
-            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
+        if (getValidSession().isTrace()) {
+            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
 
-                if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
-                    switch (getOutputFormat()) {
+                if (getValidSession().getOutputFormat() != null && getValidSession().getOutputFormat() != NutsOutputFormat.PLAIN) {
+                    switch (getValidSession().getOutputFormat()) {
                         case JSON: {
                             getValidSession().getTerminal().out().printf(ws.io().json().pretty().toJsonString(result));
                             break;
@@ -455,13 +456,12 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
-                            repo.deploy(
-                                    new DefaultNutsRepositoryDeploymentOptions()
-                                            .setForce(this.isForce())
-                                            .setOffline(this.isOffline())
-                                            .setTrace(this.isTrace())
-                                            .setTransitive(this.isTransitive())
-                                            .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
+                            repo.deploy()
+                                    .setOffline(this.isOffline())
+                                    .setTransitive(this.isTransitive())
+                                    .setSession(rsession)
+                                    .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository)
+                                    .run();
                             addResult(effId);
                             return this;
                         }
@@ -476,12 +476,15 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         }
                         NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                         effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
-                        repo.deploy(new DefaultNutsRepositoryDeploymentOptions()
-                                .setForce(this.isForce())
+                        repo.deploy()
                                 .setOffline(this.isOffline())
-                                .setTrace(this.isTrace())
                                 .setTransitive(this.isTransitive())
-                                .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
+                                .setSession(rsession)
+                                .setId(effId)
+                                .setContent(contentFile)
+                                .setDescriptor(descriptor)
+                                .setRepository(repository)
+                                .run();
                         addResult(effId);
                         return this;
                     }
@@ -511,12 +514,12 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
     }
 
     private void addResult(NutsId nid) {
-        if (isTrace()) {
+        if (getValidSession().isTrace()) {
             if (result == null) {
                 result = new ArrayList<>();
             }
             result.add(nid);
-            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
+            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
             }
         }
@@ -537,11 +540,11 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             InputSource inputStreamSource = CoreIOUtils.createInputSource(descriptor);
             if (descSHA1 != null) {
                 inputStreamSource = inputStreamSource.multi();
-                try(InputStream is=inputStreamSource.open()){
-                    if(!ws.io().hash().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)){
-                    throw new NutsIllegalArgumentException("Invalid Content Hash");
+                try (InputStream is = inputStreamSource.open()) {
+                    if (!ws.io().hash().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
+                        throw new NutsIllegalArgumentException("Invalid Content Hash");
                     }
-                }catch(IOException ex){
+                } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
             }

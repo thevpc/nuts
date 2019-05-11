@@ -11,6 +11,9 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIndexStoreClient;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
+import net.vpc.app.nuts.NutsDeployRepositoryCommand;
+import net.vpc.app.nuts.NutsPushRepositoryCommand;
+import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
 /**
  *
@@ -31,12 +34,18 @@ public interface NutsRepositoryExt {
     void fireOnDeploy(NutsContentEvent file);
 
     void fireOnInstall(NutsContentEvent evt);
-    
-    void fireOnPush(NutsContentEvent file) ;
-    
-    void fireOnAddRepository(NutsRepository repository) ;
 
-    public void fireOnRemoveRepository(NutsRepository repository) ;
-    
-    NutsIndexStoreClient getIndexStoreClient() ;
+    void fireOnPush(NutsContentEvent file);
+
+    void fireOnAddRepository(NutsRepository repository);
+
+    public void fireOnRemoveRepository(NutsRepository repository);
+
+    NutsIndexStoreClient getIndexStoreClient();
+
+    void pushImpl(NutsPushRepositoryCommand command);
+
+    void deployImpl(NutsDeployRepositoryCommand command);
+
+    void undeployImpl(NutsRepositoryUndeployCommand command);
 }

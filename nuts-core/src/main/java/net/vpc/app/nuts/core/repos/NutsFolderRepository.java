@@ -74,17 +74,17 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
-        lib.deploy(deployment, session);
+    public void deployImpl(NutsDeployRepositoryCommand command) {
+        lib.deploy(command);
     }
 
     @Override
-    protected void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
-        mirroring.push(id, options, session);
+    public void pushImpl(NutsPushRepositoryCommand command) {
+        mirroring.push(command);
     }
 
     @Override
-    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
@@ -118,8 +118,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
-        lib.undeploy(options, session);
+    public void undeployImpl(NutsRepositoryUndeployCommand options) {
+        lib.undeploy(options);
     }
 
     @Override

@@ -100,17 +100,17 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     protected abstract InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session);
 
     @Override
-    public void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
+    public void pushImpl(NutsPushRepositoryCommand options) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession context) {
+    public void deployImpl(NutsDeployRepositoryCommand deployment) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
+    public void undeployImpl(NutsRepositoryUndeployCommand options) {
         throw new NutsUnsupportedOperationException();
     }
 

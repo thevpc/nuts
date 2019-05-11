@@ -47,7 +47,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
@@ -196,7 +196,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
-                MavenFolderRepository.this.undeploy(new DefaultNutsRepositoryUndeploymentOptions().id(id), session);
+                MavenFolderRepository.this.undeploy().id(id).session(session).run();
             }
 
             @Override
@@ -212,7 +212,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
 
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {

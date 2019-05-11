@@ -105,6 +105,14 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                     this.setOutputFormat(NutsOutputFormat.PROPS);
                     break;
                 }
+                case "--table": {
+                    this.setOutputFormat(NutsOutputFormat.TABLE);
+                    break;
+                }
+                case "--tree": {
+                    this.setOutputFormat(NutsOutputFormat.TREE);
+                    break;
+                }
                 case "--plain": {
                     this.setOutputFormat(NutsOutputFormat.PLAIN);
                     break;

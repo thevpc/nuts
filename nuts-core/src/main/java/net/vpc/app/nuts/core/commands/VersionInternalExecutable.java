@@ -30,7 +30,7 @@ public class VersionInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        PrintStream out = session.getTerminal().fout();
+        PrintStream out = getSession(true).getTerminal().fout();
         ws.formatter().createWorkspaceVersionFormat().parseOptions(args).println(out);
     }
     

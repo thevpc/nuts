@@ -55,6 +55,14 @@ public class HelpInternalExecutable extends InternalExecutable {
                         outputFormat = (NutsOutputFormat.PROPS);
                         break;
                     }
+                    case "--table": {
+                        outputFormat = (NutsOutputFormat.TABLE);
+                        break;
+                    }
+                    case "--tree": {
+                        outputFormat = (NutsOutputFormat.TREE);
+                        break;
+                    }
                     case "--plain": {
                         outputFormat = (NutsOutputFormat.PLAIN);
                         break;
@@ -70,7 +78,7 @@ public class HelpInternalExecutable extends InternalExecutable {
         }
         switch (outputFormat) {
             case PLAIN: {
-                PrintStream fout = session.getTerminal().fout();
+                PrintStream fout = getSession(true).getTerminal().fout();
                 if (helpFor.isEmpty()) {
                     fout.println(NutsWorkspaceExt.of(ws).getHelpText());
                     fout.flush();
@@ -92,18 +100,11 @@ public class HelpInternalExecutable extends InternalExecutable {
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {
-                            session.getTerminal().ferr().println(arg + " : Not found");
+                            getSession(true).getTerminal().ferr().println(arg + " : Not found");
                         }
                     }
                 }
                 break;
-            }
-
-            case JSON: {
-                throw new NutsUnsupportedOperationException("Unsupported format " + outputFormat);
-            }
-            case PROPS: {
-                throw new NutsUnsupportedOperationException("Unsupported format " + outputFormat);
             }
             default: {
                 throw new NutsUnsupportedOperationException("Unsupported format " + outputFormat);

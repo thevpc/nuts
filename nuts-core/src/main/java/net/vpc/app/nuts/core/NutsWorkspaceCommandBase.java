@@ -5,17 +5,11 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.util.Arrays;
 import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsTraceFormat;
-import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -28,11 +22,7 @@ public abstract class NutsWorkspaceCommandBase<T> {
     protected NutsWorkspace ws;
     private NutsSession session;
     private NutsSession validSession;
-    private boolean ask = false;
-    private boolean trace = false;
-    private boolean force = false;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
-    protected final NutsTraceFormat[] traceFormats = new NutsTraceFormat[NutsOutputFormat.values().length];
+    private boolean sessionCopy = false;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws) {
         this.ws = ws;
@@ -42,56 +32,22 @@ public abstract class NutsWorkspaceCommandBase<T> {
     protected T copyFromWorkspaceCommandBase(NutsWorkspaceCommandBase other) {
         if (other != null) {
             this.session = other.getSession();
-            this.trace = other.isTrace();
-            this.force = other.isForce();
-            this.ask = other.isAsk();
-            System.arraycopy(other.traceFormats, 0, this.traceFormats, 0, NutsOutputFormat.values().length);
         }
         return (T) this;
-    }
-
-    public NutsTraceFormat getTraceFormat() {
-        NutsTraceFormat p = traceFormats[getOutputFormat().ordinal()];
-        if(p==null){
-            switch(outputFormat){
-                case JSON:{
-                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatJson();
-                }
-                case PROPS:{
-                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatProps();
-                }
-                case PLAIN:{
-                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatPlain(new DefaultNutsFindCommand(ws), session);
-                }
-                default: throw new NutsUnsupportedArgumentException("Unsupported "+String.valueOf(outputFormat));
-            }
-        }
-        return p;
-    }
-
-    public T unsetTraceFormat(NutsOutputFormat f) {
-        traceFormats[f.ordinal()] = null;
-        return (T) this;
-    }
-
-    public T traceFormat(NutsTraceFormat traceFormat) {
-        return setTraceFormat(traceFormat);
-    }
-
-    public T setTraceFormat(NutsTraceFormat f) {
-        if (f == null) {
-            throw new NullPointerException();
-        }
-        traceFormats[f.getSupportedFormat().ordinal()] = f;
-        return (T) this;
-    }
-
-    public NutsTraceFormat[] getTraceFormats() {
-        return Arrays.copyOf(traceFormats, traceFormats.length);
     }
 
     //@Override
     public NutsSession getSession() {
+        return session;
+    }
+    
+    public NutsSession getSession(boolean autoCreate) {
+        if(session!=null){
+            return session;
+        }
+        if(autoCreate){
+            session=ws.createSession();
+        }
         return session;
     }
 
@@ -106,112 +62,30 @@ public abstract class NutsWorkspaceCommandBase<T> {
         return (T) this;
     }
 
-    public T outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
 
-    public T setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return (T) this;
-    }
 
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
-    }
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public T setTrace(boolean trace) {
-        this.trace = trace;
-        return (T) this;
-    }
-
-    public T trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    public T trace() {
-        return trace(true);
-    }
-
-    public boolean isForce() {
-        return force;
-    }
-
-    public T force() {
-        return force(true);
-    }
-
-    public T force(boolean force) {
-        return setForce(force);
-    }
-
-    public T setForce(boolean force) {
-        this.force = force;
-        return (T) this;
-    }
-
-//    public boolean isLenient() {
-//        return lenient;
-//    }
-//
-//    public T setLenient(boolean ignoreNotFound) {
-//        this.lenient = ignoreNotFound;
-//        return (T) this;
-//    }
-//
-//    public T lenient() {
-//        return setLenient(true);
-//    }
-//
-//    public T lenient(boolean lenient) {
-//        return setLenient(lenient);
-//    }
     protected void invalidateResult() {
 
+    }
+
+    public NutsSession getValidSessionCopy() {
+        NutsSession s = getValidSession();
+        if (!sessionCopy) {
+            s = validSession = s.copy();
+            sessionCopy = true;
+        }
+        return s;
     }
 
     public NutsSession getValidSession() {
         if (validSession == null) {
             validSession = NutsWorkspaceUtils.validateSession(ws, getSession());
+            sessionCopy = true;
         }
         return validSession;
     }
 
-    public T json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    public T plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    public T props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    public boolean isAsk() {
-        return ask;
-    }
-
-    public T setAsk(boolean ask) {
-        this.ask = ask;
-        return (T) this;
-    }
-
-    public T ask(boolean ask) {
-        return setAsk(true);
-    }
-
-    public T ask() {
-        return ask(true);
-    }
-
+    
     protected NutsWorkspace getWs() {
         return ws;
     }
@@ -225,31 +99,31 @@ public abstract class NutsWorkspaceCommandBase<T> {
 
         switch (a.strKey()) {
             case "--trace": {
-                this.setTrace(a.getBooleanValue());
+                getValidSessionCopy().setTrace(a.getBooleanValue());
                 return true;
             }
             case "--ask": {
-                this.setAsk(a.getBooleanValue());
+                getValidSessionCopy().setAsk(a.getBooleanValue());
                 return true;
             }
             case "--force": {
-                this.setForce(a.getBooleanValue());
+                getValidSessionCopy().setForce(a.getBooleanValue());
                 return true;
             }
             case "--trace-format": {
-                this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                getValidSessionCopy().setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
                 return true;
             }
             case "--json": {
-                this.setOutputFormat(NutsOutputFormat.JSON);
+                getValidSessionCopy().setOutputFormat(NutsOutputFormat.JSON);
                 return true;
             }
             case "--props": {
-                this.setOutputFormat(NutsOutputFormat.PROPS);
+                getValidSessionCopy().setOutputFormat(NutsOutputFormat.PROPS);
                 return true;
             }
             case "--plain": {
-                this.setOutputFormat(NutsOutputFormat.PLAIN);
+                getValidSessionCopy().setOutputFormat(NutsOutputFormat.PLAIN);
                 return true;
             }
         }

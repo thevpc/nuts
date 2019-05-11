@@ -34,7 +34,6 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     private Boolean indexed = null;
     private NutsFetchStrategy fetchStrategy = null;
     private Boolean acceptOptional = null;
-    private Boolean acceptDefaultVersion = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean includeContent = true;
     private boolean includeDependencies = false;
@@ -193,47 +192,6 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     //@Override
     public T indexed(boolean indexed) {
         return setIndexed(indexed);
-    }
-
-    /**
-     * 
-     * @since 0.5.5
-     * @return 
-     */
-    public Boolean getAcceptDefaultVersion() {
-        return acceptDefaultVersion;
-    }
-
-    /**
-     * 
-     * @since 0.5.5
-     * @return 
-     */
-    public T acceptDefaultVersion() {
-        return acceptDefaultVersion(true);
-    }
-
-    /**
-     * 
-     * @since 0.5.5
-     * @param acceptDefaultVersion
-     * @return 
-     */
-    //@Override
-    public T acceptDefaultVersion(Boolean acceptDefaultVersion) {
-        return setAcceptDefaultVersion(acceptDefaultVersion);
-    }
-
-    /**
-     * 
-     * @since 0.5.5
-     * @param acceptDefaultVersion
-     * @return 
-     */
-    //@Override
-    public T setAcceptDefaultVersion(Boolean acceptDefaultVersion) {
-        this.acceptDefaultVersion = acceptDefaultVersion;
-        return (T) this;
     }
 
     //@Override

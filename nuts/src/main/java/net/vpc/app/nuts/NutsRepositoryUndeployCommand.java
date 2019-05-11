@@ -30,60 +30,49 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsUpdateOptions {
-    private boolean trace=true;
-    private boolean enableMajorUpdates=false;
-    private boolean applyUpdates;
-    private boolean force;
-    private boolean enableInstall;
+public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand{
 
-    public boolean isTrace() {
-        return trace;
-    }
+    @Override
+    NutsRepositoryUndeployCommand setSession(NutsRepositorySession session);
 
-    public NutsUpdateOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
+    @Override
+    NutsRepositoryUndeployCommand session(NutsRepositorySession session);
+    
+    @Override
+    NutsRepositoryUndeployCommand run();
 
-    public boolean isEnableMajorUpdates() {
-        return enableMajorUpdates;
-    }
+    NutsId getId();
 
-    public NutsUpdateOptions setEnableMajorUpdates(boolean enableMajorUpdates) {
-        this.enableMajorUpdates = enableMajorUpdates;
-        return this;
-    }
+    String getRepository();
 
-    public boolean isApplyUpdates() {
-        return applyUpdates;
-    }
+    boolean isTransitive();
 
-    public NutsUpdateOptions setApplyUpdates(boolean applyUpdates) {
-        this.applyUpdates = applyUpdates;
-        return this;
-    }
+    NutsRepositoryUndeployCommand setId(NutsId id);
 
-    public boolean isForce() {
-        return force;
-    }
+    NutsRepositoryUndeployCommand setRepository(String repository);
 
-    public NutsUpdateOptions setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
+    NutsRepositoryUndeployCommand setTransitive(boolean transitive);
+    
+//    NutsRepositoryUndeploymentOptions copy();
 
-    public boolean isEnableInstall() {
-        return enableInstall;
-    }
+    boolean isOffline();
 
-    public NutsUpdateOptions setEnableInstall(boolean enableInstall) {
-        this.enableInstall = enableInstall;
-        return this;
-    }
+    NutsRepositoryUndeployCommand setOffline(boolean offline);
+
+    NutsRepositoryUndeployCommand offline(boolean offline);
+
+    NutsRepositoryUndeployCommand offline();
+
+    NutsRepositoryUndeployCommand repository(String repository);
+
+    NutsRepositoryUndeployCommand id(NutsId id);
+
+    NutsRepositoryUndeployCommand transitive();
+
+    NutsRepositoryUndeployCommand transitive(boolean transitive);
     
 }

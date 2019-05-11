@@ -78,36 +78,6 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand{
 
     String[] getArgs();
 
-    NutsInstallCommand setSession(NutsSession session);
-
-    NutsInstallCommand session(NutsSession session);
-
-    NutsSession getSession();
-
-    NutsInstallCommand ask();
-
-    NutsInstallCommand ask(boolean ask);
-
-    NutsInstallCommand setAsk(boolean ask);
-
-    boolean isAsk();
-
-    NutsInstallCommand force();
-
-    NutsInstallCommand force(boolean forceInstall);
-
-    NutsInstallCommand setForce(boolean forceInstall);
-
-    boolean isForce();
-
-    NutsInstallCommand trace();
-
-    NutsInstallCommand trace(boolean trace);
-
-    NutsInstallCommand setTrace(boolean trace);
-
-    boolean isTrace();
-
     NutsInstallCommand defaultVersion();
 
     NutsInstallCommand defaultVersion(boolean defaultVersion);
@@ -130,23 +100,19 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand{
 
     NutsInstallCommand setIncludeCompanions(boolean includecompanions);
 
-    NutsInstallCommand parseOptions(String... args);
-
-    NutsInstallCommand run();
-
     int getResultCount();
 
     NutsDefinition[] getResult();
 
-    NutsInstallCommand outputFormat(NutsOutputFormat outputFormat);
+    @Override
+    NutsInstallCommand session(NutsSession session);
 
-    NutsInstallCommand setOutputFormat(NutsOutputFormat outputFormat);
+    @Override
+    NutsInstallCommand setSession(NutsSession session);
 
-    NutsInstallCommand json();
+    @Override
+    NutsInstallCommand parseOptions(String... args);
 
-    NutsInstallCommand plain();
-
-    NutsInstallCommand props();
-
-    NutsOutputFormat getOutputFormat();
+    @Override
+    NutsInstallCommand run();
 }

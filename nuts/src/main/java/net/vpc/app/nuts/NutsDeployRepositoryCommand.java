@@ -29,44 +29,56 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
+
 /**
  *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsInstallCompanionOptions {
+public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
-    private boolean ask;
-    private boolean force;
-    private boolean trace;
+    Path getContent();
 
-    public boolean isAsk() {
-        return ask;
-    }
+    NutsDescriptor getDescriptor();
 
-    public NutsInstallCompanionOptions setAsk(boolean ask) {
-        this.ask = ask;
-        return this;
-    }
+    NutsId getId();
 
-    public boolean isForce() {
-        return force;
-    }
+    String getRepository();
 
-    public NutsInstallCompanionOptions setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
+    boolean isOffline();
 
-    public boolean isTrace() {
-        return trace;
-    }
+    boolean isTransitive();
 
-    public NutsInstallCompanionOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
+    NutsDeployRepositoryCommand setContent(Path content);
 
-    
+    NutsDeployRepositoryCommand setDescriptor(NutsDescriptor descriptor);
 
+    NutsDeployRepositoryCommand setId(NutsId id);
+
+    NutsDeployRepositoryCommand setOffline(boolean offline);
+
+    NutsDeployRepositoryCommand setRepository(String repository);
+
+    NutsDeployRepositoryCommand setTransitive(boolean transitive);
+
+//    NutsRepositoryDeploymentOptions copy();
+    NutsDeployRepositoryCommand offline(boolean offline);
+
+    NutsDeployRepositoryCommand offline();
+
+    NutsDeployRepositoryCommand repository(String repository);
+
+    NutsDeployRepositoryCommand id(NutsId id);
+
+    NutsDeployRepositoryCommand transitive(boolean transitive);
+
+    @Override
+    NutsDeployRepositoryCommand setSession(NutsRepositorySession session);
+
+    @Override
+    NutsDeployRepositoryCommand session(NutsRepositorySession session);
+
+    @Override
+    NutsDeployRepositoryCommand run();
 }

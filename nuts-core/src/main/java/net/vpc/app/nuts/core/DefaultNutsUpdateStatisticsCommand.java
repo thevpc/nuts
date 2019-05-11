@@ -158,7 +158,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     public NutsUpdateStatisticsCommand run() {
         for (String repository : getRepositrories()) {
             ws.config().getRepository(repository).updateStatistics()
-                    .trace(isTrace())
+                    .session(getValidSession())
                     .run();
         }
         for (String repositoryPath : getPaths()) {
@@ -182,7 +182,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
             );
             if (mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, ws, pp).reindexFolder();
-                if (isTrace()) {
+                if (getValidSession().isTrace()) {
                     getValidSession().getTerminal().out().printf("Updated maven index %s%n", getWs().config().getWorkspaceLocation(), pp);
                 }
             } else {
@@ -194,7 +194,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
                 } else {
                     throw new NutsIllegalArgumentException("Unsupported repository Folder");
                 }
-                if (isTrace()) {
+                if (getValidSession().isTrace()) {
                     getValidSession().getTerminal().out().printf("Updated nuts index %s%n", getWs().config().getWorkspaceLocation(), pp);
                 }
             }

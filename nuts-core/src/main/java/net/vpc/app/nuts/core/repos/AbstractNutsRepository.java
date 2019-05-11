@@ -41,6 +41,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsDeployRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsPushRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
@@ -312,74 +315,13 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public void deploy(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
-        security().checkAllowed(NutsConstants.Rights.DEPLOY, "deploy");
-        if (deployment == null) {
-            throw new NutsIllegalArgumentException("Missing Deployment");
-        }
-        if (deployment.getId() == null) {
-            throw new NutsIllegalArgumentException("Missing Id");
-        }
-        if (deployment.getContent() == null) {
-            throw new NutsIllegalArgumentException("Missing Content");
-        }
-        if (deployment.getDescriptor() == null) {
-            throw new NutsIllegalArgumentException("Missing Descriptor");
-        }
-        if (CoreStringUtils.isBlank(deployment.getId().getGroup())) {
-            throw new NutsIllegalArgumentException("Empty group");
-        }
-        if (CoreStringUtils.isBlank(deployment.getId().getName())) {
-            throw new NutsIllegalArgumentException("Empty name");
-        }
-        if ((deployment.getId().getVersion().isBlank())) {
-            throw new NutsIllegalArgumentException("Empty version");
-        }
-        if ("RELEASE".equals(deployment.getId().getVersion().getValue())
-                || NutsConstants.Versions.LATEST.equals(deployment.getId().getVersion().getValue())) {
-            throw new NutsIllegalArgumentException("Invalid version " + deployment.getId().getVersion());
-        }
-//        if (descriptor.getArch().length > 0 || descriptor.getOs().length > 0 || descriptor.getOsdist().length > 0 || descriptor.getPlatform().length > 0) {
-//            if (CoreStringUtils.isEmpty(descriptor.getFace())) {
-//                throw new NutsIllegalArgumentException("face property '" + NutsConstants.QUERY_FACE + "' could not be null if env {arch,os,osdist,platform} is specified");
-//            }
-//        }
-        try {
-            deployImpl(deployment, session);
-            if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
-                try {
-                    nutsIndexStoreClient.revalidate(deployment.getId());
-                } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
-                }
-            }
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
-            }
-            deployment.getId();
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
-            }
-            throw ex;
-        }
+    public NutsDeployRepositoryCommand deploy() {
+        return new DefaultNutsDeployRepositoryCommand(this);
     }
 
     @Override
-    public void push(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
-        checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.PUSH, "push");
-        try {
-            pushImpl(id, options, session);
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
-            }
-        } catch (RuntimeException ex) {
-
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
-            }
-        }
+    public NutsPushRepositoryCommand push() {
+        return new DefaultNutsPushRepositoryCommand(this);
     }
 
     @Override
@@ -475,26 +417,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
-        checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.UNDEPLOY, "undeploy");
-        try {
-            undeployImpl(options, session);
-            if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
-                try {
-                    nutsIndexStoreClient.invalidate(options.getId());
-                } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
-                }
-            }
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
-            }
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
-            }
-        }
+    public NutsRepositoryUndeployCommand undeploy() {
+        return new DefaultNutsRepositoryUndeployCommand(this);
     }
 
     protected String getIdComponentExtension(String packaging) {
@@ -505,6 +429,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return getWorkspace().config().getDefaultIdExtension(id);
     }
 
+    @Override
     public String getIdFilename(NutsId id) {
         String classifier = "";
         String ext = getIdExtension(id);
@@ -608,17 +533,11 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         }
     }
 
-    protected abstract void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session);
-
     protected abstract Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
     protected abstract NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
 
-    protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
-
-    protected abstract void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session);
-
-    protected abstract void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session);
+    public abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
 
     protected abstract NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session);
 

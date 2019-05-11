@@ -11,7 +11,7 @@ import java.io.PrintStream;
  *
  * @author vpc
  */
-public interface NutsTraceFormat {
+public interface NutsOutputCustomFormat {
 
     public NutsOutputFormat getSupportedFormat();
     

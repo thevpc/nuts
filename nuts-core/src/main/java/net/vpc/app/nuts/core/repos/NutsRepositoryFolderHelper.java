@@ -31,17 +31,17 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
+import net.vpc.app.nuts.NutsDeployRepositoryCommand;
+import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
 /**
  *
@@ -211,11 +211,10 @@ public class NutsRepositoryFolderHelper {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 if (repo == null) {
-                    NutsRepositoryFolderHelper.this.undeploy(
-                            new DefaultNutsRepositoryUndeploymentOptions().id(id),
-                            session);
+                    NutsRepositoryFolderHelper.this.undeploy(new DefaultNutsRepositoryUndeployCommand(repo).id(id).setSession(session)
+                    );
                 } else {
-                    repo.undeploy(new DefaultNutsRepositoryUndeploymentOptions().id(id), session);
+                    repo.undeploy().id(id).session(session).run();
                 }
             }
 
@@ -257,14 +256,14 @@ public class NutsRepositoryFolderHelper {
         return bestId;
     }
 
-    public void deploy(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
+    public void deploy(NutsDeployRepositoryCommand deployment) {
         Path descFile = getIdLocalFile(deployment.getId().setFaceDescriptor());
         Path pckFile = getIdLocalFile(deployment.getId());
-
-        if (Files.exists(descFile) && !deployment.isForce()) {
+        NutsRepositorySession session = deployment.getSession();
+        if (Files.exists(descFile) && !session.getSession().isForce()) {
             throw new NutsAlreadyDeployedException(deployment.toString());
         }
-        if (Files.exists(pckFile) && !deployment.isForce()) {
+        if (Files.exists(pckFile) && !session.getSession().isForce()) {
             throw new NutsAlreadyDeployedException(deployment.toString());
         }
         if (Files.exists(descFile)) {
@@ -282,7 +281,7 @@ public class NutsRepositoryFolderHelper {
 
     }
 
-    public void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
+    public void undeploy(NutsRepositoryUndeployCommand options) {
         Path localFolder = getIdLocalFile(options.getId());
         if (localFolder != null && Files.exists(localFolder)) {
             try {

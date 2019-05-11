@@ -10,12 +10,12 @@ import java.util.Iterator;
 import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
+import net.vpc.app.nuts.NutsOutputCustomFormat;
 
 /**
  *
@@ -25,13 +25,13 @@ public class TraceIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
-    NutsTraceFormat conv;
+    NutsOutputCustomFormat conv;
     PrintStream out;
     NutsOutputFormat format;
     NutsFindCommand findCommand;
     long count = 0;
 
-    public TraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsTraceFormat conv, NutsFindCommand findCommand, NutsSession session) {
+    public TraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsOutputCustomFormat conv, NutsFindCommand findCommand, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;

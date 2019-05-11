@@ -36,43 +36,7 @@ package net.vpc.app.nuts;
  */
 public class NutsAddOptions {
 
-    private boolean trace = true;
-    private boolean force = false;
     private NutsSession session;
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public NutsAddOptions trace() {
-        return trace(true);
-    }
-
-    public NutsAddOptions trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    public NutsAddOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    public boolean isForce() {
-        return force;
-    }
-
-    public NutsAddOptions force() {
-        return force(true);
-    }
-
-    public NutsAddOptions force(boolean force) {
-        return setForce(force);
-    }
-
-    public NutsAddOptions setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
 
     public NutsSession getSession() {
         return session;

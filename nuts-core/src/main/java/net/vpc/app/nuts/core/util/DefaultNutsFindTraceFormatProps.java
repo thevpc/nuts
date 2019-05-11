@@ -11,16 +11,16 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.NutsOutputCustomFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsFindTraceFormatProps implements NutsTraceFormat {
+public class DefaultNutsFindTraceFormatProps implements NutsOutputCustomFormat {
 
     CanonicalBuilder canonicalBuilder;
 

@@ -41,10 +41,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand undoAddRights(Collection<String> rights);
 
-    NutsUpdateUserCommand force();
-
-    NutsUpdateUserCommand force(boolean force);
-
     String[] getAddGroups();
 
     String[] getRemoveGroups();
@@ -58,12 +54,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
     String[] getAddRights();
 
     String[] getRemoveRights();
-
-    NutsSession getSession();
-
-    boolean isForce();
-
-    boolean isTrace();
 
     NutsUpdateUserCommand removeGroups(String... groups);
 
@@ -81,10 +71,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand undoRemoveRights(Collection<String> rights);
 
-    NutsUpdateUserCommand session(NutsSession session);
-
-    NutsUpdateUserCommand setForce(boolean force);
-
     NutsUpdateUserCommand credentials(String password);
 
     NutsUpdateUserCommand setCredentials(String password);
@@ -96,16 +82,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
     NutsUpdateUserCommand remoteIdentity(String remoteIdentity);
 
     NutsUpdateUserCommand setRemoteIdentity(String remoteIdentity);
-
-    NutsUpdateUserCommand setSession(NutsSession session);
-
-    NutsUpdateUserCommand setTrace(boolean trace);
-
-    NutsUpdateUserCommand trace();
-
-    NutsUpdateUserCommand trace(boolean trace);
-
-    NutsUpdateUserCommand run();
 
     String getLogin();
 
@@ -129,6 +105,15 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setResetGroups(boolean resetGroups);
 
+    @Override
+    NutsUpdateUserCommand session(NutsSession session);
+
+    @Override
+    NutsUpdateUserCommand setSession(NutsSession session);
+
+    @Override
     NutsUpdateUserCommand parseOptions(String... args);
 
+    @Override
+    NutsUpdateUserCommand run();
 }

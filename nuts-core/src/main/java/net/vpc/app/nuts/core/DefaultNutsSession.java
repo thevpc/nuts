@@ -43,6 +43,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private List<NutsListener> listeners = new ArrayList<>();
+    private boolean trace = false;
+    private boolean force = false;
+    private boolean ask = false;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
+    protected NutsOutputCustomFormat outputCustomFormat = null;
 
     public DefaultNutsSession() {
     }
@@ -133,6 +138,139 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setTerminal(NutsSessionTerminal terminal) {
         this.terminal = terminal;
         return this;
+    }
+
+    @Override
+    public NutsOutputCustomFormat getOutputCustomFormat() {
+        return outputCustomFormat;
+    }
+
+    @Override
+    public NutsSession outputCustomFormat(NutsOutputCustomFormat traceFormat) {
+        return setOutputCustomFormat(traceFormat);
+    }
+
+    @Override
+    public NutsSession setOutputCustomFormat(NutsOutputCustomFormat f) {
+        if (f == null) {
+            this.outputCustomFormat = null;
+        } else {
+            this.outputCustomFormat = f;
+            this.setOutputFormat(f.getSupportedFormat());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsSession json() {
+        return setOutputFormat(NutsOutputFormat.JSON);
+    }
+
+    @Override
+    public NutsSession plain() {
+        return setOutputFormat(NutsOutputFormat.PLAIN);
+    }
+
+    @Override
+    public NutsSession tree() {
+        return setOutputFormat(NutsOutputFormat.TREE);
+    }
+
+    @Override
+    public NutsSession table() {
+        return setOutputFormat(NutsOutputFormat.TABLE);
+    }
+
+    @Override
+    public NutsSession props() {
+        return setOutputFormat(NutsOutputFormat.PROPS);
+    }
+
+    @Override
+    public NutsSession outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
+    }
+
+    @Override
+    public NutsSession setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
+        }
+        this.outputFormat = outputFormat;
+        return this;
+    }
+
+    @Override
+    public NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue) {
+        return outputFormat == null ? defaultValue : outputFormat;
+    }
+
+    @Override
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
+    }
+
+    @Override
+    public boolean isTrace() {
+        return trace;
+    }
+
+    @Override
+    public NutsSession setTrace(boolean trace) {
+        this.trace = trace;
+        return this;
+    }
+
+    @Override
+    public NutsSession trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    @Override
+    public NutsSession trace() {
+        return trace(true);
+    }
+
+    @Override
+    public boolean isForce() {
+        return force;
+    }
+
+    @Override
+    public NutsSession force() {
+        return force(true);
+    }
+
+    @Override
+    public NutsSession force(boolean force) {
+        return setForce(force);
+    }
+
+    @Override
+    public NutsSession setForce(boolean force) {
+        this.force = force;
+        return this;
+    }
+
+    @Override
+    public boolean isAsk() {
+        return ask;
+    }
+
+    @Override
+    public NutsSession setAsk(boolean ask) {
+        this.ask = ask;
+        return this;
+    }
+
+    @Override
+    public NutsSession ask(boolean ask) {
+        return setAsk(true);
+    }
+
+    @Override
+    public NutsSession ask() {
+        return ask(true);
     }
 
     @Override

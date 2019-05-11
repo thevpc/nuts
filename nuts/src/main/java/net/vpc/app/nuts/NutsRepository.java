@@ -59,11 +59,11 @@ public interface NutsRepository {
 
     NutsRepositorySecurityManager security();
 
-    void deploy(NutsRepositoryDeploymentOptions options, NutsRepositorySession session);
+    NutsDeployRepositoryCommand deploy();
 
-    void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session);
+    NutsRepositoryUndeployCommand  undeploy();
 
-    void push(NutsId id, NutsPushCommand options, NutsRepositorySession session);
+    NutsPushRepositoryCommand push();
 
     NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
 

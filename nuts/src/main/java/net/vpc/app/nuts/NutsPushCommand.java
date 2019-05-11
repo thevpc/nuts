@@ -102,35 +102,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     String[] getArgs();
 
-    NutsPushCommand session(NutsSession session);
-
-    NutsPushCommand setSession(NutsSession session);
-
-    NutsSession getSession();
-
-    NutsPushCommand ask();
-
-    NutsPushCommand ask(boolean enable);
-
-    NutsPushCommand setAsk(boolean enable);
-
-    boolean isAsk();
-
-    NutsPushCommand force();
-
-    NutsPushCommand force(boolean enable);
-
-    NutsPushCommand setForce(boolean enable);
-
-    boolean isForce();
-
-    NutsPushCommand trace();
-
-    NutsPushCommand trace(boolean enable);
-
-    NutsPushCommand setTrace(boolean enable);
-
-    boolean isTrace();
 
     NutsPushCommand offline();
 
@@ -146,26 +117,16 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     String getRepository();
 
-    /**
-     * execute the push command with the built options and return
-     * <code>this</code> instance.
-     *
-     * @return <code>this</code> instance
-     */
-    NutsPushCommand run();
+    @Override
+    NutsPushCommand session(NutsSession session);
 
-    NutsPushCommand outputFormat(NutsOutputFormat outputFormat);
+    @Override
+    NutsPushCommand setSession(NutsSession session);
 
-    NutsPushCommand setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsPushCommand json();
-
-    NutsPushCommand plain();
-
-    NutsPushCommand props();
-
-    NutsOutputFormat getOutputFormat();
-
+    @Override
     NutsPushCommand parseOptions(String... args);
+
+    @Override
+    NutsPushCommand run();
 
 }

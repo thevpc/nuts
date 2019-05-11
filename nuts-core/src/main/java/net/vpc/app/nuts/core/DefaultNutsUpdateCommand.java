@@ -516,7 +516,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
         NutsUpdateResult[] updates = allUpdates.values().toArray(new NutsUpdateResult[0]);
         PrintStream out = CoreIOUtils.resolveOut(ws, session);
-        if (this.isTrace()) {
+        if (getValidSession().isTrace()) {
             if (updates.length == 0) {
                 out.printf("Workspace is [[up-to-date]]. You are running latest version ==%s==%n", actualBootConfig.getRuntimeId().getVersion());
             } else {
@@ -552,9 +552,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         r.setId(id.getSimpleNameId());
 
         final PrintStream out = CoreIOUtils.resolveOut(ws, session);
-        NutsFindCommand ff = ws.find().id(id).setSession(session).installed().setAcceptOptional(false).setLenient(true);
-        ((DefaultNutsQueryBaseOptions) ff).setAcceptDefaultVersion(true);
-        NutsDefinition d0 = ff.getResultDefinitions().first();
+        NutsDefinition d0 = ws.find().id(id).setSession(session).installed().setAcceptOptional(false).lenient().defaultVersions().getResultDefinitions().first();
         if (d0 == null) {
             throw new NutsIllegalArgumentException(id + " is not yet installed to be updated.");
         }
@@ -574,13 +572,13 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             }
             r.setUpdateAvailable(true);
             r.setUpdateForced(false);
-            if (this.isTrace()) {
+            if (getValidSession().isTrace()) {
                 out.printf("==%s== is [[not-installed]] . New version is available ==%s==%n", simpleName, d1.getId().getVersion());
             }
         } else if (d1 == null) {
             //this is very interisting. Why the hell is this happening?
             r.setAvailable(d0);
-            if (this.isTrace()) {
+            if (getValidSession().isTrace()) {
                 out.printf("==%s== is [[up-to-date]]. You are running latest version ==%s==%n", d0.getId().getSimpleName(), d0.getId().getVersion());
             }
         } else {
@@ -588,9 +586,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             NutsVersion v1 = d1.getId().getVersion();
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
-                if (this.isForce()) {
+                if (getValidSession().isForce()) {
                     r.setUpdateForced(true);
-                    if (this.isTrace()) {
+                    if (getValidSession().isTrace()) {
                         if (v1.compareTo(v0) == 0) {
                             out.printf("==%s== would be [[forced]] to ==%s==%n", simpleName, d0.getId().getVersion());
 
@@ -599,13 +597,13 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                         }
                     }
                 } else {
-                    if (this.isTrace()) {
+                    if (getValidSession().isTrace()) {
                         out.printf("==%s== is [[up-to-date]]. You are running latest version ==%s==%n", simpleName, d0.getId().getVersion());
                     }
                 }
             } else {
                 r.setUpdateAvailable(true);
-                if (this.isTrace()) {
+                if (getValidSession().isTrace()) {
                     out.printf("==%s== is [[updatable]] from ==%s== to latest version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                 }
             }
@@ -621,7 +619,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             return;
         }
         NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to apply updates").setDefautValue(true);
-        if (this.isAsk() && !ws.getTerminal().ask(q)) {
+        if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
             throw new NutsUserCancelException();
         }
         NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
@@ -848,9 +846,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
         if (d0 == null) {
             ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-            dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
+            dws.updateImpl(d1, new String[0], null, getValidSession(), true);
             r.setUpdateApplied(true);
-            if (this.isTrace()) {
+            if (getValidSession().isTrace()) {
                 out.printf("==%s== is [[forced]] to latest version ==%s==%n", simpleName, d1 == null ? null : d1.getId().getVersion());
             }
         } else if (d1 == null) {
@@ -860,12 +858,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             NutsVersion v1 = d1.getId().getVersion();
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
-                if (this.isForce()) {
+                if (getValidSession().isForce()) {
                     ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                    dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
+                    dws.updateImpl(d1, new String[0], null, getValidSession(), true);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
-                    if (this.isTrace()) {
+                    if (getValidSession().isTrace()) {
                         if (v1.compareTo(v0) == 0) {
                             out.printf("==%s== is [[forced]] to ==%s== %n", simpleName, d0.getId().getVersion());
                         } else {
@@ -875,9 +873,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 }
             } else {
                 ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
+                dws.updateImpl(d1, new String[0], null, getValidSession(), true);
                 r.setUpdateApplied(true);
-                if (this.isTrace()) {
+                if (getValidSession().isTrace()) {
                     out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                 }
             }

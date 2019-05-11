@@ -288,5 +288,4 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
         }
         return this;
     }
-    
 }

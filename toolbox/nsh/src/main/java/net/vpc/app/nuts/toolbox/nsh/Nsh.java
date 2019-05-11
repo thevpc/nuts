@@ -68,17 +68,19 @@ public class Nsh extends NutsApplication {
         NutsCommand[] commands = c.getCommands();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
+        NutsSession sessionCopy = applicationContext.getSession().copy();
+        sessionCopy.setTrace(false);
         for (NutsCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (cfg.addCommandAlias(
-                        new NutsCommandAliasConfig()
-                                .setFactoryId("nsh")
-                                .setName(command.getName())
-                                .setCommand(nshIdStr, "-c", command.getName())
-                                .setOwner(applicationContext.getAppId())
-                                .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
-                         new net.vpc.app.nuts.NutsAddOptions().setForce(force).setTrace(false)
+                if (cfg.addCommandAlias(new NutsCommandAliasConfig()
+                        .setFactoryId("nsh")
+                        .setName(command.getName())
+                        .setCommand(nshIdStr, "-c", command.getName())
+                        .setOwner(applicationContext.getAppId())
+                        .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
+                        new net.vpc.app.nuts.NutsAddOptions()
+                                .session(sessionCopy.force(force).trace(true))
                 )) {
                     reinstalled.add(command.getName());
                 } else {

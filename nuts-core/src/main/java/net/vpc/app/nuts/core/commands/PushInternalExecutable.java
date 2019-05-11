@@ -25,7 +25,7 @@ public class PushInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.push().session(session).trace().parseOptions(args).run();
+        ws.push().session(getSession().trace()).parseOptions(args).run();
     }
 
 }

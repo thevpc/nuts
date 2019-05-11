@@ -26,7 +26,7 @@ public class InfoInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        PrintStream out = session.getTerminal().fout();
+        PrintStream out = getSession(true).getTerminal().fout();
         ws.formatter().createWorkspaceInfoFormat().parseOptions(args).println(out);
     }
     

@@ -280,7 +280,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                 companions = false;
             } else {
                 NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to install recommended companion tools").setDefautValue(true);
-                if (this.isAsk() && !ws.getTerminal().ask(q)) {
+                if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
                     companions = false;
                 }
             }
@@ -295,11 +295,11 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        NutsCommandExecBuilder e = createExecBuilder();
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
-                        if (this.isForce() || !dws.isInstalled(ws.parser().parseRequiredId(companionTool), false, session)) {
+                        if (getValidSession().isForce() || !dws.isInstalled(ws.parser().parseRequiredId(companionTool), false, session)) {
                             NutsDefinition r=null;
-                            if (this.isTrace()) {
+                            if (getValidSession().isTrace()) {
                                 if (companionCount == 0) {
-                                    out.println("Installation of Nuts companion tools...");
+                                    out.println("Installing Nuts companion tools...");
                                 }
                                 r = ws.find().id(companionTool).latestVersions().getResultDefinitions().required();
                                 String d = r.getDescriptor().getDescription();
@@ -311,11 +311,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                 LOG.log(Level.FINE, "Installing companion tool : {0}", r.getId().getLongName());
                             }
                             NutsInstallCommand companionInstall = ws.install().id(companionTool);
-                            if (isTrace()) {
+                            if (getValidSession().isTrace()) {
                                 companionInstall.args("--trace");
                             }
-                            if (isForce()) {
-                                companionInstall.args("--force").setForce(true);
+                            if (getValidSession().isForce()) {
+                                session=session.copy();
+                                session.setForce(true);
+                                companionInstall.args("--force");
                             }
                             companionInstall.setSession(session).run();
                             companionCount++;
@@ -324,7 +326,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                     }
                     if (companionCount > 0) {
 //            e.exec();
-                        if (this.isTrace()) {
+                        if (getValidSession().isTrace()) {
                             out.printf("Installation of ==%s== companion tools in ==%s== ##succeeded##...%n", companionCount, CoreCommonUtils.formatPeriodMilli(System.currentTimeMillis() - cr));
                         }
                     } else {
@@ -343,12 +345,12 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         List<NutsDefinition> defsToIgnore = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             emptyCommand = false;
-            NutsDefinition def = ws.find().id(id).session(session).setAcceptOptional(false)
+            NutsDefinition def = ws.find().id(id).session(session.copy().trace(false)).setAcceptOptional(false)
                     .includeDependencies().scope(NutsDependencyScope.PROFILE_RUN).includeInstallInformation().latestVersions().getResultDefinitions().required();
             if (def != null && def.getPath() != null) {
                 boolean installed = def.getInstallation().isInstalled();
                 boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());
-                if (!installed || isForce()) {
+                if (!installed || getValidSession().isForce()) {
                     defsToInstall.add(def);
                 } else if (!defVer) {
                     defsToDefVersion.add(def);
@@ -359,16 +361,16 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             }
         }
         for (NutsDefinition def : defsToIgnore) {
-            if (isTrace()) {
+            if (getValidSession().isTrace()) {
                 out.printf("%N already installed%n", ws.formatter().createIdFormat().toString(def.getId()));
             }
         }
         for (NutsDefinition def : defsToInstall) {
-            dws.installImpl(def, this.getArgs(), null, session, this.isTrace(), isDefaultVersion());
+            dws.installImpl(def, this.getArgs(), null, session, isDefaultVersion());
         }
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
-            if (isTrace()) {
+            if (getValidSession().isTrace()) {
                 out.printf("%N already ==installed==. Set as ##default##.%n", ws.formatter().createIdFormat().toString(def.getId()));
             }
         }

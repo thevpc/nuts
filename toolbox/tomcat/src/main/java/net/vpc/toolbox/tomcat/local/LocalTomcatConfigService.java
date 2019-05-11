@@ -298,7 +298,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             catalinaNutsDefinition = context.getWorkspace()
                     .install()
                     .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .setTrace(true).setSession(context.getSession().copy().addListeners(new NutsInstallListener() {
+                    .setSession(context.getSession().copy().trace().addListeners(new NutsInstallListener() {
                 @Override
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());

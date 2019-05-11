@@ -12,16 +12,16 @@ import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsFindCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
+import net.vpc.app.nuts.NutsOutputCustomFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsFindTraceFormatPlain implements NutsTraceFormat {
+public class DefaultNutsFindTraceFormatPlain implements NutsOutputCustomFormat {
 
 //    public static final NutsTraceFormat INSTANCE = new DefaultNutsFindTraceFormatPlain();
     private NutsFindCommand findCommand;
@@ -80,11 +80,12 @@ public class DefaultNutsFindTraceFormatPlain implements NutsTraceFormat {
 
             try {
                 if (!i || def == null) {
-                    defFetched = ws.fetch().id(id).setSession(session).offline()
+                    defFetched = ws.fetch().id(id).setSession(
+                            (session==null?ws.createSession():session).setTrace(false)
+                    ).offline()
                             .setIncludeInstallInformation(true)
                             .setIncludeContent(true)
                             .setAcceptOptional(false)
-                            .setTrace(false)
                             .includeDependencies(checkDependencies)
                             .getResultDefinition();
                     fetched = true;

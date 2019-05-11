@@ -845,7 +845,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         NutsDefinition def = null;
         NutsId nid = ws.parser().parseId(commandName);
         NutsFindCommand ff = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true)
-                .acceptDefaultVersion()
+                .defaultVersions()
                 .installed();
         def = ff.getResultDefinitions().first();
         if (def == null) {

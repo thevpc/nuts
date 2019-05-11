@@ -10,5 +10,13 @@ package net.vpc.app.nuts;
  * @author vpc
  */
 public interface NutsRepositoryCommand {
-    
+
+    NutsRepositoryCommand setSession(NutsRepositorySession session);
+
+    NutsRepositoryCommand session(NutsRepositorySession session);
+
+    NutsRepositorySession getSession();
+
+    NutsRepositoryCommand run();
+
 }

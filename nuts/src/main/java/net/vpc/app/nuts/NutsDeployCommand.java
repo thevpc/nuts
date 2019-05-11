@@ -39,7 +39,7 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsDeployCommand extends NutsWorkspaceCommand{
+public interface NutsDeployCommand extends NutsWorkspaceCommand {
 
     NutsDeployCommand content(InputStream stream);
 
@@ -96,40 +96,20 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand{
     NutsDeployCommand repository(String repository);
 
     NutsDeployCommand setRepository(String repository);
-    
+
     NutsDeployCommand setTargetRepository(String repository);
-
-    NutsDeployCommand session(NutsSession session);
-
-    NutsDeployCommand setSession(NutsSession session);
 
     String getTargetRepository();
 
-    boolean isForce();
-
     boolean isOffline();
 
-    boolean isTrace();
-
     boolean isTransitive();
-
-    NutsDeployCommand force();
-
-    NutsDeployCommand force(boolean force);
-
-    NutsDeployCommand setForce(boolean force);
 
     NutsDeployCommand offline();
 
     NutsDeployCommand offline(boolean offline);
 
     NutsDeployCommand setOffline(boolean offline);
-
-    NutsDeployCommand trace();
-
-    NutsDeployCommand trace(boolean trace);
-
-    NutsDeployCommand setTrace(boolean trace);
 
     NutsDeployCommand transitive();
 
@@ -138,22 +118,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand{
     NutsDeployCommand setTransitive(boolean transitive);
 
     String getSha1();
-
-    NutsSession getSession();
-
-    NutsDeployCommand run();
-
-    NutsDeployCommand outputFormat(NutsOutputFormat outputFormat);
-
-    NutsDeployCommand setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsDeployCommand json();
-
-    NutsDeployCommand plain();
-
-    NutsDeployCommand props();
-
-    NutsOutputFormat getOutputFormat();
 
     NutsId[] getResult();
 
@@ -191,15 +155,16 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand{
 
     NutsDeployCommand setSourceRepository(String repository);
 
+    @Override
+    NutsDeployCommand session(NutsSession session);
+
+    @Override
+    NutsDeployCommand setSession(NutsSession session);
+
+    @Override
     NutsDeployCommand parseOptions(String... args);
 
-    NutsTraceFormat getTraceFormat();
+    @Override
+    NutsDeployCommand run();
 
-    NutsDeployCommand unsetTraceFormat(NutsOutputFormat f);
-
-    NutsDeployCommand traceFormat(NutsTraceFormat traceFormat);
-
-    NutsDeployCommand setTraceFormat(NutsTraceFormat f);
-
-    NutsTraceFormat[] getTraceFormats();
 }

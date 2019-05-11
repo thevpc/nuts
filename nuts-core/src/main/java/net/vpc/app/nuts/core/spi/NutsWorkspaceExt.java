@@ -50,9 +50,9 @@ public interface NutsWorkspaceExt {
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
-    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion);
+    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
 
-    void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion);
+    void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
 
     /**
      * true when core extension is required for running this workspace. A

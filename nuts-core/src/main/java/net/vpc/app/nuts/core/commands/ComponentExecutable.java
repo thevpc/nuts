@@ -60,7 +60,7 @@ public class ComponentExecutable extends AbstractExecutable {
         if (!def.getInstallation().isInstalled()) {
             ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
             if (session.getTerminal().ask(NutsQuestion.forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defautValue(true))) {
-                ws.install().id(def.getId()).args(appArgs).setForce(true).setSession(session).run();
+                ws.install().id(def.getId()).args(appArgs).setSession(session.force()).run();
             } else {
                 throw new NutsUserCancelException();
             }

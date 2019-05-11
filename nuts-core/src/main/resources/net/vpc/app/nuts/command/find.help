@@ -1,3 +1,6 @@
+search for components/==nuts==
+
+@@SYNOPSYS:@@
 ==nuts== [[find]]  \[Options\]... {{\<ids\>}} ...  [[--args]] ...
        search for {{\<ids\>}} 
        [[--lenient]] : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default 'no'
@@ -22,13 +25,13 @@
        [[--location]] : force found contents to be copied to location
        [[-f]] or [[--fetch]] {{\<offline|wire|online|anywhere|installed|local|remote\>}} 
             : include fetch mode in the search process. if none defined, all fetch modes are searched.
-       [[--offline]]   : equivalent to [[--fetch]] offline
-       [[--wired]]     : equivalent to [[--fetch]] wired
-       [[--online]]    : equivalent to [[--fetch]] online
-       [[--anywhere]]  : equivalent to [[--fetch]] anywhere
-       [[--installed]] : equivalent to [[--fetch]] installed
-       [[--local]]     : equivalent to [[--fetch]] local
-       [[--remote]]    : equivalent to [[--fetch]] remote
+       [[--offline]]   : equivalent to [[--fetch]]=[[offline]]
+       [[--wired]]     : equivalent to [[--fetch]]=[[wired]]
+       [[--online]]    : equivalent to [[--fetch]]=[[online]]
+       [[--anywhere]]  : equivalent to [[--fetch]]=[[anywhere]]
+       [[--installed]] : equivalent to [[--fetch]]=[[installed]]
+       [[--local]]     : equivalent to [[--fetch]]=[[local]]
+       [[--remote]]    : equivalent to [[--fetch]]=[[remote]]
        [[--optional]]  : relevant when --dependencies is armed :
            [[--optional]]      : search for all dependencies, including optional (default)
            [[--optional]]=yes  : search for optional dependencies only
@@ -37,17 +40,20 @@
                              {{\<|profile-run-standalone|profile-run-test|profile-run-test-standalone|group-compile|group-test\>}} 
                              {{\<|other|test|all\>}} 
             : relevant when --dependencies is armed.
-              include scope in the search dependencies process. if none defined, all scopes are searched.
+              include scope in the search dependencies process. if none defined, only {{installed}} scope is searched.
             
+       [[--default]] or [[--default-versions]] : find only default installed versions. This  is meaningful with [[--installed]] flag
        [[-v]] {{\<arguments\>}}
        or [[--version]] {{\<version\>}}
             : force updates to the provided {{\<version\>}}
        [[--args]] ...        : provide arguments to pass to updater
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
+       [[-t]] or [[--trace]] : enable trace operations/result with a meaning message (default true)
        [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
        [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
        [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
        [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+       [[--table]]: trace operation as table (if available). equivalent to [[--trace-format]]=[[table]]
+       [[--tree]]: trace operation as tree (if available). equivalent to [[--trace-format]]=[[table]]
             
 @@EXAMPLES:@@
         ==nuts== find [[--help]]
@@ -55,3 +61,9 @@
        
         ==nuts== find
             search installed nuts
+
+        ==nuts== find --offline netbeans-*
+            search all components that start with "netbeans-" in all local repositories
+
+        ==nuts== find --anywhere netbeans-*
+            search all components that start with "netbeans-" in all local and remote repositories

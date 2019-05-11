@@ -37,9 +37,9 @@ import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.TraceIterator;
+import net.vpc.app.nuts.NutsOutputCustomFormat;
 
 /**
  *
@@ -293,11 +293,11 @@ public class NutsWorkspaceUtils {
 //        ws.io().writeJson(o, out, true);
 //        out.println();
 //    }
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsTraceFormat format, NutsFindCommand findCommand) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsOutputCustomFormat format, NutsFindCommand findCommand) {
         return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }
 
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsTraceFormat format, NutsFindCommand findCommand) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsOutputCustomFormat format, NutsFindCommand findCommand) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
         return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }

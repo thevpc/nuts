@@ -36,18 +36,8 @@ package net.vpc.app.nuts;
  */
 public class NutsRemoveOptions {
 
-    private boolean trace = true;
     private boolean erase = false;
     private NutsSession session;
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public NutsRemoveOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
 
     public boolean isErase() {
         return erase;
@@ -64,14 +54,6 @@ public class NutsRemoveOptions {
     public NutsRemoveOptions setErase(boolean erase) {
         this.erase = erase;
         return this;
-    }
-
-    public NutsRemoveOptions trace() {
-        return trace(true);
-    }
-
-    public NutsRemoveOptions trace(boolean trace) {
-        return setTrace(trace);
     }
 
     public NutsSession getSession() {

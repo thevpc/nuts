@@ -17,7 +17,6 @@ public class FetchInternalExecutable extends InternalExecutable {
     
     public FetchInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("fetch", args, ws, session);
-        this.session = session;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class FetchInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.fetch().session(session).trace().parseOptions(args).run();
+        ws.fetch().session(getSession(true).trace()).parseOptions(args).run();
     }
     
 }

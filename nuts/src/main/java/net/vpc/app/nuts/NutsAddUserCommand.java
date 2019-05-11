@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @author vpc
  */
-public interface NutsAddUserCommand extends NutsWorkspaceCommand{
+public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     NutsAddUserCommand addGroup(String group);
 
@@ -25,10 +25,6 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand{
 
     NutsAddUserCommand addRights(Collection<String> rights);
 
-    NutsAddUserCommand force();
-
-    NutsAddUserCommand force(boolean force);
-
     String[] getGroups();
 
     String getLogin();
@@ -39,17 +35,11 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand{
 
     String[] getRights();
 
-    NutsSession getSession();
-
     NutsAddUserCommand group(String group);
 
     NutsAddUserCommand groups(String... groups);
 
     NutsAddUserCommand groups(Collection<String> groups);
-
-    boolean isForce();
-
-    boolean isTrace();
 
     NutsAddUserCommand removeGroups(String... groups);
 
@@ -65,10 +55,6 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand{
 
     NutsAddUserCommand rights(Collection<String> rights);
 
-    NutsAddUserCommand session(NutsSession session);
-
-    NutsAddUserCommand setForce(boolean force);
-
     NutsAddUserCommand login(String login);
 
     NutsAddUserCommand setLogin(String login);
@@ -81,16 +67,19 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand{
 
     NutsAddUserCommand setRemoteIdentity(String remoteIdentity);
 
+    //
+    // NutsWorkspaceCommand overridden methods
+    //    
+
+    @Override
+    NutsAddUserCommand session(NutsSession session);
+
+    @Override
     NutsAddUserCommand setSession(NutsSession session);
 
-    NutsAddUserCommand setTrace(boolean trace);
-
-    NutsAddUserCommand trace();
-
-    NutsAddUserCommand trace(boolean trace);
-
-    NutsAddUserCommand run();
-    
+    @Override
     NutsAddUserCommand parseOptions(String... args);
 
+    @Override
+    NutsAddUserCommand run();
 }

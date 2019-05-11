@@ -278,7 +278,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 if (!config().isReadOnly()) {
                     config().save();
                 }
-                reconfigurePostInstall(new NutsInstallCompanionOptions().setAsk(true).setForce(false).setTrace(true), session);
+                reconfigurePostInstall(session.copy().ask().force().trace());
                 for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
                     workspaceListener.onCreateWorkspace(this);
                 }
@@ -334,16 +334,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         return !exists;
     }
 
-    public void reconfigurePostInstall(NutsInstallCompanionOptions options, NutsSession session) {
+    public void reconfigurePostInstall(NutsSession session) {
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.log(Level.CONFIG, "Workspace created. running post creation configurator...");
         }
-        if (options == null) {
-            options = new NutsInstallCompanionOptions();
-        }
         session = NutsWorkspaceUtils.validateSession(this, session);
         if (!config().getOptions().isSkipInstallCompanions()) {
-            if (options.isTrace()) {
+            if (session.isTrace()) {
                 PrintStream out = terminal.fout();
                 StringBuilder version = new StringBuilder(config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString());
                 while (version.length() < 25) {
@@ -361,7 +358,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
             }
-            install().setIncludeCompanions(true).setTrace(true).setAsk(true).setSession(session).run();
+            install().setIncludeCompanions(true).setSession(session.copy().trace().ask()).run();
         }
     }
 
@@ -678,16 +675,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
     }
 
     @Override
-    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, trace, updateDefaultVersion, false);
+    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, false);
     }
     
     @Override
-    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, trace, updateDefaultVersion, true);
+    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, true);
     }
     
-    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean trace, boolean updateDefaultVersion, boolean isUpdate) {
+    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean updateDefaultVersion, boolean isUpdate) {
         if (def == null) {
             return;
         }
@@ -712,7 +709,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                     } catch (NutsReadOnlyException ex) {
                         throw ex;
                     } catch (Exception ex) {
-                        if (trace) {
+                        if (session.isTrace()) {
                             out.printf("%N @@Failed@@ to update : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
                         }
                         throw new NutsExecutionException("Unable to update " + def.getId().toString(), ex);
@@ -724,7 +721,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                     } catch (NutsReadOnlyException ex) {
                         throw ex;
                     } catch (Exception ex) {
-                        if (trace) {
+                        if (session.isTrace()) {
                             out.printf("%N @@Failed@@ to install : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
                         }
                         getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
@@ -746,7 +743,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         if (updateDefaultVersion) {
             getInstalledRepository().setDefaultVersion(def.getId());
         }
-        if (trace) {
+        if (session.isTrace()) {
             String setAsDefaultString = "";
             if (updateDefaultVersion) {
                 setAsDefaultString = " set as ##default##.";

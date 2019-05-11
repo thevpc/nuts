@@ -10,48 +10,15 @@ package net.vpc.app.nuts;
  * @author vpc
  */
 public interface NutsUpdateRepositoryStatisticsCommand extends NutsWorkspaceCommand {
+    @Override
+    NutsUpdateRepositoryStatisticsCommand session(NutsSession session);
 
-    boolean isTrace();
+    @Override
+    NutsUpdateRepositoryStatisticsCommand setSession(NutsSession session);
 
-    NutsUpdateRepositoryStatisticsCommand setTrace(boolean trace);
-
-    NutsUpdateRepositoryStatisticsCommand trace();
-
-    NutsUpdateRepositoryStatisticsCommand trace(boolean trace);
-
-
-    NutsTraceFormat getTraceFormat() ;
-
-    NutsUpdateRepositoryStatisticsCommand unsetTraceFormat(NutsOutputFormat f) ;
-
-    NutsUpdateRepositoryStatisticsCommand traceFormat(NutsTraceFormat traceFormat) ;
-
-    NutsUpdateRepositoryStatisticsCommand setTraceFormat(NutsTraceFormat f) ;
-
-    NutsTraceFormat[] getTraceFormats() ;
-
-    NutsSession getSession() ;
-
-    NutsUpdateRepositoryStatisticsCommand session(NutsSession session) ;
-
-    NutsUpdateRepositoryStatisticsCommand setSession(NutsSession session) ;
-
-    NutsUpdateRepositoryStatisticsCommand outputFormat(NutsOutputFormat outputFormat) ;
-
-    NutsUpdateRepositoryStatisticsCommand setOutputFormat(NutsOutputFormat outputFormat) ;
-
-    NutsOutputFormat getOutputFormat() ;
-
-    boolean isForce() ;
-
-    NutsUpdateRepositoryStatisticsCommand force() ;
-
-    NutsUpdateRepositoryStatisticsCommand force(boolean force) ;
-
-    NutsUpdateRepositoryStatisticsCommand setForce(boolean force) ;
-
-    NutsUpdateRepositoryStatisticsCommand run();
-
+    @Override
     NutsUpdateRepositoryStatisticsCommand parseOptions(String... args);
 
+    @Override
+    NutsUpdateRepositoryStatisticsCommand run();
 }

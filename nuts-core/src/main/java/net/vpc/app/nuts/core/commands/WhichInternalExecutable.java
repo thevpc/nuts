@@ -63,9 +63,9 @@ public class WhichInternalExecutable extends InternalExecutable {
             throw new NutsIllegalArgumentException("which: missing commands");
         }
         for (String arg : this.args) {
-            PrintStream out = session.getTerminal().fout();
+            PrintStream out = getSession(true).getTerminal().fout();
             try {
-                NutsExecutableInfo p = execCommand.copy().session(session).clearCommand().parseOptions(arg).which();
+                NutsExecutableInfo p = execCommand.copy().session(getSession(true)).clearCommand().parseOptions(arg).which();
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {

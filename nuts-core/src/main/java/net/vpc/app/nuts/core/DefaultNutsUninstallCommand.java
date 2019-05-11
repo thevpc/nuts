@@ -22,7 +22,6 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUninstallCommand;
@@ -212,11 +211,11 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
-                if (this.isTrace()) {
+                if (getValidSession().isTrace()) {
                     out.printf("%N uninstalled ##successfully##%n", ws.formatter().createIdFormat().toString(id));
                 }
             } else {
-                if (this.isTrace()) {
+                if (getValidSession().isTrace()) {
                     out.printf("%N @@could not@@ be uninstalled%n", ws.formatter().createIdFormat().toString(id));
                 }
             }

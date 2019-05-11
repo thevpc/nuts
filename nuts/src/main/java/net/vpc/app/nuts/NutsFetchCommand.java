@@ -73,14 +73,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand lenient();
 
-    NutsFetchCommand setTrace(boolean trace);
-
-    NutsFetchCommand trace(boolean trace);
-
-    NutsFetchCommand trace();
-    
-    boolean isTrace();
-
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
     // Getter
@@ -172,10 +164,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand anyWhere();
 
-    NutsFetchCommand session(NutsSession session);
-
-    NutsFetchCommand setSession(NutsSession session);
-
     NutsFetchCommand scope(NutsDependencyScope scope);
 
     NutsFetchCommand addScope(NutsDependencyScope scope);
@@ -257,8 +245,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     Boolean getAcceptOptional();
 
-    NutsSession getSession();
-
     boolean isIncludeContent();
 
     boolean isIncludeInstallInformation();
@@ -287,8 +273,15 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand repository(String value);
 
-    NutsFetchCommand parseOptions(String... args);
-    
-    NutsFetchCommand run();
+    @Override
+    NutsFetchCommand session(NutsSession session);
 
+    @Override
+    NutsFetchCommand setSession(NutsSession session);
+
+    @Override
+    NutsFetchCommand parseOptions(String... args);
+
+    @Override
+    NutsFetchCommand run();
 }

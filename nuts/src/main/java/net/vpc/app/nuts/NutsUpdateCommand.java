@@ -38,18 +38,6 @@ import java.util.Collection;
  */
 public interface NutsUpdateCommand extends NutsWorkspaceCommand{
 
-    NutsUpdateCommand outputFormat(NutsOutputFormat outputFormat);
-
-    NutsUpdateCommand setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsUpdateCommand json();
-
-    NutsUpdateCommand plain();
-
-    NutsUpdateCommand props();
-
-    NutsOutputFormat getOutputFormat();
-
     NutsUpdateCommand id(NutsId id);
 
     NutsUpdateCommand id(String id);
@@ -111,12 +99,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand{
 
     String[] getArgs();
 
-    NutsUpdateCommand session(NutsSession session);
-
-    NutsUpdateCommand setSession(NutsSession session);
-
-    NutsSession getSession();
-
     NutsUpdateCommand enableInstall();
 
     NutsUpdateCommand enableInstall(boolean enableInstall);
@@ -124,41 +106,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand{
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
     boolean isEnableInstall();
-
-    NutsUpdateCommand ask();
-
-    NutsUpdateCommand ask(boolean ask);
-
-    NutsUpdateCommand setAsk(boolean ask);
-
-    boolean isAsk();
-
-    NutsUpdateCommand force();
-
-    /**
-     * @see #setForce(boolean)
-     * @param enable
-     * @return
-     */
-    NutsUpdateCommand force(boolean enable);
-
-    /**
-     * arm or disarm force install non already installed components
-     *
-     * @param enable if true force install if not yet installed
-     * @return current builder instance
-     */
-    NutsUpdateCommand setForce(boolean enable);
-
-    boolean isForce();
-
-    NutsUpdateCommand trace();
-
-    NutsUpdateCommand trace(boolean trace);
-
-    NutsUpdateCommand setTrace(boolean trace);
-
-    boolean isTrace();
 
     NutsUpdateCommand includeOptional();
 
@@ -253,8 +200,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand{
 
     NutsUpdateCommand clearScopes();
 
-    NutsUpdateCommand parseOptions(String... applicationArguments);
-
     NutsUpdateCommand api();
 
     NutsUpdateCommand api(boolean enable);
@@ -265,4 +210,15 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand{
 
     NutsUpdateCommand installed(boolean enable);
 
+    @Override
+    NutsUpdateCommand session(NutsSession session);
+
+    @Override
+    NutsUpdateCommand setSession(NutsSession session);
+
+    @Override
+    NutsUpdateCommand parseOptions(String... args);
+
+    @Override
+    NutsUpdateCommand run();
 }

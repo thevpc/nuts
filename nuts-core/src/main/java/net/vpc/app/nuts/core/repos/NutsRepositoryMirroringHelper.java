@@ -16,20 +16,20 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsPushCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryAmbiguousException;
-import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
-import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
+import net.vpc.app.nuts.NutsDeployRepositoryCommand;
+import net.vpc.app.nuts.NutsPushRepositoryCommand;
+import net.vpc.app.nuts.NutsRepositorySession;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  *
@@ -149,7 +149,11 @@ public class NutsRepositoryMirroringHelper {
 
     }
 
-    public void push(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
+    public void push(NutsPushRepositoryCommand cmd) {
+        NutsRepositorySession session = cmd.getSession();
+        CoreNutsUtils.checkSession(session);
+        NutsId id=cmd.getId();
+        String repository=cmd.getRepository();
         NutsRepositorySession nonTransitiveSession = session.copy().setTransitive(false);
         NutsDescriptor desc = repo.fetchDescriptor(id, nonTransitiveSession);
         NutsContent local = repo.fetchContent(id, null, null, nonTransitiveSession);
@@ -160,7 +164,7 @@ public class NutsRepositoryMirroringHelper {
             throw new NutsRepositoryNotFoundException("Not Repo for pushing " + id);
         }
         NutsRepository repo = null;
-        if (options.getRepository() == null) {
+        if (CoreStringUtils.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().getMirrors()) {
                 int lvl = remote.config().getFindSupportLevel(NutsRepositorySupportedAction.DEPLOY,id, session.getFetchMode(), false);
@@ -175,23 +179,22 @@ public class NutsRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = repo.config().getMirror(options.getRepository());
+            repo = repo.config().getMirror(repository);
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createComponentFaceId(id.unsetQuery(), desc).setAlternative(CoreStringUtils.trim(desc.getAlternative()));
-            NutsRepositoryDeploymentOptions dep = new DefaultNutsRepositoryDeploymentOptions()
+            NutsDeployRepositoryCommand dep = repo.deploy()
                     .setId(effId)
                     .setContent(local.getPath())
                     .setDescriptor(desc)
                     .setRepository(repo.config().getName())
-                    .setTrace(options.isTrace())
-                    .setForce(options.isForce())
                     .setTransitive(true)
-                    .setOffline(options.isOffline());
-            repo.deploy(dep, session);
+                    .setOffline(cmd.isOffline())
+                    .setSession(session)
+                    .run();
             NutsRepositoryExt.of(repo).fireOnPush(new NutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
         } else {
-            throw new NutsRepositoryNotFoundException(options.getRepository());
+            throw new NutsRepositoryNotFoundException(repository);
         }
     }
 

@@ -841,19 +841,20 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (options == null) {
             options = new NutsAddOptions();
         }
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
         if (defaultCommandFactory.findCommand(command.getName(), ws) != null) {
-            if (options.isForce()) {
+            if (session.isForce()) {
                 forced = true;
                 removeCommandAlias(command.getName(),
-                        new NutsRemoveOptions().trace(options.isTrace()).session(options.getSession())
+                        new NutsRemoveOptions().session(session)
                 );
             } else {
                 throw new NutsIllegalArgumentException("Command alias already exists " + command.getName());
             }
         }
         defaultCommandFactory.installCommand(command);
-        if (options.isTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(ws, options.getSession());
+        if (session.isTrace()) {
+            PrintStream out = CoreIOUtils.resolveOut(ws, session);
             out.printf("[[install]] command alias ==%s==%n", command.getName());
         }
         return forced;
@@ -867,13 +868,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (options == null) {
             options = new NutsRemoveOptions();
         }
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
         NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, ws);
         if (command == null) {
             throw new NutsIllegalArgumentException("Command alias does not exists " + name);
         }
         defaultCommandFactory.uninstallCommand(name);
-        if (options.isTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(ws, options.getSession());
+        if (session.isTrace()) {
+            PrintStream out = CoreIOUtils.resolveOut(ws, session);
             out.printf("[[uninstall]] command alias ==%s==%n", name);
         }
         return true;

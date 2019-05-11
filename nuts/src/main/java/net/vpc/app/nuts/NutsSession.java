@@ -37,6 +37,55 @@ import java.util.Map;
  * @since 0.5.4
  */
 public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider {
+    boolean isTrace();
+
+    NutsSession setTrace(boolean trace);
+
+    NutsSession trace();
+
+    NutsSession trace(boolean trace);
+
+    boolean isForce();
+
+    /**
+     * arm or disarm force install non already installed components
+     *
+     * @param enable if true force install if not yet installed
+     * @return current builder instance
+     */
+    NutsSession setForce(boolean enable);
+
+    /**
+     * @see #setForce(boolean)
+     * @return
+     */
+    NutsSession force();
+
+    NutsSession force(boolean force);
+
+    NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue);
+    
+    NutsOutputFormat getOutputFormat();
+
+    NutsOutputCustomFormat getOutputCustomFormat();
+
+    NutsSession outputCustomFormat(NutsOutputCustomFormat customFormat);
+
+    NutsSession setOutputCustomFormat(NutsOutputCustomFormat customFormat) ;
+    
+    NutsSession outputFormat(NutsOutputFormat outputFormat);
+
+    NutsSession setOutputFormat(NutsOutputFormat outputFormat);
+
+    NutsSession json();
+
+    NutsSession plain();
+
+    NutsSession props();
+
+    NutsSession tree();
+
+    NutsSession table();
 
     NutsSession copy();
 
@@ -55,4 +104,12 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     @Override
     NutsSession setProperties(Map<String, Object> properties);
+
+    NutsSession ask();
+
+    NutsSession ask(boolean enable);
+
+    NutsSession setAsk(boolean enable);
+
+    boolean isAsk();
 }
