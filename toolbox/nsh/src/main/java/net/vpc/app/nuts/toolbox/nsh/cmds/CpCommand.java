@@ -35,8 +35,6 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.ssh.SShConnection;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.ssh.SshPath;
@@ -47,12 +45,12 @@ import net.vpc.common.xfile.JavaXFile;
 import net.vpc.common.xfile.XFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
@@ -71,17 +69,17 @@ public class CpCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         List<XFile> files = new ArrayList<>();
         Options o = new Options();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if ((a = cmdLine.readBooleanOption("--mkdir")) != null) {
                 o.mkdir = a.getBooleanValue();
             } else {
-                String value = cmdLine.readNonOption().getExpression();
+                String value = cmdLine.readNonOption().getString();
                 if (StringUtils.isEmpty(value)) {
                     throw new NutsExecutionException("Empty File Path", 2);
                 }

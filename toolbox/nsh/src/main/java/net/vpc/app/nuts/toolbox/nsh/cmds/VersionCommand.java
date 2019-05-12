@@ -29,14 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.mvn.PomIdResolver;
+import net.vpc.app.nuts.NutsArgument;
 
-import net.vpc.app.nuts.NutsOutputFormat;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,24 +46,18 @@ public class VersionCommand extends AbstractNutsCommand {
         super("version", DEFAULT_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsWorkspace ws = context.getWorkspace();
         boolean fancy = false;
         boolean min = false;
-        CommandLine cmdLine = new CommandLine(args);
-        NutsOutputFormat ft = NutsOutputFormat.PLAIN;
-        Argument a;
+        NutsCommandLine cmdLine = context.getWorkspace().parser().parseCommandLine(args);
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
-            } else if ((a = cmdLine.readBooleanOption("--json")) != null) {
-                ft = NutsOutputFormat.JSON;
-            } else if ((a = cmdLine.readBooleanOption("--plain")) != null) {
-                ft = NutsOutputFormat.PLAIN;
-            } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
-                ft = NutsOutputFormat.PROPS;
             } else {
                 cmdLine.unexpectedArgument(getName());
             }
@@ -73,7 +66,7 @@ public class VersionCommand extends AbstractNutsCommand {
 
         ws.formatter().createWorkspaceVersionFormat()
                 .setMinimal(min)
-                .setOutputFormat(ft)
+                .setSession(context.getSession())
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
         return 0;

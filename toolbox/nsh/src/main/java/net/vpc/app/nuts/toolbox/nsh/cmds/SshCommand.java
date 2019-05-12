@@ -33,19 +33,18 @@ import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
-import net.vpc.common.commandline.Argument;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.ssh.SShConnection;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
@@ -67,28 +66,28 @@ public class SshCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.isOption()) {
+            if (cmdLine.get().isOption()) {
                 if (context.configure(cmdLine)) {
                     //
                 } else if ((a = cmdLine.readOption("--nuts")) != null) {
                     o.invokeNuts = true;
                 } else if ((a = cmdLine.readStringOption("--nuts-jre")) != null) {
-                    o.nutsJre = a.getStringValue();
+                    o.nutsJre = a.getValue().getString();
                 } else {
                     //suppose this is an other nuts option
                     //just consume the rest as of the command
                     while (cmdLine.hasNext()) {
-                        o.cmd.add(cmdLine.read().getExpression());
+                        o.cmd.add(cmdLine.read().getString());
                     }
                 }
             } else {
-                o.address = cmdLine.read().getExpression();
+                o.address = cmdLine.read().getString();
                 while (cmdLine.hasNext()) {
-                    o.cmd.add(cmdLine.read().getExpression());
+                    o.cmd.add(cmdLine.read().getString());
                 }
             }
         }
@@ -105,12 +104,12 @@ public class SshCommand extends AbstractNutsCommand {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                CommandLine c = new CommandLine(o.cmd.subList(1, o.cmd.size()));
-                Argument arg = null;
+                NutsCommandLine c = context.getWorkspace().parser().parseCommandLine(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
+                NutsArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.readOption("--workspace")) != null) {
-                        workspace = c.readNonOption().getStringExpression();
-                    } else if (c.isNonOption()) {
+                        workspace = c.readNonOption().getString();
+                    } else if (c.get().isNonOption()) {
                         break;
                     } else {
                         c.skip();

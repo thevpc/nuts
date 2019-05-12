@@ -31,14 +31,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.ShellHistory;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -59,8 +59,8 @@ public class HistoryCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        CommandLine cmdLine = cmdLine(args, context);
-        Argument a;
+        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsArgument a;
         class Options {
             public String sval;
             int ival = -1;
@@ -75,25 +75,25 @@ public class HistoryCommand extends AbstractNutsCommand {
                 cmdLine.unexpectedArgument(getName());
             } else if ((a = cmdLine.readStringOption("-d", "--delete")) != null) {
                 o.action = Action.DELETE;
-                o.ival = a.getIntValue();
+                o.ival = a.getValue().getInt();
                 cmdLine.unexpectedArgument(getName());
             } else if ((a = cmdLine.readOption("-D", "--remove-duplicates")) != null) {
                 o.action = Action.REMOVE_DUPLICATES;
                 cmdLine.unexpectedArgument(getName());
             } else if ((a = cmdLine.readOption("-w", "--write")) != null) {
                 o.action = Action.WRITE;
-                if(a.isKeyVal()){
-                    o.sval=a.getStringValue();
+                if(a.isKeyValue()){
+                    o.sval=a.getValue().getString();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getStringExpression();
+                    o.sval=cmdLine.read().getString();
                 }
                 cmdLine.unexpectedArgument(getName());
             } else if ((a = cmdLine.readOption("-r", "--read")) != null) {
                 o.action = Action.READ;
-                if(a.isKeyVal()){
-                    o.sval=a.getStringValue();
+                if(a.isKeyValue()){
+                    o.sval=a.getValue().getString();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getStringExpression();
+                    o.sval=cmdLine.read().getString();
                 }
                 cmdLine.unexpectedArgument(getName());
             } else {

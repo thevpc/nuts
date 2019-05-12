@@ -48,11 +48,11 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+//        NutsCommandLine cmdLine = cmdLine(args, context);
 //        List<String> sargs = new ArrayList<>();
 //        NutsExecutionType executionType = null;
 //        boolean command = false;
-//        Argument a;
+//        NutsCommandArg a;
 //        List<String> execOptions = new ArrayList<>();
 //        while (cmdLine.hasNext()) {
 //            if (!command) {
@@ -71,13 +71,13 @@
 //                        executionType = NutsExecutionType.SPAWN;
 //                    }
 //                } else if (cmdLine.isOption()) {
-//                    execOptions.add(cmdLine.read().getStringExpression());
+//                    execOptions.add(cmdLine.read().getString());
 //                } else {
-//                    sargs.add(cmdLine.read().getStringExpression());
+//                    sargs.add(cmdLine.read().getString());
 //                    command = true;
 //                }
 //            } else {
-//                sargs.add(cmdLine.read().getStringExpression());
+//                sargs.add(cmdLine.read().getString());
 //            }
 //        }
 //        if (!cmdLine.isExecMode()) {

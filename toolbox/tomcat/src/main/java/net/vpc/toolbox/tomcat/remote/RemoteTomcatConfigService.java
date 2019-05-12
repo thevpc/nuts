@@ -5,7 +5,6 @@ import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.*;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
 
 public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {

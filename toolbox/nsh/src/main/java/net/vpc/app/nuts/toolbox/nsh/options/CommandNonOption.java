@@ -29,34 +29,40 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
-import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.DefaultArgumentCandidate;
-import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.javashell.cmds.Command;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentNonOption;
 
 /**
  *
  * @author vpc
  */
-public class CommandNonOption extends DefaultNonOption {
+public class CommandNonOption implements NutsArgumentNonOption {
 
     private NutsConsoleContext context;
+    private String name;
 
     public CommandNonOption(String name, NutsConsoleContext context) {
-        super(name);
+        this.name=name;
         this.context = context;
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
+    public String getName() {
+        return name;
+    }
+    
+
+    @Override
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
         for (Command command : context.getShell().getCommands()) {
-            all.add(new DefaultArgumentCandidate(command.getName()));
+            all.add(new NutsDefaultArgumentCandidate(command.getName()));
         }
         return all;
     }

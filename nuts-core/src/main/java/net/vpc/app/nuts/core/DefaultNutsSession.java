@@ -47,7 +47,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private boolean force = false;
     private boolean ask = false;
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
-    protected NutsOutputCustomFormat outputCustomFormat = null;
+    protected NutsOutputListFormat outputCustomFormat = null;
 
     public DefaultNutsSession() {
     }
@@ -141,17 +141,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsOutputCustomFormat getOutputCustomFormat() {
+    public NutsOutputListFormat getOutputCustomFormat() {
         return outputCustomFormat;
     }
 
     @Override
-    public NutsSession outputCustomFormat(NutsOutputCustomFormat traceFormat) {
+    public NutsSession outputCustomFormat(NutsOutputListFormat traceFormat) {
         return setOutputCustomFormat(traceFormat);
     }
 
     @Override
-    public NutsSession setOutputCustomFormat(NutsOutputCustomFormat f) {
+    public NutsSession setOutputCustomFormat(NutsOutputListFormat f) {
         if (f == null) {
             this.outputCustomFormat = null;
         } else {
@@ -182,6 +182,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsSession xml() {
+        return setOutputFormat(NutsOutputFormat.XML);
+    }
+
+    @Override
     public NutsSession props() {
         return setOutputFormat(NutsOutputFormat.PROPS);
     }
@@ -198,6 +203,43 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
         this.outputFormat = outputFormat;
         return this;
+    }
+
+    @Override
+    public boolean parseOption(NutsArgument arg, NutsCommandLine cmd) {
+        if (arg != null) {
+            switch (arg.strKey()) {
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(arg).getString().toUpperCase()));
+                    return true;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    return true;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    return true;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    return true;
+                }
+                case "--table": {
+                    this.setOutputFormat(NutsOutputFormat.TABLE);
+                    return true;
+                }
+                case "--tree": {
+                    this.setOutputFormat(NutsOutputFormat.TREE);
+                    return true;
+                }
+                case "--xml": {
+                    this.setOutputFormat(NutsOutputFormat.XML);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

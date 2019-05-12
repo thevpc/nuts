@@ -115,7 +115,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         InputSource stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;

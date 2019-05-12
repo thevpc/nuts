@@ -1,12 +1,12 @@
 package net.vpc.toolbox.mysql;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.toolbox.mysql.remote.RemoteMysql;
 import net.vpc.toolbox.mysql.local.LocalMysql;
 
 import java.util.Arrays;
+import net.vpc.app.nuts.NutsApplicationContext;
 
 public class MysqlMain extends NutsApplication {
 

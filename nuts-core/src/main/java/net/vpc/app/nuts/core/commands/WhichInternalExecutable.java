@@ -8,8 +8,8 @@ package net.vpc.app.nuts.core.commands;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsExecutableInfo;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
@@ -17,6 +17,7 @@ import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -38,9 +39,9 @@ public class WhichInternalExecutable extends InternalExecutable {
             return;
         }
         List<String> commands = new ArrayList<String>();
-        NutsCommandLine commandLine = new NutsCommandLine(args);
+        NutsCommandLine commandLine = ws.parser().parseCommandLine(args);
         while (commandLine.hasNext()) {
-            NutsCommandArg a = commandLine.next();
+            NutsArgument a = commandLine.next();
             if (commands.isEmpty()) {
                 if (a.isOption()) {
                     switch (a.strKey()) {

@@ -10,8 +10,9 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c help --code ls</exec.args>
+                <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.error-stacktrace=!true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --nuts-exec-mode=on-install -f</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
         <action>
@@ -24,9 +25,10 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c help --code ls</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.boot.args=--//debug -Dnuts.export.error-stacktrace=!true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --nuts-exec-mode=on-install -f</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
+                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
         <action>
@@ -39,8 +41,9 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c help --code ls</exec.args>
+                <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.error-stacktrace=!true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --nuts-exec-mode=on-install -f</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
     </actions>

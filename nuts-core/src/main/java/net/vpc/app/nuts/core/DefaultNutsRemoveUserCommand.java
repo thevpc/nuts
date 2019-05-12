@@ -5,14 +5,15 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.NutsRemoveUserCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -48,6 +49,7 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
         return this;
     }
 
+    @Override
     public NutsRemoveUserCommand run() {
         if (repo != null) {
             NutsRepositoryConfigManagerExt.of(repo.config()).removeUser(login);
@@ -57,9 +59,10 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
         return this;
     }
 
+    @Override
     public NutsRemoveUserCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 default: {

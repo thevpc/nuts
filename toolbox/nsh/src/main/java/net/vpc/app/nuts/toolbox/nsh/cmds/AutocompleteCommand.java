@@ -33,11 +33,10 @@ import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,8 +49,8 @@ public class AutocompleteCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         List<String> items = new ArrayList<>();
-        CommandLine cmdLine = cmdLine(args, context);
-        Argument a;
+        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsArgument a;
         int index = -1;
         String cmd = null;
         while (cmdLine.hasNext()) {
@@ -59,7 +58,7 @@ public class AutocompleteCommand extends AbstractNutsCommand {
                 //
             } else {
                 while (cmdLine.hasNext()) {
-                    String s = cmdLine.read().getStringExpression();
+                    String s = cmdLine.read().getString();
                     if (cmd == null) {
                         cmd = s;
                     } else {

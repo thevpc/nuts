@@ -214,14 +214,15 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         return setOffline(offline);
     }
 
+    @Override
     protected void invalidateResult() {
         result = null;
     }
 
     @Override
     public NutsUndeployCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "-o":

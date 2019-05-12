@@ -34,7 +34,7 @@
 //import net.vpc.app.nuts.toolbox.nsh.*;
 //import net.vpc.common.commandline.Argument;
 //import net.vpc.common.commandline.CommandAutoComplete;
-//import net.vpc.common.commandline.CommandLine;
+//import NutsCommandLine;
 //import net.vpc.common.javashell.InterruptShellException;
 //import net.vpc.common.javashell.QuitShellException;
 //import net.vpc.common.strings.StringUtils;
@@ -58,9 +58,9 @@
 //        if (autoComplete != null) {
 //            return -1;
 //        }
-//        Argument a;
+//        NutsCommandArg a;
 //        List<String> invokeArgs = new ArrayList<>();
-//        CommandLine cmdLine = new CommandLine(args);
+//        NutsCommandLine cmdLine = new NutsCommandLine(args);
 //        while (cmdLine.hasNext()) {
 //            if (context.configure(cmdLine)) {
 //                //

@@ -11,13 +11,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUpdateStatisticsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.bridges.maven.MavenRepositoryFolderHelper;
 import net.vpc.app.nuts.core.repos.NutsRepositoryFolderHelper;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -136,8 +136,8 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateStatisticsCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 default: {

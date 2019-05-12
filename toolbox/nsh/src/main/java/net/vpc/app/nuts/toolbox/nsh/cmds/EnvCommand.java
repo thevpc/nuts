@@ -29,18 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
-import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.FileNonOption;
-import net.vpc.common.commandline.format.PropertiesFormatter;
-import net.vpc.common.xfile.XFile;
 
 import java.io.*;
-import java.util.*;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsPropertiesFormat;
 
 /**
  * Created by vpc on 1/7/17.
@@ -56,10 +50,10 @@ public class EnvCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         PrintStream out = context.out();
-        PropertiesFormatter f = new PropertiesFormatter()
+        NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
                 .setSort(o.sort)
                 .setTable(true);
         f.format(context.env().getEnv(), out);

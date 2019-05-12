@@ -491,7 +491,7 @@ public class CoreNutsUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t,NutsWorkspace ws) {
+    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsWorkspace ws) {
         if (t == null) {
             return null;
         }
@@ -896,49 +896,77 @@ public class CoreNutsUtils {
         }
         return x;
     }
-    
-    public static boolean isIncludesHelpOption(String[] cmd){
-        if(cmd!=null){
+
+    public static boolean isIncludesHelpOption(String[] cmd) {
+        if (cmd != null) {
             for (String c : cmd) {
-                if(!c.startsWith("-")){
+                if (!c.startsWith("-")) {
                     break;
                 }
-                if("--help".equals(c)){
+                if ("--help".equals(c)) {
                     return true;
                 }
             }
         }
         return false;
     }
-    
-    public static NutsOutputCustomFormat getValidOutputFormat(NutsWorkspace ws,NutsSession session) {
-        NutsOutputCustomFormat f = session.getOutputCustomFormat();
+
+    public static NutsOutputListFormat getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
+        NutsOutputListFormat f = session.getOutputCustomFormat();
         if (f == null) {
-            switch (session.getOutputFormat()) {
-                case JSON: {
-                    return new DefaultNutsFindTraceFormatJson();
-                }
-                case PROPS: {
-                    return new DefaultNutsFindTraceFormatProps();
-                }
-                case PLAIN: {
-                    return new DefaultNutsFindTraceFormatPlain(new DefaultNutsFindCommand(ws), session);
-                }
-                default:
-                    throw new NutsUnsupportedArgumentException("Unsupported " + String.valueOf(session.getOutputFormat()));
-            }
+            return ws.formatter().createOutputListFormat(session.getOutputFormat()).session(session);
         }
         return f;
     }
-    
+
     public static void checkSession(NutsSession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException("Missing Session");
         }
     }
+
     public static void checkSession(NutsRepositorySession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException("Missing Session");
+        }
+    }
+
+    public static void traceMessage(Logger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+        String timeMessage = "";
+        if (startTime != 0) {
+            long time = System.currentTimeMillis() - startTime;
+            if (time > 0) {
+                timeMessage = " (" + time + "ms)";
+            }
+        }
+        String tracePhaseString = "";
+        switch (tracePhase) {
+            case ERROR: {
+                tracePhaseString = "[ERROR  ] ";
+                break;
+            }
+            case SUCCESS: {
+                tracePhaseString = "[SUCCESS] ";
+                break;
+            }
+            case START: {
+                tracePhaseString = "[START  ] ";
+                break;
+            }
+        }
+        String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
+        log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
+    }
+
+    public static void checkNutsId(NutsId id) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException("Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsIllegalArgumentException("Missing group for " + id);
+        }
+        if (CoreStringUtils.isBlank(id.getName())) {
+            throw new NutsIllegalArgumentException("Missing name for " + id);
         }
     }
 }

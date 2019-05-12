@@ -1,7 +1,6 @@
 package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.mvn.Pom;
 import net.vpc.common.mvn.PomXmlParser;

@@ -36,13 +36,15 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsParseManager {
 
     NutsId parseId(String id);
+
+    NutsCommandLine parseCommandLine(String[] arguments);
 
     NutsDescriptor parseDescriptor(URL url);
 
@@ -99,4 +101,6 @@ public interface NutsParseManager {
      * on {@link NutsFormattedPrintStream}
      */
     String escapeText(String value);
+
+    Object parseExpression(Object object, String expression);
 }

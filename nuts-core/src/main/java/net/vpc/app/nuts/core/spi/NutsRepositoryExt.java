@@ -5,6 +5,9 @@
  */
 package net.vpc.app.nuts.core.spi;
 
+import java.nio.file.Path;
+import java.util.Iterator;
+import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsContentEvent;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
@@ -12,7 +15,10 @@ import net.vpc.app.nuts.NutsIndexStoreClient;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
+import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
 /**
@@ -48,4 +54,16 @@ public interface NutsRepositoryExt {
     void deployImpl(NutsDeployRepositoryCommand command);
 
     void undeployImpl(NutsRepositoryUndeployCommand command);
+
+    void checkAllowedFetch(NutsId id, NutsRepositorySession session);
+
+    NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session);
+
+    Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
+
+    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
+
+    Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
+
+    NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
 }

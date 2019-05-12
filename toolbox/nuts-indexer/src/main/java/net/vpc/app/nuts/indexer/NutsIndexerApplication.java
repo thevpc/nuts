@@ -2,8 +2,8 @@ package net.vpc.app.nuts.indexer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.app.nuts.NutsApplication;
+import net.vpc.app.nuts.NutsApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

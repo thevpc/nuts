@@ -5,10 +5,9 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -17,7 +16,7 @@ import net.vpc.common.commandline.DefaultNonOption;
 public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("list imports", "li")) {
             cmdLine.unexpectedArgument("config list imports");
             if (cmdLine.isExecMode()) {
@@ -35,7 +34,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("import", "ia")) {
             do {
-                String a = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
+                String a = cmdLine.readRequiredNonOption(cmdLine.createNonOption("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().addImports(a);
                 }
@@ -46,7 +45,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("unimport", "ir")) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
+                String ii = cmdLine.readRequiredNonOption(cmdLine.createNonOption("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().removeImports(ii);
                 }

@@ -1,13 +1,11 @@
 package net.vpc.toolbox.tomcat.local;
 
-import net.vpc.common.io.FileUtils;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
-import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import net.vpc.app.nuts.NutsApplicationContext;
 
 public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
 

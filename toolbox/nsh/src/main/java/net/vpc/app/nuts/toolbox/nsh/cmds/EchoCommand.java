@@ -32,10 +32,10 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.ValueNonOption;
 
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,14 +47,14 @@ public class EchoCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         boolean noTrailingNewLine = false;
         boolean plain = false;
         boolean first = true;
         PrintStream out = context.out();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.isOption()) {
+            if (cmdLine.get().isOption()) {
                 if (context.configure(cmdLine)) {
                     //
                 }else if ((a = cmdLine.readBooleanOption("-n")) != null) {
@@ -72,9 +72,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getStringExpression());
+                        out.print(cmdLine.readRequiredNonOption(cmdLine.createNonOption("value")).getString());
                     } else {
-                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getStringExpression());
+                        out.print(cmdLine.readRequiredNonOption(cmdLine.createNonOption("value")).getString());
                     }
                 }
             }

@@ -33,12 +33,12 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,11 +50,11 @@ public class UnameCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         boolean farch = false;
         boolean fos = false;
         boolean fdist = false;
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //

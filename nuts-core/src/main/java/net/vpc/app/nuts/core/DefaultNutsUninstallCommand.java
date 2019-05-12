@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsId;
@@ -28,6 +28,7 @@ import net.vpc.app.nuts.NutsUninstallCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -236,8 +237,8 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "-e":

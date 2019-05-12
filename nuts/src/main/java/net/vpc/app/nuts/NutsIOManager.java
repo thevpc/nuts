@@ -78,5 +78,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
     NutsPathCopyAction copy();
     
     Path path(String first, String... more);
+    
+    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId);
 
 }

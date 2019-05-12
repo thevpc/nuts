@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,14 +46,14 @@ public class LoginCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        Argument a;
+        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsArgument a;
         while(cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             }else  {
-                String login = cmdLine.readRequiredNonOption(new DefaultNonOption("Username")).getStringExpression();
-                String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getStringExpression();
+                String login = cmdLine.readRequiredNonOption(cmdLine.createNonOption("username")).getString();
+                String password = cmdLine.readNonOption(cmdLine.createNonOption("password")).getString();
                 cmdLine.unexpectedArgument(getName());
                 if (cmdLine.isExecMode()) {
                     if (!NutsConstants.Names.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {

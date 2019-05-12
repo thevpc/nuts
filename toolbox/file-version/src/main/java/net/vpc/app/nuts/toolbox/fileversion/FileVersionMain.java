@@ -1,11 +1,7 @@
 package net.vpc.app.nuts.toolbox.fileversion;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.format.PropertiesFormatter;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.PathFilter;
@@ -52,8 +48,8 @@ public class FileVersionMain extends NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        CommandLine commandLine = new CommandLine(context);
-        Argument a;
+        NutsCommandLine commandLine = context.newCommandLine();
+        NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
             if (context.configure(commandLine)) {
@@ -82,7 +78,7 @@ public class FileVersionMain extends NutsApplication {
                 error = a.getBooleanValue();
             } else {
                 a = commandLine.read();
-                String arg = a.getStringExpression();
+                String arg = a.getString();
                 if (maven || arg.endsWith(".jar") || arg.endsWith(".war") || arg.endsWith(".ear")) {
                     jarFiles.add(arg);
                 } else if (winPE || arg.endsWith(".exe") || arg.endsWith(".dll")) {
@@ -136,7 +132,7 @@ public class FileVersionMain extends NutsApplication {
             PrintStream err = context.out();
 
             if (table) {
-                PropertiesFormatter tt = new PropertiesFormatter().setSort(sort).setTable(true);
+                NutsPropertiesFormat tt = context.getWorkspace().formatter().createPropertiesFormat().setSort(sort).setTable(true);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -181,7 +177,7 @@ public class FileVersionMain extends NutsApplication {
                             out.printf("[[%s]]%n", descriptor.getId());
                         } else if (longFormat) {
                             out.printf("[[%s]]%n", descriptor.getId());
-                            PropertiesFormatter f = new PropertiesFormatter()
+                            NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
                                     .setTable(true)
                                     .setSort(true);
                             f.format(descriptor.getProperties(), out);

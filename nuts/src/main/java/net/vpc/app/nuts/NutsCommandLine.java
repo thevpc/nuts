@@ -30,12 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * Simple Command line parser implementation. The command line supports
@@ -64,18 +59,18 @@ import java.util.Set;
  * <li>
  * simple option arguments : any argument that starts with a single '-' in the
  * form of
- * <pre>-[//][!]?[a-z][=.*]</pre>
- * This is actually very similar to long options if expandSimpleOptions=false.
- * When activating expandSimpleOptions, multi characters key will be expanded 
- * as multiple separate simple options
- * Examples :
+ * <pre>-[//][!]?[a-z][=.*]</pre> This is actually very similar to long options
+ * if expandSimpleOptions=false. When activating expandSimpleOptions, multi
+ * characters key will be expanded as multiple separate simple options Examples
+ * :
  * <ul>
- * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false' value</li>
+ * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
+ * value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
  * <li>--!enable=yes : invalid option (no error will be thrown buts the result
  * is undefined)</li>
  * </ul>
- * 
+ *
  * </li>
  *
  * <li>long option arguments : any argument that starts with a '--' </li>
@@ -84,41 +79,147 @@ import java.util.Set;
  * activated
  *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.5
  */
-public class NutsCommandLine {
+public interface NutsCommandLine {
 
-    protected LinkedList<String> args = new LinkedList<>();
-    protected LinkedList<NutsCommandArg> expanded = new LinkedList<>();
-    protected boolean expandSimpleOptions = true;
-    protected Set<String> specialSimpleOptions = new HashSet<>();
+    NutsCommandLine addSpecialSimpleOption(String option);
 
-    public NutsCommandLine(String[] args) {
-        if (args != null) {
-            this.args.addAll(Arrays.asList(args));
-        }
+    boolean isExpandSimpleOptions();
+
+    NutsCommandLine expandSimpleOptions();
+
+    NutsCommandLine expandSimpleOptions(boolean expand);
+
+    NutsCommandLine setExpandSimpleOptions(boolean expand);
+
+    List<String> getArgs();
+
+    /**
+     * returns un-parsed arguments and then clears thems
+     *
+     * @return
+     */
+    List<String> removeAll();
+
+    /**
+     * if the argument defines a values (with =) it will be returned : If not
+     * consumes the next argument (without expanding simple options)
+     *
+     * @param cmdArg
+     * @return
+     */
+    NutsArgument getValueFor(NutsArgument cmdArg);
+
+    NutsArgument next(boolean required);
+
+    boolean isSpecialOneDashOption(String v);
+
+    NutsArgument next();
+
+    boolean hasNext();
+
+    NutsArgument readBooleanOption(String... names);
+
+    NutsArgument readStringOption(String... names);
+
+    NutsArgument readImmediateStringOption(String... names);
+
+    NutsArgument readOption(String... names);
+
+    NutsArgument readVoidOption(String... names);
+
+    NutsArgument readOption(OptionType expectValue, String... names);
+
+    NutsCommandLine requiredNonOption();
+
+    void skipAll();
+
+    NutsArgument readNonOption(boolean expectValue, String name);
+
+    NutsArgument readRequiredOption(String name);
+
+    NutsArgument readRequiredNonOption();
+
+    NutsArgument readRequiredNonOption(NutsArgumentNonOption name);
+
+    NutsArgument readNonOption();
+
+    NutsArgument readNonOption(String... names);
+
+    NutsArgument readRequiredNonOption(String name);
+
+    NutsArgument readNonOption(NutsArgumentNonOption name);
+
+    NutsArgument readNonOption(NutsArgumentNonOption name, boolean error);
+
+    NutsArgument read();
+
+    boolean readAll(boolean acceptDuplicates, String... vals);
+
+    boolean readAll(String... vals);
+
+    boolean readAllOnce(String... vals);
+
+    boolean acceptSequence(int pos, String... vals);
+
+    NutsArgument findOption(String option);
+
+    NutsArgument get();
+
+    NutsArgument get(int i);
+
+    boolean containOption(String name);
+
+    int indexOfOption(String name);
+
+    int length();
+
+    void requireEmpty();
+
+    void unexpectedArgument();
+
+    void unexpectedArgument(String commandName);
+
+    void requireNonEmpty();
+
+    boolean isEmpty();
+
+    String[] toArray();
+
+    int getWordIndex();
+
+    boolean isExecMode();
+
+    boolean isAutoCompleteMode();
+
+    NutsArgument newArgument(String val);
+
+    boolean isOption(int index);
+
+    boolean isNonOption(int index);
+
+    boolean isOption(String... options);
+
+    boolean isOption(int index, String... options);
+
+    NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
+
+    int skip();
+
+    int skip(int count);
+
+    default NutsArgumentNonOption createNonOption(String type) {
+        return createNonOption(type, type);
     }
 
-    public NutsCommandLine addSpecialSimpleOption(String option) {
-        specialSimpleOptions.add(option);
-        return this;
-    }
+    NutsArgumentNonOption createNonOption(String type, String label);
 
-    public boolean isExpandSimpleOptions() {
-        return expandSimpleOptions;
-    }
-
-    public NutsCommandLine expandSimpleOptions() {
-        return expandSimpleOptions(true);
-    }
-
-    public NutsCommandLine expandSimpleOptions(boolean expand) {
-        return setExpandSimpleOptions(expand);
-    }
-
-    public NutsCommandLine setExpandSimpleOptions(boolean expand) {
-        this.expandSimpleOptions = expand;
-        return this;
+    public enum OptionType {
+        VOID,
+        STRING,
+        IMMEDIATE_STRING,
+        BOOLEAN,
     }
 
     public static String escapeArgument(String arg) {
@@ -165,141 +266,6 @@ public class NutsCommandLine {
             sb.append(escapeArgument(arg));
         }
         return sb.toString();
-    }
-
-    public void clear() {
-        args.clear();
-        expanded.clear();
-    }
-
-    public List<String> getArgs() {
-        ArrayList<String> p = new ArrayList<>();
-        for (NutsCommandArg a : expanded) {
-            p.add(a.toString());
-        }
-        for (String a : args) {
-            p.add(a);
-        }
-        return p;
-    }
-
-    /**
-     * returns un-parsed arguments and then clears thems
-     *
-     * @return
-     */
-    public List<String> removeAll() {
-        List<String> x = getArgs();
-        clear();
-        return x;
-    }
-
-    /**
-     * if the argument defines a values (with =) it will be returned : If not
-     * consumes the next argument (without expanding simple options)
-     *
-     * @param cmdArg
-     * @return
-     */
-    public NutsCommandArg getValueFor(NutsCommandArg cmdArg) {
-        NutsCommandArg v = cmdArg.getValue();
-        if (v.isNull()) {
-            return next(true, false);
-        }
-        return v;
-    }
-
-    public NutsCommandArg next(boolean required) {
-        return next(required, expandSimpleOptions);
-    }
-
-    public boolean isSpecialOneDashOption(String v) {
-        for (String x : specialSimpleOptions) {
-            if (v.equals("-" + x) || v.startsWith("-" + x + "=")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public NutsCommandArg next() {
-        return next(false, expandSimpleOptions);
-    }
-
-    private NutsCommandArg next(boolean required, boolean expandSimpleOptions) {
-        if (!expanded.isEmpty()) {
-            return expanded.removeFirst();
-        }
-        if (!args.isEmpty()) {
-            // -!abc=true
-            String v = args.removeFirst();
-            if (expandSimpleOptions && (v.length() > 2 && v.charAt(0) == '-' && v.charAt(1) != '-' && !isSpecialOneDashOption(v))) {
-                char[] chars = v.toCharArray();
-                boolean negate = false;
-                Character c = null;
-                for (int i = 1; i < chars.length; i++) {
-                    switch (chars[i]) {
-                        case '!': {
-                            if (c != null) {
-                                if (negate) {
-                                    expanded.add(new NutsCommandArg("-!" + c));
-                                } else {
-                                    expanded.add(new NutsCommandArg("-" + c));
-                                }
-                                c = null;
-                            }
-                            negate = true;
-                            break;
-                        }
-                        case '=': {
-                            if (c == null) {
-                                if (negate) {
-                                    expanded.add(new NutsCommandArg("-!" + new String(chars, i, chars.length - i)));
-                                    negate = false;
-                                } else {
-                                    expanded.add(new NutsCommandArg("-" + new String(chars, i, chars.length - i)));
-                                }
-                            } else {
-                                if (negate) {
-                                    negate = false;
-                                    expanded.add(new NutsCommandArg("-!" + c + new String(chars, i, chars.length - i)));
-                                } else {
-                                    expanded.add(new NutsCommandArg("-" + c + new String(chars, i, chars.length - i)));
-                                }
-                            }
-                            c = null;
-                            i = chars.length;
-                            break;
-                        }
-                        default: {
-                            if (c != null) {
-                                if (negate) {
-                                    expanded.add(new NutsCommandArg("-!" + c));
-                                    negate = false;
-                                } else {
-                                    expanded.add(new NutsCommandArg("-" + c));
-                                }
-                            }
-                            c = chars[i];
-                        }
-                    }
-                }
-                if (c != null) {
-                    if (negate) {
-                        expanded.add(new NutsCommandArg("!" + c));
-                        negate = false;
-                    } else {
-                        expanded.add(new NutsCommandArg("" + c));
-                    }
-                }
-                return expanded.removeFirst();
-            }
-            return new NutsCommandArg(v);
-        }
-        if (required) {
-            throw new NoSuchElementException("Missing argument");
-        }
-        return null;
     }
 
     public static String[] parseCommandLine(String commandLineString) {
@@ -434,7 +400,7 @@ public class NutsCommandLine {
         return args.toArray(new String[0]);
     }
 
-    private static int readEscaped(char[] charArray, int i, StringBuilder sb) {
+    public static int readEscaped(char[] charArray, int i, StringBuilder sb) {
         char c = charArray[i];
         switch (c) {
             case 'n': {
@@ -459,9 +425,4 @@ public class NutsCommandLine {
         }
         return i;
     }
-
-    public boolean hasNext() {
-        return !expanded.isEmpty() || !args.isEmpty();
-    }
-
 }

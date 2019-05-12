@@ -1,11 +1,8 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 
 import java.util.*;
 
@@ -38,8 +35,8 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        CommandLine cmd = new CommandLine(applicationContext);
-        Argument a;
+        NutsCommandLine cmd = applicationContext.newCommandLine();
+        NutsArgument a;
         boolean force = false;
         boolean trace = true;
         while (cmd.hasNext()) {
@@ -80,7 +77,7 @@ public class Nsh extends NutsApplication {
                         .setOwner(applicationContext.getAppId())
                         .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new net.vpc.app.nuts.NutsAddOptions()
-                                .session(sessionCopy.force(force).trace(true))
+                                .session(sessionCopy.force(force).trace(false))
                 )) {
                     reinstalled.add(command.getName());
                 } else {

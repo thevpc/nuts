@@ -73,7 +73,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     
     NutsUpdateStatisticsCommand updateStatistics();
 
-//    NutsWorkspaceUpdateResult[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);
     ///////////////////// Environment
     NutsWorkspace setSystemTerminal(NutsSystemTerminalBase term);
 

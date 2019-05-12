@@ -34,8 +34,6 @@ import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
@@ -43,8 +41,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.toolbox.nsh.DefaultNutsCommandContext;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,10 +56,10 @@ public class HelpCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
-        Argument a;
+        NutsArgument a;
         boolean code = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -70,12 +69,12 @@ public class HelpCommand extends AbstractNutsCommand {
             } else if (cmdLine.readAll("--code")) {
                 code = true;
                 context.setTerminalMode(NutsTerminalMode.FILTERED);
-            } else if (cmdLine.isOption()) {
+            } else if (cmdLine.get().isOption()) {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getStringExpression());
+                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getString());
                 }
             } else {
-                commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context.consoleContext())).getStringOrError());
+                commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context.consoleContext())).required().getString());
             }
         }
         Function<String, String> ss = code ? new Function<String, String>() {

@@ -32,14 +32,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -56,21 +56,21 @@ public class ZipCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
         File outZip=null;
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             }else if (cmdLine.readAll("-r")) {
                 options.r=true;
-            } else if (cmdLine.isOption()) {
+            } else if (cmdLine.get().isOption()) {
                 throw new NutsExecutionException("Not yet supported",2);
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
+                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;

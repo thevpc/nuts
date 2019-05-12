@@ -6,10 +6,7 @@
 package net.vpc.toolbox.derby;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,26 +45,25 @@ public class DerbyMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArgs();
         this.appContext = appContext;
         NutsWorkspace ws=appContext.getWorkspace();
-        CommandLine cmdLine = new CommandLine(args);
-        Argument a;
+        NutsCommandLine cmdLine = appContext.newCommandLine();
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (appContext.configure(cmdLine)) {
                 //
             } else if ((a = cmdLine.readStringOption("--derby-version")) != null) {
-                derbyVersion = a.getStringValue();
+                derbyVersion = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("--db")) != null) {
-                derbyDataHome = ws.io().path(getAbsoluteFile(a.getStringValue(), appContext.getVarFolder().toString()));
+                derbyDataHome = ws.io().path(getAbsoluteFile(a.getValue().getString(), appContext.getVarFolder().toString()));
             } else if ((a = cmdLine.readStringOption("--netbeans")) != null) {
                 derbyDataHome = ws.io().path(System.getProperty("user.home") + "/.netbeans-derby");
             } else if ((a = cmdLine.readStringOption("-h", "--host")) != null) {
-                host = a.getStringValue();
+                host = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("-p", "--port")) != null) {
-                port = a.getIntValue();
+                port = a.getValue().getInt();
             } else if ((a = cmdLine.readStringOption("-ssl", "--ssl")) != null) {
-                sslmode = SSLMode.valueOf(a.getStringValue());
+                sslmode = SSLMode.valueOf(a.getValue().getString());
             } else if ((a = cmdLine.readNonOption("start")) != null) {
                 cmd = Command.start;
             } else if ((a = cmdLine.readNonOption("sys", "sysinfo")) != null) {
@@ -78,19 +74,19 @@ public class DerbyMain extends NutsApplication {
                 cmd = Command.runtimeinfo;
             } else if ((a = cmdLine.readStringOption("trace")) != null) {
                 cmd = Command.trace;
-                extraArg = a.getStringValue();
+                extraArg = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("trace-directory")) != null) {
                 cmd = Command.trace;
-                extraArg = a.getStringValue();
+                extraArg = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("max-threads")) != null) {
                 cmd = Command.maxthreads;
-                extraArg = a.getStringValue();
+                extraArg = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("time-slice")) != null) {
                 cmd = Command.timeslice;
-                extraArg = a.getStringValue();
+                extraArg = a.getValue().getString();
             } else if ((a = cmdLine.readStringOption("log-connections")) != null) {
                 cmd = Command.logconnections;
-                extraArg = a.getStringValue();
+                extraArg = a.getValue().getString();
             } else if ((a = cmdLine.readNonOption("stop", "shutdown")) != null) {
                 cmd = Command.shutdown;
             } else {

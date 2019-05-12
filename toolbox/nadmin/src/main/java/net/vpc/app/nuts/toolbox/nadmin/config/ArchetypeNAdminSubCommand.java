@@ -5,11 +5,11 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.common.commandline.CommandLine;
 
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -18,7 +18,7 @@ import java.io.PrintStream;
 public class ArchetypeNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("list archetypes", "la")) {
             PrintStream out = context.getTerminal().fout();
             if (cmdLine.isExecMode()) {

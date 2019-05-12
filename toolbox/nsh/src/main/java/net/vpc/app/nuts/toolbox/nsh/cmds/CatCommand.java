@@ -31,14 +31,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -58,11 +58,11 @@ public class CatCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         List<File> files = new ArrayList<>();
         PrintStream out = context.out();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -75,7 +75,7 @@ public class CatCommand extends AbstractNutsCommand {
             } else if (cmdLine.readAll("-E", "--show-ends")) {
                 o.E = true;
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
+                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file);
             }

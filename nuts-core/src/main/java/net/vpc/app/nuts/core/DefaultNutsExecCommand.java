@@ -474,8 +474,8 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 
     @Override
     public NutsExecCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         if (command == null) {
             command = new ArrayList<>();
         }

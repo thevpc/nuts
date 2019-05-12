@@ -1,10 +1,7 @@
 package net.vpc.app.nuts.toolbox.mvn;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 import org.apache.maven.cli.MavenCli;
 
 import java.io.*;
@@ -16,7 +13,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsArgument;
 
 public class NutsMvnMain extends NutsApplication {
 //    public static void main(String[] args) {
@@ -40,8 +40,8 @@ public class NutsMvnMain extends NutsApplication {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        CommandLine cmd = new CommandLine(appContext);
-        Argument a;
+        NutsCommandLine cmd = appContext.newCommandLine();
+        NutsArgument a;
         while (cmd.hasNext()) {
             if (command == null) {
                 if (appContext.configure(cmd)) {
@@ -54,10 +54,10 @@ public class NutsMvnMain extends NutsApplication {
                     command = "get";
                 } else {
                     command = "default";
-                    args2.add(cmd.read().getStringExpression());
+                    args2.add(cmd.read().getString());
                 }
             } else {
-                args2.add(cmd.read().getStringExpression());
+                args2.add(cmd.read().getString());
             }
         }
         if (command == null) {

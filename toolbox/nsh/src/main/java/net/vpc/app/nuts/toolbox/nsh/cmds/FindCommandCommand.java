@@ -33,9 +33,10 @@ import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -49,16 +50,16 @@ public class FindCommandCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        Argument a;
+        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsArgument a;
         List<String> commands=new ArrayList<>();
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            }else if (cmdLine.isOption()) {
+            }else if (cmdLine.get().isOption()) {
                 cmdLine.skip();
             }else{
-                commands.add(cmdLine.read().getStringExpression());
+                commands.add(cmdLine.read().getString());
             }
         }
         if(commands.isEmpty()){

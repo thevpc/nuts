@@ -6,15 +6,15 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import java.nio.file.Paths;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * @author vpc
@@ -22,13 +22,13 @@ import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin update stats";
-        Argument a;
+        NutsArgument a;
         if (cmdLine.readAll("update stats")) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                repos.add(cmdLine.read().getExpression());
+                repos.add(cmdLine.read().getString());
             }
             updateStatistics(context, repos.toArray(new String[0]));
             cmdLine.unexpectedArgument(name);

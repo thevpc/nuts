@@ -66,7 +66,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
         if (descriptorFilter != null) {
             NutsDescriptor descriptor = null;
             try {
-                descriptor = repository.fetchDescriptor(id, session);
+                descriptor = repository.fetchDescriptor().setId(id).session(session).run().getResult();
                 if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                     NutsDescriptor nutsDescriptor = null;
                     try {

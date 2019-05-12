@@ -49,12 +49,12 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+//        NutsCommandLine cmdLine = cmdLine(args, context);
 //        NutsInstallCommand options = context.getWorkspace().install().setSession(context.getSession()).setTrace(true);
 //        boolean deployOnly = false;
 //        String repositoryId = null;
 //        String descriptorFile = null;
-//        Argument a;
+//        NutsCommandArg a;
 //        do {
 //            if (context.configure(cmdLine)) {
 //                //
@@ -65,15 +65,15 @@
 //            } else {
 //                NutsWorkspace ws = context.getWorkspace();
 //                if (cmdLine.readAllOnce("-r", "--repository")) {
-//                    repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getStringExpression();
+//                    repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getString();
 //                } else if (cmdLine.readAllOnce("-s", "--descriptor")) {
-//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getStringExpression();
+//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
 //                } else if (cmdLine.readAllOnce("-t", "--target")) {
-//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getStringExpression();
+//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
 //                } else if (cmdLine.readAllOnce("-y", "--deploy", "--no-install")) {
 //                    deployOnly = true;
 //                } else {
-//                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
+//                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
 //                    if (cmdLine.isExecMode()) {
 //                        if (deployOnly) {
 //                            for (String s : context.getShell().expandPath(id)) {

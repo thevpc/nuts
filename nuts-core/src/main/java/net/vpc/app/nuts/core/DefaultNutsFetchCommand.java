@@ -268,8 +268,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
                                 NutsRepository repo = foundDefinition.getRepository();
-                                NutsContent content = repo.fetchContent(id1, foundDefinition.getDescriptor(), copyTo,
-                                        NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options));
+                                NutsContent content = repo.fetchContent()
+                                        .id(id1).descriptor(foundDefinition.getDescriptor())
+                                        .localPath(copyTo)
+                                        .session(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options))
+                                        .run().getResult()
+                                        ;
                                 if (content != null) {
                                     foundDefinition.setContent(content);
                                     foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));
@@ -337,10 +341,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             if (getValidSession().isTrace()) {
                 final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-                NutsOutputCustomFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession());
-                ff.formatStart(out, ws);
-                ff.formatElement(foundDefinition, -1, out, ws);
-                ff.formatEnd(1, out, ws);
+                NutsOutputListFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
+                        .session(getValidSession())
+                        ;
+                ff.formatStart();
+                ff.formatElement(foundDefinition, -1);
+                ff.formatEnd(1);
             }
             return foundDefinition;
         }
@@ -423,9 +429,9 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         }
         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, id, repositoryFilter, mode, options)) {
             try {
-                NutsDescriptor descriptor = repo.fetchDescriptor(id, NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
+                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
                         options
-                ));
+                )).run().getResult();
                 if (descriptor != null) {
                     NutsId nutsId = dws.resolveEffectiveId(descriptor,
                             options);
@@ -488,8 +494,8 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     @Override
     public NutsFetchCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 default: {

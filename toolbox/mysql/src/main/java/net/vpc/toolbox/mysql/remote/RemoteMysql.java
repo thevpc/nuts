@@ -2,15 +2,10 @@ package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.app.NutsAppUtils;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlConfig;
 import net.vpc.toolbox.mysql.util.UserCancelException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
@@ -18,8 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 public class RemoteMysql {
 
@@ -30,8 +26,8 @@ public class RemoteMysql {
     }
 
     public int runArgs(String[] args) {
-        CommandLine cmd = new CommandLine(args);
-        Argument a;
+        NutsCommandLine cmd = context.getWorkspace().parser().parseCommandLine(args);
+        NutsArgument a;
         while (cmd.hasNext()) {
             if ((a = cmd.readNonOption("list")) != null) {
                 return list(cmd);
@@ -50,21 +46,21 @@ public class RemoteMysql {
         return 0;
     }
 
-    public int list(CommandLine args) {
+    public int list(NutsCommandLine args) {
         boolean json = false;
         String instance = null;
         String app = null;
         String property = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readBooleanOption("--json")) != null) {
                 json = a.getBooleanValue();
             } else if ((a = args.readBooleanOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.readBooleanOption("--db")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else if ((a = args.readBooleanOption("--property")) != null) {
-                property = a.getStringValue();
+                property = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --remote list");
             }
@@ -94,25 +90,25 @@ public class RemoteMysql {
         } else {
             RemoteMysqlConfigService c = loadOrCreateMysqlConfig(instance);
             if (app != null) {
-                context.out().printf("%s%n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
+                context.out().printf("%s%n", context.getWorkspace().parser().parseExpression(c.getDatabase(app).getConfig(), property));
             } else {
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
-                    context.out().printf("[%s] %s%n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    context.out().printf("[%s] %s%n", aa.getName(), context.getWorkspace().parser().parseExpression(aa.getConfig(), property));
                 }
             }
         }
         return 0;
     }
 
-    private int add(CommandLine args) {
+    private int add(NutsCommandLine args) {
         RemoteMysqlConfigService c = null;
         String appName = null;
         String instanceName = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
                 if (c == null) {
-                    instanceName = a.getStringValue();
+                    instanceName = a.getValue().getString();
                     c = loadOrCreateMysqlConfig(instanceName);
                 } else {
                     throw new NutsExecutionException("instance already defined", 2);
@@ -122,27 +118,27 @@ public class RemoteMysql {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
-                db.getConfig().setServer(a.getStringValue());
+                db.getConfig().setServer(a.getValue().getString());
             } else if ((a = args.readStringOption("--remote-instance")) != null) {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
-                db.getConfig().setRemoteInstance(a.getStringValue());
+                db.getConfig().setRemoteInstance(a.getValue().getString());
             } else if ((a = args.readStringOption("--remote-temp-path")) != null) {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
-                db.getConfig().setRemoteTempPath(a.getStringValue());
+                db.getConfig().setRemoteTempPath(a.getValue().getString());
             } else if ((a = args.readStringOption("--app")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 c.getDatabaseOrCreate(appName);
             } else if ((a = args.readStringOption("--app.path")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
@@ -186,15 +182,15 @@ public class RemoteMysql {
         return 0;
     }
 
-    private int remove(CommandLine args) {
+    private int remove(NutsCommandLine args) {
         String instance = null;
         String appName = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--db")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
             } else if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --remote remove");
             }
@@ -213,15 +209,15 @@ public class RemoteMysql {
         return 0;
     }
 
-    private int pull(CommandLine args) {
+    private int pull(NutsCommandLine args) {
         String conf = null;
         String app = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
-                conf = a.getStringValue();
+                conf = a.getValue().getString();
             } else if ((a = args.readStringOption("--db")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --remote pull");
             }
@@ -231,15 +227,15 @@ public class RemoteMysql {
         return 0;
     }
 
-    private int push(CommandLine args) {
+    private int push(NutsCommandLine args) {
         String conf = null;
         String app = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
-                conf = a.getStringValue();
+                conf = a.getValue().getString();
             } else if ((a = args.readStringOption("--db")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --remote push");
             }

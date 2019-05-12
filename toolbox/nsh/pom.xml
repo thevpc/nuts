@@ -68,8 +68,8 @@
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.5.0</version>
+            <artifactId>nuts</artifactId>
+            <version>0.5.5</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>

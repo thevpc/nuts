@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.nio.file.Path;
 import java.util.Iterator;
 
 /**
@@ -65,13 +64,13 @@ public interface NutsRepository {
 
     NutsPushRepositoryCommand push();
 
-    NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
+    NutsFetchDescriptorRepositoryCommand fetchDescriptor();
 
-    NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
+    NutsFetchContentRepositoryCommand fetchContent();
 
-    Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
+    NutsFindRepositoryCommand find();
 
-    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
+    NutsFindVersionsRepositoryCommand findVersions();
 
     /**
      * @param listener

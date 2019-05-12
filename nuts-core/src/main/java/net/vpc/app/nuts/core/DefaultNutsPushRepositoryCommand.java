@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsPushCommand;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;

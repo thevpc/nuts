@@ -1055,7 +1055,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                                                 IteratorBuilder.ofLazy(new Iterable<NutsId>() {
                                                     @Override
                                                     public Iterator<NutsId> iterator() {
-                                                        return repo.findVersions(nutsId1, filter, NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions()));
+                                                        return repo.findVersions().id(nutsId1).filter(filter).session(NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions()))
+                                                                .run().getResult();
                                                     }
                                                 }).safeIgnore().iterator()
                                         );
@@ -1102,7 +1103,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                                     IteratorBuilder.ofLazy(new Iterable<NutsId>() {
                                         @Override
                                         public Iterator<NutsId> iterator() {
-                                            return repo.find(filter, rsession);
+                                            return repo.find().filter(filter).session(rsession).run().getResult();
                                         }
                                     }).safeIgnore().iterator()
                             );
@@ -1169,8 +1170,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "--all-versions": {

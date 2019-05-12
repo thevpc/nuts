@@ -2,18 +2,11 @@ package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.app.NutsAppUtils;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.format.PropertiesFormatter;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 import net.vpc.app.nuts.NutsUserCancelException;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
@@ -22,7 +15,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 public class RemoteTomcat {
 
@@ -33,10 +28,10 @@ public class RemoteTomcat {
     }
 
     public void runArgs() {
-        CommandLine cmd = new CommandLine(context.getArgs());
-        Argument a;
+        NutsCommandLine cmd = context.newCommandLine();
+        NutsArgument a;
         while (cmd.hasNext()) {
-            if (cmd.isOption()) {
+            if (cmd.get().isOption()) {
                 if (context.configure(cmd)) {
                     //
                 } else {
@@ -83,8 +78,8 @@ public class RemoteTomcat {
         }
     }
 
-    public void list(CommandLine args) {
-        Argument a;
+    public void list(NutsCommandLine args) {
+        NutsArgument a;
         class Helper {
 
             boolean processed = false;
@@ -102,9 +97,9 @@ public class RemoteTomcat {
             if (context.configure(args)) {
                 //
             } else if ((a = args.readStringOption("--name")) != null) {
-                x.print(loadOrCreateTomcatConfig(a.getStringValue()));
+                x.print(loadOrCreateTomcatConfig(a.getValue().getString()));
             } else {
-                x.print(loadOrCreateTomcatConfig(args.readRequiredNonOption().getStringValue()));
+                x.print(loadOrCreateTomcatConfig(args.readRequiredNonOption().getValue().getString()));
             }
         }
         if (!x.processed) {
@@ -114,17 +109,17 @@ public class RemoteTomcat {
         }
     }
 
-    private void add(CommandLine args) {
+    private void add(NutsCommandLine args) {
         RemoteTomcatConfigService c = null;
         String appName = null;
         String instanceName = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
             } else if ((a = args.readStringOption("--name")) != null) {
                 if (c == null) {
-                    instanceName = a.getStringValue();
+                    instanceName = a.getValue().getString();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
                     throw new NutsExecutionException("instance already defined", 2);
@@ -133,33 +128,33 @@ public class RemoteTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setServer(a.getStringValue());
+                c.getConfig().setServer(a.getValue().getString());
             } else if ((a = args.readStringOption("--remote-temp-path")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setRemoteTempPath(a.getStringValue());
+                c.getConfig().setRemoteTempPath(a.getValue().getString());
             } else if ((a = args.readStringOption("--remote-instance")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setRemoteName(value);
             } else if ((a = args.readStringOption("--app")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getAppOrCreate(appName);
             } else if ((a = args.readStringOption("--app.path")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 RemoteTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setPath(value);
             } else if ((a = args.readStringOption("--app.version")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -197,9 +192,9 @@ public class RemoteTomcat {
         c.save();
     }
 
-    public void remove(CommandLine args) {
+    public void remove(NutsCommandLine args) {
         RemoteTomcatServiceBase s = null;
-        Argument a;
+        NutsArgument a;
         boolean processed = false;
         int lastExitCode = 0;
         while (args.hasNext()) {
@@ -224,32 +219,32 @@ public class RemoteTomcat {
         }
     }
 
-    private void install(CommandLine args) {
+    private void install(NutsCommandLine args) {
         String conf = null;
         String app = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
             } else if ((a = args.readStringOption("--app")) != null) {
-                loadApp(a.getStringValue()).install();
+                loadApp(a.getValue().getString()).install();
             } else {
                 args.unexpectedArgument("tomcat --remote install");
             }
         }
     }
 
-    private void deploy(CommandLine args) {
+    private void deploy(NutsCommandLine args) {
         String app = null;
         String version = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
             } else if ((a = args.readStringOption("--app")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else if ((a = args.readStringOption("--version")) != null) {
-                version = a.getStringValue();
+                version = a.getValue().getString();
             } else {
                 args.unexpectedArgument("tomcat --remote deploy");
             }
@@ -257,26 +252,26 @@ public class RemoteTomcat {
         loadApp(app).deploy(version);
     }
 
-    private void stop(CommandLine args) {
+    private void stop(NutsCommandLine args) {
         String name = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
             } else {
-                name = args.readRequiredNonOption().getExpression();
+                name = args.readRequiredNonOption().getString();
                 RemoteTomcatConfigService c = loadTomcatConfig(name);
                 c.shutdown();
             }
         }
     }
 
-    public void restart(CommandLine args, boolean shutdown) {
+    public void restart(NutsCommandLine args, boolean shutdown) {
         String instance = null;
         boolean deleteLog = false;
         boolean install = false;
         List<String> apps = new ArrayList<>();
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
@@ -285,9 +280,9 @@ public class RemoteTomcat {
             } else if ((a = args.readBooleanOption("--install")) != null) {
                 install = a.getBooleanValue();
             } else if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.readStringOption("--deploy")) != null) {
-                for (String s : a.getStringValue().split(",")) {
+                for (String s : a.getValue().getString().split(",")) {
                     s = s.trim();
                     if (!StringUtils.isEmpty(s)) {
                         apps.add(s);
@@ -296,12 +291,12 @@ public class RemoteTomcat {
 //            } else if ((a = args.readNonOption(DefaultNonOption.NAME)) != null) {
 //                instance = a.getString();
             } else {
-                instance = args.readRequiredNonOption().getStringValue();
+                instance = args.readRequiredNonOption().getValue().getString();
             }
         }
         if (install) {
             for (String app : apps) {
-                install(new CommandLine(
+                install(getContext().getWorkspace().parser().parseCommandLine(
                         new String[]{
                             "--name",
                             instance,
@@ -319,8 +314,8 @@ public class RemoteTomcat {
         }
     }
 
-    public void reset(CommandLine args) {
-        Argument a;
+    public void reset(NutsCommandLine args) {
+        NutsArgument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
@@ -351,8 +346,8 @@ public class RemoteTomcat {
         return all.toArray(new RemoteTomcatConfigService[0]);
     }
 
-    public void show(CommandLine args) {
-        Argument a;
+    public void show(NutsCommandLine args) {
+        NutsArgument a;
         RemoteTomcatServiceBase s;
         class Helper {
 
@@ -384,8 +379,8 @@ public class RemoteTomcat {
         }
     }
 
-    public void showProperty(CommandLine args) {
-        Argument a;
+    public void showProperty(NutsCommandLine args) {
+        NutsArgument a;
         class Item {
 
             String name;
@@ -408,7 +403,7 @@ public class RemoteTomcat {
             void build() {
                 if (s != null) {
                     for (String prop : props) {
-                        Object o = NutsAppUtils.getPropertyValue(s.getConfig(), prop);
+                        Object o = context.getWorkspace().parser().parseExpression(s.getConfig(), prop);
                         m.put(new Item(prop), o);
                     }
                     props.clear();
@@ -422,11 +417,11 @@ public class RemoteTomcat {
             } else if (x.s == null && (x.s = readBaseServiceArg(args)) != null) {
                 //ok
             } else if ((a = args.readStringOption("--property")) != null) {
-                x.addProp(a.getStringValue());
-            } else if (args.isOption()) {
+                x.addProp(a.getValue().getString());
+            } else if (args.get().isOption()) {
                 args.unexpectedArgument("tomcat --remote show-property");
             } else {
-                x.addProp(args.read().getExpression());
+                x.addProp(args.read().getString());
             }
         }
         x.build();
@@ -439,7 +434,7 @@ public class RemoteTomcat {
                 break;
             }
         } else {
-            new PropertiesFormatter().format(x.m, context.out());
+            getContext().getWorkspace().formatter().createPropertiesFormat().format(x.m, context.out());
         }
     }
 
@@ -484,16 +479,16 @@ public class RemoteTomcat {
         }
     }
 
-    public RemoteTomcatServiceBase readBaseServiceArg(CommandLine args) {
-        Argument a;
+    public RemoteTomcatServiceBase readBaseServiceArg(NutsCommandLine args) {
+        NutsArgument a;
         if ((a = args.readStringOption("--name")) != null) {
-            return (loadOrCreateTomcatConfig(a.getStringValue()));
+            return (loadOrCreateTomcatConfig(a.getValue().getString()));
         } else if ((a = args.readStringOption("--app")) != null) {
-            return (loadApp(a.getStringValue()));
-        } else if (args.isOption()) {
+            return (loadApp(a.getValue().getString()));
+        } else if (args.hasNext() && args.get().isOption()) {
             return null;
         } else {
-            return (loadServiceBase(args.read().getExpression()));
+            return (loadServiceBase(args.read().getString()));
         }
     }
 

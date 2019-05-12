@@ -5,10 +5,13 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
+import net.vpc.app.nuts.core.util.cmdline.DefaultWorkspaceCommandLine;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
@@ -18,6 +21,11 @@ public class DefaultNutsParseManager implements NutsParseManager {
 
     public DefaultNutsParseManager(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsCommandLine parseCommandLine(String[] arguments) {
+        return new DefaultWorkspaceCommandLine(ws, arguments);
     }
 
     @Override
@@ -166,4 +174,30 @@ public class DefaultNutsParseManager implements NutsParseManager {
         return FormattedPrintStreamUtils.escapeText(str);
     }
 
+    @Override
+    public Object parseExpression(Object object, String expression) {
+        int x = expression.indexOf('.');
+        if (x < 0) {
+            if (object instanceof Map) {
+                for (Object o : ((Map) object).keySet()) {
+                    String k = String.valueOf(o);
+                    if (k.equals(expression)) {
+                        return ((Map) object).get(o);
+                    }
+                }
+                return null;
+            }
+            expression = Character.toUpperCase(expression.charAt(0)) + expression.substring(1);
+            Method m = null;
+            try {
+                m = object.getClass().getDeclaredMethod("get" + expression);
+                return m.invoke(object);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else {
+            Object o = parseExpression(object, expression.substring(0, x));
+            return parseExpression(o, expression.substring(x + 1));
+        }
+    }
 }

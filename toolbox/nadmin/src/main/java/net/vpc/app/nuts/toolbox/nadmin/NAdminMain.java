@@ -1,10 +1,7 @@
 package net.vpc.app.nuts.toolbox.nadmin;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -25,9 +22,9 @@ public class NAdminMain extends NutsApplication {
             );
         }
         Boolean autoSave = true;
-        CommandLine cmdLine = new CommandLine(context);
+        NutsCommandLine cmdLine = context.newCommandLine();
         boolean empty = true;
-        Argument a;
+        NutsArgument a;
         do {
             if (context.configure(cmdLine)) {
                 //

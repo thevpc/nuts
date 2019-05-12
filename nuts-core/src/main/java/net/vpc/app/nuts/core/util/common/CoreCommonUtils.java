@@ -43,10 +43,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsDefaultArgument;
 import net.vpc.app.nuts.NutsException;
 
 public class CoreCommonUtils {
@@ -145,7 +144,7 @@ public class CoreCommonUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return new NutsCommandArg(System.getProperty(property)).getBoolean(defaultValue);
+        return new NutsDefaultArgument(System.getProperty(property)).getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {

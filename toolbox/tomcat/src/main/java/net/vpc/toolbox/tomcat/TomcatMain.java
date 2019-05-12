@@ -1,15 +1,14 @@
 package net.vpc.toolbox.tomcat;
 
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.toolbox.tomcat.remote.RemoteTomcat;
 import net.vpc.toolbox.tomcat.local.LocalTomcat;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 public class TomcatMain extends NutsApplication {
 
@@ -19,27 +18,26 @@ public class TomcatMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArgs();
         List<String> argsList = new ArrayList<>();
-        CommandLine cmd = new CommandLine(args);
+        NutsCommandLine cmd = appContext.newCommandLine();
         Boolean local = null;
         while (cmd.hasNext()) {
-            Argument a = cmd.read();
+            NutsArgument a = cmd.read();
             if (local == null) {
                 if (appContext.configure(cmd)) {
                     //
-                } else if ((a.getExpression().equals("--remote") || a.getExpression().equals("-r"))) {
+                } else if ((a.getString().equals("--remote") || a.getString().equals("-r"))) {
                     local = false;
-                } else if ((a.getExpression().equals("--local") || a.getExpression().equals("-l"))) {
+                } else if ((a.getString().equals("--local") || a.getString().equals("-l"))) {
                     local = true;
                 } else if (a.isOption()) {
-                    argsList.add(a.getExpression());
+                    argsList.add(a.getString());
                 } else {
-                    argsList.add(a.getExpression());
+                    argsList.add(a.getString());
                     local = true;
                 }
             } else {
-                argsList.add(a.getExpression());
+                argsList.add(a.getString());
             }
         }
         if (local == null) {

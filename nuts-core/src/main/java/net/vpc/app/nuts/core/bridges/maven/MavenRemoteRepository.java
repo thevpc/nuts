@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
@@ -376,14 +375,21 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (wrapper == null) {
             wrapper = getWrapper();
         }
         if (wrapper != null && wrapper.get(id, config().getLocation(true), session.getSession())) {
             NutsRepository loc = getLocalMavenRepo();
             if (loc != null) {
-                return loc.fetchContent(id, descriptor,localPath, session.copy().setFetchMode(NutsFetchMode.LOCAL));
+                return loc.fetchContent()
+                        .id(id)
+                        .descriptor(descriptor)
+                        .localPath(localPath)
+                        .session(session.copy().setFetchMode(NutsFetchMode.LOCAL))
+                        .run()
+                        .getResult()
+                        ;
             }
             //should be already downloaded to m2 folder
             Path content = getMavenLocalFolderContent(id);

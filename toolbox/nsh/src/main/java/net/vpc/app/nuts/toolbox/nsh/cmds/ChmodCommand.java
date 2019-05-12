@@ -32,12 +32,13 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -122,12 +123,12 @@ public class ChmodCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
-            String s = cmdLine.read().getStringExpression();
+            String s = cmdLine.read().getString();
             if (context.configure(cmdLine)) {
                 //
             }else if (s.startsWith("-")) {

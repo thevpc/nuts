@@ -5,11 +5,11 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsUpdateRepositoryStatisticsCommand;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -27,8 +27,8 @@ public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsW
 
     @Override
     public NutsUpdateRepositoryStatisticsCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 default: {

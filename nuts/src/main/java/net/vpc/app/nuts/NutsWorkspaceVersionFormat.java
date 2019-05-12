@@ -46,6 +46,13 @@ public interface NutsWorkspaceVersionFormat {
 
     NutsWorkspaceVersionFormat addProperties(Properties p);
 
+    
+    NutsSession getSession();
+
+    NutsWorkspaceVersionFormat session(NutsSession session);
+    
+    NutsWorkspaceVersionFormat setSession(NutsSession session);
+    
     @Override
     String toString();
 
@@ -76,9 +83,9 @@ public interface NutsWorkspaceVersionFormat {
 
     void println(File file);
 
-    NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat);
+//    NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat);
 
-    NutsOutputFormat getOutputFormat();
+//    NutsOutputFormat getOutputFormat();
 
     NutsWorkspaceVersionFormat parseOptions(String[] args);
     
@@ -89,6 +96,4 @@ public interface NutsWorkspaceVersionFormat {
     NutsWorkspaceVersionFormat setPretty(boolean pretty);
 
     boolean isPretty();
-
-    NutsWorkspaceVersionFormat outputFormat(NutsOutputFormat outputFormat);
 }

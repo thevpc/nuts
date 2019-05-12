@@ -33,9 +33,9 @@ import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.io.PrintStream;
 import java.util.Properties;
-import net.vpc.common.commandline.format.PropertiesFormatter;
 import net.vpc.common.javashell.JavaShell;
 import net.vpc.common.javashell.cmds.CmdSyntaxError;
+import net.vpc.app.nuts.NutsPropertiesFormat;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,7 +57,7 @@ public class AliasCommand extends AbstractNutsCommand {
                 p.setProperty(k, shell.getAlias(k));
             }
             PrintStream out = context.out();
-            PropertiesFormatter f = new PropertiesFormatter()
+            NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
                     .setSort(true)
                     .setTable(true);
             f.format(p, out);

@@ -32,11 +32,12 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider {
+
     boolean isTrace();
 
     NutsSession setTrace(boolean trace);
@@ -64,18 +65,20 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     NutsSession force(boolean force);
 
     NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue);
-    
+
     NutsOutputFormat getOutputFormat();
 
-    NutsOutputCustomFormat getOutputCustomFormat();
+    NutsOutputListFormat getOutputCustomFormat();
 
-    NutsSession outputCustomFormat(NutsOutputCustomFormat customFormat);
+    NutsSession outputCustomFormat(NutsOutputListFormat customFormat);
 
-    NutsSession setOutputCustomFormat(NutsOutputCustomFormat customFormat) ;
-    
+    NutsSession setOutputCustomFormat(NutsOutputListFormat customFormat);
+
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
     NutsSession setOutputFormat(NutsOutputFormat outputFormat);
+
+    boolean parseOption(NutsArgument arg, NutsCommandLine cmd);
 
     NutsSession json();
 
@@ -86,6 +89,8 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     NutsSession tree();
 
     NutsSession table();
+
+    NutsSession xml();
 
     NutsSession copy();
 

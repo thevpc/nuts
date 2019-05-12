@@ -2,7 +2,6 @@ package net.vpc.app.nuts.toolbox.nsh.term;
 
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
-import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 import net.vpc.common.javashell.cmds.Command;
 import net.vpc.common.strings.StringUtils;

@@ -1,20 +1,16 @@
 package net.vpc.toolbox.tomcat.local;
 
-import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatAppConfig;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsApplicationContext;
 
 public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 

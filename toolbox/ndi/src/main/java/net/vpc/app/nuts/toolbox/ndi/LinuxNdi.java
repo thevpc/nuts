@@ -2,7 +2,6 @@ package net.vpc.app.nuts.toolbox.ndi;
 
 import java.io.BufferedWriter;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.IOUtils;
 
 import java.io.File;

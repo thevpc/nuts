@@ -5,12 +5,12 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -95,7 +95,7 @@ public abstract class NutsWorkspaceCommandBase<T> {
         invalidateResult();
     }
 
-    protected boolean parseOption(NutsCommandArg a, NutsCommandLine cmd) {
+    protected boolean parseOption(NutsArgument a, NutsCommandLine cmd) {
 
         switch (a.strKey()) {
             case "--trace": {
@@ -125,6 +125,9 @@ public abstract class NutsWorkspaceCommandBase<T> {
             case "--plain": {
                 getValidSessionCopy().setOutputFormat(NutsOutputFormat.PLAIN);
                 return true;
+            }
+            default:{
+                getValidSessionCopy().parseOption(a, cmd);
             }
         }
         return false;

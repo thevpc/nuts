@@ -32,8 +32,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -42,9 +40,10 @@ import net.vpc.common.strings.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -63,21 +62,21 @@ public class UnzipCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             }else if (cmdLine.readAll("-l")) {
                 options.l = true;
             } else if (cmdLine.readAll("-d")) {
-                options.dir = cmdLine.read().getExpression();
-            } else if (cmdLine.isOption()) {
+                options.dir = cmdLine.read().getString();
+            } else if (cmdLine.get().isOption()) {
                 throw new NutsExecutionException("Not yet supported",2);
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
+                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }

@@ -1,14 +1,8 @@
 package net.vpc.toolbox.mysql.local;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.NutsAppUtils;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlConfig;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
@@ -16,8 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 public class LocalMysql {
 
@@ -28,10 +23,10 @@ public class LocalMysql {
     }
 
     public int runArgs(String[] args) {
-        CommandLine cmd = new CommandLine(args);
+        NutsCommandLine cmd = context.getWorkspace().parser().parseCommandLine(args);
         while (cmd.hasNext()) {
-            Argument val = cmd.readNonOption();
-            switch (val.getExpression()) {
+            NutsArgument val = cmd.readNonOption();
+            switch (val.getString()) {
                 case "list":
                     return list(cmd);
                 case "add":
@@ -44,27 +39,27 @@ public class LocalMysql {
                 case "restore":
                     return restore(cmd);
                 default:
-                    throw new RuntimeException("Unsupported action " + val.getExpression());
+                    throw new RuntimeException("Unsupported action " + val.getString());
             }
         }
         return 0;
     }
 
-    public int list(CommandLine args) {
+    public int list(NutsCommandLine args) {
         boolean json = false;
         String instance = null;
         String app = null;
         String property = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readBooleanOption("--json")) != null) {
                 json = a.getBooleanValue();
             } else if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.readStringOption("--app")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else if ((a = args.readStringOption("--property")) != null) {
-                property = a.getStringValue();
+                property = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --local list");
             }
@@ -94,25 +89,25 @@ public class LocalMysql {
         } else {
             LocalMysqlConfigService c = loadOrCreateMysqlConfig(instance);
             if (app != null) {
-                getContext().out().printf("%s%n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
+                getContext().out().printf("%s%n", context.getWorkspace().parser().parseExpression(c.getDatabase(app).getConfig(), property));
             } else {
                 for (LocalMysqlDatabaseConfigService aa : c.getDatabases()) {
-                    getContext().out().printf("[%s] %s%n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    getContext().out().printf("[%s] %s%n", aa.getName(), context.getWorkspace().parser().parseExpression(aa.getConfig(), property));
                 }
             }
         }
         return 0;
     }
 
-    public int add(CommandLine args) {
+    public int add(NutsCommandLine args) {
         LocalMysqlConfigService c = null;
         String appName = null;
         String instance = null;
 
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(instance);
                 } else {
@@ -122,15 +117,15 @@ public class LocalMysql {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
-                c.getConfig().setShutdownWaitTime(a.getIntValue());
+                c.getConfig().setShutdownWaitTime(a.getValue().getInt());
             } else if ((a = args.readStringOption("--db")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 c.getDatabaseOrCreate(appName);
             } else if ((a = args.readStringOption("--app.user")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
@@ -140,7 +135,7 @@ public class LocalMysql {
                 }
                 mysqlAppConfig.getConfig().setUser(value);
             } else if ((a = args.readStringOption("--app.password")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
@@ -159,15 +154,15 @@ public class LocalMysql {
         return 0;
     }
 
-    public int remove(CommandLine args) {
+    public int remove(NutsCommandLine args) {
         String conf = null;
         String appName = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--db")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
             } else if ((a = args.readStringOption("--name")) != null) {
-                conf = a.getStringValue();
+                conf = a.getValue().getString();
             } else {
                 args.unexpectedArgument("mysql --local remove");
             }
@@ -248,18 +243,18 @@ public class LocalMysql {
         this.context = context;
     }
 
-    public int restore(CommandLine args) {
+    public int restore(NutsCommandLine args) {
         String instance = null;
         String db = null;
         String path = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.readStringOption("--db")) != null) {
-                db = a.getStringValue();
+                db = a.getValue().getString();
             } else {
-                path = args.readNonOption().getStringExpression();
+                path = args.readNonOption().getString();
                 args.unexpectedArgument("mysql --local restore");
             }
         }
@@ -267,18 +262,18 @@ public class LocalMysql {
         return c.getDatabaseOrError(db).restore(path).execResult;
     }
 
-    public int archive(CommandLine args) {
+    public int archive(NutsCommandLine args) {
         String instance = null;
         String db = null;
         String path = null;
-        Argument a;
+        NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.readStringOption("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.readStringOption("--db")) != null) {
-                db = a.getStringValue();
+                db = a.getValue().getString();
             } else {
-                path = args.readNonOption().getStringExpression();
+                path = args.readNonOption().getString();
                 args.unexpectedArgument("mysql --local archive");
             }
         }

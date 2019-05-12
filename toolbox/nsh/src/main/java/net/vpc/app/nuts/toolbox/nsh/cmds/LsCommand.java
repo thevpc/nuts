@@ -32,8 +32,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +41,8 @@ import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import net.vpc.app.nuts.NutsSessionTerminal;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -63,12 +62,12 @@ public class LsCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> folders = new ArrayList<>();
         List<File> files = new ArrayList<>();
         List<File> invalids = new ArrayList<>();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -77,7 +76,7 @@ public class LsCommand extends AbstractNutsCommand {
             } else if ((a = cmdLine.readBooleanOption("-l", "--list")) != null) {
                 options.l = a.getBooleanValue();
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getStringExpression();
+                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 ;
                 if (file.isDirectory()) {

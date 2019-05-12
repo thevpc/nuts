@@ -32,11 +32,28 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     private final Properties extraProperties = new Properties();
     private boolean minimal = false;
     private boolean showRepositories = false;
-    private NutsOutputFormat outputFormat = null;
-    boolean fancy = false;
+    private boolean fancy = false;
+    private NutsSession session;
 
     public DefaultNutsWorkspaceInfoFormat(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setSession(NutsSession session) {
+        //should copy because will chage outputformat
+        this.session = session == null ? null : session.copy();
+        return this;
     }
 
     @Override
@@ -75,10 +92,17 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         return this;
     }
 
+    public NutsSession getValidSession() {
+        if (session == null) {
+            session = ws.createSession();
+        }
+        return session;
+    }
+
     @Override
     public NutsWorkspaceInfoFormat parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "--min": {
@@ -93,37 +117,15 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                     this.setFancy(a.getBooleanValue());
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--table": {
-                    this.setOutputFormat(NutsOutputFormat.TABLE);
-                    break;
-                }
-                case "--tree": {
-                    this.setOutputFormat(NutsOutputFormat.TREE);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 case "--add": {
-                    NutsCommandArg r = cmd.getValueFor(a);
+                    NutsArgument r = cmd.getValueFor(a);
                     extraProperties.put(r.getKey().getString(), r.getValue().getString());
                     break;
                 }
                 default: {
-                    throw new NutsIllegalArgumentException("Unsupported argument " + a);
+                    if (!getValidSession().parseOption(a, cmd)) {
+                        throw new NutsIllegalArgumentException("Unsupported argument " + a);
+                    }
                 }
             }
         }
@@ -149,22 +151,6 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     @Override
     public NutsWorkspaceInfoFormat setMinimal(boolean minimal) {
         this.minimal = minimal;
-        return this;
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return outputFormat;
-    }
-
-    @Override
-    public NutsWorkspaceInfoFormat outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsWorkspaceInfoFormat setOutputFormat(NutsOutputFormat outputFormat) {
-        this.outputFormat = outputFormat;
         return this;
     }
 
@@ -260,7 +246,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     private void format0(Writer w) {
-        NutsOutputFormat t = outputFormat;
+        NutsOutputFormat t = getValidSession().getOutputFormat();
         if (t == null) {
             t = NutsOutputFormat.PLAIN;
         }

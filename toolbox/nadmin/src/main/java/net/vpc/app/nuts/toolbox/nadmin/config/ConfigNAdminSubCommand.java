@@ -8,14 +8,14 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -24,9 +24,9 @@ import java.nio.file.Path;
 public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin config";
-        Argument a;
+        NutsArgument a;
         if (cmdLine.readAll("delete log")) {
             deleteLog(context, readForce(cmdLine, name));
             return true;
@@ -134,9 +134,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         }
     }
 
-    private boolean readForce(CommandLine cmdLine, String name) {
+    private boolean readForce(NutsCommandLine cmdLine, String name) {
         boolean force = false;
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.readBooleanOption("-f", "--force")) != null) {
                 force = a.getBooleanValue();

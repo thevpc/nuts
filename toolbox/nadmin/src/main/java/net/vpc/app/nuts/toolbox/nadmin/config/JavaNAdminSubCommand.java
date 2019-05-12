@@ -8,17 +8,16 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.app.nuts.app.util.DefaultWorkspaceCellFormatter;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.format.TableFormatter;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsTableFormat;
 
 /**
  * @author vpc
@@ -26,7 +25,7 @@ import java.util.List;
 public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
@@ -37,7 +36,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.readAll("--search")) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
-                    extraLocations.add(cmdLine.read().getExpression());
+                    extraLocations.add(cmdLine.read().getString());
                 }
                 if (extraLocations.isEmpty()) {
                     for (NutsSdkLocation loc : conf.searchSdkLocations("java", out)) {
@@ -56,7 +55,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.read().getExpression()));
+                    NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.read().getString()));
                     if (loc != null) {
                         conf.addSdk(loc,null);
                     }
@@ -68,7 +67,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("remove java")) {
             while (cmdLine.hasNext()) {
-                String name = cmdLine.read().getExpression();
+                String name = cmdLine.read().getString();
                 NutsSdkLocation loc = conf.findSdkByName("java", name);
                 if (loc == null) {
                     loc = conf.findSdkByPath("java", ws.io().path(name));
@@ -85,8 +84,8 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.readAll("list java")) {
-            TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
-                    .setBorder(TableFormatter.SPACE_BORDER)
+            NutsTableFormat t = context.getWorkspace().formatter().createTableFormat()
+//                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")
                     .addHeaderCells("==Name==", "==Version==", "==Path==");

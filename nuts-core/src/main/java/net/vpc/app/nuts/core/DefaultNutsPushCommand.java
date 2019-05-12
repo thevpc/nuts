@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
@@ -35,6 +34,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -252,7 +252,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {
-                        descr = repo.fetchDescriptor(file.getId(), rsession);
+                        descr = repo.fetchDescriptor().session(rsession).setId(file.getId()).run().getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
@@ -394,8 +394,8 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
 
     @Override
     public NutsPushCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "-o":

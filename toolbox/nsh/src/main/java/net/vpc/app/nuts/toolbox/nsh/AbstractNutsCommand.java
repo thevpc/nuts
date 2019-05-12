@@ -30,8 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.common.commandline.CommandAutoComplete;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
@@ -41,6 +39,8 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommandAutoComplete;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,9 +57,9 @@ public abstract class AbstractNutsCommand implements NutsCommand {
         this.supportLevel = supportLevel;
     }
 
-    protected CommandLine cmdLine(String[] args, NutsCommandContext context) {
-        CommandAutoComplete autoComplete = context.consoleContext().getAutoComplete();
-        return new CommandLine(args, autoComplete);
+    protected NutsCommandLine cmdLine(String[] args, NutsCommandContext context) {
+        NutsCommandAutoComplete autoComplete = context.consoleContext().getAutoComplete();
+        return context.getWorkspace().parser().parseCommandLine(args).setAutoComplete(autoComplete);
     }
 
     @Override
@@ -112,8 +112,8 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     }
 
     @Override
-    public void autoComplete(NutsCommandContext context, CommandAutoComplete autoComplete) {
-        CommandAutoComplete oldAutoComplete = context.consoleContext().getAutoComplete();
+    public void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete) {
+        NutsCommandAutoComplete oldAutoComplete = context.consoleContext().getAutoComplete();
         context.consoleContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {

@@ -30,11 +30,12 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsFormatManager {
+
     NutsIdFormat createIdFormat();
 
     NutsWorkspaceVersionFormat createWorkspaceVersionFormat();
@@ -43,5 +44,12 @@ public interface NutsFormatManager {
 
     NutsDescriptorFormat createDescriptorFormat();
 
+    NutsOutputListFormat createOutputListFormat(NutsOutputFormat format);
+
+    NutsTreeFormat createTreeFormat();
+
+    NutsTableFormat createTableFormat();
+
+    NutsPropertiesFormat createPropertiesFormat();
 
 }

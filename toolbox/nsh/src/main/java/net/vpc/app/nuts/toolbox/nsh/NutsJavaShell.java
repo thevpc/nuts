@@ -30,9 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.*;
 import net.vpc.common.javashell.cmds.*;
 import net.vpc.common.javashell.parser.nodes.BinoOp;
@@ -302,8 +299,13 @@ public class NutsJavaShell extends JavaShell {
         boolean command = false;
 //        String command = null;
         long startMillis = appContext == null ? System.currentTimeMillis() : appContext.getStartTimeMillis();
-        CommandLine cmd = new CommandLine(args, appContext == null ? null : appContext.getAutoComplete());
-        Argument a;
+        NutsCommandLine cmd = null;
+        if(appContext==null){
+            cmd=new NutsDefaultCommandLine(args);
+        }else{
+            cmd=appContext.getWorkspace().parser().parseCommandLine(args).setAutoComplete(appContext.getAutoComplete());
+        }
+        NutsArgument a;
         while (cmd.hasNext()) {
             if (nonOptions.isEmpty()) {
                 if ((a = cmd.readOption("--help")) != null) {
@@ -313,7 +315,7 @@ public class NutsJavaShell extends JavaShell {
                     //ok
                 } else if ((a = cmd.readStringOption("-c", "--command")) != null) {
                     command = true;
-                    nonOptions.add(a.getStringValue());
+                    nonOptions.add(a.getValue().getString());
                 } else if ((a = cmd.readBooleanOption("-i", "--interactive")) != null) {
                     interactive = a.getBooleanValue();
                 } else if ((a = cmd.readBooleanOption("--perf")) != null) {
@@ -321,14 +323,14 @@ public class NutsJavaShell extends JavaShell {
                 } else if ((a = cmd.readBooleanOption("-x")) != null) {
                     getOptions().setXtrace(a.getBooleanValue());
                 } else if ((a = cmd.readBooleanOption("-c")) != null) {
-                    nonOptions.add(cmd.read().getStringExpression());
-                } else if (cmd.isOption()) {
+                    nonOptions.add(cmd.read().getString());
+                } else if (cmd.get().isOption()) {
                     cmd.unexpectedArgument("nsh");
                 } else {
-                    nonOptions.add(cmd.read().getStringExpression());
+                    nonOptions.add(cmd.read().getString());
                 }
             } else {
-                nonOptions.add(cmd.read().getStringExpression());
+                nonOptions.add(cmd.read().getString());
             }
         }
         int ret = 0;

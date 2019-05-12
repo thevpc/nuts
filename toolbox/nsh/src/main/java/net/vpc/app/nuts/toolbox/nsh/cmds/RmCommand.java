@@ -33,13 +33,13 @@ import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.ssh.SshXFile;
 import net.vpc.common.xfile.XFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -59,17 +59,17 @@ public class RmCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         List<XFile> files = new ArrayList<>();
         Options o = new Options();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if (cmdLine.isOption("-R")) {
                 o.R = true;
             } else {
-                files.add(ShellHelper.xfileOf(cmdLine.read().getExpression(),context.getShell().getCwd()));
+                files.add(ShellHelper.xfileOf(cmdLine.read().getString(),context.getShell().getCwd()));
             }
         }
         if (files.size() < 1) {

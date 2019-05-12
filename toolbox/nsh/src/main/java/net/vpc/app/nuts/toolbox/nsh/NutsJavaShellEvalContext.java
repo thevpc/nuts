@@ -30,10 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.AbstractCommandAutoComplete;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.javashell.*;
 import net.vpc.common.javashell.cmds.Command;
 import net.vpc.common.javashell.cmds.CommandContext;
@@ -50,7 +46,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     private NutsWorkspace workspace;
     private String serviceName;
     private NutsSession session;
-    private CommandAutoComplete autoComplete;
+    private NutsCommandAutoComplete autoComplete;
     private boolean verbose;
     private NutsTerminalMode terminalMode;
 
@@ -177,12 +173,12 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     }
 
     @Override
-    public CommandAutoComplete getAutoComplete() {
+    public NutsCommandAutoComplete getAutoComplete() {
         return autoComplete;
     }
 
     @Override
-    public void setAutoComplete(CommandAutoComplete autoComplete) {
+    public void setAutoComplete(NutsCommandAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
     }
 
@@ -218,7 +214,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
 
     public List<AutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         Command command = this.getShell().findCommand(commandName);
-        CommandAutoComplete autoComplete = new AbstractCommandAutoComplete() {
+        NutsCommandAutoComplete autoComplete = new NutsCommandAutoCompleteBase() {
             @Override
             public String getLine() {
                 return autoCompleteLine;
@@ -301,7 +297,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
 
         }
         List<AutoCompleteCandidate> all = new ArrayList<>();
-        for (ArgumentCandidate a : autoComplete.getCandidates()) {
+        for (NutsArgumentCandidate a : autoComplete.getCandidates()) {
             all.add(new AutoCompleteCandidate(a.getValue(), a.getDisplay()));
         }
         return all;

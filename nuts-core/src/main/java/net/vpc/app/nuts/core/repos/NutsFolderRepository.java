@@ -59,7 +59,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             NutsDescriptor c = lib.fetchDescriptorImpl(id, session);
             if (c != null) {
@@ -95,7 +95,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             NutsContent c = lib.fetchContentImpl(id, localPath, session);
             if (c != null) {
@@ -123,7 +123,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
         Iterator<NutsId> namedNutIdIterator = null;
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
@@ -145,7 +145,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //        return lib.getStoreLocation();
 //    }
     @Override
-    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isBlank() && filter == null) {
             NutsId bestId = lib.findLatestVersion(id, filter, session);
             NutsId c1 = cache.findLatestVersion(id, filter, session);

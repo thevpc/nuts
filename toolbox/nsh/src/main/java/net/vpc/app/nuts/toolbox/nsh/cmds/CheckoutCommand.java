@@ -49,15 +49,15 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+//        NutsCommandLine cmdLine = cmdLine(args, context);
 //
-//        Argument a;
+//        NutsCommandArg a;
 //        while (cmdLine.hasNext()) {
 //            if (context.configure(cmdLine)) {
 //                //
 //            } else {
-//                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getStringExpression();
-//                String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getStringExpression();
+//                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
+//                String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getString();
 //                if (cmdLine.isExecMode()) {
 //                    NutsWorkspace ws = context.getWorkspace();
 //                    NutsDefinition nf = ws.checkout(

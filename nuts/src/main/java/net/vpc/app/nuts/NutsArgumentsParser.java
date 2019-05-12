@@ -55,9 +55,9 @@ public final class NutsArgumentsParser {
         HashSet<String> tempRepositories = new HashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
-        NutsCommandArg a;
+        NutsArgument a;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdArgList = new NutsCommandLine(bootArguments)
+        NutsCommandLine cmdArgList = new NutsDefaultCommandLine(bootArguments)
                 .addSpecialSimpleOption("version")
                 .expandSimpleOptions();
         
@@ -684,7 +684,7 @@ public final class NutsArgumentsParser {
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
     }
 
-    private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandArg arg, NutsCommandLine cmdArgList, boolean enabled) {
+    private static void parseLogLevel(NutsLogConfig logConfig, NutsArgument arg, NutsCommandLine cmdArgList, boolean enabled) {
         switch (arg.strKey()) {
             case "--log-size": {
                 String v = cmdArgList.getValueFor(arg).getString();

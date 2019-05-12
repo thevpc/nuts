@@ -8,8 +8,8 @@ package net.vpc.app.nuts.core.commands;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsExecutableInfo;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsOutputFormat;
@@ -19,6 +19,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -37,10 +38,10 @@ public class HelpInternalExecutable extends InternalExecutable {
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
         NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
         while (cmd.hasNext()) {
-            NutsCommandArg a = cmd.next();
+            NutsArgument a = cmd.next();
             if (a.isOption()) {
                 switch (a.strKey()) {
                     case "--trace-format": {

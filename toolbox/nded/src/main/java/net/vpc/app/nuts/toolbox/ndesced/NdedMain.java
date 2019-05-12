@@ -1,10 +1,7 @@
 package net.vpc.app.nuts.toolbox.ndesced;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 
 import java.io.File;
 import java.util.Arrays;
@@ -22,55 +19,55 @@ public class NdedMain extends NutsApplication {
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        CommandLine commandLine = new CommandLine(appContext.getArgs(), appContext.getAutoComplete());
-        Argument a;
+        NutsCommandLine commandLine = appContext.newCommandLine();
+        NutsArgument a;
         while (commandLine.hasNext()) {
             if (appContext.configure(commandLine)) {
 
             } else if ((a = commandLine.readStringOption("--home")) != null) {
-                home = a.getStringValue();
+                home = a.getValue().getString();
             } else if ((a = commandLine.readStringOption("--id")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 builder0.setId(v);
             } else if ((a = commandLine.readStringOption("--alternative")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 builder0.setAlternative(v);
             } else if ((a = commandLine.readStringOption("--name")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 builder0.setName(v);
             } else if ((a = commandLine.readStringOption("--packaging")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 builder0.setPackaging(v);
             } else if ((a = commandLine.readStringOption("--platform")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addPlatform(s);
                     }
                 }
             } else if ((a = commandLine.readStringOption("--os")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addOs(s);
                     }
                 }
             } else if ((a = commandLine.readStringOption("--osdist")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addOsdist(s);
                     }
                 }
             } else if ((a = commandLine.readStringOption("--arch")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addArch(s);
                     }
                 }
             } else if ((a = commandLine.readStringOption("--location")) != null) {
-                String v = a.getStringValue();
+                String v = a.getValue().getString();
                 builder0.addLocation(v);
             } else if ((a = commandLine.readBooleanOption("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();

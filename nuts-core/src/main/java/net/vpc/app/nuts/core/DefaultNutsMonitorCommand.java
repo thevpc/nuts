@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsDefaultArgument;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsHttpConnectionFacade;
 import net.vpc.app.nuts.NutsId;
@@ -192,7 +192,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         boolean monitorable = true;
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = new NutsCommandArg(String.valueOf(o)).getBoolean();
+            o = new NutsDefaultArgument(String.valueOf(o)).getBoolean();
         }
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();

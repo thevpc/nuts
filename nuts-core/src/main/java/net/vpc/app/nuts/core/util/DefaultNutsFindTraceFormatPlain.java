@@ -5,60 +5,67 @@
  */
 package net.vpc.app.nuts.core.util;
 
-import java.io.PrintStream;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.DefaultNutsFindCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
-import net.vpc.app.nuts.NutsOutputCustomFormat;
+import net.vpc.app.nuts.NutsOutputListFormat;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsFindTraceFormatPlain implements NutsOutputCustomFormat {
+public class DefaultNutsFindTraceFormatPlain extends DefaultNutsFindTraceFormatBase<NutsOutputListFormat> {
 
 //    public static final NutsTraceFormat INSTANCE = new DefaultNutsFindTraceFormatPlain();
-    private NutsFindCommand findCommand;
-    private NutsSession session;
     private boolean longFormat = false;
 
-    public DefaultNutsFindTraceFormatPlain(NutsFindCommand findCommand, NutsSession session) {
-        this.findCommand = findCommand;
-        this.session = session;
-        longFormat = ((DefaultNutsFindCommand) findCommand).isLongFormat();
+    public DefaultNutsFindTraceFormatPlain(NutsWorkspace ws) {
+        super(ws,NutsOutputFormat.PLAIN);
+    }
+
+//    public DefaultNutsFindTraceFormatPlain(NutsFindCommand findCommand, NutsSession session) {
+//        this.session = session;
+//        longFormat = ((DefaultNutsFindCommand) findCommand).isLongFormat();
+//    }
+
+    @Override
+    public NutsOutputListFormat setOption(String name, String value) {
+        if(name!=null){
+            switch(name){
+                case "long":{
+                    longFormat=CoreCommonUtils.parseBoolean(value, true);
+                    break;
+                }
+            }
+        }
+        return this;
+    }
+
+    
+    @Override
+    public void formatStart() {
     }
 
     @Override
-    public void formatStart(PrintStream out, NutsWorkspace ws) {
-    }
-
-    @Override
-    public NutsOutputFormat getSupportedFormat() {
-        return NutsOutputFormat.PLAIN;
-    }
-
-    @Override
-    public void formatElement(Object object, long index, PrintStream out, NutsWorkspace ws) {
+    public void formatElement(Object object, long index) {
         if (object instanceof NutsId) {
             NutsId id = (NutsId) object;
-            formatElement(id, null, null, index, out, ws);
+            formatElement(id, null, null, index);
         } else if (object instanceof NutsDescriptor) {
-            formatElement(null, ((NutsDescriptor) object), null, index, out, ws);
+            formatElement(null, ((NutsDescriptor) object), null, index);
         } else if (object instanceof NutsDefinition) {
-            formatElement(null, null, ((NutsDefinition) object), index, out, ws);
+            formatElement(null, null, ((NutsDefinition) object), index);
         } else {
-            out.printf("%N%n", object);
+            getValidOut().printf("%N%n", object);
         }
-        out.flush();
+        getValidOut().flush();
     }
 
-    private void formatElement(NutsId id, NutsDescriptor desc, NutsDefinition def, long index, PrintStream out, NutsWorkspace ws) {
+    private void formatElement(NutsId id, NutsDescriptor desc, NutsDefinition def, long index) {
         if (id == null) {
             if (desc != null) {
                 id = desc.getId();
@@ -68,8 +75,8 @@ public class DefaultNutsFindTraceFormatPlain implements NutsOutputCustomFormat {
             }
         }
         if (longFormat) {
-            boolean i = NutsWorkspaceExt.of(ws).getInstalledRepository().isInstalled(id);
-            boolean d = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(id);
+            boolean i = NutsWorkspaceExt.of(getWs()).getInstalledRepository().isInstalled(id);
+            boolean d = NutsWorkspaceExt.of(getWs()).getInstalledRepository().isDefaultVersion(id);
 //            Boolean updatable = null;
             Boolean executable = null;
             Boolean executableApp = null;
@@ -80,8 +87,8 @@ public class DefaultNutsFindTraceFormatPlain implements NutsOutputCustomFormat {
 
             try {
                 if (!i || def == null) {
-                    defFetched = ws.fetch().id(id).setSession(
-                            (session==null?ws.createSession():session).setTrace(false)
+                    defFetched = getWs().fetch().id(id).setSession(
+                            getValidSession().setTrace(false)
                     ).offline()
                             .setIncludeInstallInformation(true)
                             .setIncludeContent(true)
@@ -119,18 +126,18 @@ public class DefaultNutsFindTraceFormatPlain implements NutsOutputCustomFormat {
 //                    updatable = true;
 //                }
 //            }
-            out.printf("##%s%s## %N%n",
+            getValidOut().printf("##%s%s## %N%n",
                     i && d ? "I" : i ? "i" : fetched ? "f" : "r",
                     executableApp != null ? (executableApp ? "X" : executable ? "x" : "-") : ".",
                     //                    updatable != null ? (updatable ? "u" : "-") : ".",
-                    NutsWorkspaceUtils.getIdFormat(ws).toString(id));
+                    NutsWorkspaceUtils.getIdFormat(getWs()).toString(id));
         } else {
-            out.printf("%N%n", NutsWorkspaceUtils.getIdFormat(ws).toString(id));
+            getValidOut().printf("%N%n", NutsWorkspaceUtils.getIdFormat(getWs()).toString(id));
         }
     }
 
     @Override
-    public void formatEnd(long count, PrintStream out, NutsWorkspace ws) {
+    public void formatEnd(long count) {
 
     }
 

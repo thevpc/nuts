@@ -33,7 +33,6 @@ import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,12 +41,15 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsDeployRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsFetchContentRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsFetchDescriptorRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsFindRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsFindVersionsRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsPushRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
-import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
 /**
@@ -207,6 +209,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return a.toString();
     }
 
+    @Override
     public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
     }
 
@@ -228,55 +231,13 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session) {
-        checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "fetch-descriptor");
-        Map<String, String> queryMap = id.getQueryMap();
-        queryMap.remove(NutsConstants.QueryKeys.OPTIONAL);
-        queryMap.remove(NutsConstants.QueryKeys.SCOPE);
-        queryMap.put(NutsConstants.QueryKeys.FACE, NutsConstants.QueryFaces.DESCRIPTOR);
-        id = id.setQuery(queryMap);
-        checkAllowedFetch(id, session);
-        long startTime = System.currentTimeMillis();
-        try {
-            String versionString = id.getVersion().getValue();
-            NutsDescriptor d = null;
-            if (DefaultNutsVersion.isBlank(versionString)) {
-                NutsId a = findLatestVersion(id.setVersion(""), null, session);
-                if (a == null) {
-                    throw new NutsNotFoundException(id);
-                }
-                a = a.setFaceDescriptor();
-                d = fetchDescriptorImpl(a, session);
-            } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
-                id = id.setFaceDescriptor();
-                d = fetchDescriptorImpl(id, session);
-            } else {
-                NutsIdFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsPatternIdFilter(id), null, this, session).simplify();
-                NutsId a = findLatestVersion(id.setVersion(""), filter, session);
-                if (a == null) {
-                    throw new NutsNotFoundException(id);
-                }
-                a = a.setFaceDescriptor();
-                d = fetchDescriptorImpl(a, session);
-            }
-            if (d == null) {
-                throw new NutsNotFoundException(id);
-            }
-            if (LOG.isLoggable(Level.FINEST)) {
-                traceMessage(session, id, TraceResult.SUCCESS, "Fetch descriptor", startTime);
-            }
-            return d;
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                traceMessage(session, id, TraceResult.ERROR, "Fetch descriptor", startTime);
-            }
-            throw ex;
-        }
+    public NutsFetchDescriptorRepositoryCommand fetchDescriptor() {
+        return new DefaultNutsFetchDescriptorRepositoryCommand(this);
     }
 
-    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        Iterator<NutsId> allVersions = findVersions(id, filter, session);
+    @Override
+    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+        Iterator<NutsId> allVersions = findVersions().id(id).filter(filter).session(session).run().getResult();
         NutsId a = null;
         while (allVersions.hasNext()) {
             NutsId next = allVersions.next();
@@ -288,30 +249,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     protected void traceMessage(NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
-        String timeMessage = "";
-        if (startTime != 0) {
-            long time = System.currentTimeMillis() - startTime;
-            if (time > 0) {
-                timeMessage = " (" + time + "ms)";
-            }
-        }
-        String tracePhaseString = "";
-        switch (tracePhase) {
-            case ERROR: {
-                tracePhaseString = "[ERROR  ] ";
-                break;
-            }
-            case SUCCESS: {
-                tracePhaseString = "[SUCCESS] ";
-                break;
-            }
-            case START: {
-                tracePhaseString = "[START  ] ";
-                break;
-            }
-        }
-        String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        LOG.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(config().getName(), 20), id == null ? "" : id.toString(), timeMessage});
+        CoreNutsUtils.traceMessage(LOG, config().name(), session, id, tracePhase, title, startTime);
     }
 
     @Override
@@ -325,95 +263,18 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public Iterator<NutsId> find(final NutsIdFilter filter, NutsRepositorySession session) {
-        checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "find");
-        checkAllowedFetch(null, session);
-        try {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
-            }
-            if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
-                Iterator<NutsId> o = null;
-                try {
-                    o = nutsIndexStoreClient.find(filter, session);
-                } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{config().getName(), ex});
-                }
-
-                if (o != null) {
-                    return o;
-                }
-            }
-
-            return findImpl(filter, session);
-        } catch (NutsNotFoundException | SecurityException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
-            }
-            throw ex;
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.log(Level.SEVERE, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
-            }
-            throw ex;
-        }
+    public NutsFindRepositoryCommand find() {
+        return new DefaultNutsFindRepositoryCommand(this);
     }
 
     @Override
-    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        checkSession(session);
-        if (descriptor == null) {
-            descriptor = fetchDescriptor(id, session);
-        }
-        id = id.setFaceComponent();
-        security().checkAllowed(NutsConstants.Rights.FETCH_CONTENT, "fetch-content");
-        checkAllowedFetch(id, session);
-        long startTime = System.currentTimeMillis();
-        try {
-            NutsContent f = fetchContentImpl(id, descriptor, localPath, session);
-            if (f == null) {
-                throw new NutsNotFoundException(id);
-            }
-            if (LOG.isLoggable(Level.FINEST)) {
-                traceMessage(session, id, TraceResult.SUCCESS, "Fetch component", startTime);
-            }
-            return f;
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                traceMessage(session, id, TraceResult.ERROR, "Fetch component", startTime);
-            }
-            throw ex;
-        }
+    public NutsFetchContentRepositoryCommand fetchContent() {
+        return new DefaultNutsFetchContentRepositoryCommand(this);
     }
 
     @Override
-    public Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
-        id = id.setFaceComponent();
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "find-versions");
-        checkSession(session);
-        checkNutsId(id);
-        checkAllowedFetch(id, session);
-        try {
-            if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
-                List<NutsId> d = null;
-                try {
-                    d = nutsIndexStoreClient.findVersions(id, session);
-                } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{config().getName(), ex});
-                }
-                if (d != null && !d.isEmpty() && idFilter != null) {
-                    return IteratorBuilder.of(d.iterator()).filter(x -> idFilter.accept(x, getWorkspace())).iterator();
-                }
-            }
-            Iterator<NutsId> d = findVersionsImpl(id, idFilter, session);
-            return d;
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7), CoreStringUtils.alignLeft(config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id});
-            }
-            throw ex;
-        }
+    public NutsFindVersionsRepositoryCommand findVersions() {
+        return new DefaultNutsFindVersionsRepositoryCommand(this);
     }
 
     @Override
@@ -532,14 +393,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
             listener.onRemoveRepository(event);
         }
     }
-
-    protected abstract Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
-
-    protected abstract NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
-
-    public abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
-
-    protected abstract NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session);
 
     protected void helperHttpDownloadToFile(String path, Path file, boolean mkdirs) throws IOException {
         InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), path).open();

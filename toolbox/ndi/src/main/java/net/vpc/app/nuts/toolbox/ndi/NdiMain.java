@@ -1,10 +1,7 @@
 package net.vpc.app.nuts.toolbox.ndi;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +23,8 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        CommandLine cmd = new CommandLine(appContext);
-        Argument a;
+        NutsCommandLine cmd = appContext.newCommandLine();
+        NutsArgument a;
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
 
@@ -68,17 +65,17 @@ public class NdiMain extends NutsApplication {
                             execType = NutsExecutionType.SYSCALL;
                         }
                     } else if ((a = cmd.readStringOption("-X", "--exec-options")) != null) {
-                        executorOptions.add(a.getStringValue());
-                    } else if (cmd.isOption()) {
+                        executorOptions.add(a.getValue().getString());
+                    } else if (cmd.get().isOption()) {
                         cmd.unexpectedArgument("ndi");
                     } else {
                         run = true;
-                        Argument aa = null;
+                        NutsArgument aa = null;
                         aa = cmd.read();
                         if (cmd.isExecMode()) {
                             try {
                                 ndi.createNutsScript(
-                                        new NdiScriptOptions().setId(aa.getStringExpression())
+                                        new NdiScriptOptions().setId(aa.getString())
                                                 .setForce(force)
                                                 .setForceBoot(forceAll)
                                                 .setFetch(fetch)
@@ -109,8 +106,8 @@ public class NdiMain extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        CommandLine cmd = new CommandLine(applicationContext);
-        Argument a;
+        NutsCommandLine cmd = applicationContext.newCommandLine();
+        NutsArgument a;
         boolean force = false;
         boolean trace = true;
         while (cmd.hasNext()) {

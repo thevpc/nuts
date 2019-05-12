@@ -32,16 +32,16 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -58,17 +58,17 @@ public class WgetCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if (cmdLine.readAll("-O", "--output-document")) {
-                options.outputDocument = cmdLine.readNonOption().getStringExpression();
+                options.outputDocument = cmdLine.readNonOption().getString();
             } else {
-                files.add(cmdLine.readNonOption().getStringExpression());
+                files.add(cmdLine.readNonOption().getString());
             }
         }
         if (files.isEmpty()) {

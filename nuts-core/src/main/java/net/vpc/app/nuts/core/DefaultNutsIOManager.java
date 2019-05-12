@@ -2,8 +2,6 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.io.InputStreamMetadataAware;
 import net.vpc.app.nuts.core.util.io.NullInputStream;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
@@ -19,8 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.app.nuts.core.util.io.InputStreamEvent;
-import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
+import net.vpc.app.nuts.core.util.app.DefaultNutsApplicationContext;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -98,7 +95,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public NutsMonitorCommand monitor() {
         return new DefaultNutsMonitorCommand(ws);
     }
-    
+
     @Override
     public NutsJsonCommand json() {
         return new DefaultNutsJsonCommand();
@@ -243,7 +240,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
-                HashMap<String,Object> m=new HashMap<>();
+                HashMap<String, Object> m = new HashMap<>();
                 m.put("workspace", this);
                 m.put("out", out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
@@ -258,7 +255,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
-                HashMap<String,Object> m=new HashMap<>();
+                HashMap<String, Object> m = new HashMap<>();
                 m.put("workspace", this);
                 m.put("out", out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormatFilteredPrintStream.class,
@@ -392,16 +389,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public NutsHashCommand hash() {
         return new DefaultNutsHashCommand(ws);
     }
-    
-    
-
-   
 
     public NutsWorkspace getWorkspace() {
         return ws;
     }
 
-    
     @Override
     public NutsPathCopyAction copy() {
         return new DefaultNutsIOCopyAction(this);
@@ -413,6 +405,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return null;
         }
         return Paths.get(first, more);
+    }
+
+    @Override
+    public NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId) {
+        return new DefaultNutsApplicationContext(ws, appClass, storeId);
     }
 
 }

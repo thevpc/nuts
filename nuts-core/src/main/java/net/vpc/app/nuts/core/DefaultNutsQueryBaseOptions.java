@@ -13,13 +13,13 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsFetchStrategy;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -465,7 +465,7 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     @Override
-    protected boolean parseOption(NutsCommandArg a, NutsCommandLine cmd) {
+    protected boolean parseOption(NutsArgument a, NutsCommandLine cmd) {
         if (super.parseOption(a, cmd)) {
             return true;
         }
@@ -530,7 +530,7 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
                 return true;
             }
             case "--optional": {
-                NutsCommandArg v = cmd.getValueFor(a);
+                NutsArgument v = cmd.getValueFor(a);
                 if (CoreCommonUtils.isYes(v.getString())) {
                     this.setAcceptOptional(true);
                 } else if (CoreCommonUtils.isNo(v.getString())) {

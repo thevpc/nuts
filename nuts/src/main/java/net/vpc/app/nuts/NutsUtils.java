@@ -873,7 +873,7 @@ final class NutsUtils {
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll[0] = true;
-                } else if (new NutsCommandArg(line).getBoolean()) {
+                } else if (new NutsDefaultArgument(line).getBoolean()) {
                     //ok
                 } else {
                     throw new NutsUserCancelException();

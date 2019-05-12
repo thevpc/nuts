@@ -45,15 +45,15 @@
 //    }
 //
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+//        NutsCommandLine cmdLine = cmdLine(args, context);
 //        String repo = null;
 //        net.vpc.app.nuts.NutsPushCommand push = context.getWorkspace().push().setSession(context.getSession());
-//        Argument a;
+//        NutsCommandArg a;
 //        do {
 //            if (context.configure(cmdLine)) {
 //                //
 //            } else if (cmdLine.readAllOnce("--repo", "-r")) {
-//                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression();
+//                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getString();
 //            } else if (cmdLine.readAllOnce("--force", "-f")) {
 //                push.setForce(true);
 //            } else {

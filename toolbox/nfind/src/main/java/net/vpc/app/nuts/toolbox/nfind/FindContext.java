@@ -8,11 +8,11 @@ package net.vpc.app.nuts.toolbox.nfind;
 import java.io.PrintStream;
 import java.util.EnumSet;
 import java.util.HashSet;
+import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 
 /**
  *

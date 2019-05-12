@@ -6,12 +6,7 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.app.nuts.app.options.ArchitectureNonOption;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.DefaultNonOption;
-import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
@@ -23,7 +18,7 @@ import java.io.PrintStream;
 public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAllOnce("show location")) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
@@ -45,13 +40,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.readAllOnce("-s", "--save")) {
                     save = true;
                 } else if (cmdLine.readAllOnce("-h", "--archetype")) {
-                    archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", context.getWorkspace())).getStringOrError();
+                    archetype = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Archetype")).required().getString();
                 } else if (cmdLine.readAllOnce("-u", "--login")) {
-                    login = cmdLine.readRequiredNonOption(new DefaultNonOption("Login")).getStringOrError();
+                    login = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Login")).required().getString();
                 } else if (cmdLine.readAllOnce("-x", "--password")) {
-                    password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
+                    password = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Password")).required().getString();
                 } else {
-                    String ws = cmdLine.readRequiredNonOption(new DefaultNonOption("NewWorkspaceName")).getStringExpression();
+                    String ws = cmdLine.readRequiredNonOption(cmdLine.createNonOption("NewWorkspaceName")).getString();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
                                 new NutsWorkspaceOptions()
@@ -76,14 +71,14 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.readAll("set workspace boot-version")) {
-            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
+            String version = cmdLine.readRequiredNonOption(cmdLine.createNonOption("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.unexpectedArgument("config set workspace version");
 
         } else if (cmdLine.readAll("set workspace runtime-version", "set workspace runtime-id")) {
-            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
+            String version = cmdLine.readRequiredNonOption(cmdLine.createNonOption("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             if (version.contains("#")) {
                 c.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + version);
@@ -114,13 +109,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.readAllOnce("-s", "--nosave")) {
                     save = false;
                 } else if (cmdLine.readAllOnce("-h", "--archetype")) {
-                    archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", context.getWorkspace())).getStringOrError();
+                    archetype = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Archetype")).required().getString();
                 } else if (cmdLine.readAllOnce("-u", "--login")) {
-                    login = cmdLine.readRequiredNonOption(new DefaultNonOption("Username")).getStringOrError();
+                    login = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Username")).required().getString();
                 } else if (cmdLine.readAllOnce("-x", "--password")) {
-                    password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
+                    password = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Password")).required().getString();
                 } else {
-                    String ws = cmdLine.readRequiredNonOption(new FolderNonOption("WorkspacePath")).getStringExpression();
+                    String ws = cmdLine.readRequiredNonOption(cmdLine.createNonOption("WorkspacePath")).getString();
                     wsCount++;
                     cmdLine.unexpectedArgument("config set workspace");
                     processed = true;

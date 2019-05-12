@@ -1,7 +1,6 @@
 package net.vpc.toolbox.mysql.local;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.ProcessBuilder2;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;
@@ -12,8 +11,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsApplicationContext;
 
 public class LocalMysqlDatabaseConfigService {
 

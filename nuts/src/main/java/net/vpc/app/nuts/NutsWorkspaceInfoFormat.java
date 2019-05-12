@@ -36,7 +36,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -80,19 +80,23 @@ public interface NutsWorkspaceInfoFormat {
     boolean isFancy();
 
     boolean isMinimal();
-    
+
     NutsWorkspaceInfoFormat showRepositories();
+
     NutsWorkspaceInfoFormat showRepositories(boolean enable);
+
     NutsWorkspaceInfoFormat setShowRepositories(boolean enable);
+
     boolean isShowRepositories();
 
     NutsWorkspaceInfoFormat setFancy(boolean fancy);
 
     NutsWorkspaceInfoFormat setMinimal(boolean minimal);
 
-    NutsOutputFormat getOutputFormat();
+    NutsSession getSession();
 
-    NutsWorkspaceInfoFormat outputFormat(NutsOutputFormat outputFormat);
-    
-    NutsWorkspaceInfoFormat setOutputFormat(NutsOutputFormat outputFormat);
+    NutsWorkspaceInfoFormat session(NutsSession session);
+
+    NutsWorkspaceInfoFormat setSession(NutsSession session);
+
 }

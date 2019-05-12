@@ -1,17 +1,7 @@
 package net.vpc.app.nuts.toolbox.nfind;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.app.nuts.app.options.ArchitectureNonOption;
-import net.vpc.app.nuts.app.options.PackagingNonOption;
-import net.vpc.app.nuts.app.options.RepositoryNonOption;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.DefaultNonOption;
-import net.vpc.common.commandline.format.TreeFormatter;
-import net.vpc.common.commandline.format.TreeModel;
-import net.vpc.common.commandline.format.TreeNodeFormatter;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -30,14 +20,14 @@ public class NFindMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        CommandLine cmdLine = new CommandLine(context);
+        NutsCommandLine cmdLine = context.newCommandLine();
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
         findContext.context = context;
         findContext.out = context.out();
         findContext.err = context.err();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -153,11 +143,11 @@ public class NFindMain extends NutsApplication {
             } else if (currentFindWhat == 0 && (a = cmdLine.readOption("--optional-only")) != null) {
                 findContext.acceptOptional = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-p", "--pkg")) {
-                findContext.pack.add(cmdLine.readRequiredNonOption(new PackagingNonOption("Packaging", context.getWorkspace())).getStringExpression());
+                findContext.pack.add(cmdLine.readRequiredNonOption(cmdLine.createNonOption("Packaging")).getString());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-a", "--arch")) {
-                findContext.arch.add(cmdLine.readRequiredNonOption(new ArchitectureNonOption("Architecture", context.getWorkspace())).getStringExpression());
+                findContext.arch.add(cmdLine.readRequiredNonOption(cmdLine.createNonOption("Architecture")).getString());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-r", "--repo")) {
-                findContext.repos.add(cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression());
+                findContext.repos.add(cmdLine.readRequiredNonOption(cmdLine.createNonOption("Repository")).getString());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-V", "--last-version")) {
                 findContext.allVersions = false;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-v", "--all-versions")) {
@@ -165,19 +155,19 @@ public class NFindMain extends NutsApplication {
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-Y", "--summary")) {
                 findContext.showSummary = true;
             } else {
-                Argument val = cmdLine.readRequiredNonOption(new DefaultNonOption("Expression"));
+                NutsArgument val = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Expression"));
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat(this));
                 }
                 if (cmdLine.isExecMode()) {
                     if (findContext.jsflag) {
                         if (findWhats.get(currentFindWhat).jsCode == null) {
-                            findWhats.get(currentFindWhat).jsCode = val.getStringExpression();
+                            findWhats.get(currentFindWhat).jsCode = val.getString();
                         } else {
                             throw new NutsExecutionException("find: Unsupported mixed and non js find expressions", 1);
                         }
                     } else {
-                        String arg = val.getStringExpression();
+                        String arg = val.getString();
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).nonjs.add(arg);
                         } else {
@@ -643,28 +633,29 @@ public class NFindMain extends NutsApplication {
 
     private void printDependencyTree(FindContext findContext, NutsInfo info) {
 
-        TreeFormatter<NutsInfo> f = new TreeFormatter<>(new TreeModel<NutsInfo>() {
-            Set<String> visited = new HashSet<>();
+        NutsTreeFormat<NutsInfo> f = findContext.context.getWorkspace().formatter().createTreeFormat()
+                .setTree(new net.vpc.app.nuts.NutsTreeModel<NutsInfo>() {
+                    Set<String> visited = new HashSet<>();
 
-            @Override
-            public NutsInfo getRoot() {
-                return prepareChildren(findContext, info, visited);
-            }
+                    @Override
+                    public NutsInfo getRoot() {
+                        return prepareChildren(findContext, info, visited);
+                    }
 
-            @Override
-            public List<NutsInfo> getChildren(NutsInfo o) {
-                List<NutsInfo> c = o.children;
-                for (NutsInfo nutsInfo : c) {
-                    prepareChildren(findContext, nutsInfo, visited);
-                }
-                return c;
-            }
-        }, new TreeNodeFormatter<NutsInfo>() {
+                    @Override
+                    public List<NutsInfo> getChildren(NutsInfo o) {
+                        List<NutsInfo> c = o.children;
+                        for (NutsInfo nutsInfo : c) {
+                            prepareChildren(findContext, nutsInfo, visited);
+                        }
+                        return c;
+                    }
+                }).setFormatter(new NutsTreeNodeFormatter<NutsInfo>() {
             @Override
             public String format(NutsInfo o) {
                 return toStringId(findContext, o);
             }
-        }, null);
+        });
         f.print(findContext.out);
     }
 

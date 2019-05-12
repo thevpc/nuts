@@ -1,7 +1,6 @@
 package net.vpc.toolbox.mysql.local;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.*;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;

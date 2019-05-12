@@ -5,45 +5,53 @@
  */
 package net.vpc.app.nuts.core.util;
 
-import java.io.PrintStream;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsOutputCustomFormat;
+import net.vpc.app.nuts.NutsOutputListFormat;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsFindTraceFormatJson implements NutsOutputCustomFormat {
+public class DefaultNutsFindTraceFormatJson extends DefaultNutsFindTraceFormatBase<NutsOutputListFormat> {
 
-    CanonicalBuilder canonicalBuilder;
+    private boolean pretty = true;
 
-    public DefaultNutsFindTraceFormatJson() {
+    public DefaultNutsFindTraceFormatJson(NutsWorkspace ws) {
+        super(ws, NutsOutputFormat.JSON);
     }
 
     @Override
-    public NutsOutputFormat getSupportedFormat() {
-        return NutsOutputFormat.JSON;
-    }
-    
-
-    @Override
-    public void formatStart(PrintStream out, NutsWorkspace ws) {
-        out.println("[");
+    public void formatStart() {
+        getValidOut().println("[");
     }
 
     @Override
-    public void formatElement(Object object, long index, PrintStream out, NutsWorkspace ws) {
-        if (index > 0) {
-            out.print(", ");
+    public NutsOutputListFormat setOption(String name, String value) {
+        if (name != null) {
+            switch (name) {
+                case "pretty": {
+                    pretty = CoreCommonUtils.parseBoolean(value, true);
+                    break;
+                }
+            }
         }
-        out.printf("%N%n", ws.io().json().pretty().toJsonString(object));
-        out.flush();
+        return this;
     }
 
     @Override
-    public void formatEnd(long count, PrintStream out, NutsWorkspace ws) {
-        out.println("]");
+    public void formatElement(Object object, long index) {
+        if (index > 0) {
+            getValidOut().print(", ");
+        }
+        getValidOut().printf("%N%n", getWs().io().json().pretty(pretty).toJsonString(object));
+        getValidOut().flush();
+    }
+
+    @Override
+    public void formatEnd(long count) {
+        getValidOut().println("]");
     }
 
 }

@@ -1,9 +1,9 @@
 package net.vpc.toolbox.worky;
 
-import net.vpc.app.nuts.app.NutsApplication;
-import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
+import net.vpc.app.nuts.NutsApplication;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 public class WorkyMain extends NutsApplication {
 
@@ -18,8 +18,8 @@ public class WorkyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         this.service = new WorkspaceService(appContext);
-        CommandLine cmdLine = new CommandLine(args, appContext.getAutoComplete());
-        Argument a;
+        NutsCommandLine cmdLine = appContext.newCommandLine();
+        NutsArgument a;
         do {
             if (appContext.configure(cmdLine)) {
                 //

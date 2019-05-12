@@ -27,12 +27,12 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsBootConfig;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -55,6 +55,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsUpdateCommand;
 import net.vpc.app.nuts.NutsUserCancelException;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -1121,8 +1122,8 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     @Override
     public NutsUpdateCommand parseOptions(String... args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "-a":

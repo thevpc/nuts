@@ -8,13 +8,12 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExtensionInfo;
 import net.vpc.app.nuts.NutsWorkspaceExtension;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.app.nuts.app.options.ExtensionNonOption;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * @author vpc
@@ -22,17 +21,17 @@ import java.io.PrintStream;
 public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
         if (cmdLine.readAll("add extension", "ax")) {
-            String extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.getWorkspace())).getStringExpression();
+            String extensionId = cmdLine.readRequiredNonOption(cmdLine.createNonOption("extension")).getString();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
-                extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.getWorkspace())).getStringExpression();
+                extensionId = cmdLine.readRequiredNonOption(cmdLine.createNonOption("extension")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
                 }

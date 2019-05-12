@@ -11,7 +11,6 @@
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
-        <module>nuts-cmd-app</module>
         <module>toolbox/mvn</module>
         <module>toolbox/nfind</module>
         <module>toolbox/nadmin</module>

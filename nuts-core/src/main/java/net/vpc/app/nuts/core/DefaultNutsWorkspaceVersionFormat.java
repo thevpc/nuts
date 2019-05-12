@@ -10,20 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
-import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 import java.util.*;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
-import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsOutputFormat;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 /**
  *
@@ -35,18 +36,42 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     private final NutsWorkspace ws;
     private final Properties extraProperties = new Properties();
-    private NutsOutputFormat outputFormat = null;
     private boolean minimal = false;
     private boolean pretty = true;
+    private NutsSession session;
 
     public DefaultNutsWorkspaceVersionFormat(NutsWorkspace ws) {
         this.ws = ws;
     }
 
+    public NutsSession getValidSession() {
+        if (session == null) {
+            session = ws.createSession();
+        }
+        return session;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsWorkspaceVersionFormat session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
+    public NutsWorkspaceVersionFormat setSession(NutsSession session) {
+        //should copy because will chage outputformat
+        this.session = session == null ? null : session.copy();
+        return this;
+    }
+
     @Override
     public NutsWorkspaceVersionFormat parseOptions(String[] args) {
-        NutsCommandLine cmd = new NutsCommandLine(args);
-        NutsCommandArg a;
+        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
+        NutsArgument a;
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "--min": {
@@ -58,28 +83,14 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                     break;
                 }
                 case "--add": {
-                    NutsCommandArg r = cmd.getValueFor(a);
+                    NutsArgument r = cmd.getValueFor(a);
                     extraProperties.put(r.getKey().getString(), r.getValue().getString());
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    throw new NutsIllegalArgumentException("Unsupported argument " + a);
+                    if (!getValidSession().parseOption(a, cmd)) {
+                        throw new NutsIllegalArgumentException("Unsupported argument " + a);
+                    }
                 }
             }
         }
@@ -105,22 +116,6 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     @Override
     public NutsWorkspaceVersionFormat setMinimal(boolean minimal) {
         this.minimal = minimal;
-        return this;
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return outputFormat;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat) {
-        this.outputFormat = outputFormat;
         return this;
     }
 
@@ -224,7 +219,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public void print(Writer out) {
-        NutsOutputFormat t = outputFormat;
+        NutsOutputFormat t = getSession().getOutputFormat();
         if (t == null) {
             t = NutsOutputFormat.PLAIN;
         }

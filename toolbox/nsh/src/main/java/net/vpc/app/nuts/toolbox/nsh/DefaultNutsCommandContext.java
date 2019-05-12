@@ -3,16 +3,15 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.Env;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.NutsArgument;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
 
@@ -37,8 +36,8 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public boolean configure(CommandLine cmd) {
-        Argument a;
+    public boolean configure(NutsCommandLine cmd) {
+        NutsArgument a;
         if ((a = cmd.readOption("--help")) != null) {
             if (cmd.isExecMode()) {
                 showHelp();
@@ -56,7 +55,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
         } else if ((a = cmd.readOption("--no-color")) != null) {
             setTerminalMode(NutsTerminalMode.FILTERED);
         } else if ((a = cmd.readImmediateStringOption("--color")) != null) {
-            switch (StringUtils.trim(a.getValue()).toLowerCase()) {
+            switch (StringUtils.trim(a.getValue().getString()).toLowerCase()) {
                 case "formatted": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
@@ -76,11 +75,11 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
                     break;
                 }
                 default:{
-                    setTerminalMode(new NutsCommandArg(a.getValue()).getBoolean(false)?NutsTerminalMode.FORMATTED:NutsTerminalMode.FILTERED);
+                    setTerminalMode(a.getValue().getBoolean(false)?NutsTerminalMode.FORMATTED:NutsTerminalMode.FILTERED);
                 }
             }
         } else if ((a = cmd.readStringOption("--term")) != null) {
-            String s = a.getStringValue().toLowerCase();
+            String s = a.getValue().getString().toLowerCase();
             switch (s) {
                 case "":
                 case "system": {
@@ -118,10 +117,12 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
         out().println(command.getHelp());
     }
 
+    @Override
     public PrintStream out() {
         return consoleContext.out();
     }
 
+    @Override
     public PrintStream err() {
         return consoleContext.err();
     }
@@ -130,6 +131,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
         return terminalMode;
     }
 
+    @Override
     public void setTerminalMode(NutsTerminalMode outMode) {
         getWorkspace().getSystemTerminal().setMode(outMode);
     }

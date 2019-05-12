@@ -2,7 +2,6 @@ package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIOManager;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.FileUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlConfig;
@@ -13,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import net.vpc.app.nuts.NutsApplicationContext;
 
 public class RemoteMysqlConfigService {
 

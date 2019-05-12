@@ -34,7 +34,7 @@
 //import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.common.commandline.Argument;
-//import net.vpc.common.commandline.CommandLine;
+//import NutsCommandLine;
 //import net.vpc.common.mvn.PomIdResolver;
 //
 ///**
@@ -50,9 +50,9 @@
 //        NutsWorkspace ws = context.getWorkspace();
 //        boolean fancy = false;
 //        boolean min = false;
-//        CommandLine cmdLine = new CommandLine(args);
+//        NutsCommandLine cmdLine = new NutsCommandLine(args);
 //        NutsOutputFormat ft = NutsOutputFormat.PLAIN;
-//        Argument a;
+//        NutsCommandArg a;
 //        while (cmdLine.hasNext()) {
 //            if (context.configure(cmdLine)) {
 //                //

@@ -8,7 +8,6 @@ import net.vpc.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatConfig;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
 import net.vpc.toolbox.tomcat.util.AppStatus;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.*;

@@ -2,7 +2,6 @@ package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.NutsCommandStringFormatterAdapter;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.ssh.SShConnection;
@@ -15,6 +14,7 @@ import net.vpc.toolbox.mysql.local.LocalMysqlDatabaseConfigService;
 
 import java.io.PrintStream;
 import java.util.List;
+import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
 
 public class RemoteMysqlDatabaseConfigService {

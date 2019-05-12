@@ -32,14 +32,13 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.DefaultNonOption;
-import net.vpc.common.commandline.FileNonOption;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -61,12 +60,12 @@ public class GrepCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
         PrintStream out = context.out();
-        Argument a;
+        NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -92,9 +91,9 @@ public class GrepCommand extends AbstractNutsCommand {
                 return 0;
             } else {
                 if (expression == null) {
-                    expression = cmdLine.readRequiredNonOption(new DefaultNonOption("expression")).getStringExpression();
+                    expression = cmdLine.readRequiredNonOption(cmdLine.createNonOption("expression")).getString();
                 } else {
-                    String path = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
+                    String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                     File file = new File(context.getShell().getAbsolutePath(path));
                     files.add(file);
                 }

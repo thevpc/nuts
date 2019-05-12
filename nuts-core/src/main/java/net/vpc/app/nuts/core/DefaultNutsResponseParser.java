@@ -1,9 +1,10 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsDefaultArgument;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsResponseParser;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
+import net.vpc.app.nuts.NutsArgument;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
 
@@ -59,7 +60,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsCommandArg a = new NutsCommandArg(sReponse);
+                NutsArgument a = new NutsDefaultArgument(sReponse);
                 if (!a.isBoolean()) {
                     throw new NutsIllegalArgumentException("Invalid response " + sReponse);
                 }

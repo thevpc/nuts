@@ -5,14 +5,9 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
-import net.vpc.common.commandline.Argument;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.NonBlockingInputStreamAdapter;
 import net.vpc.common.strings.StringUtils;
@@ -20,6 +15,9 @@ import net.vpc.common.strings.StringUtils;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsArgument;
 
 /**
  * @author vpc
@@ -27,18 +25,18 @@ import java.net.Socket;
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
     @Override
-    public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("connect")) {
             String password = null;
             String server = null;
-            Argument a;
+            NutsArgument a;
             while (cmdLine.hasNext()) {
                 if (context.configure(cmdLine)) {
                     //
                 } else if (cmdLine.readAllOnce("--password")) {
-                    password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
+                    password = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Password")).required().getString();
                 } else {
-                    server = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getStringOrError();
+                    server = cmdLine.readRequiredNonOption(cmdLine.createNonOption("ServerAddress")).required().getString();
                     cmdLine.unexpectedArgument("nadmin connect");
                 }
             }

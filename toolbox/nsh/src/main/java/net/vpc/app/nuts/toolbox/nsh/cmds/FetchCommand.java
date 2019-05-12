@@ -52,16 +52,16 @@
 //    }
 //
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+//        NutsCommandLine cmdLine = cmdLine(args, context);
 //        String lastLocationFile = null;
 //        boolean descMode = false;
 //        boolean effective = false;
-//        Argument a;
+//        NutsCommandArg a;
 //        do {
 //            if (context.configure(cmdLine)) {
 //                //
 //            } else if (cmdLine.readAll("-t", "--to")) {
-//                lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getStringExpression());
+//                lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString());
 //            } else if (cmdLine.readAll("-d", "--desc")) {
 //                descMode = true;
 //            } else if (cmdLine.readAll("-n", "--nuts")) {
@@ -70,7 +70,7 @@
 //                effective = true;
 //            } else {
 //                NutsWorkspace ws = context.getWorkspace();
-//                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
+//                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
 //                if (cmdLine.isExecMode()) {
 //                    if (descMode) {
 //                        NutsDefinition file = null;
