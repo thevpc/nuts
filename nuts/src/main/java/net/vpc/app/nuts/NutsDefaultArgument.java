@@ -127,14 +127,21 @@ public class NutsDefaultArgument implements NutsArgument {
         return expression == null;
     }
 
+    @Override
     public boolean isBlank() {
         return expression == null || expression.trim().isEmpty();
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public boolean isEmpty() {
         return expression == null || expression.isEmpty();
     }
 
+    @Override
     public boolean isNegated() {
         if (expression == null) {
             return false;
@@ -158,6 +165,7 @@ public class NutsDefaultArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public boolean isComment() {
         if (expression == null) {
             return false;
@@ -190,6 +198,7 @@ public class NutsDefaultArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public boolean isInt() {
         try {
             if (expression != null) {
@@ -201,10 +210,12 @@ public class NutsDefaultArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public int getInt() {
         return getInt(0);
     }
 
+    @Override
     public int getInt(int defaultValue) {
         if (NutsUtils.isBlank(expression)) {
             return defaultValue;
@@ -216,6 +227,7 @@ public class NutsDefaultArgument implements NutsArgument {
         }
     }
 
+    @Override
     public boolean isLong() {
         try {
             if (expression != null) {
@@ -227,10 +239,12 @@ public class NutsDefaultArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public long getLong() {
         return getLong(0);
     }
 
+    @Override
     public long getLong(long defaultValue) {
         if (NutsUtils.isBlank(expression)) {
             return defaultValue;
@@ -242,59 +256,30 @@ public class NutsDefaultArgument implements NutsArgument {
         }
     }
 
+    @Override
     public boolean getBoolean() {
-        return getBoolean(false);
+        Boolean bb = NutsUtils.parseBoolean(expression, null);
+        boolean b = NutsUtils.isBlank(expression)?false:bb==null?false:bb.booleanValue();
+        if (isNegated()) {
+            return !b;
+        }
+        return b;
     }
 
+    @Override
     public boolean isBoolean() {
         if (expression != null) {
-            switch (expression.trim().toLowerCase()) {
-                case "ok":
-                case "true":
-                case "yes":
-                case "always":
-                case "enable":
-                case "enabled":
-                case "on":
-                case "y":
-                case "false":
-                case "no":
-                case "none":
-                case "never":
-                case "disable":
-                case "n":
-                case "off":
-                    return true;
-            }
+            return NutsUtils.parseBoolean(expression, null) != null;
         }
         return false;
     }
 
-    public boolean getBoolean(boolean defaultValue) {
+    @Override
+    public Boolean getBoolean(Boolean defaultValue) {
         if (expression == null) {
             return defaultValue;
         }
-        switch (expression.trim().toLowerCase()) {
-            case "ok":
-            case "true":
-            case "yes":
-            case "always":
-            case "enable":
-            case "enabled":
-            case "on":
-            case "y":
-                return true;
-            case "false":
-            case "no":
-            case "none":
-            case "never":
-            case "disable":
-            case "disabled":
-            case "n":
-            case "off":
-                return false;
-        }
-        return defaultValue;
+        return NutsUtils.parseBoolean(expression, defaultValue);
     }
 
     @Override

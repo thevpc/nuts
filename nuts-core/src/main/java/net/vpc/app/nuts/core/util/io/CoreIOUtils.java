@@ -62,7 +62,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
-import net.vpc.app.nuts.core.DefaultNutsURLHeader;
+import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 

@@ -47,14 +47,17 @@ search for components/==nuts==
        or [[--version]] {{\<version\>}}
             : force updates to the provided {{\<version\>}}
        [[--args]] ...        : provide arguments to pass to updater
-       [[-t]] or [[--trace]] : enable trace operations/result with a meaning message (default true)
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
-       [[--table]]: trace operation as table (if available). equivalent to [[--trace-format]]=[[table]]
-       [[--tree]]: trace operation as tree (if available). equivalent to [[--trace-format]]=[[table]]
             
+@@STANDARD OPTIONS@@ :
+    This command supports standard options :
+       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
+       [[--xml]]: trace operation xml. equivalent to [[--output-format]]=[[xml]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
+       [[--table]]: trace operation as table. equivalent to [[--output-format]]=[[table]]
+       [[--tree]]: trace operation as tree. equivalent to [[--output-format]]=[[tree]]
+
 @@EXAMPLES:@@
         ==nuts== find [[--help]]
             shows this help and exit

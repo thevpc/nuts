@@ -24,7 +24,11 @@ public interface NutsWorkspaceCommand {
 
     NutsWorkspaceCommand setSession(NutsSession session);
 
-    NutsWorkspaceCommand parseOptions(String... args);
+    NutsWorkspaceCommand configure(String... args);
+    
+    NutsWorkspaceCommand configure(NutsCommandLine commandLine, boolean skipIgnored);
+    
+    boolean configureFirst(NutsCommandLine commandLine);
 
     NutsWorkspaceCommand run();
 

@@ -272,8 +272,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                         .id(id1).descriptor(foundDefinition.getDescriptor())
                                         .localPath(copyTo)
                                         .session(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options))
-                                        .run().getResult()
-                                        ;
+                                        .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
                                     foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));
@@ -342,8 +341,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             if (getValidSession().isTrace()) {
                 final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
                 NutsOutputListFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
-                        .session(getValidSession())
-                        ;
+                        .session(getValidSession());
                 ff.formatStart();
                 ff.formatElement(foundDefinition, -1);
                 ff.formatEnd(1);
@@ -493,22 +491,18 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     }
 
     @Override
-    public NutsFetchCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("find: Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
             }
         }
-        return this;
+        return false;
     }
 }

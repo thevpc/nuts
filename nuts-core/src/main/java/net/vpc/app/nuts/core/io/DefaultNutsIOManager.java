@@ -1,4 +1,4 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsHashCommand;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;

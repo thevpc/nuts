@@ -465,103 +465,108 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     @Override
-    protected boolean parseOption(NutsArgument a, NutsCommandLine cmd) {
-        if (super.parseOption(a, cmd)) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        if (super.configureFirst(cmdLine)) {
             return true;
+        }
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
         }
         switch (a.strKey()) {
             case "--lenient": {
-                this.setLenient(a.getBooleanValue());
+                this.setLenient(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "-r":
             case "--repository": {
-                this.addRepository(cmd.getValueFor(a).getString());
+                this.addRepository(cmdLine.readStringOption().getString());
                 return true;
             }
 
             case "--scope": {
-                this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                this.addScope(NutsDependencyScope.valueOf(cmdLine.readStringOption().getString().toUpperCase().replace("-", "_")));
                 return true;
             }
             case "-f":
             case "--fetch": {
-                this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.readStringOption().getString().toUpperCase().replace("-", "_")));
                 return true;
             }
             case "--main-only": {
-                this.includeDependencies(!a.getBooleanValue());
-                break;
+                this.includeDependencies(!cmdLine.readBooleanOption().getBoolean());
+                return true;
             }
             case "--main-and-dependencies": {
-                this.includeDependencies(a.getBooleanValue());
-                break;
+                this.includeDependencies(cmdLine.readBooleanOption().getBoolean());
+                return true;
             }
             case "--dependencies": {
-                this.includeDependencies(a.getBooleanValue());
-                break;
+                this.includeDependencies(cmdLine.readBooleanOption().getBoolean());
+                return true;
             }
             case "--anywhere": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
                 return true;
             }
             case "--installed": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.INSTALLED);
                 return true;
             }
             case "--local": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.LOCAL);
                 return true;
             }
             case "--offline": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.OFFLINE);
                 return true;
             }
             case "--online": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.ONLINE);
                 return true;
             }
             case "--remote": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.REMOTE);
                 return true;
             }
             case "--wired": {
+                cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.WIRED);
                 return true;
             }
             case "--optional": {
-                NutsArgument v = cmd.getValueFor(a);
-                if (CoreCommonUtils.isYes(v.getString())) {
-                    this.setAcceptOptional(true);
-                } else if (CoreCommonUtils.isNo(v.getString())) {
-                    this.setAcceptOptional(false);
-                } else if (CoreCommonUtils.isNo(v.getString())) {
-                    this.setAcceptOptional(null);
-                }
+                NutsArgument v = cmdLine.readStringOption();
+                this.setAcceptOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
                 return true;
             }
             case "--cached": {
-                this.setCached(a.getBooleanValue());
+                this.setCached(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "--effective": {
-                this.setEffective(a.getBooleanValue());
+                this.setEffective(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "--indexed": {
-                this.setIndexed(a.getBooleanValue());
+                this.setIndexed(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "--content": {
-                this.setIncludeContent(a.getBooleanValue());
+                this.setIncludeContent(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "--install-info": {
-                this.setIncludeInstallInformation(a.getBooleanValue());
+                this.setIncludeInstallInformation(cmdLine.readBooleanOption().getBoolean());
                 return true;
             }
             case "--location": {
-                String location = cmd.getValueFor(a).getString();
+                String location = cmdLine.readStringOption().getString();
                 this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
                 return true;
             }

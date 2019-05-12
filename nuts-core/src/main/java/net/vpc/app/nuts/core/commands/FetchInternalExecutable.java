@@ -25,7 +25,7 @@ public class FetchInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.fetch().session(getSession(true).trace()).parseOptions(args).run();
+        ws.fetch().session(getSession(true).trace()).configure(args).run();
     }
     
 }

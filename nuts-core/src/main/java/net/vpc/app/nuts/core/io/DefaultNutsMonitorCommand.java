@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.io;
 
+import net.vpc.app.nuts.core.io.DefaultNutsInputStreamMonitor;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.logging.Level;

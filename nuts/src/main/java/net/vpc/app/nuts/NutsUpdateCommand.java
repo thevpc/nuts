@@ -217,7 +217,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand{
     NutsUpdateCommand setSession(NutsSession session);
 
     @Override
-    NutsUpdateCommand parseOptions(String... args);
+    NutsUpdateCommand configure(String... args);
 
     @Override
     NutsUpdateCommand run();

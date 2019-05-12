@@ -1,4 +1,4 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.format;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +19,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
@@ -88,7 +85,8 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                     break;
                 }
                 default: {
-                    if (!getValidSession().parseOption(a, cmd)) {
+                    cmd.pushBack(a);
+                    if (!getValidSession().configureFirst(cmd)) {
                         throw new NutsIllegalArgumentException("Unsupported argument " + a);
                     }
                 }
@@ -219,22 +217,14 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public void print(Writer out) {
-        NutsOutputFormat t = getSession().getOutputFormat();
-        if (t == null) {
-            t = NutsOutputFormat.PLAIN;
+        NutsOutputFormat t = getValidSession().getOutputFormat();
+        if ((t == null || t == NutsOutputFormat.PLAIN) && isMinimal()) {
+            PrintWriter pout = (out instanceof PrintWriter) ? ((PrintWriter) out) : new PrintWriter(out);
+            NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
+            pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
+        } else {
+            ws.formatter().createOutputFormatWriter(t, buildProps()).write(out);
         }
-        switch (t) {
-            case PLAIN:
-                printPlain(out);
-                return;
-            case PROPS:
-                printProps(out);
-                return;
-            case JSON:
-                printJson(out);
-                return;
-        }
-        throw new NutsUnsupportedArgumentException("Unsupported format Type " + t);
     }
 
     public Map<String, String> buildProps() {
@@ -259,42 +249,4 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
         }
         return props;
     }
-
-    public void printProps(Writer w) {
-        CoreIOUtils.storeProperties(buildProps(), w);
-    }
-
-    public void printJson(Writer w) {
-        ws.io().json().pretty().write(buildProps(), w);
-    }
-
-    public void printPlain(Writer w) {
-        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
-        NutsWorkspaceConfigManager configManager = ws.config();
-        if (isMinimal()) {
-            NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
-            out.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
-        } else {
-            int len = 23;
-            Map<String, String> props = buildProps();
-            for (String extraKey : props.keySet()) {
-                int x = ws.parser().escapeText(extraKey).length();
-                if (x > len) {
-                    len = x;
-                }
-            }
-            boolean first = true;
-            for (Map.Entry<String, String> e : props.entrySet()) {
-                if (first) {
-                    first = false;
-                } else {
-                    out.print("\n");
-                }
-                String key = e.getKey();
-                String value = e.getValue();
-                out.printf(CoreStringUtils.alignLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
-            }
-        }
-    }
-
 }

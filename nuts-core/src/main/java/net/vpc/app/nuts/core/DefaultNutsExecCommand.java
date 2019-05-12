@@ -473,47 +473,51 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     }
 
     @Override
-    public NutsExecCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
         if (command == null) {
             command = new ArrayList<>();
         }
-        while ((a = cmd.next()) != null) {
-            if (a.isOption()) {
-                if (command.isEmpty()) {
-                    switch (a.strKey()) {
-                        case "--external":
-                        case "--spawn":
-                        case "-x": {
-                            setExecutionType(NutsExecutionType.SPAWN);
-                            break;
-                        }
-                        case "--embedded":
-                        case "-b": {
-                            setExecutionType(NutsExecutionType.EMBEDDED);
-                            break;
-                        }
-                        case "--native":
-                        case "--syscall":
-                        case "-n": {
-                            setExecutionType(NutsExecutionType.SYSCALL);
-                            break;
-                        }
-                        default: {
-                            if (!super.parseOption(a, cmd)) {
-                                executorOptions.add(a.getString());
-                            }
-                        }
+        if (!command.isEmpty()) {
+            command.add(a.getString());
+            return true;
+        }
+        switch (a.strKey()) {
+            case "--external":
+            case "--spawn":
+            case "-x": {
+                cmdLine.skip();
+                setExecutionType(NutsExecutionType.SPAWN);
+                return true;
+            }
+            case "--embedded":
+            case "-b": {
+                cmdLine.skip();
+                setExecutionType(NutsExecutionType.EMBEDDED);
+                return true;
+            }
+            case "--native":
+            case "--syscall":
+            case "-n": {
+                cmdLine.skip();
+                setExecutionType(NutsExecutionType.SYSCALL);
+                return true;
+            }
+            default: {
+                if (!super.configureFirst(cmdLine)) {
+                    cmdLine.skip();
+                    if (a.isOption()) {
+                        executorOptions.add(a.getString());
+                    } else {
+                        command.add(a.getString());
                     }
-                } else {
-                    throw new NutsIllegalArgumentException("Unexpected option here");
                 }
-            } else {
-                command.add(a.getString());
             }
         }
-        return this;
+        return false;
     }
 
     @Override

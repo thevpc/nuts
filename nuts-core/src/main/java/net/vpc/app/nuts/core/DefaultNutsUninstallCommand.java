@@ -236,35 +236,37 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     }
 
     @Override
-    public NutsUninstallCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-e":
-                case "--earse": {
-                    this.setErase(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "-e":
+            case "--earse": {
+                this.setErase(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-g":
+            case "--args": {
+                while (cmdLine.hasNext()) {
+                    this.addArg(cmdLine.readStringOption().getString());
                 }
-                case "-g":
-                case "--args": {
-                    while (cmd.hasNext()) {
-                        this.addArg(cmd.next().getString());
-                    }
-                    break;
+                return true;
+            }
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    return false;
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
     }
 
 }

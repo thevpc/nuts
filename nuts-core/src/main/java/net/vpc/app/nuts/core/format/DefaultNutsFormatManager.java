@@ -1,7 +1,10 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.format;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceCellFormat;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.DefaultNutsDescriptorFormat;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
@@ -11,7 +14,7 @@ import net.vpc.app.nuts.core.app.format.DefaultTreeFormat;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
 
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
 
     public DefaultNutsFormatManager(NutsWorkspace ws) {
         this.ws = ws;
@@ -66,6 +69,22 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     @Override
     public NutsTreeFormat createTreeFormat() {
         return new DefaultTreeFormat();
+    }
+
+    @Override
+    public NutsOutputFormatWriter createOutputFormatWriter(NutsOutputFormat format, Object value) {
+        if (format == null) {
+            format = NutsOutputFormat.PLAIN;
+        }
+        if (value == null) {
+            Map m = new HashMap();
+            m.put(null, null);
+            value = m;
+        }
+        if (ObjectOutputFormatWriterHelper.isMapStringObject(value)) {
+            return new MapStringObjectOutputFormatWriter(format, ws, (Map) value);
+        }
+        throw new NutsUnsupportedArgumentException("Unsupported OutputFormatWriter for type " + value.getClass());
     }
 
 }

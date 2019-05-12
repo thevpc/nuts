@@ -1,15 +1,16 @@
 package net.vpc.app.nuts.core.app.format;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsTreeNodeFormatter;
 import net.vpc.app.nuts.NutsTreeModel;
 import net.vpc.app.nuts.NutsTreeLinkFormatter;
 import net.vpc.app.nuts.NutsTreeFormat;
+import net.vpc.app.nuts.NutsTreeNodeFormat;
 
 public class DefaultTreeFormat<T> implements NutsTreeFormat {
 
@@ -36,13 +37,13 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
 //        }).toString();
 //        System.out.println(s);
 //    }
-    public static final NutsTreeNodeFormatter TO_STRING_FORMATTER = new NutsTreeNodeFormatter() {
+    public static final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
         public String format(Object o) {
             return String.valueOf(o);
         }
     };
-    private NutsTreeNodeFormatter formatter = TO_STRING_FORMATTER;
+    private NutsTreeNodeFormat formatter = TO_STRING_FORMATTER;
     private NutsTreeLinkFormatter linkFormatter = LINK_ASCII_FORMATTER;
     private NutsTreeModel tree;
 
@@ -55,7 +56,7 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
         this(tree, null, null);
     }
 
-    public DefaultTreeFormat(NutsTreeModel<T> tree, NutsTreeNodeFormatter formatter, NutsTreeLinkFormatter linkFormatter) {
+    public DefaultTreeFormat(NutsTreeModel<T> tree, NutsTreeNodeFormat formatter, NutsTreeLinkFormatter linkFormatter) {
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -70,11 +71,11 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
         this.tree = tree;
     }
 
-    public NutsTreeNodeFormatter getFormatter() {
+    public NutsTreeNodeFormat getNodeFormat() {
         return formatter;
     }
 
-    public DefaultTreeFormat setFormatter(NutsTreeNodeFormatter formatter) {
+    public DefaultTreeFormat setNodeFormat(NutsTreeNodeFormat formatter) {
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -82,11 +83,11 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
         return this;
     }
 
-    public NutsTreeLinkFormatter getLinkFormatter() {
+    public NutsTreeLinkFormatter getLinkFormat() {
         return linkFormatter;
     }
 
-    public DefaultTreeFormat setLinkFormatter(NutsTreeLinkFormatter linkFormatter) {
+    public DefaultTreeFormat setLinkFormat(NutsTreeLinkFormatter linkFormatter) {
         if (linkFormatter == null) {
             linkFormatter = LINK_ASCII_FORMATTER;
         }
@@ -116,6 +117,12 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
         out.flush();
     }
 
+    public void print(Writer w) {
+        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
+        print("", NutsTreeLinkFormatter.Type.FIRST, tree.getRoot(), out);
+        out.flush();
+    }
+
     private void print(String prefix, NutsTreeLinkFormatter.Type type, Object o, PrintStream out) {
         out.print(prefix);
         out.print(linkFormatter.formatMain(type));
@@ -136,16 +143,55 @@ public class DefaultTreeFormat<T> implements NutsTreeFormat {
         }
     }
 
-    public boolean configure(NutsCommandLine cmdLine) {
+    private void print(String prefix, NutsTreeLinkFormatter.Type type, Object o, PrintWriter out) {
+        out.print(prefix);
+        out.print(linkFormatter.formatMain(type));
+        out.print(formatter.format(o));
+        out.print("\n");
+        List children1 = tree.getChildren(o);
+        Iterator<Object> children = children1 == null ? Collections.emptyIterator() : children1.iterator();
+        Object last = null;
+        if (children.hasNext()) {
+            last = children.next();
+        }
+        while (children.hasNext()) {
+            Object c = last;
+            last = children.next();
+            print(prefix + linkFormatter.formatChild(type), NutsTreeLinkFormatter.Type.MIDDLE, c, out);
+        }
+        if (last != null) {
+            print(prefix + linkFormatter.formatChild(type), NutsTreeLinkFormatter.Type.LAST, last, out);
+        }
+    }
+
+    @Override
+    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
+        boolean conf = false;
+        while (commandLine.hasNext()) {
+            if (!configure(commandLine, false)) {
+                if (skipIgnored) {
+                    commandLine.skip();
+                } else {
+                    commandLine.unexpectedArgument();
+                }
+            } else {
+                conf = true;
+            }
+        }
+        return conf;
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a;
         if ((a = cmdLine.readStringOption("--border")) != null) {
             switch (a.getValue().strKey()) {
                 case "simple": {
-                    setLinkFormatter(LINK_ASCII_FORMATTER);
+                    setLinkFormat(LINK_ASCII_FORMATTER);
                     break;
                 }
                 case "none": {
-                    setLinkFormatter(LINK_SPACE_FORMATTER);
+                    setLinkFormat(LINK_SPACE_FORMATTER);
                     break;
                 }
             }

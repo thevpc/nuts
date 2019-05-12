@@ -146,7 +146,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             .setColumnsConfig("id", "enabled", "type", "location")
                             .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
-                        if (!t.configure(cmdLine)) {
+                        if (!t.configureFirst(cmdLine)) {
                             cmdLine.setCommandName("config list repos").unexpectedArgument();
                         }
                     }
@@ -229,7 +229,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             .setColumnsConfig("id", "enabled", "type", "location")
                             .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
-                        if (!t.configure(cmdLine)) {
+                        if (!t.configureFirst(cmdLine)) {
                             cmdLine.setCommandName("config edit repo").unexpectedArgument();
                         }
                     }

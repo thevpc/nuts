@@ -1045,19 +1045,19 @@ final class NutsUtils {
         return v;
     }
 
-    public static boolean getSystemBoolean(String property, boolean defaultValue) {
+    public static Boolean getSystemBoolean(String property, Boolean defaultValue) {
         return parseBoolean(System.getProperty(property), defaultValue);
     }
 
-    public static boolean parseBoolean(String value, boolean defaultValue) {
+    public static Boolean parseBoolean(String value, Boolean defaultValue) {
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
         value = value.trim().toLowerCase();
-        if (value.matches("true|enable|yes|always|y|on|ok")) {
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok")) {
             return true;
         }
-        if (value.matches("false|disable|no|none|never|n|off")) {
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko")) {
             return false;
         }
         return defaultValue;

@@ -111,7 +111,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand{
     NutsInstallCommand setSession(NutsSession session);
 
     @Override
-    NutsInstallCommand parseOptions(String... args);
+    NutsInstallCommand configure(String... args);
 
     @Override
     NutsInstallCommand run();

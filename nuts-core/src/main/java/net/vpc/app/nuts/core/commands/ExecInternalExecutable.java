@@ -29,7 +29,7 @@ public class ExecInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        execCommand.copy().session(getSession(true)).clearCommand().parseOptions(args).failFast().run();
+        execCommand.copy().session(getSession(true)).clearCommand().configure(args).failFast().run();
     }
     
 }

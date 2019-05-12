@@ -193,7 +193,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setSession(NutsSession session);
 
     @Override
-    NutsExecCommand parseOptions(String... args);
+    NutsExecCommand configure(String... args);
 
     @Override
     NutsExecCommand run();

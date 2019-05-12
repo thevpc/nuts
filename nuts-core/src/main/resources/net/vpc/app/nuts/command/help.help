@@ -1,12 +1,22 @@
 ==nuts== [[help]] \[-options\]... {{\<command-name\>}}... 
       show help and exit
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
 
        If no command names are provided, nuts help is displayed. Otherwise, Each command help is displayed.
        When Command is unknown or invalid, an error message is displayed.
+
+@@STANDARD OPTIONS@@ :
+    This command supports standard options :
+       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
+       [[--xml]]: trace operation xml. equivalent to [[--output-format]]=[[xml]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
+       [[--table]]: trace operation as table. equivalent to [[--output-format]]=[[table]]
+       [[--tree]]: trace operation as tree. equivalent to [[--output-format]]=[[tree]]
 
 @@EXAMPLES:@@
         ==nuts== help [[--help]]

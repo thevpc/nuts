@@ -25,7 +25,7 @@ public class FindInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.find().session(getSession(true).trace()).parseOptions(args).run();
+        ws.find().session(getSession(true).trace()).configure(args).run();
     }
     
 }

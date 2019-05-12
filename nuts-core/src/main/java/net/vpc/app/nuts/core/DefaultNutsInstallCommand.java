@@ -231,35 +231,38 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     }
 
     @Override
-    public NutsInstallCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-c":
-                case "--companions": {
-                    this.setIncludeCompanions(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "-c":
+            case "--companions": {
+                this.setIncludeCompanions(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-g":
+            case "--args": {
+                while ((a = cmdLine.next()) != null) {
+                    this.addArg(a.getString());
                 }
-                case "-g":
-                case "--args": {
-                    while ((a = cmd.next()) != null) {
-                        this.addArg(a.getString());
-                    }
-                    break;
+                return true;
+            }
+
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    return false;
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
     }
 
     @Override
@@ -296,7 +299,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
                         if (getValidSession().isForce() || !dws.isInstalled(ws.parser().parseRequiredId(companionTool), false, session)) {
-                            NutsDefinition r=null;
+                            NutsDefinition r = null;
                             if (getValidSession().isTrace()) {
                                 if (companionCount == 0) {
                                     out.println("Installing Nuts companion tools...");
@@ -304,7 +307,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                 r = ws.find().id(companionTool).latestVersions().getResultDefinitions().required();
                                 String d = r.getDescriptor().getDescription();
                                 out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
-                            }else{
+                            } else {
                                 r = ws.find().id(companionTool).latestVersions().getResultDefinitions().required();
                             }
                             if (LOG.isLoggable(Level.CONFIG)) {
@@ -315,7 +318,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                 companionInstall.args("--trace");
                             }
                             if (getValidSession().isForce()) {
-                                session=session.copy();
+                                session = session.copy();
                                 session.setForce(true);
                                 companionInstall.args("--force");
                             }

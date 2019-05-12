@@ -1,4 +1,4 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -9,7 +9,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 import net.vpc.app.nuts.core.app.DefaultWorkspaceCommandLine;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -26,6 +28,11 @@ public class DefaultNutsParseManager implements NutsParseManager {
     @Override
     public NutsCommandLine parseCommandLine(String[] arguments) {
         return new DefaultWorkspaceCommandLine(ws, arguments);
+    }
+
+    @Override
+    public NutsCommandLine parseCommandLine(Collection<String> arguments) {
+        return parseCommandLine(arguments == null ? null : (String[]) arguments.toArray(new String[0]));
     }
 
     @Override

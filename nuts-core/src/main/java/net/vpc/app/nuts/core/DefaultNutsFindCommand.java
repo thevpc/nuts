@@ -1164,98 +1164,99 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
-    public NutsFindCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "--all-versions": {
-                    this.setAllVersions(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "--all-versions": {
+                this.setAllVersions(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-L":
+            case "--latest":
+            case "--latest-versions": {
+                this.latestVersions();
+                return true;
+            }
+            case "--single":
+            case "--single-versions": {
+                this.duplicateVersions(!cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "--default":
+            case "--default-versions": {
+                this.defaultVersions(cmdLine.readBooleanOption().getBoolean(null));
+                return true;
+            }
+            case "--duplicate":
+            case "--duplicate-versions": {
+                this.duplicateVersions(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-s":
+            case "--sort": {
+                this.sort(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-l":
+            case "--long": {
+                this.longFormat(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "--main": {
+                this.includeMain = cmdLine.readBooleanOption().getBoolean();
+                return true;
+            }
+            case "--main-only": {
+                cmdLine.skip();
+                this.mainOnly();
+                return true;
+            }
+            case "--main-and-dependencies": {
+                cmdLine.skip();
+                this.mainAndDependencies();
+                return true;
+            }
+            case "--dependencies": {
+                cmdLine.skip();
+                this.mainAndDependencies();
+                return true;
+            }
+            case "--dependencies-only": {
+                cmdLine.skip();
+                this.dependenciesOnly();
+                return true;
+            }
+            case "--arch": {
+                this.addArch(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--packaging": {
+                this.addPackaging(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--script": {
+                this.addScript(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--id": {
+                this.addId(cmdLine.readStringOption().getString());
+                return true;
+            }
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                case "-L":
-                case "--latest":
-                case "--latest-versions": {
-                    this.latestVersions();
-                    break;
-                }
-                case "--single":
-                case "--single-versions": {
-                    this.duplicateVersions(!a.getBooleanValue());
-                    break;
-                }
-                case "--default":
-                case "--default-versions": {
-                    if ("any".equals(a.getValue().getString())) {
-                        this.defaultVersions(null);
-                    } else {
-                        this.defaultVersions(a.getBooleanValue());
-                    }
-                    break;
-                }
-                case "--duplicate":
-                case "--duplicate-versions": {
-                    this.duplicateVersions(a.getBooleanValue());
-                    break;
-                }
-                case "-s":
-                case "--sort": {
-                    this.sort(a.getBooleanValue());
-                    break;
-                }
-                case "-l":
-                case "--long": {
-                    this.longFormat(a.getBooleanValue());
-                    break;
-                }
-                case "--main": {
-                    this.includeMain = a.getBooleanValue();
-                    break;
-                }
-                case "--main-only": {
-                    this.mainOnly();
-                    break;
-                }
-                case "--main-and-dependencies": {
-                    this.mainAndDependencies();
-                    break;
-                }
-                case "--dependencies": {
-                    this.mainAndDependencies();
-                    break;
-                }
-                case "--dependencies-only": {
-                    this.dependenciesOnly();
-                    break;
-                }
-                case "--arch": {
-                    this.addArch(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--packaging": {
-                    this.addPackaging(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--script": {
-                    this.addScript(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--id": {
-                    this.addId(cmd.getValueFor(a).getString());
-                    break;
-                }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("find: Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    return false;
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
     }
-
 }

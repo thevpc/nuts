@@ -51,5 +51,7 @@ public interface NutsFormatManager {
     NutsTableFormat createTableFormat();
 
     NutsPropertiesFormat createPropertiesFormat();
+    
+    NutsOutputFormatWriter createOutputFormatWriter(NutsOutputFormat format,Object value);
 
 }

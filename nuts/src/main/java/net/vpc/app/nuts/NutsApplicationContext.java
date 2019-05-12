@@ -16,6 +16,8 @@ public interface NutsApplicationContext extends NutsCommandLineContext {
 
     public boolean configure(NutsCommandLine cmd);
 
+    public boolean configure(NutsCommandLine cmd, boolean skipUnsupported);
+
     public void showHelp();
 
     public void setTerminalMode(NutsTerminalMode mode);
@@ -88,7 +90,6 @@ public interface NutsApplicationContext extends NutsCommandLineContext {
     public long getStartTimeMillis();
 
     public NutsVersion getAppPreviousVersion();
-
 
     public NutsCommandLine getCommandLine();
 

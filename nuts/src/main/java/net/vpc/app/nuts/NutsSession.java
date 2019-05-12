@@ -78,8 +78,6 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     NutsSession setOutputFormat(NutsOutputFormat outputFormat);
 
-    boolean parseOption(NutsArgument arg, NutsCommandLine cmd);
-
     NutsSession json();
 
     NutsSession plain();
@@ -117,4 +115,8 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     NutsSession setAsk(boolean enable);
 
     boolean isAsk();
+
+    boolean configureFirst(NutsCommandLine cmd);
+
+    boolean configure(NutsCommandLine commandLine, boolean skipIgnored);
 }

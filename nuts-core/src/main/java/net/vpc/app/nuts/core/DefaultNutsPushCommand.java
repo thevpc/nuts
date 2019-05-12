@@ -393,47 +393,50 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     }
 
     @Override
-    public NutsPushCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-o":
-                case "--offline": {
-                    setOffline(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "-o":
+            case "--offline": {
+                setOffline(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-x":
+            case "--freeze": {
+                for (String id : cmdLine.readStringOption().getString().split(",")) {
+                    frozenId(id);
                 }
-                case "-x":
-                case "--freeze": {
-                    for (String id : cmd.getValueFor(a).toString().split(",")) {
-                        frozenId(id);
-                    }
-                    break;
+                return true;
+            }
+            case "-r":
+            case "-repository":
+            case "--from": {
+                setRepository(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "-g":
+            case "--args": {
+                while ((a = cmdLine.next()) != null) {
+                    this.addArg(a.getString());
                 }
-                case "-r":
-                case "-repository":
-                case "--from": {
-                    setRepository(cmd.getValueFor(a).getString());
-                    break;
+                return true;
+            }
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                case "-g":
-                case "--args": {
-                    while ((a = cmd.next()) != null) {
-                        this.addArg(a.getString());
-                    }
-                    break;
-                }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    cmdLine.unexpectedArgument();
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
+        return false;
     }
 }

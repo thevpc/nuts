@@ -645,74 +645,76 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
     }
 
     @Override
-    public NutsDeployCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-o":
-                case "--offline": {
-                    setOffline(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "-o":
+            case "--offline": {
+                setOffline(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-d":
+            case "--desc": {
+                setDescriptor(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "-s":
+            case "--source":
+            case "--from": {
+                from(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "-r":
+            case "--target":
+            case "--to": {
+                to(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--desc-sha1": {
+                this.setDescSha1(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--desc-sha1-file": {
+                try {
+                    this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmdLine.readStringOption().getString()))));
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
                 }
-                case "-d":
-                case "--desc": {
-                    setDescriptor(cmd.getValueFor(a).getString());
-                    break;
+                return true;
+            }
+            case "--sha1": {
+                this.setSha1(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "--sha1-file": {
+                try {
+                    this.setSha1(new String(Files.readAllBytes(Paths.get(cmdLine.readStringOption().getString()))));
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
                 }
-                case "-s":
-                case "--source":
-                case "--from": {
-                    from(cmd.getValueFor(a).getString());
-                    break;
+                return true;
+            }
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                case "-r":
-                case "--target":
-                case "--to": {
-                    to(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--desc-sha1": {
-                    this.setDescSha1(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--desc-sha1-file": {
-                    try {
-                        this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmd.getValueFor(a).getString()))));
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
+                if (a.isOption()) {
+                    cmdLine.unexpectedArgument();
+                } else {
+                    cmdLine.skip();
+                    String idOrPath = a.getString();
+                    if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
+                        setContent(idOrPath);
+                    } else {
+                        id(idOrPath);
                     }
-                    break;
-                }
-                case "--sha1": {
-                    this.setSha1(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "--sha1-file": {
-                    try {
-                        this.setSha1(new String(Files.readAllBytes(Paths.get(cmd.getValueFor(a).getString()))));
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                    break;
-                }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            String idOrPath = a.getString();
-                            if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                                setContent(idOrPath);
-                            } else {
-                                id(idOrPath);
-                            }
-                        }
-                    }
+                    return true;
                 }
             }
         }
-        return this;
+        return false;
     }
-
 }

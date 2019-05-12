@@ -60,7 +60,7 @@ public final class NutsArgumentsParser {
         NutsCommandLine cmdArgList = new NutsDefaultCommandLine(bootArguments)
                 .addSpecialSimpleOption("version")
                 .expandSimpleOptions();
-        
+
         while ((a = cmdArgList.next()) != null) {
             if (a.isOption()) {
                 boolean enabled = !a.isComment();
@@ -348,27 +348,25 @@ public final class NutsArgumentsParser {
                             String v = a.getValue().getString();
                             switch (NutsUtils.trim(v).toLowerCase()) {
                                 case "":
-                                case "always":
-                                case "yes":
-                                case "enable":
-                                case "y":
-                                case "true": {
+                                case "formatted": {
                                     o.setTerminalMode(NutsTerminalMode.FORMATTED);
                                     break;
                                 }
-                                case "never":
-                                case "no":
-                                case "none":
-                                case "false":
-                                case "filtered":
-                                case "disable":
-                                case "n": {
+                                case "filtered": {
                                     o.setTerminalMode(NutsTerminalMode.FILTERED);
                                     break;
                                 }
                                 case "inherited": {
                                     o.setTerminalMode(NutsTerminalMode.INHERITED);
                                     break;
+                                }
+                                default: {
+                                    boolean b = NutsUtils.parseBoolean(v, false);
+                                    if (b) {
+                                        o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                                    } else {
+                                        o.setTerminalMode(NutsTerminalMode.FILTERED);
+                                    }
                                 }
                             }
                         }
@@ -604,9 +602,9 @@ public final class NutsArgumentsParser {
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             applicationArguments.add("-c");
-                            applicationArguments.addAll(cmdArgList.removeAll());
+                            applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
                         } else {
-                            applicationArguments.addAll(cmdArgList.removeAll());
+                            applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
                         }
                         break;
                     }
@@ -616,7 +614,7 @@ public final class NutsArgumentsParser {
                     case "--version": {
                         if (enabled) {
                             o.setBootCommand(NutsBootCommand.VERSION);
-                            applicationArguments.addAll(cmdArgList.removeAll());
+                            applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
                         } else {
                             cmdArgList.removeAll();
                         }
@@ -640,7 +638,7 @@ public final class NutsArgumentsParser {
                                     executorOptions.add(a.getString());
                                 } else {
                                     applicationArguments.add(a.getString());
-                                    applicationArguments.addAll(cmdArgList.removeAll());
+                                    applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
                                 }
                             }
                         } else {
@@ -653,7 +651,7 @@ public final class NutsArgumentsParser {
                     case "-h": {
                         if (enabled) {
                             o.setBootCommand(NutsBootCommand.HELP);
-                            applicationArguments.addAll(cmdArgList.removeAll());
+                            applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
                         } else {
                             cmdArgList.removeAll();
                         }
@@ -668,7 +666,7 @@ public final class NutsArgumentsParser {
                 }
             } else {
                 applicationArguments.add(a.getString());
-                applicationArguments.addAll(cmdArgList.removeAll());
+                applicationArguments.addAll(Arrays.asList(cmdArgList.removeAll()));
             }
         }
 

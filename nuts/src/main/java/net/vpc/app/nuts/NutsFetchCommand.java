@@ -280,7 +280,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
     NutsFetchCommand setSession(NutsSession session);
 
     @Override
-    NutsFetchCommand parseOptions(String... args);
+    NutsFetchCommand configure(String... args);
 
     @Override
     NutsFetchCommand run();

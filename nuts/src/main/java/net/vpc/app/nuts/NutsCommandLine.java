@@ -104,19 +104,19 @@ public interface NutsCommandLine {
     NutsCommandLine requireNonEmpty();
 
     NutsCommandLine pushBack(NutsArgument a);
-    
+
     /**
-     * set command name that will be used as an extra info 
-     * in thrown exceptions
+     * set command name that will be used as an extra info in thrown exceptions
+     *
      * @param commandName
-     * @return 
+     * @return
      */
     NutsCommandLine setCommandName(String commandName);
-    
+
     /**
-     * 
-     * @return command name that will be used as an extra info 
-     * in thrown exceptions
+     *
+     * @return command name that will be used as an extra info in thrown
+     * exceptions
      */
     String getCommandName();
 
@@ -124,14 +124,14 @@ public interface NutsCommandLine {
 
     boolean isExpandSimpleOptions();
 
-    List<String> getArgs();
+    String[] getArgs();
 
     /**
      * returns un-parsed arguments and then clears thems
      *
      * @return
      */
-    List<String> removeAll();
+    String[] removeAll();
 
     /**
      * if the argument defines a values (with =) it will be returned : If not
@@ -147,6 +147,8 @@ public interface NutsCommandLine {
     boolean isSpecialOneDashOption(String v);
 
     NutsArgument next();
+
+    NutsArgument peek();
 
     boolean hasNext();
 

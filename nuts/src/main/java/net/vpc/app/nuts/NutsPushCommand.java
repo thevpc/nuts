@@ -124,7 +124,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     NutsPushCommand setSession(NutsSession session);
 
     @Override
-    NutsPushCommand parseOptions(String... args);
+    NutsPushCommand configure(String... args);
 
     @Override
     NutsPushCommand run();

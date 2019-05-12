@@ -118,7 +118,7 @@ public class WorkspaceService {
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
                 //consumed
-            } else if (tf.configure(cmd)) {
+            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if ((a = cmd.readNonOption()) != null) {
                 filters.add(a.getString());
@@ -179,7 +179,7 @@ public class WorkspaceService {
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
                 //consumed
-            } else if (tf.configure(cmd)) {
+            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if (cmd.readAll("-c", "--commitable", "--changed")) {
                 commitable = true;

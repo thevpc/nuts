@@ -125,12 +125,13 @@ Java         Version: ${java.version} (${java.vm.name})
       workspace archetype to create (if workspace not found).
       when opening a non existing workspace, ==nuts== will create it
       using the default archetype. Supported archetypes are :
-          {{default}} : should handle most cases. Will create 4 repositories
+          {{default}} : should handle most cases. Will create 6 repositories
                     nuts local       : containing local ==nuts== (java and non java ==nuts==)
-                    maven-local      : containing a reference to ~/.m2/repository local maven repository
+                    maven-local      : referencing ~/.m2/repository local maven repository
                     maven-central    : referencing http://repo.maven.apache.org/maven2/ (with cache support)
                     vpc-public-maven : referencing https://.../vpc-public-maven/master author\'s github maven repo (cached)
                     vpc-public-nuts  : referencing https://.../vpc-public-nuts/master  author\'s github ==nuts==  repo (cached)
+                    system           : referencing global (root, system wide) repository if available
           {{minimal}} : will create an almost empty workspace with a single ==nuts== local repository
           {{server}}  : will create an almost empty workspace with a couple of users __guest__ (read support) and __contributor__
                     (write support)
@@ -425,30 +426,30 @@ Java         Version: ${java.version} (${java.vm.name})
       uninstall  ==nuts== package {{\<nuts-component\>}}
       for more details, type : [[nuts]] help uninstall
 
- [[update]] \[Options\]... {{\<ids\>}} ...  [[--args]] ...
+ [[update]] \[-options\]... {{\<ids\>}} ...  [[--args]] ...
        check if a newer version of ==nuts== or any of the provided {{\<ids\>}} 
        is available in the current workspace and perform update by downloading (fetch) 
        and installing the component. The updated version is promoted to 'default' version.
       for more details, type : [[nuts]] help update
             
- [[check-updates]] \[Options\]... {{\<ids\>}} ...
+ [[check-updates]] \[-options\]... {{\<ids\>}} ...
        check if a newer version of ==nuts== is available in the current workspace without performing updates
        Take the same arguments and options as [[update]] command
       for more details, type : [[nuts]] help check-updates
 
- [[find]] \[Options\]... {{\<ids\>}} ...  
+ [[find]] \[-options\]... {{\<ids\>}} ...  
        search for {{\<ids\>}} 
       for more details, type : [[nuts]] help find
             
- [[fetch]] \[Options\]... {{\<ids\>}} ...  
+ [[fetch]] \[-options\]... {{\<ids\>}} ...  
       download {{\<ids\>}}  without installing them
       for more details, type : [[nuts]] help fetch
             
- [[deploy]] \[Options\]... {{\<id\>}} ...  
+ [[deploy]] \[-options\]... {{\<id\>}} ...  
       deploy {{\<ids\>}}  without installing them
       for more details, type : [[nuts]] help deploy
             
- [[undeploy]] \[Options\]... {{\<id\>}} ...  
+ [[undeploy]] \[-options\]... {{\<id\>}} ...  
       undeploy {{\<ids\>}}
       for more details, type : [[nuts]] help deploy
             
@@ -475,10 +476,10 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--!...]] or [[-!...]] 
       option will negated if boolean. Actually, [[--!option]] is equivalent to [[--option=false]]
 
- [[--...]]=true|yes|always|y|ok|sure
+ [[--...]]=true|enable|enabled|yes|always|y|on|ok
       option will switched to 'true'
 
- [[--...]]=false|no|none|never|n
+ [[--...]]=false|disable|disabled|no|none|never|n|off|ko
       option will switched to 'false'
 
  [[--//...]] or [[-//...]] 

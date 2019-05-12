@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.PrintStream;
+import java.io.Writer;
 
 /**
  * Created by vpc on 2/17/17.
@@ -49,6 +50,7 @@ public interface NutsTableFormat {
     public NutsTableFormat setBorder(NutsTableFormatterBorders border);
 
     public void print(PrintStream out);
+    public void print(Writer out);
 
     public NutsTableFormat setVisibleColumn(int col, boolean visible);
 
@@ -72,7 +74,9 @@ public interface NutsTableFormat {
 
     public NutsTableCell addCell(Object value);
 
-    public boolean configure(NutsCommandLine cmdLine);
+    public boolean configure(NutsCommandLine cmdLine, boolean skipIgnored);
+    
+    public boolean configureFirst(NutsCommandLine cmdLine);
 
     public enum Separator {
         FIRST_ROW_START('A'),

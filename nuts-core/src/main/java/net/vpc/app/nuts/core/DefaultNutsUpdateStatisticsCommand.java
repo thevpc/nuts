@@ -134,26 +134,23 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
         return repositrories.toArray(new String[0]);
     }
 
-    @Override
-    public NutsUpdateStatisticsCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            //id(a.getString());
-                        }
-                    }
+@Override
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
             }
         }
-        return this;
+        return false;
     }
-
+    
+    
     @Override
     public NutsUpdateStatisticsCommand run() {
         for (String repository : getRepositrories()) {

@@ -3,35 +3,42 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.app.format;
 
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsTableCell;
@@ -42,7 +49,8 @@ import net.vpc.app.nuts.NutsTableFormat;
 /**
  * Created by vpc on 2/17/17.
  */
-public class DefaultTableFormat implements NutsTableFormat{
+public class DefaultTableFormat implements NutsTableFormat {
+
     public static NutsTableFormatterBorders NO_BORDER = new DefaultTableFormatterBorders(
             "", "", "", "",
             "", "", "",
@@ -75,21 +83,15 @@ public class DefaultTableFormat implements NutsTableFormat{
     );
     private NutsTableCellFormat defaultFormatter;
     /**
-     * ABBBBCBBBBD
-     * E    F    G
-     * HIIIIJIIIIK
-     * E    F    G
-     * LMMMMNMMMMO
+     * ABBBBCBBBBD E F G HIIIIJIIIIK E F G LMMMMNMMMMO
      */
-    private NutsTableFormatterBorders border = SPACE_BORDER;
+    private NutsTableFormatterBorders border = SIMPLE_BORDER;
     private Row header = new Row();
     private List<Row> rows = new ArrayList<>();
     private List<Boolean> visibleColumns = new ArrayList<>();
     private Map<String, Integer> columns = new HashMap<>();
     private boolean visibleHeader = true;
 
-
-    
 //    public static void main(String[] args) {
 //        TableFormatter t = new TableFormatter();
 //        t.addCell("****");//.setColspan(2).setRowspan(2);
@@ -103,7 +105,6 @@ public class DefaultTableFormat implements NutsTableFormat{
 //
 //        System.out.println(t);
 //    }
-
     public DefaultTableFormat(NutsTableCellFormat formatter) {
         setCellFormatter(formatter);
     }
@@ -147,104 +148,123 @@ public class DefaultTableFormat implements NutsTableFormat{
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OutputStreamWriter w = new OutputStreamWriter(out);
+        print(w);
+        try {
+            w.flush();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return new String(out.toByteArray());
+    }
+
+    public void print(PrintStream out) {
+        OutputStreamWriter w = new OutputStreamWriter(out);
+        print(w);
+        try {
+            w.flush();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public void print(Writer w) {
+        rebuild();
+        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
+
         List<Row> rows = rebuild();
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
-            if (
-                    (getSeparator(Separator.FIRST_ROW_START) +
-                            getSeparator(Separator.FIRST_ROW_SEP) +
-                            getSeparator(Separator.FIRST_ROW_LINE) +
-                            getSeparator(Separator.FIRST_ROW_END)
-                    ).length() > 0
-                    ) {
-                sb.append(getSeparator(Separator.FIRST_ROW_START));
+            if ((getSeparator(Separator.FIRST_ROW_START)
+                    + getSeparator(Separator.FIRST_ROW_SEP)
+                    + getSeparator(Separator.FIRST_ROW_LINE)
+                    + getSeparator(Separator.FIRST_ROW_END)).length() > 0) {
+                out.write(getSeparator(Separator.FIRST_ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        sb.append(getSeparator(Separator.FIRST_ROW_SEP));
+                        out.write(getSeparator(Separator.FIRST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    sb.append(FormatUtils.fillString(B, s.length()));
+                    NutsTableCellFormat formatter = cell.formatter;
+                    if (formatter == null) {
+                        formatter = defaultFormatter;
+                    }
+                    out.write(FormatUtils.fillString(B, formatter.stringLength(s)));
                 }
-                sb.append(getSeparator(Separator.FIRST_ROW_END));
-                sb.append("\n");
+                out.write(getSeparator(Separator.FIRST_ROW_END));
+                out.write("\n");
+                out.flush();
             }
             for (int i1 = 0; i1 < rows.size(); i1++) {
                 if (i1 > 0) {
-                    if (
-                            (getSeparator(Separator.INTER_ROW_START) +
-                                    getSeparator(Separator.INTER_ROW_SEP) +
-                                    getSeparator(Separator.INTER_ROW_LINE) +
-                                    getSeparator(Separator.INTER_ROW_END)
-                            ).length() > 0
-                            ) {
-                        sb.append(getSeparator(Separator.INTER_ROW_START));
+                    if ((getSeparator(Separator.INTER_ROW_START)
+                            + getSeparator(Separator.INTER_ROW_SEP)
+                            + getSeparator(Separator.INTER_ROW_LINE)
+                            + getSeparator(Separator.INTER_ROW_END)).length() > 0) {
+                        out.write(getSeparator(Separator.INTER_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                sb.append(getSeparator(Separator.INTER_ROW_SEP));
+                                out.write(getSeparator(Separator.INTER_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.INTER_ROW_LINE);
                             String s = cell.rendered.toString();
-                            sb.append(FormatUtils.fillString(B, s.length()));
+                            NutsTableCellFormat formatter = cell.formatter;
+                            if (formatter == null) {
+                                formatter = defaultFormatter;
+                            }
+                            out.write(FormatUtils.fillString(B, formatter.stringLength(s)));
                         }
-                        sb.append(getSeparator(Separator.INTER_ROW_END));
-                        sb.append("\n");
+                        out.write(getSeparator(Separator.INTER_ROW_END));
+                        out.write("\n");
+                        out.flush();
                     }
                 }
-
 
                 Row row = rows.get(i1);
                 cells = row.cells;
 
-                sb.append(getSeparator(Separator.ROW_START));
+                out.write(getSeparator(Separator.ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        sb.append(getSeparator(Separator.ROW_SEP));
+                        out.write(getSeparator(Separator.ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String s = cell.rendered.toString();
-                    sb.append(s);
+                    out.write(s);
                 }
-                sb.append(getSeparator(Separator.ROW_END));
+                out.write(getSeparator(Separator.ROW_END));
 
-                sb.append("\n");
+                out.write("\n");
+                out.flush();
             }
 
-            if (
-                    (getSeparator(Separator.LAST_ROW_START) +
-                            getSeparator(Separator.LAST_ROW_SEP) +
-                            getSeparator(Separator.LAST_ROW_LINE) +
-                            getSeparator(Separator.LAST_ROW_END)
-                    ).length() > 0
-                    ) {
-                sb.append(getSeparator(Separator.LAST_ROW_START));
+            if ((getSeparator(Separator.LAST_ROW_START)
+                    + getSeparator(Separator.LAST_ROW_SEP)
+                    + getSeparator(Separator.LAST_ROW_LINE)
+                    + getSeparator(Separator.LAST_ROW_END)).length() > 0) {
+                out.write(getSeparator(Separator.LAST_ROW_START));
                 cells = rows.get(0).cells;
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        sb.append(getSeparator(Separator.LAST_ROW_SEP));
+                        out.write(getSeparator(Separator.LAST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    sb.append(FormatUtils.fillString(B, s.length()));
+                    NutsTableCellFormat formatter = cell.formatter;
+                    if (formatter == null) {
+                        formatter = defaultFormatter;
+                    }
+                    out.write(FormatUtils.fillString(B, formatter.stringLength(s)));
                 }
-                sb.append(getSeparator(Separator.LAST_ROW_END));
+                out.write(getSeparator(Separator.LAST_ROW_END));
             }
         }
-        return sb.toString();
-    }
-
-    public void print(PrintStream out) {
-        rebuild();
-        for (Row row : this.rows) {
-            for (DefaultCell cell : row.cells) {
-                out.print(cell.rendered);
-            }
-            out.println();
-        }
+        out.flush();
     }
 
     private static class Row {
@@ -252,7 +272,6 @@ public class DefaultTableFormat implements NutsTableFormat{
         NutsTableCellFormat formatter;
         List<DefaultCell> cells = new ArrayList<>();
     }
-
 
     private static class RenderedCell {
 
@@ -403,7 +422,7 @@ public class DefaultTableFormat implements NutsTableFormat{
                         rendered0[i] = rendered[i];
                     }
                 } else {
-                    rendered0[i] = FormatUtils.fillString(' ',columns).toCharArray();
+                    rendered0[i] = FormatUtils.fillString(' ', columns).toCharArray();
                 }
             }
 //            for (int i = 0; i < rendered0.length; i++) {
@@ -450,7 +469,7 @@ public class DefaultTableFormat implements NutsTableFormat{
         }
     }
 
-    private static class DefaultCell implements NutsTableCell{
+    private static class DefaultCell implements NutsTableCell {
 
         int colspan = 1;
         int rowspan = 1;
@@ -558,7 +577,6 @@ public class DefaultTableFormat implements NutsTableFormat{
             }
         }
 
-
         //first pass to eval renderedText and effective positions
         Bounds b = new Bounds();
         Bounds cb = new Bounds();
@@ -623,7 +641,7 @@ public class DefaultTableFormat implements NutsTableFormat{
         return effectiveRows;
     }
 
-    public NutsTableFormat setCellFormatter(NutsTableCellFormat formatter){
+    public NutsTableFormat setCellFormatter(NutsTableCellFormat formatter) {
         defaultFormatter = formatter == null ? new NutsTableCellFormat() {
             @Override
             public int stringLength(String value) {
@@ -634,11 +652,10 @@ public class DefaultTableFormat implements NutsTableFormat{
             public String format(int row, int col, Object value) {
                 return String.valueOf(value);
             }
-        } : formatter
-        ;
+        } : formatter;
         return this;
     }
-    
+
     private boolean isVisibleColumnPositive() {
         for (Boolean visibleColumn : visibleColumns) {
             if (visibleColumn != null && visibleColumn) {
@@ -749,6 +766,7 @@ public class DefaultTableFormat implements NutsTableFormat{
     }
 
     private static class Pos {
+
         int column;
         int row;
 
@@ -759,11 +777,15 @@ public class DefaultTableFormat implements NutsTableFormat{
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Pos pos = (Pos) o;
-            return column == pos.column &&
-                    row == pos.row;
+            return column == pos.column
+                    && row == pos.row;
         }
 
         @Override
@@ -774,10 +796,10 @@ public class DefaultTableFormat implements NutsTableFormat{
 
         @Override
         public String toString() {
-            return "(" +
-                    "" + column +
-                    "," + row +
-                    ')';
+            return "("
+                    + "" + column
+                    + "," + row
+                    + ')';
         }
 
     }
@@ -926,8 +948,8 @@ public class DefaultTableFormat implements NutsTableFormat{
             Interval key = new Interval(from, to);
 
             columnIntervalSize.put(key, Math.max(
-                    (columnIntervalSize.containsKey(key)?columnIntervalSize.get(key):0)
-                    , size));
+                    (columnIntervalSize.containsKey(key) ? columnIntervalSize.get(key) : 0),
+                    size));
         }
 
         public void setRowIntervalMinSize(int from, int to, int size) {
@@ -937,8 +959,8 @@ public class DefaultTableFormat implements NutsTableFormat{
             }
             Interval key = new Interval(from, to);
             rowIntervalSize.put(key, Math.max(
-                    (rowIntervalSize.containsKey(key)?rowIntervalSize.get(key):0)
-                    , size));
+                    (rowIntervalSize.containsKey(key) ? rowIntervalSize.get(key) : 0),
+                    size));
         }
 
         public int evalColumnSize(int col, int colspan) {
@@ -994,15 +1016,32 @@ public class DefaultTableFormat implements NutsTableFormat{
     }
 
     @Override
-    public boolean configure(NutsCommandLine cmdLine) {
+    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
+        boolean conf = false;
+        while (commandLine.hasNext()) {
+            if (!configure(commandLine, false)) {
+                if (skipIgnored) {
+                    commandLine.skip();
+                } else {
+                    commandLine.unexpectedArgument();
+                }
+            } else {
+                conf = true;
+            }
+        }
+        return conf;
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a;
-        if ((a=cmdLine.readBooleanOption("--no-header"))!=null) {
+        if ((a = cmdLine.readBooleanOption("--no-header")) != null) {
             setVisibleHeader(!a.getBooleanValue());
             return true;
-        } else if ((a=cmdLine.readBooleanOption("--header"))!=null) {
+        } else if ((a = cmdLine.readBooleanOption("--header")) != null) {
             setVisibleHeader(a.getBooleanValue());
             return true;
-        } else if ((a=cmdLine.readStringOption("--border"))!=null) {
+        } else if ((a = cmdLine.readStringOption("--border")) != null) {
             switch (a.getValue().strKey()) {
                 case "spaces": {
                     setBorder(SPACE_BORDER);
@@ -1040,6 +1079,5 @@ public class DefaultTableFormat implements NutsTableFormat{
         }
         return false;
     }
-
 
 }

@@ -128,7 +128,7 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public List<String> getArgs() {
+    public String[] getArgs() {
         ArrayList<String> p = new ArrayList<>();
         for (NutsArgument a : expanded) {
             p.add(a.toString());
@@ -136,7 +136,7 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
         for (String a : args) {
             p.add(a);
         }
-        return p;
+        return p.toArray(new String[0]);
     }
 
     /**
@@ -145,8 +145,8 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
      * @return
      */
     @Override
-    public List<String> removeAll() {
-        List<String> x = getArgs();
+    public String[] removeAll() {
+        String[] x = getArgs();
         args.clear();
         expanded.clear();
         return x;
@@ -188,6 +188,16 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
         return next(false, expandSimpleOptions);
     }
 
+    @Override
+    public NutsArgument peek() {
+        NutsArgument a = next();
+        if(a!=null){
+            pushBack(a);
+        }
+        return a;
+    }
+
+    @Override
     public NutsArgument newArgument(String s) {
         return new NutsDefaultArgument(s);
     }

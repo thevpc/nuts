@@ -460,7 +460,7 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
     NutsFindCommand setSession(NutsSession session);
 
     @Override
-    NutsFindCommand parseOptions(String... args);
+    NutsFindCommand configure(String... args);
 
     @Override
     NutsFindCommand run();

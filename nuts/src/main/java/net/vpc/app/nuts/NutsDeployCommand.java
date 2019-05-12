@@ -162,7 +162,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
     NutsDeployCommand setSession(NutsSession session);
 
     @Override
-    NutsDeployCommand parseOptions(String... args);
+    NutsDeployCommand configure(String... args);
 
     @Override
     NutsDeployCommand run();

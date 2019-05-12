@@ -57,8 +57,9 @@ public interface NutsArgument {
 
     public boolean isBoolean();
 
-    public boolean getBoolean(boolean defaultValue);
+    public Boolean getBoolean(Boolean defaultValue);
 
+    @Deprecated
     public boolean getBooleanValue();
 
     NutsArgument required();

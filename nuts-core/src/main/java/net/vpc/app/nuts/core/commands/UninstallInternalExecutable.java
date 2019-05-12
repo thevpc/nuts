@@ -25,7 +25,7 @@ public class UninstallInternalExecutable extends InternalExecutable {
             showDefaultHelp();
             return;
         }
-        ws.uninstall().session(getSession(true).trace()).parseOptions(args).run();
+        ws.uninstall().session(getSession(true).trace()).configure(args).run();
     }
     
 }

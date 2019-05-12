@@ -15,7 +15,8 @@ import org.junit.Test;
 public class Test07_ColorfulStream {
     @Test
     public void test(){
-        String msg="[[-t]] or [[--trace]] : enable trace operation with a meaning message \\( or disable it with [[--!trace]] or [[--trace=false]] \\)";
+        String msg="<-t>";
+//        String msg="[[-t]] or [[--trace]] : enable trace operation with a meaning message \\( or disable it with [[--!trace]] or [[--trace=false]] \\)";
         NutsAnsiUnixTermPrintStream out=new NutsAnsiUnixTermPrintStream(System.out);
         out.println(msg);
     }

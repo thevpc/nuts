@@ -271,29 +271,38 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
 
     @Override
     public NutsArgument readOption(OptionType expectValue, String... names) {
+        boolean acceptAnyName = false;
+        if (names.length == 0) {
+            names = new String[]{null};
+            acceptAnyName = true;
+        }
         for (String name : names) {
-            checkOptionString(name);
-            if (isAutoCompleteMode() && getWordIndex() == autoComplete.getCurrentWordIndex()) {
-                autoComplete.addCandidate(new NutsDefaultArgumentCandidate(name));
+            if (!acceptAnyName) {
+                checkOptionString(name);
+            }
+            if (!acceptAnyName) {
+                if (isAutoCompleteMode() && getWordIndex() == autoComplete.getCurrentWordIndex()) {
+                    autoComplete.addCandidate(new NutsDefaultArgumentCandidate(name));
+                }
             }
             if (hasNext() && get().isOption()) {
                 NutsArgument p = get(0);
                 switch (expectValue) {
                     case VOID: {
-                        if (p.getString().equals(name)) {
+                        if (acceptAnyName || p.getString().equals(name)) {
                             skip();
                             return p;
                         }
                         break;
                     }
                     case STRING: {
-                        if (p.getName().getString().equals(name)) {
+                        if (acceptAnyName || p.getName().getString().equals(name)) {
                             if (p.isKeyValue()) {
                                 skip();
                                 return p;
                             } else {
                                 if (isAutoCompleteMode() && getWordIndex() + 1 == autoComplete.getCurrentWordIndex()) {
-                                    autoComplete.addCandidate(new NutsDefaultArgumentCandidate("<StringValueFor" + name + ">"));
+                                    autoComplete.addCandidate(new NutsDefaultArgumentCandidate("<StringValueFor" + p.getName().getString() + ">"));
                                 }
                                 NutsArgument r2 = get(1);
                                 if (r2 != null && !r2.isOption()) {
@@ -305,7 +314,7 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
                         break;
                     }
                     case IMMEDIATE_STRING: {
-                        if (p.getName().getString().equals(name)) {
+                        if (acceptAnyName || p.getName().getString().equals(name)) {
                             if (p.isKeyValue()) {
                                 skip();
                                 return p;
@@ -314,7 +323,7 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
                         break;
                     }
                     case BOOLEAN: {
-                        if (p.getName().getString().equals(name)) {
+                        if (acceptAnyName || p.getName().getString().equals(name)) {
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
                                     //should not happen
@@ -838,6 +847,15 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public NutsArgument peek() {
+        NutsArgument a = next();
+        if (a != null) {
+            pushBack(a);
+        }
+        return a;
+    }
+
+    @Override
     public NutsArgument newArgument(String s) {
         return new NutsDefaultWorkspaceArgument(s);
     }
@@ -880,7 +898,7 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public List<String> getArgs() {
+    public String[] getArgs() {
         ArrayList<String> p = new ArrayList<>();
         for (NutsArgument a : lookahead) {
             p.add(a.toString());
@@ -888,7 +906,7 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
         for (String a : args) {
             p.add(a);
         }
-        return p;
+        return p.toArray(new String[0]);
     }
 
     /**
@@ -913,8 +931,8 @@ public class DefaultWorkspaceCommandLine implements NutsCommandLine {
      * @return
      */
     @Override
-    public List<String> removeAll() {
-        List<String> x = getArgs();
+    public String[] removeAll() {
+        String[] x = getArgs();
         args.clear();
         lookahead.clear();
         return x;

@@ -89,7 +89,7 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
     NutsUninstallCommand setSession(NutsSession session);
 
     @Override
-    NutsUninstallCommand parseOptions(String... args);
+    NutsUninstallCommand configure(String... args);
 
     @Override
     NutsUninstallCommand run();

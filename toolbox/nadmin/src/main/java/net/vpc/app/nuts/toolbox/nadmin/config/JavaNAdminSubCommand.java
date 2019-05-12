@@ -90,7 +90,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     .setColumnsConfig("name", "version", "path")
                     .addHeaderCells("==Name==", "==Version==", "==Path==");
             while (cmdLine.hasNext()) {
-                if (!t.configure(cmdLine)) {
+                if (!t.configureFirst(cmdLine)) {
                     cmdLine.setCommandName("config list java").unexpectedArgument();
                 }
             }

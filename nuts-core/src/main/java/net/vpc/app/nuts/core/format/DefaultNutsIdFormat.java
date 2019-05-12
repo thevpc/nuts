@@ -1,4 +1,4 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.format;
 
 import java.io.File;
 import java.io.IOException;

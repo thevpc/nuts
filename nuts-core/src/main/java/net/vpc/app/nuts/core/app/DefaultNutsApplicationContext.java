@@ -156,6 +156,23 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
+    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
+        if (skipIgnored) {
+            boolean conf = false;
+            while (commandLine.hasNext()) {
+                if (!configure(commandLine, false)) {
+                    commandLine.skip();
+                } else {
+                    conf = true;
+                }
+            }
+            return conf;
+        } else {
+            return configure(commandLine);
+        }
+    }
+    
+    @Override
     public boolean configure(NutsCommandLine cmd) {
         NutsArgument a;
         if ((a = cmd.readOption("--help")) != null) {

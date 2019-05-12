@@ -237,30 +237,30 @@ public class CoreCommonUtils {
         }
     }
 
-    public static boolean isYes(String s) {
-        switch (s == null ? "" : s.trim().toLowerCase()) {
-            case "ok":
-            case "true":
-            case "yes":
-            case "always":
-            case "y":
-                return true;
-        }
-        return false;
-    }
+//    public static boolean isYes(String s) {
+//        switch (s == null ? "" : s.trim().toLowerCase()) {
+//            case "ok":
+//            case "true":
+//            case "yes":
+//            case "always":
+//            case "y":
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    public static boolean isNo(String s) {
+//        switch (s == null ? "" : s.trim().toLowerCase()) {
+//            case "false":
+//            case "no":
+//            case "none":
+//            case "never":
+//                return true;
+//        }
+//        return false;
+//    }
 
-    public static boolean isNo(String s) {
-        switch (s == null ? "" : s.trim().toLowerCase()) {
-            case "false":
-            case "no":
-            case "none":
-            case "never":
-                return true;
-        }
-        return false;
-    }
-
-    public static void putAllInProps(String prefix, Map<String,String> dest, Object value) {
+    public static void putAllInProps(String prefix, Map<String, String> dest, Object value) {
         if (!CoreStringUtils.isBlank(prefix)) {
             if (value instanceof Map) {
                 for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {
@@ -291,18 +291,17 @@ public class CoreCommonUtils {
 
     }
 
-    public static boolean parseBoolean(String value, boolean defaultValue) {
+    public static Boolean parseBoolean(String value, Boolean defaultValue) {
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
         value = value.trim().toLowerCase();
-        if (value.matches("true|enable|yes|always|y")) {
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok")) {
             return true;
         }
-        if (value.matches("false|disable|no|none|never|n")) {
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko")) {
             return false;
         }
         return defaultValue;
     }
-
 }

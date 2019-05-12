@@ -24,7 +24,7 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand{
     NutsRemoveUserCommand setSession(NutsSession session);
 
     @Override
-    NutsRemoveUserCommand parseOptions(String... args);
+    NutsRemoveUserCommand configure(String... args);
 
     @Override
     NutsRemoveUserCommand run();

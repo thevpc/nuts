@@ -44,7 +44,7 @@ public class HelpInternalExecutable extends InternalExecutable {
             NutsArgument a = cmd.next();
             if (a.isOption()) {
                 switch (a.strKey()) {
-                    case "--trace-format": {
+                    case "--output-format": {
                         outputFormat = (NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
                         break;
                     }

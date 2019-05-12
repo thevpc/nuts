@@ -220,33 +220,37 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
     }
 
     @Override
-    public NutsUndeployCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-o":
-                case "--offline": {
-                    setOffline(a.getBooleanValue());
-                    break;
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "--offline": {
+                setOffline(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-r":
+            case "-repository":
+            case "--from": {
+                setRepository(cmdLine.readStringOption().getString());
+                break;
+            }
+
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                case "-r":
-                case "-repository":
-                case "--from": {
-                    setRepository(cmd.getValueFor(a).getString());
-                    break;
-                }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    return false;
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
+        return false;
     }
+
 }

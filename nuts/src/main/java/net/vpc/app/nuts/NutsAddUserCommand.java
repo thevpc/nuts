@@ -102,7 +102,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     NutsAddUserCommand setSession(NutsSession session);
 
     @Override
-    NutsAddUserCommand parseOptions(String... args);
+    NutsAddUserCommand configure(String... args);
 
     @Override
     NutsAddUserCommand run();

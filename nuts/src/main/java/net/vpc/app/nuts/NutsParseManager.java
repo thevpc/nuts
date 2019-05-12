@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
 
 /**
  *
@@ -45,6 +46,8 @@ public interface NutsParseManager {
     NutsId parseId(String id);
 
     NutsCommandLine parseCommandLine(String[] arguments);
+
+    NutsCommandLine parseCommandLine(Collection<String> arguments);
 
     NutsDescriptor parseDescriptor(URL url);
 

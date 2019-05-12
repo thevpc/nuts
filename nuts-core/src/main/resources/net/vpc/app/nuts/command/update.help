@@ -11,13 +11,19 @@
        [[-v]] {{\<arguments\>}}
        or [[--version]] {{\<version\>}}
             : force updates to the provided {{\<version\>}} (may be a downgrade)
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
        [[--args]] ...        : provide arguments to pass to updater
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
             
+@@STANDARD OPTIONS@@ :
+    This command supports standard options :
+       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
+       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
+       [[--xml]]: trace operation xml. equivalent to [[--output-format]]=[[xml]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
+       [[--table]]: trace operation as table. equivalent to [[--output-format]]=[[table]]
+       [[--tree]]: trace operation as tree. equivalent to [[--output-format]]=[[tree]]
+
 @@SYNOPSIS:@@
 ==nuts== ##update## [ --force ] id1 ...
 

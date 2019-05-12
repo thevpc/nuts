@@ -17,7 +17,7 @@ public interface NutsUpdateRepositoryStatisticsCommand extends NutsWorkspaceComm
     NutsUpdateRepositoryStatisticsCommand setSession(NutsSession session);
 
     @Override
-    NutsUpdateRepositoryStatisticsCommand parseOptions(String... args);
+    NutsUpdateRepositoryStatisticsCommand configure(String... args);
 
     @Override
     NutsUpdateRepositoryStatisticsCommand run();

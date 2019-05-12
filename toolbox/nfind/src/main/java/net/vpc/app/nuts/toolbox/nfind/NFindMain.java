@@ -650,7 +650,7 @@ public class NFindMain extends NutsApplication {
                         }
                         return c;
                     }
-                }).setFormatter(new NutsTreeNodeFormatter<NutsInfo>() {
+                }).setNodeFormat(new NutsTreeNodeFormat<NutsInfo>() {
             @Override
             public String format(NutsInfo o) {
                 return toStringId(findContext, o);

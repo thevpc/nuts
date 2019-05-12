@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,6 +29,9 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsJsonCommand;
 import net.vpc.app.nuts.NutsVersion;
+import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
+import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**

@@ -79,8 +79,6 @@ public interface NutsWorkspaceInfoFormat {
 
     boolean isFancy();
 
-    boolean isMinimal();
-
     NutsWorkspaceInfoFormat showRepositories();
 
     NutsWorkspaceInfoFormat showRepositories(boolean enable);
@@ -90,8 +88,6 @@ public interface NutsWorkspaceInfoFormat {
     boolean isShowRepositories();
 
     NutsWorkspaceInfoFormat setFancy(boolean fancy);
-
-    NutsWorkspaceInfoFormat setMinimal(boolean minimal);
 
     NutsSession getSession();
 

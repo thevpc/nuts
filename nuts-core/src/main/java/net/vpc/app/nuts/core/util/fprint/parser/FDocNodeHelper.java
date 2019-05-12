@@ -86,6 +86,9 @@ public class FDocNodeHelper {
                     case "{": {
                         return wrap(convert(p.getNode()), "{", "}", null);
                     }
+                    case "<": {
+                        return wrap(convert(p.getNode()), "<", ">", null);
+                    }
                     case "__":
                     case "___":
                     case "____": {

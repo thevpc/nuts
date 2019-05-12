@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.app;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsDefaultArgument;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  * @author vpc
@@ -281,6 +282,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public boolean isComment() {
         int i = 0;
         boolean opt = false;
@@ -310,6 +312,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public boolean isInt() {
         try {
             if (expression != null) {
@@ -321,6 +324,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public int getInt() {
         if (expression == null) {
             throw new IllegalArgumentException("Missing value");
@@ -328,6 +332,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return getInt(0);
     }
 
+    @Override
     public int getInt(int defaultValue) {
         if (CoreStringUtils.isBlank(expression)) {
             return defaultValue;
@@ -339,6 +344,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         }
     }
 
+    @Override
     public boolean isLong() {
         try {
             if (expression != null) {
@@ -350,10 +356,12 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return false;
     }
 
+    @Override
     public long getLong() {
         return getLong(0);
     }
 
+    @Override
     public long getLong(long defaultValue) {
         if (CoreStringUtils.isBlank(expression)) {
             return defaultValue;
@@ -365,59 +373,30 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         }
     }
 
+    @Override
     public boolean getBoolean() {
-        return getBoolean(false);
+        Boolean bb = CoreCommonUtils.parseBoolean(expression, null);
+        boolean b = CoreStringUtils.isBlank(expression)?false:bb==null?false:bb.booleanValue();
+        if (isNegated()) {
+            return !b;
+        }
+        return b;
     }
 
+    @Override
     public boolean isBoolean() {
         if (expression != null) {
-            switch (expression.trim().toLowerCase()) {
-                case "ok":
-                case "true":
-                case "yes":
-                case "always":
-                case "enable":
-                case "enabled":
-                case "on":
-                case "y":
-                case "false":
-                case "no":
-                case "none":
-                case "never":
-                case "disable":
-                case "n":
-                case "off":
-                    return true;
-            }
+            return CoreCommonUtils.parseBoolean(expression, null) != null;
         }
         return false;
     }
 
-    public boolean getBoolean(boolean defaultValue) {
+    @Override
+    public Boolean getBoolean(Boolean defaultValue) {
         if (expression == null) {
             return defaultValue;
         }
-        switch (expression.trim().toLowerCase()) {
-            case "ok":
-            case "true":
-            case "yes":
-            case "always":
-            case "enable":
-            case "enabled":
-            case "on":
-            case "y":
-                return true;
-            case "false":
-            case "no":
-            case "none":
-            case "never":
-            case "disable":
-            case "disabled":
-            case "n":
-            case "off":
-                return false;
-        }
-        return defaultValue;
+        return CoreCommonUtils.parseBoolean(expression, defaultValue);
     }
 
     @Override
@@ -425,6 +404,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return String.valueOf(expression);
     }
 
+    @Override
     public boolean getBooleanValue() {
         return getValue().getBoolean(!isNegated());
     }

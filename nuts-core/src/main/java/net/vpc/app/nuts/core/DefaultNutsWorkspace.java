@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
+import net.vpc.app.nuts.core.parsers.DefaultNutsParseManager;
+import net.vpc.app.nuts.core.format.DefaultNutsFormatManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;

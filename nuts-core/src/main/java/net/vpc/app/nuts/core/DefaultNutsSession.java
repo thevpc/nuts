@@ -206,35 +206,60 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public boolean parseOption(NutsArgument arg, NutsCommandLine cmd) {
+    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
+        boolean conf = false;
+        while (commandLine.hasNext()) {
+            if (!configureFirst(commandLine)) {
+                if (skipIgnored) {
+                    commandLine.skip();
+                } else {
+                    commandLine.unexpectedArgument();
+                }
+            } else {
+                conf = true;
+            }
+        }
+        return conf;
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine cmd) {
+        NutsArgument arg = cmd.peek();
         if (arg != null) {
             switch (arg.strKey()) {
-                case "--trace-format": {
+                case "--output-format": {
                     this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(arg).getString().toUpperCase()));
+                    cmd.skip();
                     return true;
                 }
                 case "--json": {
                     this.setOutputFormat(NutsOutputFormat.JSON);
+                    cmd.skip();
                     return true;
                 }
                 case "--props": {
                     this.setOutputFormat(NutsOutputFormat.PROPS);
+                    cmd.skip();
                     return true;
                 }
                 case "--plain": {
                     this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    cmd.skip();
                     return true;
                 }
                 case "--table": {
                     this.setOutputFormat(NutsOutputFormat.TABLE);
+                    cmd.skip();
                     return true;
                 }
                 case "--tree": {
                     this.setOutputFormat(NutsOutputFormat.TREE);
+                    cmd.skip();
                     return true;
                 }
                 case "--xml": {
                     this.setOutputFormat(NutsOutputFormat.XML);
+                    cmd.skip();
                     return true;
                 }
             }

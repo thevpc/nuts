@@ -1,16 +1,17 @@
 package net.vpc.app.nuts;
 
 import java.io.PrintStream;
+import java.io.Writer;
 
 public interface NutsTreeFormat<T> {
 
-    public NutsTreeNodeFormatter getFormatter();
+    public NutsTreeNodeFormat getNodeFormat();
 
-    public NutsTreeFormat setFormatter(NutsTreeNodeFormatter formatter);
+    public NutsTreeFormat setNodeFormat(NutsTreeNodeFormat nodeFormat);
 
-    public NutsTreeLinkFormatter getLinkFormatter();
+    public NutsTreeLinkFormatter getLinkFormat();
 
-    public NutsTreeFormat setLinkFormatter(NutsTreeLinkFormatter linkFormatter);
+    public NutsTreeFormat setLinkFormat(NutsTreeLinkFormatter linkFormat);
 
     public NutsTreeModel getTree();
 
@@ -18,7 +19,10 @@ public interface NutsTreeFormat<T> {
 
     public void print(PrintStream out);
 
-    public boolean configure(NutsCommandLine cmdLine);
-    
-    
+    public void print(Writer out);
+
+    public boolean configure(NutsCommandLine cmdLine, boolean skipIgnored);
+
+    public boolean configureFirst(NutsCommandLine cmdLine);
+
 }

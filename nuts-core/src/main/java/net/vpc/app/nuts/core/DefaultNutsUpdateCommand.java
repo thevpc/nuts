@@ -1121,67 +1121,70 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     }
 
     @Override
-    public NutsUpdateCommand parseOptions(String... args) {
-        NutsCommandLine cmd = ws.parser().parseCommandLine(args);
-        NutsArgument a;
-        while ((a = cmd.next()) != null) {
-            switch (a.strKey()) {
-                case "-a":
-                case "--all": {
-                    this.all();
-                    break;
-                }
-                case "-w":
-                case "--ws":
-                case "--workspace": {
-                    this.workspace();
-                    break;
-                }
-                case "-i":
-                case "--installed": {
-                    this.installed(a.getBooleanValue());
-                    break;
-                }
-                case "-r":
-                case "--runtime": {
-                    this.runtime(a.getBooleanValue());
-                    break;
-                }
-                case "-A":
-                case "--api": {
-                    this.runtime(a.getBooleanValue());
-                    break;
-                }
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.strKey()) {
+            case "-a":
+            case "--all": {
+                this.all();
+                return true;
+            }
+            case "-w":
+            case "--ws":
+            case "--workspace": {
+                this.workspace();
+                return true;
+            }
+            case "-i":
+            case "--installed": {
+                this.installed(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-r":
+            case "--runtime": {
+                this.runtime(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-A":
+            case "--api": {
+                this.runtime(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
 
-                case "-e":
-                case "--extensions": {
-                    this.extensions(a.getBooleanValue());
-                    break;
+            case "-e":
+            case "--extensions": {
+                this.extensions(cmdLine.readBooleanOption().getBoolean());
+                return true;
+            }
+            case "-v":
+            case "--version": {
+                this.setApiVersion(cmdLine.readStringOption().getString());
+                return true;
+            }
+            case "-g":
+            case "--args": {
+                while (cmdLine.hasNext()) {
+                    this.addArg(cmdLine.next().getString());
                 }
-                case "-v":
-                case "--version": {
-                    this.setApiVersion(cmd.getValueFor(a).getString());
-                    break;
+                return true;
+            }
+
+            default: {
+                if (super.configureFirst(cmdLine)) {
+                    return true;
                 }
-                case "-g":
-                case "--args": {
-                    while (cmd.hasNext()) {
-                        this.addArg(cmd.next().getString());
-                    }
-                    break;
-                }
-                default: {
-                    if (!super.parseOption(a, cmd)) {
-                        if (a.isOption()) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + a);
-                        } else {
-                            id(a.getString());
-                        }
-                    }
+                if (a.isOption()) {
+                    return false;
+                } else {
+                    cmdLine.skip();
+                    id(a.getString());
+                    return true;
                 }
             }
         }
-        return this;
     }
 
 }
