@@ -41,7 +41,7 @@ import java.util.List;
  */
 public abstract class NutsCommandAutoCompleteBase implements net.vpc.app.nuts.NutsCommandAutoComplete {
 
-    private LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
 
     @Override
     public List getCandidates() {

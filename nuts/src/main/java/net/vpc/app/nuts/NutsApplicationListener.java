@@ -28,7 +28,7 @@ public interface NutsApplicationListener {
         
     }
 
-    default NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args){
+    default NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis){
         return null;
     }
 }

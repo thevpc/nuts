@@ -52,5 +52,5 @@ public interface NutsWorkspaceListManager {
 
     boolean removeWorkspace(String name);
 
-    void onOffWorkspace(String name, Boolean value);
+    void save();
 }

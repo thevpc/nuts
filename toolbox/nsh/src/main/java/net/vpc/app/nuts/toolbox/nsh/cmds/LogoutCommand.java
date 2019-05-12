@@ -50,7 +50,7 @@ public class LogoutCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else  {
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             }
         }
         if (!cmdLine.isExecMode()) {

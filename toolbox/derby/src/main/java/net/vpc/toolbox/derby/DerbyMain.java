@@ -47,7 +47,7 @@ public class DerbyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
         NutsWorkspace ws=appContext.getWorkspace();
-        NutsCommandLine cmdLine = appContext.newCommandLine();
+        NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if (appContext.configure(cmdLine)) {
@@ -90,7 +90,7 @@ public class DerbyMain extends NutsApplication {
             } else if ((a = cmdLine.readNonOption("stop", "shutdown")) != null) {
                 cmd = Command.shutdown;
             } else {
-                cmdLine.unexpectedArgument("derby");
+                cmdLine.setCommandName("derby").unexpectedArgument();
             }
         }
         List<String> command = new ArrayList<>();

@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
@@ -327,10 +328,10 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
                 if (localFile == null) {
                     Path tempFile = getWorkspace().io().createTempFile(CoreIOUtils.getURLName(path), this);
                     helperHttpDownloadToFile(path, tempFile, true);
-                    return new NutsContent(tempFile, false, true);
+                    return new DefaultNutsContent(tempFile, false, true);
                 } else {
                     helperHttpDownloadToFile(path, localFile, true);
-                    return new NutsContent(localFile, false, false);
+                    return new DefaultNutsContent(localFile, false, false);
                 }
             } else {
                 for (String location : descriptor.getLocations()) {
@@ -338,10 +339,10 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
                         if (localFile == null) {
                             Path tempFile = getWorkspace().io().createTempFile(CoreIOUtils.getURLName(location), this);
                             helperHttpDownloadToFile(location, tempFile, true);
-                            return new NutsContent(tempFile, false, true);
+                            return new DefaultNutsContent(tempFile, false, true);
                         } else {
                             helperHttpDownloadToFile(location, localFile, true);
-                            return new NutsContent(localFile, false, false);
+                            return new DefaultNutsContent(localFile, false, false);
                         }
                     } catch (Exception ex) {
                         //ignore!!

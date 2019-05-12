@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,6 +92,7 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
     protected LinkedList<NutsArgument> expanded = new LinkedList<>();
     protected boolean expandSimpleOptions = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
+    private static final String NOT_SUPPORTED = "This a minimal implementation of NutsCommandLine used to bootstrap. This Method is not supported.";
 
     public NutsDefaultCommandLine(String[] args) {
         if (args != null) {
@@ -276,237 +276,247 @@ public class NutsDefaultCommandLine implements NutsCommandLine {
     // NOT IMPLEMENTED !!!!
     @Override
     public NutsArgument readBooleanOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readStringOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readImmediateStringOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readVoidOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readOption(OptionType expectValue, String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsCommandLine requiredNonOption() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
-    public void skipAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int skipAll() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readNonOption(boolean expectValue, String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readRequiredOption(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readRequiredNonOption() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readRequiredNonOption(NutsArgumentNonOption name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readNonOption() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readNonOption(String... names) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readRequiredNonOption(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readNonOption(NutsArgumentNonOption name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument readNonOption(NutsArgumentNonOption name, boolean error) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument read() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean readAll(boolean acceptDuplicates, String... vals) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean readAll(String... vals) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean readAllOnce(String... vals) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean acceptSequence(int pos, String... vals) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument findOption(String option) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument get() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgument get(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean containOption(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public int indexOfOption(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public int length() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
-    public void requireEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public NutsCommandLine requireEmpty() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
-    public void unexpectedArgument() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public NutsCommandLine unexpectedArgument() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
-    public void unexpectedArgument(String commandName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public NutsCommandLine requireNonEmpty() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
-    public void requireNonEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public NutsCommandLine removeSpecialSimpleOption(String option) {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public NutsCommandLine pushBack(NutsArgument a) {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public NutsCommandLine setCommandName(String commandName) {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public String getCommandName() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
+    }
+
+    @Override
+    public String[] getSpecialSimpleOptions() {
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public String[] toArray() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public int getWordIndex() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isExecMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isAutoCompleteMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isOption(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isNonOption(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isOption(String... options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public boolean isOption(int index, String... options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public int skip() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public int skip(int count) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
     @Override
     public NutsArgumentNonOption createNonOption(String type, String label) {
-        return new NutsArgumentNonOption() {
-            @Override
-            public String getName() {
-                return label == null ? type : label;
-            }
-
-            @Override
-            public List<NutsArgumentCandidate> getValues() {
-                return Collections.emptyList();
-            }
-        };
+        throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 
 }

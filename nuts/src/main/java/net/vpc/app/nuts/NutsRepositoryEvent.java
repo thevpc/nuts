@@ -30,30 +30,15 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsRepositoryEvent {
-    private final NutsWorkspace workspace;
-    private final NutsRepository parent;
-    private final NutsRepository repository;
+public interface NutsRepositoryEvent {
 
-    public NutsRepositoryEvent(NutsWorkspace workspace, NutsRepository parent, NutsRepository repository) {
-        this.workspace = workspace;
-        this.parent = parent;
-        this.repository = repository;
-    }
+    NutsWorkspace getWorkspace();
 
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
+    NutsRepository getParent();
 
-    public NutsRepository getParent() {
-        return parent;
-    }
-
-    public NutsRepository getRepository() {
-        return repository;
-    }
+    NutsRepository getRepository();
 }

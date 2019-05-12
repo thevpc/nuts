@@ -79,6 +79,6 @@ public interface NutsIOManager extends NutsComponent<Object> {
     
     Path path(String first, String... more);
     
-    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId);
+    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis);
 
 }

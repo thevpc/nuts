@@ -13,6 +13,7 @@ import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.DefaultNutsExecCommand;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
@@ -60,7 +61,7 @@ public class PathComponentExecutable extends AbstractExecutable {
                 //this is a native file?
                 c.descriptor = DefaultNutsExecCommand.TEMP_DESC;
             }
-            NutsDefinition nutToRun = new DefaultNutsDefinition(ws, null, c.descriptor.getId(), c.descriptor, new NutsContent(c.getContentPath(), false, c.temps.size() > 0), null);
+            NutsDefinition nutToRun = new DefaultNutsDefinition(ws, null, c.descriptor.getId(), c.descriptor, new DefaultNutsContent(c.getContentPath(), false, c.temps.size() > 0), null);
             execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), session, embedded);
         }
     }

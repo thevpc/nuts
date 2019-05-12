@@ -335,6 +335,13 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
+                    case "--gui": {
+                        if (enabled) {
+                            o.setGui(a.getBooleanValue());
+                        }
+                        break;
+                    }
+
                     case "--color":
                     case "-C": {
                         if (enabled) {

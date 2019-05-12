@@ -23,7 +23,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        NutsCommandLine cmd = appContext.newCommandLine();
+        NutsCommandLine cmd = appContext.getCommandLine();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
@@ -67,7 +67,7 @@ public class NdiMain extends NutsApplication {
                     } else if ((a = cmd.readStringOption("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getValue().getString());
                     } else if (cmd.get().isOption()) {
-                        cmd.unexpectedArgument("ndi");
+                        cmd.setCommandName("ndi").unexpectedArgument();
                     } else {
                         run = true;
                         NutsArgument aa = null;
@@ -99,14 +99,14 @@ public class NdiMain extends NutsApplication {
                     throw new NutsExecutionException("Unable to configure path : " + e.toString(), e);
                 }
             } else {
-                cmd.unexpectedArgument("ndi");
+                cmd.setCommandName("ndi").unexpectedArgument();
             }
         }
     }
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd = applicationContext.newCommandLine();
+        NutsCommandLine cmd = applicationContext.getCommandLine();
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
@@ -116,7 +116,7 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmd.readBooleanOption("--trace")) != null) {
                 trace = a.getBooleanValue();
             } else {
-                cmd.unexpectedArgument("ndi --nuts-exec-mode=on-install");
+                cmd.setCommandName("ndi --nuts-exec-mode=on-install").unexpectedArgument();
             }
         }
         SystemNdi ndi = createNdi(applicationContext);

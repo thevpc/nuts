@@ -40,6 +40,7 @@ import javax.tools.ToolProvider;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 
 /**
  * Created by vpc on 1/7/17.
@@ -78,7 +79,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getNutsDefinition();
         d = new DefaultNutsDefinition(d);
-        ((DefaultNutsDefinition) d).setContent(new NutsContent(
+        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
                 folder,
                 false,
                 true

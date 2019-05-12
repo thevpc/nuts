@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.core.DefaultNutsVersionInterval;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
@@ -86,29 +87,29 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
                 boolean inclusiveUpperBoundary = y.group("R1").equals("]");
                 String min = y.group("LV1");
                 String max = y.group("RV1");
-                d.add(new NutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, min, max));
+                d.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, min, max));
             } else if (y.group("VAL2") != null) {
                 boolean inclusiveLowerBoundary = y.group("L2").equals("[");
                 boolean inclusiveUpperBoundary = y.group("R2").equals("]");
                 String val = y.group("V2");
                 //  [a]  or ]a[
                 if ((inclusiveLowerBoundary && inclusiveUpperBoundary) || (!inclusiveLowerBoundary && !inclusiveUpperBoundary)) {
-                    d.add(new NutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, val, val));
+                    d.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, val, val));
                     // ]a]    == ],a]
                 } else if (!inclusiveLowerBoundary) {
-                    d.add(new NutsVersionInterval(false, true, null, val));
+                    d.add(new DefaultNutsVersionInterval(false, true, null, val));
                     // [a[    == [a,[
                 } else if (!inclusiveUpperBoundary) {
-                    d.add(new NutsVersionInterval(false, true, val, null));
+                    d.add(new DefaultNutsVersionInterval(false, true, val, null));
                 }
             } else {
                 String v3 = y.group("V3");
                 if (v3.endsWith("*")) {
                     String min = v3.substring(0, v3.length() - 1);
                     String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
-                    d.add(new NutsVersionInterval(true, false, min, max));
+                    d.add(new DefaultNutsVersionInterval(true, false, min, max));
                 } else {
-                    d.add(new NutsVersionInterval(true, true, v3, v3));
+                    d.add(new DefaultNutsVersionInterval(true, true, v3, v3));
                 }
             }
         }

@@ -29,6 +29,7 @@ import net.vpc.app.nuts.core.util.common.LazyIterator;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositorySession;
+import net.vpc.app.nuts.core.DefaultNutsContentEvent;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -192,7 +193,7 @@ public class NutsRepositoryMirroringHelper {
                     .setOffline(cmd.isOffline())
                     .setSession(session)
                     .run();
-            NutsRepositoryExt.of(repo).fireOnPush(new NutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
+            NutsRepositoryExt.of(repo).fireOnPush(new DefaultNutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
         } else {
             throw new NutsRepositoryNotFoundException(repository);
         }

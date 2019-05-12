@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequestMapping("ws/workspaces")
 public class NutsWorkspaceService {
 
-    private NutsWorkspaceListManager workspaceManager= Nuts.openWorkspace().config().createWorkspaceListManager("clown");
+    private final NutsWorkspaceListManager workspaceManager= Nuts.openWorkspace().config().createWorkspaceListManager("clown");
 
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll() {
@@ -50,7 +50,8 @@ public class NutsWorkspaceService {
     @GetMapping(value = "onOff", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> onOff(@RequestParam("name") String name,
                                                            @RequestParam("value") Boolean value) {
-        this.workspaceManager.onOffWorkspace(name, value);
+        this.workspaceManager.getWorkspaceLocation(name).setEnabled(value==null?false:value);
+        this.workspaceManager.save();
         return getAll();
     }
 }

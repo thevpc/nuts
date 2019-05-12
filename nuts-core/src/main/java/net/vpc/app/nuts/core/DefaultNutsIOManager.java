@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.app.nuts.core.util.app.DefaultNutsApplicationContext;
+import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -408,8 +408,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId) {
-        return new DefaultNutsApplicationContext(ws, appClass, storeId);
+    public NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis) {
+        return new DefaultNutsApplicationContext(ws, appClass, storeId, startTimeMillis);
     }
 
 }

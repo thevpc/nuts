@@ -19,7 +19,7 @@ public class NdedMain extends NutsApplication {
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        NutsCommandLine commandLine = appContext.newCommandLine();
+        NutsCommandLine commandLine = appContext.getCommandLine();
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (appContext.configure(commandLine)) {
@@ -72,7 +72,7 @@ public class NdedMain extends NutsApplication {
             } else if ((a = commandLine.readBooleanOption("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
             } else {
-                commandLine.unexpectedArgument("nded");
+                commandLine.setCommandName("nded").unexpectedArgument();
             }
         }
     }

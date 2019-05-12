@@ -65,19 +65,19 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     private NutsExecutionType executionType = NutsExecutionType.SPAWN;
     private boolean redirectErrorStream;
     private boolean failFast;
-    private NutsCommandStringFormatter commandStringFormatter;
+    private NutsCommandStringFormat commandStringFormatter;
 
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws);
     }
 
     @Override
-    public NutsCommandStringFormatter getCommandStringFormatter() {
+    public NutsCommandStringFormat getCommandStringFormat() {
         return commandStringFormatter;
     }
 
     @Override
-    public NutsExecCommand setCommandStringFormatter(NutsCommandStringFormatter commandStringFormatter) {
+    public NutsExecCommand setCommandStringFormat(NutsCommandStringFormat commandStringFormatter) {
         this.commandStringFormatter = commandStringFormatter;
         return this;
     }
@@ -649,7 +649,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 
     @Override
     public String getCommandString() {
-        NutsCommandStringFormatter f = getCommandStringFormatter();
+        NutsCommandStringFormat f = getCommandStringFormat();
         StringBuilder sb = new StringBuilder();
         if (env != null) {
             for (Map.Entry<Object, Object> e : env.entrySet()) {

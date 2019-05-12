@@ -39,7 +39,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     private String sourceName;
     private long length = -1;
     private NutsTerminalProvider session;
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
 
     public DefaultNutsMonitorCommand(NutsWorkspace ws) {
         this.ws = ws;

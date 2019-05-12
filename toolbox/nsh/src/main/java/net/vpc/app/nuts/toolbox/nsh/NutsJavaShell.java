@@ -325,7 +325,7 @@ public class NutsJavaShell extends JavaShell {
                 } else if ((a = cmd.readBooleanOption("-c")) != null) {
                     nonOptions.add(cmd.read().getString());
                 } else if (cmd.get().isOption()) {
-                    cmd.unexpectedArgument("nsh");
+                    cmd.setCommandName("nsh").unexpectedArgument();
                 } else {
                     nonOptions.add(cmd.read().getString());
                 }

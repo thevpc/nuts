@@ -38,7 +38,7 @@ import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.TraceIterator;
+import net.vpc.app.nuts.core.NutsTraceIterator;
 import net.vpc.app.nuts.NutsOutputListFormat;
 
 /**
@@ -220,8 +220,7 @@ public class NutsWorkspaceUtils {
                     //ignore...
                 }
                 if (t > 0) {
-                    repos2.add(new RepoAndLevel(repository, t, repository.config().getSpeed(true), postComp));
-                    //                    reposLevels.add(t);
+                    repos2.add(new RepoAndLevel(repository, t, postComp));
                 }
             }
         }
@@ -239,14 +238,12 @@ public class NutsWorkspaceUtils {
 
         NutsRepository r;
         int level;
-        int speed;
         Comparator<NutsRepository> postComp;
 
-        public RepoAndLevel(NutsRepository r, int level, int speed, Comparator<NutsRepository> postComp) {
+        public RepoAndLevel(NutsRepository r, int level, Comparator<NutsRepository> postComp) {
             super();
             this.r = r;
             this.level = level;
-            this.speed = speed;
             this.postComp = postComp;
         }
 
@@ -256,7 +253,6 @@ public class NutsWorkspaceUtils {
             if (x != 0) {
                 return x;
             }
-            x = Integer.compare(o2.speed, this.speed);
             if (postComp != null) {
                 x = postComp.compare(this.r, o2.r);
             }
@@ -294,11 +290,11 @@ public class NutsWorkspaceUtils {
 //        out.println();
 //    }
     public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsOutputListFormat format, NutsFindCommand findCommand) {
-        return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
+        return new NutsTraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }
 
     public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsOutputListFormat format, NutsFindCommand findCommand) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
-        return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
+        return new NutsTraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }
 }

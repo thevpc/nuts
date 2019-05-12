@@ -67,7 +67,7 @@
 //            } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
 //                ft = NutsOutputFormat.PROPS;
 //            } else {
-//                cmdLine.unexpectedArgument(getName());
+//                cmdLine.setCommandName(getName()).unexpectedArgument();
 //            }
 //
 //        }

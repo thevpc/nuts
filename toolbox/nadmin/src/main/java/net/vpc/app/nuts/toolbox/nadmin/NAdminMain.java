@@ -22,7 +22,7 @@ public class NAdminMain extends NutsApplication {
             );
         }
         Boolean autoSave = true;
-        NutsCommandLine cmdLine = context.newCommandLine();
+        NutsCommandLine cmdLine = context.getCommandLine();
         boolean empty = true;
         NutsArgument a;
         do {

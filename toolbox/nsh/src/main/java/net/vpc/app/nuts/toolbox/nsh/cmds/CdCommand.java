@@ -83,7 +83,7 @@ public class CdCommand extends AbstractNutsCommand {
                 result = 0;
                 break;
         }
-        cmdLine.unexpectedArgument(getName());
+        cmdLine.setCommandName(getName()).unexpectedArgument();
         return result;
     }
 }

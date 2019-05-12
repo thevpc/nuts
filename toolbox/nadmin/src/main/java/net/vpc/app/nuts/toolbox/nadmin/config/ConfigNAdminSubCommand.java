@@ -141,7 +141,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             if ((a = cmdLine.readBooleanOption("-f", "--force")) != null) {
                 force = a.getBooleanValue();
             } else {
-                cmdLine.unexpectedArgument(name);
+                cmdLine.setCommandName(name).unexpectedArgument();
             }
         }
         return force;

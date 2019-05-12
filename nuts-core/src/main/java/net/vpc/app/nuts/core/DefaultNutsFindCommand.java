@@ -955,12 +955,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             }
             List<NutsId> mi = findBasket(false).list();
             List<NutsDefinition> li = new ArrayList<>(mi.size());
-//            NutsSession s = evalSession(true);
             NutsFetchCommand fetch = toFetch();
-            PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().out();
-
-            Properties props = new Properties();
-            List<Object> json = new ArrayList<>();
             for (NutsId nutsId : mi) {
                 NutsDefinition y = fetch.id(nutsId).getResultDefinition();
                 li.add(y);

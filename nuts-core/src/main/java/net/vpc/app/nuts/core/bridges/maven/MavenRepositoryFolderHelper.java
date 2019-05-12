@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
-import net.vpc.app.nuts.core.repos.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -33,13 +32,14 @@ import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
-import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
-import net.vpc.app.nuts.core.util.mvn.MavenMetadataParser;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
 
 /**
  *
@@ -79,7 +79,7 @@ public class MavenRepositoryFolderHelper {
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
         Path cacheContent = getIdLocalFile(id);
         if (cacheContent != null && Files.exists(cacheContent)) {
-            return new NutsContent(cacheContent, true, false);
+            return new DefaultNutsContent(cacheContent, true, false);
         }
         return null;
     }

@@ -1,19 +1,15 @@
 package net.vpc.app.nuts;
 
-
 import java.io.PrintStream;
 import java.nio.file.Path;
 
 public interface NutsApplicationContext extends NutsCommandLineContext {
+
     public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "@@Candidate@@: ";
 
     public String getMode();
 
-    public NutsApplicationContext setMode(String mode);
-
     public String[] getModeArgs();
-
-    public NutsApplicationContext setModeArgs(String[] modeArgs);
 
     @Override
     public NutsCommandAutoComplete getAutoComplete();
@@ -32,8 +28,20 @@ public interface NutsApplicationContext extends NutsCommandLineContext {
 
     public NutsWorkspace getWorkspace();
 
-    public NutsApplicationContext setWorkspace(NutsWorkspace workspace);
-
+//    public NutsApplicationContext setModeArgs(String[] modeArgs);
+//    public NutsApplicationContext setMode(String mode);
+//    public NutsApplicationContext setWorkspace(NutsWorkspace workspace);
+//    public NutsApplicationContext setProgramsFolder(Path programsFolder);
+//    public NutsApplicationContext setConfigFolder(Path configFolder);
+//    public NutsApplicationContext setLogsFolder(Path logsFolder);
+//    public NutsApplicationContext setTempFolder(Path tempFolder);
+//    public NutsApplicationContext setVarFolder(Path varFolder);
+//    public NutsApplicationContext setStoreId(String storeId);
+//    public NutsApplicationContext setArgs(String[] args);
+//    public NutsApplicationContext setStartTimeMillis(long startTimeMillis);
+//    public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion);
+//    public NutsApplicationContext setLibFolder(Path libFolder);
+//    public NutsApplicationContext setCacheFolder(Path cacheFolder);
     public NutsSession getSession();
 
     public NutsApplicationContext setSession(NutsSession session);
@@ -48,27 +56,19 @@ public interface NutsApplicationContext extends NutsCommandLineContext {
 
     public Path getProgramsFolder();
 
-    public NutsApplicationContext setProgramsFolder(Path programsFolder);
-
     public Path getConfigFolder();
-
-    public NutsApplicationContext setConfigFolder(Path configFolder);
 
     public Path getLogsFolder();
 
-    public NutsApplicationContext setLogsFolder(Path logsFolder);
-
     public Path getTempFolder();
-
-    public NutsApplicationContext setTempFolder(Path tempFolder);
 
     public Path getVarFolder();
 
-    public NutsApplicationContext setVarFolder(Path varFolder);
+    public Path getLibFolder();
+
+    public Path getCacheFolder();
 
     public String getStoreId();
-
-    public NutsApplicationContext setStoreId(String storeId);
 
     public NutsId getAppId();
 
@@ -80,30 +80,18 @@ public interface NutsApplicationContext extends NutsCommandLineContext {
 
     public NutsApplicationContext setVerbose(boolean verbose);
 
+    @Override
     public String[] getArgs();
-
-    public NutsApplicationContext setArgs(String[] args);
 
     public NutsTerminalMode getTerminalMode();
 
-    public NutsTableCellFormat getTableCellFormatter();
-
     public long getStartTimeMillis();
-
-    public NutsApplicationContext setStartTimeMillis(long startTimeMillis);
 
     public NutsVersion getAppPreviousVersion();
 
-    public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion);
 
-    public Path getLibFolder();
+    public NutsCommandLine getCommandLine();
 
-    public NutsApplicationContext setLibFolder(Path libFolder);
-
-    public Path getCacheFolder();
-
-    public NutsApplicationContext setCacheFolder(Path cacheFolder);
-    
-    public NutsCommandLine newCommandLine();
+    NutsCommandLine commandLine();
 
 }

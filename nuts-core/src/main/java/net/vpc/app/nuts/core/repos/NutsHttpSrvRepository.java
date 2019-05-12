@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
@@ -207,7 +208,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = CoreIOUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return new NutsContent(localPath, false, temp);
+                return new DefaultNutsContent(localPath, false, temp);
             }
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, ex);

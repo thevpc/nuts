@@ -51,8 +51,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsFindCommand;
-import net.vpc.app.nuts.core.util.mvn.PomId;
-import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
 
 /**
  * Created by vpc on 1/6/17.

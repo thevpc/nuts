@@ -1,13 +1,13 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.util.app.NutsDefaultWorkspaceCellFormat;
+import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceCellFormat;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
 import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
-import net.vpc.app.nuts.core.util.cmdline.format.DefaultPropertiesFormat;
-import net.vpc.app.nuts.core.util.cmdline.format.DefaultTableFormat;
-import net.vpc.app.nuts.core.util.cmdline.format.DefaultTreeFormat;
+import net.vpc.app.nuts.core.app.format.DefaultPropertiesFormat;
+import net.vpc.app.nuts.core.app.format.DefaultTableFormat;
+import net.vpc.app.nuts.core.app.format.DefaultTreeFormat;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
 

@@ -62,7 +62,9 @@ public class Nuts {
     }
 
     /**
-     * main method. This Main will call System.exit() at completion
+     * main method. This Main will call
+     * {@link Nuts#runWorkspace(java.lang.String...)} then {@link System#exit(int)}
+     * at completion
      *
      * @param args main arguments
      */
@@ -73,7 +75,7 @@ public class Nuts {
             System.exit(0);
         } catch (Exception ex) {
             int errorCode = NutsExecutionException.DEFAULT_ERROR_EXIT_CODE;
-            boolean showTrace = NutsUtils.getSystemBoolean("nuts.export.trace-exit-errors",false);
+            boolean showTrace = NutsUtils.getSystemBoolean("nuts.export.trace-exit-errors", false);
             for (String arg : args) {
                 if (arg.startsWith("-")) {
                     if (arg.equals("--verbose") || arg.equals("--debug")) {
@@ -105,8 +107,9 @@ public class Nuts {
     }
 
     /**
-     * opens a workspace using "--nuts-boot-args" configuration argument. This
-     * method is to be called by child processes of nuts in order to inherit
+     * opens a workspace using "--nuts-boot-args" configuration argument. 
+     * The argument MUST be the very first command line argument to be processes.
+     * This method is to be called by child processes of nuts in order to inherit
      * workspace configuration.
      *
      * @param args arguments
@@ -135,7 +138,7 @@ public class Nuts {
     }
 
     /**
-     * creates a workspace. Nuts Boot arguments are passed in <code>args</code>
+     * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
      * @param args nuts boot arguments
      * @return new NutsWorkspace instance
@@ -153,7 +156,7 @@ public class Nuts {
     }
 
     /**
-     * creates a default workspace (no boot options)
+     * open default workspace (no boot options)
      *
      * @return new NutsWorkspace instance
      */
@@ -162,7 +165,7 @@ public class Nuts {
     }
 
     /**
-     * opens a workspace using the given options
+     * open a workspace using the given options
      *
      * @param options boot options
      * @return new NutsWorkspace instance
@@ -178,8 +181,9 @@ public class Nuts {
     }
 
     /**
-     * run Nuts application with the provided arguments. This Main will never
-     * call System.exit()
+     * open then run Nuts application with the provided arguments. This Main will 
+     * <strong>NEVER</strong>
+     * call {@link System#exit(int)}.
      *
      * @param args boot arguments
      */

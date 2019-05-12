@@ -67,19 +67,6 @@ public class NutsRepositoryDefinition {
         this.order = o.order;
     }
 
-//    public NutsRepositoryDefinition(String name, String location, String type, boolean proxy, boolean reference, boolean failSafe, boolean create,int deployOrder, int order) {
-//        this.name = name;
-//        this.location = location;
-//        this.type = type;
-//        this.proxy = proxy;
-//        this.reference = reference;
-//        this.failSafe = failSafe;
-//        this.create = create;
-//        this.deployOrder = deployOrder;
-//        this.order = order;
-//    }
-
-    
     public int getOrder() {
         return order;
     }

@@ -59,7 +59,7 @@ public class VersionCommand extends AbstractNutsCommand {
             } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
             } else {
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             }
 
         }

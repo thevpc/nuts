@@ -61,7 +61,7 @@ public class LocalMysql {
             } else if ((a = args.readStringOption("--property")) != null) {
                 property = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --local list");
+                args.setCommandName("mysql --local list").unexpectedArgument();
             }
         }
         if (property == null) {
@@ -145,7 +145,7 @@ public class LocalMysql {
                 }
                 mysqlAppConfig.getConfig().setPassword(value);
             } else {
-                args.unexpectedArgument("mysql --local add");
+                args.setCommandName("mysql --local add").unexpectedArgument();
             }
         }
         if (c != null) {
@@ -164,7 +164,7 @@ public class LocalMysql {
             } else if ((a = args.readStringOption("--name")) != null) {
                 conf = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --local remove");
+                args.setCommandName("mysql --local remove").unexpectedArgument();
             }
         }
         if (appName == null) {
@@ -255,7 +255,7 @@ public class LocalMysql {
                 db = a.getValue().getString();
             } else {
                 path = args.readNonOption().getString();
-                args.unexpectedArgument("mysql --local restore");
+                args.setCommandName("mysql --local restore").unexpectedArgument();
             }
         }
         LocalMysqlConfigService c = loadMysqlConfig(instance);
@@ -274,7 +274,7 @@ public class LocalMysql {
                 db = a.getValue().getString();
             } else {
                 path = args.readNonOption().getString();
-                args.unexpectedArgument("mysql --local archive");
+                args.setCommandName("mysql --local archive").unexpectedArgument();
             }
         }
         LocalMysqlConfigService c = loadMysqlConfig(instance);

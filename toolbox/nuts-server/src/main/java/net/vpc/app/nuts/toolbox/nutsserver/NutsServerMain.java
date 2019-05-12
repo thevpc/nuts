@@ -28,7 +28,7 @@ public class NutsServerMain extends NutsApplication {
             boolean autoSave = false;
             NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
 
-            NutsCommandLine cmdLine = context.newCommandLine();
+            NutsCommandLine cmdLine = context.getCommandLine();
 
             class SrvInfo {
 
@@ -204,7 +204,7 @@ public class NutsServerMain extends NutsApplication {
                     }
                 }
             } else if (cmdLine.readAll("list")) {
-                cmdLine.unexpectedArgument("nuts-server list");
+                cmdLine.setCommandName("nuts-server list").unexpectedArgument();
                 if (cmdLine.isExecMode()) {
                     List<NutsServer> servers = serverManager.getServers();
                     PrintStream out = context.getTerminal().fout();
@@ -222,7 +222,7 @@ public class NutsServerMain extends NutsApplication {
             } else {
                 throw new NutsExecutionException("nuts-server: Invalid syntax for command server", 1);
             }
-            cmdLine.unexpectedArgument("nuts-server");
+            cmdLine.setCommandName("nuts-server").unexpectedArgument();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

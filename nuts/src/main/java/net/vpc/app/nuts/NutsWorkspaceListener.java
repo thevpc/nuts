@@ -35,13 +35,23 @@ package net.vpc.app.nuts;
  */
 public interface NutsWorkspaceListener {
 
-    void onAddRepository(NutsWorkspace workspace, NutsRepository repository);
+    default void onAddRepository(NutsWorkspace workspace, NutsRepository repository){
+        
+    }
 
-    void onRemoveRepository(NutsWorkspace workspace, NutsRepository repository);
+    default void onRemoveRepository(NutsWorkspace workspace, NutsRepository repository){
+        
+    }
 
-    void onReloadWorkspace(NutsWorkspace workspace);
+    default void onReloadWorkspace(NutsWorkspace workspace){
+        
+    }
 
-    void onCreateWorkspace(NutsWorkspace workspace);
+    default void onCreateWorkspace(NutsWorkspace workspace){
+        
+    }
 
-    void onUpdateProperty(String property, Object oldValue, Object newValue);
+    default void onUpdateProperty(String property, Object oldValue, Object newValue){
+        
+    }
 }

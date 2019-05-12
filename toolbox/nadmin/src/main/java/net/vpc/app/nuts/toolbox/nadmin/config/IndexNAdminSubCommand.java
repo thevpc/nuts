@@ -31,7 +31,7 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
                 repos.add(cmdLine.read().getString());
             }
             updateStatistics(context, repos.toArray(new String[0]));
-            cmdLine.unexpectedArgument(name);
+            cmdLine.setCommandName(name).unexpectedArgument();
             return true;
         } else {
             return false;

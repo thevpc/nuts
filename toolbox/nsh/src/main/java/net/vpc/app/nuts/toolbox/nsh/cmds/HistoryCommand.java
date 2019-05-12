@@ -72,14 +72,14 @@ public class HistoryCommand extends AbstractNutsCommand {
                 //
             } else if (cmdLine.readOption("-c", "--clear") != null) {
                 o.action = Action.CLEAR;
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             } else if ((a = cmdLine.readStringOption("-d", "--delete")) != null) {
                 o.action = Action.DELETE;
                 o.ival = a.getValue().getInt();
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             } else if ((a = cmdLine.readOption("-D", "--remove-duplicates")) != null) {
                 o.action = Action.REMOVE_DUPLICATES;
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             } else if ((a = cmdLine.readOption("-w", "--write")) != null) {
                 o.action = Action.WRITE;
                 if(a.isKeyValue()){
@@ -87,7 +87,7 @@ public class HistoryCommand extends AbstractNutsCommand {
                 }else if(!cmdLine.isEmpty()){
                     o.sval=cmdLine.read().getString();
                 }
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             } else if ((a = cmdLine.readOption("-r", "--read")) != null) {
                 o.action = Action.READ;
                 if(a.isKeyValue()){
@@ -95,13 +95,13 @@ public class HistoryCommand extends AbstractNutsCommand {
                 }else if(!cmdLine.isEmpty()){
                     o.sval=cmdLine.read().getString();
                 }
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             } else {
                 if (cmdLine.get(0).getInt(0) != 0) {
                     o.action = Action.PRINT;
                     o.ival = Math.abs(cmdLine.read().getInt());
                 } else {
-                    cmdLine.unexpectedArgument(getName());
+                    cmdLine.setCommandName(getName()).unexpectedArgument();
                 }
             }
         }

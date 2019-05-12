@@ -113,7 +113,7 @@ public class PropsCommand extends AbstractNutsCommand {
                         o.sourceType = SourceType.FILE;
                         o.sourceFile = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                     } else {
-                        cmdLine.unexpectedArgument(getName());
+                        cmdLine.setCommandName(getName()).unexpectedArgument();
                     }
 
                 }
@@ -174,16 +174,16 @@ public class PropsCommand extends AbstractNutsCommand {
                         o.sourceType = SourceType.FILE;
                         o.sourceFile = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
                     } else {
-                        cmdLine.unexpectedArgument(getName());
+                        cmdLine.setCommandName(getName()).unexpectedArgument();
                     }
                 }
             } else if (cmdLine.readAllOnce("list")) {
                 o.action = "list";
                 while (cmdLine.hasNext()) {
-                    cmdLine.unexpectedArgument(getName());
+                    cmdLine.setCommandName(getName()).unexpectedArgument();
                 }
             } else {
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             }
         } while (cmdLine.hasNext());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {

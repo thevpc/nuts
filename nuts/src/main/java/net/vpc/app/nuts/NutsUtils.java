@@ -991,22 +991,6 @@ final class NutsUtils {
         return null;
     }
 
-    public static void copy(InputStream ff, File to) throws IOException {
-        if (to.getParentFile() != null) {
-            to.getParentFile().mkdirs();
-        }
-        try {
-            Files.copy(ff, to.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
-            throw ex;
-        } finally {
-            if (ff != null) {
-                ff.close();
-            }
-        }
-    }
-
     public static void copy(File ff, File to) throws IOException {
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();

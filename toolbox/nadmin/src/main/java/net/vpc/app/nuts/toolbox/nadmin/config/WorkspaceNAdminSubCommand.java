@@ -61,7 +61,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                         trySave(context, workspace, null, autoSave, cmdLine);
                     }
                     processed = true;
-                    cmdLine.unexpectedArgument("config create workspace");
+                    cmdLine.setCommandName("config create workspace").unexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -75,7 +75,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
             context.getWorkspace().config().setBootConfig(c);
-            cmdLine.unexpectedArgument("config set workspace version");
+            cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
         } else if (cmdLine.readAll("set workspace runtime-version", "set workspace runtime-id")) {
             String version = cmdLine.readRequiredNonOption(cmdLine.createNonOption("version")).getString();
@@ -86,10 +86,10 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 c.setRuntimeId(version);
             }
             context.getWorkspace().config().setBootConfig(c);
-            cmdLine.unexpectedArgument("config set workspace version");
+            cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
         } else if (cmdLine.readAll("get workspace version", "gwv")) {
-            cmdLine.unexpectedArgument("config get workspace version");
+            cmdLine.setCommandName("config get workspace version").unexpectedArgument();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             context.out().printf("boot-version  : %s%n", StringUtils.trim(c.getApiVersion()));
             context.out().printf("runtime-id    : %s%n", StringUtils.trim(c.getRuntimeId()));
@@ -117,7 +117,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else {
                     String ws = cmdLine.readRequiredNonOption(cmdLine.createNonOption("WorkspacePath")).getString();
                     wsCount++;
-                    cmdLine.unexpectedArgument("config set workspace");
+                    cmdLine.setCommandName("config set workspace").unexpectedArgument();
                     processed = true;
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
@@ -137,7 +137,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
             }
-            cmdLine.unexpectedArgument("config set workspace");
+            cmdLine.setCommandName("config set workspace").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 if (!processed) {
                     throw new NutsExecutionException("incorrect command : create workspace", 2);
@@ -145,7 +145,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.readAll("save workspace", "save", "sw")) {
-            cmdLine.unexpectedArgument("config save workspace");
+            cmdLine.setCommandName("config save workspace").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }

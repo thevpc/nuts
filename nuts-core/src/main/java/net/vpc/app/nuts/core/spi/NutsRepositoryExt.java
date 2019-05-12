@@ -66,4 +66,6 @@ public interface NutsRepositoryExt {
     Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
 
     NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
+
+    boolean acceptNutsId(NutsId id);
 }

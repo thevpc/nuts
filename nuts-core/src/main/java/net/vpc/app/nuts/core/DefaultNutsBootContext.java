@@ -20,13 +20,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final String[] storeLocations;
     private final String[] homeLocations;
     private final boolean global;
-    private NutsWorkspace ws;
+    private final boolean gui;
+    private final NutsWorkspace ws;
 
     public DefaultNutsBootContext(NutsWorkspace ws,String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
             NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
-            boolean global
+            boolean global,boolean gui
     ) {
         this.ws = ws;
         this.workspace = workspace;
@@ -54,6 +55,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
             this.homeLocations[i] = homeLocations[i];
         }
         this.global = global;
+        this.gui = gui;
     }
 
     public DefaultNutsBootContext(NutsWorkspace ws,NutsBootConfig c) {
@@ -73,11 +75,17 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.storeLocations = c.getStoreLocations();
         this.homeLocations = c.getHomeLocations();
         this.global = c.isGlobal();
+        this.gui = c.isGui();
     }
 
     @Override
     public boolean isGlobal() {
         return this.global;
+    }
+    
+    @Override
+    public boolean isGui() {
+        return this.gui;
     }
 
     @Override

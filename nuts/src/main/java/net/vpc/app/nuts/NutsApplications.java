@@ -69,8 +69,7 @@ public class NutsApplications {
             ws = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext = null;
-        applicationContext = listener.createApplicationContext(ws, args);//ws.config().getOptions().getApplicationArguments()
-        applicationContext.setStartTimeMillis(startTimeMillis);
+        applicationContext = listener.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
         switch (applicationContext.getMode()) {
             case "launch":
             case "auto-complete": {

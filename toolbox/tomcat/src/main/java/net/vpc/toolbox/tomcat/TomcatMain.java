@@ -18,38 +18,37 @@ public class TomcatMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        List<String> argsList = new ArrayList<>();
-        NutsCommandLine cmd = appContext.newCommandLine();
+        NutsCommandLine cmdLine = appContext.getCommandLine();
         Boolean local = null;
-        while (cmd.hasNext()) {
-            NutsArgument a = cmd.read();
+        boolean skipFirst = false;
+        while (cmdLine.hasNext()) {
+            NutsArgument a = cmdLine.read();
             if (local == null) {
-                if (appContext.configure(cmd)) {
+                if (appContext.configure(cmdLine)) {
                     //
                 } else if ((a.getString().equals("--remote") || a.getString().equals("-r"))) {
                     local = false;
                 } else if ((a.getString().equals("--local") || a.getString().equals("-l"))) {
                     local = true;
                 } else if (a.isOption()) {
-                    argsList.add(a.getString());
+                    cmdLine.pushBack(a);
                 } else {
-                    argsList.add(a.getString());
+                    cmdLine.pushBack(a);
                     local = true;
                 }
             } else {
-                argsList.add(a.getString());
+                cmdLine.pushBack(a);
             }
         }
         if (local == null) {
             local = true;
         }
 
-        appContext.setArgs(argsList.toArray(new String[0]));
         if (local) {
-            LocalTomcat m = new LocalTomcat(appContext);
+            LocalTomcat m = new LocalTomcat(appContext, cmdLine);
             m.runArgs();
         } else {
-            RemoteTomcat m = new RemoteTomcat(appContext);
+            RemoteTomcat m = new RemoteTomcat(appContext,cmdLine);
             m.runArgs();
         }
     }

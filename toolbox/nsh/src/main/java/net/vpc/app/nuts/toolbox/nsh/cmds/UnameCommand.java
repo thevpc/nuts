@@ -69,7 +69,7 @@ public class UnameCommand extends AbstractNutsCommand {
                 fos = true;
                 farch = true;
             } else {
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             }
         }
         if (cmdLine.isExecMode()) {

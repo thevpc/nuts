@@ -20,7 +20,7 @@ public class NFindMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsCommandLine cmdLine = context.newCommandLine();
+        NutsCommandLine cmdLine = context.getCommandLine();
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();

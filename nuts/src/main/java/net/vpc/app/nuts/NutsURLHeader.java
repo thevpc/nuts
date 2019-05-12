@@ -36,57 +36,18 @@ import java.util.Date;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsURLHeader {
+public interface NutsURLHeader {
 
-    public static final long serialVersionUID = 1;
-    private String url;
-    private long contentLength;
-    private String contentType;
-    private String contentEncoding;
-    private Date lastModified;
+    String getUrl() ;
 
-    public NutsURLHeader(String url) {
-        this.url = url;
-    }
+    long getContentLength() ;
 
-    public String getUrl() {
-        return url;
-    }
+    String getContentType() ;
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    String getContentEncoding() ;
 
-    public long getContentLength() {
-        return contentLength;
-    }
+    void setContentEncoding(String contentEncoding) ;
 
-    public void setContentLength(long contentLength) {
-        this.contentLength = contentLength;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getContentEncoding() {
-        return contentEncoding;
-    }
-
-    public void setContentEncoding(String contentEncoding) {
-        this.contentEncoding = contentEncoding;
-    }
-
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
+    Date getLastModified() ;
 
 }

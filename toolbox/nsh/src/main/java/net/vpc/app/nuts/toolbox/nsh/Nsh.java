@@ -35,7 +35,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd = applicationContext.newCommandLine();
+        NutsCommandLine cmd = applicationContext.getCommandLine();
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
@@ -45,7 +45,7 @@ public class Nsh extends NutsApplication {
             } else if ((a = cmd.readBooleanOption("-t", "--trace")) != null) {
                 trace = a.getBooleanValue();
             } else {
-                cmd.unexpectedArgument("nsh on-install");
+                cmd.setCommandName("nsh on-install").unexpectedArgument();
             }
         }
         String nshIdStr = applicationContext.getAppId().toString();

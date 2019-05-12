@@ -62,6 +62,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
+import net.vpc.app.nuts.core.DefaultNutsURLHeader;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
@@ -271,7 +272,7 @@ public class CoreIOUtils {
     public static NutsURLHeader getURLHeader(URL url) throws UncheckedIOException {
         if (url.getProtocol().equals("file")) {
             File f = toFile(url);
-            NutsURLHeader info = new NutsURLHeader(url.toString());
+            DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
             info.setContentLength(f.length());
             info.setLastModified(new Date(f.lastModified()));
             return info;
@@ -288,7 +289,7 @@ public class CoreIOUtils {
                 throw new UncheckedIOException(ex);
             }
             final String f = conn.getHeaderField("Last-Modified");
-            final NutsURLHeader info = new NutsURLHeader(url.toString());
+            final DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
             info.setContentType(conn.getContentType());
             info.setContentEncoding(conn.getContentEncoding());
             info.setContentLength(conn.getContentLengthLong());

@@ -104,7 +104,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     } else if (cmdLine.readAll("--old-password")) {
                         oldPassword = cmdLine.readRequiredNonOption(cmdLine.createNonOption("OldPassword")).getString();
                     } else {
-                        cmdLine.unexpectedArgument("config password");
+                        cmdLine.setCommandName("config password").unexpectedArgument();
                     }
                 } while (cmdLine.hasNext());
                 if (cmdLine.isExecMode()) {
@@ -247,7 +247,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 }
                                 break;
                             default:
-                                cmdLine.unexpectedArgument("config edit user");
+                                cmdLine.setCommandName("config edit user").unexpectedArgument();
                                 break;
                         }
                     }

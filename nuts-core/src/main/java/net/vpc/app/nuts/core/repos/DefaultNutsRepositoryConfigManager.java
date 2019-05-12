@@ -377,7 +377,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         boolean ok = false;
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.checkReadOnly(repository.getWorkspace());
-            repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY,"save");
+            repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY, "save");
             Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {
@@ -589,16 +589,30 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
 
     @Override
     public int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive) {
-        int namespaceSupport = NutsRepositoryExt.of(repository).getFindSupportLevelCurrent(supportedAction, id, mode);
+        NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
+        double result = 0;
+        if (xrepo.acceptNutsId(id)) {
+            int r = repository.config().getSpeed();
+            if (r > 0) {
+                result += 1.0 / r;
+            }
+        }
         if (transitive) {
             for (NutsRepository remote : mirrors.values()) {
                 int r = remote.config().getFindSupportLevel(supportedAction, id, mode, transitive);
-                if (r > 0 && r > namespaceSupport) {
-                    namespaceSupport = r;
+                if (r > 0) {
+                    result += 1.0 / r;
                 }
             }
         }
-        return namespaceSupport;
+        int intResult = 0;
+        if (result != 0) {
+            intResult = (int) (1.0 / result);
+            if (intResult < 0) {
+                intResult = Integer.MAX_VALUE;
+            }
+        }
+        return intResult;
     }
 
     public NutsRepositoryConfig getStoredConfig() {

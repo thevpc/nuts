@@ -22,57 +22,58 @@ import net.vpc.app.nuts.NutsArgument;
 public class RemoteTomcat {
 
     public NutsApplicationContext context;
+    public NutsCommandLine cmdLine;
 
-    public RemoteTomcat(NutsApplicationContext ws) {
+    public RemoteTomcat(NutsApplicationContext ws,NutsCommandLine cmdLine) {
         this.setContext(ws);
+        this.cmdLine=cmdLine;
     }
 
     public void runArgs() {
-        NutsCommandLine cmd = context.newCommandLine();
         NutsArgument a;
-        while (cmd.hasNext()) {
-            if (cmd.get().isOption()) {
-                if (context.configure(cmd)) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.get().isOption()) {
+                if (context.configure(cmdLine)) {
                     //
                 } else {
-                    cmd.unexpectedArgument("tomcat --remote");
+                    cmdLine.setCommandName("tomcat --remote").unexpectedArgument();
                 }
             } else {
-                if ((a = cmd.readNonOption("list")) != null) {
-                    list(cmd);
+                if ((a = cmdLine.readNonOption("list")) != null) {
+                    list(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("show")) != null) {
-                    show(cmd);
+                } else if ((a = cmdLine.readNonOption("show")) != null) {
+                    show(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("show-property")) != null) {
-                    showProperty(cmd);
+                } else if ((a = cmdLine.readNonOption("show-property")) != null) {
+                    showProperty(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("add", "set")) != null) {
-                    add(cmd);
+                } else if ((a = cmdLine.readNonOption("add", "set")) != null) {
+                    add(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("remove")) != null) {
-                    remove(cmd);
+                } else if ((a = cmdLine.readNonOption("remove")) != null) {
+                    remove(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("start")) != null) {
-                    restart(cmd, false);
+                } else if ((a = cmdLine.readNonOption("start")) != null) {
+                    restart(cmdLine, false);
                     return;
-                } else if ((a = cmd.readNonOption("restart")) != null) {
-                    restart(cmd, true);
+                } else if ((a = cmdLine.readNonOption("restart")) != null) {
+                    restart(cmdLine, true);
                     return;
-                } else if ((a = cmd.readNonOption("stop")) != null) {
-                    stop(cmd);
+                } else if ((a = cmdLine.readNonOption("stop")) != null) {
+                    stop(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("install")) != null) {
-                    install(cmd);
+                } else if ((a = cmdLine.readNonOption("install")) != null) {
+                    install(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("deploy")) != null) {
-                    deploy(cmd);
+                } else if ((a = cmdLine.readNonOption("deploy")) != null) {
+                    deploy(cmdLine);
                     return;
-                } else if ((a = cmd.readNonOption("reset")) != null) {
-                    reset(cmd);
+                } else if ((a = cmdLine.readNonOption("reset")) != null) {
+                    reset(cmdLine);
                     return;
                 } else {
-                    cmd.unexpectedArgument("tomcat --remote");
+                    cmdLine.setCommandName("tomcat --remote").unexpectedArgument();
                 }
             }
         }
@@ -161,7 +162,7 @@ public class RemoteTomcat {
                 RemoteTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setVersionCommand(value);
             } else {
-                args.unexpectedArgument("tomcat --remote add");
+                args.setCommandName("tomcat --remote add").unexpectedArgument();
             }
         }
         if (c == null) {
@@ -208,7 +209,7 @@ public class RemoteTomcat {
                 processed = true;
                 lastExitCode = 0;
             } else {
-                args.unexpectedArgument("tomcat --remote remove");
+                args.setCommandName("tomcat --remote remove").unexpectedArgument();
             }
         }
         if (!processed) {
@@ -229,7 +230,7 @@ public class RemoteTomcat {
             } else if ((a = args.readStringOption("--app")) != null) {
                 loadApp(a.getValue().getString()).install();
             } else {
-                args.unexpectedArgument("tomcat --remote install");
+                args.setCommandName("tomcat --remote install").unexpectedArgument();
             }
         }
     }
@@ -246,7 +247,7 @@ public class RemoteTomcat {
             } else if ((a = args.readStringOption("--version")) != null) {
                 version = a.getValue().getString();
             } else {
-                args.unexpectedArgument("tomcat --remote deploy");
+                args.setCommandName("tomcat --remote deploy").unexpectedArgument();
             }
         }
         loadApp(app).deploy(version);
@@ -320,7 +321,7 @@ public class RemoteTomcat {
             if (context.configure(args)) {
                 //
             } else {
-                args.unexpectedArgument("tomcat --remote reset");
+                args.setCommandName("tomcat --remote reset").unexpectedArgument();
             }
         }
         for (RemoteTomcatConfigService tomcatConfig : listConfig()) {
@@ -374,7 +375,7 @@ public class RemoteTomcat {
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {
-                args.unexpectedArgument("tomcat --remote show");
+                args.setCommandName("tomcat --remote show").unexpectedArgument();
             }
         }
     }
@@ -419,7 +420,7 @@ public class RemoteTomcat {
             } else if ((a = args.readStringOption("--property")) != null) {
                 x.addProp(a.getValue().getString());
             } else if (args.get().isOption()) {
-                args.unexpectedArgument("tomcat --remote show-property");
+                args.setCommandName("tomcat --remote show-property").unexpectedArgument();
             } else {
                 x.addProp(args.read().getString());
             }

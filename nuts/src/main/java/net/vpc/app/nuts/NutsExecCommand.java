@@ -181,9 +181,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand spawn();
 
-    NutsCommandStringFormatter getCommandStringFormatter();
+    NutsCommandStringFormat getCommandStringFormat();
 
-    NutsExecCommand setCommandStringFormatter(NutsCommandStringFormatter commandStringFormatter);
+    NutsExecCommand setCommandStringFormat(NutsCommandStringFormat commandStringFormat);
 
     
     @Override

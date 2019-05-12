@@ -46,11 +46,11 @@ import net.vpc.app.nuts.core.DefaultNutsFetchDescriptorRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFindRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFindVersionsRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsPushRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryEvent;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
 /**
  * Created by vpc on 1/18/17.
@@ -125,6 +125,15 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     @Override
     public NutsRepositorySecurityManager security() {
         return securityManager;
+    }
+
+    @Override
+    public boolean acceptNutsId(NutsId id) {
+        String groups = config().getGroups();
+        if (CoreStringUtils.isBlank(groups)) {
+            return true;
+        }
+        return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups));
     }
 
     @Override
@@ -374,7 +383,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public void fireOnAddRepository(NutsRepository repository) {
-        NutsRepositoryEvent event = new NutsRepositoryEvent(getWorkspace(), this, repository);
+        NutsRepositoryEvent event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository);
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onAddRepository(event);
         }
@@ -385,7 +394,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public void fireOnRemoveRepository(NutsRepository repository) {
-        NutsRepositoryEvent event = new NutsRepositoryEvent(getWorkspace(), this, repository);
+        NutsRepositoryEvent event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository);
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onRemoveRepository(event);
         }

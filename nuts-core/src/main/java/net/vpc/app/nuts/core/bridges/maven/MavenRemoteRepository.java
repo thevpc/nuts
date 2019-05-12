@@ -42,13 +42,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
-import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 
 /**
  * Created by vpc on 1/15/17.
@@ -395,11 +396,11 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             Path content = getMavenLocalFolderContent(id);
             if (content != null && Files.exists(content)) {
                 if (localPath == null) {
-                    return new NutsContent(content, true, false);
+                    return new DefaultNutsContent(content, true, false);
                 } else {
                     Path tempFile = getWorkspace().io().createTempFile(content.getFileName().toString(), this);
                     getWorkspace().io().copy().from(content).to(tempFile).safeCopy().run();
-                    return new NutsContent(tempFile, true, false);
+                    return new DefaultNutsContent(tempFile, true, false);
                 }
             }
         }
@@ -420,7 +421,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(id, null, ex);
             }
-            return new NutsContent(tempFile, false, true);
+            return new DefaultNutsContent(tempFile, false, true);
         } else {
             try {
                 getWorkspace().io().copy().from(getStream(id, session)).to(localPath).validator(new NutsPathCopyAction.Validator() {
@@ -437,7 +438,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
                 throw new NutsNotFoundException(id, null, ex);
             }
-            return new NutsContent(localPath, false, false);
+            return new DefaultNutsContent(localPath, false, false);
         }
     }
 

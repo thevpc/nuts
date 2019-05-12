@@ -1,6 +1,5 @@
 package net.vpc.toolbox.mysql.remote;
 
-import net.vpc.app.nuts.NutsCommandStringFormatterAdapter;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
@@ -15,6 +14,7 @@ import net.vpc.toolbox.mysql.local.LocalMysqlDatabaseConfigService;
 import java.io.PrintStream;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandStringFormat;
 import net.vpc.app.nuts.NutsExecCommand;
 
 public class RemoteMysqlDatabaseConfigService {
@@ -134,7 +134,7 @@ public class RemoteMysqlDatabaseConfigService {
         b.addCommand("--nuts");
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
-        context.out().printf("[[EXEC]] %s%n", b.setCommandStringFormatter(new NutsCommandStringFormatterAdapter() {
+        context.out().printf("[[EXEC]] %s%n", b.setCommandStringFormat(new NutsCommandStringFormat() {
             @Override
             public String replaceEnvValue(String envName, String envValue) {
                 if (

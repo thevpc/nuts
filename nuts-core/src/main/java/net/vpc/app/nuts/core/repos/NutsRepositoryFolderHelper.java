@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import net.vpc.app.nuts.NutsAlreadyDeployedException;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsContent;
-import net.vpc.app.nuts.NutsContentEvent;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
@@ -42,6 +41,8 @@ import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
+import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.core.DefaultNutsContentEvent;
 
 /**
  *
@@ -81,7 +82,7 @@ public class NutsRepositoryFolderHelper {
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
         Path cacheContent = getIdLocalFile(id);
         if (cacheContent != null && Files.exists(cacheContent)) {
-            return new NutsContent(cacheContent, true, false);
+            return new DefaultNutsContent(cacheContent, true, false);
         }
         return null;
     }
@@ -277,7 +278,7 @@ public class NutsRepositoryFolderHelper {
         getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         getWorkspace().io().copy().from(deployment.getContent()).to(pckFile).safeCopy().run();
         getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
-        NutsRepositoryExt.of(repo).fireOnDeploy(new NutsContentEvent(pckFile, deployment, getWorkspace(), repo));
+        NutsRepositoryExt.of(repo).fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, getWorkspace(), repo));
 
     }
 

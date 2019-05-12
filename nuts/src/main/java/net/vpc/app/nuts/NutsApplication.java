@@ -4,11 +4,11 @@ package net.vpc.app.nuts;
  * <pre>
  *   public class MyApplication extends NutsApplication{
  *     public static void main(String[] args) {
- *         // just create an instance and call launchAndExit in the main method
- *         new MyApplication().launchAndExit(args);
+ *         // just create an instance and call runAndExit in the main method
+ *         new MyApplication().runAndExit(args);
  *     }
  *     // do the main staff in launch method
- *     public int launch(NutsApplicationContext appContext) {
+ *     public void run(NutsApplicationContext appContext) {
  *         boolean myBooleanOption=false;
  *         Argument a;
  *         while(cmd.hasNext()){
@@ -66,10 +66,10 @@ public abstract class NutsApplication {
             }
 
             @Override
-            public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args) {
-                NutsApplicationContext c = NutsApplication.this.createApplicationContext(ws, args);
+            public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
+                NutsApplicationContext c = NutsApplication.this.createApplicationContext(ws, args, startTimeMillis);
                 if (c == null) {
-                    c = ws.io().createApplicationContext(args, NutsApplication.this.getClass(), null);
+                    c = ws.io().createApplicationContext(args, NutsApplication.this.getClass(), null,startTimeMillis);
                 }
                 return c;
             }
@@ -85,8 +85,8 @@ public abstract class NutsApplication {
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 
-    protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args) {
-        return ws.io().createApplicationContext(args, getClass(), null);
+    protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
+        return ws.io().createApplicationContext(args, getClass(), null,startTimeMillis);
     }
 
     public abstract void run(NutsApplicationContext applicationContext);

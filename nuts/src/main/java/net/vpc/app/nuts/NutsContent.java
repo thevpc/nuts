@@ -32,30 +32,15 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsContent {
-    private final Path file;
-    private final boolean cached;
-    private final boolean temporary;
+public interface NutsContent {
 
-    public NutsContent(Path file, boolean cached, boolean temporary) {
-        this.file = file;
-        this.cached = cached;
-        this.temporary = temporary;
-    }
+    Path getPath();
 
-    public Path getPath() {
-        return file;
-    }
+    boolean isCached();
 
-    public boolean isCached() {
-        return cached;
-    }
-
-    public boolean isTemporary() {
-        return temporary;
-    }
+    boolean isTemporary();
 }

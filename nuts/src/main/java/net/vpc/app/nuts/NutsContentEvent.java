@@ -32,40 +32,17 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.3
  */
-public class NutsContentEvent {
+public interface NutsContentEvent {
 
-    private final NutsDeployRepositoryCommand deployment;
-    /**
-     * stored deployment Path, this is Repository dependent
-     */
-    private final Path path;
-    private final NutsWorkspace workspace;
-    private final NutsRepository repository;
+    Path getPath();
 
-    public NutsContentEvent(Path path, NutsDeployRepositoryCommand deployment, NutsWorkspace workspace, NutsRepository repository) {
-        this.path = path;
-        this.deployment = deployment;
-        this.workspace = workspace;
-        this.repository = repository;
-    }
+    NutsDeployRepositoryCommand getDeployment();
 
-    public Path getPath() {
-        return path;
-    }
+    NutsWorkspace getWorkspace();
 
-    public NutsDeployRepositoryCommand getDeployment() {
-        return deployment;
-    }
-
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    public NutsRepository getRepository() {
-        return repository;
-    }
+    NutsRepository getRepository();
 }

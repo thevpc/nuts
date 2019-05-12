@@ -36,8 +36,8 @@ package net.vpc.app.nuts;
  */
 public class NutsDefaultArgumentCandidate implements NutsArgumentCandidate {
 
-    private String value;
-    private String display;
+    private final String value;
+    private final String display;
 
     public NutsDefaultArgumentCandidate(String value) {
         this.value = value;

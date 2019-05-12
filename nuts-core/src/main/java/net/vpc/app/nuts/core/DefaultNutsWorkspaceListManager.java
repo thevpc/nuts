@@ -16,9 +16,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 
     private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
-    private NutsWorkspace defaultWorkspace;
+    private final NutsWorkspace defaultWorkspace;
     private NutsWorkspaceListConfig config;
-    private String name;
+    private final String name;
 
     public DefaultNutsWorkspaceListManager(NutsWorkspace ws, String name) {
         this.defaultWorkspace = ws;
@@ -71,15 +71,18 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return this;
     }
 
+    @Override
     public NutsWorkspaceListConfig getConfig() {
         return config;
     }
 
+    @Override
     public DefaultNutsWorkspaceListManager setConfig(NutsWorkspaceListConfig config) {
         this.config = config;
         return this;
     }
 
+    @Override
     public NutsWorkspace addWorkspace(String path) {
         NutsWorkspace workspace = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
@@ -99,7 +102,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         );
     }
 
-    private void save() {
+    public void save() {
         this.config.setWorkspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
@@ -113,10 +116,5 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             save();
         }
         return b;
-    }
-
-    public void onOffWorkspace(String name, Boolean value) {
-        this.workspaces.get(name).setEnabled(value);
-        this.save();
     }
 }

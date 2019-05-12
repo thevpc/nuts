@@ -51,14 +51,14 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.mvn.ArchetypeCatalogParser;
-import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
-import net.vpc.app.nuts.core.util.mvn.MavenMetadataParser;
-import net.vpc.app.nuts.core.util.mvn.Pom;
-import net.vpc.app.nuts.core.util.mvn.PomDependency;
-import net.vpc.app.nuts.core.util.mvn.PomId;
-import net.vpc.app.nuts.core.util.mvn.PomIdFilter;
-import net.vpc.app.nuts.core.util.mvn.PomXmlParser;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.ArchetypeCatalogParser;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.Pom;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomDependency;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdFilter;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomXmlParser;
 
 /**
  * Created by vpc on 2/20/17.

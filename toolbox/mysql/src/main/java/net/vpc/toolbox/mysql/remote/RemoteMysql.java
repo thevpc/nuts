@@ -40,7 +40,7 @@ public class RemoteMysql {
             } else if ((a = cmd.readNonOption("pull")) != null) {
                 return pull(cmd);
             } else {
-                cmd.unexpectedArgument("mysql --remote");
+                cmd.setCommandName("mysql --remote").unexpectedArgument();
             }
         }
         return 0;
@@ -62,7 +62,7 @@ public class RemoteMysql {
             } else if ((a = args.readBooleanOption("--property")) != null) {
                 property = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --remote list");
+                args.setCommandName("mysql --remote list").unexpectedArgument();
             }
         }
         if (property == null) {
@@ -145,7 +145,7 @@ public class RemoteMysql {
                 RemoteMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 mysqlAppConfig.getConfig().setPath(value);
             } else {
-                args.unexpectedArgument("mysql --remote add");
+                args.setCommandName("mysql --remote add").unexpectedArgument();
             }
         }
         if (c == null) {
@@ -192,7 +192,7 @@ public class RemoteMysql {
             } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --remote remove");
+                args.setCommandName("mysql --remote remove").unexpectedArgument();
             }
         }
         if (appName == null) {
@@ -219,7 +219,7 @@ public class RemoteMysql {
             } else if ((a = args.readStringOption("--db")) != null) {
                 app = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --remote pull");
+                args.setCommandName("mysql --remote pull").unexpectedArgument();
             }
         }
         RemoteMysqlConfigService c = loadMysqlConfig(conf);
@@ -237,7 +237,7 @@ public class RemoteMysql {
             } else if ((a = args.readStringOption("--db")) != null) {
                 app = a.getValue().getString();
             } else {
-                args.unexpectedArgument("mysql --remote push");
+                args.setCommandName("mysql --remote push").unexpectedArgument();
             }
         }
         RemoteMysqlConfigService c = loadMysqlConfig(conf);

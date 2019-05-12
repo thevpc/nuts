@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.core.util.cmdline.DefaultWorkspaceCommandLine;
+import net.vpc.app.nuts.core.app.DefaultWorkspaceCommandLine;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 

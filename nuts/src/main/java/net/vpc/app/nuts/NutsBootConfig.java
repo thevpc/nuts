@@ -52,6 +52,7 @@ public final class NutsBootConfig implements Cloneable {
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
     private boolean global = false;
+    private boolean gui = false;
 
     public NutsBootConfig() {
     }
@@ -65,6 +66,7 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocations = options.getStoreLocations();
             this.homeLocations = options.getHomeLocations();
             this.global = options.isGlobal();
+            this.gui = options.isGui();
         }
     }
 
@@ -81,6 +83,8 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationStrategy = context.getStoreLocationStrategy();
             this.repositoryStoreLocationStrategy = context.getRepositoryStoreLocationStrategy();
             this.storeLocationLayout = context.getStoreLocationLayout();
+            this.global = context.isGlobal();
+            this.gui = context.isGui();
         }
     }
 
@@ -97,6 +101,7 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationStrategy = other.getStoreLocationStrategy();
             this.storeLocationLayout = other.getStoreLocationLayout();
             this.global = other.isGlobal();
+            this.gui = other.isGui();
         }
     }
 
@@ -234,6 +239,10 @@ public final class NutsBootConfig implements Cloneable {
 
     public boolean isGlobal() {
         return global;
+    }
+
+    public boolean isGui() {
+        return gui;
     }
 
     @Override

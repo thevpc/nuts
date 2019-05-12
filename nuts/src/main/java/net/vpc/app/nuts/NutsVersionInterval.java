@@ -33,49 +33,12 @@ import java.io.Serializable;
 
 /**
  * Created by vpc on 2/1/17.
+ *
  * @since 0.5.4
  */
-public class NutsVersionInterval implements Serializable{
-    private static final long serialVersionUID= 1L;
+public interface NutsVersionInterval extends Serializable {
 
-    private final boolean inclusiveLowerBoundary;
-    private final boolean inclusiveUpperBoundary;
-    private final String min;
-    private final String max;
+    public boolean acceptVersion(NutsVersion version);
 
-    public NutsVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
-        this.inclusiveLowerBoundary = inclusiveLowerBoundary;
-        this.inclusiveUpperBoundary = inclusiveUpperBoundary;
-        this.min = min;
-        this.max = max;
-    }
-
-    public boolean acceptVersion(NutsVersion version) {
-        if (!NutsUtils.isBlank(min) && !min.equals(NutsConstants.Versions.LATEST) && !min.equals(NutsConstants.Versions.RELEASE)) {
-            int t = version.compareTo(min);
-            if ((inclusiveLowerBoundary && t < 0) || (!inclusiveLowerBoundary && t <= 0)) {
-                return false;
-            }
-        }
-        if (!NutsUtils.isBlank(max) && !max.equals(NutsConstants.Versions.LATEST) && !max.equals(NutsConstants.Versions.RELEASE)) {
-            int t = version.compareTo(max);
-            return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
-        }
-        return true;
-    }
-
-    public boolean isFixedValue() {
-        return inclusiveLowerBoundary && inclusiveUpperBoundary && NutsUtils.trim(min).equals(NutsUtils.trim(max))
-                && !NutsConstants.Versions.LATEST.equals(min) && !NutsConstants.Versions.RELEASE.equals(min);
-    }
-
-    @Override
-    public String toString() {
-        return (inclusiveLowerBoundary ? "[" : "]") +
-                (min == null ? "" : min) +
-                "," +
-                (max == null ? "" : max) +
-                (inclusiveUpperBoundary ? "]" : "[");
-    }
-
+    public boolean isFixedValue();
 }

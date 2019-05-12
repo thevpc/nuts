@@ -52,10 +52,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     NutsDescriptor getEffectiveDescriptor();
 
-
-    NutsDefinition copy();
-
     @Override
-    int compareTo(NutsDefinition n2);
+    int compareTo(NutsDefinition other);
 
 }

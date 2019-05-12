@@ -83,15 +83,46 @@ import java.util.List;
  */
 public interface NutsCommandLine {
 
-    NutsCommandLine addSpecialSimpleOption(String option);
+    NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
 
-    boolean isExpandSimpleOptions();
+    NutsCommandLine removeSpecialSimpleOption(String option);
+
+    NutsCommandLine addSpecialSimpleOption(String option);
 
     NutsCommandLine expandSimpleOptions();
 
     NutsCommandLine expandSimpleOptions(boolean expand);
 
     NutsCommandLine setExpandSimpleOptions(boolean expand);
+
+    NutsCommandLine requiredNonOption();
+
+    NutsCommandLine requireEmpty();
+
+    NutsCommandLine unexpectedArgument();
+
+    NutsCommandLine requireNonEmpty();
+
+    NutsCommandLine pushBack(NutsArgument a);
+    
+    /**
+     * set command name that will be used as an extra info 
+     * in thrown exceptions
+     * @param commandName
+     * @return 
+     */
+    NutsCommandLine setCommandName(String commandName);
+    
+    /**
+     * 
+     * @return command name that will be used as an extra info 
+     * in thrown exceptions
+     */
+    String getCommandName();
+
+    String[] getSpecialSimpleOptions();
+
+    boolean isExpandSimpleOptions();
 
     List<String> getArgs();
 
@@ -130,10 +161,6 @@ public interface NutsCommandLine {
     NutsArgument readVoidOption(String... names);
 
     NutsArgument readOption(OptionType expectValue, String... names);
-
-    NutsCommandLine requiredNonOption();
-
-    void skipAll();
 
     NutsArgument readNonOption(boolean expectValue, String name);
 
@@ -175,14 +202,6 @@ public interface NutsCommandLine {
 
     int length();
 
-    void requireEmpty();
-
-    void unexpectedArgument();
-
-    void unexpectedArgument(String commandName);
-
-    void requireNonEmpty();
-
     boolean isEmpty();
 
     String[] toArray();
@@ -203,7 +222,7 @@ public interface NutsCommandLine {
 
     boolean isOption(int index, String... options);
 
-    NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
+    int skipAll();
 
     int skip();
 

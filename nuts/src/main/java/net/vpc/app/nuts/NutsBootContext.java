@@ -33,6 +33,7 @@ import java.nio.file.Path;
 
 /**
  * Nuts read-only configuration
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -58,18 +59,17 @@ public interface NutsBootContext {
      * @return array of available locations
      */
     String[] getStoreLocations();
-    
+
     /**
      * all store locations ordered according NutsStoreFolder and then
      * NutsStoreLocationLayout constant definitions. Note that
-     * NutsStoreLocationLayout. 
-     * example of order is :
+     * NutsStoreLocationLayout. example of order is :
      * <pre>
-     *  SYSTEM  PROGRAMS 
-     *  SYSTEM  CONFIG  
+     *  SYSTEM  PROGRAMS
+     *  SYSTEM  CONFIG
      *  ....
-     *  WINDOWS PROGRAMS 
-     *  WINDOWS CONFIG  
+     *  WINDOWS PROGRAMS
+     *  WINDOWS CONFIG
      *  ....
      *  LINUX   PROGRAMS
      *  LINUX   CONFIG
@@ -82,7 +82,7 @@ public interface NutsBootContext {
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    String getHomeLocation(NutsStoreLocationLayout layout,NutsStoreLocation folderType);
+    String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType);
 
     NutsId getApiId();
 
@@ -95,8 +95,10 @@ public interface NutsBootContext {
     String getJavaCommand();
 
     String getJavaOptions();
-    
+
     boolean isGlobal();
+
+    boolean isGui();
 
     Path getNutsJar();
 }

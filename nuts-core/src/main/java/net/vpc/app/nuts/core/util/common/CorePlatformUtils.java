@@ -29,11 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.common.DefaultPlatformBeanProperty;
 import net.vpc.app.nuts.core.util.io.SimpleClassStream;
-import net.vpc.app.nuts.core.util.common.PlatformBeanProperty;
-import net.vpc.app.nuts.core.util.common.Ref;
 import net.vpc.app.nuts.*;
 
 import java.io.*;

@@ -37,7 +37,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                     password = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Password")).required().getString();
                 } else {
                     server = cmdLine.readRequiredNonOption(cmdLine.createNonOption("ServerAddress")).required().getString();
-                    cmdLine.unexpectedArgument("nadmin connect");
+                    cmdLine.setCommandName("nadmin connect").unexpectedArgument();
                 }
             }
             if (!cmdLine.isExecMode()) {

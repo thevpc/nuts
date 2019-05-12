@@ -113,7 +113,7 @@ public class WorkspaceService {
 
     public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
-        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().setCellFormatter(appContext.getTableCellFormatter()).addHeaderCells("==Id==", "==Path==", "==Technos==");
+        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().addHeaderCells("==Id==", "==Path==", "==Technos==");
         List<String> filters = new ArrayList<>();
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
@@ -123,7 +123,7 @@ public class WorkspaceService {
             } else if ((a = cmd.readNonOption()) != null) {
                 filters.add(a.getString());
             } else {
-                cmd.unexpectedArgument("worky list");
+                cmd.setCommandName("worky list").unexpectedArgument();
             }
         }
         if (cmd.isExecMode()) {
@@ -172,7 +172,7 @@ public class WorkspaceService {
         Boolean uptodate = null;
         Boolean old = null;
         Boolean invalid = null;
-        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().setCellFormatter(appContext.getTableCellFormatter())
+        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat()
                 .addHeaderCells("==Id==", "==Local==", "==Remote==", "==Status==");
         List<String> filters = new ArrayList<>();
         NutsArgument a;
@@ -208,7 +208,7 @@ public class WorkspaceService {
             } else if ((a = cmd.readNonOption()) != null) {
                 filters.add(a.getString());
             } else {
-                cmd.unexpectedArgument("worky check");
+                cmd.setCommandName("worky check").unexpectedArgument();
             }
         }
 
@@ -495,7 +495,7 @@ public class WorkspaceService {
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getValue().getString());
                 setWorkspaceConfig(conf);
             } else {
-                cmd.unexpectedArgument("worky set");
+                cmd.setCommandName("worky set").unexpectedArgument();
             }
         }
         return 0;

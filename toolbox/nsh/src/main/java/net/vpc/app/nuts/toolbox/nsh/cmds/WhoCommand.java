@@ -62,7 +62,7 @@ public class WhoCommand extends AbstractNutsCommand {
             }else if (cmdLine.readAllOnce("--all", "-a")) {
                 argAll = true;
             } else {
-                cmdLine.unexpectedArgument(getName());
+                cmdLine.setCommandName(getName()).unexpectedArgument();
             }
         }
         if (!cmdLine.isExecMode()) {

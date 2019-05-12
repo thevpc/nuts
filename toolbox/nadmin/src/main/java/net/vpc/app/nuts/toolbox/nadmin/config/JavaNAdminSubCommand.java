@@ -49,7 +49,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                         }
                     }
                 }
-                cmdLine.unexpectedArgument("config java");
+                cmdLine.setCommandName("config java").unexpectedArgument();
                 if (autoSave) {
                     conf.save(false);
                 }
@@ -91,7 +91,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     .addHeaderCells("==Name==", "==Version==", "==Path==");
             while (cmdLine.hasNext()) {
                 if (!t.configure(cmdLine)) {
-                    cmdLine.unexpectedArgument("config list java");
+                    cmdLine.setCommandName("config list java").unexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {

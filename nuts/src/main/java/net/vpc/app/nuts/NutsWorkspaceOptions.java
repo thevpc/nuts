@@ -90,6 +90,13 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private boolean global;
 
     /**
+     * if true consider GUI/Swing mode
+     *
+     * option-type : exported (inherited in child workspaces)
+     */
+    private boolean gui;
+
+    /**
      * option-type : exported (inherited in child workspaces)
      */
     private String[] excludedExtensions;
@@ -234,6 +241,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setGlobal(boolean global) {
         this.global = global;
+        return this;
+    }
+
+    public boolean isGui() {
+        return gui;
+    }
+
+    public NutsWorkspaceOptions setGui(boolean gui) {
+        this.gui = gui;
         return this;
     }
 
@@ -471,6 +487,9 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
             if (global) {
                 all.add("--global");
+            }
+            if (gui) {
+                all.add("--gui");
             }
             if (readOnly) {
                 all.add("--read-only");

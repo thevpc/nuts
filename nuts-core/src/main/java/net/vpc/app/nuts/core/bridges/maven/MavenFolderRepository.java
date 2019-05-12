@@ -47,6 +47,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
@@ -108,10 +109,10 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             Path f = getIdFile(id);
             if (f != null && Files.exists(f)) {
                 if (localPath == null) {
-                    return new NutsContent(f, true, false);
+                    return new DefaultNutsContent(f, true, false);
                 } else {
                     getWorkspace().io().copy().from(f).to(localPath).safeCopy().run();
-                    return new NutsContent(localPath, true, false);
+                    return new DefaultNutsContent(localPath, true, false);
                 }
             }
         }

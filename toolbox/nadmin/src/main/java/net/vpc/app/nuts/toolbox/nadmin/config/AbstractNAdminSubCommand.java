@@ -37,7 +37,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
                 if (cmdLine.readAll("--save")) {
                     save = true;
                 } else {
-                    cmdLine.unexpectedArgument("config");
+                    cmdLine.setCommandName("config").unexpectedArgument();
                 }
             }
         }

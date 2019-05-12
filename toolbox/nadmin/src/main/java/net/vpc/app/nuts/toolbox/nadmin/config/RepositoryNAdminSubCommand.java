@@ -24,7 +24,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
         NutsWorkspace ws = context.getWorkspace();
         if (cmdLine.readAll("save repository", "sw")) {
             String repositoryName = cmdLine.readRequiredNonOption(cmdLine.createNonOption("repository")).getString();
-            cmdLine.unexpectedArgument("config save repository");
+            cmdLine.setCommandName("config save repository").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 trySave(context, ws, ws.config().getRepository(repositoryName), true, null);
             }
@@ -44,7 +44,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (!cmdLine.get().isOption()) {
                     location = cmdLine.readNonOption(cmdLine.createNonOption("RepositoryLocation")).getString();
                 } else {
-                    cmdLine.unexpectedArgument("config create repo");
+                    cmdLine.setCommandName("config create repo").unexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -127,7 +127,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             trySave(context, ws, repo, autoSave, null);
                             trySave(context, ws, null, autoSave, null);
                         }
-                        cmdLine.unexpectedArgument("config add repo");
+                        cmdLine.setCommandName("config add repo").unexpectedArgument();
                     }
                 }
                 return true;
@@ -147,7 +147,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
                         if (!t.configure(cmdLine)) {
-                            cmdLine.unexpectedArgument("config list repos");
+                            cmdLine.setCommandName("config list repos").unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : ws.config().getRepositories()) {
@@ -230,7 +230,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
                         if (!t.configure(cmdLine)) {
-                            cmdLine.unexpectedArgument("config edit repo");
+                            cmdLine.setCommandName("config edit repo").unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : linkRepositories) {

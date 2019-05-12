@@ -1183,10 +1183,8 @@ public class NutsBootWorkspace {
     }
 
     public void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
-        System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.%n");
-        System.err.printf("This component needs Internet connexion to initialize Nuts configuration.%n");
-        System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...%n");
-        System.err.printf("Here after current environment info :%n");
+        System.err.printf("Unable to bootstrap Nuts. : %s%n",extraMessage);
+        System.err.printf("Here after current environment info:%n");
         System.err.printf("  nuts-boot-api-version            : %s%n", actualBootConfig.getApiVersion() == null ? "<?> Not Found!" : actualBootConfig.getApiVersion());
         System.err.printf("  nuts-boot-runtime                : %s%n", actualBootConfig.getRuntimeId() == null ? "<?> Not Found!" : actualBootConfig.getRuntimeId());
         System.err.printf("  nuts-workspace-api-version       : %s%n", workspaceConfig.getApiVersion() == null ? "<?> Not Found!" : workspaceConfig.getApiVersion());
@@ -1228,12 +1226,11 @@ public class NutsBootWorkspace {
         System.err.printf("  user-name                        : %s%n", System.getProperty("user.name"));
         System.err.printf("  user-home                        : %s%n", System.getProperty("user.home"));
         System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
-        System.err.printf("Reported Error is :%n");
-        System.err.printf(extraMessage + "%n");
-        System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' argument.%n");
+        System.err.printf("");
+        System.err.printf("If the problem persists you may want to get more debug info by adding '--debug' argument.%n");
         System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' argument.%n");
         System.err.printf("Here is the proper command : %n");
-        System.err.printf("  java -jar nuts.jar --verbose --recover [...]%n");
+        System.err.printf("  java -jar nuts.jar --debug --recover [...]%n");
         System.err.printf("Now exiting Nuts, Bye!%n");
     }
 
