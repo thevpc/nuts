@@ -34,6 +34,6 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public interface NutsDependencyFilter {
-    boolean accept(NutsId from, NutsDependency dependency);
+    boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session);
 }
 

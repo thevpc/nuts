@@ -38,17 +38,17 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
 
     private final String id;
 
-    public NutsAlreadyInstalledException(NutsId id) {
-        this(id == null ? null : id.toString());
+    public NutsAlreadyInstalledException(NutsWorkspace workspace,NutsId id) {
+        this(workspace,id == null ? null : id.toString());
     }
 
-    public NutsAlreadyInstalledException(String id) {
-        super("Already Installed nuts " + (id == null ? "<null>" : id));
+    public NutsAlreadyInstalledException(NutsWorkspace workspace,String id) {
+        super(workspace, "Already Installed nuts " + (id == null ? "<null>" : id));
         this.id = id;
     }
 
-    public NutsAlreadyInstalledException(String nuts, String msg, Exception ex) {
-        super(NutsUtils.isBlank(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
+    public NutsAlreadyInstalledException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
+        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
         this.id = nuts;
     }
 

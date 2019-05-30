@@ -35,10 +35,10 @@ package net.vpc.app.nuts;
  */
 public interface NutsDescriptorFilter extends NutsSearchIdFilter {
 
-    boolean accept(NutsDescriptor descriptor, NutsWorkspace ws);
+    boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session);
 
     @Override
-    default boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws) {
-        return accept(sid.getDescriptor(ws), ws);
+    default boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
+        return accept(sid.getDescriptor(ws), ws, session);
     }
 }

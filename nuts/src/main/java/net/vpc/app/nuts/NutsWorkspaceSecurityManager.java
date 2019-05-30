@@ -42,7 +42,7 @@ public interface NutsWorkspaceSecurityManager {
 
     String[] getCurrentLoginStack();
 
-    void login(String login, String password);
+    void login(String login, char[] password);
 
     String login(CallbackHandler handler);
 
@@ -62,9 +62,9 @@ public interface NutsWorkspaceSecurityManager {
 
     void checkAllowed(String right, String operationName);
 
-    boolean switchUnsecureMode(String adminPassword);
+    boolean switchUnsecureMode(char[] adminPassword);
 
-    boolean switchSecureMode(String adminPassword);
+    boolean switchSecureMode(char[] adminPassword);
 
     boolean isAdmin();
 

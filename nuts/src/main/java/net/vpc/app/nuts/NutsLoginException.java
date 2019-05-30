@@ -36,22 +36,23 @@ package net.vpc.app.nuts;
  */
 public class NutsLoginException extends NutsException {
 
-    public NutsLoginException() {
+    public NutsLoginException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsLoginException(String message) {
-        super(message);
+    public NutsLoginException(NutsWorkspace workspace,String message) {
+        super(workspace,message);
     }
 
-    public NutsLoginException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsLoginException(NutsWorkspace workspace,String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsLoginException(Throwable cause) {
-        super(cause);
+    public NutsLoginException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsLoginException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsLoginException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

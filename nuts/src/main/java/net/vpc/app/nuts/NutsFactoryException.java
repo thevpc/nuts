@@ -38,26 +38,27 @@ import java.io.IOException;
  */
 public class NutsFactoryException extends NutsException {
 
-    public NutsFactoryException() {
+    public NutsFactoryException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsFactoryException(String message) {
-        super(message);
+    public NutsFactoryException(NutsWorkspace workspace,String message) {
+        super(workspace,message);
     }
 
-    public NutsFactoryException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsFactoryException(NutsWorkspace workspace,String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsFactoryException(Throwable cause) {
-        super(cause);
+    public NutsFactoryException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsFactoryException(IOException cause) {
-        super(cause);
+    public NutsFactoryException(NutsWorkspace workspace,IOException cause) {
+        super(workspace,cause);
     }
 
-    public NutsFactoryException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsFactoryException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

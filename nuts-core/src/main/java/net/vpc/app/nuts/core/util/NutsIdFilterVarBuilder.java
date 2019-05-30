@@ -23,8 +23,8 @@ public class NutsIdFilterVarBuilder {
     private static final String CURR = "$CURRENT";
     private Map<String, NutsIdFilter> vars = new HashMap<String, NutsIdFilter>();
 
-    public NutsIdFilterVarBuilder js(String n, String js,NutsWorkspace ws) {
-        return store(n, new NutsJavascriptIdFilter(js,ws));
+    public NutsIdFilterVarBuilder js(String n, String js) {
+        return store(n, new NutsJavascriptIdFilter(js));
     }
 
     public NutsIdFilterVarBuilder and(String n, String... a) {

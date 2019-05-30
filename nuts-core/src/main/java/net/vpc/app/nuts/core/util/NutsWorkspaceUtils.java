@@ -5,6 +5,8 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatPlain;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import java.io.IOException;
@@ -13,33 +15,12 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDescriptorFormat;
-import net.vpc.app.nuts.NutsExecCommand;
-import net.vpc.app.nuts.NutsFetchCommand;
-import net.vpc.app.nuts.NutsFetchMode;
-import net.vpc.app.nuts.NutsFindCommand;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFormat;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsReadOnlyException;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryFilter;
-import net.vpc.app.nuts.NutsRepositorySupportedAction;
-import net.vpc.app.nuts.NutsSdkLocation;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.NutsTraceIterator;
-import net.vpc.app.nuts.NutsOutputListFormat;
+
+import net.vpc.app.nuts.core.format.NutsTraceIterator;
+import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
 /**
  *
@@ -150,7 +131,7 @@ public class NutsWorkspaceUtils {
 
     public static void checkReadOnly(NutsWorkspace ws) {
         if (ws.config().isReadOnly()) {
-            throw new NutsReadOnlyException(ws.config().getWorkspaceLocation().toString());
+            throw new NutsReadOnlyException(ws,ws.config().getWorkspaceLocation().toString());
         }
     }
 
@@ -215,7 +196,7 @@ public class NutsWorkspaceUtils {
             if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
                 int t = 0;
                 try {
-                    t = repository.config().getFindSupportLevel(fmode, id, mode, options.isTransitive());
+                    t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
                 } catch (Exception e) {
                     //ignore...
                 }
@@ -232,6 +213,61 @@ public class NutsWorkspaceUtils {
             ret.add(repoAndLevel.r);
         }
         return ret;
+    }
+
+    public static void checkSimpleNameNutsId(NutsWorkspace workspace, NutsId id) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException(workspace, "Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsIllegalArgumentException(workspace, "Missing group for " + id);
+        }
+        if (CoreStringUtils.isBlank(id.getName())) {
+            throw new NutsIllegalArgumentException(workspace, "Missing name for " + id);
+        }
+    }
+    public static void checkLongNameNutsId(NutsWorkspace workspace, NutsId id) {
+        checkSimpleNameNutsId(workspace,id);
+        if (CoreStringUtils.isBlank(id.getVersion().toString())) {
+            throw new NutsIllegalArgumentException(workspace, "Missing version for " + id);
+        }
+    }
+
+    public static void validateRepositoryName(NutsWorkspace ws, String repositoryName, Set<String> registered) {
+        if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
+            throw new NutsIllegalArgumentException(ws, "Invalid repository id " + repositoryName);
+        }
+        if (registered.contains(repositoryName)) {
+            throw new NutsRepositoryAlreadyRegisteredException(ws,repositoryName);
+        }
+    }
+
+    public static NutsId parseRequiredNutsId(NutsWorkspace ws, String nutFormat) {
+        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+        if (id == null) {
+            throw new NutsParseException(ws,"Invalid Id format : " + nutFormat);
+        }
+        return id;
+    }
+
+    public static NutsId findNutsIdBySimpleNameInStrings(NutsWorkspace ws, NutsId id, Collection<String> all) {
+        if (all != null) {
+            for (String nutsId : all) {
+                if (nutsId != null) {
+                    NutsId nutsId2 = parseRequiredNutsId(ws, nutsId);
+                    if (nutsId2.equalsSimpleName(id)) {
+                        return nutsId2;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void checkSession(NutsWorkspace ws, NutsRepositorySession session) {
+        if (session == null) {
+            throw new NutsIllegalArgumentException(ws, "Missing Session");
+        }
     }
 
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
@@ -261,7 +297,7 @@ public class NutsWorkspaceUtils {
     }
 
     public static NutsIdFormat getIdFormat(NutsWorkspace ws) {
-        String k = DefaultNutsFindTraceFormatPlain.class.getName() + "#NutsIdFormat";
+        String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
         NutsIdFormat f = (NutsIdFormat) ws.getUserProperties().get(k);
         if (f == null) {
             f = ws.formatter().createIdFormat();
@@ -271,7 +307,7 @@ public class NutsWorkspaceUtils {
     }
 
     public static NutsDescriptorFormat getDescriptorFormat(NutsWorkspace ws) {
-        String k = DefaultNutsFindTraceFormatPlain.class.getName() + "#NutsDescriptorFormat";
+        String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.getUserProperties().get(k);
         if (f == null) {
             f = ws.formatter().createDescriptorFormat();
@@ -289,12 +325,12 @@ public class NutsWorkspaceUtils {
 //        ws.io().writeJson(o, out, true);
 //        out.println();
 //    }
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsOutputListFormat format, NutsFindCommand findCommand) {
-        return new NutsTraceIterator<>(it, ws, out, oformat, format, findCommand, session);
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsIncrementalFormat format, NutsFetchDisplayOptions displayOptions) {
+        return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
     }
 
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsOutputListFormat format, NutsFindCommand findCommand) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsIncrementalFormat format, NutsFetchDisplayOptions displayOptions) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
-        return new NutsTraceIterator<>(it, ws, out, oformat, format, findCommand, session);
+        return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
     }
 }

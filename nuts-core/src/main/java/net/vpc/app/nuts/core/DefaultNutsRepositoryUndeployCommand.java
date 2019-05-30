@@ -12,7 +12,7 @@ import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
@@ -120,7 +120,7 @@ public class DefaultNutsRepositoryUndeployCommand extends NutsRepositoryCommandB
 
     @Override
     public NutsRepositoryUndeployCommand run() {
-        CoreNutsUtils.checkSession(getSession());
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
         getRepo().security().checkAllowed(NutsConstants.Rights.UNDEPLOY, "undeploy");
         try {
             NutsRepositoryExt xrepo=NutsRepositoryExt.of(getRepo());

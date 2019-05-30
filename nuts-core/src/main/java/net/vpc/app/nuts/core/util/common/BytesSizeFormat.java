@@ -208,7 +208,7 @@ public class BytesSizeFormat {
                             depth=-1;
                         }
                         if(depth<=0 || depth>9){
-                            throw new NutsIllegalArgumentException("Invalid depth "+depth);
+                            throw new NutsIllegalArgumentException(null, "Invalid depth "+depth);
                         }
                     }
                     case 'F': {
@@ -226,7 +226,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException("Unsupported " + c);
+                        throw new NutsIllegalArgumentException(null, "Unsupported " + c);
                     }
                 }
             }

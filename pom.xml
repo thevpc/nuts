@@ -11,8 +11,13 @@
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
+
+        <!--<module>toolbox/nuts-clown</module>-->
+        <module>lib/nuts-servlet</module>
+        <module>lib/nuts-tomcat-classloader</module>
+
         <module>toolbox/mvn</module>
-        <module>toolbox/nfind</module>
+        <!--<module>toolbox/nfind</module>-->
         <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/ndi</module>
@@ -26,9 +31,6 @@
         <module>toolbox/mysql</module>
         <module>toolbox/nuts-indexer</module>
         <module>toolbox/nuts-http-repo</module>
-        <!--<module>toolbox/nuts-clown</module>-->
-        <module>nuts-servlet</module>
-        <module>nuts-tomcat-classloader</module>
     </modules>
     <properties>
     </properties>

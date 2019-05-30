@@ -31,6 +31,6 @@ public class ImmutableConvertedList<A, B> extends AbstractList<B> {
 
     @Override
     public B set(int index, B element) {
-        throw new NutsUnsupportedOperationException("Immutable List");
+        throw new NutsUnsupportedOperationException(null,"Immutable List");
     }
 }

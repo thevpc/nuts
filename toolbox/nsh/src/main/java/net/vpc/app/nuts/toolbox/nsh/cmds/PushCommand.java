@@ -29,7 +29,7 @@
 // */
 //package net.vpc.app.nuts.toolbox.nsh.cmds;
 //
-//import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+//import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.app.nuts.app.options.RepositoryNonOption;
 //import net.vpc.common.commandline.Argument;
@@ -38,26 +38,26 @@
 ///**
 // * Created by vpc on 1/7/17.
 // */
-//public class PushCommand extends AbstractNutsCommand {
+//public class PushCommand extends AbstractNshCommand {
 //
 //    public PushCommand() {
 //        super("push", DEFAULT_SUPPORT);
 //    }
 //
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        NutsCommandLine cmdLine = cmdLine(args, context);
+//        NutsCommand cmdLine = cmdLine(args, context);
 //        String repo = null;
 //        net.vpc.app.nuts.NutsPushCommand push = context.getWorkspace().push().setSession(context.getSession());
 //        NutsCommandArg a;
 //        do {
 //            if (context.configure(cmdLine)) {
 //                //
-//            } else if (cmdLine.readAllOnce("--repo", "-r")) {
-//                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getString();
-//            } else if (cmdLine.readAllOnce("--force", "-f")) {
+//            } else if (cmdLine.skipOnce("--repo", "-r")) {
+//                repo = cmdLine.required().nextNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getString();
+//            } else if (cmdLine.skipOnce("--force", "-f")) {
 //                push.setForce(true);
 //            } else {
-//                String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
+//                String id = cmdLine.required().nextNonOption(new DefaultNonOption("NewNutsId")).toString();
 //                if (cmdLine.isExecMode()) {
 //                    push.id(id).run();
 //                    context.out().printf("%s pushed successfully\n", id);

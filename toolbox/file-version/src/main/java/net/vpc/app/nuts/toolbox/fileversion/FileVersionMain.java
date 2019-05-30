@@ -48,36 +48,36 @@ public class FileVersionMain extends NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NutsCommandLine commandLine = context.getCommandLine();
+        NutsCommand commandLine = context.getCommandLine();
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
-            if (context.configure(commandLine)) {
+            if (context.configureFirst(commandLine)) {
                 //
-            } else if ((a = commandLine.readBooleanOption("--maven")) != null) {
-                maven = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--win-pe")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--exe")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--dll")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--long")) != null) {
-                longFormat = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--name")) != null) {
-                nameFormat = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--sort")) != null) {
-                sort = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--id")) != null) {
-                idFormat = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--all")) != null) {
-                all = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--table")) != null) {
-                table = a.getBooleanValue();
-            } else if ((a = commandLine.readBooleanOption("--error")) != null) {
-                error = a.getBooleanValue();
+            } else if ((a = commandLine.nextBoolean("--maven")) != null) {
+                maven = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--win-pe")) != null) {
+                winPE = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--exe")) != null) {
+                winPE = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--dll")) != null) {
+                winPE = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--long")) != null) {
+                longFormat = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--name")) != null) {
+                nameFormat = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--sort")) != null) {
+                sort = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--id")) != null) {
+                idFormat = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--all")) != null) {
+                all = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--table")) != null) {
+                table = a.getValue().getBoolean();
+            } else if ((a = commandLine.nextBoolean("--error")) != null) {
+                error = a.getValue().getBoolean();
             } else {
-                a = commandLine.read();
+                a = commandLine.next();
                 String arg = a.getString();
                 if (maven || arg.endsWith(".jar") || arg.endsWith(".war") || arg.endsWith(".ear")) {
                     jarFiles.add(arg);
@@ -90,7 +90,7 @@ public class FileVersionMain extends NutsApplication {
         }
         if (commandLine.isExecMode()) {
             if (unsupportedFileTypes.size() > 0) {
-                throw new NutsExecutionException("file-version: unsupported files : " + unsupportedFileTypes, 2);
+                throw new NutsExecutionException(context.getWorkspace(),"file-version: unsupported files : " + unsupportedFileTypes, 2);
             }
             for (String arg : jarFiles) {
                 Set<VersionDescriptor> value = null;
@@ -98,7 +98,7 @@ public class FileVersionMain extends NutsApplication {
                     processed++;
                     value = detectJarWarEarVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(e, 2);
+                    throw new NutsExecutionException(context.getWorkspace(),e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
@@ -111,7 +111,7 @@ public class FileVersionMain extends NutsApplication {
                         processed++;
                         value = detectExeVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                     } catch (IOException e) {
-                        throw new NutsExecutionException(e, 2);
+                        throw new NutsExecutionException(context.getWorkspace(),e, 2);
                     }
                     if (!value.isEmpty()) {
                         results.put(arg, value);
@@ -119,20 +119,20 @@ public class FileVersionMain extends NutsApplication {
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException("file-version: Missing file", 2);
+                throw new NutsExecutionException(context.getWorkspace(),"file-version: Missing file", 2);
             }
             if (table && all) {
-                throw new NutsExecutionException("file-version: Options conflict --table --all", 1);
+                throw new NutsExecutionException(context.getWorkspace(),"file-version: Options conflict --table --all", 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException("file-version: Options conflict --table --long", 1);
+                throw new NutsExecutionException(context.getWorkspace(),"file-version: Options conflict --table --long", 1);
             }
 
             PrintStream out = context.out();
             PrintStream err = context.out();
 
             if (table) {
-                NutsPropertiesFormat tt = context.getWorkspace().formatter().createPropertiesFormat().setSort(sort).setTable(true);
+                NutsPropertiesFormat tt = context.getWorkspace().formatter().createPropertiesFormat().setSort(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -158,7 +158,7 @@ public class FileVersionMain extends NutsApplication {
                         }
                     }
                 }
-                tt.format(pp, out);
+                tt.model(pp).print(out);
             } else {
                 Set<String> keys = sort ? new TreeSet<>(results.keySet()) : new LinkedHashSet<>(results.keySet());
                 for (String k : keys) {
@@ -178,9 +178,8 @@ public class FileVersionMain extends NutsApplication {
                         } else if (longFormat) {
                             out.printf("[[%s]]%n", descriptor.getId());
                             NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
-                                    .setTable(true)
                                     .setSort(true);
-                            f.format(descriptor.getProperties(), out);
+                            f.model(descriptor.getProperties()).print(out);
                         } else {
                             out.printf("[[%s]]%n", descriptor.getId().getVersion());
                         }
@@ -205,7 +204,7 @@ public class FileVersionMain extends NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException("file-version: Unsupported File types " + unsupportedFileTypes, 3);
+                throw new NutsExecutionException(context.getWorkspace(),"file-version: Unsupported File types " + unsupportedFileTypes, 3);
             }
         }
     }

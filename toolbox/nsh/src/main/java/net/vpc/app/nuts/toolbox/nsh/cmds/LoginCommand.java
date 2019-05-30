@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.app.nuts.NutsArgument;
@@ -39,24 +39,24 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class LoginCommand extends AbstractNutsCommand {
+public class LoginCommand extends AbstractNshCommand {
 
     public LoginCommand() {
         super("login", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         while(cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             }else  {
-                String login = cmdLine.readRequiredNonOption(cmdLine.createNonOption("username")).getString();
-                String password = cmdLine.readNonOption(cmdLine.createNonOption("password")).getString();
+                String login = cmdLine.required().nextNonOption(cmdLine.createNonOption("username")).getString();
+                char[] password = cmdLine.nextNonOption(cmdLine.createNonOption("password")).getString().toCharArray();
                 cmdLine.setCommandName(getName()).unexpectedArgument();
                 if (cmdLine.isExecMode()) {
-                    if (!NutsConstants.Names.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
+                    if (!NutsConstants.Users.ANONYMOUS.equals(login) && StringUtils.isEmpty(new String(password))) {
                         password = context.getTerminal().readPassword("Password:");
                     }
                     context.getWorkspace().security().login(login, password);

@@ -36,101 +36,17 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsExtensionInfo {
+public interface NutsExtensionInfo {
 
-    private final NutsId id;
-    private final String name;
-    private final String description;
-    private final String author;
-    private final String category;
-    private String source;
+    NutsId getId() ;
 
-    public NutsExtensionInfo(NutsId id, String name, String author, String description, String category, String source) {
-        this.id = id;
-        this.name = name;
-        this.author = author;
-        this.description = description;
-        this.category = category;
-        this.source = source;
-    }
+    String getName() ;
 
-    public void setSource(String source) {
-        this.source = source;
-    }
+    String getDescription() ;
 
-    public NutsId getId() {
-        return id;
-    }
+    String getAuthor() ;
 
-    public String getName() {
-        return name;
-    }
+    String getCategory() ;
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    @Override
-    public String toString() {
-        return "NutsExtensionInfo{" + "id=" + id + ", name=" + name + ", description=" + description + ", author=" + author + ", category=" + category + ", source=" + source + '}';
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.id);
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.description);
-        hash = 59 * hash + Objects.hashCode(this.author);
-        hash = 59 * hash + Objects.hashCode(this.category);
-        hash = 59 * hash + Objects.hashCode(this.source);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsExtensionInfo other = (NutsExtensionInfo) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(this.author, other.author)) {
-            return false;
-        }
-        if (!Objects.equals(this.category, other.category)) {
-            return false;
-        }
-        if (!Objects.equals(this.source, other.source)) {
-            return false;
-        }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
-    }
-
-    
+    String getSource() ;
 }

@@ -29,21 +29,21 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.ShellHistory;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.common.javashell.JShellHistory;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HistoryCommand extends AbstractNutsCommand {
+public class HistoryCommand extends AbstractNshCommand {
 
     enum Action {
         CLEAR,
@@ -59,7 +59,7 @@ public class HistoryCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         class Options {
             public String sval;
@@ -68,38 +68,38 @@ public class HistoryCommand extends AbstractNutsCommand {
         }
         Options o = new Options();
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.readOption("-c", "--clear") != null) {
+            } else if (cmdLine.next("-c", "--clear") != null) {
                 o.action = Action.CLEAR;
                 cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.readStringOption("-d", "--delete")) != null) {
+            } else if ((a = cmdLine.nextString("-d", "--delete")) != null) {
                 o.action = Action.DELETE;
                 o.ival = a.getValue().getInt();
                 cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.readOption("-D", "--remove-duplicates")) != null) {
+            } else if ((a = cmdLine.next("-D", "--remove-duplicates")) != null) {
                 o.action = Action.REMOVE_DUPLICATES;
                 cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.readOption("-w", "--write")) != null) {
+            } else if ((a = cmdLine.next("-w", "--write")) != null) {
                 o.action = Action.WRITE;
                 if(a.isKeyValue()){
                     o.sval=a.getValue().getString();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getString();
+                    o.sval=cmdLine.next().getString();
                 }
                 cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.readOption("-r", "--read")) != null) {
+            } else if ((a = cmdLine.next("-r", "--read")) != null) {
                 o.action = Action.READ;
                 if(a.isKeyValue()){
                     o.sval=a.getValue().getString();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getString();
+                    o.sval=cmdLine.next().getString();
                 }
                 cmdLine.setCommandName(getName()).unexpectedArgument();
             } else {
-                if (cmdLine.get(0).getInt(0) != 0) {
+                if (cmdLine.peek().getInt(0) != 0) {
                     o.action = Action.PRINT;
-                    o.ival = Math.abs(cmdLine.read().getInt());
+                    o.ival = Math.abs(cmdLine.next().getInt());
                 } else {
                     cmdLine.setCommandName(getName()).unexpectedArgument();
                 }
@@ -108,7 +108,7 @@ public class HistoryCommand extends AbstractNutsCommand {
         if (!cmdLine.isExecMode()) {
             return 0;
         }
-        ShellHistory shistory = context.getShell().getHistory();
+        JShellHistory shistory = context.getShell().getHistory();
         switch (o.action) {
             case PRINT: {
                 PrintStream out = context.out();

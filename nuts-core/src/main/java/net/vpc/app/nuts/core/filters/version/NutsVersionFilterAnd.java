@@ -1,7 +1,9 @@
 package net.vpc.app.nuts.core.filters.version;
 
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
@@ -29,12 +31,12 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
     }
 
     @Override
-    public boolean accept(NutsVersion id) {
+    public boolean accept(NutsVersion id, NutsWorkspace ws, NutsSession session) {
         if (all.length == 0) {
             return true;
         }
         for (NutsVersionFilter filter : all) {
-            if (!filter.accept(id)) {
+            if (!filter.accept(id, ws, session)) {
                 return false;
             }
         }

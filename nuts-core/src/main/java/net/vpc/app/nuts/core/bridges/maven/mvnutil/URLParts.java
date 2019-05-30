@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 
@@ -47,7 +71,7 @@ class URLParts {
         } else if (r.startsWith("/")) {
             values = new URLPart[]{new URLPart("/", r.substring(1))};
         } else {
-            throw new NutsUnsupportedArgumentException("Unsupported protocol " + r);
+            throw new NutsUnsupportedArgumentException(null,"Unsupported protocol " + r);
         }
     }
 
@@ -117,7 +141,7 @@ class URLParts {
                                 }
                                 return found;
                             } else {
-                                throw new NutsUnsupportedArgumentException("Unsupported");
+                                throw new NutsUnsupportedArgumentException(null,"Unsupported");
                             }
                         } else if (parent instanceof URL) {
                             final URL uu = (URL) parent;
@@ -158,7 +182,7 @@ class URLParts {
                             }
                             parent = ff.get(0);
                         } else {
-                            throw new NutsUnsupportedArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
                     }
                 case "file":
@@ -185,10 +209,10 @@ class URLParts {
                                 }
                                 return found;
                             } else {
-                                throw new NutsUnsupportedArgumentException("Unsupported");
+                                throw new NutsUnsupportedArgumentException(null,"Unsupported");
                             }
                         } else {
-                            throw new NutsUnsupportedArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
                     }
                 case "jar":
@@ -201,7 +225,7 @@ class URLParts {
                     }
             }
         }
-        throw new NutsUnsupportedArgumentException("Unsupported");
+        throw new NutsUnsupportedArgumentException(null,"Unsupported");
     }
 
     public InputStream getInputStream() throws IOException {
@@ -213,7 +237,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new File(value.getPath());
                         } else {
-                            throw new NutsUnsupportedArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
                     }
                 case "file":
@@ -221,7 +245,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new URL(value.getPath());
                         } else {
-                            throw new NutsUnsupportedArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
                     }
                 case "jar":
@@ -229,7 +253,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new URL(value.getPath()).openStream();
                         } else {
-                            throw new NutsUnsupportedArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
                     }
             }
@@ -240,7 +264,7 @@ class URLParts {
         if (parent instanceof URL) {
             return ((URL) parent).openStream();
         }
-        throw new NutsUnsupportedArgumentException("Unsupported");
+        throw new NutsUnsupportedArgumentException(null,"Unsupported");
     }
     
 }

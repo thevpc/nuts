@@ -35,11 +35,11 @@ package net.vpc.app.nuts;
  */
 public class NutsReadOnlyException extends NutsException {
 
-    public NutsReadOnlyException(String location) {
-        super("Cannot update Readonly Workspace " + location);
+    public NutsReadOnlyException(NutsWorkspace workspace,String location) {
+        super(workspace,"Cannot update Readonly Workspace " + location);
     }
 
     public NutsReadOnlyException(NutsWorkspace ws) {
-        this(ws == null ? null : ws.config().getWorkspaceLocation().toString());
+        this(ws,ws == null ? null : ws.config().getWorkspaceLocation().toString());
     }
 }

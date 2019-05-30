@@ -36,17 +36,22 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
-import net.vpc.app.nuts.NutsDefaultArgument;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceArgument;
 
 public class CoreCommonUtils {
 
@@ -95,10 +100,10 @@ public class CoreCommonUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(x);
+                throw new NutsException(null,x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException("Not a valid type " + c + " <> " + service);
+                throw new NutsException(null,"Not a valid type " + c + " <> " + service);
             }
             classes.add(c);
         }
@@ -144,7 +149,7 @@ public class CoreCommonUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return new NutsDefaultArgument(System.getProperty(property)).getBoolean(defaultValue);
+        return new NutsDefaultWorkspaceArgument(System.getProperty(property),'=').getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {
@@ -259,7 +264,6 @@ public class CoreCommonUtils {
 //        }
 //        return false;
 //    }
-
     public static void putAllInProps(String prefix, Map<String, String> dest, Object value) {
         if (!CoreStringUtils.isBlank(prefix)) {
             if (value instanceof Map) {
@@ -304,4 +308,60 @@ public class CoreCommonUtils {
         }
         return defaultValue;
     }
+
+    public static String getEnumString(Enum e) {
+        return e.toString().toLowerCase().replace("_", "-");
+    }
+
+    public static <T extends Enum> T parseEnumString(String val, Class<T> e, boolean lenient) {
+        String v2 = val.toUpperCase().replace("-", "_");
+        for (T enumConstant : e.getEnumConstants()) {
+            if (enumConstant.toString().equals(v2)) {
+                return enumConstant;
+            }
+        }
+        if (lenient) {
+            return null;
+        }
+        throw new NoSuchElementException(val + " of type " + e.getSimpleName());
+    }
+
+    public static String stringValue(Object o) {
+        if (o == null) {
+            return "";
+        }
+        if (o.getClass().isEnum()) {
+            return getEnumString((Enum) o);
+        }
+        if (o instanceof Date) {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o);
+        }
+        if (o instanceof Collection) {
+            Collection c = ((Collection) o);
+            Object[] a = c.toArray();
+            if (a.length == 0) {
+                return "";
+            }
+            if (a.length == 1) {
+                return stringValue(a[0]);
+            }
+            return "[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]";
+        }
+        if (o.getClass().isArray()) {
+            int len = Array.getLength(o);
+            if (len == 0) {
+                return "";
+            }
+            if (len == 1) {
+                return stringValue(Array.get(o, 0));
+            }
+            List<String> all = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                all.add(stringValue(Array.get(o, i)));
+            }
+            return "[" + CoreStringUtils.join(", ", all) + "]";
+        }
+        return o.toString();
+    }
+
 }

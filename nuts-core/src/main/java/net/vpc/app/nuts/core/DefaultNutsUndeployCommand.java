@@ -3,13 +3,11 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUndeployCommand> implements NutsUndeployCommand {
 
@@ -20,7 +18,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
     private boolean transitive = true;
 
     public DefaultNutsUndeployCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"undeploy");
     }
 
     @Override
@@ -137,16 +135,16 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
 
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
         if (ids.isEmpty()) {
-            throw new NutsExecutionException("No component to undeploy", 1);
+            throw new NutsExecutionException(ws,"No component to undeploy", 1);
         }
         for (NutsId id : ids) {
-            NutsDefinition p = ws.find()
+            NutsDefinition p = ws.search()
                     .ids(id)
                     .repositories(getRepository())
                     .setTransitive(isTransitive())
-                    .setFetchStratery(isOffline() ? NutsFetchStrategy.LOCAL : NutsFetchStrategy.LOCAL)
-                    .duplicateVersions(false)
-                    .lenient(false)
+                    .setFetchStratery(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
+                    .duplicates(false)
+                    .failFast()
                     .getResultDefinitions().required();
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
             p.getRepository().undeploy()
@@ -155,25 +153,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
             addResult(id);
         }
         if (getValidSession().isTrace()) {
-            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                if (getValidSession().getOutputFormat() != null && getValidSession().getOutputFormat() != NutsOutputFormat.PLAIN) {
-                    switch (getValidSession().getOutputFormat()) {
-                        case JSON: {
-                            getValidSession().getTerminal().out().printf(ws.io().json().pretty().toJsonString(result));
-                            break;
-                        }
-                        case PROPS: {
-                            Map<String, String> props = new LinkedHashMap<>();
-                            for (int i = 0; i < result.size(); i++) {
-                                props.put(String.valueOf(i + 1), result.get(i).toString());
-                            }
-                            CoreIOUtils.storeProperties(props, getValidSession().getTerminal().out());
-                            break;
-                        }
-
-                    }
-                }
-            }
+            ws.formatter().createObjectFormat(getValidSession(), result).println();
         }
         return this;
     }
@@ -220,20 +200,20 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "--offline": {
-                setOffline(cmdLine.readBooleanOption().getBoolean());
+                setOffline(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                setRepository(cmdLine.readStringOption().getString());
+                setRepository(cmdLine.nextString().getValue().getString());
                 break;
             }
 

@@ -38,7 +38,7 @@ import java.io.Serializable;
  */
 public interface NutsVersionInterval extends Serializable {
 
-    public boolean acceptVersion(NutsVersion version);
+    boolean acceptVersion(NutsVersion version);
 
-    public boolean isFixedValue();
+    boolean isFixedValue();
 }

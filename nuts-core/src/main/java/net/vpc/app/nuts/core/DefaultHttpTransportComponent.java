@@ -79,7 +79,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {
-            throw new NutsUnsupportedOperationException("Upload unsupported");
+            throw new NutsUnsupportedOperationException(null,"Upload unsupported");
         }
     }
 }

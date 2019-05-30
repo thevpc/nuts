@@ -46,7 +46,7 @@ public interface NutsExecutionContext {
 
     NutsDefinition getNutsDefinition();
 
-    String[] getArgs();
+    String[] getArguments();
 
     NutsWorkspace getWorkspace();
 

@@ -31,7 +31,10 @@ package net.vpc.app.nuts.core.util.io;
 
 import java.io.*;
 import java.util.*;
+
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsWorkspace;
 
 //    public static void main(String[] args) {
 //        try {
@@ -67,6 +70,11 @@ public class ProcessBuilder2 {
     //    private List<PipeThread> pipes = new ArrayList<>();
     private Process proc;
     private int sleepMillis = 1000;
+    private NutsWorkspace ws;
+
+    public ProcessBuilder2(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public int getSleepMillis() {
         return sleepMillis;
@@ -155,7 +163,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException("Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException(ws,"Already used Base IO Rediection");
         }
         this.in = in;
         return this;
@@ -180,7 +188,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
     }
 
     public String getErrorString() {
@@ -191,7 +199,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
@@ -208,7 +216,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException("Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException(ws, "Already used Base IO Rediection");
         }
         this.err = err;
         return this;
@@ -315,17 +323,17 @@ public class ProcessBuilder2 {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
-                        throw new IOException("Execution Failed with code " + result + " and message : " + getOutputString());
+                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getOutputString(),result);
                     }
                 } else {
                     if (isGrabErrorString()) {
-                        throw new IOException("Execution Failed with code " + result + " and message : " + getErrorString());
+                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getErrorString(),result);
                     }
                     if (isGrabOutputString()) {
-                        throw new IOException("Execution Failed with code " + result + " and message : " + getOutputString());
+                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getOutputString(),result);
                     }
                 }
-                throw new IOException("Execution Failed with code " + result);
+                throw new NutsExecutionException(ws,"Execution Failed with code " + result,result);
             }
         }
     }
@@ -479,73 +487,46 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    public static class CommandStringFormatterAdapter implements CommandStringFormatter {
+    public interface CommandStringFormat {
 
-        @Override
-        public boolean acceptArgument(int argIndex, String arg) {
+        default boolean acceptArgument(int argIndex, String arg) {
             return true;
         }
 
-        @Override
-        public String replaceArgument(int argIndex, String arg) {
+        default String replaceArgument(int argIndex, String arg) {
             return null;
         }
 
-        @Override
-        public boolean acceptEnvName(String envName, String envValue) {
+        default boolean acceptEnvName(String envName, String envValue) {
             return true;
         }
 
-        @Override
-        public boolean acceptRedirectInput() {
+        default boolean acceptRedirectInput() {
             return true;
         }
 
-        @Override
-        public boolean acceptRedirectOutput() {
+        default boolean acceptRedirectOutput() {
             return true;
         }
 
-        @Override
-        public boolean acceptRedirectError() {
+        default boolean acceptRedirectError() {
             return true;
         }
 
-        @Override
-        public String replaceEnvName(String envName, String envValue) {
+        default String replaceEnvName(String envName, String envValue) {
             return null;
         }
 
-        @Override
-        public String replaceEnvValue(String envName, String envValue) {
+        default String replaceEnvValue(String envName, String envValue) {
             return null;
         }
-    }
-
-    public interface CommandStringFormatter {
-
-        boolean acceptArgument(int argIndex, String arg);
-
-        String replaceArgument(int argIndex, String arg);
-
-        boolean acceptEnvName(String envName, String envValue);
-
-        boolean acceptRedirectInput();
-
-        boolean acceptRedirectOutput();
-
-        boolean acceptRedirectError();
-
-        String replaceEnvName(String envName, String envValue);
-
-        String replaceEnvValue(String envName, String envValue);
     }
 
     public String getCommandString() {
         return getCommandString(null);
     }
 
-    public String getCommandString(CommandStringFormatter f) {
+    public String getCommandString(CommandStringFormat f) {
         StringBuilder sb = new StringBuilder();
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {

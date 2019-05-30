@@ -38,14 +38,14 @@ public class NutsWorkspaceExtensionAlreadyRegisteredException extends NutsElemen
     private final String id;
     private final String installed;
 
-    public NutsWorkspaceExtensionAlreadyRegisteredException(String id, String installed) {
-        super("Extension Already registered " + (id == null ? "<null>" + " as " + installed : id));
+    public NutsWorkspaceExtensionAlreadyRegisteredException(NutsWorkspace workspace,String id, String installed) {
+        super(workspace, "Extension Already registered " + (id == null ? "<null>" + " as " + installed : id));
         this.id = id;
         this.installed = installed;
     }
 
-    public NutsWorkspaceExtensionAlreadyRegisteredException(String id, String installed, Throwable err) {
-        super("Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, err);
+    public NutsWorkspaceExtensionAlreadyRegisteredException(NutsWorkspace workspace,String id, String installed, Throwable err) {
+        super(workspace, "Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, err);
         this.id = id;
         this.installed = installed;
     }

@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.common.LRUMap;
 
 /**
  *
@@ -347,7 +345,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
             case "java.lang.Integer":
                 return new IntegerSerializer();
         }
-        throw new NutsUnsupportedArgumentException();
+        throw new NutsUnsupportedArgumentException(null);
     }
 
     private static class DefaultHashPath implements HashPath {

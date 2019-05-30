@@ -88,8 +88,5 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand{
     NutsUndeployCommand configure(String... args);
 
     @Override
-    NutsUndeployCommand configure(NutsCommandLine commandLine, boolean skipIgnored);
-    
-    @Override
     NutsUndeployCommand run();
 }

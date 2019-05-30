@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.util.common;
 
 import net.vpc.app.nuts.NutsParseException;
+import net.vpc.app.nuts.NutsWorkspace;
 
 public class JsonStatus {
 
@@ -39,6 +40,11 @@ public class JsonStatus {
     public boolean openAntiSlash;
     public boolean openSimpleQuotes;
     public boolean openDoubleQuotes;
+    public NutsWorkspace ws;
+
+    public JsonStatus(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public boolean checkValid(boolean throwError) {
         if (!checkPartialValid(throwError)) {
@@ -46,36 +52,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NutsParseException("not an object");
+                throw new NutsParseException(ws,"not an object");
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced brackets");
+                throw new NutsParseException(ws,"Unbalanced brackets");
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced braces");
+                throw new NutsParseException(ws,"Unbalanced braces");
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced anti-slash");
+                throw new NutsParseException(ws,"Unbalanced anti-slash");
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced simple quotes");
+                throw new NutsParseException(ws,"Unbalanced simple quotes");
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced double quotes");
+                throw new NutsParseException(ws,"Unbalanced double quotes");
             }
             return false;
         }
@@ -85,13 +91,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced brackets");
+                throw new NutsParseException(ws,"Unbalanced brackets");
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NutsParseException("Unbalanced braces");
+                throw new NutsParseException(ws,"Unbalanced braces");
             }
             return false;
         }

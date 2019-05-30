@@ -38,7 +38,7 @@ import java.util.EnumSet;
  * @author vpc
  * @since 0.5.4
  */
-public enum NutsDependencyScope {
+public enum NutsDependencyScope{
     /**
      * dependencies needed for running/executing the nuts : includes
      * 'compile,system,runtime' witch are NOT optional
@@ -192,7 +192,7 @@ public enum NutsDependencyScope {
             case "api":
                 return COMPILE;
             case "implementation":
-                return COMPILE;
+                return IMPLEMENTATION;
             case "provided": //maven
             case "compileOnly": //gradle
                 return PROVIDED;

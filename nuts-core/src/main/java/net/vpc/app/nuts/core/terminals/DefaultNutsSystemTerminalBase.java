@@ -87,7 +87,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
 //    @Override
-    public String readPassword(String prompt, Object... params) {
+    public char[] readPassword(String prompt, Object... params) {
         return readPassword(getOut(), prompt, params);
     }
 
@@ -105,7 +105,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     @Override
-    public String readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(PrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = getOut();
         }
@@ -113,7 +113,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = System.out;
         }
         out.printf(prompt, params);
-        return scanner.nextLine();
+        return scanner.nextLine().toCharArray();
     }
 
     @Override

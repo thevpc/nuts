@@ -29,15 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JavaShell;
+import net.vpc.common.javashell.JShell;
 import net.vpc.common.javashell.cmds.CmdSyntaxError;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnaliasCommand extends AbstractNutsCommand {
+public class UnaliasCommand extends AbstractNshCommand {
 
     public UnaliasCommand() {
         super("unalias", DEFAULT_SUPPORT);
@@ -45,7 +45,7 @@ public class UnaliasCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JavaShell shell=context.getShell();
+        JShell shell=context.getShell();
         int commandArgsCount = args.length;
         if (commandArgsCount == 1 && args[0].equals("-a")) {
             for (String k : shell.getAliases()) {

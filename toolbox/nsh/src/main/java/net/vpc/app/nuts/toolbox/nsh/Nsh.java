@@ -19,7 +19,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext applicationContext) {
-        String[] args = applicationContext.getArgs();
+        String[] args = applicationContext.getArguments();
         NutsSystemTerminal st = applicationContext.getWorkspace().getSystemTerminal();
         if (st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal) {
             //that's ok
@@ -29,21 +29,21 @@ public class Nsh extends NutsApplication {
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         int r = c.run(args);
         if (r != 0) {
-            throw new NutsExecutionException(r);
+            throw new NutsExecutionException(applicationContext.getWorkspace(),r);
         }
     }
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd = applicationContext.getCommandLine();
+        NutsCommand cmd = applicationContext.getCommandLine();
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
         while (cmd.hasNext()) {
-            if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
-                force = a.getBooleanValue();
-            } else if ((a = cmd.readBooleanOption("-t", "--trace")) != null) {
-                trace = a.getBooleanValue();
+            if ((a = cmd.nextBoolean("-f", "--force")) != null) {
+                force = a.getValue().getBoolean();
+            } else if ((a = cmd.nextBoolean("-t", "--trace")) != null) {
+                trace = a.getValue().getBoolean();
             } else {
                 cmd.setCommandName("nsh on-install").unexpectedArgument();
             }
@@ -62,12 +62,12 @@ public class Nsh extends NutsApplication {
 //                        .setParameters(parameters)
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        NutsCommand[] commands = c.getCommands();
+        NshCommand[] commands = c.getCommands();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = applicationContext.getSession().copy();
         sessionCopy.setTrace(false);
-        for (NutsCommand command : commands) {
+        for (NshCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.addCommandAlias(new NutsCommandAliasConfig()

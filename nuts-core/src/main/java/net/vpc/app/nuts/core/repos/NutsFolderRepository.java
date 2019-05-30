@@ -84,14 +84,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
         }
-        return mirroring.find(IteratorUtils.concat(li), filter, session);
+        return mirroring.search(IteratorUtils.concat(li), filter, session);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (c != null) {
             return c;
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(getWorkspace(),id);
     }
 
     protected boolean isAllowedOverrideNut(NutsId id) {
@@ -123,20 +123,23 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
         Iterator<NutsId> namedNutIdIterator = null;
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             try {
                 List<Iterator<NutsId>> all = new ArrayList<>();
-                all.add(lib.findVersions(id, idFilter, true, session));
-                all.add(cache.findVersions(id, idFilter, true, session));
+                all.add(lib.searchVersions(id, idFilter, true, session));
+                all.add(cache.searchVersions(id, idFilter, true, session));
                 namedNutIdIterator = IteratorUtils.concat(all);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
-        return mirroring.findVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, session);
+        if(namedNutIdIterator==null){
+            namedNutIdIterator=Collections.emptyIterator();
+        }
+        return mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, session);
 
     }
 
@@ -145,16 +148,16 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //        return lib.getStoreLocation();
 //    }
     @Override
-    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isBlank() && filter == null) {
-            NutsId bestId = lib.findLatestVersion(id, filter, session);
-            NutsId c1 = cache.findLatestVersion(id, filter, session);
+            NutsId bestId = lib.searchLatestVersion(id, filter, session);
+            NutsId c1 = cache.searchLatestVersion(id, filter, session);
             if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                 bestId = c1;
             }
-            return mirroring.findLatestVersion(bestId, id, filter, session);
+            return mirroring.searchLatestVersion(bestId, id, filter, session);
         }
-        return super.findLatestVersion(id, filter, session);
+        return super.searchLatestVersion(id, filter, session);
     }
 
     @Override

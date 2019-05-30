@@ -36,6 +36,7 @@ import net.vpc.app.nuts.core.DefaultNutsDefinition;
 
 import java.nio.file.Path;
 import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.io.UnzipOptions;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
@@ -68,7 +69,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        nutsDefinition.setInstallation(new DefaultNutsInstallInfo(true, true,installFolder));
+        nutsDefinition.setInstallation(NutsWorkspaceExt.of(executionContext.getWorkspace()).getInstalledRepository().getInstallInfo(nutsDefinition.getId()));
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .exec()

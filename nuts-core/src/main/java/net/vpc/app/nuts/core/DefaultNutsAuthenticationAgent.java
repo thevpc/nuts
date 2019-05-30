@@ -1,16 +1,15 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsAuthenticationAgent;
-import net.vpc.app.nuts.NutsEnvProvider;
-import net.vpc.app.nuts.NutsSecurityException;
-import net.vpc.app.nuts.NutsSingleton;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
+import java.util.Arrays;
+
 @NutsSingleton
 public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
-
+    private NutsWorkspace ws;
     @Override
     public int getSupportLevel(String authenticationAgent) {
         if (authenticationAgent == null || authenticationAgent.trim().isEmpty()
@@ -22,36 +21,38 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     @Override
-    public void checkCredentials(String credentialsId, String password, NutsEnvProvider envProvider) {
+    public void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) {
         if (CoreStringUtils.isBlank(password)) {
-            throw new NutsSecurityException("Missing old password");
+            throw new NutsSecurityException(ws,"Missing old password");
         }
         //check old password
-        if (CoreStringUtils.isBlank(credentialsId) || credentialsId.equals(CoreIOUtils.evalSHA1(password))) {
-            throw new NutsSecurityException("Invalid password");
+        if (CoreStringUtils.isBlank(credentialsId) || Arrays.equals(credentialsId,CoreIOUtils.evalSHA1(password))) {
+            throw new NutsSecurityException(ws,"Invalid password");
         }
 
         if (!CoreStringUtils.isBlank(credentialsId)) {
             if ((CoreStringUtils.isBlank(password) && CoreStringUtils.isBlank(credentialsId))
                     || (!CoreStringUtils.isBlank(password) && !CoreStringUtils.isBlank(credentialsId)
-                    && credentialsId.equals(CoreIOUtils.evalSHA1(password)))) {
+                    && Arrays.equals(credentialsId,CoreIOUtils.evalSHA1(password)))) {
                 return;
             }
         }
-        throw new NutsSecurityException("Invalid login or password");
+        throw new NutsSecurityException(ws,"Invalid login or password");
     }
 
     @Override
-    public String getCredentials(String credentialsId, NutsEnvProvider envProvider) {
+    public char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider) {
         //credentials are already encrypted with default passphrase!
         if (!CoreStringUtils.isBlank(credentialsId)) {
-            credentialsId = new String(CoreSecurityUtils.httpDecrypt(credentialsId.getBytes(), CoreSecurityUtils.DEFAULT_PASSPHRASE));
+            credentialsId =CoreIOUtils.bytesToChars(
+                    CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(credentialsId), CoreSecurityUtils.DEFAULT_PASSPHRASE)
+            );
         }
         return credentialsId;
     }
 
     @Override
-    public String setCredentials(String credentials, NutsEnvProvider envProvider) {
+    public char[] setCredentials(char[] credentials, NutsEnvProvider envProvider) {
         if (CoreStringUtils.isBlank(credentials)) {
             credentials = null;
         } else {

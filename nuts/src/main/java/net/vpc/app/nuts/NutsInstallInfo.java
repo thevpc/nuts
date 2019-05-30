@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.util.Date;
 
 /**
  *
@@ -39,11 +40,15 @@ import java.nio.file.Path;
 public interface NutsInstallInfo {
 
     boolean isInstalled();
-    
+
+    Date getInstallDate();
+
     boolean isDefaultVersion();
 
     Path getInstallFolder();
 
     boolean isJustInstalled();
+
+    String getInstallUser();
 
 }

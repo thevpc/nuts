@@ -48,7 +48,7 @@ public class RemoteMysqlConfigService {
         NutsIOManager io = context.getWorkspace().io();
 
         Path f = getConfigPath();
-        io.json().pretty().write(config, f);
+        io.json().write(config, f);
         return this;
     }
 
@@ -63,7 +63,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException("Missing config name", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing config name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
@@ -87,7 +87,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlConfigService write(PrintStream out) {
         NutsIOManager jsonSerializer = context.getWorkspace().io();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.json().pretty().write(getConfig(), new PrintWriter(out));
+        jsonSerializer.json().write(getConfig(), new PrintWriter(out));
         w.flush();
         return this;
     }
@@ -112,7 +112,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
         if (a == null) {
-            throw new NutsExecutionException("App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(),"App not found :" + appName, 2);
         }
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }

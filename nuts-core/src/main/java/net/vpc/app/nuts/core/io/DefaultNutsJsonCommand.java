@@ -24,15 +24,12 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsJsonCommand;
-import net.vpc.app.nuts.NutsVersion;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -40,28 +37,34 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsJsonCommand implements NutsJsonCommand {
 
-    private static Gson GSON;
+    private static Gson GSON_COMPACT;
     private static Gson GSON_PRETTY;
-    private boolean pretty=true;
+    private boolean compact;
+    private NutsWorkspace ws;
 
-    @Override
-    public boolean isPretty() {
-        return pretty;
+    public DefaultNutsJsonCommand(NutsWorkspace ws) {
+        this.ws = ws;
     }
 
     @Override
-    public NutsJsonCommand pretty() {
-        return pretty(true);
+    public boolean isCompact() {
+        return compact;
     }
 
     @Override
-    public NutsJsonCommand pretty(boolean pretty) {
-        return setPretty(pretty);
+    public NutsJsonCommand compact() {
+        return compact(true);
+    }
+
+
+    @Override
+    public NutsJsonCommand compact(boolean compact) {
+        return setCompact(compact);
     }
 
     @Override
-    public NutsJsonCommand setPretty(boolean pretty) {
-        this.pretty = pretty;
+    public NutsJsonCommand setCompact(boolean compact) {
+        this.compact = compact;
         return this;
     }
 
@@ -74,7 +77,7 @@ public class DefaultNutsJsonCommand implements NutsJsonCommand {
 
     @Override
     public void write(Object obj, Writer out) {
-        getGson(pretty).toJson(obj, out);
+        getGson(compact).toJson(obj, out);
         try {
             out.flush();
         } catch (IOException e) {
@@ -144,17 +147,17 @@ public class DefaultNutsJsonCommand implements NutsJsonCommand {
         }
     }
 
-    private static Gson getGson(boolean pretty) {
-        if (pretty) {
+    private static Gson getGson(boolean compact) {
+        if (compact) {
+            if (GSON_COMPACT == null) {
+                GSON_COMPACT = prepareBuilder().create();
+            }
+            return GSON_COMPACT;
+        } else {
             if (GSON_PRETTY == null) {
                 GSON_PRETTY = prepareBuilder().setPrettyPrinting().create();
             }
             return GSON_PRETTY;
-        } else {
-            if (GSON == null) {
-                GSON = prepareBuilder().create();
-            }
-            return GSON;
         }
     }
 
@@ -176,7 +179,7 @@ public class DefaultNutsJsonCommand implements NutsJsonCommand {
             if (s == null) {
                 return null;
             }
-            return CoreNutsUtils.parseRequiredNutsId(s);
+            return NutsWorkspaceUtils.parseRequiredNutsId(null, s);
         }
 
         @Override

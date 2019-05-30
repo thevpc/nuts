@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
-    NutsURLLocation[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
+    URL[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
 
     String[] getExtensionRepositoryLocations(NutsId appId);
 

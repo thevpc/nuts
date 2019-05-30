@@ -21,8 +21,8 @@ public class NutsIdFilterStackBuilder {
 
     private Stack<NutsIdFilter> vars = new Stack<>();
 
-    public NutsIdFilterStackBuilder js(String n, String js,NutsWorkspace ws) {
-        return push(new NutsJavascriptIdFilter(js,ws));
+    public NutsIdFilterStackBuilder js(String n, String js) {
+        return push(new NutsJavascriptIdFilter(js));
     }
 
     public NutsIdFilterStackBuilder and() {

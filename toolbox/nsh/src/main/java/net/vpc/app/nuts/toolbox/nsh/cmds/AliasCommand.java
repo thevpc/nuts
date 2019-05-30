@@ -29,18 +29,18 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.NutsObjectFormat;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.io.PrintStream;
 import java.util.Properties;
-import net.vpc.common.javashell.JavaShell;
+import net.vpc.common.javashell.JShell;
 import net.vpc.common.javashell.cmds.CmdSyntaxError;
-import net.vpc.app.nuts.NutsPropertiesFormat;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class AliasCommand extends AbstractNutsCommand {
+public class AliasCommand extends AbstractNshCommand {
 
     public AliasCommand() {
         super("alias", DEFAULT_SUPPORT);
@@ -48,7 +48,7 @@ public class AliasCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JavaShell shell = context.getShell();
+        JShell shell = context.getShell();
 
         int commandArgsCount = args.length;
         if (commandArgsCount == 0) {
@@ -57,10 +57,9 @@ public class AliasCommand extends AbstractNutsCommand {
                 p.setProperty(k, shell.getAlias(k));
             }
             PrintStream out = context.out();
-            NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
-                    .setSort(true)
-                    .setTable(true);
-            f.format(p, out);
+            NutsObjectFormat f = context.getWorkspace().formatter().createObjectFormat(context.getSession(),p);
+            f.configure("--sort");
+            f.println(out);
 
         } else {
             for (int i = 0; i < args.length; i++) {

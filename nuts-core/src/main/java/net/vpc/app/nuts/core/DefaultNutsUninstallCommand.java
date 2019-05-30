@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -13,22 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDefaultCommandLine;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsUninstallCommand;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -43,7 +31,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsUninstallCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"uninstall");
     }
 
     @Override
@@ -64,7 +52,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     @Override
     public NutsUninstallCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(ws,id);
         } else {
             ids.add(id);
         }
@@ -186,10 +174,10 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
         ws.security().checkAllowed(NutsConstants.Rights.UNINSTALL, "uninstall");
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
-            NutsDefinition def = ws.fetch().id(id).setSession(session.copy()).setTransitive(false).setAcceptOptional(false).includeDependencies()
-                    .setIncludeInstallInformation(true).getResultDefinition();
+            NutsDefinition def = ws.fetch().id(id).setSession(session.copy()).setTransitive(false).setOptional(false).dependencies()
+                    .setInstallInformation(true).getResultDefinition();
             if (!def.getInstallation().isInstalled()) {
-                throw new NutsIllegalArgumentException(id + " Not Installed");
+                throw new NutsIllegalArgumentException(ws, id + " Not Installed");
             }
             defs.add(def);
         }
@@ -236,21 +224,21 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "-e":
             case "--earse": {
-                this.setErase(cmdLine.readBooleanOption().getBoolean());
+                this.setErase(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-g":
             case "--args": {
                 while (cmdLine.hasNext()) {
-                    this.addArg(cmdLine.readStringOption().getString());
+                    this.addArg(cmdLine.nextString().getValue().getString());
                 }
                 return true;
             }

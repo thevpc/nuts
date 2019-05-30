@@ -29,21 +29,22 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class GrepCommand extends AbstractNutsCommand {
+public class GrepCommand extends AbstractNshCommand {
 
     public GrepCommand() {
         super("grep", DEFAULT_SUPPORT);
@@ -60,40 +61,40 @@ public class GrepCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
         PrintStream out = context.out();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.readAll("-")) {
+            } else if (cmdLine.next("-")!=null) {
                 files.add(null);
-            } else if (cmdLine.readAll("-e", "--regexp")) {
+            } else if (cmdLine.next("-e", "--regexp")!=null) {
                 options.regexp = true;
-            } else if (cmdLine.readAll("-v", "--invert-match")) {
+            } else if (cmdLine.next("-v", "--invert-match")!=null) {
                 options.invertMatch = true;
-            } else if (cmdLine.readAll("-w", "--word-regexp")) {
+            } else if (cmdLine.next("-w", "--word-regexp")!=null) {
                 options.word = true;
-            } else if (cmdLine.readAll("-x", "--line-regexp")) {
+            } else if (cmdLine.next("-x", "--line-regexp")!=null) {
                 options.lineRegexp = true;
-            } else if (cmdLine.readAll("-i", "--ignore-case")) {
+            } else if (cmdLine.next("-i", "--ignore-case")!=null) {
                 options.ignoreCase = true;
-            } else if (cmdLine.readAll("--version")) {
+            } else if (cmdLine.next("--version")!=null) {
                 out.printf("%s\n", "1.0");
                 return 0;
-            } else if (cmdLine.readAll("-n")) {
+            } else if (cmdLine.next("-n")!=null) {
                 options.n = true;
-            } else if (cmdLine.readAll("--help")) {
+            } else if (cmdLine.next("--help")!=null) {
                 out.printf("%s\n", getHelp());
                 return 0;
             } else {
                 if (expression == null) {
-                    expression = cmdLine.readRequiredNonOption(cmdLine.createNonOption("expression")).getString();
+                    expression = cmdLine.required().nextNonOption(cmdLine.createNonOption("expression")).getString();
                 } else {
-                    String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
+                    String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
                     File file = new File(context.getShell().getAbsolutePath(path));
                     files.add(file);
                 }
@@ -103,7 +104,7 @@ public class GrepCommand extends AbstractNutsCommand {
             files.add(null);
         }
         if (expression == null) {
-            throw new NutsExecutionException("Missing Expression", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing Expression", 2);
         }
         String baseExpr = options.regexp ? ("^" + simpexpToRegexp(expression, false) + "$") : expression;
         if (options.word) {

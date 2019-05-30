@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core;
 
@@ -144,26 +168,26 @@ public class DefaultNutsDeployRepositoryCommand extends NutsRepositoryCommandBas
     public NutsDeployRepositoryCommand run() {
         getRepo().security().checkAllowed(NutsConstants.Rights.DEPLOY, "deploy");
         if (this.getId() == null) {
-            throw new NutsIllegalArgumentException("Missing Id");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Missing Id");
         }
         if (this.getContent() == null) {
-            throw new NutsIllegalArgumentException("Missing Content");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Missing Content");
         }
         if (this.getDescriptor() == null) {
-            throw new NutsIllegalArgumentException("Missing Descriptor");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Missing Descriptor");
         }
         if (CoreStringUtils.isBlank(this.getId().getGroup())) {
-            throw new NutsIllegalArgumentException("Empty group");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Empty group");
         }
         if (CoreStringUtils.isBlank(this.getId().getName())) {
-            throw new NutsIllegalArgumentException("Empty name");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Empty name");
         }
         if ((this.getId().getVersion().isBlank())) {
-            throw new NutsIllegalArgumentException("Empty version");
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Empty version");
         }
         if ("RELEASE".equals(this.getId().getVersion().getValue())
                 || NutsConstants.Versions.LATEST.equals(this.getId().getVersion().getValue())) {
-            throw new NutsIllegalArgumentException("Invalid version " + this.getId().getVersion());
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Invalid version " + this.getId().getVersion());
         }
 //        if (descriptor.getArch().length > 0 || descriptor.getOs().length > 0 || descriptor.getOsdist().length > 0 || descriptor.getPlatform().length > 0) {
 //            if (CoreStringUtils.isEmpty(descriptor.getFace())) {

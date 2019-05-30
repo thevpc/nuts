@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.ssh.SshXFile;
@@ -38,7 +39,7 @@ import net.vpc.common.xfile.XFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
@@ -46,7 +47,7 @@ import net.vpc.app.nuts.NutsArgument;
  * ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class MkdirCommand extends AbstractNutsCommand {
+public class MkdirCommand extends AbstractNshCommand {
 
     public MkdirCommand() {
         super("mkdir", DEFAULT_SUPPORT);
@@ -58,23 +59,23 @@ public class MkdirCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         List<XFile> files = new ArrayList<>();
         Options o = new Options();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.get().isOption()) {
-                if (context.configure(cmdLine)) {
+            if (cmdLine.peek().isOption()) {
+                if (context.configureFirst(cmdLine)) {
                     //
-                }else if ((a = cmdLine.readBooleanOption("-p","--parent")) != null) {
-                    o.p = a.getBooleanValue();
+                }else if ((a = cmdLine.nextBoolean("-p","--parent")) != null) {
+                    o.p = a.getValue().getBoolean();
                 }
             } else {
-                files.add(ShellHelper.xfileOf(cmdLine.read().getString(),context.getShell().getCwd()));
+                files.add(ShellHelper.xfileOf(cmdLine.next().getString(),context.getShell().getCwd()));
             }
         }
         if (files.size() < 1) {
-            throw new NutsExecutionException("Missing parameters",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing parameters",2);
         }
         ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()) : null;
         for (XFile v : files) {

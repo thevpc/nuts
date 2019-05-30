@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStreamParser;
-import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
 /**
  *
  * @author vpc
  */
 public class FormattedPrintStreamNodePartialParser implements FormattedPrintStreamParser {
+    private static final Logger LOG = Logger.getLogger(FormattedPrintStreamNodePartialParser.class.getName());
 
     List<FDocNode> all = new ArrayList<>();
     StringBuilder curr = new StringBuilder();
@@ -149,6 +151,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         } else {
                             status = 2;
                             end.append(c);
+                            p.applyPop();
                         }
                     } else {
                         switch (c) {
@@ -439,6 +442,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 }
                 case '\n':
                 case '\r': {
+                    if (wasEscape) {
+                        wasEscape = false;
+                    }
                     value.append(c);
                     p.applyPop();
                     if (p.lineMode) {
@@ -457,6 +463,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     return;
                 }
                 default: {
+                    if (wasEscape) {
+                        wasEscape = false;
+                    }
                     value.append(c);
 //                    p.appContinue();
                     return;
@@ -546,9 +555,8 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         switch (c) {
             case '`':
             case '"':
-            case '\'': 
-            case '%': 
-            {
+            case '\'':
+            case '%': {
                 this.applyPush(new QuotedParseAction(c));
                 break;
             }
@@ -576,6 +584,107 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     @Override
     public String escapeText(String str) {
-        return FormattedPrintStreamUtils.escapeText(str);
+        return escapeText0(str);
     }
+
+    public String filterText(String text) {
+        return filterText0(text);
+    }
+
+    public static String filterText0(String text) {
+        //create new instance not to alter current state
+        FormattedPrintStreamNodePartialParser pp = new FormattedPrintStreamNodePartialParser();
+        StringBuilder sb = new StringBuilder();
+        try {
+            pp.take(text);
+            pp.forceEnding();
+            FDocNode tn = null;
+            while ((tn = pp.consumeFDocNode()) != null) {
+                escape(tn, sb);
+            }
+            return sb.toString();
+        } catch (Exception ex) {
+            LOG.log(Level.FINEST, "Error parsing : \n" + text, ex);
+            return text;
+        }
+
+    }
+
+    private static void escape(FDocNode tn, StringBuilder sb) {
+        if (tn instanceof FDocNode.Plain) {
+            sb.append(((FDocNode.Plain) tn).getValue());
+        } else if (tn instanceof FDocNode.List) {
+            for (FDocNode fDocNode : ((FDocNode.List) tn).getValues()) {
+                escape(fDocNode, sb);
+            }
+        } else if (tn instanceof FDocNode.Typed) {
+            FDocNode.Typed rr = (FDocNode.Typed) tn;
+            if (rr.getStart().length() == 1) {
+                sb.append(rr.getStart());
+                escape(rr.getNode(), sb);
+                sb.append(rr.getEnd());
+            } else {
+                escape(rr.getNode(), sb);
+            }
+        } else if (tn instanceof FDocNode.Escaped) {
+            FDocNode.Escaped rr = (FDocNode.Escaped) tn;
+            sb.append(rr.getStart());
+            sb.append(((FDocNode.Escaped) tn).getValue());
+            sb.append(rr.getEnd());
+        } else {
+            throw new IllegalArgumentException("Unsupported");
+        }
+    }
+
+    /**
+     * transform plain text to formatted text so that the result is rendered as
+     * is
+     *
+     * @param str
+     * @return
+     */
+    public static String escapeText0(String str) {
+        if (str == null) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            switch (c) {
+                case '\"':
+                case '\'':
+                case '`':
+                case '$':
+                case '£':
+                case '§':
+                case '_':
+                case '~':
+                case '%':
+                case '¤':
+                case '@':
+                case '^':
+                case '#':
+                case '¨':
+                case '=':
+                case '*':
+                case '+':
+                case '(':
+                case '[':
+                case '{':
+                case '<':
+                case ')':
+                case ']':
+                case '}':
+                case '>':
+                case '\\': {
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
 }

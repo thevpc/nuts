@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.toolbox.mvn;
 
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsApplication;
+import net.vpc.app.nuts.*;
 import org.apache.maven.cli.MavenCli;
 
 import java.io.*;
@@ -13,10 +12,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsArgument;
+
+import net.vpc.app.nuts.NutsCommand;
 
 public class NutsMvnMain extends NutsApplication {
 //    public static void main(String[] args) {
@@ -40,24 +37,24 @@ public class NutsMvnMain extends NutsApplication {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        NutsCommandLine cmd = appContext.getCommandLine();
+        NutsCommand cmd = appContext.getCommandLine();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (command == null) {
-                if (appContext.configure(cmd)) {
+                if (appContext.configureFirst(cmd)) {
                     //fo nothing
-                } else if ((a = cmd.readBooleanOption("-j", "--json")) != null) {
-                    o.json = a.getBooleanValue();
-                } else if ((a = cmd.readNonOption("build")) != null) {
+                } else if ((a = cmd.nextBoolean("-j", "--json")) != null) {
+                    o.json = a.getValue().getBoolean();
+                } else if ((a = cmd.next("build")) != null) {
                     command = "build";
-                } else if ((a = cmd.readNonOption("get")) != null) {
+                } else if ((a = cmd.next("get")) != null) {
                     command = "get";
                 } else {
                     command = "default";
-                    args2.add(cmd.read().getString());
+                    args2.add(cmd.next().getString());
                 }
             } else {
-                args2.add(cmd.read().getString());
+                args2.add(cmd.next().getString());
             }
         }
         if (command == null) {
@@ -81,7 +78,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException("Maven Call exited with code " + r, r);
+                        throw new NutsExecutionException(appContext.getWorkspace(),"Maven Call exited with code " + r, r);
                     }
                 }
                 case "get": {
@@ -109,7 +106,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException("Maven Call exited with code " + r, r);
+                        throw new NutsExecutionException(appContext.getWorkspace(),"Maven Call exited with code " + r, r);
                     }
                 }
             }

@@ -339,6 +339,18 @@ public class CoreStringUtils {
         return string == null || string.trim().isEmpty();
     }
 
+    public static boolean isBlank(char[] string) {
+        if(string == null || string.length==0){
+            return true;
+        }
+        for (char c:string) {
+            if(c > ' '){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * copied from StringUtils (in order to remove dependency)
      *
@@ -469,6 +481,25 @@ public class CoreStringUtils {
         char[] cc = new char[width];
         Arrays.fill(cc, x);
         return new String(cc);
+    }
+    public static String fillString(String x, int width) {
+        StringBuilder sb=new StringBuilder();
+        fillString(x,width,sb);
+        return sb.toString();
+    }
+
+    public static void fillString(char x, int width,StringBuilder sb) {
+        sb.ensureCapacity(sb.length()+width);
+        for (int i = 0; i < width; i++) {
+            sb.append(x);
+        }
+    }
+
+    public static void fillString(String x, int width,StringBuilder sb) {
+        sb.ensureCapacity(sb.length()+(width*x.length()));
+        for (int i = 0; i < width; i++) {
+            sb.append(x);
+        }
     }
 
     /**

@@ -36,18 +36,14 @@ import java.io.Serializable;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsVersion extends Serializable,Comparable<NutsVersion>{
+public interface NutsVersion extends Serializable,NutsTokenFilter, Comparable<NutsVersion>{
 
     String getValue();
-
-    boolean isBlank();
 
     int compareTo(String other);
 
     @Override
     int compareTo(NutsVersion other);
-
-    boolean matches(String expression);
 
     boolean ge(String other);
 

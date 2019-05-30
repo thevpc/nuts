@@ -1,23 +1,44 @@
 package net.vpc.app.nuts;
 
-import java.io.PrintStream;
 import java.util.Map;
 
-public interface NutsPropertiesFormat {
-    
-    boolean isSort() ;
+public interface NutsPropertiesFormat extends NutsFormat {
 
-    boolean isTable() ;
+    @Override
+    NutsPropertiesFormat terminalFormat(NutsTerminalFormat metric);
 
-    public NutsPropertiesFormat setTable(boolean table);
+    @Override
+    NutsPropertiesFormat setTerminalFormat(NutsTerminalFormat metric);
 
-    public String getSeparator() ;
+    @Override
+    NutsPropertiesFormat session(NutsSession session);
 
-    public NutsPropertiesFormat setSeparator(String separator);
+    @Override
+    NutsPropertiesFormat setSession(NutsSession session);
 
+    @Override
+    NutsPropertiesFormat configure(String ... args);
+
+    NutsPropertiesFormat model(Map map);
+    NutsPropertiesFormat setModel(Map map);
+
+    Map getModel();
+
+    boolean isSort();
+
+//    boolean isTable();
+//
+//    NutsPropertiesFormat table();
+//    NutsPropertiesFormat table(boolean table);
+//    NutsPropertiesFormat setTable(boolean table);
+
+    String getSeparator();
+
+    NutsPropertiesFormat separator(String separator);
+    NutsPropertiesFormat setSeparator(String separator);
+
+    NutsPropertiesFormat sort();
+    NutsPropertiesFormat sort(boolean sort);
     NutsPropertiesFormat setSort(boolean sort);
 
-    void format(Map map, PrintStream out);
-
-    
 }

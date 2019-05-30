@@ -58,7 +58,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
         NutsServerComponent server = ws.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class,NutsServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
         if (server == null) {
-            throw new NutsIllegalArgumentException("Not server extensions are registered.");
+            throw new NutsIllegalArgumentException(ws, "Not server extensions are registered.");
         }
         NutsServer s = server.start(ws/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
@@ -72,7 +72,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
     public NutsServer getServer(String serverId) {
         NutsServer nutsServer = servers.get(serverId);
         if (nutsServer == null) {
-            throw new NutsIllegalArgumentException("Server not found " + serverId);
+            throw new NutsIllegalArgumentException(ws, "Server not found " + serverId);
         }
         return nutsServer;
     }

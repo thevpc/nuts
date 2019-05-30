@@ -29,19 +29,15 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.util.ArrayList;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/5/17.
@@ -113,6 +109,107 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return toString().isEmpty();
+    }
+
+    @Override
+    public boolean matches(String pattern) {
+        if (pattern == null) {
+            return true;
+        }
+        return toString().matches(pattern);
+    }
+
+    @Override
+    public boolean contains(String substring) {
+        return toString().contains(substring);
+    }
+
+    @Override
+    public NutsTokenFilter groupToken() {
+        return new DefaultNutsTokenFilter(getGroup());
+    }
+
+    @Override
+    public NutsTokenFilter queryToken() {
+        return new DefaultNutsTokenFilter(getQuery());
+    }
+
+    @Override
+    public NutsTokenFilter versionToken() {
+        return new DefaultNutsTokenFilter(getVersion().getValue());
+    }
+    @Override
+    public NutsTokenFilter nameToken() {
+        return new DefaultNutsTokenFilter(getName());
+    }
+    @Override
+    public NutsTokenFilter namespaceToken() {
+        return new DefaultNutsTokenFilter(getNamespace());
+    }
+
+    @Override
+    public NutsTokenFilter anyToken() {
+        NutsTokenFilter[] oo={groupToken(), queryToken(),versionToken(),nameToken(),namespaceToken()};
+        return new NutsTokenFilter() {
+            @Override
+            public boolean isNull() {
+                for (NutsTokenFilter t: oo) {
+                    if(t.isNull()){
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isBlank() {
+                for (NutsTokenFilter t: oo) {
+                    if(t.isBlank()){
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean like(String pattern) {
+                for (NutsTokenFilter t: oo) {
+                    if(t.like(pattern)){
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean matches(String pattern) {
+                for (NutsTokenFilter t: oo) {
+                    if(t.matches(pattern)){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            @Override
+            public boolean contains(String pattern) {
+                for (NutsTokenFilter t: oo) {
+                    if(t.contains(pattern)){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+    }
+
+    @Override
     public boolean equalsSimpleName(NutsId other) {
         if (other == null) {
             return false;
@@ -121,47 +218,7 @@ public class DefaultNutsId implements NutsId {
                 && CoreStringUtils.trim(group).equals(CoreStringUtils.trim(other.getGroup()));
     }
 
-    @Override
-    public boolean anyContains(String value) {
-        if (value == null) {
-            return true;
-        }
-        if (CoreStringUtils.trim(namespace).contains(value)) {
-            return true;
-        }
-        if (CoreStringUtils.trim(name).contains(value)) {
-            return true;
-        }
-        if (CoreStringUtils.trim(version.getValue()).contains(value)) {
-            return true;
-        }
-        return CoreStringUtils.trim(query).contains(value);
-    }
 
-    @Override
-    public boolean anyMatches(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        if (CoreStringUtils.trim(namespace).matches(pattern)) {
-            return true;
-        }
-        if (CoreStringUtils.trim(name).matches(pattern)) {
-            return true;
-        }
-        if (CoreStringUtils.trim(version.getValue()).matches(pattern)) {
-            return true;
-        }
-        return CoreStringUtils.trim(query).matches(pattern);
-    }
-
-    @Override
-    public boolean anyLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return anyMatches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
 
     @Override
     public boolean like(String pattern) {
@@ -169,46 +226,6 @@ public class DefaultNutsId implements NutsId {
             return true;
         }
         return toString().matches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
-
-    @Override
-    public boolean namespaceLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return CoreStringUtils.trim(namespace).matches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
-
-    @Override
-    public boolean nameLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return CoreStringUtils.trim(name).matches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
-
-    @Override
-    public boolean groupLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return CoreStringUtils.trim(group).matches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
-
-    @Override
-    public boolean versionLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return CoreStringUtils.trim(version.getValue()).matches(CoreStringUtils.simpexpToRegexp(pattern));
-    }
-
-    @Override
-    public boolean queryLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return CoreStringUtils.trim(query).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override

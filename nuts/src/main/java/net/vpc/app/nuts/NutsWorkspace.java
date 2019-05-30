@@ -53,7 +53,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
 
     //COMMANDS
-    NutsFindCommand find();
+    NutsSearchCommand search();
 
     NutsFetchCommand fetch();
 
@@ -95,7 +95,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsParseManager parser();
 
-    NutsFormatManager formatter();
+    NutsWorkspaceFormatManager formatter();
 
     ///////////////////// utilities
     String resolveDefaultHelpForClass(Class clazz);

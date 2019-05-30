@@ -21,6 +21,7 @@ public class ByteArrayPrintStream extends PrintStream {
         return out.toByteArray();
     }
 
+    @Override
     public String toString() {
         flush();
         return out.toString();

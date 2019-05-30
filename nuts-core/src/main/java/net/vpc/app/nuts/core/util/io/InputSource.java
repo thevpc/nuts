@@ -18,6 +18,8 @@ public interface InputSource extends AutoCloseable {
 
     String getName();
 
+    long length();
+
     boolean isPath();
 
     boolean isURL() ;
@@ -35,6 +37,6 @@ public interface InputSource extends AutoCloseable {
     MultiInputSource multi();
 
     @Override
-    public void close();
+    void close();
 
 }

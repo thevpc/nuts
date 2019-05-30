@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.parsers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.app.NutsCommandLineUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
@@ -13,9 +14,8 @@ import java.util.Collection;
 import java.util.Map;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.core.app.DefaultWorkspaceCommandLine;
+import net.vpc.app.nuts.core.app.DefaultNutsCommand;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
 public class DefaultNutsParseManager implements NutsParseManager {
 
@@ -26,13 +26,18 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsCommandLine parseCommandLine(String[] arguments) {
-        return new DefaultWorkspaceCommandLine(ws, arguments);
+    public NutsCommand parseCommandLine(String line) {
+        return parseCommand(NutsCommandLineUtils.parseCommandLine(ws,line));
     }
 
     @Override
-    public NutsCommandLine parseCommandLine(Collection<String> arguments) {
-        return parseCommandLine(arguments == null ? null : (String[]) arguments.toArray(new String[0]));
+    public NutsCommand parseCommand(String... arguments) {
+        return new DefaultNutsCommand(ws, arguments);
+    }
+
+    @Override
+    public NutsCommand parseCommand(Collection<String> arguments) {
+        return parseCommand(arguments == null ? null : (String[]) arguments.toArray(new String[0]));
     }
 
     @Override
@@ -48,10 +53,10 @@ public class DefaultNutsParseManager implements NutsParseManager {
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException("Unable to parse url " + url, ex);
+                throw new NutsParseException(ws,"Unable to parse url " + url, ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException("Unable to parse url " + url, ex);
+            throw new NutsParseException(ws,"Unable to parse url " + url, ex);
         }
     }
 
@@ -63,14 +68,14 @@ public class DefaultNutsParseManager implements NutsParseManager {
     @Override
     public NutsDescriptor parseDescriptor(Path path) {
         if (!Files.exists(path)) {
-            throw new NutsNotFoundException("at file " + path);
+            throw new NutsNotFoundException(ws,"at file " + path);
         }
         try {
             return parseDescriptor(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsParseException("Unable to parse file " + path, ex);
+            throw new NutsParseException(ws,"Unable to parse file " + path, ex);
         }
     }
 
@@ -107,14 +112,14 @@ public class DefaultNutsParseManager implements NutsParseManager {
 
     @Override
     public NutsDependency parseDependency(String dependency) {
-        return CoreNutsUtils.parseNutsDependency(dependency);
+        return CoreNutsUtils.parseNutsDependency(ws, dependency);
     }
 
     @Override
     public NutsId parseRequiredId(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
-            throw new NutsParseException("Invalid Id format : " + nutFormat);
+            throw new NutsParseException(ws,"Invalid Id format : " + nutFormat);
         }
         return id;
     }
@@ -166,19 +171,6 @@ public class DefaultNutsParseManager implements NutsParseManager {
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];
-    }
-
-    @Override
-    public String filterText(String value) {
-        return FormattedPrintStreamUtils.filterText(value);
-    }
-
-    @Override
-    public String escapeText(String str) {
-        if (str == null) {
-            return "";
-        }
-        return FormattedPrintStreamUtils.escapeText(str);
     }
 
     @Override

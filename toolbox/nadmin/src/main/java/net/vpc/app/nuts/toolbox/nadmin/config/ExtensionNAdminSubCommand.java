@@ -5,15 +5,13 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExtensionInfo;
-import net.vpc.app.nuts.NutsWorkspaceExtension;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
+
+import net.vpc.app.nuts.NutsCommand;
 
 /**
  * @author vpc
@@ -21,17 +19,17 @@ import net.vpc.app.nuts.NutsCommandLine;
 public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
-        if (cmdLine.readAll("add extension", "ax")) {
-            String extensionId = cmdLine.readRequiredNonOption(cmdLine.createNonOption("extension")).getString();
+        if (cmdLine.next("add extension", "ax")!=null) {
+            String extensionId = cmdLine.required().nextNonOption(cmdLine.createNonOption("extension")).getString();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
-                extensionId = cmdLine.readRequiredNonOption(cmdLine.createNonOption("extension")).getString();
+                extensionId = cmdLine.required().nextNonOption(cmdLine.createNonOption("extension")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
                 }
@@ -42,10 +40,10 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else {
             PrintStream out = context.getTerminal().fout();
-            if (cmdLine.readAll("list extensions", "lx")) {
+            if (cmdLine.next("list extensions", "lx")!=null) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {
-                        NutsDescriptor desc = context.getWorkspace().find().id(extension.getWiredId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
+                        NutsDescriptor desc = context.getWorkspace().search().id(extension.getWiredId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;
@@ -59,10 +57,10 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.readAll("find extensions", "fx")) {
+            } else if (cmdLine.next("find extensions", "fx")!=null) {
                 if (cmdLine.isExecMode()) {
                     for (NutsExtensionInfo extension : context.getWorkspace().extensions().findWorkspaceExtensions(context.getSession())) {
-                        NutsDescriptor desc = context.getWorkspace().find().id(extension.getId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
+                        NutsDescriptor desc = context.getWorkspace().search().id(extension.getId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;
@@ -72,7 +70,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.readAll("list extension points", "lxp")) {
+            } else if (cmdLine.next("list extension points", "lxp")!=null) {
                 if (cmdLine.isExecMode()) {
                     for (Class extension : context.getWorkspace().extensions().getExtensionPoints()) {
                         out.printf("[[%s]]:%n", extension.getName());

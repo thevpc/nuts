@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.File;
@@ -41,13 +42,13 @@ import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class LsCommand extends AbstractNutsCommand {
+public class LsCommand extends AbstractNshCommand {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
 
@@ -62,21 +63,21 @@ public class LsCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> folders = new ArrayList<>();
         List<File> files = new ArrayList<>();
         List<File> invalids = new ArrayList<>();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            }else if ((a = cmdLine.readBooleanOption("-d", "--dir")) != null) {
-                options.d = a.getBooleanValue();
-            } else if ((a = cmdLine.readBooleanOption("-l", "--list")) != null) {
-                options.l = a.getBooleanValue();
+            }else if ((a = cmdLine.nextBoolean("-d", "--dir")) != null) {
+                options.d = a.getValue().getBoolean();
+            } else if ((a = cmdLine.nextBoolean("-l", "--list")) != null) {
+                options.l = a.getValue().getBoolean();
             } else {
-                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
+                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 ;
                 if (file.isDirectory()) {
@@ -118,7 +119,7 @@ public class LsCommand extends AbstractNutsCommand {
 
     private void ls(File path, Options options, NutsCommandContext context, PrintStream out, boolean addPrefix) {
         if (!path.exists()) {
-            throw new NutsIllegalArgumentException("ls: cannot access '" + path.getPath() + "': No such file or directory");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"ls: cannot access '" + path.getPath() + "': No such file or directory");
         } else if (path.isDirectory()) {
             if (addPrefix) {
                 out.printf("%s:\n", path.getName());
@@ -178,7 +179,7 @@ public class LsCommand extends AbstractNutsCommand {
         } else {
             String p = path.getName().toLowerCase();
             if (p.startsWith(".") || p.endsWith(".log") || p.contains(".log.")) {
-                out.printf("<%s>\n", name);
+                out.printf("<<%s>>\n", name);
             } else {
                 int i = p.lastIndexOf('.');
                 if (i > -1) {

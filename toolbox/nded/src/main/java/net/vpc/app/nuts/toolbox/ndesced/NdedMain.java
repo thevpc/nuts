@@ -15,62 +15,62 @@ public class NdedMain extends NutsApplication {
     private boolean interactive = false;
 
     public static void main(String[] args) {
-        new NdedMain().run(args);
+        new NdedMain().runAndExit(args);
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        NutsCommandLine commandLine = appContext.getCommandLine();
+        NutsCommand commandLine = appContext.getCommandLine();
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (appContext.configure(commandLine)) {
+            if (appContext.configureFirst(commandLine)) {
 
-            } else if ((a = commandLine.readStringOption("--home")) != null) {
+            } else if ((a = commandLine.nextString("--home")) != null) {
                 home = a.getValue().getString();
-            } else if ((a = commandLine.readStringOption("--id")) != null) {
+            } else if ((a = commandLine.nextString("--id")) != null) {
                 String v = a.getValue().getString();
                 builder0.setId(v);
-            } else if ((a = commandLine.readStringOption("--alternative")) != null) {
+            } else if ((a = commandLine.nextString("--alternative")) != null) {
                 String v = a.getValue().getString();
                 builder0.setAlternative(v);
-            } else if ((a = commandLine.readStringOption("--name")) != null) {
+            } else if ((a = commandLine.nextString("--name")) != null) {
                 String v = a.getValue().getString();
                 builder0.setName(v);
-            } else if ((a = commandLine.readStringOption("--packaging")) != null) {
+            } else if ((a = commandLine.nextString("--packaging")) != null) {
                 String v = a.getValue().getString();
                 builder0.setPackaging(v);
-            } else if ((a = commandLine.readStringOption("--platform")) != null) {
+            } else if ((a = commandLine.nextString("--platform")) != null) {
                 String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addPlatform(s);
                     }
                 }
-            } else if ((a = commandLine.readStringOption("--os")) != null) {
+            } else if ((a = commandLine.nextString("--os")) != null) {
                 String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addOs(s);
                     }
                 }
-            } else if ((a = commandLine.readStringOption("--osdist")) != null) {
+            } else if ((a = commandLine.nextString("--osdist")) != null) {
                 String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addOsdist(s);
                     }
                 }
-            } else if ((a = commandLine.readStringOption("--arch")) != null) {
+            } else if ((a = commandLine.nextString("--arch")) != null) {
                 String v = a.getValue().getString();
                 for (String s : v.split(" ,;")) {
                     if (s.length() > 0) {
                         builder0.addArch(s);
                     }
                 }
-            } else if ((a = commandLine.readStringOption("--location")) != null) {
+            } else if ((a = commandLine.nextString("--location")) != null) {
                 String v = a.getValue().getString();
                 builder0.addLocation(v);
-            } else if ((a = commandLine.readBooleanOption("-i", "--interactive")) != null) {
-                interactive = a.getBooleanValue();
+            } else if ((a = commandLine.nextBoolean("-i", "--interactive")) != null) {
+                interactive = a.getValue().getBoolean();
             } else {
                 commandLine.setCommandName("nded").unexpectedArgument();
             }
@@ -193,9 +193,9 @@ public class NdedMain extends NutsApplication {
         }
     }
 
-    public void run(NutsApplicationContext appContext) {
-        this.appContext = appContext;
-        String[] args = appContext.getArgs();
+    public void run(NutsApplicationContext context) {
+        this.appContext = context;
+        String[] args = context.getArguments();
 //        f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.appContext.getWorkspace().createDescriptorBuilder();
         fillArgs(b);
@@ -211,7 +211,7 @@ public class NdedMain extends NutsApplication {
                 //
             }
             if (confirm("Abort?")) {
-                throw new NutsExecutionException("Cancelled", 1);
+                throw new NutsExecutionException(context.getWorkspace(),"Cancelled", 1);
             }
         }
         String path = b.getId().getGroup().replace('.', '/')
@@ -231,9 +231,9 @@ public class NdedMain extends NutsApplication {
             }
         }
         if (!confirm("Confirm ?")) {
-            throw new NutsExecutionException("Cancelled", 1);
+            throw new NutsUserCancelException(context.getWorkspace());
         }
-        NutsDescriptorFormat nutsDescriptorFormat = appContext.getWorkspace().formatter().createDescriptorFormat().setPretty(true);
+        NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().formatter().createDescriptorFormat();
         nutsDescriptorFormat.print(desc, file);
         nutsDescriptorFormat.print(desc, this.appContext.out());
     }

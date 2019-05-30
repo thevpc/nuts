@@ -14,7 +14,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
@@ -24,25 +24,25 @@ import net.vpc.app.nuts.NutsArgument;
 public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin config";
         NutsArgument a;
-        if (cmdLine.readAll("delete log")) {
+        if (cmdLine.next("delete log")!=null) {
             deleteLog(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.readAll("delete var")) {
+        } else if (cmdLine.next("delete var")!=null) {
             deleteVar(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.readAll("delete programs")) {
+        } else if (cmdLine.next("delete programs")!=null) {
             deletePrograms(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.readAll("delete config")) {
+        } else if (cmdLine.next("delete config")!=null) {
             deleteConfig(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.readAll("delete cache")) {
+        } else if (cmdLine.next("delete cache")!=null) {
             deleteCache(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.readAll("cleanup")) {
+        } else if (cmdLine.next("cleanup")!=null) {
             boolean force = readForce(cmdLine, name);
             deleteCache(context, force);
             deleteLog(context, force);
@@ -83,7 +83,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.out().printf("@@Deleting@@ ##%s## folder %s ...%n", name, storeLocation);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {
+                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefaultValue(false))) {
                     try {
                         Files.delete(storeLocation);
                     } catch (IOException ex) {
@@ -118,7 +118,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {
+                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefaultValue(false))) {
                     try {
                         Files.delete(s);
                     } catch (IOException ex) {
@@ -134,12 +134,12 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         }
     }
 
-    private boolean readForce(NutsCommandLine cmdLine, String name) {
+    private boolean readForce(NutsCommand cmdLine, String name) {
         boolean force = false;
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.readBooleanOption("-f", "--force")) != null) {
-                force = a.getBooleanValue();
+            if ((a = cmdLine.nextBoolean("-f", "--force")) != null) {
+                force = a.getValue().getBoolean();
             } else {
                 cmdLine.setCommandName(name).unexpectedArgument();
             }

@@ -40,60 +40,73 @@ public class JavaExecutorOptions {
         List<String> classPath0 = new ArrayList<>();
         NutsIdFormat nutsIdFormat = ws.formatter().createIdFormat().setOmitNamespace(true);
         //will accept all -- and - based options!
-        for (int i = 0; i < getExecArgs().length; i++) {
-            String arg = getExecArgs()[i];
-            if (arg.equals("--java-version") || arg.equals("-java-version")) {
-                i++;
-                javaVersion = getExecArgs()[i];
-            } else if (arg.startsWith("--java-version=") || arg.startsWith("-java-version=")) {
-                javaVersion = getExecArgs()[i].substring(arg.indexOf('=') + 1);
-
-            } else if (arg.equals("--java-home") || arg.equals("-java-home")) {
-                i++;
-                javaHome = getExecArgs()[i];
-            } else if (
-                    arg.startsWith("--java-home=")
-                            || arg.startsWith("-java-home=")
-            ) {
-                javaHome = getExecArgs()[i].substring(arg.indexOf('=') + 1);
-
-            } else if (
-                    arg.equals("--class-path") || arg.equals("--classpath") || arg.equals("--cp")
-                            || arg.equals("-class-path") || arg.equals("-classpath") || arg.equals("-cp")
-            ) {
-                i++;
-                addToCp(classPath0, getExecArgs()[i]);
-            } else if (
-                    arg.startsWith("--class-path=") || arg.startsWith("--classpath=") || arg.startsWith("--cp=")
-                            || arg.startsWith("-class-path=") || arg.startsWith("-classpath=") || arg.startsWith("-cp=")
-            ) {
-                addToCp(classPath0, getExecArgs()[i].substring(arg.indexOf('=') + 1));
-
-            } else if (arg.equals("--nuts-path") || arg.equals("--nutspath") || arg.equals("--np")) {
-                i++;
-                npToCp(classPath0, getExecArgs()[i]);
-            } else if (arg.startsWith("--nuts-path=") || arg.startsWith("--nutspath=") || arg.startsWith("--np=")) {
-                npToCp(classPath0, getExecArgs()[i].substring(arg.indexOf('=') + 1));
-            } else if (arg.equals("--jar") || arg.equals("-jar")) {
-                this.jar = true;
-            } else if (arg.equals("--main-class") || arg.equals("-main-class") || arg.equals("--class") || arg.equals("-class")) {
-                i++;
-                this.mainClass = getExecArgs()[i];
-            } else if (arg.startsWith("--main-class=") || arg.startsWith("-main-class=") || arg.startsWith("--class=")
-                            || arg.startsWith("-class=")
-            ) {
-                this.mainClass = getExecArgs()[i].substring(arg.indexOf('=') + 1);
-            } else if (arg.equals("--show-command") || arg.equals("-show-command")) {
-                this.showCommand = true;
-            } else if (arg.equals("--dir") || arg.equals("-dir")) {
-                i++;
-                this.dir = getExecArgs()[i];
-            } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
-                this.dir = getExecArgs()[i].substring(arg.indexOf('=') + 1);
-            } else if (arg.startsWith("--exclude-base")) {
-                this.excludeBase = true;
-            } else {
-                getJvmArgs().add(arg);
+        NutsCommand cmdLine = ws.parser().parseCommand(getExecArgs());
+        NutsArgument a;
+        while(cmdLine.hasNext()){
+            a=cmdLine.peek();
+            switch (a.getKey().getString()){
+                case "--java-version":
+                case "-java-version":{
+                    javaVersion = cmdLine.nextString().getValue().getString();
+                    break;
+                }
+                case "--java-home":
+                case "-java-home":{
+                    javaHome = cmdLine.nextString().getValue().getString();
+                    break;
+                }
+                case "--class-path":
+                case "-class-path":
+                case "--classpath":
+                case "-classpath":
+                case "--cp":
+                case "-cp":
+                    {
+                        addToCp(classPath0,cmdLine.nextString().getValue().getString());
+                    break;
+                }
+                case "--nuts-path":
+                case "-nuts-path":
+                case "--nutspath":
+                case "-nutspath":
+                case "--np":
+                case "-np":
+                    {
+                        npToCp(classPath0,cmdLine.nextString().getValue().getString());
+                    break;
+                }
+                case "--main-class":
+                case "-main-class":
+                case "--class":
+                case "-class":
+                    {
+                        this.mainClass=cmdLine.nextString().getValue().getString();
+                    break;
+                }
+                case "--dir":
+                case "-dir":
+                    {
+                        this.dir=cmdLine.nextString().getValue().getString();
+                    break;
+                }
+                case "--jar":
+                case "-jar":{
+                        this.jar=cmdLine.nextBoolean().getValue().getBoolean();
+                    break;
+                }
+                case "--show-command":
+                case "-show-command":{
+                        this.showCommand=cmdLine.nextBoolean().getValue().getBoolean();
+                    break;
+                }
+                case "--exclude-base":
+                case "-exclude-base":{
+                        this.excludeBase=cmdLine.nextBoolean().getValue().getBoolean();
+                    break;
+                }
+                default:{
+                    getJvmArgs().add(cmdLine.next().getString());
+                }
             }
         }
         if (getJavaHome() == null) {
@@ -110,12 +123,13 @@ public class JavaExecutorOptions {
         NutsDescriptor descriptor = nutsMainDef.getEffectiveDescriptor();
         nutsDefinitions.addAll(
                 ws
-                        .find().addId(descriptor.getId())
+                        .search().addId(descriptor.getId())
                         .setSession(session)
                         .setTransitive(true)
                         .addScope(NutsDependencyScope.PROFILE_RUN)
-                        .setIncludeOptional(false)
-                        .mainAndDependencies()
+                        .optional(false)
+                        .duplicates(false)
+                        .inlineDependencies()
                         .getResultDefinitions().list()
 
         );
@@ -128,7 +142,7 @@ public class JavaExecutorOptions {
                 session.getTerminal().ferr().printf("Ignored class-path=%s. running jar!%n", classPath0);
             }
             if(this.excludeBase) {
-                throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
+                throw new NutsIllegalArgumentException(ws, "Cannot exclude base with jar modifier");
             }
         }else{
             Path contentFile = nutsMainDef.getPath();
@@ -145,7 +159,7 @@ public class JavaExecutorOptions {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException("Missing Main Class for " + nutsMainDef.getId());
+                throw new NutsIllegalArgumentException(ws, "Missing Main Class for " + nutsMainDef.getId());
             }
             if(!isExcludeBase()) {
                 nutsPath.add(nutsIdFormat.toString(nutsMainDef.getId()));
@@ -165,7 +179,7 @@ public class JavaExecutorOptions {
                 List<String> possibleClasses = CoreStringUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutsMainDef.getId());
+                        throw new NutsIllegalArgumentException(ws, "Missing Main-Class in Manifest for " + nutsMainDef.getId());
                     case 1:
                         //
                         break;
@@ -179,7 +193,7 @@ public class JavaExecutorOptions {
                             String line = session.getTerminal().readLine("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ", "#", "name", "cancel");
                             if (line != null) {
                                 if (line.equals("cancel")) {
-                                    throw new NutsUserCancelException();
+                                    throw new NutsUserCancelException(ws);
                                 }
                                 Integer anyInt = CoreCommonUtils.convertToInteger(line, null);
                                 if (anyInt!=null) {
@@ -214,7 +228,7 @@ public class JavaExecutorOptions {
     }
 
     private void npToCp(List<String> classPath, String value) {
-        NutsFindCommand ns = getWs().find().latestVersions()
+        NutsSearchCommand ns = getWs().search().latest()
                 .setSession(this.session);
         for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!CoreStringUtils.isBlank(n)) {
@@ -223,7 +237,7 @@ public class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWs()
-                    .find().id(nutsId).setSession(this.session).setIncludeInstallInformation(true).latestVersions().getResultDefinitions().required();
+                    .search().id(nutsId).setSession(this.session).installInformation().latest().getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }

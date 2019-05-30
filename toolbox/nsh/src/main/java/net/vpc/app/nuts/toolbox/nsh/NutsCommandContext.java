@@ -1,22 +1,21 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.javashell.cmds.CommandContext;
-import net.vpc.app.nuts.NutsSessionTerminal;
-import net.vpc.app.nuts.NutsTerminalMode;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.common.javashell.cmds.JShellCommandContext;
 
-public interface NutsCommandContext extends CommandContext {
+public interface NutsCommandContext extends JShellCommandContext {
 
     @Override
-    NutsConsoleContext consoleContext();
+    NutsConsoleContext shellContext();
 
     NutsWorkspace getWorkspace();
+    
+    void printObject(Object any);
 
     NutsSession getSession();
 
-    boolean configure(NutsCommandLine cmd);
+    boolean configureFirst(NutsCommand cmd);
 
     NutsSessionTerminal getTerminal();
 

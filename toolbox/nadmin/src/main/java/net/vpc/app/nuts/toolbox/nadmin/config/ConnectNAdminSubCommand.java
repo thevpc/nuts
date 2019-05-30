@@ -16,7 +16,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
@@ -25,18 +25,18 @@ import net.vpc.app.nuts.NutsArgument;
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.readAll("connect")) {
-            String password = null;
+    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+        if (cmdLine.next("connect")!=null) {
+            char[] password = null;
             String server = null;
             NutsArgument a;
             while (cmdLine.hasNext()) {
-                if (context.configure(cmdLine)) {
+                if (context.configureFirst(cmdLine)) {
                     //
-                } else if (cmdLine.readAllOnce("--password")) {
-                    password = cmdLine.readRequiredNonOption(cmdLine.createNonOption("Password")).required().getString();
+                } else if (cmdLine.next("--password")!=null) {
+                    password = cmdLine.required().nextNonOption(cmdLine.createNonOption("Password")).required().getString().toCharArray();
                 } else {
-                    server = cmdLine.readRequiredNonOption(cmdLine.createNonOption("ServerAddress")).required().getString();
+                    server = cmdLine.required().nextNonOption(cmdLine.createNonOption("ServerAddress")).required().getString();
                     cmdLine.setCommandName("nadmin connect").unexpectedArgument();
                 }
             }
@@ -46,7 +46,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
             String login = null;
             int port = -1;
             if (server == null) {
-                throw new NutsIllegalArgumentException("Missing address");
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing address");
             }
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
@@ -56,7 +56,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 port = Integer.parseInt(server.substring(server.indexOf(":") + 1));
                 server = server.substring(0, server.indexOf(":"));
             }
-            if (!StringUtils.isEmpty(login) && StringUtils.isEmpty(password)) {
+            if (!StringUtils.isEmpty(login) && isBlank(password)) {
                 password = context.getTerminal().readPassword("Password:");
             }
             Socket socket = null;
@@ -87,7 +87,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
             } catch (Exception ex) {
-                throw new NutsExecutionException(ex, 2);
+                throw new NutsExecutionException(context.getWorkspace(),ex, 2);
             }
             return true;
         }
@@ -97,6 +97,18 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT;
+    }
+
+    public static boolean isBlank(char[] string) {
+        if(string == null || string.length==0){
+            return true;
+        }
+        for (char c:string) {
+            if(c > ' '){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

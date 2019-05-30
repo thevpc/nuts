@@ -36,22 +36,24 @@ package net.vpc.app.nuts;
  */
 public class NutsElementAlreadyDefinedException extends NutsException {
 
-    public NutsElementAlreadyDefinedException() {
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsElementAlreadyDefinedException(String message) {
-        super(message);
+
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message) {
+        super(workspace,message);
     }
 
-    public NutsElementAlreadyDefinedException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsElementAlreadyDefinedException(Throwable cause) {
-        super(cause);
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsElementAlreadyDefinedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

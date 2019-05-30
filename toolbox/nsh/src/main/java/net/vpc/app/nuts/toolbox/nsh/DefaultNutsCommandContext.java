@@ -3,26 +3,31 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.javashell.Env;
+import net.vpc.common.javashell.JShellEnv;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
-import net.vpc.common.strings.StringUtils;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsExecutionException;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
 
     private NutsConsoleContext consoleContext;
-    private NutsCommand command;
+    private NshCommand command;
     private NutsTerminalMode terminalMode = null;
     private boolean verbose = false;
 
-    public DefaultNutsCommandContext(NutsConsoleContext consoleContext, NutsCommand command) {
+    public DefaultNutsCommandContext(NutsConsoleContext consoleContext, NshCommand command) {
         this.consoleContext = consoleContext;
         this.command = command;
+    }
+
+    @Override
+    public void printObject(Object any) {
+        this.getWorkspace().formatter().createObjectFormat(this.getSession(), any).print(this.getSession().getTerminal().fout());
     }
 
     @Override
@@ -31,84 +36,115 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public NutsConsoleContext consoleContext() {
+    public NutsConsoleContext shellContext() {
         return consoleContext;
     }
 
     @Override
-    public boolean configure(NutsCommandLine cmd) {
-        NutsArgument a;
-        if ((a = cmd.readOption("--help")) != null) {
-            if (cmd.isExecMode()) {
-                showHelp();
+    public boolean configureFirst(NutsCommand cmd) {
+        NutsArgument a = cmd.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.getKey().getString()) {
+            case "--help": {
+                cmd.skip();
+                if (cmd.isExecMode()) {
+                    showHelp();
+                    cmd.skipAll();
+                }
+                throw new NutsExecutionException(consoleContext.getWorkspace(),"Help", 0);
             }
-            cmd.skipAll();
-            return true;
-        } else if ((a = cmd.readOption("--term-system")) != null) {
-            setTerminalMode(null);
-        } else if ((a = cmd.readOption("--term-filtered")) != null) {
-            setTerminalMode(NutsTerminalMode.FILTERED);
-        } else if ((a = cmd.readOption("--term-formatted")) != null) {
-            setTerminalMode(NutsTerminalMode.FORMATTED);
-        } else if ((a = cmd.readOption("--term-inherited")) != null) {
-            setTerminalMode(NutsTerminalMode.INHERITED);
-        } else if ((a = cmd.readOption("--no-color")) != null) {
-            setTerminalMode(NutsTerminalMode.FILTERED);
-        } else if ((a = cmd.readImmediateStringOption("--color")) != null) {
-            switch (StringUtils.trim(a.getValue().getString()).toLowerCase()) {
-                case "formatted": {
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    break;
+            case "--version": {
+                cmd.skip();
+                if (cmd.isExecMode()) {
+                    out().printf("%s%n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
+                    cmd.skipAll();
                 }
-                case "filtered": {
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    break;
+                throw new NutsExecutionException(consoleContext.getWorkspace(),"Help", 0);
+            }
+            case "--term-system": {
+                cmd.skip();
+                setTerminalMode(null);
+                return true;
+            }
+            case "--term-filtered": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.FILTERED);
+                return true;
+            }
+            case "--term-formatted": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.FORMATTED);
+                return true;
+            }
+            case "--term-inherited": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.INHERITED);
+                return true;
+            }
+            case "--term": {
+                String s = cmd.nextString().getValue().getString("").toLowerCase();
+                switch (s) {
+                    case "":
+                    case "system":
+                    case "auto": {
+                        setTerminalMode(null);
+                        break;
+                    }
+                    case "filtered": {
+                        setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "formatted": {
+                        setTerminalMode(NutsTerminalMode.FORMATTED);
+                        break;
+                    }
+                    case "inherited": {
+                        setTerminalMode(NutsTerminalMode.INHERITED);
+                        break;
+                    }
                 }
-                case "inherited": {
-                    setTerminalMode(NutsTerminalMode.INHERITED);
-                    break;
+                return true;
+            }
+            case "--color": {
+                NutsArgument val = cmd.nextString().getValue();
+                String s = val.getString("").toLowerCase();
+                switch (s) {
+                    case "":
+                    case "system":
+                    case "auto": {
+                        setTerminalMode(null);
+                        break;
+                    }
+                    case "filtered": {
+                        setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "formatted": {
+                        setTerminalMode(NutsTerminalMode.FORMATTED);
+                        break;
+                    }
+                    case "inherited": {
+                        setTerminalMode(NutsTerminalMode.INHERITED);
+                        break;
+                    }
+                    default: {
+                        Boolean bval = cmd.newArgument(s).getBoolean(false);
+                        setTerminalMode(bval ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
+                    }
                 }
-                case "auto":
-                case "default":
-                case "": {
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    break;
-                }
-                default:{
-                    setTerminalMode(a.getValue().getBoolean(false)?NutsTerminalMode.FORMATTED:NutsTerminalMode.FILTERED);
+                return true;
+            }
+            case "--verbose": {
+                setVerbose(cmd.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            default:{
+                if(getSession()!=null && getSession().configureFirst(cmd)){
+                    return true;
                 }
             }
-        } else if ((a = cmd.readStringOption("--term")) != null) {
-            String s = a.getValue().getString().toLowerCase();
-            switch (s) {
-                case "":
-                case "system": {
-                    setTerminalMode(null);
-                    break;
-                }
-                case "filtered": {
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    break;
-                }
-                case "formatted": {
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    break;
-                }
-                case "inherited": {
-                    setTerminalMode(NutsTerminalMode.INHERITED);
-                    break;
-                }
-            }
-            return true;
-        } else if ((a = cmd.readBooleanOption("--verbose")) != null) {
-            this.setVerbose((a.getBooleanValue()));
-            return true;
-        } else if ((a = cmd.readBooleanOption("--version")) != null) {
-            if (cmd.isExecMode()) {
-                consoleContext.getTerminal().fout().printf("%s%n", consoleContext.getShell().getVersion());
-            }
-            cmd.skipAll();
-            return true;
         }
         return false;
     }
@@ -166,7 +202,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public Env env() {
+    public JShellEnv env() {
         return consoleContext.env();
     }
 

@@ -11,6 +11,7 @@ import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
+import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
@@ -44,7 +45,7 @@ public interface NutsWorkspaceExt {
      * @param id
      * @return
      */
-    String[] getInstalledVersions(NutsId id);
+    String[] getInstalledVersions(NutsId id, NutsSession session);
 
     String[] getCompanionTools();
 

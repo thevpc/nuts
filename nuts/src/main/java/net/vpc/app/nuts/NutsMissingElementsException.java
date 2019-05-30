@@ -38,28 +38,28 @@ import java.io.IOException;
  */
 public class NutsMissingElementsException extends NutsException{
 
-    public NutsMissingElementsException() {
-        this("Missing Element");
+    public NutsMissingElementsException(NutsWorkspace workspace) {
+        this(workspace,"Missing Element");
     }
 
-    public NutsMissingElementsException(String message) {
-        super(message);
+    public NutsMissingElementsException(NutsWorkspace workspace,String message) {
+        super(workspace,message);
     }
 
-    public NutsMissingElementsException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsMissingElementsException(NutsWorkspace workspace,String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsMissingElementsException(Throwable cause) {
-        super(cause);
+    public NutsMissingElementsException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsMissingElementsException(IOException cause) {
-        super(cause);
+    public NutsMissingElementsException(NutsWorkspace workspace,IOException cause) {
+        super(workspace,cause);
     }
 
-    public NutsMissingElementsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsMissingElementsException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
     
 }

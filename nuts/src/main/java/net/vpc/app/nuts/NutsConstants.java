@@ -37,11 +37,6 @@ public final class NutsConstants {
 
     public static final class Names {
 
-//    public static final class Envs {
-//
-//        private Envs() {
-//        }
-//    }
         /**
          * default workspace name
          */
@@ -52,8 +47,6 @@ public final class NutsConstants {
          * workspace and default root naming)
          */
         public static final String DEFAULT_REPOSITORY_NAME = "local";
-        public static final String USER_ADMIN = "admin";
-        public static final String USER_ANONYMOUS = "anonymous";
 
         private Names() {
         }
@@ -109,9 +102,9 @@ public final class NutsConstants {
 
     }
 
-    public static final class BootsrapURLs {
+    public static final class BootstrapURLs {
 
-        private BootsrapURLs() {
+        private BootstrapURLs() {
         }
 
         public static final String REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
@@ -120,6 +113,11 @@ public final class NutsConstants {
         public static final String REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
         public static final String LOCAL_MAVEN_CENTRAL = "~/.m2/repository";
 
+    }
+
+    public static final class Users {
+        public static final String ADMIN = "admin";
+        public static final String ANONYMOUS = "anonymous";
     }
 
     public static final class Rights {

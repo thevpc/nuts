@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core;
 
@@ -14,7 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -49,7 +73,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     private String repository;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"push");
     }
 
     @Override
@@ -75,7 +99,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(ws,id);
         } else {
             ids.add(id);
         }
@@ -121,7 +145,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand addFrozenId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(ws,id);
         } else {
             if (frozenIds == null) {
                 frozenIds = new ArrayList<>();
@@ -228,18 +252,18 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NutsIllegalArgumentException("Invalid Version " + id.getVersion());
+                throw new NutsIllegalArgumentException(ws,"Invalid Version " + id.getVersion());
             }
             NutsDefinition file = ws.fetch().id(id).setSession(session).setTransitive(false).getResultDefinition();
             if (file == null) {
-                throw new NutsIllegalArgumentException("Nothing to push");
+                throw new NutsIllegalArgumentException(ws, "Nothing to push");
             }
             toProcess.put(id, file);
         }
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true).setSession(session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
-            throw new NutsIllegalArgumentException("Missing component to push");
+            throw new NutsIllegalArgumentException(ws, "Missing component to push");
         }
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
@@ -277,7 +301,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                     }
                 }
                 if (!ok) {
-                    throw new NutsRepositoryNotFoundException(this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
+                    throw new NutsRepositoryNotFoundException(ws,this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
                 }
             } else {
                 NutsRepository repo = ws.config().getRepository(this.getRepository());
@@ -286,7 +310,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                 );
 
                 if (!repo.config().isEnabled()) {
-                    throw new NutsIllegalArgumentException("Repository " + repo.config().getName() + " is disabled");
+                    throw new NutsIllegalArgumentException(ws, "Repository " + repo.config().getName() + " is disabled");
                 }
                 NutsId effId = ws.config().createComponentFaceId(id.unsetQuery(), file.getDescriptor()).setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()));
                 repo.deploy().setSession(rsession)
@@ -393,20 +417,20 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "-o":
             case "--offline": {
-                setOffline(cmdLine.readBooleanOption().getBoolean());
+                setOffline(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-x":
             case "--freeze": {
-                for (String id : cmdLine.readStringOption().getString().split(",")) {
+                for (String id : cmdLine.nextString().getValue().getString().split(",")) {
                     frozenId(id);
                 }
                 return true;
@@ -414,14 +438,14 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
             case "-r":
             case "-repository":
             case "--from": {
-                setRepository(cmdLine.readStringOption().getString());
+                setRepository(cmdLine.nextString().getValue().getString());
                 return true;
             }
             case "-g":
             case "--args": {
-                while ((a = cmdLine.next()) != null) {
-                    this.addArg(a.getString());
-                }
+                cmdLine.skip();
+                this.addArgs(cmdLine.toArray());
+                cmdLine.skipAll();
                 return true;
             }
             default: {

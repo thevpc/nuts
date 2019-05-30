@@ -88,15 +88,14 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             handler.handle(callbacks);
             String name = ((NameCallback) callbacks[0]).getName();
             PasswordCallback callback = (PasswordCallback) callbacks[1];
-            char[] pp = callback == null ? null : callback.getPassword();
-            String password = pp == null ? null : String.valueOf(pp);
+            char[] password = callback == null ? null : callback.getPassword();
 
             NutsWorkspace workspace = NutsWorkspaceLoginModule.workspace.get();
             if (workspace == null) {
                 throw new LoginException("Authentication failed : No Workspace");
             }
 
-            if (NutsConstants.Names.USER_ANONYMOUS.equals(name)) {
+            if (NutsConstants.Users.ANONYMOUS.equals(name)) {
                 this.login = name;
                 return true;
             }
@@ -106,7 +105,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 try {
                     workspace.security().getAuthenticationAgent()
                             .checkCredentials(
-                                    registeredUser.getCredentials(),
+                                    registeredUser.getCredentials().toCharArray(),
                                     password,
                                     workspace.config()
                             );

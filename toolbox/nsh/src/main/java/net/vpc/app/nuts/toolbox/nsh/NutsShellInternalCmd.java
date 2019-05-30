@@ -36,10 +36,10 @@
 //
 //class NutsShellInternalCmd implements Command {
 //
-//    private final NutsCommand ncommand;
+//    private final NshCommand ncommand;
 //    private final NutsJavaShell component;
 //
-//    public NutsShellInternalCmd(NutsCommand ncommand, NutsJavaShell component) {
+//    public NutsShellInternalCmd(NshCommand ncommand, NutsJavaShell component) {
 //        this.ncommand = ncommand;
 //        this.component = component;
 //    }

@@ -15,19 +15,19 @@ public class MysqlMain extends NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArgs();
+    public void run(NutsApplicationContext context) {
+        String[] args = context.getArguments();
         if (args.length == 0) {
-            throw new NutsExecutionException("Expected --remote or --local", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Expected --remote or --local", 2);
         }
         if (args[0].equals("--remote") || args[0].equals("-c")) {
-            RemoteMysql m = new RemoteMysql(appContext);
+            RemoteMysql m = new RemoteMysql(context);
             m.runArgs(Arrays.copyOfRange(args, 1, args.length));
         } else if (args[0].equals("--local") || args[0].equals("-s")) {
-            LocalMysql m = new LocalMysql(appContext);
+            LocalMysql m = new LocalMysql(context);
             m.runArgs(Arrays.copyOfRange(args, 1, args.length));
         } else {
-            LocalMysql m = new LocalMysql(appContext);
+            LocalMysql m = new LocalMysql(context);
             m.runArgs(args);
         }
     }

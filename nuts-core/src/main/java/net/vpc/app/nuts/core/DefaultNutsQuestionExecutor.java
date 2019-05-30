@@ -3,7 +3,6 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
-import java.util.Arrays;
 
 public class DefaultNutsQuestionExecutor<T> {
 
@@ -29,7 +28,7 @@ public class DefaultNutsQuestionExecutor<T> {
             out.printf(message, question.getMessageParameters());
             NutsResponseParser p = question.getParser();
             if (p == null) {
-                p = DefaultNutsResponseParser.INSTANCE;
+                p = new DefaultNutsResponseParser(ws);
             }
             Object[] acceptedValues = question.getAcceptedValues();
             if (acceptedValues == null) {
@@ -37,14 +36,14 @@ public class DefaultNutsQuestionExecutor<T> {
             }
             boolean first = true;
 
-            if (question.getDefautValue() != null) {
+            if (question.getDefaultValue() != null) {
                 if (first) {
                     first = false;
                     out.print(" \\(");
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is [[%s]]", p.format(question.getDefautValue()));
+                out.printf("default is [[%s]]", p.format(question.getDefaultValue()));
             }
 
             if (acceptedValues != null && acceptedValues.length > 0) {
@@ -91,12 +90,12 @@ public class DefaultNutsQuestionExecutor<T> {
                 v = terminal.readLine(" ? : ");
             }
             if ("cancel!".equals(v)) {
-                throw new NutsUserCancelException();
+                throw new NutsUserCancelException(ws);
             }
             T parsed = null;
             if (v == null || v.length() == 0) {
                 try {
-                    parsed = (T) p.parse(question.getDefautValue(), question.getValueType());
+                    parsed = (T) p.parse(question.getDefaultValue(), question.getValueType());
                     return parsed;
                 } catch (Exception ex) {
                     out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());

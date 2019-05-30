@@ -44,6 +44,8 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsInstallInfo install;
     private NutsRepository repository;
     private NutsWorkspace ws;
+    private NutsDependencyTreeNode[] dependencyTreeNodes;
+    private NutsDependency[] dependenciesArray;
 
     public DefaultNutsDefinition(NutsWorkspace ws, NutsRepository repo, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
         this.descriptor = descriptor;
@@ -168,4 +170,23 @@ public class DefaultNutsDefinition implements NutsDefinition {
     public NutsInstallInfo getInstallation() {
         return install;
     }
+
+    @Override
+    public NutsDependencyTreeNode[] getDependenciesNodes() {
+        return dependencyTreeNodes;
+    }
+
+    public void setDependencyTreeNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
+        this.dependencyTreeNodes = dependencyTreeNode;
+    }
+
+    public void setDependencies(NutsDependency[] dependenciesArray) {
+        this.dependenciesArray = dependenciesArray;
+    }
+
+    @Override
+    public NutsDependency[] getDependencies() {
+        return this.dependenciesArray;
+    }
+
 }

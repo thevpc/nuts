@@ -39,9 +39,9 @@ import java.util.List;
  */
 public interface NutsIndexStoreClient {
 
-    List<NutsId> findVersions(NutsId id, NutsRepositorySession session);
+    List<NutsId> searchVersions(NutsId id, NutsRepositorySession session);
 
-    Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
+    Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session);
 
     boolean isEnabled();
 

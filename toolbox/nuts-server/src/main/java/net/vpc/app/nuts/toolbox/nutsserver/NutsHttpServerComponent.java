@@ -69,7 +69,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
         Map<String, NutsWorkspace> workspaces = httpConfig.getWorkspaces();
         if (invokerWorkspace == null) {
-            throw new NutsIllegalArgumentException("Missing Workspace");
+            throw new NutsIllegalArgumentException(invokerWorkspace, "Missing Workspace");
         }
         if (workspaces.isEmpty()) {
             workspaces.put("", invokerWorkspace);
@@ -117,10 +117,10 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         server.setExecutor(executor);
         if (httpConfig.isSsh()) {
             if (httpConfig.getSslKeystorePassphrase() == null) {
-                throw new NutsIllegalArgumentException("Missing SslKeystorePassphrase");
+                throw new NutsIllegalArgumentException(invokerWorkspace, "Missing SslKeystorePassphrase");
             }
             if (httpConfig.getSslKeystoreCertificate() == null) {
-                throw new NutsIllegalArgumentException("Missing SslKeystoreCertificate");
+                throw new NutsIllegalArgumentException(invokerWorkspace, "Missing SslKeystoreCertificate");
             }
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -166,7 +166,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new NutsIllegalArgumentException(e);
+                throw new NutsIllegalArgumentException(invokerWorkspace,e);
             }
         }
 

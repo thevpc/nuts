@@ -82,7 +82,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         NutsIOManager io = context.getWorkspace().io();
         Path f = getConfigPath();
-        io.json().pretty().write(config, f);
+        io.json().write(config, f);
         return this;
     }
 
@@ -288,8 +288,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            NutsDefinition r = context.getWorkspace().find().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .includeInstallInformation().session(context.getSession())
+            NutsDefinition r = context.getWorkspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                    .installInformation().session(context.getSession())
                     .getResultDefinitions().first();
             if(r!=null && r.getInstallation().isInstalled()){
              return r;
@@ -380,7 +380,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLogs) {
         stop();
         if (getJpsResult() != null) {
-            throw new NutsExecutionException("Server " + getName() + " is running. It cannot be stopped!", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Server " + getName() + " is running. It cannot be stopped!", 2);
         }
         start(deployApps, deleteLogs);
         return true;
@@ -399,7 +399,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.out().printf("==[%s]== Tomcat started.\n", getName());
                 return AppStatus.RUNNING;
             }
-            throw new NutsExecutionException("Unable to start tomcat", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Unable to start tomcat", 2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -417,7 +417,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.out().printf("==[%s]== Tomcat out of memory.\n", getName());
             return y;
         }
-        throw new NutsExecutionException("Unable to start tomcat", 2);
+        throw new NutsExecutionException(context.getWorkspace(),"Unable to start tomcat", 2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -582,7 +582,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService getAppOrError(String appName) {
         LocalTomcatAppConfigService a = getAppOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException("App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(),"App not found :" + appName, 2);
         }
         return a;
     }
@@ -606,7 +606,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         domainName = TomcatUtils.toValidFileName(domainName, "default");
         LocalTomcatDomainConfigService d = getDomainOrNull(domainName);
         if (d == null) {
-            throw new NutsExecutionException("Domain not found :" + domainName, 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Domain not found :" + domainName, 2);
         }
         return d;
     }

@@ -1,156 +1,54 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core.app;
 
+import net.vpc.app.nuts.core.DefaultNutsTokenFilter;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsDefaultArgument;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  * @author vpc
  */
-public class NutsDefaultWorkspaceArgument implements NutsArgument {
+public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter implements NutsArgument {
 
-    private final String expression;
+    private final char eq;
 
-    public NutsDefaultWorkspaceArgument(String expression) {
-        this.expression = expression;
-    }
-
-    public boolean isNegatedOption() {
-        return expression != null
-                && (expression.startsWith("-!") || expression.startsWith("--!"));
-    }
-
-    public boolean isUnsupportedOption() {
-        return expression != null
-                && (expression.startsWith("---") || expression.startsWith("-!!") || expression.startsWith("--!!"));
+    public NutsDefaultWorkspaceArgument(String expression,char eq) {
+        super(expression);
+        this.eq = eq;
     }
 
     public boolean isUnsupported() {
         return expression != null
                 && (expression.startsWith("---") || expression.startsWith("-!!") || expression.startsWith("--!!") || expression.startsWith("!!"));
-    }
-
-    @Override
-    public NutsArgument getName() {
-        return new NutsDefaultWorkspaceArgument(getName0());
-    }
-
-    public String getName0() {
-        boolean k = isKeyVal();
-        String s = (k) ? getKey().getString() : getString();
-        if (isUnsupported()) {
-            return s;
-        }
-        if (s != null) {
-            if (s.startsWith("!")) {
-                return s.substring(1);
-            }
-            if (s.startsWith("--!")) {
-                return "--" + s.substring(3);
-            }
-            if (s.startsWith("-!")) {
-                return "-" + s.substring(2);
-            }
-        }
-        return s;
-    }
-
-    public boolean isKeyVal() {
-        return expression != null
-                && expression.indexOf('=') >= 0;
-    }
-
-    public String getOptionName() {
-        if (expression != null) {
-            if (expression.startsWith("--")) {
-                return expression.substring(2);
-            } else if (expression.startsWith("-")) {
-                return expression.substring(1);
-            }
-        }
-        throw new IllegalArgumentException("Not an option");
-    }
-
-    public String getStringValue() {
-        if (isKeyVal()) {
-            return getValue().getString();
-        }
-        return "";
-    }
-
-    public int getIntValue() {
-        String value = getStringValue();
-        if (value.isEmpty()) {
-            return 0;
-        }
-        return Integer.parseInt(value);
-    }
-
-    public long getLongValue() {
-        String value = getStringValue();
-        if (value.isEmpty()) {
-            return 0;
-        }
-        return Long.parseLong(value);
-    }
-
-    public double getDoubleValue() {
-        String value = getStringValue();
-        if (value.isEmpty()) {
-            return 0;
-        }
-        return Double.parseDouble(value);
-    }
-
-    public boolean isKeyVal(String sep) {
-        return expression != null && expression.contains(sep);
-    }
-
-    public String getKey(String sep) {
-        if (isKeyVal()) {
-            int x = expression.indexOf(sep);
-            return expression.substring(0, x);
-        }
-        throw new IllegalArgumentException("Not a KeyVal");
-    }
-
-    public String getValue(String sep) {
-        if (isKeyVal()) {
-            int x = expression.indexOf(sep);
-            return expression.substring(x + sep.length());
-        }
-        throw new IllegalArgumentException("Not a KeyVal");
-    }
-
-    public String getExpression(String s) {
-        return expression == null ? s : expression;
-    }
-
-    public boolean isAny(String... any) {
-        for (String s : any) {
-            if (s == null) {
-                if (expression == null) {
-                    return true;
-                }
-            } else if (s.equals(expression)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public NutsArgument required() {
-        if (expression == null) {
-            throw new IllegalArgumentException("Missing value");
-        }
-        return this;
     }
 
     @Override
@@ -160,27 +58,12 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
 
     @Override
     public boolean isNonOption() {
-        return !expression.startsWith("-");
+        return expression == null || !expression.startsWith("-");
     }
 
     @Override
     public boolean isKeyValue() {
-        return expression.indexOf('=') >= 0;
-    }
-
-    @Override
-    public boolean hasValue() {
-        return expression.indexOf('=') >= 0;
-    }
-
-    @Override
-    public String strKey() {
-        return getStrKey();
-    }
-
-    @Override
-    public String getStrKey() {
-        return getKey().getString();
+        return expression != null && expression.indexOf(eq) >= 0;
     }
 
     @Override
@@ -188,7 +71,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         if (expression == null) {
             return this;
         }
-        int x = expression.indexOf('=');
+        int x = expression.indexOf(eq);
         String p = expression;
         if (x >= 0) {
             p = expression.substring(0, x);
@@ -203,37 +86,33 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
                 }
                 case '!': {
                     sb.append(p.substring(i + 1));
-                    return new NutsDefaultArgument(sb.toString());
+                    return new NutsDefaultWorkspaceArgument(sb.toString(),eq);
                 }
                 case '/': {
                     if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
                         sb.append(p.substring(i + 2));
-                        return new NutsDefaultArgument(sb.toString());
+                        return new NutsDefaultWorkspaceArgument(sb.toString(),eq);
                     }
                 }
                 default: {
-                    return new NutsDefaultArgument(p);
+                    return new NutsDefaultWorkspaceArgument(p,eq);
                 }
             }
             i++;
         }
-        return new NutsDefaultArgument(p);
+        return new NutsDefaultWorkspaceArgument(p,eq);
     }
 
-//    public Argument getName() {
-//        int x = expression.indexOf('=');
-//        if (x >= 0) {
-//            return new Argument(expression.substring(0, x));
-//        }
-//        return new Argument(null);
-//    }
     @Override
-    public NutsDefaultWorkspaceArgument getValue() {
-        int x = expression.indexOf('=');
-        if (x >= 0) {
-            return new NutsDefaultWorkspaceArgument(expression.substring(x + 1));
+    public NutsArgument getValue() {
+        if (expression == null) {
+            return this;
         }
-        return new NutsDefaultWorkspaceArgument(null);
+        int x = expression.indexOf(eq);
+        if (x >= 0) {
+            return new NutsDefaultWorkspaceArgument(expression.substring(x + 1),eq);
+        }
+        return new NutsDefaultWorkspaceArgument(null,eq);
     }
 
     @Override
@@ -257,12 +136,10 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
     }
 
     @Override
-    public boolean isEmpty() {
-        return expression == null || expression.isEmpty();
-    }
-
-    @Override
     public boolean isNegated() {
+        if (expression == null) {
+            return false;
+        }
         int i = 0;
         while (i < expression.length()) {
             switch (expression.charAt(i)) {
@@ -283,7 +160,10 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
     }
 
     @Override
-    public boolean isComment() {
+    public boolean isEnabled() {
+        if (expression == null) {
+            return true;
+        }
         int i = 0;
         boolean opt = false;
         boolean slash = false;
@@ -298,18 +178,18 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
                         return false;
                     }
                     if (slash) {
-                        return true;
+                        return false;
                     }
                     slash = true;
                     break;
                 }
                 default: {
-                    return false;
+                    return true;
                 }
             }
             i++;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -320,6 +200,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
                 return true;
             }
         } catch (NumberFormatException ex) {
+            //ignore
         }
         return false;
     }
@@ -352,6 +233,7 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
                 return true;
             }
         } catch (NumberFormatException ex) {
+            //ignore
         }
         return false;
     }
@@ -368,6 +250,36 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         }
         try {
             return Long.parseLong(expression);
+        } catch (NumberFormatException ex) {
+            return defaultValue;
+        }
+    }
+
+    @Override
+    public boolean isDouble() {
+        try {
+            if (expression != null) {
+                Double.parseDouble(expression);
+                return true;
+            }
+        } catch (NumberFormatException ex) {
+            //ignore
+        }
+        return false;
+    }
+
+    @Override
+    public double getDouble() {
+        return getDouble(0);
+    }
+
+    @Override
+    public double getDouble(double defaultValue) {
+        if (CoreStringUtils.isBlank(expression)) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(expression);
         } catch (NumberFormatException ex) {
             return defaultValue;
         }
@@ -404,9 +316,10 @@ public class NutsDefaultWorkspaceArgument implements NutsArgument {
         return String.valueOf(expression);
     }
 
-    @Override
-    public boolean getBooleanValue() {
-        return getValue().getBoolean(!isNegated());
+    public NutsArgument required() {
+        if (expression == null) {
+            throw new IllegalArgumentException("Missing value");
+        }
+        return this;
     }
-
 }

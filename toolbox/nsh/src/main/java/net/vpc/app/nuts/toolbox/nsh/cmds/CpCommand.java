@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.URLUtils;
@@ -45,10 +46,14 @@ import net.vpc.common.xfile.JavaXFile;
 import net.vpc.common.xfile.XFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsArgument;
 
@@ -56,7 +61,7 @@ import net.vpc.app.nuts.NutsArgument;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class CpCommand extends AbstractNutsCommand {
+public class CpCommand extends AbstractNshCommand {
 
     public CpCommand() {
         super("cp", DEFAULT_SUPPORT);
@@ -69,25 +74,25 @@ public class CpCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         List<XFile> files = new ArrayList<>();
         Options o = new Options();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if ((a = cmdLine.readBooleanOption("--mkdir")) != null) {
-                o.mkdir = a.getBooleanValue();
+            } else if ((a = cmdLine.nextBoolean("--mkdir")) != null) {
+                o.mkdir = a.getValue().getBoolean();
             } else {
-                String value = cmdLine.readNonOption().getString();
+                String value = cmdLine.requireNonOption().next().getString();
                 if (StringUtils.isEmpty(value)) {
-                    throw new NutsExecutionException("Empty File Path", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "Empty File Path", 2);
                 }
                 files.add(XFile.of(value.contains("://") ? value : context.getWorkspace().io().expandPath(value)));
             }
         }
         if (files.size() < 2) {
-            throw new NutsExecutionException("Missing parameters", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing parameters", 2);
         }
         o.sshlistener = context.isVerbose() ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
         for (int i = 0; i < files.size() - 1; i++) {
@@ -114,7 +119,11 @@ public class CpCommand extends AbstractNutsCommand {
                 FileUtils.createParents(to1);
             }
             context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
-            IOUtils.copy(from1, to1);
+            try {
+                IOUtils.copy(from1, to1);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         } else if (from.getProtocol().equals("file") && to.getProtocol().equals("ssh")) {
             SshPath to1 = ((SshXFile) to).getSshPath();
             String p = to1.getPath();
@@ -146,9 +155,13 @@ public class CpCommand extends AbstractNutsCommand {
                 FileUtils.createParents(to1);
             }
             context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
-            IOUtils.copy(from1, to1);
+            try {
+                IOUtils.copy(from1, to1);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         } else {
-            throw new NutsIllegalArgumentException("cp: Unsupported protocols " + from + "->" + to);
+            throw new NutsIllegalArgumentException(context.getWorkspace(), "cp: Unsupported protocols " + from + "->" + to);
         }
     }
 

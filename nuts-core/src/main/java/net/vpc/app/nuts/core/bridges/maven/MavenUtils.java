@@ -44,12 +44,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static net.vpc.app.nuts.core.bridges.maven.MavenFolderRepository.LOG;
+import java.util.regex.Pattern;
+
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.ArchetypeCatalogParser;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
@@ -59,6 +60,9 @@ import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomDependency;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdFilter;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomXmlParser;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Created by vpc on 2/20/17.
@@ -106,6 +110,23 @@ public class MavenUtils {
         );
     }
 
+    private static boolean testNode(Node n, Predicate<Node> tst) {
+        if (tst.test(n)) {
+            return true;
+        }
+        if (n instanceof Element) {
+            Element e = (Element) n;
+            final NodeList nl = e.getChildNodes();
+            final int len = nl.getLength();
+            for (int i = 0; i < len; i++) {
+                if (testNode(nl.item(i), tst)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
         long startTime = System.currentTimeMillis();
         try {
@@ -118,9 +139,27 @@ public class MavenUtils {
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
                 executable = true;
-            } else if (new String(bytes)
-                    .matches("^.*?((<mainClass>)|(<goal>exec-war-only</goal>)).*$")) {
-                executable = true;
+            } else {
+                if(pom.getArtifactId().contains("netbeans-launcher")){
+                    System.out.print("");
+                }
+                final Element ee = pom.getXml().getDocumentElement();
+                if (testNode(ee, x -> {
+                    if (x instanceof Element) {
+                        Element e = (Element) x;
+                        if (e.getNodeName().equals("mainClass")) {
+                            return true;
+                        }
+                        if (e.getNodeName().equals("goal")) {
+                            if (CoreStringUtils.trim(e.getTextContent()).equals("exec-war-only")) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                })) {
+                    executable = true;
+                }
             }
             if ("true".equals(pom.getProperties().get("nuts.application"))) {
                 application = true;
@@ -159,7 +198,7 @@ public class MavenUtils {
             } else {
                 LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
             }
-            throw new NutsParseException("Error Parsing " + urlDesc, e);
+            throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
         }
     }
 
@@ -215,7 +254,7 @@ public class MavenUtils {
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
+                            throw new NutsNotFoundException(null, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -254,7 +293,7 @@ public class MavenUtils {
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
+                                throw new NutsNotFoundException(null, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
                             }
                         }
                         done.add(pid.getSimpleName());
@@ -270,7 +309,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNutsUtils.containsVars(thisId)) {
-                        throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
+                        throw new NutsNotFoundException(null, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
                     }
                     nutsDescriptor = nutsDescriptor.setId(thisId);
                 }
@@ -294,16 +333,16 @@ public class MavenUtils {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         } catch (Exception ex) {
-            throw new NutsParseException("Error Parsing " + urlDesc, ex);
+            throw new NutsParseException(null, "Error Parsing " + urlDesc, ex);
         }
         return nutsDescriptor;
     }
 
-    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose,NutsWorkspace ws) {
+    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NutsWorkspace ws, NutsSession session) {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
-                return filter.accept(MavenUtils.toNutsId(id), ws);
+                return filter.accept(MavenUtils.toNutsId(id), ws, session);
             }
         }, autoClose);
         return new Iterator<NutsId>() {

@@ -30,9 +30,8 @@ import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsBootConfig;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDefaultCommandLine;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -47,7 +46,6 @@ import net.vpc.app.nuts.NutsWorkspaceUpdateResult;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -81,7 +79,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     private NutsWorkspaceUpdateResult result;
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"update");
     }
 
     @Override
@@ -107,7 +105,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     @Override
     public NutsUpdateCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(ws,id);
         } else {
             ids.add(id);
         }
@@ -355,7 +353,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             checkUpdates();
         }
         if (result == null) {
-            throw new NutsUnexpectedException();
+            throw new NutsUnexpectedException(ws);
         }
         return result;
     }
@@ -421,7 +419,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isUpdateInstalled()) {
-            baseRegulars.addAll(ws.find().installed().getResultIds().stream().map(x -> x.getSimpleNameId()).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().installed().getResultIds().stream().map(x -> x.getSimpleNameId()).collect(Collectors.toList()));
         }
         HashSet<NutsId> regulars = new HashSet<>();
         for (NutsId id : baseRegulars) {
@@ -504,12 +502,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsId[] frozenIds = this.getFrozenIds();
         if (frozenIds.length > 0) {
             for (NutsId d : new HashSet<>(Arrays.asList(frozenIds))) {
-                NutsDependency dd = CoreNutsUtils.parseNutsDependency(d.toString());
+                NutsDependency dd = CoreNutsUtils.parseNutsDependency(ws, d.toString());
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
-                    if (!dd.getVersion().toFilter().accept(updated.getId().getVersion())) {
-                        throw new NutsIllegalArgumentException(dd + " unsatisfied  : " + updated.getId().getVersion());
+                    if (!dd.getVersion().toFilter().accept(updated.getId().getVersion(), ws, session)) {
+                        throw new NutsIllegalArgumentException(ws, dd + " unsatisfied  : " + updated.getId().getVersion());
                     }
                 }
             }
@@ -536,7 +534,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 }
             }
         }
-        result = new NutsWorkspaceUpdateResult(apiUpdate, runtimeUpdate, extUpdates.values().toArray(new NutsUpdateResult[0]),
+        result = new DefaultNutsWorkspaceUpdateResult(apiUpdate, runtimeUpdate, extUpdates.values().toArray(new NutsUpdateResult[0]),
                 regularUpdates.values().toArray(new NutsUpdateResult[0])
         );
         return this;
@@ -546,19 +544,19 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
-            throw new NutsIllegalArgumentException(id + " : Version is too restrictive. You would use fetch or install instead");
+            throw new NutsIllegalArgumentException(ws, id + " : Version is too restrictive. You would use fetch or install instead");
         }
 
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getSimpleNameId());
 
         final PrintStream out = CoreIOUtils.resolveOut(ws, session);
-        NutsDefinition d0 = ws.find().id(id).setSession(session).installed().setAcceptOptional(false).lenient().defaultVersions().getResultDefinitions().first();
+        NutsDefinition d0 = ws.search().id(id).setSession(session).installed().setOptional(false).failFast(false).defaultVersions().getResultDefinitions().first();
         if (d0 == null) {
-            throw new NutsIllegalArgumentException(id + " is not yet installed to be updated.");
+            throw new NutsIllegalArgumentException(ws, id + " is not yet installed to be updated.");
         }
-        NutsDefinition d1 = ws.find().id(id).setSession(session).setAcceptOptional(false).includeDependencies()
-                .latestVersions().setLenient(true)
+        NutsDefinition d1 = ws.search().id(id).setSession(session).setOptional(false).inlineDependencies()
+                .latest().failFast(false)
                 .anyWhere()
                 .getResultDefinitions().first();
         r.setLocal(d0);
@@ -566,10 +564,10 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
         if (d0 == null) {
             if (!this.isEnableInstall()) {
-                throw new NutsIllegalArgumentException("No version is installed to be updated for " + id);
+                throw new NutsIllegalArgumentException(ws, "No version is installed to be updated for " + id);
             }
             if (d1 == null) {
-                throw new NutsNotFoundException(id);
+                throw new NutsNotFoundException(ws,id);
             }
             r.setUpdateAvailable(true);
             r.setUpdateForced(false);
@@ -619,9 +617,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to apply updates").setDefautValue(true);
+        NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to apply updates").setDefaultValue(true);
         if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
-            throw new NutsUserCancelException();
+            throw new NutsUserCancelException(ws);
         }
         NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
         Path bootstrapFolder = ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.BOOT);
@@ -635,7 +633,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 ws.io().copy().from(apiUpdate.getAvailable().getPath()).to(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
                         .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
                 ).run();
-                ws.formatter().createDescriptorFormat().pretty().print(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor(),
+                ws.formatter().createDescriptorFormat().print(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor(),
                         ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
                                 .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceDescriptor()))
                 );
@@ -644,15 +642,8 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         }
         if (runtimeUpdate != null && !runtimeUpdate.isUpdateApplied()) {
             NutsBootConfig bc = ws.config().getBootConfig();
-            bc.setRuntimeId(runtimeUpdate.getAvailable().getId().toString());
-            StringBuilder sb = new StringBuilder();
-            for (NutsId dependency : runtimeUpdate.getDependencies()) {
-                if (sb.length() > 0) {
-                    sb.append(";");
-                }
-                sb.append(dependency.setNamespace(null).toString());
-            }
-            bc.setRuntimeDependencies(sb.toString());
+            bc.setRuntimeId(runtimeUpdate.getAvailable().getId().getLongName());
+            bc.setRuntimeDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
             NutsWorkspaceUtils.checkReadOnly(ws);
             ws.config().setBootConfig(bc);
             ws.io().copy().from(runtimeUpdate.getAvailable().getPath())
@@ -660,7 +651,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                             .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
                     ).run();
             NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailable().getId()).getResultDescriptor();
-            ws.formatter().createDescriptorFormat().pretty().print(runtimeDesc,
+            ws.formatter().createDescriptorFormat().print(runtimeDesc,
                     ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
                             .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceDescriptor()))
             );
@@ -677,7 +668,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                             ws.config().getStoreLocation(dependency.getId().getLongNameId(), bootstrapFolder)
                                     .resolve("nuts.properties")
                     )) {
-                        CoreIOUtils.storeProperties(pr, writer);
+                        CoreIOUtils.storeProperties(pr, writer,false);
                     } catch (IOException ex) {
                         throw new UncheckedIOException(ex);
                     }
@@ -695,7 +686,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                                     .filter(new Predicate<NutsDependency>() {
                                         @Override
                                         public boolean test(NutsDependency x) {
-                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x);
+                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x, ws, getValidSession());
                                         }
                                     })
                                     .map(x -> x.getId().getLongName())
@@ -706,7 +697,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                     ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId().getLongNameId(), bootstrapFolder)
                             .resolve("nuts.properties")
             )) {
-                CoreIOUtils.storeProperties(pr, writer);
+                CoreIOUtils.storeProperties(pr, writer,false);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -748,12 +739,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 v = NutsConstants.Versions.LATEST;
             }
             try {
-                oldFile = ws.fetch().id(oldId).session(session).wired().getResultDefinition();
+                oldFile = ws.fetch().id(oldId).session(session).online().getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
             try {
-                newFile = ws.find().id(NutsConstants.Ids.NUTS_API + "#" + v).session(session).anyWhere().latestVersions().getResultDefinitions().first();
+                newFile = ws.search().id(NutsConstants.Ids.NUTS_API + "#" + v).session(session).anyWhere().latest().getResultDefinitions().first();
                 newId = newFile.getId();
             } catch (NutsNotFoundException ex) {
                 //ignore
@@ -765,22 +756,22 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 oldId = confId;
             }
             try {
-                oldFile = ws.fetch().id(oldId).session(session).wired().getResultDefinition();
+                oldFile = ws.fetch().id(oldId).session(session).online().getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
             try {
-                newFile = ws.find()
+                newFile = ws.search()
                         .addId(oldFile != null ? oldFile.getId().setVersion("").toString() : NutsConstants.Ids.NUTS_RUNTIME)
                         .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
-                        .latestVersions()
-                        .wired()
+                        .latest()
+                        .online()
                         .session(session)
                         .getResultDefinitions().first();
                 if (newFile != null) {
-                    for (NutsDefinition d : ws.find().addId(newFile.getId()).latestVersions()
+                    for (NutsDefinition d : ws.search().addId(newFile.getId()).latest()
                             .anyWhere()
-                            .setSession(session).dependenciesOnly().getResultDefinitions()) {
+                            .setSession(session).main(false).inlineDependencies().getResultDefinitions()) {
                         dependencies.add(d.getId());
                     }
                 }
@@ -800,12 +791,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 //ignore
             }
             try {
-                newFile = ws.find().addId(NutsConstants.Ids.NUTS_RUNTIME)
+                newFile = ws.search().addId(NutsConstants.Ids.NUTS_RUNTIME)
                         .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
-                        .latestVersions().setSession(session).online().mainAndDependencies().getResultDefinitions().first();
-                for (NutsDefinition d : ws.find().id(newFile.getId()).latestVersions().scopes(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
-                        .includeOptional(includeOptional)
-                        .anyWhere().setSession(session).dependenciesOnly().getResultDefinitions()) {
+                        .latest().setSession(session).online().inlineDependencies().getResultDefinitions().first();
+                for (NutsDefinition d : ws.search().id(newFile.getId()).latest().scopes(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
+                        .optional(includeOptional?null:false)
+                        .anyWhere().setSession(session).main(false).inlineDependencies().getResultDefinitions()) {
                     dependencies.add(d.getId());
                 }
             } catch (Exception ex) {
@@ -892,7 +883,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         }
 
         @Override
-        public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws) {
+        public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 if (dependency.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
                     if (dependency.getVersion().matches("]" + bootApiVersion + "]")) {
@@ -1121,12 +1112,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "-a":
             case "--all": {
                 this.all();
@@ -1140,35 +1131,35 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             }
             case "-i":
             case "--installed": {
-                this.installed(cmdLine.readBooleanOption().getBoolean());
+                this.installed(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-r":
             case "--runtime": {
-                this.runtime(cmdLine.readBooleanOption().getBoolean());
+                this.runtime(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-A":
             case "--api": {
-                this.runtime(cmdLine.readBooleanOption().getBoolean());
+                this.runtime(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                this.extensions(cmdLine.readBooleanOption().getBoolean());
+                this.extensions(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-v":
             case "--version": {
-                this.setApiVersion(cmdLine.readStringOption().getString());
+                this.setApiVersion(cmdLine.nextString().getValue().getString());
                 return true;
             }
             case "-g":
             case "--args": {
-                while (cmdLine.hasNext()) {
-                    this.addArg(cmdLine.next().getString());
-                }
+                cmdLine.skip();
+                this.addArgs(cmdLine.toArray());
+                cmdLine.skipAll();
                 return true;
             }
 

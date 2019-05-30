@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -38,13 +38,13 @@ import net.vpc.common.io.ZipUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ZipCommand extends AbstractNutsCommand {
+public class ZipCommand extends AbstractNshCommand {
 
 
     public ZipCommand() {
@@ -56,21 +56,21 @@ public class ZipCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
         File outZip=null;
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            }else if (cmdLine.readAll("-r")) {
+            }else if (cmdLine.next("-r")!=null) {
                 options.r=true;
-            } else if (cmdLine.get().isOption()) {
-                throw new NutsExecutionException("Not yet supported",2);
+            } else if (cmdLine.peek().isOption()) {
+                throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
             } else {
-                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
+                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;
@@ -80,10 +80,10 @@ public class ZipCommand extends AbstractNutsCommand {
             }
         }
         if (outZip==null) {
-            throw new NutsExecutionException("Not yet supported",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException("Not yet supported",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
         }
         ZipUtils.zip(outZip.getPath(),new ZipOptions(),files.toArray(new String[0]));
         return 0;

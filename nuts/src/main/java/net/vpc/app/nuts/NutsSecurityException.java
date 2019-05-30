@@ -35,20 +35,27 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public class NutsSecurityException extends SecurityException {
-
-    public NutsSecurityException() {
+    private NutsWorkspace workspace;
+    public NutsSecurityException(NutsWorkspace workspace) {
+        this.workspace=workspace;
     }
 
-    public NutsSecurityException(String s) {
+    public NutsSecurityException(NutsWorkspace workspace,String s) {
         super(s);
+        this.workspace=workspace;
     }
 
-    public NutsSecurityException(String message, Throwable cause) {
+    public NutsSecurityException(NutsWorkspace workspace,String message, Throwable cause) {
         super(message, cause);
+        this.workspace=workspace;
     }
 
-    public NutsSecurityException(Throwable cause) {
+    public NutsSecurityException(NutsWorkspace workspace,Throwable cause) {
         super(cause);
+        this.workspace=workspace;
     }
 
+    public NutsWorkspace getWorkspace() {
+        return workspace;
+    }
 }

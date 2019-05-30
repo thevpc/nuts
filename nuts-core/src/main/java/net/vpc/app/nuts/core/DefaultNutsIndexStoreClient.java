@@ -6,7 +6,7 @@ import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
+
 import net.vpc.app.nuts.core.filters.NutsSearchIdById;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -38,7 +38,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
     }
 
     @Override
-    public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
+    public List<NutsId> searchVersions(NutsId id, NutsRepositorySession session) {
         if (isInaccessible()) {
             return null;
         }
@@ -61,7 +61,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
     }
 
     @Override
-    public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session) {
         if (isInaccessible()) {
             return null;
         }
@@ -75,7 +75,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     .filter(filter != null ? new Predicate<NutsId>() {
                         @Override
                         public boolean test(NutsId t) {
-                            return filter.acceptSearchId(new NutsSearchIdById(t), repository.getWorkspace());
+                            return filter.acceptSearchId(new NutsSearchIdById(t), repository.getWorkspace(), session.getSession());
                         }
                     } : (Predicate<NutsId>) id -> true)
                     .iterator();

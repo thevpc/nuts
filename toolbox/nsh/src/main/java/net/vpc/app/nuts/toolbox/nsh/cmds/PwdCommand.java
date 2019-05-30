@@ -29,26 +29,27 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class PwdCommand extends AbstractNutsCommand {
+public class PwdCommand extends AbstractNshCommand {
 
     public PwdCommand() {
         super("pwd", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         while(cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             }else {
                 break;

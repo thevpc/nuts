@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts;
 
@@ -10,6 +34,7 @@ import java.io.PrintStream;
 /**
  *
  * @author vpc
+ * @since 0.5.5
  */
 public class NutsApplications {
 
@@ -30,9 +55,14 @@ public class NutsApplications {
             return 0;
         }
         int errorCode = 204;
-        boolean showTrace = NutsUtils.getSystemBoolean("nuts.export.error-stacktrace", false);
+        boolean showTrace =
+                //exported/inherited
+                  NutsUtilsLimited.getSystemBoolean("nuts.export.debug", false)
+                //non exported
+                ||NutsUtilsLimited.getSystemBoolean("nuts.debug", false)
+                ;
 
-        if (args != null) {
+        if (!showTrace && args != null) {
             for (String arg : args) {
                 if (arg.startsWith("-")) {
                     if (arg.equals("--verbose") || arg.equals("--debug")) {
@@ -56,46 +86,66 @@ public class NutsApplications {
         if (m == null || m.length() < 5) {
             m = ex.toString();
         }
+        NutsWorkspace ws=null;
+        if(ex instanceof NutsException){
+            ws=((NutsException) ex).getWorkspace();
+        }
+        if(ws==null) {
+            if (ex instanceof NutsSecurityException) {
+                ws = ((NutsSecurityException) ex).getWorkspace();
+            }
+        }
+        if(out==null && ws!=null){
+            try {
+                out = ws.getSystemTerminal().getOut();
+                m="@@"+m+"@@";
+            }catch (Exception ex2){
+                //
+            }
+        }
+        if(out==null){
+            out=System.err;
+        }
         out.println(m);
         if (showTrace) {
             ex.printStackTrace(out);
         }
+        out.flush();
         return (errorCode);
     }
 
     public static void runApplication(String[] args, NutsWorkspace ws, NutsApplicationListener listener) {
         long startTimeMillis = System.currentTimeMillis();
+        if(listener==null){
+            throw new NullPointerException("Null Application");
+        }
         if (ws == null) {
             ws = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext = null;
         applicationContext = listener.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
+        if(applicationContext==null){
+            applicationContext=ws.io().createApplicationContext(args, listener.getClass(), null,startTimeMillis);
+        }
         switch (applicationContext.getMode()) {
-            case "launch":
-            case "auto-complete": {
-//                    if(!applicationContext.getWorkspace().isInstalled(applicationContext.getAppId(),false,applicationContext.getSession())){
-//                        int i = onInstallApplication(applicationContext);
-//                        if(i!=0){
-//                            throw new NutsExecutionException("Unable to install "+applicationContext.getAppId(),i);
-//                        }
-//                        return i;
-//                    }
+            case RUN:
+            case AUTO_COMPLETE: {
                 listener.onRunApplication(applicationContext);
                 return;
             }
-            case "on-install": {
+            case INSTALL: {
                 listener.onInstallApplication(applicationContext);
                 return;
             }
-            case "on-update": {
+            case UPDATE: {
                 listener.onUpdateApplication(applicationContext);
                 return;
             }
-            case "on-uninstall": {
+            case UNINSTALL: {
                 listener.onUninstallApplication(applicationContext);
                 return;
             }
         }
-        throw new NutsExecutionException("Unsupported execution mode " + applicationContext.getMode(), 204);
+        throw new NutsExecutionException(ws,"Unsupported execution mode " + applicationContext.getMode(), 204);
     }
 }

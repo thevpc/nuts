@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 3/7/17.
+ * @since 0.5.5
  */
 public interface NutsArgumentCandidate {
 

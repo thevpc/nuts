@@ -1,8 +1,6 @@
 package net.vpc.app.nuts.core.filters.dependency;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyFilter;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 public class OptionalNutsDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
@@ -14,7 +12,7 @@ public class OptionalNutsDependencyFilter implements NutsDependencyFilter, Simpl
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
         return optional == dependency.isOptional();
     }
 

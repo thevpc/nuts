@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -50,14 +49,19 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<ClassLoader, List<Class>> discoveredCache = new HashMap<>();
-
+    private NutsWorkspace workspace;
     public DefaultNutsWorkspaceFactory() {
-        initialize();
+        initialize(null);
     }
 
-    public final void initialize() {
-
+    public DefaultNutsWorkspaceFactory(NutsWorkspace workspace) {
+        this.workspace = workspace;
     }
+
+    public final void initialize(NutsWorkspace ws) {
+        this.workspace=ws;
+    }
+
 
     @Override
     public List<Class> discoverTypes(Class type, ClassLoader bootClassLoader) {
@@ -113,7 +117,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public <T> void registerInstance(Class<T> extensionPoint, T implementation) {
         if (isRegisteredInstance(extensionPoint, implementation)) {
-            throw new NutsIllegalArgumentException("Already Registered Extension " + implementation + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.log(Level.FINEST, "Register {0} for impl instance {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName()});
@@ -139,7 +143,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public void registerType(Class extensionPoint, Class implementation) {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
-            throw new NutsIllegalArgumentException("Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.log(Level.FINEST, "Register {0} for impl type {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName()});
@@ -182,9 +186,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(cause);
+            throw new NutsFactoryException(workspace,cause);
         } catch (IllegalAccessException e) {
-            throw new NutsFactoryException(e);
+            throw new NutsFactoryException(workspace,e);
         }
         //initialize?
         return theInstance;
@@ -205,7 +209,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(cause);
+            throw new NutsFactoryException(workspace,cause);
         } catch (Exception e) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Unable to instantiate " + t, e);
@@ -213,7 +217,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsFactoryException(e);
+            throw new NutsFactoryException(workspace,e);
         }
         //initialize?
         return t1;
@@ -276,7 +280,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (singleton) {
             if (argTypes.length > 0) {
-                throw new NutsIllegalArgumentException("Singletons should have no arg types");
+                throw new NutsIllegalArgumentException(workspace, "Singletons should have no arg types");
             }
             Object o = singletons.get(type);
             if (o == null) {
@@ -313,7 +317,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         for (T obj : discoverInstances(type, null)) {
             return obj;
         }
-        throw new NutsElementNotFoundException("Type " + type + " not found");
+        throw new NutsElementNotFoundException(workspace, "Type " + type + " not found");
     }
 
     @Override

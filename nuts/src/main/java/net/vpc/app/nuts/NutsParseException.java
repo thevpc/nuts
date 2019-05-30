@@ -36,22 +36,23 @@ package net.vpc.app.nuts;
  */
 public class NutsParseException extends NutsException {
 
-    public NutsParseException() {
+    public NutsParseException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsParseException(String message) {
-        super(message);
+    public NutsParseException(NutsWorkspace workspace,String message) {
+        super(workspace,message);
     }
 
-    public NutsParseException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsParseException(NutsWorkspace workspace,String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsParseException(Throwable cause) {
-        super(cause);
+    public NutsParseException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsParseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsParseException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

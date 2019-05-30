@@ -65,7 +65,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
     public void exec(NutsExecutionContext executionContext) {
         List<String> args = new ArrayList<>();
         args.add(id.toString());
-        args.addAll(Arrays.asList(executionContext.getArgs()));
+        args.addAll(Arrays.asList(executionContext.getArguments()));
         executionContext.getWorkspace()
                 .exec()
                 .command(args)

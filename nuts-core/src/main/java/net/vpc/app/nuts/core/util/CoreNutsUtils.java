@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
@@ -50,6 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -62,8 +64,8 @@ public class CoreNutsUtils {
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = new OptionalNutsDependencyFilter(true);
     public static final NutsDependencyFilter NON_OPTIONAL = new OptionalNutsDependencyFilter(false);
-    public static final NutsDependencyFilter SCOPE_RUN = And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
-    public static final NutsDependencyFilter SCOPE_TEST = And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
+    public static final NutsDependencyFilter SCOPE_RUN = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
+    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
 
 //    public static void main(String[] args) {
 //        NutsId t = parseNutsId("commons-digester:commons-digester#[1.7,)?arch=amd64&os=linux#4.20.10-1-default&osdist=opensuse-tumbleweed#20190226");
@@ -120,7 +122,7 @@ public class CoreNutsUtils {
         private int weight(String[] desc) {
             int x = 1;
             for (String s : desc) {
-                x += weight(parseNutsDependency(s));
+                x += weight(parseNutsDependency(null, s));
             }
             return x;
         }
@@ -187,7 +189,7 @@ public class CoreNutsUtils {
         _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.PLATFORM, null);
     }
 
-    public static NutsId finNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
+    public static NutsId findNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
         if (all != null) {
             for (NutsId nutsId : all) {
                 if (nutsId != null) {
@@ -218,20 +220,6 @@ public class CoreNutsUtils {
         return sb.toString();
     }
 
-    public static NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
-        if (all != null) {
-            for (String nutsId : all) {
-                if (nutsId != null) {
-                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
-                    if (nutsId2.equalsSimpleName(id)) {
-                        return nutsId2;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     public static boolean isEffectiveValue(String value) {
         return (!CoreStringUtils.isBlank(value) && !CoreStringUtils.containsVars(value));
     }
@@ -242,15 +230,6 @@ public class CoreNutsUtils {
 
     public static boolean containsVars(NutsId id) {
         return (CoreStringUtils.containsVars(id.getGroup()) && CoreStringUtils.containsVars(id.getName()) && CoreStringUtils.containsVars(id.getVersion().getValue()));
-    }
-
-    public static void validateRepositoryName(String repositoryName, Set<String> registered) {
-        if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException("Invalid repository id " + repositoryName);
-        }
-        if (registered.contains(repositoryName)) {
-            throw new NutsRepositoryAlreadyRegisteredException(repositoryName);
-        }
     }
 
     /**
@@ -285,14 +264,6 @@ public class CoreNutsUtils {
             );
         }
         return null;
-    }
-
-    public static NutsId parseRequiredNutsId(String nutFormat) {
-        NutsId id = parseNutsId(nutFormat);
-        if (id == null) {
-            throw new NutsParseException("Invalid Id format : " + nutFormat);
-        }
-        return id;
     }
 
     public static String[] applyStringProperties(String[] child, Function<String, String> properties) {
@@ -349,7 +320,7 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static NutsDependency parseNutsDependency(String nutFormat) {
+    public static NutsDependency parseNutsDependency(NutsWorkspace ws, String nutFormat) {
         if (nutFormat == null) {
             return null;
         }
@@ -363,7 +334,7 @@ public class CoreNutsUtils {
             Map<String, String> queryMap = CoreStringUtils.parseMap(face, "&");
             for (String s : queryMap.keySet()) {
                 if (!DEPENDENCY_SUPPORTED_PARAMS.contains(s)) {
-                    throw new NutsIllegalArgumentException("Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
+                    throw new NutsIllegalArgumentException(ws, "Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
                 }
             }
             if (name == null) {
@@ -384,60 +355,6 @@ public class CoreNutsUtils {
         return null;
     }
 
-    public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
-        return new NutsDescriptorFilterAnd(all);
-    }
-
-    public static NutsDescriptorFilter Or(NutsDescriptorFilter... all) {
-        return new NutsDescriptorFilterOr(all);
-    }
-
-    public static NutsIdFilter And(NutsIdFilter... all) {
-        return new NutsIdFilterAnd(all);
-    }
-
-    public static NutsIdFilter Or(NutsIdFilter... all) {
-        return new NutsIdFilterOr(all);
-    }
-
-    public static NutsVersionFilter And(NutsVersionFilter... all) {
-        return new NutsVersionFilterAnd(all);
-    }
-
-    public static NutsRepositoryFilter And(NutsRepositoryFilter... all) {
-        return new NutsRepositoryFilterAnd(all);
-    }
-
-    public static NutsVersionFilter Or(NutsVersionFilter... all) {
-        return new NutsVersionFilterOr(all);
-    }
-
-    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osdist, String platform) {
-        return simplify(
-                And(
-                        new NutsDescriptorFilterArch(arch),
-                        new NutsDescriptorFilterOs(os),
-                        new NutsDescriptorFilterOsdist(osdist),
-                        new NutsDescriptorFilterPlatform(platform)
-                )
-        );
-    }
-
-    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap) {
-        return createNutsDescriptorFilter(
-                faceMap == null ? null : faceMap.get("arch"),
-                faceMap == null ? null : faceMap.get("os"),
-                faceMap == null ? null : faceMap.get("osdist"),
-                faceMap == null ? null : faceMap.get("platform"));
-    }
-
-    public static NutsDependencyFilter And(NutsDependencyFilter... all) {
-        return new NutsDependencyFilterAnd(all);
-    }
-
-    public static NutsDependencyFilter Or(NutsDependencyFilter... all) {
-        return new NutsDependencyFilterOr(all);
-    }
 
     public static <T> T simplify(T any) {
         if (any == null) {
@@ -469,39 +386,6 @@ public class CoreNutsUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public static List<NutsId> filterNutsIdByLatestVersion(List<NutsId> base) {
-        LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
-        for (NutsId n : base) {
-            NutsId old = valid.get(n.getSimpleName());
-            if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
-                valid.put(n.getSimpleName(), n);
-            }
-        }
-        return new ArrayList<>(valid.values());
-    }
-
-    public static List<NutsExtensionInfo> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInfo> base) {
-        LinkedHashMap<String, NutsExtensionInfo> valid = new LinkedHashMap<>();
-        for (NutsExtensionInfo n : base) {
-            NutsExtensionInfo old = valid.get(n.getId().getSimpleName());
-            if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
-                valid.put(n.getId().getSimpleName(), n);
-            }
-        }
-        return new ArrayList<>(valid.values());
-    }
-
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsWorkspace ws) {
-        if (t == null) {
-            return null;
-        }
-        return new Predicate<NutsId>() {
-            @Override
-            public boolean test(NutsId value) {
-                return t.accept(value, ws);
-            }
-        };
-    }
 
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
         if (parent != null) {
@@ -877,7 +761,7 @@ public class CoreNutsUtils {
                 x.put("path", def.getContent().getPath().toString());
             }
             x.put("cached", def.getContent().isCached());
-            x.put("tomporary", def.getContent().isTemporary());
+            x.put("temporary", def.getContent().isTemporary());
         }
         if (def.getInstallation() != null) {
             if (def.getInstallation().getInstallFolder() != null) {
@@ -911,24 +795,12 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static NutsOutputListFormat getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
-        NutsOutputListFormat f = session.getOutputCustomFormat();
+    public static NutsIncrementalFormat getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
+        NutsIncrementalFormat f = session.getOutputCustomFormat();
         if (f == null) {
-            return ws.formatter().createOutputListFormat(session.getOutputFormat()).session(session);
+            return ws.formatter().createIncrementalFormat(session.getOutputFormat()).session(session);
         }
         return f;
-    }
-
-    public static void checkSession(NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException("Missing Session");
-        }
-    }
-
-    public static void checkSession(NutsRepositorySession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException("Missing Session");
-        }
     }
 
     public static void traceMessage(Logger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
@@ -958,15 +830,30 @@ public class CoreNutsUtils {
         log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
     }
 
-    public static void checkNutsId(NutsId id) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException("Missing id");
+    public static NutsOutputFormat readOptionOutputFormat(NutsCommand cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        switch (a.getKey().getString()) {
+            case "--output-format": {
+                a=cmdLine.nextString();
+                return CoreCommonUtils.parseEnumString(a.getValue().getString(), NutsOutputFormat.class, false);
+            }
+            case "--json": {
+                return  (NutsOutputFormat.JSON);
+            }
+            case "--props": {
+                return  (NutsOutputFormat.PROPS);
+            }
+            case "--table": {
+                return  (NutsOutputFormat.TABLE);
+            }
+            case "--tree": {
+                return  (NutsOutputFormat.TREE);
+            }
+            case "--plain": {
+                return  (NutsOutputFormat.PLAIN);
+            }
         }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing name for " + id);
-        }
+        return null;
     }
+
 }

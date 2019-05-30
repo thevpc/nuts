@@ -14,7 +14,7 @@ public class NutsArgumentsParserTest {
 //            System.out.println(Arrays.toString(arg));
 //            String v = NutsMinimalCommandLine.escapeArguments(arg);
 //            System.out.println("\t"+v);
-//            String[] v2 = NutsMinimalCommandLine.parseCommandLine(v);
+//            String[] v2 = NutsMinimalCommandLine.parseCommand(v);
 //            Assert.assertArrayEquals(
 //                    arg,v2
 //            );

@@ -44,12 +44,32 @@ public final class NutsWorkspaceConfig implements Serializable {
     private boolean global;
     private String workspace = null;
     private String bootApiVersion = null;
+
+    /**
+     * Api version having created the config
+     */
+    private String createApiVersion = null;
+
+    /**
+     * boot component Id in long format (as defined in {@link NutsId#getLongName()})
+     * @see NutsId#getLongNameId()
+     */
     private String bootRuntime = null;
+
+    /**
+     * ';' separated list of component Ids in long format (as defined in {@link NutsId#getLongName()})
+     * that defines ALL dependencies  needed (no further dependency computation should be performed)
+     * to load and execute a valid implementation of nuts-api.
+     * These components should be accessible from {@link NutsWorkspaceConfig#getBootRepositories()}
+     *
+     * @see NutsId#getLongNameId()
+     */
     private String bootRuntimeDependencies = null;
     private String bootRepositories = null;
     private String bootJavaCommand = null;
     private String bootJavaOptions = null;
-    // folder types and layout types are exploded so that it is easier 
+
+    // folder types and layout types are exploded so that it is easier
     // to extract from json file eventhough no json library is available
     // via simple regexp
     private String programsStoreLocation = null;
@@ -112,6 +132,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.secure = other.isSecure();
         this.workspace = other.getWorkspace();
         this.bootApiVersion = other.getBootApiVersion();
+        this.createApiVersion = other.getCreateApiVersion();
         this.bootRuntime = other.getBootRuntime();
         this.bootRuntimeDependencies = other.getBootRuntimeDependencies();
         this.bootRepositories = other.getBootRepositories();
@@ -251,6 +272,15 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setBootApiVersion(String bootApiVersion) {
         this.bootApiVersion = bootApiVersion;
+        return this;
+    }
+
+    public String getCreateApiVersion() {
+        return createApiVersion;
+    }
+
+    public NutsWorkspaceConfig setCreateApiVersion(String createApiVersion) {
+        this.createApiVersion = createApiVersion;
         return this;
     }
 

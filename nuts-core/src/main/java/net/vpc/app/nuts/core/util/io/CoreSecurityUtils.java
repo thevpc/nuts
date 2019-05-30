@@ -58,6 +58,10 @@ public class CoreSecurityUtils {
     }
 
 
+    public static char[] httpEncryptChars(char[] data, String passphrase) {
+        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
+        return CoreIOUtils.bytesToChars(bytes);
+    }
     public static byte[] httpEncrypt(byte[] data, String passphrase) {
         try {
             byte[] key = CoreIOUtils.evalMD5(passphrase);

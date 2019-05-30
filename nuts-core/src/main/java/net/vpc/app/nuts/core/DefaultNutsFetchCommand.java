@@ -4,22 +4,21 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.*;
-import static net.vpc.app.nuts.core.DefaultNutsWorkspace.NOT_INSTALLED;
+import net.vpc.app.nuts.core.filters.CoreFilterUtils;
+import net.vpc.app.nuts.core.filters.dependency.NutsDependencyOptionFilter;
+import net.vpc.app.nuts.core.filters.dependency.NutsDependencyScopeFilter;
 import net.vpc.app.nuts.core.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsIdGraph;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.TraceResult;
 
 public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
@@ -27,7 +26,8 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     private NutsId id;
 
     public DefaultNutsFetchCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"fetch");
+        failFast();
     }
 
     @Override
@@ -59,15 +59,15 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     @Override
     public NutsFetchCommand setId(NutsId id) {
         if (id == null) {
-            throw new NutsParseException("Invalid Id format : null");
+            throw new NutsParseException(ws,"Invalid Id format : null");
         }
         this.id = id;
         return this;
     }
 
     @Override
-    public NutsFetchCommand includeDependencies() {
-        return this.includeDependencies(true);
+    public NutsFetchCommand inlineDependencies() {
+        return this.inlineDependencies(true);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             NutsDefinition def = fetchDefinition(id, this);
             return def;
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -86,10 +86,10 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     @Override
     public NutsContent getResultContent() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(true).setEffective(false).setIncludeInstallInformation(false));
+            NutsDefinition def = fetchDefinition(id, copy().setContent(true).setEffective(false).setInstallInformation(false));
             return def.getContent();
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -105,7 +105,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             return def.getId();
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -118,7 +118,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             Path f = getResultDefinition().getPath();
             return ws.io().hash().source(f).computeString();
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -130,7 +130,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         try {
             return ws.io().hash().source(getResultDescriptor()).computeString();
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -140,13 +140,13 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     @Override
     public NutsDescriptor getResultDescriptor() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(false).setIncludeInstallInformation(false));
+            NutsDefinition def = fetchDefinition(id, copy().setContent(false).setInstallInformation(false));
             if (isEffective()) {
                 return def.getEffectiveDescriptor();
             }
             return def.getDescriptor();
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -156,14 +156,14 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     @Override
     public Path getResultPath() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(true).setEffective(false).setIncludeInstallInformation(false));
+            NutsDefinition def = fetchDefinition(id, copy().setContent(true).setEffective(false).setInstallInformation(false));
             Path p = def.getPath();
             if (getLocation() != null) {
                 return getLocation();
             }
             return p;
         } catch (NutsNotFoundException ex) {
-            if (isLenient()) {
+            if (!isFailFast()) {
                 return null;
             }
             throw ex;
@@ -194,18 +194,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
         long startTime = System.currentTimeMillis();
-        if (id == null) {
-            throw new NutsIllegalArgumentException("Missing component Id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing Group");
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing Name");
-        }
-        if (DefaultNutsVersion.isBlank(id.getVersion().getValue())) {
-            throw new NutsIllegalArgumentException("Missing Version");
-        }
+        NutsWorkspaceUtils.checkLongNameNutsId(ws,id);
         options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
@@ -221,7 +210,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             for (NutsFetchMode mode : nutsFetchModes) {
                 try {
                     if (id.getGroup() == null) {
-                        String[] groups = ws.config().getImports();
+                        Set<String> groups = ws.config().getImports();
                         for (String group : groups) {
                             try {
                                 foundDefinition = fetchDescriptorAsDefinition(id.setGroup(group), options, mode);
@@ -236,7 +225,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                             modeForSuccessfulDescRetreival = mode;
                             break;
                         }
-                        throw new NutsNotFoundException(id);
+                        throw new NutsNotFoundException(ws,id);
                     }
                     foundDefinition = fetchDescriptorAsDefinition(id, options, mode);
                     if (foundDefinition != null) {
@@ -258,7 +247,31 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     }
                 }
                 if (foundDefinition != null) {
-                    if (options.isIncludeContent() || options.isIncludeInstallInformation()) {
+                    if (isDependenciesTree()) {
+                        foundDefinition.setDependencyTreeNodes(buildTreeNode(null,
+                                new DefaultNutsDependency(id),
+                                foundDefinition, new HashSet<NutsId>(), getSession().copy().trace(false),
+                                getScope().isEmpty() ? null : new NutsDependencyScopeFilter(getScope())).getChildren());
+                    }
+                    if (isDependencies()) {
+                        NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
+                        NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
+                                new NutsDependencyScopeFilter(getScope()),
+                                getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
+                                null//getDependencyFilter()
+                        ));
+                        NutsIdGraph graph = new NutsIdGraph(ws, _session, isFailFast());
+                        List<NutsId> ids = Arrays.asList(id);
+                        graph.push(ids, _dependencyFilter);
+                        NutsId[] pp = graph.collect(ids, ids);
+                        DefaultNutsDependency[] dd = new DefaultNutsDependency[pp.length];
+                        for (int i = 0; i < dd.length; i++) {
+                            dd[i] = new DefaultNutsDependency(pp[i]);
+                        }
+                        foundDefinition.setDependencies(dd);
+                    }
+                    boolean includeContent = shouldIncludeContent(options);
+                    if (includeContent || options.isInstallInformation()) {
                         NutsId id1 = ws.config().createComponentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
                         Path copyTo = options.getLocation();
                         if (copyTo != null && Files.isDirectory(copyTo)) {
@@ -293,22 +306,20 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                             CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
                         }
                     }
-                    if (foundDefinition != null && options.isIncludeInstallInformation()) {
+                    if (foundDefinition != null && options.isInstallInformation()) {
                         NutsInstallerComponent installer = null;
                         if (foundDefinition.getPath() != null) {
                             installer = dws.getInstaller(foundDefinition, options.getSession());
                         }
                         if (installer != null) {
-                            if (dws.getInstalledRepository().isInstalled(foundDefinition.getId())) {
-                                foundDefinition.setInstallation(new DefaultNutsInstallInfo(true,
-                                        dws.getInstalledRepository().isDefaultVersion(foundDefinition.getId()),
-                                        ws.config().getStoreLocation(foundDefinition.getId(), NutsStoreLocation.PROGRAMS)
-                                ));
+                            NutsInstallInfo ii = dws.getInstalledRepository().getInstallInfo(id);
+                            if (ii!=null) {
+                                foundDefinition.setInstallation(ii);
                             } else {
-                                foundDefinition.setInstallation(NOT_INSTALLED);
+                                foundDefinition.setInstallation(DefaultNutsWorkspace.NOT_INSTALLED);
                             }
                         } else {
-                            foundDefinition.setInstallation(NOT_INSTALLED);
+                            foundDefinition.setInstallation(DefaultNutsWorkspace.NOT_INSTALLED);
                         }
                     }
                 }
@@ -328,27 +339,65 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.SUCCESS, "Fetch component", startTime);
             }
-            if (isIncludeDependencies()) {
+            if (isInlineDependencies()) {
                 NutsDependencyScope[] s = (getScope() == null || getScope().isEmpty())
                         ? new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
                         : getScope().toArray(new NutsDependencyScope[0]);
-                ws.find().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
+                ws.search().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
                         .addScopes(s)
-                        .setAcceptOptional(getAcceptOptional())
-                        .dependenciesOnly().getResultDefinitions();
+                        .setOptional(getOptional())
+                        .main(false).inlineDependencies().getResultDefinitions();
 
             }
             if (getValidSession().isTrace()) {
                 final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-                NutsOutputListFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
+                NutsIncrementalFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
                         .session(getValidSession());
                 ff.formatStart();
-                ff.formatElement(foundDefinition, -1);
-                ff.formatEnd(1);
+                ff.formatNext(foundDefinition, -1);
+                ff.formatComplete(1);
             }
             return foundDefinition;
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(ws,id);
+    }
+
+    private boolean shouldIncludeContent(NutsFetchCommand options) {
+        boolean includeContent = options.isContent();
+        if (options instanceof DefaultNutsQueryBaseOptions) {
+            if (((DefaultNutsQueryBaseOptions) options).getDisplayOptions().isRequireDefinition()) {
+                includeContent = true;
+            }
+        }
+        return includeContent;
+    }
+
+    private NutsDependencyTreeNode buildTreeNode(NutsId from, NutsDependency root, NutsDefinition def, Set<NutsId> visited, NutsSession session, NutsDependencyFilter dependencyFilter) {
+        List<NutsDependencyTreeNode> all = new ArrayList<NutsDependencyTreeNode>();
+        boolean partial = visited.contains(root.getId().getLongNameId());
+        if (!partial) {
+            visited.add(root.getId().getLongNameId());
+            NutsDependency[] d = def.getDescriptor().getDependencies();
+            for (NutsDependency nutsDependency : d) {
+                if (dependencyFilter == null || dependencyFilter.accept(null, nutsDependency, ws, session)) {
+                    NutsDefinition def2 = ws.search()
+                            .id(nutsDependency.getId()).session(session.copy().trace(false).setProperty("monitor-allowed", false)).effective()
+                            .content(shouldIncludeContent(this))
+                            .latest().getResultDefinitions().first();
+                    if (def2 != null) {
+                        NutsDependency[] dependencies = CoreFilterUtils.filterDependencies(def2.getDescriptor().getId(), def2.getDescriptor().getDependencies(), 
+                                dependencyFilter, ws, session);
+                        for (NutsDependency dd : dependencies) {
+                            if (dd.getVersion().equals(nutsDependency.getVersion())) {
+                                dd = dd.setId(dd.getId().setQueryProperty("resolved-version", dd.getVersion().getValue()));
+                            }
+                            all.add(buildTreeNode(root.getId(), dd, def2, visited, session, dependencyFilter));
+                        }
+                    }
+                }
+            }
+        }
+        return new DefaultNutsDependencyTreeNode(root, def, all.toArray(new NutsDependencyTreeNode[0]), partial);
     }
 
     protected NutsDescriptor resolveExecProperties(NutsDescriptor nutsDescriptor, Path jar) {
@@ -381,7 +430,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.io().json().pretty().write(map, f);
+                        ws.io().json().write(map, f);
                     } catch (Exception ex) {
                         //
                     }
@@ -410,22 +459,18 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
             }
             NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
-            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, new NutsIdFilter() {
-                @Override
-                public boolean accept(NutsId id, NutsWorkspace ws) {
-                    return versionFilter.accept(id.getVersion());
-                }
-            }))
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
+            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id,CoreFilterUtils.idFilterOf(versionFilter),rsession))
                     .convert(x -> x.getVersion()).list();
             if (all.size() > 0) {
                 all.sort(null);
                 id = id.setVersion(all.get(all.size() - 1));
                 mode = NutsFetchMode.LOCAL;
             } else {
-                throw new NutsNotFoundException(id);
+                throw new NutsNotFoundException(ws,id);
             }
         }
-        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, id, repositoryFilter, mode, options)) {
+        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, options)) {
             try {
                 NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
                         options
@@ -463,7 +508,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 //
             }
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(ws,id);
     }
 
     @Override
@@ -491,12 +536,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
@@ -504,5 +549,39 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
         }
         return false;
+    }
+
+    private static class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
+
+        private final NutsDependency dependency;
+        private final NutsDependencyTreeNode[] children;
+        private final NutsDefinition definition;
+        private final boolean partial;
+
+        public DefaultNutsDependencyTreeNode(NutsDependency dependency, NutsDefinition definition, NutsDependencyTreeNode[] children, boolean partial) {
+            this.dependency = dependency;
+            this.children = children;
+            this.definition = definition;
+            this.partial = partial;
+        }
+
+        public NutsDefinition getDefinition() {
+            return definition;
+        }
+
+        @Override
+        public NutsDependency getDependency() {
+            return dependency;
+        }
+
+        @Override
+        public NutsDependencyTreeNode[] getChildren() {
+            return children;
+        }
+
+        @Override
+        public boolean isPartial() {
+            return partial;
+        }
     }
 }

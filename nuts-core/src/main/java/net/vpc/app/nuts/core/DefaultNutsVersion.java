@@ -31,10 +31,8 @@ package net.vpc.app.nuts.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.NutsVersionInterval;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -42,10 +40,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/15/17.
  */
-public class DefaultNutsVersion implements NutsVersion {
+public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVersion {
 
     private static final long serialVersionUID = 1L;
-    private final String value;
     public static final NutsVersion EMPTY = new DefaultNutsVersion("");
 
     public static NutsVersion valueOf(String value) {
@@ -56,23 +53,18 @@ public class DefaultNutsVersion implements NutsVersion {
         return new DefaultNutsVersion(value);
     }
 
-    private DefaultNutsVersion(String value) {
-        this.value = CoreStringUtils.trim(value);
+    private DefaultNutsVersion(String expression) {
+        super(CoreStringUtils.trim(expression));
     }
 
     @Override
     public String getValue() {
-        return value;
-    }
-
-    @Override
-    public boolean isBlank() {
-        return CoreStringUtils.isBlank(value);
+        return expression;
     }
 
     @Override
     public int compareTo(String other) {
-        return compareVersions(value, other);
+        return compareVersions(expression, other);
     }
 
     @Override
@@ -112,12 +104,12 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public NutsVersionFilter toFilter() {
-        return DefaultNutsVersionFilter.parse(value);
+        return DefaultNutsVersionFilter.parse(expression);
     }
 
     @Override
     public NutsVersionInterval[] toIntervals() {
-        NutsVersionFilter s = DefaultNutsVersionFilter.parse(value);
+        NutsVersionFilter s = DefaultNutsVersionFilter.parse(expression);
         if (s instanceof DefaultNutsVersionFilter) {
             return ((DefaultNutsVersionFilter) s).getIntervals();
         }
@@ -147,7 +139,7 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public String toString() {
-        return value == null ? "" : String.valueOf(value);
+        return expression == null ? "" : String.valueOf(expression);
     }
 
     @Override
@@ -161,13 +153,13 @@ public class DefaultNutsVersion implements NutsVersion {
 
         DefaultNutsVersion version = (DefaultNutsVersion) o;
 
-        return value != null ? value.equals(version.value) : version.value == null;
+        return expression != null ? expression.equals(version.expression) : version.expression == null;
 
     }
 
     @Override
     public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+        return expression != null ? expression.hashCode() : 0;
     }
 
     @Override
@@ -175,7 +167,7 @@ public class DefaultNutsVersion implements NutsVersion {
         if (CoreStringUtils.isBlank(expression)) {
             return true;
         }
-        return DefaultNutsVersionFilter.parse(expression).accept(this);
+        return DefaultNutsVersionFilter.parse(expression).accept(this, null, null);
     }
 
     public static boolean versionMatches(String version, String pattern) {

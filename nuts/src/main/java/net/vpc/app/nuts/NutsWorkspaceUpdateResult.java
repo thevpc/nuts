@@ -33,80 +33,25 @@ import java.util.Arrays;
 
 /**
  * Created by vpc on 6/23/17.
- * @since 0.5.4
+ * @since 0.5.5
  */
-public final class NutsWorkspaceUpdateResult /*implements Iterable<NutsWorkspaceUpdateResultItem>*/ {
+public interface NutsWorkspaceUpdateResult {
 
-    private final NutsUpdateResult api;
-    private final NutsUpdateResult runtime;
-    private final NutsUpdateResult[] extensions;
-    private final NutsUpdateResult[] components;
+    NutsUpdateResult getApi();
 
-    public NutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, NutsUpdateResult[] extensions, NutsUpdateResult[] components) {
-        this.api = api;
-        this.runtime = runtime;
-        this.extensions = extensions;
-        this.components = components;
-    }
+    NutsUpdateResult getRuntime();
 
-    public NutsUpdateResult getApi() {
-        return api;
-    }
+    NutsUpdateResult[] getExtensions();
 
-    public NutsUpdateResult getRuntime() {
-        return runtime;
-    }
+    NutsUpdateResult[] getComponents();
 
-    public NutsUpdateResult[] getExtensions() {
-        return Arrays.copyOf(extensions, extensions.length);
-    }
+    boolean isUpdatableApi() ;
 
-    public NutsUpdateResult[] getComponents() {
-        return Arrays.copyOf(components, components.length);
-    }
+    boolean isUpdatableRuntime() ;
 
-    public boolean isUpdatableApi() {
-        return api != null;
-    }
+    boolean isUpdatableExtensions() ;
 
-    public boolean isUpdatableRuntime() {
-        return runtime != null;
-    }
-
-    public boolean isUpdatableExtensions() {
-        return extensions.length > 0;
-    }
-
-//    public NutsWorkspaceUpdateResultItem[] toArray() {
-//        List<NutsWorkspaceUpdateResultItem> all = new ArrayList<NutsWorkspaceUpdateResultItem>();
-//        if (api != null) {
-//            all.add(api);
-//        }
-//        if (runtime != null) {
-//            all.add(runtime);
-//        }
-//        all.addAll(Arrays.asList(extensions));
-//        return all.toArray(new NutsWorkspaceUpdateResultItem[0]);
-//    }
-
-    public boolean isUpdateAvailable() {
-        return getUpdatesCount()>0;
-    }
+    boolean isUpdateAvailable() ;
     
-    public int getUpdatesCount() {
-        int c = 0;
-        if (api != null) {
-            c++;
-        }
-        if (runtime != null) {
-            c++;
-        }
-        return c + extensions.length+components.length;
-    }
-
-//    @Override
-//    public Iterator<NutsWorkspaceUpdateResultItem> iterator() {
-//        return Arrays.asList(toArray()).iterator();
-//    }
-
+    int getUpdatesCount() ;
 }

@@ -32,16 +32,16 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.javashell.ConsoleContext;
 
 import java.io.PrintStream;
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.common.javashell.JShellContext;
 
 /**
  * Created by vpc on 1/13/17.
  */
-public interface NutsConsoleContext extends ConsoleContext {
+public interface NutsConsoleContext extends JShellContext {
 
     String getServiceName();
 
@@ -78,5 +78,7 @@ public interface NutsConsoleContext extends ConsoleContext {
     NutsTerminalMode getTerminalMode();
 
     NutsConsoleContext setTerminalMode(NutsTerminalMode mode);
+    
+    NutsConsoleContext setTerminal(NutsSessionTerminal terminal);
 
 }

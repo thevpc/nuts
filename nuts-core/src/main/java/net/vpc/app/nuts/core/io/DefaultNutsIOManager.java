@@ -24,6 +24,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsIOManager.class.getName());
     private NutsWorkspace ws;
+    private NutsTerminalFormat terminalMetrics = new DefaultNutsTerminalFormat();
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -99,7 +100,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public NutsJsonCommand json() {
-        return new DefaultNutsJsonCommand();
+        return new DefaultNutsJsonCommand(ws);
     }
 
     @Override
@@ -270,7 +271,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 return new PrintStream(out);
             }
         }
-        throw new NutsUnsupportedArgumentException("Unsupported NutsTerminalMode " + mode);
+        throw new NutsUnsupportedArgumentException(ws,"Unsupported NutsTerminalMode " + mode);
     }
 
     @Override
@@ -290,7 +291,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
-            throw new NutsExtensionMissingException(NutsSessionTerminal.class, "Terminal");
+            throw new NutsExtensionMissingException(ws,NutsSessionTerminal.class, "Terminal");
         }
         try {
             NutsSessionTerminal term = null;
@@ -411,6 +412,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis) {
         return new DefaultNutsApplicationContext(ws, appClass, storeId, startTimeMillis);
+    }
+
+    @Override
+    public NutsTerminalFormat getTerminalFormat() {
+        return terminalMetrics;
     }
 
 }

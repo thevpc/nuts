@@ -3,7 +3,6 @@ package net.vpc.app.nuts.toolbox.nsh.term;
 import net.vpc.app.nuts.NutsMapListener;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.javashell.ShellHistory;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.utils.Log;
@@ -19,10 +18,11 @@ import java.util.function.Consumer;
 
 import static org.jline.reader.LineReader.HISTORY_IGNORE;
 import static org.jline.reader.impl.ReaderUtils.*;
+import net.vpc.common.javashell.JShellHistory;
 
 class NutsJLineHistory implements History {
     private NutsWorkspace ws;
-    private ShellHistory shellHistory;
+    private JShellHistory shellHistory;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
@@ -42,29 +42,29 @@ class NutsJLineHistory implements History {
 
             @Override
             public void entryAdded(String name, Object value) {
-                if (ShellHistory.class.getName().equals(name)) {
-                    setShellHistory((ShellHistory) value);
+                if (JShellHistory.class.getName().equals(name)) {
+                    setShellHistory((JShellHistory) value);
                 }
             }
 
             @Override
             public void entryRemoved(String name, Object value) {
-                if (ShellHistory.class.getName().equals(name)) {
+                if (JShellHistory.class.getName().equals(name)) {
                     setShellHistory(null);
                 }
             }
 
             @Override
             public void entryUpdated(String key, Object newValue, Object oldValue) {
-                if (ShellHistory.class.getName().equals(newValue)) {
-                    setShellHistory((ShellHistory) newValue);
+                if (JShellHistory.class.getName().equals(newValue)) {
+                    setShellHistory((JShellHistory) newValue);
                 }
             }
         });
-        setShellHistory((ShellHistory) workspace.getUserProperties().get(ShellHistory.class.getName()));
+        setShellHistory((JShellHistory) workspace.getUserProperties().get(JShellHistory.class.getName()));
     }
 
-    private void setShellHistory(ShellHistory shellHistory) {
+    private void setShellHistory(JShellHistory shellHistory) {
         this.shellHistory = shellHistory;
         offset = 0;
         index = 0;
@@ -114,7 +114,7 @@ class NutsJLineHistory implements History {
                                 public void accept(String l) {
                                     int idx = l.indexOf(':');
                                     if (idx < 0) {
-                                        throw new NutsExecutionException("Bad history file syntax! " +
+                                        throw new NutsExecutionException(ws,"Bad history file syntax! " +
                                                 "The history file `" + path + "` may be an older history: " +
                                                 "please remove it or use a different history file.", 2);
                                     }

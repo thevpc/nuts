@@ -22,11 +22,11 @@ public class NAdminMain extends NutsApplication {
             );
         }
         Boolean autoSave = true;
-        NutsCommandLine cmdLine = context.getCommandLine();
+        NutsCommand cmdLine = context.getCommandLine();
         boolean empty = true;
         NutsArgument a;
         do {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             } else {
                 NAdminSubCommand selectedSubCommand = null;
@@ -46,9 +46,9 @@ public class NAdminMain extends NutsApplication {
                 }
                 if (cmdLine.hasNext()) {
                     PrintStream out = context.err();
-                    out.printf("Unexpected %s%n", cmdLine.get());
+                    out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : config -h%n");
-                    throw new NutsExecutionException("Unexpected " + cmdLine.get(),1);
+                    throw new NutsExecutionException(context.getWorkspace(),"Unexpected " + cmdLine.peek(),1);
                 }
                 break;
             }
@@ -57,7 +57,7 @@ public class NAdminMain extends NutsApplication {
             PrintStream out = context.err();
             out.printf("Missing config command%n");
             out.printf("type for more help : config -h%n");
-            throw new NutsExecutionException("Missing config command", 1);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing config command", 1);
         }
     }
 

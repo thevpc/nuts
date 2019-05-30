@@ -441,7 +441,7 @@ public class PomXmlParser {
                 depsMan.toArray(new PomDependency[0]),
                 repos.toArray(new PomRepository[0]),
                 pluginRepos.toArray(new PomRepository[0]),
-                modules.toArray(new String[0])
+                modules.toArray(new String[0]),doc
         );
         if (visitor != null) {
             visitor.visitEndDocument(doc, pom);

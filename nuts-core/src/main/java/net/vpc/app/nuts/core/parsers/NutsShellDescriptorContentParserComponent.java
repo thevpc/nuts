@@ -88,7 +88,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
             r = new BufferedReader(new InputStreamReader(file));
             String line = null;
             boolean firstLine = true;
-            JsonStringBuffer comment = new JsonStringBuffer();
+            JsonStringBuffer comment = new JsonStringBuffer(ws);
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {

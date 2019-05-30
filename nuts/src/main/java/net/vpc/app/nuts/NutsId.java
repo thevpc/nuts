@@ -38,27 +38,21 @@ import java.util.function.Function;
  * @author vpc
  * @since 0.1.0
  */
-public interface NutsId extends Serializable {
+public interface NutsId extends NutsTokenFilter, Serializable {
 
     boolean equalsSimpleName(NutsId other);
 
-    boolean anyContains(String value);
+    NutsTokenFilter groupToken();
 
-    boolean anyMatches(String pattern);
+    NutsTokenFilter queryToken();
 
-    boolean anyLike(String pattern);
+    NutsTokenFilter versionToken();
 
-    boolean like(String pattern);
+    NutsTokenFilter nameToken();
 
-    boolean namespaceLike(String pattern);
+    NutsTokenFilter namespaceToken();
 
-    boolean groupLike(String pattern);
-
-    boolean nameLike(String pattern);
-
-    boolean versionLike(String pattern);
-
-    boolean queryLike(String pattern);
+    NutsTokenFilter anyToken();
 
     NutsId setGroup(String newGroupId);
 
@@ -134,14 +128,18 @@ public interface NutsId extends Serializable {
 
     /**
      * return a new instance of NutsId defining only group, name and version, ignoring namespace, and queryMap values.
+     * An example of long name is
+     * <code>my-group:my-artifact#my-version</code>
      *
      * @return group, name and version only Id instance
      */
     String getLongName();
 
     /**
-     * returns a string concatenation of group and name (dot separated) ignoring version,namespace, and queryMap values.
+     * returns a string concatenation of group and name (':' separated) ignoring version,namespace, and queryMap values.
      * In group is empty or null, name is returned. Ann null values are trimmed to ""
+     * An example of simple name is
+     * <code>my-group:my-artifact</code>
      *
      * @return group and name
      */

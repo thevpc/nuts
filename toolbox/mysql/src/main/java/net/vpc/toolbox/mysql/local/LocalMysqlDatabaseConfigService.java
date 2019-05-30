@@ -59,7 +59,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        context.getWorkspace().io().json().pretty().write(getConfig(), out);
+        context.getWorkspace().io().json().write(getConfig(), out);
         return this;
     }
 
@@ -122,7 +122,7 @@ public class LocalMysqlDatabaseConfigService {
                     if (new File(path).exists()) {
                         new File(path).delete();
                     }
-                    throw new NutsExecutionException(p.getOutputString(), 2);
+                    throw new NutsExecutionException(context.getWorkspace(),p.getOutputString(), 2);
                 }
             } else {
                 context.out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
@@ -145,7 +145,7 @@ public class LocalMysqlDatabaseConfigService {
                     if (new File(path).exists()) {
                         new File(path).delete();
                     }
-                    throw new NutsExecutionException(p.getOutputString(), 2);
+                    throw new NutsExecutionException(context.getWorkspace(),p.getOutputString(), 2);
                 }
             }
         } catch (IOException ex) {

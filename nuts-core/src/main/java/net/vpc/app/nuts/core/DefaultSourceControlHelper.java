@@ -41,7 +41,7 @@ public class DefaultSourceControlHelper {
         session = NutsWorkspaceUtils.validateSession(ws, session);
         ws.security().checkAllowed(NutsConstants.Rights.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException("Not a directory " + folder);
+            throw new NutsIllegalArgumentException(ws, "Not a directory " + folder);
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -62,7 +62,7 @@ public class DefaultSourceControlHelper {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            ws.formatter().createDescriptorFormat().setPretty(true).print(d, file);
+            ws.formatter().createDescriptorFormat().print(d, file);
             try {
                 CoreIOUtils.delete(folder);
             } catch (IOException ex) {
@@ -70,7 +70,7 @@ public class DefaultSourceControlHelper {
             }
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException("commit not supported");
+            throw new NutsUnsupportedOperationException(ws,"commit not supported");
         }
     }
 
@@ -83,7 +83,7 @@ public class DefaultSourceControlHelper {
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
         ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "checkout");
-        NutsDefinition nutToInstall = ws.fetch().id(id).setSession(session).setAcceptOptional(false).includeDependencies().getResultDefinition();
+        NutsDefinition nutToInstall = ws.fetch().id(id).setSession(session).setOptional(false).dependencies().getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
@@ -98,7 +98,7 @@ public class DefaultSourceControlHelper {
             NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
 
-            ws.formatter().createDescriptorFormat().setPretty(true).print(d, file);
+            ws.formatter().createDescriptorFormat().print(d, file);
 
             return new DefaultNutsDefinition(
                     ws, nutToInstall.getRepository(),
@@ -110,7 +110,7 @@ public class DefaultSourceControlHelper {
                     null
             );
         } else {
-            throw new NutsUnsupportedOperationException("Checkout not supported");
+            throw new NutsUnsupportedOperationException(ws,"Checkout not supported");
         }
     }
 }

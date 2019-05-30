@@ -43,8 +43,8 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsDeployRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFetchDescriptorRepositoryCommand;
-import net.vpc.app.nuts.core.DefaultNutsFindRepositoryCommand;
-import net.vpc.app.nuts.core.DefaultNutsFindVersionsRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsSearchRepositoryCommand;
+import net.vpc.app.nuts.core.DefaultNutsSeachVersionsRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsPushRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryEvent;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
@@ -82,7 +82,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
         if (optionsConfig == null) {
-            throw new NutsIllegalArgumentException("Null Config");
+            throw new NutsIllegalArgumentException(workspace, "Null Config");
         }
         this.workspace = workspace;
         this.parentRepository = parent;
@@ -139,7 +139,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     @Override
     public int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode) {
         switch (supportedAction) {
-            case FIND: {
+            case SEARCH: {
                 switch (mode) {
                     case INSTALLED:
                     case LOCAL: {
@@ -184,7 +184,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
                 return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
             }
         }
-        throw new NutsUnsupportedArgumentException("Unsupported action " + supportedAction);
+        throw new NutsUnsupportedArgumentException(workspace,"Unsupported action " + supportedAction);
     }
 
     @Override
@@ -245,8 +245,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        Iterator<NutsId> allVersions = findVersions().id(id).filter(filter).session(session).run().getResult();
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+        Iterator<NutsId> allVersions = searchVersions().id(id).filter(filter).session(session).run().getResult();
         NutsId a = null;
         while (allVersions.hasNext()) {
             NutsId next = allVersions.next();
@@ -272,8 +272,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsFindRepositoryCommand find() {
-        return new DefaultNutsFindRepositoryCommand(this);
+    public NutsSearchRepositoryCommand search() {
+        return new DefaultNutsSearchRepositoryCommand(this);
     }
 
     @Override
@@ -282,8 +282,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsFindVersionsRepositoryCommand findVersions() {
-        return new DefaultNutsFindVersionsRepositoryCommand(this);
+    public NutsSearchVersionsRepositoryCommand searchVersions() {
+        return new DefaultNutsSeachVersionsRepositoryCommand(this);
     }
 
     @Override
@@ -314,25 +314,25 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     protected void checkSession(NutsSession session) {
         if (session == null) {
-            throw new NutsIllegalArgumentException("Missing Session");
+            throw new NutsIllegalArgumentException(workspace, "Missing Session");
         }
     }
 
     protected void checkSession(NutsRepositorySession session) {
         if (session == null) {
-            throw new NutsIllegalArgumentException("Missing Session");
+            throw new NutsIllegalArgumentException(workspace, "Missing Session");
         }
     }
 
     protected void checkNutsId(NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException("Missing id");
+            throw new NutsIllegalArgumentException(workspace, "Missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing group for " + id);
+            throw new NutsIllegalArgumentException(workspace, "Missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing name for " + id);
+            throw new NutsIllegalArgumentException(workspace, "Missing name for " + id);
         }
     }
 

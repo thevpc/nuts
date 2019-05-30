@@ -31,16 +31,16 @@
 //
 //import net.vpc.app.nuts.NutsOutputFormat;
 //import net.vpc.app.nuts.NutsWorkspace;
-//import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+//import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.common.commandline.Argument;
-//import NutsCommandLine;
+//import NutsCommand;
 //import net.vpc.common.mvn.PomIdResolver;
 //
 ///**
 // * Created by vpc on 1/7/17.
 // */
-//public class InfoCommand extends AbstractNutsCommand {
+//public class InfoCommand extends AbstractNshCommand {
 //
 //    public InfoCommand() {
 //        super("version", DEFAULT_SUPPORT);
@@ -50,21 +50,21 @@
 //        NutsWorkspace ws = context.getWorkspace();
 //        boolean fancy = false;
 //        boolean min = false;
-//        NutsCommandLine cmdLine = new NutsCommandLine(args);
+//        NutsCommand cmdLine = new NutsCommand(args);
 //        NutsOutputFormat ft = NutsOutputFormat.PLAIN;
 //        NutsCommandArg a;
 //        while (cmdLine.hasNext()) {
 //            if (context.configure(cmdLine)) {
 //                //
-//            } else if ((a = cmdLine.readBooleanOption("-f", "--fancy")) != null) {
+//            } else if ((a = cmdLine.nextBoolean("-f", "--fancy")) != null) {
 //                fancy = a.getBooleanValue();
-//            } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
+//            } else if ((a = cmdLine.nextBoolean("-m", "--min")) != null) {
 //                min = true;
-//            } else if ((a = cmdLine.readBooleanOption("--json")) != null) {
+//            } else if ((a = cmdLine.nextBoolean("--json")) != null) {
 //                ft = NutsOutputFormat.JSON;
-//            } else if ((a = cmdLine.readBooleanOption("--plain")) != null) {
+//            } else if ((a = cmdLine.nextBoolean("--plain")) != null) {
 //                ft = NutsOutputFormat.PLAIN;
-//            } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
+//            } else if ((a = cmdLine.nextBoolean("--props")) != null) {
 //                ft = NutsOutputFormat.PROPS;
 //            } else {
 //                cmdLine.setCommandName(getName()).unexpectedArgument();

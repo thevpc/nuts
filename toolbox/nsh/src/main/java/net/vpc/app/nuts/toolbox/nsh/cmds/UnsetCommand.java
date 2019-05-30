@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnsetCommand extends AbstractNutsCommand {
+public class UnsetCommand extends AbstractNshCommand {
 
 
     public UnsetCommand() {

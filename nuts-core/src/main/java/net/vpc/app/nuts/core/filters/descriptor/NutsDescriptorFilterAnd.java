@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.filters.descriptor;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
@@ -29,12 +30,12 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
     }
 
     @Override
-    public boolean accept(NutsDescriptor id, NutsWorkspace ws) {
+    public boolean accept(NutsDescriptor id, NutsWorkspace ws, NutsSession session) {
         if (all.length == 0) {
             return true;
         }
         for (NutsDescriptorFilter filter : all) {
-            if (!filter.accept(id, ws)) {
+            if (!filter.accept(id, ws, session)) {
                 return false;
             }
         }

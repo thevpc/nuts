@@ -1,6 +1,6 @@
 package net.vpc.toolbox.worky;
 
-import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.*;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.worky.config.ProjectConfig;
@@ -14,10 +14,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsTableFormat;
+
+import net.vpc.app.nuts.NutsCommand;
 
 public class WorkspaceService {
 
@@ -62,7 +60,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().io().json().pretty().write(c, configFile);
+        appContext.getWorkspace().io().json().write(c, configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -92,35 +90,35 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NutsCommandLine cmd, NutsApplicationContext appContext, boolean enable) {
+    public void enableScan(NutsCommand cmd, NutsApplicationContext context, boolean enable) {
         int count = 0;
         while (cmd.hasNext()) {
-            if (appContext.configure(cmd)) {
+            if (context.configureFirst(cmd)) {
                 //consumed
             } else {
-                String expression = cmd.read().getString();
+                String expression = cmd.next().getString();
                 if (cmd.isExecMode()) {
-                    setNoScan(appContext.getWorkspace().io().path(expression), enable);
+                    setNoScan(context.getWorkspace().io().path(expression), enable);
                     count++;
                 }
             }
         }
 
         if (count == 0) {
-            throw new NutsExecutionException("Missing projects", 1);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing projects", 1);
         }
     }
 
-    public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
+    public void list(NutsCommand cmd, NutsApplicationContext appContext) {
         NutsArgument a;
-        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().addHeaderCells("==Id==", "==Path==", "==Technos==");
+        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().addHeaderCells("Id", "Path", "Technos");
         List<String> filters = new ArrayList<>();
         while (cmd.hasNext()) {
-            if (appContext.configure(cmd)) {
+            if (appContext.configureFirst(cmd)) {
                 //consumed
             } else if (tf.configureFirst(cmd)) {
                 //consumed
-            } else if ((a = cmd.readNonOption()) != null) {
+            } else if ((a = cmd.requireNonOption().next()) != null) {
                 filters.add(a.getString());
             } else {
                 cmd.setCommandName("worky list").unexpectedArgument();
@@ -143,17 +141,17 @@ public class WorkspaceService {
         }
     }
 
-    public void scan(NutsCommandLine cmdLine, NutsApplicationContext context) {
+    public void scan(NutsCommand cmdLine, NutsApplicationContext context) {
         boolean interactive = false;
         NutsArgument a;
         boolean run = false;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //consumed
-            } else if ((a = cmdLine.readBooleanOption("-i", "--interactive")) != null) {
-                interactive = a.getBooleanValue();
+            } else if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
+                interactive = a.getValue().getBoolean();
             } else {
-                String folder = cmdLine.readNonOption(cmdLine.createNonOption("Folder")).getString();
+                String folder = cmdLine.nextNonOption(cmdLine.createNonOption("Folder")).getString();
                 run = true;
                 if (cmdLine.isExecMode()) {
                     scan(new File(folder), interactive);
@@ -161,11 +159,11 @@ public class WorkspaceService {
             }
         }
         if (!run) {
-            throw new NutsExecutionException("Missing folders", 1);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing folders", 1);
         }
     }
 
-    public void check(NutsCommandLine cmd, NutsApplicationContext appContext) {
+    public void check(NutsCommand cmd, NutsApplicationContext appContext) {
         boolean progress = true;
         Boolean commitable = null;
         Boolean newP = null;
@@ -173,39 +171,39 @@ public class WorkspaceService {
         Boolean old = null;
         Boolean invalid = null;
         NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat()
-                .addHeaderCells("==Id==", "==Local==", "==Remote==", "==Status==");
+                .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
         NutsArgument a;
         while (cmd.hasNext()) {
-            if (appContext.configure(cmd)) {
+            if (appContext.configureFirst(cmd)) {
                 //consumed
             } else if (tf.configureFirst(cmd)) {
                 //consumed
-            } else if (cmd.readAll("-c", "--commitable", "--changed")) {
+            } else if (cmd.next("-c", "--commitable", "--changed")!=null) {
                 commitable = true;
-            } else if (cmd.readAll("-!c", "--!commitable", "--!changed")) {
+            } else if (cmd.next("-!c", "--!commitable", "--!changed")!=null) {
                 commitable = false;
-            } else if (cmd.readAll("-n", "--new")) {
+            } else if (cmd.next("-n", "--new")!=null) {
                 newP = true;
-            } else if (cmd.readAll("-!n", "--!new")) {
+            } else if (cmd.next("-!n", "--!new")!=null) {
                 newP = false;
-            } else if (cmd.readAll("-o", "--old")) {
+            } else if (cmd.next("-o", "--old")!=null) {
                 old = true;
-            } else if (cmd.readAll("-!o", "--!old")) {
+            } else if (cmd.next("-!o", "--!old")!=null) {
                 old = false;
-            } else if (cmd.readAll("-0", "--ok", "--uptodate")) {
+            } else if (cmd.next("-0", "--ok", "--uptodate")!=null) {
                 uptodate = true;
-            } else if (cmd.readAll("-!0", "--!ok", "--!uptodate")) {
+            } else if (cmd.next("-!0", "--!ok", "--!uptodate")!=null) {
                 uptodate = false;
-            } else if (cmd.readAll("-e", "--invalid", "--error")) {
+            } else if (cmd.next("-e", "--invalid", "--error")!=null) {
                 invalid = true;
-            } else if (cmd.readAll("-!e", "--!invalid", "--!error")) {
+            } else if (cmd.next("-!e", "--!invalid", "--!error")!=null) {
                 invalid = false;
-            } else if (cmd.readAll("-p", "--progress")) {
+            } else if (cmd.next("-p", "--progress")!=null) {
                 progress = true;
-            } else if (cmd.readAll("-!p", "--!progress")) {
+            } else if (cmd.next("-!p", "--!progress")!=null) {
                 progress = false;
-            } else if ((a = cmd.readNonOption()) != null) {
+            } else if ((a = cmd.nextNonOption()) != null) {
                 filters.add(a.getString());
             } else {
                 cmd.setCommandName("worky check").unexpectedArgument();
@@ -483,14 +481,14 @@ public class WorkspaceService {
         return false;
     }
 
-    public int setWorkspaceConfigParam(NutsCommandLine cmd, NutsApplicationContext appContext) {
+    public int setWorkspaceConfigParam(NutsCommand cmd, NutsApplicationContext appContext) {
         NutsArgument a;
         while (cmd.hasNext()) {
-            if ((a = cmd.readStringOption("-r", "--repo")) != null) {
+            if ((a = cmd.nextString("-r", "--repo")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsRepository(a.getValue().getString());
                 setWorkspaceConfig(conf);
-            } else if ((a = cmd.readStringOption("-w", "--workspace")) != null) {
+            } else if ((a = cmd.nextString("-w", "--workspace")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getValue().getString());
                 setWorkspaceConfig(conf);

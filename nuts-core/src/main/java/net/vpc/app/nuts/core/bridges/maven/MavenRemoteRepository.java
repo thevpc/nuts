@@ -65,7 +65,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.IteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException {
-            throw new NutsUnsupportedOperationException("Not supported undeploy.");
+            throw new NutsUnsupportedOperationException(getWorkspace(),"Not supported undeploy.");
         }
 
         @Override
@@ -88,7 +88,15 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+            throw new NutsNotFoundException(getWorkspace(),id);
+        }
+        return super.fetchDescriptorImpl(id,session);
+    }
+
+    @Override
+    public Iterator<NutsId> searchVersionsImpl(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return Collections.emptyIterator();
         }
@@ -123,7 +131,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 return Collections.emptyIterator();
             }
             default: {
-                throw new NutsUnsupportedArgumentException(String.valueOf(versionApi));
+                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
             }
         }
     }
@@ -150,7 +158,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(id, ex);
+                throw new NutsNotFoundException(getWorkspace(),id, ex);
             }
             List<Map<String, Object>> info = getWorkspace().io().json().read(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
@@ -159,7 +167,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                         String versionName = (String) version.get("name");
                         final NutsId nutsId = id.setVersion(versionName);
 
-                        if (idFilter != null && !idFilter.accept(nutsId, getWorkspace())) {
+                        if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
                             continue;
                         }
                         ret.add(
@@ -204,14 +212,14 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(id, ex);
+                throw new NutsNotFoundException(getWorkspace(),id, ex);
             }
             MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.setVersion(version);
 
-                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace())) {
+                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
                         continue;
                     }
                     ret.add(
@@ -255,7 +263,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
             return ret.iterator();
         } else {
-            throw new NutsIllegalArgumentException("Expected single version in " + id);
+            throw new NutsIllegalArgumentException(getWorkspace(), "Expected single version in " + id);
         }
     }
 
@@ -277,13 +285,13 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 foldersFileStream = openStream(id, foldersFileUrl, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
                 foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(id, ex);
+                throw new NutsNotFoundException(getWorkspace(),id, ex);
             }
             if (foldersFileContent != null) {
                 for (String version : foldersFileContent) {
                     final NutsId nutsId = id.setVersion(version);
 
-                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace())) {
+                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
                         continue;
                     }
                     ret.add(
@@ -310,7 +318,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return Collections.emptyIterator();
         }
@@ -342,7 +350,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 return Collections.emptyIterator();
             }
             default: {
-                throw new NutsUnsupportedArgumentException(String.valueOf(versionApi));
+                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
             }
         }
     }
@@ -419,7 +427,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(id, null, ex);
+                throw new NutsNotFoundException(getWorkspace(),id, null, ex);
             }
             return new DefaultNutsContent(tempFile, false, true);
         } else {
@@ -436,7 +444,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 }).run();
             } catch (UncheckedIOException ex) {
                 LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
-                throw new NutsNotFoundException(id, null, ex);
+                throw new NutsNotFoundException(getWorkspace(),id, null, ex);
             }
             return new DefaultNutsContent(localPath, false, false);
         }
@@ -479,7 +487,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(getWorkspace(),id);
         }
     }
 

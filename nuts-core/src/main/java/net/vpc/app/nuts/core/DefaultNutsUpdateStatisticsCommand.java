@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUpdateStatisticsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -29,7 +29,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     private LinkedHashSet<String> repositrories = new LinkedHashSet<>();
 
     public DefaultNutsUpdateStatisticsCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"update-statistics");
     }
 
     @Override
@@ -135,12 +135,12 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     }
 
 @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
@@ -160,11 +160,11 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
         }
         for (String repositoryPath : getPaths()) {
             if (repositoryPath == null) {
-                throw new NutsIllegalArgumentException("Missing location " + repositoryPath);
+                throw new NutsIllegalArgumentException(ws, "Missing location " + repositoryPath);
             }
             Path pp = Paths.get(repositoryPath);
             if (!Files.isDirectory(pp)) {
-                throw new NutsIllegalArgumentException("Expected folder at location " + repositoryPath);
+                throw new NutsIllegalArgumentException(ws, "Expected folder at location " + repositoryPath);
             }
             File[] mavenRepoRootFiles = pp.toFile().listFiles(x
                     -> x.getName().equals("index.html")
@@ -189,7 +189,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
                 if (nutsRepoRootFiles.length > 0) {
                     new NutsRepositoryFolderHelper(null, ws, pp).reindexFolder();
                 } else {
-                    throw new NutsIllegalArgumentException("Unsupported repository Folder");
+                    throw new NutsIllegalArgumentException(ws, "Unsupported repository Folder");
                 }
                 if (getValidSession().isTrace()) {
                     getValidSession().getTerminal().out().printf("Updated nuts index %s%n", getWs().config().getWorkspaceLocation(), pp);

@@ -61,7 +61,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
     public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
         if (invokerWorkspace == null) {
-            throw new NutsIllegalArgumentException("Missing Workspace");
+            throw new NutsIllegalArgumentException(invokerWorkspace, "Missing Workspace");
         }
         NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
         String serverId = httpConfig.getServerId();
@@ -188,7 +188,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
 //                                    cli.uninstallCommand("server");
                                     cli.undeclareCommand("connect");
                                     cli.setServiceName(serverId);
-                                    cli.declareCommand(new AbstractNutsCommand("stop-server", DEFAULT_SUPPORT) {
+                                    cli.declareCommand(new AbstractNshCommand("stop-server", DEFAULT_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
                                             PrintStream out2 = MyNutsServer.this.terminal.fout();

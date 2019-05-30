@@ -1,14 +1,15 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsDefaultArgument;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsResponseParser;
-import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceArgument;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
 
-    public static final NutsResponseParser INSTANCE = new DefaultNutsResponseParser();
+//    public static final NutsResponseParser INSTANCE = new DefaultNutsResponseParser();
+    private NutsWorkspace ws;
+    public DefaultNutsResponseParser(NutsWorkspace ws) {
+        this.ws=ws;
+    }
 
     @Override
     public Object parse(Object response, Class type) {
@@ -60,15 +61,15 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsArgument a = new NutsDefaultArgument(sReponse);
+                NutsArgument a = new NutsDefaultWorkspaceArgument(sReponse,'=');
                 if (!a.isBoolean()) {
-                    throw new NutsIllegalArgumentException("Invalid response " + sReponse);
+                    throw new NutsIllegalArgumentException(ws, "Invalid response " + sReponse);
                 }
                 return a.getBoolean();
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException("Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(ws,"Unsupported type " + type.getName());
             }
         }
     }
@@ -103,7 +104,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 return new Object[]{true, false};
             }
             default: {
-                throw new NutsUnsupportedArgumentException("Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(ws,"Unsupported type " + type.getName());
             }
         }
     }

@@ -37,29 +37,29 @@ public class NutsNotFoundException extends NutsElementNotFoundException {
 
     private final String id;
 
-    public NutsNotFoundException(NutsId nuts) {
-        this(nuts == null ? null : nuts.toString());
+    public NutsNotFoundException(NutsWorkspace workspace,NutsId nuts) {
+        this(workspace,nuts == null ? null : nuts.toString());
     }
 
-    public NutsNotFoundException(NutsId nuts,Exception ex) {
-        this(nuts == null ? null : nuts.toString(),null,ex);
+    public NutsNotFoundException(NutsWorkspace workspace,NutsId nuts,Exception ex) {
+        this(workspace,nuts == null ? null : nuts.toString(),null,ex);
     }
 
-    public NutsNotFoundException(String nuts) {
-        super("No such nuts " + (nuts == null ? "<null>" : nuts));
+    public NutsNotFoundException(NutsWorkspace workspace,String nuts) {
+        super(workspace, "No such nuts " + (nuts == null ? "<null>" : nuts));
         this.id = nuts;
     }
 
-    public NutsNotFoundException(String nuts, String msg, Exception ex) {
+    public NutsNotFoundException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }
 
-    public NutsNotFoundException(NutsId nuts, String msg, Exception ex) {
+    public NutsNotFoundException(NutsWorkspace workspace,NutsId nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
+                workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
         this.id = nuts==null?null:nuts.toString();
     }

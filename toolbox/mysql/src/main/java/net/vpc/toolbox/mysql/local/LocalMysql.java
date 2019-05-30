@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql.local;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlConfig;
 
@@ -11,7 +12,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsArgument;
 
 public class LocalMysql {
@@ -23,9 +23,9 @@ public class LocalMysql {
     }
 
     public int runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().parser().parseCommandLine(args);
+        NutsCommand cmd = context.getWorkspace().parser().parseCommand(args);
         while (cmd.hasNext()) {
-            NutsArgument val = cmd.readNonOption();
+            NutsArgument val = cmd.requireNonOption().next();
             switch (val.getString()) {
                 case "list":
                     return list(cmd);
@@ -45,20 +45,20 @@ public class LocalMysql {
         return 0;
     }
 
-    public int list(NutsCommandLine args) {
+    public int list(NutsCommand args) {
         boolean json = false;
         String instance = null;
         String app = null;
         String property = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.readBooleanOption("--json")) != null) {
-                json = a.getBooleanValue();
-            } else if ((a = args.readStringOption("--name")) != null) {
+            if ((a = args.nextBoolean("--json")) != null) {
+                json = a.getValue().getBoolean();
+            } else if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
-            } else if ((a = args.readStringOption("--app")) != null) {
+            } else if ((a = args.nextString("--app")) != null) {
                 app = a.getValue().getString();
-            } else if ((a = args.readStringOption("--property")) != null) {
+            } else if ((a = args.nextString("--property")) != null) {
                 property = a.getValue().getString();
             } else {
                 args.setCommandName("mysql --local list").unexpectedArgument();
@@ -99,49 +99,49 @@ public class LocalMysql {
         return 0;
     }
 
-    public int add(NutsCommandLine args) {
+    public int add(NutsCommand args) {
         LocalMysqlConfigService c = null;
         String appName = null;
         String instance = null;
 
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--name")) != null) {
+            if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(instance);
                 } else {
-                    throw new NutsExecutionException("Instance name already defined", 2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Instance name already defined", 2);
                 }
-            } else if ((a = args.readStringOption("--shutdownWaitTime")) != null) {
+            } else if ((a = args.nextString("--shutdownWaitTime")) != null) {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 c.getConfig().setShutdownWaitTime(a.getValue().getInt());
-            } else if ((a = args.readStringOption("--db")) != null) {
+            } else if ((a = args.nextString("--db")) != null) {
                 appName = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 c.getDatabaseOrCreate(appName);
-            } else if ((a = args.readStringOption("--app.user")) != null) {
+            } else if ((a = args.nextString("--app.user")) != null) {
                 String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new NutsExecutionException("Missing --app.user", 2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Missing --app.user", 2);
                 }
                 mysqlAppConfig.getConfig().setUser(value);
-            } else if ((a = args.readStringOption("--app.password")) != null) {
+            } else if ((a = args.nextString("--app.password")) != null) {
                 String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new NutsExecutionException("Missing --app.password", 2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Missing --app.password", 2);
                 }
                 mysqlAppConfig.getConfig().setPassword(value);
             } else {
@@ -154,14 +154,14 @@ public class LocalMysql {
         return 0;
     }
 
-    public int remove(NutsCommandLine args) {
+    public int remove(NutsCommand args) {
         String conf = null;
         String appName = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--db")) != null) {
+            if ((a = args.nextString("--db")) != null) {
                 appName = a.getValue().getString();
-            } else if ((a = args.readStringOption("--name")) != null) {
+            } else if ((a = args.nextString("--name")) != null) {
                 conf = a.getValue().getString();
             } else {
                 args.setCommandName("mysql --local remove").unexpectedArgument();
@@ -243,18 +243,18 @@ public class LocalMysql {
         this.context = context;
     }
 
-    public int restore(NutsCommandLine args) {
+    public int restore(NutsCommand args) {
         String instance = null;
         String db = null;
         String path = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--name")) != null) {
+            if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
-            } else if ((a = args.readStringOption("--db")) != null) {
+            } else if ((a = args.nextString("--db")) != null) {
                 db = a.getValue().getString();
             } else {
-                path = args.readNonOption().getString();
+                path = args.requireNonOption().next().getString();
                 args.setCommandName("mysql --local restore").unexpectedArgument();
             }
         }
@@ -262,18 +262,18 @@ public class LocalMysql {
         return c.getDatabaseOrError(db).restore(path).execResult;
     }
 
-    public int archive(NutsCommandLine args) {
+    public int archive(NutsCommand args) {
         String instance = null;
         String db = null;
         String path = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--name")) != null) {
+            if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
-            } else if ((a = args.readStringOption("--db")) != null) {
+            } else if ((a = args.nextString("--db")) != null) {
                 db = a.getValue().getString();
             } else {
-                path = args.readNonOption().getString();
+                path = args.requireNonOption().next().getString();
                 args.setCommandName("mysql --local archive").unexpectedArgument();
             }
         }

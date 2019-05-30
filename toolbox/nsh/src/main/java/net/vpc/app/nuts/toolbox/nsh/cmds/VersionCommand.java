@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.mvn.PomIdResolver;
 import net.vpc.app.nuts.NutsArgument;
@@ -40,7 +40,7 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class VersionCommand extends AbstractNutsCommand {
+public class VersionCommand extends AbstractNshCommand {
 
     public VersionCommand() {
         super("version", DEFAULT_SUPPORT);
@@ -49,14 +49,13 @@ public class VersionCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsWorkspace ws = context.getWorkspace();
-        boolean fancy = false;
         boolean min = false;
-        NutsCommandLine cmdLine = context.getWorkspace().parser().parseCommandLine(args);
+        NutsCommand cmdLine = context.getWorkspace().parser().parseCommand(args);
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
+            } else if ((a = cmdLine.nextBoolean("-m", "--min")) != null) {
                 min = true;
             } else {
                 cmdLine.setCommandName(getName()).unexpectedArgument();

@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.util.common;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -82,6 +83,10 @@ public class IteratorBuilder<T> {
 
     public <V> IteratorBuilder<V> convertMulti(Function<T, List<V>> t) {
         return new IteratorBuilder<>(new ConvertedToListIterator<>(it, t));
+    }
+
+    public <V> IteratorBuilder<T> sort(Comparator<T> t, boolean removeDuplicates) {
+        return new IteratorBuilder<>(IteratorUtils.sort(it, t, true));
     }
 
     public <V> IteratorBuilder<T> unique(Function<T, V> t) {

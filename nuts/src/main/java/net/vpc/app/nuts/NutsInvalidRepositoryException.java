@@ -37,8 +37,8 @@ public class NutsInvalidRepositoryException extends NutsIllegalArgumentException
 
     private final String repository;
 
-    public NutsInvalidRepositoryException(String repository, String message) {
-        super("Invalid repository " + (repository == null ? "<null>" : repository) + " : " + message);
+    public NutsInvalidRepositoryException(NutsWorkspace workspace, String repository, String message) {
+        super(workspace, "Invalid repository " + (repository == null ? "<null>" : repository) + " : " + message);
         this.repository = repository;
     }
 

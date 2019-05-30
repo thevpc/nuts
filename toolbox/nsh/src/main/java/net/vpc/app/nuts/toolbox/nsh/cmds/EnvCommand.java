@@ -29,17 +29,17 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsObjectFormat;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.*;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsPropertiesFormat;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EnvCommand extends AbstractNutsCommand {
+public class EnvCommand extends AbstractNshCommand {
 
     public EnvCommand() {
         super("env", DEFAULT_SUPPORT);
@@ -50,13 +50,14 @@ public class EnvCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options o = new Options();
         PrintStream out = context.out();
-        NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
-                .setSort(o.sort)
-                .setTable(true);
-        f.format(context.env().getEnv(), out);
+        NutsObjectFormat f = context.getWorkspace().formatter().createObjectFormat(context.getSession(),context.env().getEnv());
+        if(o.sort){
+            f.configure("--sort");
+        }
+        f.print(out);
         return 0;
     }
 }

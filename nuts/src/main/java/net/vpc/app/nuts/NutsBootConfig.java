@@ -65,6 +65,9 @@ public final class NutsBootConfig implements Cloneable {
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.storeLocations = options.getStoreLocations();
             this.homeLocations = options.getHomeLocations();
+            this.setRuntimeId(options.getBootRuntime());
+//            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
+//            this.setRepositories(options.getRepositories());
             this.global = options.isGlobal();
             this.gui = options.isGui();
         }
@@ -73,7 +76,7 @@ public final class NutsBootConfig implements Cloneable {
     public NutsBootConfig(NutsBootContext context) {
         if (context != null) {
             this.apiVersion = context.getApiId().getVersion().getValue();
-            this.runtimeId = context.getRuntimeId().toString();
+            this.runtimeId = context.getRuntimeId().getLongName();
             this.runtimeDependencies = context.getRuntimeDependencies();
             this.repositories = context.getRepositories();
             this.javaCommand = context.getJavaCommand();
@@ -167,7 +170,7 @@ public final class NutsBootConfig implements Cloneable {
         try {
             return (NutsBootConfig) clone();
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnexpectedException();
+            throw new NutsUnexpectedException(null);
         }
     }
 
@@ -248,43 +251,43 @@ public final class NutsBootConfig implements Cloneable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!NutsUtils.isBlank(apiVersion)) {
+        if (!NutsUtilsLimited.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (!NutsUtils.isBlank(runtimeId)) {
+        if (!NutsUtilsLimited.isBlank(runtimeId)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!NutsUtils.isBlank(runtimeDependencies)) {
+        if (!NutsUtilsLimited.isBlank(runtimeDependencies)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
         }
-        if (!NutsUtils.isBlank(repositories)) {
+        if (!NutsUtilsLimited.isBlank(repositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("repositories='").append(repositories).append('\'');
         }
-        if (!NutsUtils.isBlank(javaCommand)) {
+        if (!NutsUtilsLimited.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!NutsUtils.isBlank(javaOptions)) {
+        if (!NutsUtilsLimited.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!NutsUtils.isBlank(workspace)) {
+        if (!NutsUtilsLimited.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -292,7 +295,7 @@ public final class NutsBootConfig implements Cloneable {
         }
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
             String s = getStoreLocation(value);
-            if (!NutsUtils.isBlank(s)) {
+            if (!NutsUtilsLimited.isBlank(s)) {
                 if (sb.length() > 0) {
                     sb.append(", ");
                 }
@@ -302,11 +305,11 @@ public final class NutsBootConfig implements Cloneable {
         for (NutsStoreLocationLayout value : NutsStoreLocationLayout.values()) {
             for (NutsStoreLocation value1 : NutsStoreLocation.values()) {
                 String s = getHomeLocation(value, value1);
-                if (!NutsUtils.isBlank(s)) {
+                if (!NutsUtilsLimited.isBlank(s)) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(value1.name().toLowerCase()).append(NutsUtils.capitalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
+                    sb.append(value1.name().toLowerCase()).append(NutsUtilsLimited.capitalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
                 }
             }
         }

@@ -38,7 +38,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import net.vpc.app.nuts.NutsWorkspace;
 
 public class NutsURLClassLoader extends URLClassLoader {
@@ -97,7 +97,7 @@ public class NutsURLClassLoader extends URLClassLoader {
         try {
             super.addURL(url.toUri().toURL());
         } catch (MalformedURLException e) {
-            throw new NutsIllegalArgumentException(url.toString());
+            throw new NutsIllegalArgumentException(ws, url.toString());
         }
     }
 
@@ -105,7 +105,7 @@ public class NutsURLClassLoader extends URLClassLoader {
         try {
             super.addURL(ws.io().path(path).toUri().toURL());
         } catch (MalformedURLException e) {
-            throw new NutsIllegalArgumentException(path);
+            throw new NutsIllegalArgumentException(ws, path);
         }
     }
 
@@ -113,7 +113,7 @@ public class NutsURLClassLoader extends URLClassLoader {
         try {
             super.addURL(url.toURI().toURL());
         } catch (MalformedURLException e) {
-            throw new NutsIllegalArgumentException(url.toString());
+            throw new NutsIllegalArgumentException(ws, url.toString());
         }
     }
 
@@ -121,7 +121,7 @@ public class NutsURLClassLoader extends URLClassLoader {
         try {
             super.addURL(CoreIOUtils.toURL(new String[]{url})[0]);
         } catch (MalformedURLException e) {
-            throw new NutsIllegalArgumentException(url.toString());
+            throw new NutsIllegalArgumentException(ws, url.toString());
         }
     }
 }

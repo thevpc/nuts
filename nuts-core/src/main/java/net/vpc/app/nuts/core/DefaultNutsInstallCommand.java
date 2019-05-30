@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core;
 
@@ -13,13 +37,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsQuestion;
@@ -47,7 +70,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     private NutsDefinition[] result;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"install");
     }
 
     @Override
@@ -68,7 +91,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     @Override
     public NutsInstallCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(ws,id);
         } else {
             ids.add(id);
         }
@@ -231,22 +254,22 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "-c":
             case "--companions": {
-                this.setIncludeCompanions(cmdLine.readBooleanOption().getBoolean());
+                this.setIncludeCompanions(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-g":
             case "--args": {
-                while ((a = cmdLine.next()) != null) {
-                    this.addArg(a.getString());
-                }
+                cmdLine.skip();
+                this.addArgs(cmdLine.toArray());
+                cmdLine.skipAll();
                 return true;
             }
 
@@ -282,7 +305,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                 //ok;
                 companions = false;
             } else {
-                NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to install recommended companion tools").setDefautValue(true);
+                NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to install recommended companion tools").setDefaultValue(true);
                 if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
                     companions = false;
                 }
@@ -304,11 +327,11 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                 if (companionCount == 0) {
                                     out.println("Installing Nuts companion tools...");
                                 }
-                                r = ws.find().id(companionTool).latestVersions().getResultDefinitions().required();
+                                r = ws.search().id(companionTool).latest().getResultDefinitions().required();
                                 String d = r.getDescriptor().getDescription();
                                 out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
                             } else {
-                                r = ws.find().id(companionTool).latestVersions().getResultDefinitions().required();
+                                r = ws.search().id(companionTool).latest().getResultDefinitions().required();
                             }
                             if (LOG.isLoggable(Level.CONFIG)) {
                                 LOG.log(Level.FINE, "Installing companion tool : {0}", r.getId().getLongName());
@@ -348,19 +371,25 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         List<NutsDefinition> defsToIgnore = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             emptyCommand = false;
-            NutsDefinition def = ws.find().id(id).session(session.copy().trace(false)).setAcceptOptional(false)
-                    .includeDependencies().scope(NutsDependencyScope.PROFILE_RUN).includeInstallInformation().latestVersions().getResultDefinitions().required();
-            if (def != null && def.getPath() != null) {
-                boolean installed = def.getInstallation().isInstalled();
-                boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());
-                if (!installed || getValidSession().isForce()) {
-                    defsToInstall.add(def);
-                } else if (!defVer) {
-                    defsToDefVersion.add(def);
-                } else {
-                    defsToIgnore.add(def);
+            List<NutsDefinition> allDefs = ws.search().id(id).session(session.copy().trace(false)).setOptional(false)
+//                    .includeDependencies()
+                    .scope(NutsDependencyScope.PROFILE_RUN).installInformation().latest().getResultDefinitions().list();
+            if(allDefs.isEmpty()){
+                throw new NutsNotFoundException(ws,id);
+            }
+            for (NutsDefinition def : allDefs) {
+                if (def != null && def.getPath() != null) {
+                    boolean installed = def.getInstallation().isInstalled();
+                    boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());
+                    if (!installed || getValidSession().isForce()) {
+                        defsToInstall.add(def);
+                    } else if (!defVer) {
+                        defsToDefVersion.add(def);
+                    } else {
+                        defsToIgnore.add(def);
+                    }
+                    defsAll.add(def);
                 }
-                defsAll.add(def);
             }
         }
         for (NutsDefinition def : defsToIgnore) {
@@ -378,7 +407,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             }
         }
         if (emptyCommand) {
-            throw new NutsExecutionException("Missing components to install", 1);
+            throw new NutsExecutionException(ws,"Missing components to install", 1);
         }
         result = defsAll.toArray(new NutsDefinition[0]);
         return this;

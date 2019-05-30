@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.util.fprint;
 
 import org.fusesource.jansi.AnsiOutputStream;
-import org.fusesource.jansi.WindowsAnsiOutputStream;
+import org.fusesource.jansi.WindowsAnsiPrintStream;
 import org.fusesource.jansi.internal.CLibrary;
 
 import java.io.FilterOutputStream;
@@ -101,7 +101,7 @@ public class AnsiPrintStreamSupport extends PrintStream {
             if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
                 // On windows we know the console does not interpret ANSI codes..
                 try {
-                    this.ansi = new WindowsAnsiOutputStream(base);
+                    this.ansi = new WindowsAnsiPrintStream((base instanceof PrintStream)?(PrintStream) base:(new PrintStream(base)));
                 } catch (Throwable ignore) {
                     this.ansi = new AnsiOutputStream(base);
                 }

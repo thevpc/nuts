@@ -29,40 +29,41 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EchoCommand extends AbstractNutsCommand {
+public class EchoCommand extends AbstractNshCommand {
 
     public EchoCommand() {
         super("echo", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         boolean noTrailingNewLine = false;
         boolean plain = false;
         boolean first = true;
         PrintStream out = context.out();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.get().isOption()) {
-                if (context.configure(cmdLine)) {
+            if (cmdLine.peek().isOption()) {
+                if (context.configureFirst(cmdLine)) {
                     //
-                }else if ((a = cmdLine.readBooleanOption("-n")) != null) {
-                    noTrailingNewLine = a.getBooleanValue();
-                } else if ((a = cmdLine.readBooleanOption("-p")) != null) {
-                    plain = a.getBooleanValue();
+                }else if ((a = cmdLine.nextBoolean("-n")) != null) {
+                    noTrailingNewLine = a.getValue().getBoolean();
+                } else if ((a = cmdLine.nextBoolean("-p")) != null) {
+                    plain = a.getValue().getBoolean();
                 } else {
-                    throw new NutsIllegalArgumentException("echo: Unsupported option " + a);
+                    throw new NutsIllegalArgumentException(context.getWorkspace(),"echo: Unsupported option " + a);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
@@ -72,9 +73,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmdLine.readRequiredNonOption(cmdLine.createNonOption("value")).getString());
+                        out.print(cmdLine.required().nextNonOption(cmdLine.createNonOption("value")).getString());
                     } else {
-                        out.print(cmdLine.readRequiredNonOption(cmdLine.createNonOption("value")).getString());
+                        out.print(cmdLine.required().nextNonOption(cmdLine.createNonOption("value")).getString());
                     }
                 }
             }

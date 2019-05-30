@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class NdiMain extends NutsApplication {
 
     public static void main(String[] args) {
-        new NdiMain().run(args);
+        new NdiMain().runAndExit(args);
     }
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
@@ -22,16 +22,18 @@ public class NdiMain extends NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
-        NutsCommandLine cmd = appContext.getCommandLine();
+    public void run(NutsApplicationContext context) {
+        NutsCommand cmd = context.getCommandLine()
+                .setCommandName("ndi")
+                .required();
         NutsArgument a;
         while (cmd.hasNext()) {
-            if (appContext.configure(cmd)) {
-
-            } else if ((a = cmd.readNonOption("in", "install")) != null) {
-                SystemNdi ndi = createNdi(appContext);
+            if (context.configureFirst(cmd)) {
+                // ignore
+            } else if ((a = cmd.next("in", "install")) != null) {
+                SystemNdi ndi = createNdi(context);
                 if (ndi == null) {
-                    throw new NutsExecutionException("Platform not supported : " + appContext.getWorkspace().config().getPlatformOs(), 2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Platform not supported : " + context.getWorkspace().config().getPlatformOs(), 2);
                 }
                 boolean force = false;
                 boolean trace = true;
@@ -41,37 +43,37 @@ public class NdiMain extends NutsApplication {
                 ArrayList<String> executorOptions = new ArrayList<>();
                 NutsExecutionType execType = null;
                 while (cmd.hasNext()) {
-                    if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
-                        force = a.getBooleanValue();
-                    } else if ((a = cmd.readBooleanOption("-F", "--force-all")) != null) {
-                        forceAll = a.getBooleanValue();
+                    if ((a = cmd.nextBoolean("-f", "--force")) != null) {
+                        force = a.getValue().getBoolean();
+                    } else if ((a = cmd.nextBoolean("-F", "--force-all")) != null) {
+                        forceAll = a.getValue().getBoolean();
                         if (forceAll && !force) {
                             force = true;
                         }
-                    } else if ((a = cmd.readBooleanOption("--trace")) != null) {
-                        trace = a.getBooleanValue();
-                    } else if ((a = cmd.readBooleanOption("-t", "--fetch")) != null) {
-                        fetch = a.getBooleanValue();
-                    } else if ((a = cmd.readBooleanOption("-x", "--external", "--spawn")) != null) {
-                        if (a.getBooleanValue()) {
+                    } else if ((a = cmd.nextBoolean("--trace")) != null) {
+                        trace = a.getValue().getBoolean();
+                    } else if ((a = cmd.nextBoolean("-t", "--fetch")) != null) {
+                        fetch = a.getValue().getBoolean();
+                    } else if ((a = cmd.nextBoolean("-x", "--external", "--spawn")) != null) {
+                        if (a.getValue().getBoolean()) {
                             execType = NutsExecutionType.SPAWN;
                         }
-                    } else if ((a = cmd.readBooleanOption("-m", "--embedded")) != null) {
-                        if (a.getBooleanValue()) {
+                    } else if ((a = cmd.nextBoolean("-m", "--embedded")) != null) {
+                        if (a.getValue().getBoolean()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
-                    } else if ((a = cmd.readBooleanOption("-n", "--native", "--syscall")) != null) {
-                        if (a.getBooleanValue()) {
+                    } else if ((a = cmd.nextBoolean("-n", "--native", "--syscall")) != null) {
+                        if (a.getValue().getBoolean()) {
                             execType = NutsExecutionType.SYSCALL;
                         }
-                    } else if ((a = cmd.readStringOption("-X", "--exec-options")) != null) {
+                    } else if ((a = cmd.nextString("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getValue().getString());
-                    } else if (cmd.get().isOption()) {
-                        cmd.setCommandName("ndi").unexpectedArgument();
+                    } else if (cmd.peek().isOption()) {
+                        cmd.unexpectedArgument();
                     } else {
                         run = true;
                         NutsArgument aa = null;
-                        aa = cmd.read();
+                        aa = cmd.next();
                         if (cmd.isExecMode()) {
                             try {
                                 ndi.createNutsScript(
@@ -84,50 +86,50 @@ public class NdiMain extends NutsApplication {
                                                 .setExecutorOptions(executorOptions)
                                 );
                             } catch (IOException e) {
-                                throw new NutsExecutionException("Unable to run script " + aa + " : " + e.toString(), e);
+                                throw new NutsExecutionException(context.getWorkspace(),"Unable to run script " + aa + " : " + e.toString(), e);
                             }
                         }
                     }
                 }
                 if (!run) {
-                    appContext.err().print("Missing arguments\n");
-                    throw new NutsExecutionException("Missing arguments", 1);
+                    throw new NutsExecutionException(context.getWorkspace(),"Missing arguments", 1);
                 }
                 try {
                     ndi.configurePath(force, trace);
                 } catch (IOException e) {
-                    throw new NutsExecutionException("Unable to configure path : " + e.toString(), e);
+                    throw new NutsExecutionException(context.getWorkspace(),"Unable to configure path : " + e.toString(), e);
                 }
             } else {
-                cmd.setCommandName("ndi").unexpectedArgument();
+                cmd.unexpectedArgument();
             }
         }
     }
 
     @Override
-    protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd = applicationContext.getCommandLine();
+    protected void onInstallApplication(NutsApplicationContext context) {
+        NutsCommand cmd = context.getCommandLine()
+                .setCommandName("ndi --nuts-exec-mode=on-install")
+                ;
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
         while (cmd.hasNext()) {
-            if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
-                force = a.getBooleanValue();
-            } else if ((a = cmd.readBooleanOption("--trace")) != null) {
-                trace = a.getBooleanValue();
+            if ((a = cmd.nextBoolean("-f", "--force")) != null) {
+                force = a.getValue().getBoolean();
+            } else if ((a = cmd.nextBoolean("--trace")) != null) {
+                trace = a.getValue().getBoolean();
             } else {
-                cmd.setCommandName("ndi --nuts-exec-mode=on-install").unexpectedArgument();
+                cmd.unexpectedArgument();
             }
         }
-        SystemNdi ndi = createNdi(applicationContext);
+        SystemNdi ndi = createNdi(context);
         if (ndi != null) {
             try {
                 ndi.configurePath(force, trace);
             } catch (IOException e) {
-                applicationContext.out().println("ndi: install failed : " + e.toString());
-                throw new NutsExecutionException("ndi: install failed : " + e.toString(), 1);
+                throw new NutsExecutionException(context.getWorkspace(),"ndi: install failed : " + e.toString(), 1);
             }
-            for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin", "nfind"}) {
+            for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin"}) {
                 try {
                     ndi.createNutsScript(
                             new NdiScriptOptions().setId(s)
@@ -138,8 +140,7 @@ public class NdiMain extends NutsApplication {
                                     .setExecType(NutsExecutionType.SPAWN)
                                     .setExecutorOptions(new ArrayList<>()));
                 } catch (IOException e) {
-                    applicationContext.out().println("ndi: " + s + "install failed : " + e.toString());
-                    throw new NutsExecutionException("ndi: " + s + "install failed : " + e.toString(), 1);
+                    throw new NutsExecutionException(context.getWorkspace(),"ndi: " + s + "install failed : " + e.toString(), 1);
                 }
             }
         }

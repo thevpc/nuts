@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils.MapToFunction;
 
@@ -44,149 +45,8 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils.MapToFunction;
  */
 public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
-    @Override
-    public boolean matchesEnv(String arch, String os, String dist, String platform) {
-        if (!matchesArch(arch)) {
-            return false;
-        }
-        if (!matchesOs(os)) {
-            return false;
-        }
-        if (!matchesOsdist(dist)) {
-            return false;
-        }
-        if (!matchesPlatform(platform)) {
-            return false;
-        }
-        return true;
-    }
 
-    @Override
-    public boolean matchesPackaging(String packaging) {
-        if (CoreStringUtils.isBlank(packaging)) {
-            return true;
-        }
-        if (CoreStringUtils.isBlank(getPackaging())) {
-            return true;
-        }
-        NutsId _v = CoreNutsUtils.parseNutsId(packaging);
-        NutsId _v2 = CoreNutsUtils.parseNutsId(getPackaging());
-        if (_v == null || _v2 == null) {
-            return _v == _v2;
-        }
-        if (_v.equalsSimpleName(_v2)) {
-            if (_v.getVersion().toFilter().accept(_v2.getVersion())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean matchesArch(String arch) {
-        if (CoreStringUtils.isBlank(arch)) {
-            return true;
-        }
-        NutsId _v = CoreNutsUtils.parseNutsId(arch);
-        String[] all = getArch();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
-                    return true;
-                }
-                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public boolean matchesOs(String os) {
-        if (CoreStringUtils.isBlank(os)) {
-            return true;
-        }
-        NutsId _v = CoreNutsUtils.parseNutsId(os);
-        String[] all = getOs();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
-                    return true;
-                }
-                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public boolean matchesOsdist(String osdist) {
-        if (CoreStringUtils.isBlank(osdist)) {
-            return true;
-        }
-        NutsId _v = CoreNutsUtils.parseNutsId(osdist);
-        String[] all = getOsdist();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
-                    return true;
-                }
-                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
-
-    }
-
-    @Override
-    public boolean matchesPlatform(String platform) {
-        if (CoreStringUtils.isBlank(platform)) {
-            return true;
-        }
-        NutsId _v = CoreNutsUtils.parseNutsId(platform);
-        String[] all = getPlatform();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
-                    return true;
-                }
-                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.getSimpleName().equals("java")) {
-                    //should accept any platform !!!
-                    return true;
-                }
-                if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
+    
     @Override
     public NutsDescriptor applyProperties() {
         return applyProperties(getProperties());
@@ -202,6 +62,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         String n_packaging = getPackaging();
 //        String n_ext = getExt();
         boolean n_executable = isExecutable();
+        boolean n_app = isNutsApplication();
         String n_name = getName();
         String n_desc = getDescription();
         NutsExecutorDescriptor n_executor = getExecutor();
@@ -224,6 +85,9 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId());
             if (!n_executable && parentDescriptor.isExecutable()) {
                 n_executable = true;
+            }
+            if (!n_app && parentDescriptor.isNutsApplication()) {
+                n_app = true;
             }
             if (n_executor == null) {
                 n_executor = parentDescriptor.getExecutor();
@@ -265,6 +129,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(n_parents)
                 .setPackaging(n_packaging)
                 .setExecutable(n_executable)
+                .setNutsApplication(n_app)
                 //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
@@ -316,6 +181,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(getParents())
                 .setPackaging(n_packaging)
                 .setExecutable(isExecutable())
+                .setNutsApplication(isNutsApplication())
                 //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)

@@ -66,12 +66,12 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     }
 
     @Override
-    public String readPassword(String prompt, Object... params) {
+    public char[] readPassword(String prompt, Object... params) {
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).readLine(prompt, params);
+            return ((NutsTerminal) p).readPassword(prompt, params);
         } else {
-            return p.readLine(out(), prompt, params);
+            return p.readPassword(out(), prompt, params);
         }
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     }
 
     @Override
-    public String readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(PrintStream out, String prompt, Object... params) {
         return getParent().readPassword(out, prompt, params);
     }
 

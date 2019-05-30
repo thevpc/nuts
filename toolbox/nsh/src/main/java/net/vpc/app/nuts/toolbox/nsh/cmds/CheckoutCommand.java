@@ -32,7 +32,7 @@
 //import java.nio.file.Paths;
 //import net.vpc.app.nuts.NutsDefinition;
 //import net.vpc.app.nuts.NutsWorkspace;
-//import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+//import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.app.nuts.app.options.NutsIdNonOption;
 //import net.vpc.common.commandline.Argument;
@@ -41,7 +41,7 @@
 ///**
 // * Created by vpc on 1/7/17.
 // */
-//public class CheckoutCommand extends AbstractNutsCommand {
+//public class CheckoutCommand extends AbstractNshCommand {
 //
 //    public CheckoutCommand() {
 //        super("checkout", DEFAULT_SUPPORT);
@@ -49,15 +49,15 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        NutsCommandLine cmdLine = cmdLine(args, context);
+//        NutsCommand cmdLine = cmdLine(args, context);
 //
 //        NutsCommandArg a;
 //        while (cmdLine.hasNext()) {
 //            if (context.configure(cmdLine)) {
 //                //
 //            } else {
-//                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
-//                String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getString();
+//                String id = cmdLine.required().nextNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
+//                String contentFile = cmdLine.required().nextNonOption(new FolderNonOption("folder")).getString();
 //                if (cmdLine.isExecMode()) {
 //                    NutsWorkspace ws = context.getWorkspace();
 //                    NutsDefinition nf = ws.checkout(

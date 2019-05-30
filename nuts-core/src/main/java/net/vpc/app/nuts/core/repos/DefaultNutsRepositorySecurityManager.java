@@ -34,9 +34,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     public void checkAllowed(String right, String operationName) {
         if (!isAllowed(right)) {
             if (CoreStringUtils.isBlank(operationName)) {
-                throw new NutsSecurityException(right + " not allowed!");
+                throw new NutsSecurityException(repo.getWorkspace(),right + " not allowed!");
             } else {
-                throw new NutsSecurityException(operationName + ": " + right + " not allowed!");
+                throw new NutsSecurityException(repo.getWorkspace(),operationName + ": " + right + " not allowed!");
             }
         }
     }
@@ -59,7 +59,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public boolean isAllowed(String right) {
         String name = repo.getWorkspace().security().getCurrentLogin();
-        if (NutsConstants.Names.USER_ADMIN.equals(name)) {
+        if (NutsConstants.Users.ADMIN.equals(name)) {
             return true;
         }
         Stack<String> items = new Stack<>();
@@ -135,7 +135,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         DefaultNutsRepositoryConfigManager cc = (DefaultNutsRepositoryConfigManager) repo.config();
 
         if (repo.getWorkspace().config().createAuthenticationAgent(authenticationAgent) == null) {
-            throw new NutsIllegalArgumentException("Unsupported Authentication Agent " + authenticationAgent);
+            throw new NutsIllegalArgumentException(repo.getWorkspace(),"Unsupported Authentication Agent " + authenticationAgent);
         }
 
         NutsRepositoryConfig conf = cc.getStoredConfig();

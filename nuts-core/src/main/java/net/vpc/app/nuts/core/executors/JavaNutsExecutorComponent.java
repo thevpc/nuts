@@ -71,7 +71,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path contentFile = nutsMainDef.getPath();
         JavaExecutorOptions joptions = new JavaExecutorOptions(
-                nutsMainDef, executionContext.getArgs(),
+                nutsMainDef, executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
                 CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getWorkspace(),
@@ -138,7 +138,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add(contentFile.toString());
         } else {
             xargs.add("--nuts-path");
-            xargs.add(CoreStringUtils.join(File.pathSeparator, joptions.getNutsPath()));
+            xargs.add(CoreStringUtils.join(";", joptions.getNutsPath()));
             xargs.add(joptions.getMainClass());
 
             args.add("-classpath");
@@ -147,9 +147,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         xargs.addAll(joptions.getApp());
         args.addAll(joptions.getApp());
-        if (joptions.isShowCommand()) {
+        if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command",false)) {
             PrintStream out = executionContext.getTerminal().fout();
-//            out.println("==[nuts-exec]== " + NutsArgumentsParser.escapeArguments(xargs.toArray(new String[0])));
             out.println("==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 String xarg = xargs.get(i);

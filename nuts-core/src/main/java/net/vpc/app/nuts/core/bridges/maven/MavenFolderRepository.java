@@ -45,10 +45,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
@@ -104,6 +102,14 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+        if(session.getFetchMode()==NutsFetchMode.REMOTE){
+            throw new NutsNotFoundException(getWorkspace(),id);
+        }
+        return super.fetchDescriptorImpl(id,session);
+    }
+
+        @Override
     public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             Path f = getIdFile(id);
@@ -116,7 +122,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 }
             }
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(getWorkspace(),id);
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
@@ -131,7 +137,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
         Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
@@ -166,7 +172,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isBlank() && filter == null) {
             Path file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
@@ -187,7 +193,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             }
             return bestId;
         }
-        return super.findLatestVersion(id, filter, session);
+        return super.searchLatestVersion(id, filter, session);
     }
 
     protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
@@ -213,7 +219,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
 
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {

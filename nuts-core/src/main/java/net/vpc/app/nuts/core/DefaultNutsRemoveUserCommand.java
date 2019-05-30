@@ -5,9 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsDefaultCommandLine;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.NutsRemoveUserCommand;
 import net.vpc.app.nuts.NutsRepository;
@@ -25,11 +23,11 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
     private String login;
 
     public DefaultNutsRemoveUserCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"remove-user");
     }
 
     public DefaultNutsRemoveUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace());
+        super(repo.getWorkspace(),"remove-user");
         this.repo = repo;
     }
 
@@ -60,12 +58,12 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

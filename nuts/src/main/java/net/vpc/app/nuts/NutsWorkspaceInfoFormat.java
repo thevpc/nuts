@@ -29,10 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -40,44 +36,26 @@ import java.util.Properties;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsWorkspaceInfoFormat {
+public interface NutsWorkspaceInfoFormat extends NutsFormat {
+
+    @Override
+    NutsWorkspaceInfoFormat terminalFormat(NutsTerminalFormat metric);
+
+    @Override
+    NutsWorkspaceInfoFormat setTerminalFormat(NutsTerminalFormat metric);
+
+    @Override
+    NutsWorkspaceInfoFormat session(NutsSession session);
+
+    @Override
+    NutsWorkspaceInfoFormat setSession(NutsSession session);
+
+    @Override
+    NutsWorkspaceInfoFormat configure(String[] args);
 
     NutsWorkspaceInfoFormat addProperty(String key, String value);
 
     NutsWorkspaceInfoFormat addProperties(Properties p);
-
-    NutsWorkspaceInfoFormat parseOptions(String... o);
-
-    @Override
-    String toString();
-
-    String format();
-
-    void print(Path out);
-
-    void println(Path out);
-
-    void print(File out);
-
-    void println(File out);
-
-    void print(Writer out);
-
-    void println(Writer out);
-
-    void print(PrintStream out);
-
-    void println(PrintStream out);
-
-    void print();
-
-    void println();
-
-    void print(NutsTerminal terminal);
-
-    void println(NutsTerminal terminal);
-
-    boolean isFancy();
 
     NutsWorkspaceInfoFormat showRepositories();
 
@@ -89,10 +67,6 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat setFancy(boolean fancy);
 
-    NutsSession getSession();
-
-    NutsWorkspaceInfoFormat session(NutsSession session);
-
-    NutsWorkspaceInfoFormat setSession(NutsSession session);
+    boolean isFancy();
 
 }

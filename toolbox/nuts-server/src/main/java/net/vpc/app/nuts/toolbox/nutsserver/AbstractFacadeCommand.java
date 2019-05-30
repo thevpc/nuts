@@ -55,10 +55,11 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
     public void execute(FacadeCommandContext context) throws IOException, LoginException {
         ListMap<String, String> parameters = context.getParameters();
         String userLogin = parameters.getOne("ul");
-        String userPassword = parameters.getOne("up");
+        String userPasswordS = parameters.getOne("up");
+        char[] userPassword = userPasswordS==null?null:userPasswordS.toCharArray();
         NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
         userLogin = new String(configManager.decryptString(userLogin==null?null:userLogin.getBytes()));
-        userPassword = new String(configManager.decryptString(userPassword==null?null:userPassword.getBytes()));
+        userPassword = configManager.decryptString(userPassword);
         if (!StringUtils.isEmpty(userLogin)) {
             boolean loggedId = false;
             try {

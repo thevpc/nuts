@@ -29,13 +29,11 @@
  */
 package net.vpc.app.nuts.core.filters.descriptor;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
@@ -51,9 +49,9 @@ public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws) {
+    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
         if (id != null) {
-            return id.accept(descriptor.getId(), ws);
+            return id.accept(descriptor.getId(), ws, session);
         }
         return true;
     }

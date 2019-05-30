@@ -5,26 +5,31 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
  * @author vpc
  * @param <T>
  */
-public abstract class NutsWorkspaceCommandBase<T> {
+public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> implements NutsWorkspaceCommand {
 
     protected NutsWorkspace ws;
     private NutsSession session;
     private NutsSession validSession;
     private boolean sessionCopy = false;
+    private String commandName;
 
-    public NutsWorkspaceCommandBase(NutsWorkspace ws) {
+    public NutsWorkspaceCommandBase(NutsWorkspace ws,String commandName) {
         this.ws = ws;
+        this.commandName = commandName;
+    }
+
+    public String getCommandName() {
+        return commandName;
     }
 
     //@Override
@@ -91,22 +96,23 @@ public abstract class NutsWorkspaceCommandBase<T> {
         invalidateResult();
     }
 
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    @Override
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             case "--trace": {
-                getValidSessionCopy().setTrace(cmdLine.readBooleanOption().getBoolean());
+                getValidSessionCopy().setTrace(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--ask": {
-                getValidSessionCopy().setAsk(cmdLine.readBooleanOption().getBoolean());
+                getValidSessionCopy().setAsk(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--force": {
-                getValidSessionCopy().setForce(cmdLine.readBooleanOption().getBoolean());
+                getValidSessionCopy().setForce(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
         }
@@ -117,25 +123,14 @@ public abstract class NutsWorkspaceCommandBase<T> {
         return false;
     }
 
+    @Override
     public T configure(String... args) {
-        NutsCommandLine cmdLine = ws.parser().parseCommandLine(args);
-        NutsWorkspaceCommandBase.this.configure(cmdLine, true);
-        return (T) this;
+        return NutsConfigurableHelper.configure(this, ws,args,getCommandName());
     }
 
-    public T configure(NutsCommandLine cmdLine, boolean skipIgnore) {
-        NutsArgument a;
-        while ((a = cmdLine.next()) != null) {
-            if (!configureFirst(cmdLine)) {
-                if (skipIgnore) {
-                    cmdLine.skip();
-                } else {
-                    cmdLine.unexpectedArgument();
-                }
-            }
-        }
-        return (T) this;
+    @Override
+    public boolean configure(NutsCommand commandLine, boolean skipIgnored) {
+        return NutsConfigurableHelper.configure(this, ws, commandLine,skipIgnored);
     }
 
-    public abstract T run();
 }

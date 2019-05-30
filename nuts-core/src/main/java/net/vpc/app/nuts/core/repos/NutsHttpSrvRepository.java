@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
@@ -54,7 +55,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     public NutsHttpSrvRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
         try {
-            remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(options.getLocation() + "/version"));
+            remoteId = NutsWorkspaceUtils.parseRequiredNutsId(workspace, httpGetString(options.getLocation() + "/version"));
         } catch (Exception ex) {
             LOG.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
@@ -62,7 +63,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     @Override
     public void pushImpl(NutsPushRepositoryCommand options) {
-        throw new NutsUnsupportedOperationException();
+        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     public String getUrl(String path) {
@@ -72,7 +73,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     public NutsId getRemoteId() {
         if (remoteId == null) {
             try {
-                remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(getUrl("/version")));
+                remoteId = NutsWorkspaceUtils.parseRequiredNutsId(getWorkspace(), httpGetString(getUrl("/version")));
             } catch (Exception ex) {
                 LOG.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
@@ -82,12 +83,12 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     @Override
     public void deployImpl(NutsDeployRepositoryCommand deployment) {
-        CoreNutsUtils.checkSession(deployment.getSession());
+        NutsWorkspaceUtils.checkSession(getWorkspace(), deployment.getSession());
         if (deployment.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsIllegalArgumentException("Offline");
+            throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
+        getWorkspace().formatter().createDescriptorFormat().print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
@@ -101,6 +102,9 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+            throw new NutsNotFoundException(getWorkspace(),id);
+        }
         boolean transitive = session.isTransitive();
         InputStream stream = null;
         try {
@@ -114,7 +118,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                     }
                 }
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(id);
+                throw new NutsNotFoundException(getWorkspace(),id);
             }
         } finally {
             if (stream != null) {
@@ -125,7 +129,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 }
             }
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(getWorkspace(),id);
     }
 
     protected void copyToImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -141,11 +145,11 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(getWorkspace(),id);
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
@@ -155,13 +159,13 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
         if (idFilter != null) {
-            it = IteratorBuilder.of(it).filter(CoreNutsUtils.createFilter(idFilter,getWorkspace())).iterator();
+            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(idFilter,getWorkspace(),session.getSession())).iterator();
         }
         return it;
     }
 
     @Override
-    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
 
         boolean transitive = session.isTransitive();
         InputStream ret = null;
@@ -175,7 +179,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreNutsUtils.createFilter(filter,getWorkspace())).iterator();
+                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter,getWorkspace(),session.getSession())).iterator();
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
@@ -189,7 +193,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         if (filter == null) {
             return new NamedNutIdFromStreamIterator(ret);
         }
-        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreNutsUtils.createFilter(filter,getWorkspace())).iterator();
+        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter,getWorkspace(),session.getSession())).iterator();
 
     }
 
@@ -211,10 +215,10 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 return new DefaultNutsContent(localPath, false, temp);
             }
         } catch (IOException ex) {
-            throw new NutsNotFoundException(id, ex);
+            throw new NutsNotFoundException(getWorkspace(),id, ex);
             //
         }
-        throw new NutsNotFoundException(id);
+        throw new NutsNotFoundException(getWorkspace(),id);
 
     }
 
@@ -237,10 +241,10 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         String login = getWorkspace().security().getCurrentLogin();
         NutsUserConfig security = NutsRepositoryConfigManagerExt.of(config()).getUser(login);
         String newLogin = "";
-        String credentials = "";
+        char[] credentials = new char[0];
         if (security == null) {
             newLogin = "anonymous";
-            credentials = "anonymous";
+            credentials = "anonymous".toCharArray();
         } else {
             newLogin = security.getMappedUser();
             if (CoreStringUtils.isBlank(newLogin)) {
@@ -258,8 +262,8 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
         String passphrase = config().getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE, true);
         newLogin = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase));
-        credentials = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase));
-        return new String[]{newLogin, credentials};
+        credentials = CoreSecurityUtils.httpEncryptChars(credentials, passphrase);
+        return new String[]{newLogin, new String(credentials)};
     }
 
     private String resolveAuthURLPart() {
@@ -269,14 +273,14 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     @Override
     public void undeployImpl(NutsRepositoryUndeployCommand options) {
-        throw new NutsUnsupportedOperationException();
+        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     @Override
     public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(id);
+            throw new NutsNotFoundException(getWorkspace(),id);
         }
     }
 

@@ -103,7 +103,7 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.io().json().pretty().write(this.config, file);
+        this.defaultWorkspace.io().json().write(this.config, file);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {

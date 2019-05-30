@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.TextFiles;
@@ -39,13 +39,13 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HeadCommand extends AbstractNutsCommand {
+public class HeadCommand extends AbstractNshCommand {
 
 
     public HeadCommand() {
@@ -57,28 +57,28 @@ public class HeadCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
         PrintStream out = context.out();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.get().isOption()) {
-                if (context.configure(cmdLine)) {
+            if (cmdLine.peek().isOption()) {
+                if (context.configureFirst(cmdLine)) {
                     //
-                }else if (ShellHelper.isInt(cmdLine.get().getString().substring(1))) {
-                    options.max = Integer.parseInt(cmdLine.read().getString().substring(1));
+                }else if (ShellHelper.isInt(cmdLine.peek().getString().substring(1))) {
+                    options.max = Integer.parseInt(cmdLine.next().getString().substring(1));
                 } else {
-                    throw new NutsExecutionException("Not yet supported",2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
                 }
             } else {
-                String path = cmdLine.read().getString();
+                String path = cmdLine.next().getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException("Not yet supported",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
         }
         for (String file : files) {
             TextFiles.head(TextFiles.create(file), options.max, out);

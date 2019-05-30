@@ -153,7 +153,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
      */
     NutsRepositoryConfigManager removeMirror(String repositoryId);
 
-    int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
+    int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 }

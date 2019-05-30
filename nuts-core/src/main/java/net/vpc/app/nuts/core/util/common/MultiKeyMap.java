@@ -82,7 +82,7 @@ public class MultiKeyMap<K, V> {
             s2.add(k1);
         } else {
             if (s1 != s2) {
-                throw new NutsUnexpectedException();
+                throw new NutsUnexpectedException(null);
             }
         }
     }

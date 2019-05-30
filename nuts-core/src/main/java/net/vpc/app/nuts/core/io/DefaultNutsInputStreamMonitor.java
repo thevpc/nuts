@@ -6,11 +6,14 @@
 package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
+import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputStreamEvent;
 import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
 import net.vpc.app.nuts.core.util.common.BytesSizeFormat;
@@ -56,13 +59,8 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
     public boolean onProgress0(InputStreamEvent event) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
-            //if (!first) {
-                //if (event.getGlobalCount() != event.getLength() && event.getException() == null) {
-                    //print command to move cursor to last line!
-                    out.print("`"+FPrintCommands.MOVE_LINE_START+"`");
-//                    out.print("`"+FPrintCommands.MOVE_LINE_START+";"+FPrintCommands.MOVE_UP+"`");
-                //}
-            //}
+            NutsTerminalFormat terminalFormat = ws.io().getTerminalFormat();
+            out.print("`"+FPrintCommands.MOVE_LINE_START+"`");
             double globalSeconds = event.getGlobalMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
@@ -78,50 +76,35 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             formattedLine.append("\\[");
             if (x > 0) {
                 formattedLine.append("##");
-                for (int i = 0; i < x; i++) {
-                    formattedLine.append("\\*");
-//                    formattedLine.append("\u2588");
-                }
+                CoreStringUtils.fillString("\\*" ,x,formattedLine);
                 formattedLine.append("##");
             }
-            for (int i = x; i < 20; i++) {
-                formattedLine.append(" ");
-            }
+            CoreStringUtils.fillString(' ',20-x,formattedLine);
             formattedLine.append("\\]");
-            formattedLine.append(" ").append(String.format("%6s", df.format(percent))).append("\\% ");
-            formattedLine.append(" [[").append(mf.format(partialSpeed)).append("/s]]");
-//            formattedLine.append(" ([[").append(mf.format(globalSpeed)).append("/s]])");
+            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
+            formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
             if (event.getLength() < 0) {
                 if (globalSpeed == 0) {
-                    formattedLine.append(" ( -- )");
+                    formattedLine.append(terminalFormat.escapeText(" ( -- )"));
                 } else {
-                    formattedLine.append(" ([[").append(mf.format(globalSpeed)).append("]])");
+                    formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("]])");
                 }
             } else {
-                formattedLine.append(" ([[").append(mf.format(event.getLength())).append("]])");
+                formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(event.getLength()))).append("]])");
             }
             if (event.getException() != null) {
                 formattedLine.append(" @@ERROR@@ ");
             }
-            formattedLine.append(" ").append(ws.parser().escapeText(event.getSourceName())).append(" ");
-//            while (formattedLine.length() < 80) {
-//                formattedLine.append(' ');
-//            }
-//            if (line.length() > 80) {
-//                line.delete(80, line.length());
-//            }
-
+            formattedLine.append(" ").append(terminalFormat.escapeText(event.getSourceName())).append(" ");
             String ff = formattedLine.toString();
-            int length = ws.parser().filterText(ff).length();
+            int length = terminalFormat.filterText(ff).length();
             if(length<minLength){
-                while(length<minLength){
-                    length++;
-                    formattedLine.append(' ');
-                }
+                CoreStringUtils.fillString(' ' ,minLength-length,formattedLine);
             }else{
                 minLength=length;
             }
             out.print(ff);
+            out.flush();
             return true;
         }
         return false;

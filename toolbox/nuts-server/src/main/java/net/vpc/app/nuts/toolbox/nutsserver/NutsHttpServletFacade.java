@@ -156,7 +156,7 @@ public class NutsHttpServletFacade {
                 List<NutsId> fetch = null;
                 try {
                     NutsWorkspace ws = context.getWorkspace();
-                    fetch = ws.find().setSession(context.getSession()).setTransitive(transitive).addId(id).getResultIds().list();
+                    fetch = ws.search().setSession(context.getSession()).setTransitive(transitive).addId(id).getResultIds().list();
                 } catch (Exception exc) {
                     //
                 }
@@ -186,7 +186,7 @@ public class NutsHttpServletFacade {
                 }
             }
         });
-        register(new AbstractFacadeCommand("find") {
+        register(new AbstractFacadeCommand("search") {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 //Content-type
@@ -217,7 +217,7 @@ public class NutsHttpServletFacade {
                             break;
                     }
                 }
-                Iterator<NutsId> it = context.getWorkspace().find()
+                Iterator<NutsId> it = context.getWorkspace().search()
                         .setSession(context.getSession())
                         .setTransitive(transitive)
                         .addScripts(js).addId(pattern).getResultIds().iterator();

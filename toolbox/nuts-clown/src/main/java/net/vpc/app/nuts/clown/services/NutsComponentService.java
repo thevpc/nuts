@@ -47,7 +47,7 @@ public class NutsComponentService {
     public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = Nuts.openWorkspace("--workspace",workspaceLocation);
-        List<NutsId> ids = workspace.find()
+        List<NutsId> ids = workspace.search()
                 .setRepositoryFilter(new NutsRepositoryFilter() {
                     @Override
                     public boolean accept(NutsRepository repository) {
@@ -55,8 +55,8 @@ public class NutsComponentService {
                     }
                 })
                 .setLenient(true)
-                .setIncludeInstallInformation(false)
-                .setIncludeContent(false)
+                .setInstallInformation(false)
+                .setContent(false)
                 .effective(true)
                 .getResultIds().list();
         List<Map<String, String>> result = ids.stream()

@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -132,7 +133,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = CoreNutsUtils.parseRequiredNutsId(id);
+        this.id = NutsWorkspaceUtils.parseRequiredNutsId(null, id);
         return this;
     }
 

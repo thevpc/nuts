@@ -55,7 +55,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
 //        this.session = session;
 //        if (nutsDefinition != null && nutsDefinition.getDescriptor() != null && nutsDefinition.getDescriptor().getInstaller() != null) {
 //            NutsExecutorDescriptor ii = nutsDefinition.getDescriptor().getInstaller();
-//            executorOptions = ii.getArgs();
+//            executorOptions = ii.getArguments();
 //            executorProperties = ii.getProperties();
 //        }
 //        this.workspace = workspace;
@@ -119,7 +119,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     }
 
     @Override
-    public String[] getArgs() {
+    public String[] getArguments() {
         return args;
     }
 

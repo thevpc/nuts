@@ -99,10 +99,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] standardDependencies,
                                  String[] locations, Map<String, String> properties) {
         if (id == null) {
-            throw new NutsIllegalArgumentException("Missing id");
+            throw new NutsIllegalArgumentException(null, "Missing id");
         }
         if (!id.getQueryMap().isEmpty()) {
-            throw new NutsIllegalArgumentException("id should not have query defined in descriptors");
+            throw new NutsIllegalArgumentException(null, "id should not have query defined in descriptors");
         }
         this.id = id;
         this.alternative = CoreStringUtils.trimToNull(alternative);
@@ -240,20 +240,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return locations;
     }
 
-    @Override
-    public NutsDependency[] getDependencies(NutsDependencyFilter dependencyFilter) {
-        NutsDependency[] d0 = getDependencies();
-        if (dependencyFilter == null) {
-            return d0;
-        }
-        List<NutsDependency> r = new ArrayList<>(d0.length);
-        for (NutsDependency nutsDependency : d0) {
-            if (dependencyFilter.accept(getId(), nutsDependency)) {
-                r.add(nutsDependency);
-            }
-        }
-        return r.toArray(new NutsDependency[0]);
-    }
 
     @Override
     public String toString() {

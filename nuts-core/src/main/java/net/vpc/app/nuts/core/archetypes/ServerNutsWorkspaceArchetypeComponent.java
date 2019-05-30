@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.archetypes;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 1/23/17.
@@ -62,18 +61,18 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
                         )
         );
         if (defaultRepo == null) {
-            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
+            throw new NutsIllegalArgumentException(workspace, "Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
         }
 
         //has read rights
-        workspace.security().addUser("guest").credentials("user").rights(
+        workspace.security().addUser("guest").credentials("user".toCharArray()).rights(
                 NutsConstants.Rights.FETCH_DESC,
                 NutsConstants.Rights.FETCH_CONTENT,
                 NutsConstants.Rights.DEPLOY
         ).run();
 
         //has write rights
-        workspace.security().addUser("contributor").credentials("user").rights(
+        workspace.security().addUser("contributor").credentials("user".toCharArray()).rights(
                 NutsConstants.Rights.FETCH_DESC,
                 NutsConstants.Rights.FETCH_CONTENT,
                 NutsConstants.Rights.DEPLOY,

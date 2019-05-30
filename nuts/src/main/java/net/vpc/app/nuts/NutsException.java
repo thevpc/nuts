@@ -37,26 +37,37 @@ import java.io.IOException;
  * @since 0.5.4
  */
 public class NutsException extends RuntimeException {
-    public NutsException() {
+    private NutsWorkspace workspace;
+    public NutsException(NutsWorkspace workspace) {
+        this.workspace=workspace;
     }
 
-    public NutsException(String message) {
+    public NutsException(NutsWorkspace workspace,String message) {
         super(message);
+        this.workspace=workspace;
     }
 
-    public NutsException(String message, Throwable cause) {
+    public NutsException(NutsWorkspace workspace,String message, Throwable cause) {
         super(message, cause);
+        this.workspace=workspace;
     }
 
-    public NutsException(Throwable cause) {
+    public NutsException(NutsWorkspace workspace,Throwable cause) {
         super(cause);
+        this.workspace=workspace;
     }
 
-    public NutsException(IOException cause) {
+    public NutsException(NutsWorkspace workspace,IOException cause) {
         super(cause);
+        this.workspace=workspace;
     }
 
-    public NutsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+        this.workspace=workspace;
+    }
+
+    public NutsWorkspace getWorkspace() {
+        return workspace;
     }
 }

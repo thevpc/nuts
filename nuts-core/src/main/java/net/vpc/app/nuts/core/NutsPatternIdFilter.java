@@ -11,10 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -60,14 +58,14 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     }
 
     @Override
-    public boolean accept(NutsId other, NutsWorkspace ws) {
+    public boolean accept(NutsId other, NutsWorkspace ws, NutsSession session) {
         if (!g.matcher(other.getGroup()).matches()) {
             return false;
         }
         if (!n.matcher(other.getName()).matches()) {
             return false;
         }
-        if (!v.accept(other.getVersion())) {
+        if (!v.accept(other.getVersion(), ws, session)) {
             return false;
         }
         Map<String, String> oqm = null;

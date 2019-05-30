@@ -29,19 +29,19 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
-import net.vpc.common.javashell.JavaShell;
+import net.vpc.common.javashell.JShell;
 import net.vpc.common.javashell.cmds.CmdSyntaxError;
-import net.vpc.common.javashell.cmds.CommandContext;
+import net.vpc.common.javashell.cmds.JShellCommandContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SetCommand extends AbstractNutsCommand {
+public class SetCommand extends AbstractNshCommand {
 
 
     public SetCommand() {
@@ -49,7 +49,7 @@ public class SetCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JavaShell shell = context.getShell();
+        JShell shell = context.getShell();
         int commandArgsCount = args.length;
         if (commandArgsCount == 0) {
             throw new CmdSyntaxError(1, args, getName(), getHelpHeader(), getHelp());
@@ -79,7 +79,7 @@ public class SetCommand extends AbstractNutsCommand {
         return 0;
     }
     
-    private void doSet(String name, String value, CommandContext context) throws RemoteException {
+    private void doSet(String name, String value, JShellCommandContext context) throws RemoteException {
         if (value == null) {
             context.env().setEnv(name, value);
         } else {

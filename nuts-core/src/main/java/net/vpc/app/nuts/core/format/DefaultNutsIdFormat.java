@@ -12,6 +12,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.util.Map;
+import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsIdFormat implements NutsIdFormat {
@@ -133,91 +134,90 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             idBuilder.setQueryProperty(NutsConstants.QueryKeys.FACE, null);
         }
         id = idBuilder.build();
+        NutsTerminalFormat tf = ws.io().getTerminalFormat();
         StringBuilder sb = new StringBuilder();
         if (!omitNamespace) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
-                sb.append(id.getNamespace()).append("://");
+                sb.append("<<");
+                sb.append(tf.escapeText(id.getNamespace()+"://"));
+                sb.append(">>");
             }
         }
         if (!omitGroup) {
             if (!CoreStringUtils.isBlank(id.getGroup())) {
-                boolean importedGroup = false;
-                for (String anImport : ws.config().getImports()) {
-                    if (id.getGroup().equals(anImport)) {
-                        importedGroup = true;
-                        break;
-                    }
-                }
+                boolean importedGroup = ws.config().getImports().contains(id.getGroup());
                 if (!(importedGroup && omitImportedGroup)) {
                     if (importedGroup) {
                         sb.append("<<");
-                        sb.append(ws.parser().escapeText(id.getGroup()));
+                        sb.append(tf.escapeText(id.getGroup()));
                         sb.append(">>");
                     } else {
-                        sb.append(ws.parser().escapeText(id.getGroup()));
+                        sb.append(tf.escapeText(id.getGroup()));
                     }
                     sb.append(":");
                 }
             }
         }
         sb.append("[[");
-        sb.append(ws.parser().escapeText(id.getName()));
+        sb.append(tf.escapeText(id.getName()));
         sb.append("]]");
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
             sb.append("#");
-            sb.append(ws.parser().escapeText(id.getVersion().toString()));
+            sb.append(tf.escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;
 
         if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
-                sb.append("{{?}}");
+                sb.append("{{\\?}}");
                 firstQ = false;
             } else {
-                sb.append("{{&}}");
+                sb.append("{{\\&}}");
             }
             sb.append("{{classifier}}=**");
             sb.append("**");
-            sb.append(ws.parser().escapeText(classifier));
+            sb.append(tf.escapeText(classifier));
             sb.append("**");
         }
 
 //        if (highlightScope) {
-        if (!CoreStringUtils.isBlank(scope) && !"compile".equals(scope)) {
+        if (!CoreStringUtils.isBlank(scope) && !"compile".equalsIgnoreCase(scope)) {
             if (firstQ) {
-                sb.append("{{?}}");
+                sb.append("{{\\?}}");
                 firstQ = false;
             } else {
-                sb.append("{{&}}");
+                sb.append("{{\\&}}");
             }
-            sb.append("{{scope}}=**");
+            sb.append("{{scope}}=");
             sb.append("**");
-            sb.append(ws.parser().escapeText(scope));
+            sb.append(tf.escapeText(scope));
             sb.append("**");
         }
 //        }
 //        if (highlightOptional) {
-        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
+        if (!CoreStringUtils.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
-                sb.append("{{?}}");
+                sb.append("{{\\?}}");
                 firstQ = false;
             } else {
-                sb.append("{{&}}");
+                sb.append("{{\\&}}");
             }
-            sb.append("{{optional}}=**");
-            sb.append(ws.parser().escapeText(optional));
+            sb.append("{{optional}}=");
+            sb.append("**");
+            sb.append(tf.escapeText(optional));
             sb.append("**");
         }
 //        }
         if (!CoreStringUtils.isBlank(exclusions)) {
             if (firstQ) {
-                sb.append("{{?}}");
+                sb.append("{{\\?}}");
                 firstQ = false;
             } else {
-                sb.append("{{&}}");
+                sb.append("{{\\&}}");
             }
-            sb.append("{{exclusions}}=@@");
-            sb.append(ws.parser().escapeText(exclusions));
+            sb.append("{{exclusions}}=");
+            sb.append("@@");
+            sb.append(tf.escapeText(exclusions));
             sb.append("@@");
         }
         if (!CoreStringUtils.isBlank(id.getQuery())) {
@@ -231,13 +231,13 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                     }
                     default: {
                         if (firstQ) {
-                            sb.append("{{?}}");
+                            sb.append("{{\\?}}");
                             firstQ = false;
                         } else {
-                            sb.append("{{&}}");
+                            sb.append("{{\\&}}");
                         }
-                        sb.append("<<" + ws.parser().escapeText(ee.getKey()) + ">>=");
-                        sb.append(ws.parser().escapeText(exclusions));
+                        sb.append("<<").append(tf.escapeText(ee.getKey())).append(">>=");
+                        sb.append(tf.escapeText(exclusions));
 //                        sb.append("");
                     }
                 }
@@ -289,4 +289,56 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         p.flush();
     }
 
+    @Override
+    public final NutsIdFormat configure(String... args) {
+        return NutsConfigurableHelper.configure(this, ws, args, "nuts-id-format");
+    }
+
+    @Override
+    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
+        return NutsConfigurableHelper.configure(this, ws, commandLine, skipIgnored);
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmdLine) {
+        NutsArgument a = cmdLine.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.getKey().getString()) {
+            case "--omit-env": {
+                setOmitEnv(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--omit-face": {
+                setOmitFace(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--omit-group": {
+                setOmitGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--omit-imported-group": {
+                setOmitImportedGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--omit-namespace": {
+                setOmitNamespace(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--highlight-imported-group": {
+                setHighlightImportedGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--highlight-optional": {
+                setHighlightOptional(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--highlight-scope": {
+                setHighlightScope(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+        }
+        return false;
+    }
 }

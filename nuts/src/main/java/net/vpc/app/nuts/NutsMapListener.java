@@ -39,16 +39,23 @@ public interface NutsMapListener<K, V> {
 
     /**
      * Invoked when item added
+     * @param key
+     * @param value
      */
     void entryAdded(K key, V value);
 
     /**
      * Invoked when item removed
+     * @param key
+     * @param value
      */
     void entryRemoved(K key, V value);
 
     /**
      * Invoked when item updated
+     * @param key
+     * @param newValue
+     * @param oldValue
      */
     void entryUpdated(K key, V newValue, V oldValue);
 }

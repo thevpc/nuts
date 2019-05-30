@@ -63,7 +63,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatConfigService save() {
         NutsIOManager io = context.getWorkspace().io();
         Path f = getConfigPath();
-        io.json().pretty().write(config, f);
+        io.json().write(config, f);
         return this;
     }
 
@@ -143,7 +143,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException("Missing config name", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing config name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
@@ -167,7 +167,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatConfigService write(PrintStream out) {
         NutsIOManager jsonSerializer = context.getWorkspace().io();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.json().pretty().write(getConfig(), new PrintWriter(out));
+        jsonSerializer.json().write(getConfig(), new PrintWriter(out));
         w.flush();
         return this;
     }
@@ -192,7 +192,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NutsExecutionException("App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(),"App not found :" + appName, 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

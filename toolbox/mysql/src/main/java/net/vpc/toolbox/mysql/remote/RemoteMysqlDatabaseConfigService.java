@@ -46,7 +46,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().io().json().pretty().write(getConfig(), out);
+        context.getWorkspace().io().json().write(getConfig(), out);
     }
 
     public int pull() {
@@ -58,7 +58,7 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
         String localDatabase = getConfig().getLocalDatabase();
         if (StringUtils.isEmpty(localDatabase)) {
-            throw new NutsExecutionException("Missing local database name",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing local database name",2);
         }
         LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
         if (archiveResult.execResult != 0) {
@@ -82,7 +82,7 @@ public class RemoteMysqlDatabaseConfigService {
                         .exec("echo","$HOME") == 0) {
                     home = c.getOutputString().trim();
                 } else {
-                    throw new NutsExecutionException("Unable to detect user remote home : " + c.getOutputString().trim(),2);
+                    throw new NutsExecutionException(context.getWorkspace(),"Unable to detect user remote home : " + c.getOutputString().trim(),2);
                 }
             }
             remoteTempPath = home + "/tmp";

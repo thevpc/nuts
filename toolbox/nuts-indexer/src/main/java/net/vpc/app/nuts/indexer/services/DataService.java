@@ -136,16 +136,17 @@ public class DataService {
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NutsId> allDependencies = ws.find()
-                    .dependenciesOnly()
+            List<NutsId> allDependencies = ws.search()
+                    .main(false)
+                    .inlineDependencies()
                     .addId(id)
-                    .setLenient(true)
-                    .setIncludeInstallInformation(false)
-                    .setIncludeContent(false)
+                    .failFast(false)
+                    .installInformation(false)
+                    .content(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
             row.put("allDependencies", ws.io().
-                    json().pretty().toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList())));
+                    json().toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList())));
             updateData(dirPath, oldRow, row);
         }
         String[] array = ws.io().json().read(new StringReader(row.get("allDependencies")), String[].class);

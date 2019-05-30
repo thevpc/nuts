@@ -29,9 +29,7 @@
  */
 package net.vpc.app.nuts.core.filters.version;
 
-import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.NutsVersionInterval;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
@@ -57,7 +55,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
     @Override
-    public boolean accept(NutsVersion version) {
+    public boolean accept(NutsVersion version, NutsWorkspace ws, NutsSession session) {
         if (intervals.isEmpty()) {
             return true;
         }

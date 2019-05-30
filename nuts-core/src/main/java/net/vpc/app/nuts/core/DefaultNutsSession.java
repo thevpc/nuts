@@ -29,8 +29,10 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsPropertiesHolder;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -47,9 +49,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private boolean force = false;
     private boolean ask = false;
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
-    protected NutsOutputListFormat outputCustomFormat = null;
+    protected NutsIncrementalFormat outputCustomFormat = null;
+    protected NutsWorkspace ws = null;
 
-    public DefaultNutsSession() {
+    public DefaultNutsSession(NutsWorkspace ws) {
+        this.ws = ws;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             cloned.listeners = listeners == null ? null : new ArrayList<>(listeners);
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(e);
+            throw new NutsUnsupportedOperationException(ws,e);
         }
     }
 
@@ -141,17 +145,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsOutputListFormat getOutputCustomFormat() {
+    public NutsIncrementalFormat getOutputCustomFormat() {
         return outputCustomFormat;
     }
 
     @Override
-    public NutsSession outputCustomFormat(NutsOutputListFormat traceFormat) {
+    public NutsSession outputCustomFormat(NutsIncrementalFormat traceFormat) {
         return setOutputCustomFormat(traceFormat);
     }
 
     @Override
-    public NutsSession setOutputCustomFormat(NutsOutputListFormat f) {
+    public NutsSession setOutputCustomFormat(NutsIncrementalFormat f) {
         if (f == null) {
             this.outputCustomFormat = null;
         } else {
@@ -206,60 +210,55 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
-        boolean conf = false;
-        while (commandLine.hasNext()) {
-            if (!configureFirst(commandLine)) {
-                if (skipIgnored) {
-                    commandLine.skip();
-                } else {
-                    commandLine.unexpectedArgument();
-                }
-            } else {
-                conf = true;
-            }
-        }
-        return conf;
+    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
+        return NutsConfigurableHelper.configure(this, ws, commandLine, skipIgnored);
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument arg = cmd.peek();
+    public Object configure(String... args) {
+        return NutsConfigurableHelper.configure(this, ws, args,"nuts-session");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmdLine) {
+        NutsArgument arg = cmdLine.peek();
         if (arg != null) {
-            switch (arg.strKey()) {
+            switch (arg.getKey().getString()) {
                 case "--output-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(arg).getString().toUpperCase()));
-                    cmd.skip();
+                    arg=cmdLine.nextString();
+                    NutsOutputFormat outf = CoreCommonUtils.parseEnumString(arg.getValue().getString(), NutsOutputFormat.class, false);
+                    this.setOutputFormat(outf);
+                    cmdLine.skip();
                     return true;
                 }
                 case "--json": {
                     this.setOutputFormat(NutsOutputFormat.JSON);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
                 case "--props": {
                     this.setOutputFormat(NutsOutputFormat.PROPS);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
                 case "--plain": {
                     this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
                 case "--table": {
                     this.setOutputFormat(NutsOutputFormat.TABLE);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
                 case "--tree": {
                     this.setOutputFormat(NutsOutputFormat.TREE);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
                 case "--xml": {
                     this.setOutputFormat(NutsOutputFormat.XML);
-                    cmd.skip();
+                    cmdLine.skip();
                     return true;
                 }
             }

@@ -120,7 +120,7 @@ public class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
     @Override
     public Object getValue(Object o) {
         if (getter == null) {
-            throw new NutsIllegalArgumentException("Field inaccessible : no getter found for field " + getName());
+            throw new NutsIllegalArgumentException(null, "Field inaccessible : no getter found for field " + getName());
         }
         try {
             return getter.invoke(o);
@@ -131,14 +131,14 @@ public class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsException(e);
+            throw new NutsException(null,e);
         }
     }
 
     @Override
     public void setValue(Object o, Object value) {
         if (setter == null) {
-            throw new NutsException("Field readonly : no setter found for " + getName() + " in class " + o.getClass());
+            throw new NutsException(null,"Field readonly : no setter found for " + getName() + " in class " + o.getClass());
         }
         try {
             setter.invoke(o, value);
@@ -149,7 +149,7 @@ public class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsIllegalArgumentException(e);
+            throw new NutsIllegalArgumentException(null,e);
         }
     }
 

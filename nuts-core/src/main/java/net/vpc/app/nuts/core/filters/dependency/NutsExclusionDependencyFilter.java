@@ -1,8 +1,6 @@
 package net.vpc.app.nuts.core.filters.dependency;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyFilter;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
@@ -20,17 +18,17 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
         if (base != null) {
-            if (!base.accept(from, dependency)) {
+            if (!base.accept(from, dependency, ws, session)) {
                 return false;
             }
         }
         for (NutsId exclusion : exclusions) {
             NutsId nutsId = dependency.getId();
-            if (nutsId.groupLike(exclusion.getGroup())
-                    && nutsId.nameLike(exclusion.getName())
-                    && exclusion.getVersion().toFilter().accept(nutsId.getVersion())) {
+            if (nutsId.groupToken().like(exclusion.getGroup())
+                    && nutsId.nameToken().like(exclusion.getName())
+                    && exclusion.getVersion().toFilter().accept(nutsId.getVersion(), ws, session)) {
                 return false;
             }
         }

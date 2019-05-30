@@ -6,10 +6,15 @@
 package net.vpc.app.nuts.core.util.common;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -100,6 +105,58 @@ public class IteratorUtils {
             }
         }
         return t;
+    }
+
+    public static <T> List<T> toList(Iterator<T> it) {
+        List<T> a = new ArrayList<T>();
+        while (it.hasNext()) {
+            a.add(it.next());
+        }
+        return a;
+    }
+
+    public static <T> Set<T> toSet(Iterator<T> it) {
+        LinkedHashSet<T> a = new LinkedHashSet<T>();
+        while (it.hasNext()) {
+            a.add(it.next());
+        }
+        return a;
+    }
+    public static <T> Set<T> toTreeSet(Iterator<T> it,Comparator<T> c) {
+        TreeSet<T> a = new TreeSet<T>(c);
+        while (it.hasNext()) {
+            a.add(it.next());
+        }
+        return a;
+    }
+
+    public static <T> Iterator<T> sort(Iterator<T> it, Comparator<T> c, boolean removeDuplicates) {
+        return new Iterator<T>() {
+            Iterator<T> base = null;
+
+            public Iterator<T> getBase() {
+                if (base == null) {
+                    if (removeDuplicates) {
+                        base = toTreeSet(base, c).iterator();
+                    } else {
+                        List<T> a = toList(base);
+                        a.sort(c);
+                        base = a.iterator();
+                    }
+                }
+                return base;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return getBase().hasNext();
+            }
+
+            @Override
+            public T next() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
     }
 
     public static <T> Iterator<T> unique(Iterator<T> it) {

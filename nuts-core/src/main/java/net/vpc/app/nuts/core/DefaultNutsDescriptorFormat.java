@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -7,37 +8,37 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminal;
 
 public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     private NutsWorkspace ws;
-    private boolean pretty;
+    private boolean compact;
 
     public DefaultNutsDescriptorFormat(NutsWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
-    public NutsDescriptorFormat pretty(boolean pretty) {
-        return setPretty(pretty);
+    public NutsDescriptorFormat compact(boolean compact) {
+        return setCompact(compact);
     }
 
     @Override
-    public NutsDescriptorFormat pretty() {
-        return pretty(true);
+    public NutsDescriptorFormat compact() {
+        return compact(true);
     }
 
     @Override
-    public boolean isPretty() {
-        return pretty;
+    public boolean isCompact() {
+        return compact;
     }
 
+
     @Override
-    public NutsDescriptorFormat setPretty(boolean pretty) {
-        this.pretty = pretty;
+    public NutsDescriptorFormat setCompact(boolean compact) {
+        this.compact = compact;
         return this;
     }
 
@@ -83,15 +84,16 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().json().pretty(pretty).write(descriptor, out);
+        ws.io().json().compact(isCompact()).write(descriptor, out);
 
     }
 
     @Override
     public void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().json().pretty(pretty).write(descriptor, out);
+        ws.io().json().compact(isCompact()).write(descriptor, out);
         try {
             out.write("\n");
+            out.flush();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -163,6 +165,21 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public final NutsDescriptorFormat configure(String... args) {
+        return NutsConfigurableHelper.configure(this, ws, args,"descriptor-format");
+    }
+
+    @Override
+    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
+        return NutsConfigurableHelper.configure(this, ws, commandLine,skipIgnored);
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        return false;
     }
 
 }

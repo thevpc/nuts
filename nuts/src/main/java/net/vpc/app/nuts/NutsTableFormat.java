@@ -29,56 +29,67 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.PrintStream;
-import java.io.Writer;
-
 /**
- * Created by vpc on 2/17/17.
+ *
+ * @author vpc
+ * @since 0.5.5
  */
-public interface NutsTableFormat {
+public interface NutsTableFormat extends NutsFormat {
 
-    public boolean isVisibleHeader();
+    @Override
+    NutsTableFormat terminalFormat(NutsTerminalFormat metric);
 
-    public NutsTableFormat setVisibleHeader(boolean visibleHeader);
+    @Override
+    NutsTableFormat setTerminalFormat(NutsTerminalFormat metric);
 
-    public NutsTableFormat setColumnsConfig(String... names);
+    @Override
+    NutsTableFormat session(NutsSession session);
 
-    public NutsTableFormat setColumnConfigIndex(String name, int index);
+    @Override
+    NutsTableFormat setSession(NutsSession session);
 
-    public NutsTableFormatterBorders getBorder();
+    @Override
+    NutsTableFormat configure(String... args);
 
-    public NutsTableFormat setBorder(NutsTableFormatterBorders border);
+    boolean isVisibleHeader();
 
-    public void print(PrintStream out);
-    public void print(Writer out);
+    NutsTableFormat setVisibleHeader(boolean visibleHeader);
 
-    public NutsTableFormat setVisibleColumn(int col, boolean visible);
+    NutsTableFormat setColumnsConfig(String... names);
 
-    public NutsTableFormat unsetVisibleColumn(int col);
+    NutsTableFormat setColumnConfigIndex(String name, int index);
 
-    public Boolean getVisibleColumn(int col);
+    NutsTableBordersFormat getBorder();
 
-    NutsTableFormat setCellFormatter(NutsTableCellFormat formatter);
+    NutsTableFormat setBorder(NutsTableBordersFormat border);
 
-    public NutsTableFormat newRow();
+    NutsTableFormat setVisibleColumn(int col, boolean visible);
 
-    public NutsTableFormat setHeader(Object... values);
+    NutsTableFormat unsetVisibleColumn(int col);
 
-    public NutsTableFormat addHeaderCells(Object... values);
+    Boolean getVisibleColumn(int col);
 
-    public NutsTableCell addHeaderCell(Object value);
+    NutsTableFormat setCellFormat(NutsTableCellFormat formatter);
 
-    public NutsTableFormat addRow(Object... values);
+    NutsTableFormat newRow();
 
-    public NutsTableFormat addCells(Object... values);
+    NutsTableFormat clearHeader();
 
-    public NutsTableCell addCell(Object value);
+    NutsTableFormat addHeaderCells(Object... values);
 
-    public boolean configure(NutsCommandLine cmdLine, boolean skipIgnored);
-    
-    public boolean configureFirst(NutsCommandLine cmdLine);
+    NutsTableFormat addHeaderCell(Object value);
 
-    public enum Separator {
+    NutsTableFormat addRow(Object... values);
+
+    NutsTableFormat addCells(Object... values);
+
+    NutsTableFormat addCell(Object value);
+
+    NutsTableModel getModel();
+
+    void setModel(NutsTableModel model);
+
+    enum Separator {
         FIRST_ROW_START('A'),
         FIRST_ROW_LINE('B'),
         FIRST_ROW_SEP('C'),

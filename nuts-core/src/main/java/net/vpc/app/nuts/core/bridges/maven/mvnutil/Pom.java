@@ -2,8 +2,10 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 
 import java.util.Arrays;
 import java.util.Map;
+import org.w3c.dom.Document;
 
 public class Pom {
+
     String groupId;
     String artifactId;
     String version;
@@ -19,17 +21,18 @@ public class Pom {
     PomRepository[] repositories;
     PomRepository[] pluginRepositories;
     String[] modules;
+    Document xml;
 
     public Pom(String groupId, String artifactId, String version, String packaging,
-               PomId parent,
-               String name, String desc,
-               String url,String inceptionYear,
-               Map<String, String> properties,
-               PomDependency[] dependencies,
-               PomDependency[] dependenciesManagement,
-               PomRepository[] repositories, PomRepository[] pluginRepositories,
-               String[] modules
-               ) {
+            PomId parent,
+            String name, String desc,
+            String url, String inceptionYear,
+            Map<String, String> properties,
+            PomDependency[] dependencies,
+            PomDependency[] dependenciesManagement,
+            PomRepository[] repositories, PomRepository[] pluginRepositories,
+            String[] modules, Document xml
+    ) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -39,12 +42,17 @@ public class Pom {
         this.name = name;
         this.description = desc;
         this.url = url;
-        this.inceptionYear= inceptionYear;
+        this.inceptionYear = inceptionYear;
         this.packaging = packaging;
         this.parent = parent;
         this.repositories = repositories;
         this.pluginRepositories = pluginRepositories;
         this.modules = modules;
+        this.xml = xml;
+    }
+
+    public Document getXml() {
+        return xml;
     }
 
     public String getGroupId() {
@@ -147,17 +155,17 @@ public class Pom {
     }
 
     public PomId getPomId() {
-        String g=groupId;
-        String v=version;
-        if(parent!=null){
-            if(g==null||g.isEmpty()||"${groupId}".equals(g)){
-                g=parent.getGroupId();
+        String g = groupId;
+        String v = version;
+        if (parent != null) {
+            if (g == null || g.isEmpty() || "${groupId}".equals(g)) {
+                g = parent.getGroupId();
             }
-            if(v==null||v.isEmpty()||"${version}".equals(v)){
-                v=parent.getVersion();
+            if (v == null || v.isEmpty() || "${version}".equals(v)) {
+                v = parent.getVersion();
             }
         }
-        return new PomId(g,artifactId,v);
+        return new PomId(g, artifactId, v);
     }
 
     public PomDependency[] getDependenciesManagement() {

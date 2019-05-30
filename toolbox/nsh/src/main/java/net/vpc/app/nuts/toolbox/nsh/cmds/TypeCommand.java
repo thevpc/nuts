@@ -29,42 +29,122 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JavaShell;
-import net.vpc.common.javashell.cmds.Command;
+import java.util.ArrayList;
+import java.util.List;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.common.javashell.JShell;
+import net.vpc.common.javashell.cmds.JavaShellCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class TypeCommand extends AbstractNutsCommand {
+public class TypeCommand extends SimpleNshCommand {
 
     public TypeCommand() {
         super("type", DEFAULT_SUPPORT);
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JavaShell shell=context.getShell();
+    private static class Config {
 
-        for (String cmd : args) {
-            Command ic = shell.findCommand(cmd);
-            if (ic != null) {
-                context.out().println(cmd + " is a shell builtin");
-                return 0;
-            }
-            String alias = shell.getAlias(cmd);
-            if (alias != null) {
-                context.out().println(cmd + " is aliased to `" + alias + "`");
-                return 0;
-            }
-            String pp = shell.which(cmd,context.consoleContext());
-            if (pp!=null) {
-                context.out().println(cmd + " is " + pp);
-                return 0;
-            }
-            context.out().println(cmd + " not found");
-            return 1;
-        }
-        return 0;
+        List<String> commands = new ArrayList<>();
     }
+
+    private static class ResultItem {
+
+        String command;
+        String type;
+        String message;
+
+        public ResultItem(String command, String type, String message) {
+            this.command = command;
+            this.type = type;
+            this.message = message;
+        }
+
+        public ResultItem() {
+        }
+
+    }
+
+    @Override
+    protected Object createConfiguration() {
+        return new Config();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Config config = context.getConfigObject();
+        NutsArgument a = commandLine.peek();
+        if (a == null) {
+            return false;
+        }
+        if (commandLine.hasNext()) {
+            if (a.isNonOption()) {
+                config.commands.add(a.getString());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected Object createResult(SimpleNshCommandContext context) {
+        Config config = context.getConfigObject();
+        JShell shell = context.getShell();
+        List<ResultItem> result = new ArrayList<>();
+        for (String cmd : config.commands) {
+            JavaShellCommand ic = shell.findCommand(cmd);
+            if (ic != null && ic.isEnabled()) {
+                result.add(new ResultItem(
+                        cmd,
+                        "builtin",
+                        cmd + " is a shell builtin"
+                ));
+            } else {
+                String alias = shell.getAlias(cmd);
+                if (alias != null) {
+                    result.add(new ResultItem(
+                            cmd,
+                            "alias",
+                            cmd + " is aliased to `" + alias + "`"
+                    ));
+                } else {
+                    String pp = shell.which(cmd, context.consoleContext());
+                    if (pp != null) {
+                        result.add(new ResultItem(
+                                cmd,
+                                "command",
+                                cmd + " is " + pp
+                        ));
+                    } else {
+                        if (ic != null) {
+                            result.add(new ResultItem(
+                                    cmd,
+                                    "error",
+                                    cmd + " is disabled"
+                            ));
+                        } else {
+                            result.add(new ResultItem(
+                                    cmd,
+                                    "error",
+                                    cmd + " not found"
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected void printObjectPlain(Object resultObject, SimpleNshCommandContext context) {
+        List<ResultItem> result = (List<ResultItem>) resultObject;
+        for (ResultItem resultItem : result) {
+            context.out().println(resultItem.message);
+        }
+    }
+
 }

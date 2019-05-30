@@ -42,8 +42,10 @@ import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import net.vpc.app.nuts.core.DefaultNutsExecutionEntry;
 import net.vpc.app.nuts.core.util.io.InputStreamVisitor;
 import net.vpc.app.nuts.core.util.io.ProcessBuilder2;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
@@ -53,7 +55,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  */
 public class CorePlatformUtils {
 
-    private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
     public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
@@ -158,7 +160,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        new ProcessBuilder2().setCommand("uname", "-r")
+                        new ProcessBuilder2(null).setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()
                                 .setSleepMillis(50)
@@ -321,7 +323,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_ARCH.contains(arch)) {
             return true;
         }
-        throw new NutsIllegalArgumentException("Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
+        throw new NutsIllegalArgumentException(null, "Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
     }
 
     public static boolean checkSupportedOs(String os) {
@@ -331,7 +333,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_OS.contains(os)) {
             return true;
         }
-        throw new NutsIllegalArgumentException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
+        throw new NutsIllegalArgumentException(null, "Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
     public static String getPlatformArch() {
@@ -551,14 +553,14 @@ public class CorePlatformUtils {
         if (ex instanceof RuntimeException) {
             return (RuntimeException) ex;
         }
-        return new NutsException(ex);
+        return new NutsException(null, ex);
     }
 
     public static NutsException toNutsException(Throwable ex) {
         if (ex instanceof NutsException) {
             return (NutsException) ex;
         }
-        return new NutsException(ex);
+        return new NutsException(null, ex);
     }
 
     public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
@@ -571,7 +573,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(ex);
+                throw new NutsException(null, ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -579,7 +581,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(ex);
+            throw new NutsException(null, ex);
         }
         return ref.get();
     }
@@ -608,11 +610,11 @@ public class CorePlatformUtils {
         try {
             mainClass = getMainClassType(classStream);
         } catch (Exception ex) {
-            log.log(java.util.logging.Level.SEVERE, "Invalid file format {0}", sourceName);
-            log.log(java.util.logging.Level.FINER, "Invalid file format " + sourceName, ex);
+            LOG.log(java.util.logging.Level.SEVERE, "Invalid file format {0}", sourceName);
+            LOG.log(java.util.logging.Level.FINER, "Invalid file format " + sourceName, ex);
         }
         if (mainClass != null) {
-            return new NutsExecutionEntry(
+            return new DefaultNutsExecutionEntry(
                     mainClass.getName(),
                     false,
                     mainClass.isApp() && mainClass.isMain()
@@ -622,8 +624,8 @@ public class CorePlatformUtils {
     }
 
     public static NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
-        if(!(jarStream instanceof BufferedInputStream)){
-           jarStream=new BufferedInputStream(jarStream);
+        if (!(jarStream instanceof BufferedInputStream)) {
+            jarStream = new BufferedInputStream(jarStream);
         }
         final List<NutsExecutionEntry> classes = new ArrayList<>();
         final List<String> manifiestClass = new ArrayList<>();
@@ -667,12 +669,18 @@ public class CorePlatformUtils {
         if (manifiestClass.size() > 0) {
             defaultEntry = manifiestClass.get(0);
         }
+        boolean defaultFound = false;
         for (NutsExecutionEntry entry : classes) {
             if (defaultEntry != null && defaultEntry.equals(entry.getName())) {
-                entries.add(new NutsExecutionEntry(entry.getName(), true, entry.isApp()));
+                entries.add(new DefaultNutsExecutionEntry(entry.getName(), true, entry.isApp()));
+                defaultFound = true;
             } else {
                 entries.add(entry);
             }
+        }
+        if (defaultEntry != null && !defaultFound) {
+            LOG.log(Level.SEVERE, "Invalid default entry " + defaultEntry + " in " + sourceName);
+//            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);
     }

@@ -36,22 +36,23 @@ package net.vpc.app.nuts;
  */
 public class NutsElementNotFoundException extends NutsException {
 
-    public NutsElementNotFoundException() {
+    public NutsElementNotFoundException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsElementNotFoundException(String message) {
-        super(message);
+    public NutsElementNotFoundException(NutsWorkspace workspace, String message) {
+        super(workspace,message);
     }
 
-    public NutsElementNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsElementNotFoundException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsElementNotFoundException(Throwable cause) {
-        super(cause);
+    public NutsElementNotFoundException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsElementNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsElementNotFoundException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -217,18 +217,18 @@ public class NutsComponentController {
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
                 List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
-                    Iterator<NutsDefinition> it = ws.find()
+                    Iterator<NutsDefinition> it = ws.search()
                             .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
                             .id(id)
-                            .lenient(true)
-                            .setIncludeInstallInformation(false)
-                            .setIncludeContent(false)
+                            .failFast(false)
+                            .installInformation(false)
+                            .content(false)
                             .effective(true)
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.io().json().pretty().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
+                        data.put("dependencies", ws.io().json().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
 
                         this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                     } else {

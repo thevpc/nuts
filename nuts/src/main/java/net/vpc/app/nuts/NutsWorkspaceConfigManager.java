@@ -44,7 +44,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String getUuid();
 
-
     /**
      * context information for the context type
      *
@@ -89,7 +88,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setImports(String[] imports);
 
-    String[] getImports();
+    Set<String> getImports();
 
     /**
      * save config file if force is activated or non read only and some changes
@@ -137,7 +136,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceOptions getOptions();
 
+    char[] decryptString(char[] input);
+
     byte[] decryptString(byte[] input);
+
+    char[] encryptString(char[] input);
 
     byte[] encryptString(byte[] input);
 
@@ -198,7 +201,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     String getDefaultIdFilename(NutsId id);
 
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
-
 
     NutsCommandAliasFactoryConfig[] getCommandFactories();
 

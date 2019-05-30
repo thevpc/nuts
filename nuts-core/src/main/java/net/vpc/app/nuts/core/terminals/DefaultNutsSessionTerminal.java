@@ -4,7 +4,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsQuestionExecutor;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
@@ -206,12 +205,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public String readPassword(String prompt, Object... params) {
+    public char[] readPassword(String prompt, Object... params) {
         return readPassword(out(), prompt, params);
     }
 
     @Override
-    public String readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(PrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = out();
         }
@@ -235,9 +234,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
         }
         if (in == System.in && ((cons = System.console()) != null)) {
             if ((passwd = cons.readPassword(prompt, params)) != null) {
-                String pwd = new String(passwd);
-                Arrays.fill(passwd, ' ');
-                return pwd;
+                return passwd;
             } else {
                 return null;
             }
@@ -245,7 +242,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             out.printf(prompt, params);
             out.flush();
             Scanner s = new Scanner(in);
-            return s.nextLine();
+            return s.nextLine().toCharArray();
         }
     }
 

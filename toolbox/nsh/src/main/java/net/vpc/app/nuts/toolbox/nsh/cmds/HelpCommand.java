@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.NshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
 import net.vpc.common.strings.StringUtils;
@@ -41,14 +41,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HelpCommand extends AbstractNutsCommand {
+public class HelpCommand extends AbstractNshCommand {
 
     public HelpCommand() {
         super("help", DEFAULT_SUPPORT);
@@ -56,31 +56,31 @@ public class HelpCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         NutsArgument a;
         boolean code = false;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.readAll("-c", "--colors")) {
+            } else if (cmdLine.next("-c", "--colors")!=null) {
                 showColors = true;
-            } else if (cmdLine.readAll("--code")) {
+            } else if (cmdLine.next("--code")!=null) {
                 code = true;
                 context.setTerminalMode(NutsTerminalMode.FILTERED);
-            } else if (cmdLine.get().isOption()) {
+            } else if (cmdLine.peek().isOption()) {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getString());
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
                 }
             } else {
-                commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context.consoleContext())).required().getString());
+                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.shellContext())).required().getString());
             }
         }
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
-                return context.getWorkspace().parser().escapeText(t);
+                return context.getWorkspace().io().getTerminalFormat().escapeText(t);
             }
         } : x -> x;
         if (cmdLine.isExecMode()) {
@@ -92,21 +92,21 @@ public class HelpCommand extends AbstractNutsCommand {
                     String helpText = context.getWorkspace().io().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
                     context.out().println(ss.apply(helpText));
                     context.out().println(ss.apply("@@AVAILABLE COMMANDS ARE:@@"));
-                    NutsCommand[] commands = context.getShell().getCommands();
-                    Arrays.sort(commands, new Comparator<NutsCommand>() {
+                    NshCommand[] commands = context.getShell().getCommands();
+                    Arrays.sort(commands, new Comparator<NshCommand>() {
                         @Override
-                        public int compare(NutsCommand o1, NutsCommand o2) {
+                        public int compare(NshCommand o1, NshCommand o2) {
                             return o1.getName().compareTo(o2.getName());
                         }
                     });
                     int max = 1;
-                    for (NutsCommand cmd : commands) {
+                    for (NshCommand cmd : commands) {
                         int x = cmd.getName().length();
                         if (x > max) {
                             max = x;
                         }
                     }
-                    for (NutsCommand cmd : commands) {
+                    for (NshCommand cmd : commands) {
                         if (code) {
                             context.out().printf("\\#\\#%s\\#\\# : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
@@ -116,7 +116,7 @@ public class HelpCommand extends AbstractNutsCommand {
                     }
                 } else {
                     for (String commandName : commandNames) {
-                        NutsCommand command1 = context.getShell().findCommand(commandName);
+                        NshCommand command1 = context.getShell().findCommand(commandName);
                         if (command1 == null) {
                                 context.err().printf("Command not found : %s\n", ss.apply(commandName));
                         } else {

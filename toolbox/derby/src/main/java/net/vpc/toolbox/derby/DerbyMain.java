@@ -40,54 +40,54 @@ public class DerbyMain extends NutsApplication {
     }
 
     public static void main(String[] args) {
-        new DerbyMain().run(args);
+        new DerbyMain().runAndExit(args);
     }
 
     @Override
     public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
         NutsWorkspace ws=appContext.getWorkspace();
-        NutsCommandLine cmdLine = appContext.getCommandLine();
+        NutsCommand cmdLine = appContext.getCommandLine();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (appContext.configure(cmdLine)) {
+            if (appContext.configureFirst(cmdLine)) {
                 //
-            } else if ((a = cmdLine.readStringOption("--derby-version")) != null) {
+            } else if ((a = cmdLine.nextString("--derby-version")) != null) {
                 derbyVersion = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("--db")) != null) {
+            } else if ((a = cmdLine.nextString("--db")) != null) {
                 derbyDataHome = ws.io().path(getAbsoluteFile(a.getValue().getString(), appContext.getVarFolder().toString()));
-            } else if ((a = cmdLine.readStringOption("--netbeans")) != null) {
+            } else if ((a = cmdLine.nextString("--netbeans")) != null) {
                 derbyDataHome = ws.io().path(System.getProperty("user.home") + "/.netbeans-derby");
-            } else if ((a = cmdLine.readStringOption("-h", "--host")) != null) {
+            } else if ((a = cmdLine.nextString("-h", "--host")) != null) {
                 host = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("-p", "--port")) != null) {
+            } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
                 port = a.getValue().getInt();
-            } else if ((a = cmdLine.readStringOption("-ssl", "--ssl")) != null) {
+            } else if ((a = cmdLine.nextString("-ssl", "--ssl")) != null) {
                 sslmode = SSLMode.valueOf(a.getValue().getString());
-            } else if ((a = cmdLine.readNonOption("start")) != null) {
+            } else if ((a = cmdLine.next("start")) != null) {
                 cmd = Command.start;
-            } else if ((a = cmdLine.readNonOption("sys", "sysinfo")) != null) {
+            } else if ((a = cmdLine.next("sys", "sysinfo")) != null) {
                 cmd = Command.sysinfo;
-            } else if ((a = cmdLine.readNonOption("ping")) != null) {
+            } else if ((a = cmdLine.next("ping")) != null) {
                 cmd = Command.ping;
-            } else if ((a = cmdLine.readNonOption("rt", "runtime")) != null) {
+            } else if ((a = cmdLine.next("rt", "runtime")) != null) {
                 cmd = Command.runtimeinfo;
-            } else if ((a = cmdLine.readStringOption("trace")) != null) {
+            } else if ((a = cmdLine.nextString("trace")) != null) {
                 cmd = Command.trace;
                 extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("trace-directory")) != null) {
+            } else if ((a = cmdLine.nextString("trace-directory")) != null) {
                 cmd = Command.trace;
                 extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("max-threads")) != null) {
+            } else if ((a = cmdLine.nextString("max-threads")) != null) {
                 cmd = Command.maxthreads;
                 extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("time-slice")) != null) {
+            } else if ((a = cmdLine.nextString("time-slice")) != null) {
                 cmd = Command.timeslice;
                 extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.readStringOption("log-connections")) != null) {
+            } else if ((a = cmdLine.nextString("log-connections")) != null) {
                 cmd = Command.logconnections;
                 extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.readNonOption("stop", "shutdown")) != null) {
+            } else if ((a = cmdLine.next("stop", "shutdown")) != null) {
                 cmd = Command.shutdown;
             } else {
                 cmdLine.setCommandName("derby").unexpectedArgument();
@@ -99,7 +99,7 @@ public class DerbyMain extends NutsApplication {
         String v = derbyVersion;
         Path h = derbyDataHome;
         if (v == null) {
-            NutsId best = ws.find().addId("org.apache.derby:derbynet").duplicateVersions(false).latestVersions().getResultIds().singleton();
+            NutsId best = ws.search().addId("org.apache.derby:derbynet").duplicates(false).latest().getResultIds().singleton();
             v = best.getVersion().toString();
         }
         if (h == null) {

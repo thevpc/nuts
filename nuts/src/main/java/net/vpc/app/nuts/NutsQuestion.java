@@ -40,7 +40,7 @@ public class NutsQuestion<T> {
     private String message;
     private Object[] messageParameters;
     private Object[] acceptedValues;
-    private Object defautValue;
+    private Object defaultValue;
     private Class<T> valueType;
     private NutsResponseParser parser;
 
@@ -128,16 +128,16 @@ public class NutsQuestion<T> {
         return this;
     }
 
-    public Object getDefautValue() {
-        return defautValue;
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 
-    public NutsQuestion<T> defautValue(Object defautValue) {
-        return setDefautValue(defautValue);
+    public NutsQuestion<T> defaultValue(Object defautValue) {
+        return setDefaultValue(defautValue);
     }
 
-    public NutsQuestion<T> setDefautValue(Object defautValue) {
-        this.defautValue = defautValue;
+    public NutsQuestion<T> setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
         return this;
     }
 

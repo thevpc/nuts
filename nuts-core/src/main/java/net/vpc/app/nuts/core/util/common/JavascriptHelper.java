@@ -49,6 +49,7 @@ public class JavascriptHelper {
 
     public List<Pattern> blacklistClassNamePatterns = new ArrayList<>();
     private ScriptEngine engine;
+    private NutsWorkspace ws;
 
     private Set<String> blacklistClassNames = new HashSet<>(
             Arrays.asList(
@@ -59,11 +60,14 @@ public class JavascriptHelper {
             )
     );
 
+
     public static class NutScriptUtil {
         NutsWorkspace ws;
+        NutsSession session;
 
-        public NutScriptUtil(NutsWorkspace ws) {
+        public NutScriptUtil(NutsWorkspace ws,NutsSession session) {
             this.ws = ws;
+            this.session = session;
         }
         
         public boolean matches(Object value, String pattern) {
@@ -80,18 +84,18 @@ public class JavascriptHelper {
                 return CoreStringUtils.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
-                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern,ws);
-                return f==null || f.accept((NutsId) value, ws);
+                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
+                return f==null || f.accept((NutsId) value, ws, session);
             }
             if (value instanceof NutsDependency) {
-                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern,ws);
+                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern);
                 //TODO, how to pass parent Id for dependency?
                 NutsId from=null;
-                return f==null || f.accept(from, (NutsDependency) value);
+                return f==null || f.accept(from, (NutsDependency) value, ws, session);
             }
             if (value instanceof NutsVersion) {
                 NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern,ws);
-                return f==null || f.accept((NutsVersion) value);
+                return f==null || f.accept((NutsVersion) value, ws, session);
             }
             return true;
         }
@@ -106,7 +110,8 @@ public class JavascriptHelper {
 
     }
 
-    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util,NutsWorkspace ws) {
+    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util,NutsWorkspace ws,NutsSession session) {
+        this.ws=ws;
         if (blacklist == null) {
             blacklistClassNames.addAll(Arrays.asList(
                     "java.io.File",
@@ -124,10 +129,10 @@ public class JavascriptHelper {
             }
         }
         if (code == null) {
-            throw new NutsIllegalArgumentException("Illegal js filter : empty content");
+            throw new NutsIllegalArgumentException(ws, "Illegal js filter : empty content");
         }
         if (!code.contains("return")) {
-            throw new NutsIllegalArgumentException("js filter must contain a return clause");
+            throw new NutsIllegalArgumentException(ws, "js filter must contain a return clause");
         }
         try {
             engine = createScriptEngine();
@@ -140,11 +145,11 @@ public class JavascriptHelper {
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");
             if (util == null) {
-                util = new NutScriptUtil(ws);
+                util = new NutScriptUtil(ws,session);
             }
             engine.put("util", util);
         } catch (ScriptException e) {
-            throw new NutsParseException(e);
+            throw new NutsParseException(ws,e);
         }
     }
 
@@ -181,7 +186,7 @@ public class JavascriptHelper {
         try {
             return Boolean.TRUE.equals(engine.eval("accept(x);"));
         } catch (ScriptException e) {
-            throw new NutsParseException(e);
+            throw new NutsParseException(ws,e);
         }
     }
 }

@@ -152,7 +152,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public String readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(PrintStream out, String prompt, Object... params) {
         if(out==null){
             out=getOut();
         }
@@ -160,7 +160,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             out=System.out;
         }
         out.printf(prompt, params);
-        return reader.readLine("", '*');
+        return reader.readLine("", '*').toCharArray();
     }
 
     @Override

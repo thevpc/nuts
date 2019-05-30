@@ -29,21 +29,15 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsUpdateUserCommand;
-import net.vpc.app.nuts.NutsUserConfig;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsArgument;
 
 /**
  *
@@ -57,8 +51,8 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     private boolean remoteIdentityUpdated;
     private boolean resetRights;
     private boolean resetGroups;
-    private String credentials;
-    private String oldCredentials;
+    private char[] credentials;
+    private char[] oldCredentials;
     private final Set<String> rights = new HashSet<>();
     private final Set<String> groups = new HashSet<>();
     private final Set<String> rm_rights = new HashSet<>();
@@ -66,42 +60,42 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     private NutsRepository repo;
 
     public DefaultNutsUpdateUserCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"update-user");
     }
 
     public DefaultNutsUpdateUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace());
+        super(repo.getWorkspace(),"update-user");
         this.repo = repo;
     }
 
     @Override
-    public String getCredentials() {
+    public char[] getCredentials() {
         return credentials;
     }
 
     @Override
-    public DefaultNutsUpdateUserCommand credentials(String password) {
+    public DefaultNutsUpdateUserCommand credentials(char[] password) {
         return setCredentials(password);
     }
 
     @Override
-    public DefaultNutsUpdateUserCommand setCredentials(String password) {
+    public DefaultNutsUpdateUserCommand setCredentials(char[] password) {
         this.credentials = password;
         return this;
     }
 
     @Override
-    public String getOldCredentials() {
+    public char[] getOldCredentials() {
         return oldCredentials;
     }
 
     @Override
-    public DefaultNutsUpdateUserCommand oldCredentials(String password) {
+    public DefaultNutsUpdateUserCommand oldCredentials(char[] password) {
         return setOldCredentials(password);
     }
 
     @Override
-    public DefaultNutsUpdateUserCommand setOldCredentials(String password) {
+    public DefaultNutsUpdateUserCommand setOldCredentials(char[] password) {
         this.oldCredentials = password;
         return this;
     }
@@ -415,23 +409,24 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
             ws.security().checkAllowed(NutsConstants.Rights.SET_PASSWORD, "set-user-credentials");
             String currentLogin = ws.security().getCurrentLogin();
             if (CoreStringUtils.isBlank(login)) {
-                if (!NutsConstants.Names.USER_ANONYMOUS.equals(currentLogin)) {
+                if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NutsIllegalArgumentException("Not logged in");
+                    throw new NutsIllegalArgumentException(ws, "Not logged in");
                 }
             }
             if (repo != null) {
                 NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(login);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException("No such user " + login);
+                    throw new NutsIllegalArgumentException(ws, "No such user " + login);
                 }
                 if (!currentLogin.equals(login)) {
                     repo.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
                 }
                 if (!repo.security().isAllowed(NutsConstants.Rights.ADMIN)) {
                     repo.security().getAuthenticationAgent()
-                            .checkCredentials(u.getCredentials(),
+                            .checkCredentials(
+                                    u.getCredentials().toCharArray(),
                                     getCredentials(),
                                     repo.config()
                             );
@@ -445,11 +440,13 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 //            }
                 }
                 if (CoreStringUtils.isBlank(getCredentials())) {
-                    throw new NutsIllegalArgumentException("Missing password");
+                    throw new NutsIllegalArgumentException(ws, "Missing password");
                 }
 
-                u.setCredentials(repo.security().getAuthenticationAgent()
-                        .setCredentials(credentials, repo.config()));
+                u.setCredentials(
+                        new String(repo.security().getAuthenticationAgent()
+                                .setCredentials(credentials, repo.config()))
+                );
                 if (resetGroups) {
                     u.setGroups(new String[0]);
                 }
@@ -478,14 +475,15 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 
                 NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(login);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException("No such user " + login);
+                    throw new NutsIllegalArgumentException(ws, "No such user " + login);
                 }
                 if (!currentLogin.equals(login)) {
                     ws.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
                 }
                 if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
                     ws.security().getAuthenticationAgent()
-                            .checkCredentials(u.getCredentials(),
+                            .checkCredentials(
+                                    u.getCredentials().toCharArray(),
                                     getCredentials(),
                                     ws.config()
                             );
@@ -499,11 +497,11 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 //            }
                 }
                 if (CoreStringUtils.isBlank(getCredentials())) {
-                    throw new NutsIllegalArgumentException("Missing password");
+                    throw new NutsIllegalArgumentException(ws, "Missing password");
                 }
 
-                u.setCredentials(ws.security().getAuthenticationAgent()
-                        .setCredentials(credentials, ws.config()));
+                u.setCredentials(new String(ws.security().getAuthenticationAgent()
+                        .setCredentials(credentials, ws.config())));
                 if (resetGroups) {
                     u.setGroups(new String[0]);
                 }
@@ -533,12 +531,12 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

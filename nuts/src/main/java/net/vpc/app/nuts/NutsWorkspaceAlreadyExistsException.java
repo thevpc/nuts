@@ -35,19 +35,19 @@ package net.vpc.app.nuts;
  */
 public class NutsWorkspaceAlreadyExistsException extends NutsElementAlreadyDefinedException {
 
-    private final String workspace;
+    private final String workspaceLocation;
 
-    public NutsWorkspaceAlreadyExistsException(String workspace) {
-        super("Workspace Already exists " + (workspace == null ? "<null>" : workspace));
-        this.workspace = workspace;
+    public NutsWorkspaceAlreadyExistsException(NutsWorkspace workspace,String workspaceLocation) {
+        super(workspace,"Workspace Already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation));
+        this.workspaceLocation = workspaceLocation;
     }
 
-    public NutsWorkspaceAlreadyExistsException(String workspace, Throwable err) {
-        super("Workspace Already exists " + (workspace == null ? "<null>" : workspace), err);
-        this.workspace = workspace;
+    public NutsWorkspaceAlreadyExistsException(NutsWorkspace workspace,String workspaceLocation, Throwable err) {
+        super(workspace,"Workspace Already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation), err);
+        this.workspaceLocation = workspaceLocation;
     }
 
-    public String getWorkspace() {
-        return workspace;
+    public String getWorkspaceLocation() {
+        return workspaceLocation;
     }
 }

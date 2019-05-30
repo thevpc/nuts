@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public class NutsUserCancelException extends NutsException {
-    public NutsUserCancelException() {
-        super("User cancelled operation");
+    public NutsUserCancelException(NutsWorkspace workspace) {
+        super(workspace,"User cancelled operation");
     }
 }

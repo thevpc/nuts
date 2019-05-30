@@ -30,30 +30,40 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ * an Authentication Agent is responsible of storing and retrieving credentials
+ * in external repository (password manager, kwallet, keypass, gnome-keyring...).
+ * And Id of the stored password is then saved as plain text in nuts config file.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsAuthenticationAgent extends NutsComponent<String> {
 
-    void checkCredentials(String credentialsId, String password, NutsEnvProvider envProvider);
+    /**
+     * check if the given <code>password</code> is valid against the one stored by the
+     * Authentication Agent for  <code>credentialsId</code>
+     * @param credentialsId credentialsId
+     * @param password password
+     * @param envProvider envProvider
+     * @throws NutsSecurityException when check failed
+     */
+    void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) throws NutsSecurityException;
 
     /**
-     * get the credentials for the given id
+     * get the credentials for the given id.
      *
      * @param credentialsId credentials-id
-     * @param envProvider
+     * @param envProvider  envProvider
      * @return credentials
      */
-    String getCredentials(String credentialsId, NutsEnvProvider envProvider);
+    char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider);
 
     /**
      * store credentials in the agent and return the credential id to store into
      * the config
      *
      * @param credentials credential
-     * @param envProvider
+     * @param envProvider envProvider
      * @return credentials-id
      */
-    String setCredentials(String credentials, NutsEnvProvider envProvider);
+    char[] setCredentials(char[] credentials, NutsEnvProvider envProvider);
 }

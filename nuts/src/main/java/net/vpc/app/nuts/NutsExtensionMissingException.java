@@ -37,8 +37,8 @@ public class NutsExtensionMissingException extends NutsElementNotFoundException 
 
     private final Class missingType;
 
-    public NutsExtensionMissingException(Class missingType, String extensionName) {
-        super("Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.");
+    public NutsExtensionMissingException(NutsWorkspace workspace,Class missingType, String extensionName) {
+        super(workspace, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.");
         this.missingType = missingType;
     }
 

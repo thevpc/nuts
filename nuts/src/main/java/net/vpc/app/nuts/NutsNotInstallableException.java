@@ -37,18 +37,18 @@ public class NutsNotInstallableException extends NutsElementNotFoundException {
 
     private final String id;
 
-    public NutsNotInstallableException(NutsId nuts) {
-        this(nuts == null ? null : nuts.toString());
+    public NutsNotInstallableException(NutsWorkspace workspace,NutsId nuts) {
+        this(workspace,nuts == null ? null : nuts.toString());
     }
 
-    public NutsNotInstallableException(String nuts) {
-        super("No such nuts " + (nuts == null ? "<null>" : nuts));
+    public NutsNotInstallableException(NutsWorkspace workspace,String nuts) {
+        super(workspace, "No such nuts " + (nuts == null ? "<null>" : nuts));
         this.id = nuts;
     }
 
-    public NutsNotInstallableException(String nuts, String msg, Exception ex) {
+    public NutsNotInstallableException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }

@@ -5,20 +5,20 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminSubCommand;
 
 import java.io.PrintStream;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
  * @author vpc
  */
 public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
-    public static boolean trySave(NutsApplicationContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, NutsCommandLine cmdLine) {
+    public static boolean trySave(NutsApplicationContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, NutsCommand cmdLine) {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
@@ -34,7 +34,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
         }
         if (cmdLine != null) {
             while (cmdLine.hasNext()) {
-                if (cmdLine.readAll("--save")) {
+                if (cmdLine.next("--save")!=null) {
                     save = true;
                 } else {
                     cmdLine.setCommandName("config").unexpectedArgument();

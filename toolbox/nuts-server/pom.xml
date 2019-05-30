@@ -66,11 +66,6 @@
             <artifactId>nuts</artifactId>
             <version>0.5.5</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>net.vpc.app.nuts</groupId>-->
-        <!--<artifactId>nuts-core</artifactId>-->
-        <!--<version>0.5.0.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-utils</artifactId>

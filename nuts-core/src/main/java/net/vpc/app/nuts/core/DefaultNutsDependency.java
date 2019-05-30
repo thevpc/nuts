@@ -51,6 +51,10 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String optional;
     private final NutsId[] exclusions;
 
+    public DefaultNutsDependency(NutsId id) {
+        this(id.getNamespace(),id.getGroup(),id.getName(),id.getClassifier(),id.getVersion(),id.getScope(),id.getOptional(),null);
+    }
+    
     public DefaultNutsDependency(String namespace, String group, String name, String classifier,NutsVersion version, String scope, String optional, NutsId[] exclusions) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.group = CoreStringUtils.trimToNull(group);

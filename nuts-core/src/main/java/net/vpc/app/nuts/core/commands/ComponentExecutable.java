@@ -6,22 +6,15 @@
 package net.vpc.app.nuts.core.commands;
 
 import java.util.Properties;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsExecutableType;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsUserCancelException;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsExecCommand;
 
 /**
  *
  * @author vpc
  */
-public class ComponentExecutable extends AbstractExecutable {
+public class ComponentExecutable extends AbstractNutsExecutableCommand {
     
     NutsWorkspace ws;
     NutsDefinition def;
@@ -59,10 +52,10 @@ public class ComponentExecutable extends AbstractExecutable {
     public void execute() {
         if (!def.getInstallation().isInstalled()) {
             ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
-            if (session.getTerminal().ask(NutsQuestion.forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defautValue(true))) {
-                ws.install().id(def.getId()).args(appArgs).setSession(session.force()).run();
+            if (session.getTerminal().ask(NutsQuestion.forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defaultValue(true))) {
+                ws.install().id(def.getId()).setSession(session.force()).run();
             } else {
-                throw new NutsUserCancelException();
+                throw new NutsUserCancelException(ws);
             }
         }
         execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
@@ -70,7 +63,7 @@ public class ComponentExecutable extends AbstractExecutable {
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + NutsCommandLine.escapeArguments(appArgs);
+        return "NUTS " + getId().toString() + " " + ws.parser().parseCommand(appArgs).getCommandLine();
     }
     
 }

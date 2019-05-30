@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JavaShell;
+import net.vpc.common.javashell.JShell;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ShowerrCommand extends AbstractNutsCommand {
+public class ShowerrCommand extends AbstractNshCommand {
 
 
     public ShowerrCommand() {
@@ -45,7 +45,7 @@ public class ShowerrCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-         JavaShell shell = context.getShell();
+         JShell shell = context.getShell();
         if (shell.getLastErrorMessage() == null) {
             context.out().println("##Last command ended successfully with no errors.##");
         } else {

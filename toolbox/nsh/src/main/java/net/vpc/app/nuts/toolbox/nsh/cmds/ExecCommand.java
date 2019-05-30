@@ -30,7 +30,7 @@
 //package net.vpc.app.nuts.toolbox.nsh.cmds;
 //
 //import net.vpc.app.nuts.NutsExecutionType;
-//import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+//import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.common.commandline.Argument;
 //
@@ -40,7 +40,7 @@
 ///**
 // * Created by vpc on 1/7/17.
 // */
-//public class ExecCommand extends AbstractNutsCommand {
+//public class ExecCommand extends AbstractNshCommand {
 //
 //    public ExecCommand() {
 //        super("exec", DEFAULT_SUPPORT);
@@ -48,7 +48,7 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        NutsCommandLine cmdLine = cmdLine(args, context);
+//        NutsCommand cmdLine = cmdLine(args, context);
 //        List<String> sargs = new ArrayList<>();
 //        NutsExecutionType executionType = null;
 //        boolean command = false;
@@ -58,15 +58,15 @@
 //            if (!command) {
 //                if (context.configure(cmdLine)) {
 //                    //
-//                } else if ((a = cmdLine.readBooleanOption("-n", "--native","--syscall")) != null) {
+//                } else if ((a = cmdLine.nextBoolean("-n", "--native","--syscall")) != null) {
 //                    if (a.getBooleanValue()) {
 //                        executionType = NutsExecutionType.SYSCALL;
 //                    }
-//                } else if ((a = cmdLine.readBooleanOption("-m", "--embedded")) != null) {
+//                } else if ((a = cmdLine.nextBoolean("-m", "--embedded")) != null) {
 //                    if (a.getBooleanValue()) {
 //                        executionType = NutsExecutionType.EMBEDDED;
 //                    }
-//                } else if ((a = cmdLine.readBooleanOption("-x", "--external","--spawn")) != null) {
+//                } else if ((a = cmdLine.nextBoolean("-x", "--external","--spawn")) != null) {
 //                    if (a.getBooleanValue()) {
 //                        executionType = NutsExecutionType.SPAWN;
 //                    }

@@ -30,7 +30,7 @@
 //package net.vpc.app.nuts.toolbox.nsh.cmds;
 //
 //import net.vpc.app.nuts.*;
-//import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+//import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 //import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 //import net.vpc.app.nuts.app.options.NutsIdNonOption;
 //import net.vpc.app.nuts.app.options.RepositoryNonOption;
@@ -41,7 +41,7 @@
 ///**
 // * Created by vpc on 1/7/17.
 // */
-//public class InstallCommand extends AbstractNutsCommand {
+//public class InstallCommand extends AbstractNshCommand {
 //
 //    public InstallCommand() {
 //        super("install", DEFAULT_SUPPORT);
@@ -49,7 +49,7 @@
 //
 //    @Override
 //    public int exec(String[] args, NutsCommandContext context) throws Exception {
-//        NutsCommandLine cmdLine = cmdLine(args, context);
+//        NutsCommand cmdLine = cmdLine(args, context);
 //        NutsInstallCommand options = context.getWorkspace().install().setSession(context.getSession()).setTrace(true);
 //        boolean deployOnly = false;
 //        String repositoryId = null;
@@ -58,22 +58,22 @@
 //        do {
 //            if (context.configure(cmdLine)) {
 //                //
-//            } else if (cmdLine.readAllOnce("-f", "--force")) {
+//            } else if (cmdLine.skipOnce("-f", "--force")) {
 //                options.setForce(true);
-//            } else if (cmdLine.readAllOnce("-i", "--ignore")) {
+//            } else if (cmdLine.skipOnce("-i", "--ignore")) {
 //                options.setForce(false);
 //            } else {
 //                NutsWorkspace ws = context.getWorkspace();
-//                if (cmdLine.readAllOnce("-r", "--repository")) {
-//                    repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getString();
-//                } else if (cmdLine.readAllOnce("-s", "--descriptor")) {
-//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
-//                } else if (cmdLine.readAllOnce("-t", "--target")) {
-//                    descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
-//                } else if (cmdLine.readAllOnce("-y", "--deploy", "--no-install")) {
+//                if (cmdLine.skipOnce("-r", "--repository")) {
+//                    repositoryId = cmdLine.nextNonOption(new RepositoryNonOption("Repository", ws)).getString();
+//                } else if (cmdLine.skipOnce("-s", "--descriptor")) {
+//                    descriptorFile = cmdLine.nextNonOption(new FileNonOption("DescriptorFile")).getString();
+//                } else if (cmdLine.skipOnce("-t", "--target")) {
+//                    descriptorFile = cmdLine.nextNonOption(new FileNonOption("Target")).getString();
+//                } else if (cmdLine.skipOnce("-y", "--deploy", "--no-install")) {
 //                    deployOnly = true;
 //                } else {
-//                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
+//                    String id = cmdLine.required().nextNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
 //                    if (cmdLine.isExecMode()) {
 //                        if (deployOnly) {
 //                            for (String s : context.getShell().expandPath(id)) {

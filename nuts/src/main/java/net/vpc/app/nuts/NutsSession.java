@@ -36,7 +36,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider {
+public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider, NutsConfigurable {
 
     boolean isTrace();
 
@@ -68,11 +68,11 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     NutsOutputFormat getOutputFormat();
 
-    NutsOutputListFormat getOutputCustomFormat();
+    NutsIncrementalFormat getOutputCustomFormat();
 
-    NutsSession outputCustomFormat(NutsOutputListFormat customFormat);
+    NutsSession outputCustomFormat(NutsIncrementalFormat customFormat);
 
-    NutsSession setOutputCustomFormat(NutsOutputListFormat customFormat);
+    NutsSession setOutputCustomFormat(NutsIncrementalFormat customFormat);
 
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
@@ -116,7 +116,4 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     boolean isAsk();
 
-    boolean configureFirst(NutsCommandLine cmd);
-
-    boolean configure(NutsCommandLine commandLine, boolean skipIgnored);
 }

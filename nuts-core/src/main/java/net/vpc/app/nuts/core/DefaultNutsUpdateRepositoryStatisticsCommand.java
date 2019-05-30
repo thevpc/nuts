@@ -5,11 +5,8 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsUpdateRepositoryStatisticsCommand;
-import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsCommand;
 
 /**
  *
@@ -21,17 +18,17 @@ public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsW
     protected NutsRepository repo;
 
     public DefaultNutsUpdateRepositoryStatisticsCommand(NutsRepository repo) {
-        super(repo.getWorkspace());
+        super(repo.getWorkspace(),"update-repo-statistics");
         this.repo = repo;
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

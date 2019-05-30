@@ -36,22 +36,23 @@ package net.vpc.app.nuts;
  */
 public class NutsUnsupportedArgumentException extends NutsException {
 
-    public NutsUnsupportedArgumentException() {
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace) {
+        super(workspace);
     }
 
-    public NutsUnsupportedArgumentException(String message) {
-        super(message);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message) {
+        super(workspace,message);
     }
 
-    public NutsUnsupportedArgumentException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message, Throwable cause) {
+        super(workspace,message, cause);
     }
 
-    public NutsUnsupportedArgumentException(Throwable cause) {
-        super(cause);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace,Throwable cause) {
+        super(workspace,cause);
     }
 
-    public NutsUnsupportedArgumentException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace,message, cause, enableSuppression, writableStackTrace);
     }
 }

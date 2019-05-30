@@ -29,17 +29,14 @@
  */
 package net.vpc.app.nuts.core.filters.dependency;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyFilter;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.util.common.JavascriptHelper;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.WeakHashMap;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -50,29 +47,15 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
-    private JavascriptHelper engineHelper;
 
-    public static NutsDependencyJavascriptFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsDependencyJavascriptFilter valueOf(String value) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
-        final WeakHashMap<String, NutsDependencyJavascriptFilter> cached = new WeakHashMap<>();
-        synchronized (cached) {
-            NutsDependencyJavascriptFilter old = cached.get(value);
-            if (old == null) {
-                old = new NutsDependencyJavascriptFilter(value, ws);
-                cached.put(value, old);
-            }
-            return old;
-        }
+        return new NutsDependencyJavascriptFilter(value);
     }
 
-    public NutsDependencyJavascriptFilter(String code, NutsWorkspace ws) {
-        this(code, null, ws);
-    }
-
-    public NutsDependencyJavascriptFilter(String code, Set<String> blacklist, NutsWorkspace ws) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null, ws);
+    public NutsDependencyJavascriptFilter(String code) {
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -83,7 +66,8 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency d) {
+    public boolean accept(NutsId from, NutsDependency d, NutsWorkspace ws, NutsSession session) {
+    JavascriptHelper engineHelper= new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws,session);
         return engineHelper.accept(d);
     }
 

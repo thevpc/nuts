@@ -37,13 +37,13 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsElementAlready
 
     private final String repository;
 
-    public NutsRepositoryAlreadyRegisteredException(String repository) {
-        super("Repository Already registered " + (repository == null ? "<null>" : repository));
+    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace,String repository) {
+        super(workspace, "Repository Already registered " + (repository == null ? "<null>" : repository));
         this.repository = repository;
     }
 
-    public NutsRepositoryAlreadyRegisteredException(String repository, Throwable err) {
-        super("Repository Already registered " + (repository == null ? "<null>" : repository), err);
+    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace,String repository, Throwable err) {
+        super(workspace, "Repository Already registered " + (repository == null ? "<null>" : repository), err);
         this.repository = repository;
     }
 

@@ -35,6 +35,6 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public enum NutsRepositorySupportedAction {
-    FIND,
+    SEARCH,
     DEPLOY
 }

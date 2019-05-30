@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
+import java.util.Date;
 import net.vpc.app.nuts.NutsInstallInfo;
 
 /**
@@ -42,12 +43,33 @@ public class DefaultNutsInstallInfo implements NutsInstallInfo {
     private final boolean installed;
     private boolean justInstalled;
     private boolean defaultVersion;
+    private Date installDate;
+    private String installUser;
     private final Path installFolder;
 
-    public DefaultNutsInstallInfo(boolean installed, boolean defaultVersion, Path installFolder) {
+    public DefaultNutsInstallInfo(boolean installed, boolean defaultVersion, Path installFolder,Date installDate,String installUser) {
         this.installed = installed;
         this.installFolder = installFolder;
         this.defaultVersion = defaultVersion;
+        this.installDate = installDate;
+        this.installUser = installUser;
+    }
+
+    public String getInstallUser() {
+        return installUser;
+    }
+
+    public void setInstallUser(String installUser) {
+        this.installUser = installUser;
+    }
+
+    @Override
+    public Date getInstallDate() {
+        return installDate;
+    }
+
+    public void setInstallDate(Date installDate) {
+        this.installDate = installDate;
     }
 
     @Override

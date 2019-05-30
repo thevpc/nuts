@@ -42,7 +42,7 @@ public interface NutsTerminalBase extends NutsComponent<Object> {
 
     String readLine(PrintStream out, String prompt, Object... params);
 
-    String readPassword(PrintStream out, String prompt, Object... params);
+    char[] readPassword(PrintStream out, String prompt, Object... params);
 
     InputStream getIn();
 

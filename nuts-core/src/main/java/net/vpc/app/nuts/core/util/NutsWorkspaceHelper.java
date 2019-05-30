@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import net.vpc.app.nuts.*;
 import java.util.*;
 import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
@@ -38,9 +40,6 @@ import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
  * @author vpc
  */
 public class NutsWorkspaceHelper {
-
-    
-
 
 //    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
 //        if (CoreStringUtils.isEmpty(workspace)) {

@@ -11,6 +11,7 @@ import java.util.Objects;
 import net.vpc.app.nuts.NutsCommandAutoCompleteBase;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
@@ -34,7 +35,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private boolean verbose;
     private long startTimeMillis;
     private String[] args;
-    private String mode = "launch";
+    private NutsApplicationMode mode = NutsApplicationMode.RUN;
 
     /**
      * previous version for "on-update" mode
@@ -61,37 +62,48 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            String[] execModeCommand = NutsCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
-            if (execModeCommand.length > 0) {
-                switch (execModeCommand[0]) {
+            NutsCommand execModeCommand = workspace.parser().parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
+            if (execModeCommand.hasNext()) {
+                NutsArgument a=execModeCommand.next();
+                switch (a.getKey().getString()) {
                     case "auto-complete": {
-                        mode = execModeCommand[0];
-                        if (execModeCommand.length > 1) {
-                            wordIndex = Integer.parseInt(execModeCommand[1]);
+                        mode = NutsApplicationMode.AUTO_COMPLETE;
+                        if (execModeCommand.hasNext()) {
+                            wordIndex = execModeCommand.next().getInt();
                         }
-                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        modeArgs = execModeCommand.toArray();
+                        execModeCommand.skipAll();
                         break;
                     }
-                    case "on-install": {
-                        mode = execModeCommand[0];
-                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
-                        break;
+                    case "install":
+                    case "on-install":
+                        {
+                        mode = NutsApplicationMode.INSTALL;
+                            modeArgs = execModeCommand.toArray();
+                            execModeCommand.skipAll();
+                            break;
                     }
-                    case "on-uninstall": {
-                        mode = execModeCommand[0];
-                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
-                        break;
+                    case "uninstall":
+                    case "on-uninstall":
+                        {
+                        mode = NutsApplicationMode.UNINSTALL;
+                            modeArgs = execModeCommand.toArray();
+                            execModeCommand.skipAll();
+                            break;
                     }
-                    case "on-update": {
-                        mode = execModeCommand[0];
-                        if (execModeCommand.length > 1) {
-                            appPreviousVersion = workspace.parser().parseVersion(execModeCommand[1]);
+                    case "update":
+                    case "on-update":
+                        {
+                        mode = NutsApplicationMode.UPDATE;
+                            if (execModeCommand.hasNext()) {
+                            appPreviousVersion = workspace.parser().parseVersion(execModeCommand.next().getString());
                         }
-                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
-                        break;
+                            modeArgs = execModeCommand.toArray();
+                            execModeCommand.skipAll();
+                            break;
                     }
                     default: {
-                        throw new NutsExecutionException("Unsupported nuts-exec-mode : " + args[0], 205);
+                        throw new NutsExecutionException(workspace,"Unsupported nuts-exec-mode : " + args[0], 205);
                     }
                 }
             }
@@ -99,7 +111,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         NutsId appId = workspace.resolveIdForClass(appClass);
         if (appId == null) {
-            throw new NutsExecutionException("Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
+            throw new NutsExecutionException(workspace,"Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
         this.workspace = (workspace);
         this.args = (args);
@@ -112,36 +124,37 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.err0 = (terminal.ferr());
         this.out = out0;
         this.err = err0;
-        this.programsFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.PROGRAMS));
-        this.configFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.CONFIG));
-        this.logsFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.LOGS));
-        this.tempFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.TEMP));
-        this.varFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.VAR));
-        this.libFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.LIB));
-        this.cacheFolder = (workspace.config().getStoreLocation(this.storeId, NutsStoreLocation.CACHE));
-        if ("auto-complete".equals(mode)) {
+        NutsWorkspaceConfigManager cfg = workspace.config();
+        this.programsFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.PROGRAMS));
+        this.configFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.CONFIG));
+        this.logsFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.LOGS));
+        this.tempFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.TEMP));
+        this.varFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.VAR));
+        this.libFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.LIB));
+        this.cacheFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.CACHE));
+        if (mode==NutsApplicationMode.AUTO_COMPLETE) {
             this.workspace.getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
-            autoComplete = new AppCommandAutoComplete(args, wordIndex, out());
+            autoComplete = new AppCommandAutoComplete(workspace,args, wordIndex, out());
         } else {
             autoComplete = null;
         }
     }
 
     @Override
-    public String getMode() {
+    public NutsApplicationMode getMode() {
         return mode;
     }
 
-    public DefaultNutsApplicationContext setMode(String mode) {
+    public DefaultNutsApplicationContext setMode(NutsApplicationMode mode) {
         this.mode = mode;
         return this;
     }
 
     @Override
-    public String[] getModeArgs() {
+    public String[] getModeArguments() {
         return modeArgs;
     }
 
@@ -156,99 +169,117 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public final boolean configure(NutsCommandLine commandLine, boolean skipIgnored) {
-        if (skipIgnored) {
-            boolean conf = false;
-            while (commandLine.hasNext()) {
-                if (!configure(commandLine, false)) {
-                    commandLine.skip();
-                } else {
-                    conf = true;
-                }
-            }
-            return conf;
-        } else {
-            return configure(commandLine);
-        }
+    public final NutsApplicationContext configure(String... args) {
+        NutsId appId = getAppId();
+        String appName=appId==null?"app": appId.getName();
+        return NutsConfigurableHelper.configure(this, workspace, args, appName);
     }
-    
+
     @Override
-    public boolean configure(NutsCommandLine cmd) {
-        NutsArgument a;
-        if ((a = cmd.readOption("--help")) != null) {
-            if (cmd.isExecMode()) {
-                showHelp();
-                cmd.skipAll();
+    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
+        return NutsConfigurableHelper.configure(this, workspace, commandLine,skipIgnored);
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        NutsArgument a = cmd.peek();
+        if (a == null) {
+            return false;
+        }
+        switch (a.getKey().getString()) {
+            case "--help": {
+                cmd.skip();
+                if (cmd.isExecMode()) {
+                    showHelp();
+                    cmd.skipAll();
+                }
+                throw new NutsExecutionException(workspace,"Help", 0);
             }
-            throw new NutsExecutionException("Help", 0);
-        } else if ((a = cmd.readBooleanOption("--version")) != null) {
-            if (cmd.isExecMode()) {
-                out().printf("%s%n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
-                cmd.skipAll();
+            case "--version": {
+                cmd.skip();
+                if (cmd.isExecMode()) {
+                    out().printf("%s%n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
+                    cmd.skipAll();
+                }
+                throw new NutsExecutionException(workspace,"Help", 0);
             }
-            throw new NutsExecutionException("Help", 0);
-        } else if ((a = cmd.readOption("--term-system")) != null) {
-            setTerminalMode(null);
-        } else if ((a = cmd.readOption("--term-filtered")) != null) {
-            setTerminalMode(NutsTerminalMode.FILTERED);
-        } else if ((a = cmd.readOption("--term-formatted")) != null) {
-            setTerminalMode(NutsTerminalMode.FORMATTED);
-        } else if ((a = cmd.readOption("--term-inherited")) != null) {
-            setTerminalMode(NutsTerminalMode.INHERITED);
-        } else if ((a = cmd.readOption("--no-color")) != null) {
-            setTerminalMode(NutsTerminalMode.FILTERED);
-        } else if ((a = cmd.readStringOption("--term")) != null) {
-            String s = a.getValue().getString().toLowerCase();
-            switch (s) {
-                case "":
-                case "system":
-                case "auto": {
-                    setTerminalMode(null);
-                    break;
-                }
-                case "filtered": {
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    break;
-                }
-                case "formatted": {
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    break;
-                }
-                case "inherited": {
-                    setTerminalMode(NutsTerminalMode.INHERITED);
-                    break;
-                }
+            case "--term-system": {
+                cmd.skip();
+                setTerminalMode(null);
+                return true;
             }
-            return true;
-        } else if ((a = cmd.readStringOption("--color")) != null) {
-            String s = a.getValue().getString().toLowerCase();
-            switch (s) {
-                case "":
-                case "system":
-                case "auto": {
-                    setTerminalMode(null);
-                    break;
-                }
-                case "filtered": {
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    break;
-                }
-                case "formatted": {
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    break;
-                }
-                case "inherited": {
-                    setTerminalMode(NutsTerminalMode.INHERITED);
-                    break;
-                }
-                default: {
-                    setTerminalMode(cmd.newArgument(s).getBoolean(false) ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
-                }
+            case "--term-filtered": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.FILTERED);
+                return true;
             }
-            return true;
-        } else if ((a = cmd.readBooleanOption("--verbose")) != null) {
-            this.setVerbose((a.getBooleanValue()));
-            return true;
+            case "--term-formatted": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.FORMATTED);
+                return true;
+            }
+            case "--term-inherited": {
+                cmd.skip();
+                setTerminalMode(NutsTerminalMode.INHERITED);
+                return true;
+            }
+            case "--term": {
+                String s = cmd.nextString().getValue().getString("").toLowerCase();
+                switch (s) {
+                    case "":
+                    case "system":
+                    case "auto": {
+                        setTerminalMode(null);
+                        break;
+                    }
+                    case "filtered": {
+                        setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "formatted": {
+                        setTerminalMode(NutsTerminalMode.FORMATTED);
+                        break;
+                    }
+                    case "inherited": {
+                        setTerminalMode(NutsTerminalMode.INHERITED);
+                        break;
+                    }
+                }
+                return true;
+            }
+            case "--color": {
+                NutsArgument val = cmd.nextString().getValue();
+                String s = val.getString("").toLowerCase();
+                switch (s) {
+                    case "":
+                    case "system":
+                    case "auto": {
+                        setTerminalMode(null);
+                        break;
+                    }
+                    case "filtered": {
+                        setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "formatted": {
+                        setTerminalMode(NutsTerminalMode.FORMATTED);
+                        break;
+                    }
+                    case "inherited": {
+                        setTerminalMode(NutsTerminalMode.INHERITED);
+                        break;
+                    }
+                    default: {
+                        Boolean bval = cmd.newArgument(s).getBoolean(false);
+                        setTerminalMode(bval ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
+                    }
+                }
+                return true;
+            }
+            case "--verbose": {
+                setVerbose(cmd.nextBoolean().getValue().getBoolean());
+                return true;
+            }
         }
         return false;
     }
@@ -436,7 +467,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public String[] getArgs() {
+    public String[] getArguments() {
         return args;
     }
 
@@ -447,13 +478,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public NutsCommandLine commandLine() {
+    public NutsCommand commandLine() {
         return getCommandLine();
     }
-    
+
     @Override
-    public NutsCommandLine getCommandLine() {
-        return workspace.parser().parseCommandLine(getArgs()).setAutoComplete(getAutoComplete());
+    public NutsCommand getCommandLine() {
+        return workspace.parser().parseCommand(getArguments()).setAutoComplete(getAutoComplete());
     }
 
     private static class AppCommandAutoComplete extends NutsCommandAutoCompleteBase {
@@ -461,8 +492,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         private ArrayList<String> words;
         int wordIndex;
         private PrintStream out0;
+        private NutsWorkspace workspace;
 
-        public AppCommandAutoComplete(String[] args, int wordIndex, PrintStream out0) {
+        public AppCommandAutoComplete(NutsWorkspace workspace,String[] args, int wordIndex, PrintStream out0) {
+            this.workspace=workspace;
             words = new ArrayList<>(Arrays.asList(args));
             this.wordIndex = wordIndex;
             this.out0 = out0;
@@ -473,13 +506,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException("Candidate cannot be null", 2);
+                throw new NutsExecutionException(workspace,"Candidate cannot be null", 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v));
+                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLineUtils.escapeArgument(v));
             } else {
-                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v) + " " + NutsCommandLine.escapeArgument(d));
+                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLineUtils.escapeArgument(v) + " " + NutsCommandLineUtils.escapeArgument(d));
             }
             return c;
         }

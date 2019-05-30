@@ -1,69 +1,82 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts;
 
 /**
  *
  * @author vpc
+ * @since 0.5.5
  */
-public interface NutsArgument {
+public interface NutsArgument extends NutsTokenFilter{
 
-    public boolean isOption();
+    boolean isOption();
 
-    public boolean isNonOption();
+    boolean isNonOption();
 
-    public boolean isKeyValue();
-
-    public boolean hasValue();
-
-    public String strKey();
-
-    public String getStrKey();
-
-    public NutsArgument getKey();
-
-    public NutsArgument getName();
-
-    public NutsArgument getValue();
-
-    public String getString();
-
-    public boolean isNull();
-
-    public boolean isBlank();
-
-    public boolean isEmpty();
-
-    public boolean isNegated();
-
-    public boolean isComment();
-
-    public boolean isInt();
-
-    public int getInt();
-
-    public int getInt(int defaultValue);
-
-    public boolean isLong();
-
-    public long getLong();
-
-    public long getLong(long defaultValue);
-
-    public boolean getBoolean();
-
-    public boolean isBoolean();
-
-    public Boolean getBoolean(Boolean defaultValue);
-
-    @Deprecated
-    public boolean getBooleanValue();
-
-    NutsArgument required();
+    String getString();
 
     String getString(String defaultValue);
 
+    boolean isNegated();
+
+    boolean isEnabled();
+
+    boolean isInt();
+
+    int getInt();
+
+    int getInt(int defaultValue);
+
+    boolean isLong();
+
+    long getLong();
+
+    long getLong(long defaultValue);
+
+    boolean isDouble();
+
+    double getDouble();
+
+    double getDouble(double defaultValue);
+
+    boolean getBoolean();
+
+    boolean isBoolean();
+
+    Boolean getBoolean(Boolean defaultValue);
+
+    NutsArgument required();
+
+    boolean isKeyValue();
+
+    NutsArgument getKey();
+
+    NutsArgument getValue();
 }

@@ -35,11 +35,11 @@ package net.vpc.app.nuts;
  */
 public class NutsRepositoryAmbiguousException extends NutsElementAlreadyDefinedException {
 
-    public NutsRepositoryAmbiguousException(String s) {
-        super(s);
+    public NutsRepositoryAmbiguousException(NutsWorkspace workspace,String s) {
+        super(workspace, s);
     }
 
-    public NutsRepositoryAmbiguousException() {
-        super("Too many repositories much criteria");
+    public NutsRepositoryAmbiguousException(NutsWorkspace workspace) {
+        super(workspace, "Too many repositories much criteria");
     }
 }

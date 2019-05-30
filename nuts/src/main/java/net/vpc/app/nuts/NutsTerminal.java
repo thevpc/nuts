@@ -40,7 +40,7 @@ public interface NutsTerminal extends NutsTerminalBase {
 
     String readLine(String promptFormat, Object... params);
 
-    String readPassword(String prompt, Object... params);
+    char[] readPassword(String prompt, Object... params);
 
     <T> T ask(NutsQuestion<T> question);
 

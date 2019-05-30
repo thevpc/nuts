@@ -95,7 +95,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentException("Invalid boundary");
+        throw new NutsIllegalArgumentException(null, "Invalid boundary");
     }
 
 //    private static class ErrInputStream extends InputStream {
@@ -111,8 +111,8 @@ public class ItemStreamInfo {
 //        }
 //
 //        @Override
-//        public int readAll() throws IOException {
-//            int y = ss.readAll();
+//        public int skip() throws IOException {
+//            int y = ss.skip();
 //            if (y < 0) {
 //                return y;
 //            }

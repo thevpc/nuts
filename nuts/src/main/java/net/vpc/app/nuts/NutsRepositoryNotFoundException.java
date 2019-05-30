@@ -37,8 +37,8 @@ public class NutsRepositoryNotFoundException extends NutsElementNotFoundExceptio
 
     private final String repository;
 
-    public NutsRepositoryNotFoundException(String repository) {
-        super("No such repository " + (repository == null ? "<null>" : repository));
+    public NutsRepositoryNotFoundException(NutsWorkspace workspace,String repository) {
+        super(workspace, "No such repository " + (repository == null ? "<null>" : repository));
         this.repository = repository;
     }
 

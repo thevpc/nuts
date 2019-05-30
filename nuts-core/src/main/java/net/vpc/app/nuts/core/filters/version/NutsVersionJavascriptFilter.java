@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.filters.version;
 
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -48,32 +49,14 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     private String code;
     private JavascriptHelper engineHelper;
 
-    public static NutsVersionJavascriptFilter valueOf(String value,NutsWorkspace ws) {
+    public static NutsVersionJavascriptFilter valueOf(String value, NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
-        String key = NutsVersionJavascriptFilter.class.getName() + ":cache";
-        WeakHashMap<String, NutsVersionJavascriptFilter> cached = (WeakHashMap) ws.getUserProperties().get(key);
-        if (cached == null) {
-            cached = new WeakHashMap<>();
-            ws.getUserProperties().put(key, cached);
-        }
-        synchronized (cached) {
-            NutsVersionJavascriptFilter old = cached.get(value);
-            if (old == null) {
-                old = new NutsVersionJavascriptFilter(value,ws);
-                cached.put(value, old);
-            }
-            return old;
-        }
+        return new NutsVersionJavascriptFilter(value);
     }
 
-    public NutsVersionJavascriptFilter(String code,NutsWorkspace ws) {
-        this(code, null,ws);
-    }
-
-    public NutsVersionJavascriptFilter(String code, Set<String> blacklist,NutsWorkspace ws) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null,ws);
+    public NutsVersionJavascriptFilter(String code) {
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -84,7 +67,8 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsVersion d) {
+    public boolean accept(NutsVersion d, NutsWorkspace ws, NutsSession session) {
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
         return engineHelper.accept(d);
     }
 
@@ -128,5 +112,4 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
         return "NutsVersionJavascriptFilter{" + code + '}';
     }
 
-    
 }

@@ -34,11 +34,11 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsFetchCommand extends NutsWorkspaceCommand{
+public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     ////////////////////////////////////////////////////////
     // Setters
@@ -62,16 +62,16 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
     NutsFetchCommand setDefaultLocation();
 
     /**
-     * if true, null replaces NutsNotFoundException
+     * if false, null replaces NutsNotFoundException
      *
-     * @param lenient
+     * @param enable
      * @return
      */
-    NutsFetchCommand setLenient(boolean lenient);
+    NutsFetchCommand setFailFast(boolean enable);
 
-    NutsFetchCommand lenient(boolean lenient);
+    NutsFetchCommand failFast(boolean enable);
 
-    NutsFetchCommand lenient();
+    NutsFetchCommand failFast();
 
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
@@ -132,8 +132,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
      */
     NutsFetchCommand remote();
 
-    NutsFetchCommand local();
-
     /**
      * installed and local
      *
@@ -147,13 +145,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
      * @return
      */
     NutsFetchCommand online();
-
-    /**
-     * local and remote
-     *
-     * @return
-     */
-    NutsFetchCommand wired();
 
     /**
      * local and remote
@@ -181,17 +172,11 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand clearScopes();
 
-    NutsFetchCommand acceptOptional();
+    NutsFetchCommand optional();
 
-    NutsFetchCommand acceptOptional(Boolean acceptOptional);
+    NutsFetchCommand optional(Boolean optional);
 
-    NutsFetchCommand setAcceptOptional(Boolean acceptOptional);
-
-    NutsFetchCommand includeOptional();
-
-    NutsFetchCommand includeOptional(boolean includeOptional);
-
-    NutsFetchCommand setIncludeOptional(boolean includeOptional);
+    NutsFetchCommand setOptional(Boolean optional);
 
     NutsFetchCommand indexed();
 
@@ -203,11 +188,17 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     boolean isIndexed();
 
-    NutsFetchCommand includeDependencies();
+    NutsFetchCommand dependencies();
 
-    NutsFetchCommand includeDependencies(boolean include);
+    NutsFetchCommand dependencies(boolean include);
 
-    NutsFetchCommand setIncludeDependencies(boolean includeDependencies);
+    NutsFetchCommand setDependencies(boolean includeDependencies);
+
+    NutsFetchCommand dependenciesTree();
+
+    NutsFetchCommand dependenciesTree(boolean include);
+
+    NutsFetchCommand setDependenciesTree(boolean includeDependencies);
 
     NutsFetchCommand setEffective(boolean effective);
 
@@ -221,37 +212,38 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand setCached(boolean cached);
 
-    NutsFetchCommand includeContent();
+    NutsFetchCommand content();
 
-    NutsFetchCommand includeContent(boolean includeContent);
+    NutsFetchCommand content(boolean includeContent);
 
-    NutsFetchCommand setIncludeContent(boolean includeContent);
+    NutsFetchCommand setContent(boolean includeContent);
 
-    NutsFetchCommand includeInstallInformation();
+    NutsFetchCommand installInformation();
 
-    NutsFetchCommand includeInstallInformation(boolean includeInstallInformation);
+    NutsFetchCommand installInformation(boolean includeInstallInformation);
 
-    NutsFetchCommand setIncludeInstallInformation(boolean includeInstallInformation);
+    NutsFetchCommand setInstallInformation(boolean includeInstallInformation);
 
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-
     Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
 
     Set<NutsDependencyScope> getScope();
 
-    Boolean getAcceptOptional();
+    Boolean getOptional();
 
-    boolean isIncludeContent();
+    boolean isContent();
 
-    boolean isIncludeInstallInformation();
+    boolean isInstallInformation();
 
     boolean isEffective();
 
-    boolean isIncludeDependencies();
+    boolean isDependencies();
+
+    boolean isDependenciesTree();
 
     boolean isTransitive();
 

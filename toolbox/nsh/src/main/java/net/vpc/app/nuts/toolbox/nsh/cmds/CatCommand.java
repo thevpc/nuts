@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
@@ -37,13 +37,13 @@ import net.vpc.common.strings.StringUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CatCommand extends AbstractNutsCommand {
+public class CatCommand extends AbstractNshCommand {
 
 
     public CatCommand() {
@@ -58,24 +58,24 @@ public class CatCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options o = new Options();
         List<File> files = new ArrayList<>();
         PrintStream out = context.out();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.readAll("-")) {
+            } else if (cmdLine.next("-")!=null) {
                 files.add(null);
-            } else if (cmdLine.readAll("-n", "--number")) {
+            } else if (cmdLine.next("-n", "--number")!=null) {
                 o.n = true;
-            } else if (cmdLine.readAll("-t", "--show-tabs")) {
+            } else if (cmdLine.next("-t", "--show-tabs")!=null) {
                 o.T = true;
-            } else if (cmdLine.readAll("-E", "--show-ends")) {
+            } else if (cmdLine.next("-E", "--show-ends")!=null) {
                 o.E = true;
             } else {
-                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
+                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file);
             }

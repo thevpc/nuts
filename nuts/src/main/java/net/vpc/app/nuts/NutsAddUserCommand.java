@@ -34,6 +34,7 @@ import java.util.Collection;
 /**
  *
  * @author vpc
+ * @since 0.5.5
  */
 public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
@@ -53,7 +54,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     String getLogin();
 
-    String getCredentials();
+    char[] getCredentials();
 
     String getRemoteIdentity();
 
@@ -83,9 +84,9 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     NutsAddUserCommand setLogin(String login);
 
-    NutsAddUserCommand credentials(String password);
+    NutsAddUserCommand credentials(char[] password);
 
-    NutsAddUserCommand setCredentials(String password);
+    NutsAddUserCommand setCredentials(char[] password);
 
     NutsAddUserCommand remoteIdentity(String remoteIdentity);
 

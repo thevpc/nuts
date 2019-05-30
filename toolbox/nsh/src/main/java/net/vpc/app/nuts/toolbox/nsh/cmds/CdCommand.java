@@ -29,37 +29,38 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CdCommand extends AbstractNutsCommand {
+public class CdCommand extends AbstractNshCommand {
 
     public CdCommand() {
         super("cd", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         while(cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             }else {
                 break;
             }
         }
-        String folder = cmdLine.readRequiredNonOption(cmdLine.createNonOption("folder")).getString();
-        File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.consoleContext().getShell().getCwd()), new FileFilter() {
+        String folder = cmdLine.required().nextNonOption(cmdLine.createNonOption("folder")).getString();
+        File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.shellContext().getShell().getCwd()), new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isDirectory();
@@ -69,7 +70,7 @@ public class CdCommand extends AbstractNutsCommand {
         int result = 0;
         switch (validFiles.length) {
             case 1:
-                context.consoleContext().getShell().setCwd(validFiles[0].getPath());
+                context.shellContext().getShell().setCwd(validFiles[0].getPath());
                 result = 0;
                 break;
             case 0:

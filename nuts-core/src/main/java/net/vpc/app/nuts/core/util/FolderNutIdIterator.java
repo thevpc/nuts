@@ -126,13 +126,13 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession().copy().trace(false));
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), workspace))) {
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), workspace, session.getSession()))) {
                         NutsId nutsId = t.getId().setNamespace(repository);
                         nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
@@ -156,7 +156,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException("Unsupported Remove");
+        throw new NutsUnsupportedOperationException(workspace,"Unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {

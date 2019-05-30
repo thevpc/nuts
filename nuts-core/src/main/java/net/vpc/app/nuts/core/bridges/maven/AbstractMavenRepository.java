@@ -101,17 +101,17 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     @Override
     public void pushImpl(NutsPushRepositoryCommand options) {
-        throw new NutsUnsupportedOperationException();
+        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     @Override
     public void deployImpl(NutsDeployRepositoryCommand deployment) {
-        throw new NutsUnsupportedOperationException();
+        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     @Override
     public void undeployImpl(NutsRepositoryUndeployCommand options) {
-        throw new NutsUnsupportedOperationException();
+        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     @Override
@@ -133,9 +133,9 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESC_HASH), new ByteArrayInputStream(bytes), session);
             return nutsDescriptor;
         } catch (IOException ex) {
-            throw new NutsNotFoundException(id, null, ex);
+            throw new NutsNotFoundException(getWorkspace(),id, null, ex);
         } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(id, null, ex);
+            throw new NutsNotFoundException(getWorkspace(),id, null, ex);
         }
     }
 
@@ -161,7 +161,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 return getIdComponentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException("Unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(getWorkspace(),"Unsupported fact " + f);
             }
         }
     }

@@ -37,12 +37,12 @@ public class NutsNotExecutableException extends NutsExecutionException {
 
     private final String id;
 
-    public NutsNotExecutableException(NutsId nuts) {
-        this(nuts == null ? null : nuts.toString());
+    public NutsNotExecutableException(NutsWorkspace workspace,NutsId nuts) {
+        this(workspace,nuts == null ? null : nuts.toString());
     }
 
-    public NutsNotExecutableException(String nuts) {
-        super("Not executable " + (nuts == null ? "<null>" : nuts), -1);
+    public NutsNotExecutableException(NutsWorkspace workspace,String nuts) {
+        super(workspace,"Not executable " + (nuts == null ? "<null>" : nuts), -1);
         this.id = nuts;
     }
 

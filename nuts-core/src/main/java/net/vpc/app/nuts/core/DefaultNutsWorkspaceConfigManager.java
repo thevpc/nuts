@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author vpc
@@ -78,6 +79,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private Map<String, NutsRepository> repositories = new LinkedHashMap<>();
     private NutsIndexStoreClientFactory indexStoreClientFactory;
     private boolean global;
+    private Set<String> cachedImports;
 
     protected DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace outer) {
         this.ws = outer;
@@ -170,7 +172,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
 
         }
-        throw new NutsUnsupportedArgumentException("" + contextType);
+        throw new NutsUnsupportedArgumentException(ws, "" + contextType);
     }
 
     @Override
@@ -251,12 +253,15 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public String[] getImports() {
-        HashSet<String> all = new HashSet<>();
-        if (config.getImports() != null) {
-            all.addAll(config.getImports());
+    public Set<String> getImports() {
+        if (cachedImports == null) {
+            Set<String> all = new LinkedHashSet<>();
+            if (config.getImports() != null) {
+                all.addAll(config.getImports());
+            }
+            return cachedImports = Collections.unmodifiableSet(all);
         }
-        return all.toArray(new String[0]);
+        return cachedImports;
     }
 
     @Override
@@ -291,16 +296,16 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean addSdk(NutsSdkLocation location, NutsAddOptions options) {
         if (location != null) {
             if (CoreStringUtils.isBlank(location.getType())) {
-                throw new NutsIllegalArgumentException("Sdk Type should not be null");
+                throw new NutsIllegalArgumentException(ws, "Sdk Type should not be null");
             }
             if (CoreStringUtils.isBlank(location.getName())) {
-                throw new NutsIllegalArgumentException("Sdk Name should not be null");
+                throw new NutsIllegalArgumentException(ws, "Sdk Name should not be null");
             }
             if (CoreStringUtils.isBlank(location.getVersion())) {
-                throw new NutsIllegalArgumentException("Sdk Version should not be null");
+                throw new NutsIllegalArgumentException(ws, "Sdk Version should not be null");
             }
             if (CoreStringUtils.isBlank(location.getPath())) {
-                throw new NutsIllegalArgumentException("Sdk Path should not be null");
+                throw new NutsIllegalArgumentException(ws, "Sdk Path should not be null");
             }
             List<NutsSdkLocation> list = getSdk().get(location.getType());
             if (list == null) {
@@ -407,15 +412,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             other = new NutsBootConfig();
         }
         if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
-            List<NutsDefinition> nutsDefinitions = ws.find().addId(other.getRuntimeId()).mainAndDependencies().getResultDefinitions().list();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < nutsDefinitions.size(); i++) {
-                if (i > 0) {
-                    sb.append(":");
-                }
-                sb.append(nutsDefinitions.get(i).getId().toString());
-            }
-            other.setRuntimeDependencies(sb.toString());
+            other.setRuntimeDependencies(ws.search().addId(other.getRuntimeId())
+                    .scope(NutsDependencyScope.PROFILE_RUN)
+                    .inlineDependencies()
+                    .duplicates(false)
+                    .getResultDefinitions().stream()
+                    .map(x -> x.getId().getLongName())
+                    .collect(Collectors.joining(";"))
+            );
         } else {
             other.setRuntimeDependencies("");
         }
@@ -430,9 +434,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
         NutsVersionFilter javaVersionFilter = ws.parser().parseVersionFilter(requestedVersion);
         NutsSdkLocation best = null;
+        final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks("java")) {
             String currVersion = jdk.getVersion();
-            if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion))) {
+            if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion), ws, session)) {
                 if (best == null || DefaultNutsVersion.compareVersions(best.getVersion(), currVersion) < 0) {
                     best = jdk;
                 }
@@ -480,7 +485,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             config.setSdk(plainSdks);
             Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-            ws.io().json().pretty().write(config, file);
+            if (!Files.isRegularFile(file)
+                    || CoreStringUtils.isBlank(config.getCreateApiVersion())) {
+                config.setCreateApiVersion(getApiId().getVersion().getValue());
+            }
+            ws.io().json().write(config, file);
             configurationChanged = false;
             ok = true;
         }
@@ -596,7 +605,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsUserConfig getUser(String userId) {
         NutsUserConfig _config = getSecurity(userId);
         if (_config == null) {
-            if (NutsConstants.Names.USER_ADMIN.equals(userId) || NutsConstants.Names.USER_ANONYMOUS.equals(userId)) {
+            if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
                 _config = new NutsUserConfig(userId, null, null, null);
                 setUser(_config);
             }
@@ -628,13 +637,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    @Override
     public void addRepositoryRef(NutsRepositoryRef repository) {
         if (repository == null) {
-            throw new NutsIllegalArgumentException("Invalid Repository");
+            throw new NutsIllegalArgumentException(ws, "Invalid Repository");
         }
         if (!CoreNutsUtils.isValidIdentifier(repository.getName())) {
-            throw new NutsIllegalArgumentException("Invalid Repository Name : " + repository.getName());
+            throw new NutsIllegalArgumentException(ws, "Invalid Repository Name : " + repository.getName());
         }
         if (getRepositoryRef(repository.getName()) != null) {
-            throw new NutsIllegalArgumentException("Duplicate Repository Id " + repository.getName());
+            throw new NutsIllegalArgumentException(ws, "Duplicate Repository Id " + repository.getName());
         }
         configReposByName.put(repository.getName(), repository);
         fireConfigurationChanged();
@@ -643,7 +652,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    @Override
     public void removeRepositoryRef(String repositoryName) {
         if (repositoryName == null) {
-            throw new NutsIllegalArgumentException("Invalid Null Repository");
+            throw new NutsIllegalArgumentException(ws, "Invalid Null Repository");
         }
         NutsRepositoryRef old = getRepositoryRef(repositoryName);
         if (old != null) {
@@ -718,6 +727,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     protected void fireConfigurationChanged() {
+        cachedImports = null;
         setConfigurationChanged(true);
     }
 
@@ -770,6 +780,22 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsWorkspaceOptions getOptions() {
         return options.copy();
+    }
+
+    @Override
+    public char[] decryptString(char[] input) {
+        if (input == null || input.length == 0) {
+            return new char[0];
+        }
+        return CoreIOUtils.bytesToChars(decryptString(CoreIOUtils.charsToBytes(input)));
+    }
+
+    @Override
+    public char[] encryptString(char[] input) {
+        if (input == null || input.length == 0) {
+            return new char[0];
+        }
+        return CoreIOUtils.bytesToChars(encryptString(CoreIOUtils.charsToBytes(input)));
     }
 
     @Override
@@ -835,7 +861,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 || command.getOwner().getName().isEmpty()
                 || command.getOwner().getGroup().isEmpty()
                 || command.getCommand() == null) {
-            throw new NutsIllegalArgumentException("Invalid command alias " + (command == null ? "<NULL>" : command.getName()));
+            throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (command == null ? "<NULL>" : command.getName()));
         }
         boolean forced = false;
         if (options == null) {
@@ -849,7 +875,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         new NutsRemoveOptions().session(session)
                 );
             } else {
-                throw new NutsIllegalArgumentException("Command alias already exists " + command.getName());
+                throw new NutsIllegalArgumentException(ws, "Command alias already exists " + command.getName());
             }
         }
         defaultCommandFactory.installCommand(command);
@@ -863,7 +889,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean removeCommandAlias(String name, NutsRemoveOptions options) {
         if (CoreStringUtils.isBlank(name)) {
-            throw new NutsIllegalArgumentException("Invalid command alias " + (name == null ? "<NULL>" : name));
+            throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (name == null ? "<NULL>" : name));
         }
         if (options == null) {
             options = new NutsRemoveOptions();
@@ -871,7 +897,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
         NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, ws);
         if (command == null) {
-            throw new NutsIllegalArgumentException("Command alias does not exists " + name);
+            throw new NutsIllegalArgumentException(ws, "Command alias does not exists " + name);
         }
         defaultCommandFactory.uninstallCommand(name);
         if (session.isTrace()) {
@@ -900,7 +926,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public void addCommandAliasFactory(NutsCommandAliasFactoryConfig commandFactoryConfig, NutsAddOptions options) {
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
-            throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
+            throw new NutsIllegalArgumentException(ws, "Invalid WorkspaceCommandFactory " + commandFactoryConfig);
         }
         for (NutsWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
@@ -909,7 +935,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         NutsWorkspaceCommandFactory f = null;
         if (CoreStringUtils.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
-            f = new CommandNutsWorkspaceCommandFactory();
+            f = new CommandNutsWorkspaceCommandFactory(ws);
         }
         if (f != null) {
             f.configure(commandFactoryConfig);
@@ -946,7 +972,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean removeCommandAliasFactory(String factoryId, NutsRemoveOptions options) {
         if (factoryId == null || factoryId.isEmpty()) {
-            throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
+            throw new NutsIllegalArgumentException(ws, "Invalid WorkspaceCommandFactory " + factoryId);
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsCommandAliasFactoryConfig removeMeConfig = null;
@@ -972,7 +998,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
         }
         if (removeMe == null && removeMeConfig == null) {
-            throw new NutsIllegalArgumentException("Command Factory does not exists " + factoryId);
+            throw new NutsIllegalArgumentException(ws, "Command Factory does not exists " + factoryId);
         }
         return true;
     }
@@ -1006,11 +1032,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
-        if (id==null) {
-            throw new NutsElementNotFoundException("Missing id");
+        if (id == null) {
+            throw new NutsElementNotFoundException(ws, "Missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException("Missing group for " + id);
+            throw new NutsElementNotFoundException(ws, "Missing group for " + id);
         }
         Path storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
@@ -1022,7 +1048,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public Path getStoreLocation(NutsId id, Path path) {
         if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException("Missing group for " + id);
+            throw new NutsElementNotFoundException(ws, "Missing group for " + id);
         }
         return CoreIOUtils.resolveNutsDefaultPath(id, path);
     }
@@ -1098,7 +1124,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
         NutsAuthenticationAgent supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, authenticationAgent);
         if (supported == null) {
-            throw new NutsExtensionMissingException(NutsAuthenticationAgent.class, "AuthenticationAgent");
+            throw new NutsExtensionMissingException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
         return supported;
     }
@@ -1106,7 +1132,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public void setStoreLocation(NutsStoreLocation folderType, String location) {
         if (folderType == null) {
-            throw new NutsIllegalArgumentException("Invalid store root folder null");
+            throw new NutsIllegalArgumentException(ws, "Invalid store root folder null");
         }
         switch (folderType) {
             case PROGRAMS: {
@@ -1138,7 +1164,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 break;
             }
             default: {
-                throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
             }
         }
         fireConfigurationChanged();
@@ -1147,10 +1173,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public void setHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType, String location) {
         if (layout == null) {
-            throw new NutsIllegalArgumentException("Invalid layout home null");
+            throw new NutsIllegalArgumentException(ws, "Invalid layout home null");
         }
         if (folderType == null) {
-            throw new NutsIllegalArgumentException("Invalid store folder null");
+            throw new NutsIllegalArgumentException(ws, "Invalid store folder null");
         }
         switch (layout) {
             case SYSTEM: {
@@ -1184,7 +1210,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
                     }
                 }
                 break;
@@ -1220,7 +1246,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
                     }
                 }
                 break;
@@ -1256,7 +1282,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
                     }
                 }
                 break;
@@ -1292,13 +1318,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
                     }
                 }
                 break;
             }
             default: {
-                throw new NutsIllegalArgumentException("Invalid layout " + layout);
+                throw new NutsIllegalArgumentException(ws, "Invalid layout " + layout);
             }
         }
 
@@ -1361,7 +1387,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public String getDefaultIdComponentExtension(String packaging) {
         if (CoreStringUtils.isBlank(packaging)) {
-            throw new NutsIllegalArgumentException("Unsupported empty Packaging");
+            throw new NutsIllegalArgumentException(ws, "Unsupported empty Packaging");
         }
         switch (packaging) {
             case "bundle":
@@ -1421,9 +1447,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             default: {
                 if (CoreStringUtils.isBlank(f)) {
-                    throw new NutsIllegalArgumentException("Missing face in " + id);
+                    throw new NutsIllegalArgumentException(ws, "Missing face in " + id);
                 }
-                throw new NutsIllegalArgumentException("Unsupported face " + f + " in " + id);
+                throw new NutsIllegalArgumentException(ws, "Unsupported face " + f + " in " + id);
             }
         }
     }
@@ -1578,7 +1604,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (r != null) {
             return r;
         }
-        throw new NutsRepositoryNotFoundException(repositoryName);
+        throw new NutsRepositoryNotFoundException(ws, repositoryName);
     }
 
     @Override
@@ -1615,7 +1641,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             //mainly if the lcoation is inaccessible!
             return null;
         }
-        CoreNutsUtils.validateRepositoryName(repository.config().getName(), repositories.keySet());
+        NutsWorkspaceUtils.validateRepositoryName(ws, repository.config().getName(), repositories.keySet());
         repositories.put(repository.config().getName(), repository);
         for (NutsWorkspaceListener nutsWorkspaceListener : ws.getWorkspaceListeners()) {
             nutsWorkspaceListener.onAddRepository(ws, repository);
@@ -1736,12 +1762,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private static class DummyNutsIndexStoreClient implements NutsIndexStoreClient {
 
         @Override
-        public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
+        public List<NutsId> searchVersions(NutsId id, NutsRepositorySession session) {
             return null;
         }
 
         @Override
-        public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
+        public Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session) {
             return null;
         }
 
@@ -1803,7 +1829,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
                 conf = CoreIOUtils.loadNutsRepositoryConfig(ws.io().path(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), ws);
                 if (conf == null) {
-                    throw new NutsInvalidRepositoryException(options.getLocation(), "Invalid location " + options.getLocation());
+                    throw new NutsInvalidRepositoryException(ws, options.getLocation(), "Invalid location " + options.getLocation());
                 }
                 options.setConfig(conf);
             } else {
@@ -1822,7 +1848,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     return r;
                 }
             }
-            throw new NutsInvalidRepositoryException(options.getName(), "Invalid type " + conf.getType());
+            throw new NutsInvalidRepositoryException(ws, options.getName(), "Invalid type " + conf.getType());
         } catch (RuntimeException ex) {
             if (options.isFailSafe()) {
                 return null;

@@ -44,7 +44,7 @@ public class LazyIterator<T> implements Iterator<T> {
     }
 
     protected Iterator<T> iterator() {
-        throw new NutsUnsupportedOperationException("No implemented");
+        throw new NutsUnsupportedOperationException(null,"No implemented");
     }
 
     @Override

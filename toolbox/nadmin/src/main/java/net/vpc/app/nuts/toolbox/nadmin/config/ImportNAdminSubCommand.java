@@ -6,7 +6,7 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 
 /**
@@ -16,8 +16,8 @@ import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.readAll("list imports", "li")) {
+    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+        if (cmdLine.next("list imports", "li")!=null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
@@ -25,16 +25,16 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.readAll("clear imports", "ci")) {
+        } else if (cmdLine.next("clear imports", "ci")!=null) {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().config().removeAllImports();
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
-        } else if (cmdLine.readAll("import", "ia")) {
+        } else if (cmdLine.next("import", "ia")!=null) {
             do {
-                String a = cmdLine.readRequiredNonOption(cmdLine.createNonOption("import")).getString();
+                String a = cmdLine.required().nextNonOption(cmdLine.createNonOption("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().addImports(a);
                 }
@@ -43,9 +43,9 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
-        } else if (cmdLine.readAll("unimport", "ir")) {
+        } else if (cmdLine.next("unimport", "ir")!=null) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.readRequiredNonOption(cmdLine.createNonOption("import")).getString();
+                String ii = cmdLine.required().nextNonOption(cmdLine.createNonOption("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().removeImports(ii);
                 }

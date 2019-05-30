@@ -103,7 +103,7 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public String readPassword(String prompt, Object... params) {
+    public char[] readPassword(String prompt, Object... params) {
         return base.readPassword(prompt, params);
     }
 
@@ -113,7 +113,7 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public String readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(PrintStream out, String prompt, Object... params) {
         return base.readPassword(out, prompt, params);
     }
 

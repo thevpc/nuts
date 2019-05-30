@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.core.util.common.PersistentMap;
@@ -43,6 +44,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -165,7 +169,7 @@ public class CoreIOUtils {
         for (String arg : args) {
             String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsCommandLine.parseCommandLine(s));
+                Collections.addAll(args2, workspace.parser().parseCommandLine(s).toArray());
             } else {
                 args2.add(s);
             }
@@ -207,7 +211,7 @@ public class CoreIOUtils {
                     System.getProperty("java.version")
             );
             NutsVersionFilter requestedJavaVersionFilter = workspace.parser().parseVersionFilter(requestedJavaVersion);
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()))) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace, workspace.createSession())) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -239,7 +243,7 @@ public class CoreIOUtils {
         if (ws.getSystemTerminal().isStandardInputStream(in)) {
             in = null;
         }
-        ProcessBuilder2 pb = new ProcessBuilder2()
+        ProcessBuilder2 pb = new ProcessBuilder2(ws)
                 .setCommand(args)
                 .setEnv(env)
                 .setIn(in)
@@ -254,7 +258,7 @@ public class CoreIOUtils {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
-        if (showCommand) {
+        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command",false)) {
             if (terminal.out() instanceof NutsFormattedPrintStream) {
                 terminal.out().print("==[exec]== ");
             } else {
@@ -445,7 +449,7 @@ public class CoreIOUtils {
 
                 return Paths.get(uri);
             } catch (URISyntaxException ex) {
-                throw new NutsParseException("Not a file Path : " + s);
+                throw new NutsParseException(null,"Not a file Path : " + s);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -456,10 +460,10 @@ public class CoreIOUtils {
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")
                 || s.startsWith("ssh:")) {
-            throw new NutsParseException("Not a file Path");
+            throw new NutsParseException(null,"Not a file Path");
         }
         if (isURL(s)) {
-            throw new NutsParseException("Not a file Path");
+            throw new NutsParseException(null,"Not a file Path");
         }
         return Paths.get(s);
     }
@@ -564,7 +568,7 @@ public class CoreIOUtils {
             }
             Path fileSource = (Path) c.contentFile.getSource();
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException("File does not exists " + fileSource);
+                throw new NutsIllegalArgumentException(ws, "File does not exists " + fileSource);
             }
             if (Files.isDirectory(fileSource)) {
                 if (c.descriptor == null) {
@@ -582,7 +586,7 @@ public class CoreIOUtils {
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
+                        throw new NutsIllegalArgumentException(ws, "Invalid Nut Folder source. expected 'zip' ext in descriptor");
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
@@ -595,7 +599,7 @@ public class CoreIOUtils {
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException("Path does not denote a valid file or folder " + c.contentFile);
+                throw new NutsIllegalArgumentException(ws, "Path does not denote a valid file or folder " + c.contentFile);
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -640,13 +644,13 @@ public class CoreIOUtils {
 
     public static Path resolveNutsDefaultPath(NutsId id, Path storeLocation) {
         if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException("Missing group for " + id);
+            throw new NutsElementNotFoundException(null, "Missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsElementNotFoundException("Missing name for " + id.toString());
+            throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
         }
         if (id.getVersion().isBlank()) {
-            throw new NutsElementNotFoundException("Missing version for " + id.toString());
+            throw new NutsElementNotFoundException(null, "Missing version for " + id.toString());
         }
         Path groupFolder = storeLocation.resolve(id.getGroup().replace('.', File.separatorChar));
         Path artifactFolder = groupFolder.resolve(id.getName());
@@ -1060,7 +1064,7 @@ public class CoreIOUtils {
             return new URLInputSource(source, baseURL);
         }
 
-        throw new NutsUnsupportedArgumentException("Unsupported source : " + source);
+        throw new NutsUnsupportedArgumentException(null,"Unsupported source : " + source);
     }
 
     public static boolean isValidInputStreamSource(Class type) {
@@ -1091,7 +1095,7 @@ public class CoreIOUtils {
         } else if (source instanceof String) {
             return createInputSource((String) source);
         } else {
-            throw new NutsUnsupportedArgumentException("Unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(null,"Unsupported type " + source.getClass().getName());
         }
     }
 
@@ -1139,7 +1143,7 @@ public class CoreIOUtils {
         if (baseURL != null) {
             return createTarget(baseURL);
         }
-        throw new NutsUnsupportedArgumentException("Unsuported source : " + target);
+        throw new NutsUnsupportedArgumentException(null,"Unsuported source : " + target);
     }
 
     public static TargetItem createTarget(Path target) {
@@ -1198,7 +1202,7 @@ public class CoreIOUtils {
         } else if (target instanceof String) {
             return createTarget((String) target);
         } else {
-            throw new NutsUnsupportedArgumentException("Unsupported type " + target.getClass().getName());
+            throw new NutsUnsupportedArgumentException(null,"Unsupported type " + target.getClass().getName());
         }
     }
 
@@ -1236,7 +1240,7 @@ public class CoreIOUtils {
 
     public static URL resolveURLFromResource(Class cls, String urlPath) throws MalformedURLException {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(null, "Unable to resolve url from " + urlPath);
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -1259,7 +1263,7 @@ public class CoreIOUtils {
             if (url_tostring.endsWith(encoded)) {
                 return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
             }
-            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(null, "Unable to resolve url from " + urlPath);
         }
     }
 
@@ -1274,7 +1278,7 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentException("Unable to encode " + t, ex);
+                    throw new NutsIllegalArgumentException(null, "Unable to encode " + t, ex);
                 }
             }
         }
@@ -1310,6 +1314,16 @@ public class CoreIOUtils {
             sb.append(toHex(aByte));
         }
         return sb.toString();
+    }
+
+    public static char[] toHexChars(byte[] bytes) {
+        char[] sb = new char[bytes.length * 2];
+        int x=0;
+        for (byte aByte : bytes) {
+            sb[x++]=toHex(aByte >> 4);
+            sb[x++]=toHex(aByte);
+        }
+        return sb;
     }
 
     private static char toHex(int nibble) {
@@ -1411,12 +1425,44 @@ public class CoreIOUtils {
         }
     }
 
+    public static byte[] charsToBytes(char[] chars) {
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
+                byteBuffer.position(), byteBuffer.limit());
+        // clear sensitive data
+        Arrays.fill(byteBuffer.array(), (byte) 0);
+
+        return bytes;
+    }
+
+    public static char[] bytesToChars(byte[] bytes){
+        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+        CharBuffer charBuffer = Charset.forName("UTF-8").decode(byteBuffer);
+        char[] chars = Arrays.copyOfRange(charBuffer.array(),
+                charBuffer.position(), charBuffer.limit());
+        // clear sensitive data
+        Arrays.fill(charBuffer.array(), '\0');
+        return chars;
+    }
+
+    public static char[] evalSHA1(char[] input) {
+        byte[] bytes=charsToBytes(input);
+        char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true);
+        Arrays.fill(bytes,(byte)0);
+        return r;
+    }
+
     public static String evalSHA1(String input) {
         return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true);
     }
 
     public static String evalSHA1Hex(InputStream input, boolean closeStream) {
         return toHexString(evalSHA1(input, closeStream));
+    }
+
+    public static char[] evalSHA1HexChars(InputStream input, boolean closeStream) {
+        return toHexChars(evalSHA1(input, closeStream));
     }
 
     public static byte[] evalSHA1(InputStream input, boolean closeStream) {
@@ -1463,6 +1509,11 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
+        }
+
+        @Override
+        public long length() {
+            return content.length;
         }
 
         @Override
@@ -1556,12 +1607,12 @@ public class CoreIOUtils {
 
         @Override
         public Path getPath() {
-            throw new NutsUnsupportedOperationException();
+            throw new NutsUnsupportedOperationException(null);
         }
 
         @Override
         public URL getURL() {
-            throw new NutsUnsupportedOperationException();
+            throw new NutsUnsupportedOperationException(null);
         }
 
         @Override
@@ -1695,10 +1746,16 @@ public class CoreIOUtils {
             byte[] bytes = (byte[]) this.getSource();
             return new InputStreamMetadataAwareImpl(new ByteArrayInputStream(bytes), new FixedInputStreamMetadata(name, bytes.length));
         }
+
+        @Override
+        public long length() {
+            byte[] bytes = (byte[]) this.getSource();
+            return bytes.length;
+        }
     }
 
     private static class URLInputSource extends AbstractSourceItem {
-
+        private NutsURLHeader cachedNutsURLHeader=null;
         public URLInputSource(String name, URL value) {
             super(name, value, false, true);
         }
@@ -1708,15 +1765,47 @@ public class CoreIOUtils {
             return (URL) getSource();
         }
 
+        protected NutsURLHeader getURLHeader(){
+            if(cachedNutsURLHeader==null){
+                URL u = getURL();
+                if (CoreIOUtils.isPathHttp(u.toString())) {
+                    try {
+                        NutsHttpConnectionFacade hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
+                        cachedNutsURLHeader= hf.getURLHeader();
+                    } catch (Exception ex) {
+                        //ignore
+                    }
+                }
+            }
+            return cachedNutsURLHeader;
+        }
+
+        @Override
+        public long length() {
+            URL u = getURL();
+            if (CoreIOUtils.isPathHttp(u.toString())) {
+                try {
+                    NutsURLHeader uh = getURLHeader();
+                    return uh==null?-1:uh.getContentLength();
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+            File file = toFile(u);
+            if (file!=null) {
+                return file.length();
+            }
+            return -1;
+        }
+
         @Override
         public InputStream open() {
             try {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
-                        NutsHttpConnectionFacade hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
-                        long len = hf.getURLHeader().getContentLength();
-                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), len));
+                        NutsURLHeader uh = getURLHeader();
+                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), uh==null?-1:uh.getContentLength()));
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -1749,6 +1838,15 @@ public class CoreIOUtils {
         }
 
         @Override
+        public long length() {
+            try {
+                return Files.size(getPath());
+            } catch (IOException e) {
+                return -1;
+            }
+        }
+
+        @Override
         public InputStream open() {
             try {
                 Path p = getPath();
@@ -1771,13 +1869,18 @@ public class CoreIOUtils {
 
     private static class InputStreamSource extends AbstractSourceItem {
 
-        public InputStreamSource(String name, Object value) {
+        public InputStreamSource(String name, InputStream value) {
             super(name, value, false, false);
         }
 
         @Override
         public InputStream open() {
             return (InputStream) getSource();
+        }
+
+        @Override
+        public long length() {
+            return -1;
         }
 
         @Override
@@ -1790,16 +1893,21 @@ public class CoreIOUtils {
         }
     }
 
-    public static void storeProperties(Map<String, String> props, OutputStream out) {
-        storeProperties(props, new OutputStreamWriter(out));
+    public static void storeProperties(Map<String, String> props, OutputStream out,boolean sort) {
+        storeProperties(props, new OutputStreamWriter(out),sort);
     }
 
-    public static void storeProperties(Map<String, String> props, Writer w) {
+    public static void storeProperties(Map<String, String> props, Writer w,boolean sort) {
         try {
-            for (Map.Entry<String, String> entry : props.entrySet()) {
-                w.write(escapePropsString(entry.getKey(), true));
+            Set<String> keys = props.keySet();
+            if(sort){
+                keys=new TreeSet<>(keys);
+            }
+            for (String key : keys) {
+                String value = props.get(key);
+                w.write(escapePropsString(key, true));
                 w.write("=");
-                w.write(escapePropsString(entry.getValue(), false));
+                w.write(escapePropsString(value, false));
                 w.write("\n");
                 w.flush();
             }

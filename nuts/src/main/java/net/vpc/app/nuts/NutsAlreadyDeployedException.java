@@ -30,8 +30,8 @@
 package net.vpc.app.nuts;
 
 /**
- * Exception fired in {@link NutsWorkspace#deploy(NutsDeployment, NutsSession)} method
- * if the nuts is the package is already deployed
+ * Exception fired in {@link NutsWorkspace#deploy()} method
+ * if the package is already deployed
  * Created by vpc on 1/15/17.
  * @since 0.5.4
  */
@@ -43,16 +43,16 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
      *
      * @param id nuts id
      */
-    public NutsAlreadyDeployedException(NutsId id) {
-        this(id == null ? null : id.toString());
+    public NutsAlreadyDeployedException(NutsWorkspace workspace,NutsId id) {
+        this(workspace,id == null ? null : id.toString());
     }
 
     /**
      *
      * @param id nuts id
      */
-    public NutsAlreadyDeployedException(String id) {
-        super("Already deployed nuts " + (id == null ? "<null>" : id));
+    public NutsAlreadyDeployedException(NutsWorkspace workspace,String id) {
+        super(workspace, "Already deployed nuts " + (id == null ? "<null>" : id));
         this.id = id;
     }
 
@@ -62,8 +62,8 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
      * @param msg message
      * @param ex exception
      */
-    public NutsAlreadyDeployedException(String id, String msg, Exception ex) {
-        super(NutsUtils.isBlank(msg) ? "Already deployed nuts " + (id == null ? "<null>" : id) : msg,
+    public NutsAlreadyDeployedException(NutsWorkspace workspace,String id, String msg, Exception ex) {
+        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already deployed nuts " + (id == null ? "<null>" : id) : msg,
                 ex);
         this.id = id;
     }

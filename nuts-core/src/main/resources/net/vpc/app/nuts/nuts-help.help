@@ -37,7 +37,7 @@ and other __container managers__.
 install,uninstall,update : install/uninstall/update a component (using its fetched/deployed installer)
 deploy, undeploy         : manage components on the local repositories
 fetch,push               : download, upload to remote repositories
-find                     : search for existing/installable components
+search                   : search for existing/installable components
 exec                     : execute a component (tool)
 
 @@SYNOPSIS:@@
@@ -65,7 +65,7 @@ Java         Version: ${java.version} (${java.vm.name})
                       having the ability to be exported to any java child process (as system property -D...) 
 
  [[open options]] are transient (non persistent) options that will override any configured value (if any) and will be 
-                     in use in the current process (and ignored elsewhere). Such options will be considered in creating worspaces 
+                     in use in the current process (and ignored elsewhere). Such options will be considered in creating workspaces
                      as well but still they are not persistent.
 
 
@@ -366,16 +366,13 @@ Java         Version: ${java.version} (${java.vm.name})
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
 
  [[--init=]]reset|cleanup
-       reset (delete) ==nuts== workspace folder befaore starting the workspace
-
- [[--perf]]
-      show startup time in ms
+       reset (delete) ==nuts== workspace folder before starting the workspace
 
  [[--embedded]]  or [[-b]]
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
 
  [[--external]]  or [[--spawn]] or [[-x]]
-      when invoking a nuts component, it will alway be executed in a newly created process (this is the default)
+      when invoking a nuts component, it will always be executed in a newly created process (this is the default)
 
  [[--native]]  or [[--syscall]] or [[-n]]
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
@@ -411,7 +408,7 @@ Java         Version: ${java.version} (${java.vm.name})
 
  [[help]]  \[-options\]... {{\<nuts-component\>}}... 
  or [[--help]] or [[-?]] or [[-h]]
-      if show this help and exit
+      show this help and exit
       for more details, type : [[nuts]] help help
 
  [[license]] \[-options\]... 
@@ -427,19 +424,19 @@ Java         Version: ${java.version} (${java.vm.name})
       for more details, type : [[nuts]] help uninstall
 
  [[update]] \[-options\]... {{\<ids\>}} ...  [[--args]] ...
-       check if a newer version of ==nuts== or any of the provided {{\<ids\>}} 
-       is available in the current workspace and perform update by downloading (fetch) 
-       and installing the component. The updated version is promoted to 'default' version.
+      check if a newer version of ==nuts== or any of the provided {{\<ids\>}}
+      is available in the current workspace and perform update by downloading (fetch)
+      and installing the component. The updated version is promoted to 'default' version.
       for more details, type : [[nuts]] help update
             
  [[check-updates]] \[-options\]... {{\<ids\>}} ...
-       check if a newer version of ==nuts== is available in the current workspace without performing updates
-       Take the same arguments and options as [[update]] command
+      check if a newer version of ==nuts== is available in the current workspace without performing updates
+      Takes the same arguments and options as [[update]] command
       for more details, type : [[nuts]] help check-updates
 
- [[find]] \[-options\]... {{\<ids\>}} ...  
-       search for {{\<ids\>}} 
-      for more details, type : [[nuts]] help find
+ [[search]] \[-options\]... {{\<ids\>}} ...  
+      search for {{\<ids\>}}
+      for more details, type : [[nuts]] help search
             
  [[fetch]] \[-options\]... {{\<ids\>}} ...  
       download {{\<ids\>}}  without installing them
@@ -456,7 +453,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[exec]] \[-options\]... \[command\] {{\<args\>}}...
  [[--exec]] \[-options\]... \[command\] {{\<args\>}}...
  [[-e]] \[-options\]... \[command\] {{\<arguments\>}}...
-      runs command with the given executor options \( it will be considered an option if it 
+      run command with the given executor options \( it will be considered an option if it
       starts with '-' \). This is helpful to issue JVM Options to executor for instance
       for more details, type : [[nuts]] help info
 
@@ -471,7 +468,7 @@ Java         Version: ${java.version} (${java.vm.name})
        [[-y]] : to skip confirmation
 
  [[-]] {{\<args\>}}...
-   runs a nut\'s shell (nsh) command with the remaining arguments
+   run a nut\'s shell (nsh) command with the remaining arguments
 
  [[--!...]] or [[-!...]] 
       option will negated if boolean. Actually, [[--!option]] is equivalent to [[--option=false]]
@@ -487,7 +484,7 @@ Java         Version: ${java.version} (${java.vm.name})
 
 
 @@EXAMPLES:@@
-        ==nuts== [[--help]]
+        ==nuts== [[help]]
             shows this help and exit
        
         ==nuts== [[--workspace]] /home/me/some-folder [[--archetype]] minimal
@@ -500,5 +497,5 @@ Java         Version: ${java.version} (${java.vm.name})
             /home/me/some-folder.
 
         ==nuts== [[--workspace]] /home/me/some-folder  [[--yes]] [[-e]] {{-Xmx1G}} netbeans-launcher
-            runs netbeans-launcher with JVM option  -Xmx1G. If the component is not installed
+            run netbeans-launcher with JVM option  -Xmx1G. If the component is not installed
             it will be automatically installed ( [[--yes]] modifier helps bypassing interactive mode)

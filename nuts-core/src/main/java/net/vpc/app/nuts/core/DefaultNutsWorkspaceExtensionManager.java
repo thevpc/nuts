@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -82,7 +83,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException("Missing version");
+            throw new NutsIllegalArgumentException(ws, "Missing version");
         }
         List<NutsExtensionInfo> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
@@ -93,13 +94,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             if (u != null) {
                 NutsExtensionInfo[] s = new NutsExtensionInfo[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.io().json().read(rr, NutsExtensionInfo[].class);
+                    s = ws.io().json().read(rr, DefaultNutsExtensionInfo[].class);
                 } catch (IOException e) {
                     //ignore!
                 }
                 if (s != null) {
                     for (NutsExtensionInfo nutsExtensionInfo : s) {
-                        nutsExtensionInfo.setSource(u.toString());
+                        ((DefaultNutsExtensionInfo)nutsExtensionInfo).setSource(u.toString());
                         ret.add(nutsExtensionInfo);
                     }
                 }
@@ -107,7 +108,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         boolean latestVersion = true;
         if (latestVersion && ret.size() > 1) {
-            return CoreNutsUtils.filterNutsExtensionInfoByLatestVersion(ret);
+            return CoreFilterUtils.filterNutsExtensionInfoByLatestVersion(ret);
         }
         return ret;
     }
@@ -129,7 +130,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
-        NutsId oldId = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
+        NutsId oldId = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
             NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE), session);
@@ -161,19 +162,19 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
         if (id == null) {
-            throw new NutsIllegalArgumentException("Extension Id could not be null");
+            throw new NutsIllegalArgumentException(ws,"Extension Id could not be null");
         }
-        NutsId wired = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
+        NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
-            throw new NutsWorkspaceExtensionAlreadyRegisteredException(id.toString(), wired.toString());
+            throw new NutsWorkspaceExtensionAlreadyRegisteredException(ws,id.toString(), wired.toString());
         }
         LOG.log(Level.FINE, "Installing extension {0}", id);
-        List<NutsDefinition> nutsDefinitions = ws.find()
+        List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .addId(id).setSession(session)
                 .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
-                .setIncludeOptional(false)
-                .mainAndDependencies().getResultDefinitions().list();
+                .optional(false)
+                .inlineDependencies().getResultDefinitions().list();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (nutsDefinition.getId().equalsSimpleName(id)) {
@@ -294,7 +295,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public NutsSessionTerminal createTerminal(Class ignoredClass) {
         NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, ws);
         if (termb == null) {
-            throw new NutsExtensionMissingException(NutsSessionTerminalBase.class, "TerminalBase");
+            throw new NutsExtensionMissingException(ws,NutsSessionTerminalBase.class, "TerminalBase");
         } else {
             if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
                 return null;
@@ -308,14 +309,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     @Override
-    public NutsURLLocation[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType) {
-        List<NutsURLLocation> bootUrls = new ArrayList<>();
+    public URL[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType) {
+        List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
             String url = r + "/" + CoreIOUtils.getPath(nutsId, "." + extensionType, '/');
             URL u = expandURL(url);
-            bootUrls.add(new NutsURLLocation(url, u));
+            bootUrls.add(u);
         }
-        return bootUrls.toArray(new NutsURLLocation[0]);
+        return bootUrls.toArray(new URL[0]);
     }
 
     @Override
@@ -323,8 +324,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         //should read this form config?
         //or should be read from and extension component?
         String repos = ws.config().getEnv("bootstrapRepositoryLocations", "") + ";"
-                + NutsConstants.BootsrapURLs.LOCAL_NUTS_FOLDER
-                + ";" + NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT;
+                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT;
         List<String> urls = new ArrayList<>();
         for (String r : CoreStringUtils.split(repos, "; ")) {
             if (!CoreStringUtils.isBlank(r)) {
@@ -430,7 +431,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean addExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
+            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
         }
         if (!containsExtension(extensionId)) {
             if (getStoredConfig().getExtensions() == null) {
@@ -446,7 +447,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean removeExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
+            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
             if (extension.equalsSimpleName(extensionId)) {
@@ -464,7 +465,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean updateExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
+            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
         }
         NutsId[] extensions = getExtensions();
         for (int i = 0; i < extensions.length; i++) {
@@ -482,7 +483,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean containsExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
+            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
             if (extension.equalsSimpleName(extension)) {

@@ -37,19 +37,19 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsDescriptorFormat {
+public interface NutsDescriptorFormat extends NutsConfigurable {
 
-    boolean isPretty();
+    boolean isCompact();
 
-    NutsDescriptorFormat pretty(boolean pretty);
+    NutsDescriptorFormat compact(boolean compact);
 
-    NutsDescriptorFormat pretty();
+    NutsDescriptorFormat compact();
 
-    NutsDescriptorFormat setPretty(boolean pretty);
+    NutsDescriptorFormat setCompact(boolean compact);
 
     void print(NutsDescriptor descriptor);
 
@@ -82,4 +82,8 @@ public interface NutsDescriptorFormat {
     String toString(NutsDescriptor descriptor);
 
     String format(NutsDescriptor descriptor);
+
+    @Override
+    public NutsDescriptorFormat configure(String ... args);
+
 }

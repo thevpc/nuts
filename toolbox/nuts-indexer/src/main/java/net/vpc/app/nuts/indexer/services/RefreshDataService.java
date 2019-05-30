@@ -54,11 +54,11 @@ public class RefreshDataService {
                     .getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()))
                     .stream()
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
-            Iterator<NutsDefinition> definitions = ws.find()
+            Iterator<NutsDefinition> definitions = ws.search()
                     .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
-                    .setLenient(true)
-                    .setIncludeInstallInformation(false)
-                    .setIncludeContent(false)
+                    .failFast(false)
+                    .installInformation(false)
+                    .content(false)
                     .effective(true)
                     .getResultDefinitions().iterator();
             List<Map<String, String>> dataToIndex = new ArrayList<>();
@@ -78,7 +78,7 @@ public class RefreshDataService {
                 visited.put(id.get("stringId"), true);
 
                 NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                id.put("dependencies", ws.io().json().pretty().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
+                id.put("dependencies", ws.io().json().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
                 dataToIndex.add(id);
             }
             this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), dataToIndex);

@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  */
 public class NutsBootException extends NutsException {
 
-    public NutsBootException(String message) {
-        super(message == null ? "Nuts Boot Exception" : message);
+    public NutsBootException(NutsWorkspace workspace,String message) {
+        super(workspace,message == null ? "Nuts Boot Exception" : message);
     }
 }

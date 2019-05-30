@@ -59,13 +59,13 @@ public interface NutsRepositoryExt {
 
     NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session);
 
-    Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
+    Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
     NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
 
-    Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
+    Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session);
 
-    NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
+    NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
 
     boolean acceptNutsId(NutsId id);
 }

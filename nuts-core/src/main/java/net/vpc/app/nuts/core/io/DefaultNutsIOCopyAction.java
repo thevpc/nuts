@@ -248,7 +248,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         }
         boolean _target_isPath = target.isPath();
         if (checker != null && !_target_isPath && !safeCopy) {
-            throw new NutsIllegalArgumentException("Unsupported validation if neither safeCopy is armed nor path is defined");
+            throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported validation if neither safeCopy is armed nor path is defined");
         }
         if (monitorable) {
             if (_source.isPath()) {

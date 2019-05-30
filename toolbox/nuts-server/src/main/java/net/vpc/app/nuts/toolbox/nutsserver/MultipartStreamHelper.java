@@ -63,7 +63,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException("Invalid boundary");
+        throw new NutsIllegalArgumentException(null,"Invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -82,9 +82,9 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                     }
                     return nextPart;
                 } catch (RuntimeException e) {
-                    throw (RuntimeException) e;
+                    throw e;
                 } catch (Exception e) {
-                    throw new NutsException(e);
+                    throw new NutsException(null,e);
                 }
             }
 
@@ -99,7 +99,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
             @Override
             public void remove() {
-                throw new NutsUnsupportedOperationException("remove not supported");
+                throw new NutsUnsupportedOperationException(null,"remove not supported");
             }
         };
     }
@@ -113,7 +113,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             for (int i = 0; i < count; i++) {
                 if (buffer[i] == stream.CR) {
                     if (i + 3 >= (buffer.length - 4)) {
-                        //readAll some more
+                        //skip some more
                         int x = itemInputStream.read(buffer, count, buffer.length - 4);
                         count += x;
                     }

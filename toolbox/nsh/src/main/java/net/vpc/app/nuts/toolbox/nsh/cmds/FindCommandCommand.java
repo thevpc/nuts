@@ -30,18 +30,18 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.NshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class FindCommandCommand extends AbstractNutsCommand {
+public class FindCommandCommand extends AbstractNshCommand {
 
 
     public FindCommandCommand() {
@@ -50,26 +50,26 @@ public class FindCommandCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         List<String> commands=new ArrayList<>();
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            }else if (cmdLine.get().isOption()) {
+            }else if (cmdLine.peek().isOption()) {
                 cmdLine.skip();
             }else{
-                commands.add(cmdLine.read().getString());
+                commands.add(cmdLine.next().getString());
             }
         }
         if(commands.isEmpty()){
-            for (NutsCommand command : context.getShell().getCommands()) {
+            for (NshCommand command : context.getShell().getCommands()) {
                 context.out().println(command.getName());
             }
             return 0;
         }else{
             for (String command : commands) {
-                NutsCommand c = context.getShell().findCommand(command);
+                NshCommand c = context.getShell().findCommand(command);
                 if(c!=null){
                     context.out().println(c.getName());
                 }else{
@@ -77,7 +77,7 @@ public class FindCommandCommand extends AbstractNutsCommand {
                     if(alias!=null){
                         context.out().println("=="+command+"==");
                     }else{
-                        throw new NutsExecutionException(command+": command not found",1);
+                        throw new NutsExecutionException(context.getWorkspace(),command+": command not found",1);
                     }
                 }
             }

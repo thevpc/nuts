@@ -1,7 +1,9 @@
 package net.vpc.app.nuts.core.filters.version;
 
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
@@ -13,7 +15,7 @@ public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<Nut
     }
 
     @Override
-    public boolean accept(NutsVersion version) {
+    public boolean accept(NutsVersion version, NutsWorkspace ws, NutsSession session) {
         return true;
     }
 

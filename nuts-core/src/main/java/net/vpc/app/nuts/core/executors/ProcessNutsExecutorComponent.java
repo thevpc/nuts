@@ -63,7 +63,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
         Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
-        String[] appArgs = executionContext.getArgs();
+        String[] appArgs = executionContext.getArguments();
 
         List<String> app = new ArrayList<>(Arrays.asList(appArgs));
         if (app.isEmpty()) {

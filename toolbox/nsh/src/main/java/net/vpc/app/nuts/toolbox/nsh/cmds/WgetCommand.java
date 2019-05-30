@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
@@ -40,13 +40,13 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class WgetCommand extends AbstractNutsCommand {
+public class WgetCommand extends AbstractNshCommand {
 
     public WgetCommand() {
         super("wget", DEFAULT_SUPPORT);
@@ -58,21 +58,21 @@ public class WgetCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.readAll("-O", "--output-document")) {
-                options.outputDocument = cmdLine.readNonOption().getString();
+            } else if (cmdLine.next("-O", "--output-document")!=null) {
+                options.outputDocument = cmdLine.requireNonOption().next().getString();
             } else {
-                files.add(cmdLine.readNonOption().getString());
+                files.add(cmdLine.requireNonOption().next().getString());
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException("wget: Missing Files", 2);
+            throw new NutsExecutionException(context.getWorkspace(),"wget: Missing Files", 2);
         }
         for (String file : files) {
             download(file, options.outputDocument, context);

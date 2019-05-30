@@ -29,17 +29,17 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.ConsoleContext;
-import net.vpc.common.javashell.JavaShell;
+import net.vpc.common.javashell.JShell;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.common.javashell.JShellContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SourceCommand extends AbstractNutsCommand {
+public class SourceCommand extends AbstractNshCommand {
 
     public SourceCommand() {
         super("source", DEFAULT_SUPPORT);
@@ -47,16 +47,16 @@ public class SourceCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             } else {
-                JavaShell shell = context.getShell();
-                String dPaths = shell.which(args[0], context.consoleContext());
+                JShell shell = context.getShell();
+                String dPaths = shell.which(args[0], context.shellContext());
                 if (dPaths != null) {
-                    ConsoleContext c2 = context.getShell().createContext(context.consoleContext());
+                    JShellContext c2 = context.getShell().createContext(context.shellContext());
                     c2.setArgs(args);
                     return shell.executeFile(dPaths, c2, false);
                 }

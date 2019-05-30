@@ -54,7 +54,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlConfigService saveConfig() {
         NutsIOManager io = context.getWorkspace().io();
         Path f = getServerConfigPath();
-        io.json().pretty().write(config, f);
+        io.json().write(config, f);
         return this;
     }
 
@@ -109,7 +109,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().io().json().pretty().write(getConfig(), out);
+        context.getWorkspace().io().json().write(getConfig(), out);
         return this;
     }
 
@@ -134,7 +134,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         LocalMysqlDatabaseConfigService a = getDatabaseOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException("Database not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(),"Database not found :" + appName, 2);
         }
         return a;
     }

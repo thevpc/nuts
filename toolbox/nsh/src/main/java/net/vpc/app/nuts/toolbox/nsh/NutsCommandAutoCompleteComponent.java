@@ -36,7 +36,7 @@ import net.vpc.app.nuts.NutsSingleton;
  * Created by vpc on 3/7/17.
  */
 @NutsSingleton
-public interface NutsCommandAutoCompleteComponent extends NutsComponent<NutsCommand> {
+public interface NutsCommandAutoCompleteComponent extends NutsComponent<NshCommand> {
 
-    void autoComplete(NutsCommand command, NutsCommandContext context);
+    void autoComplete(NshCommand command, NutsCommandContext context);
 }

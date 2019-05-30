@@ -35,11 +35,11 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsIdFormat {
+public interface NutsIdFormat extends NutsConfigurable {
 
     boolean isOmitNamespace();
 
@@ -74,7 +74,6 @@ public interface NutsIdFormat {
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
 //    String formatString(NutsId id);
-
     String toString(NutsId id);
 
     void format(NutsId id, PrintStream out);
@@ -88,4 +87,8 @@ public interface NutsIdFormat {
     void format(NutsId id);
 
     void format(NutsId id, NutsTerminal terminal);
+
+    @Override
+    public NutsIdFormat configure(String ... args);
+
 }

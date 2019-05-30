@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,55 +14,60 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsFetchStrategy;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsWorkspaceCommand;
 
 /**
  *
  * @author vpc
  * @param <T>
  */
-public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceCommandBase<T> {
+public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
 
-    private boolean lenient = false;
+    private boolean failFast = false;
     private boolean transitive = true;
     private boolean cached = true;
     private Boolean indexed = null;
     private NutsFetchStrategy fetchStrategy = null;
-    private Boolean acceptOptional = null;
+    private Boolean optional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
-    private boolean includeContent = true;
-    private boolean includeDependencies = false;
+    private boolean content = true;
+    private boolean inlineDependencies = false;
+    private boolean dependencies = false;
+    private boolean dependenciesTree = false;
     private boolean effective = false;
-    private boolean includeInstallInfo = true;
+    private boolean installInfo = true;
     private Path location = null;
     private final List<String> repos = new ArrayList<>();
+    private NutsFetchDisplayOptions displayOptions;
 
-    public DefaultNutsQueryBaseOptions(NutsWorkspace ws) {
-        super(ws);
+
+    public DefaultNutsQueryBaseOptions(NutsWorkspace ws,String name) {
+        super(ws,name);
+        displayOptions=new NutsFetchDisplayOptions(ws);
     }
 
     //@Override
     protected T copyFromDefaultNutsQueryBaseOptions(DefaultNutsQueryBaseOptions other) {
         if (other != null) {
             super.copyFromWorkspaceCommandBase(other);
-            this.acceptOptional = other.getAcceptOptional();
-            this.lenient = other.isLenient();
+            this.optional = other.getOptional();
+            this.failFast = other.isFailFast();
             this.fetchStrategy = other.getFetchStrategy();
             this.indexed = other.getIndexed();
-            this.includeContent = other.isIncludeContent();
-            this.includeDependencies = other.isIncludeDependencies();
+            this.content = other.isContent();
+            this.inlineDependencies = other.isInlineDependencies();
+            this.dependencies = other.isDependencies();
+            this.dependenciesTree = other.isDependenciesTree();
             this.effective = other.isEffective();
-            this.includeInstallInfo = other.isIncludeInstallInformation();
+            this.installInfo = other.isInstallInformation();
             this.scope = EnumSet.copyOf(other.getScope());
-            this.includeInstallInfo = other.isIncludeInstallInformation();
-            this.includeContent = other.isIncludeContent();
-            this.includeDependencies = other.isIncludeDependencies();
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
             this.location = other.getLocation();
@@ -130,11 +136,6 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     //@Override
-    public T local() {
-        return setFetchStratery(NutsFetchStrategy.LOCAL);
-    }
-
-    //@Override
     public T offline() {
         return setFetchStratery(NutsFetchStrategy.OFFLINE);
     }
@@ -144,10 +145,6 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
         return setFetchStratery(NutsFetchStrategy.ONLINE);
     }
 
-    //@Override
-    public T wired() {
-        return setFetchStratery(NutsFetchStrategy.WIRED);
-    }
 
     //@Override
     public T installed() {
@@ -195,37 +192,23 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     //@Override
-    public Boolean getAcceptOptional() {
-        return acceptOptional;
+    public Boolean getOptional() {
+        return optional;
     }
 
-    public T acceptOptional() {
-        return acceptOptional(true);
-    }
-
-    //@Override
-    public T acceptOptional(Boolean acceptOptional) {
-        return setAcceptOptional(acceptOptional);
+    public T optional() {
+        return optional(true);
     }
 
     //@Override
-    public T setAcceptOptional(Boolean acceptOptional) {
-        this.acceptOptional = acceptOptional;
+    public T optional(Boolean acceptOptional) {
+        return DefaultNutsQueryBaseOptions.this.setOptional(acceptOptional);
+    }
+
+    //@Override
+    public T setOptional(Boolean acceptOptional) {
+        this.optional = acceptOptional;
         return (T) this;
-    }
-
-    //@Override
-    public T includeOptional() {
-        return includeOptional(true);
-    }
-
-    //@Override
-    public T includeOptional(boolean includeOptional) {
-        return setAcceptOptional(includeOptional ? null : false);
-    }
-
-    public T setIncludeOptional(boolean includeOptional) {
-        return setAcceptOptional(includeOptional ? null : false);
     }
 
     //@Override
@@ -299,42 +282,42 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     //@Override
-    public boolean isIncludeContent() {
-        return includeContent;
+    public boolean isContent() {
+        return content;
     }
 
     //@Override
-    public T setIncludeContent(boolean includeContent) {
-        this.includeContent = includeContent;
+    public T setContent(boolean includeContent) {
+        this.content = includeContent;
         return (T) this;
     }
 
-    public T includeContent(boolean includeContent) {
-        return (T) setIncludeContent(includeContent);
+    public T content(boolean includeContent) {
+        return (T) setContent(includeContent);
     }
 
-    public T includeContent() {
-        return (T) setIncludeContent(true);
-    }
-
-    //@Override
-    public boolean isIncludeInstallInformation() {
-        return includeInstallInfo;
+    public T content() {
+        return (T) setContent(true);
     }
 
     //@Override
-    public T includeInstallInformation() {
-        return includeInstallInformation(true);
+    public boolean isInstallInformation() {
+        return installInfo;
     }
 
     //@Override
-    public T includeInstallInformation(boolean includeInstallInfo) {
-        return setIncludeInstallInformation(includeInstallInfo);
+    public T installInformation() {
+        return installInformation(true);
     }
 
     //@Override
-    public T setIncludeInstallInformation(boolean includeInstallInfo) {
-        this.includeInstallInfo = includeInstallInfo;
+    public T installInformation(boolean includeInstallInfo) {
+        return setInstallInformation(includeInstallInfo);
+    }
+
+    //@Override
+    public T setInstallInformation(boolean includeInstallInfo) {
+        this.installInfo = includeInstallInfo;
         return (T) this;
     }
 
@@ -360,24 +343,64 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     }
 
     //@Override
-    public boolean isIncludeDependencies() {
-        return includeDependencies;
+    public boolean isInlineDependencies() {
+        return inlineDependencies;
     }
 
     //@Override
-    public T includeDependencies() {
-        return setIncludeDependencies(true);
+    public T inlineDependencies() {
+        return setInlineDependencies(true);
     }
 
     //@Override
-    public T setIncludeDependencies(boolean include) {
-        includeDependencies = include;
+    public T setInlineDependencies(boolean include) {
+        inlineDependencies = include;
         return (T) this;
     }
 
     //@Override
-    public T includeDependencies(boolean include) {
-        return setIncludeDependencies(include);
+    public T inlineDependencies(boolean include) {
+        return setInlineDependencies(include);
+    }
+
+    public boolean isDependencies() {
+        return dependencies;
+    }
+
+    //@Override
+    public T dependencies() {
+        return setDependencies(true);
+    }
+
+    //@Override
+    public T setDependencies(boolean include) {
+        dependencies = include;
+        return (T) this;
+    }
+
+    //@Override
+    public T dependencies(boolean include) {
+        return setDependencies(include);
+    }
+
+    public boolean isDependenciesTree() {
+        return dependenciesTree;
+    }
+
+    //@Override
+    public T dependenciesTree() {
+        return setDependenciesTree(true);
+    }
+
+    //@Override
+    public T setDependenciesTree(boolean include) {
+        dependenciesTree = include;
+        return (T) this;
+    }
+
+    //@Override
+    public T dependenciesTree(boolean include) {
+        return setDependenciesTree(include);
     }
 
     //@Override
@@ -402,21 +425,21 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
         return (T) this;
     }
 
-    public boolean isLenient() {
-        return lenient;
+    public boolean isFailFast() {
+        return failFast;
     }
 
-    public T setLenient(boolean ignoreNotFound) {
-        this.lenient = ignoreNotFound;
+    public T setFailFast(boolean enable) {
+        this.failFast = enable;
         return (T) this;
     }
 
-    public T lenient() {
-        return setLenient(true);
+    public T failFast() {
+        return failFast(true);
     }
 
-    public T lenient(boolean lenient) {
-        return setLenient(lenient);
+    public T failFast(boolean enable) {
+        return setFailFast(enable);
     }
 
     public T repositories(Collection<String> value) {
@@ -464,45 +487,47 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
         return repos.toArray(new String[0]);
     }
 
+    public NutsFetchDisplayOptions getDisplayOptions() {
+        return displayOptions;
+    }
+
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         if (super.configureFirst(cmdLine)) {
+            return true;
+        }
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
-            case "--lenient": {
-                this.setLenient(cmdLine.readBooleanOption().getBoolean());
+        switch (a.getKey().getString()) {
+            case "--failfast": {
+                this.setFailFast(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "-r":
             case "--repository": {
-                this.addRepository(cmdLine.readStringOption().getString());
-                return true;
-            }
-
-            case "--scope": {
-                this.addScope(NutsDependencyScope.valueOf(cmdLine.readStringOption().getString().toUpperCase().replace("-", "_")));
+                this.addRepository(cmdLine.nextString().getValue().getString());
                 return true;
             }
             case "-f":
             case "--fetch": {
-                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.readStringOption().getString().toUpperCase().replace("-", "_")));
-                return true;
-            }
-            case "--main-only": {
-                this.includeDependencies(!cmdLine.readBooleanOption().getBoolean());
-                return true;
-            }
-            case "--main-and-dependencies": {
-                this.includeDependencies(cmdLine.readBooleanOption().getBoolean());
+                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.nextString().getValue().getString().toUpperCase().replace("-", "_")));
                 return true;
             }
             case "--dependencies": {
-                this.includeDependencies(cmdLine.readBooleanOption().getBoolean());
+                this.dependencies(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--dependencies-tree": {
+                this.dependenciesTree(cmdLine.nextBoolean().getValue().getBoolean());
+                return true;
+            }
+            case "--scope": {
+                this.addScope(CoreCommonUtils.parseEnumString(cmdLine.nextString().getValue().getString(), NutsDependencyScope.class, false));
                 return true;
             }
             case "--anywhere": {
@@ -513,11 +538,6 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
             case "--installed": {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.INSTALLED);
-                return true;
-            }
-            case "--local": {
-                cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.LOCAL);
                 return true;
             }
             case "--offline": {
@@ -535,38 +555,33 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
                 this.setFetchStratery(NutsFetchStrategy.REMOTE);
                 return true;
             }
-            case "--wired": {
-                cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.WIRED);
-                return true;
-            }
             case "--optional": {
-                NutsArgument v = cmdLine.readStringOption();
-                this.setAcceptOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
+                NutsArgument v = cmdLine.nextString();
+                this.setOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
                 return true;
             }
             case "--cached": {
-                this.setCached(cmdLine.readBooleanOption().getBoolean());
+                this.setCached(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--effective": {
-                this.setEffective(cmdLine.readBooleanOption().getBoolean());
+                this.setEffective(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--indexed": {
-                this.setIndexed(cmdLine.readBooleanOption().getBoolean());
+                this.setIndexed(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--content": {
-                this.setIncludeContent(cmdLine.readBooleanOption().getBoolean());
+                this.setContent(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--install-info": {
-                this.setIncludeInstallInformation(cmdLine.readBooleanOption().getBoolean());
+                this.setInstallInformation(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--location": {
-                String location = cmdLine.readStringOption().getString();
+                String location = cmdLine.nextString().getValue().getString();
                 this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
                 return true;
             }

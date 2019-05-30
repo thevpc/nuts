@@ -17,28 +17,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
-import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.core.filters.id.NutsJavascriptIdFilter;
 
 /**
  *
  * @author vpc
  */
 public class CommonRootsHelper {
-
-//    public static void main(String[] args) {
-//        NutsIdFilter b = new NutsIdFilterStackBuilder()
-//                .id("a.b.c:r#tt")
-//                .id("a.bb:r#tt")
-//                .or()
-//                .id("a.bb.l:r#tt")
-//                .and()
-//                .build();
-//        System.out.println(b);
-//        System.out.println(resolveRootIds(b));
-//    }
 
     private static Set<PathBase> resolveRootIdAnd(Set<PathBase> a, Set<PathBase> b) {
         Set<PathBase> e = new HashSet<>();
@@ -126,7 +112,7 @@ public class CommonRootsHelper {
         }
         int i = g.indexOf("*");
         boolean deep = false;
-        if (i > 0) {
+        if (i >= 0) {
             deep = true;
             g = g.substring(0, i);
             int j = g.indexOf(".");
@@ -157,14 +143,6 @@ public class CommonRootsHelper {
         if (filter == null) {
             return null;
         }
-        if (filter instanceof DefaultNutsIdMultiFilter) {
-            DefaultNutsIdMultiFilter f = ((DefaultNutsIdMultiFilter) filter);
-            NutsIdFilter a = f.getIdFilter();
-//            NutsIdFilter b = f.getDescriptorFilter()!=nul;
-//            NutsIdFilter c = f.getVersionFilter();
-//            return resolveRootIdAnd(resolveRootIdAnd(resolveRootId(a), resolveRootId(b)), resolveRootId(c));
-            return resolveRootId0(a);
-        }
         if (filter instanceof NutsIdFilterAnd) {
             NutsIdFilterAnd f = ((NutsIdFilterAnd) filter);
             Set<PathBase> xx = null;
@@ -185,10 +163,6 @@ public class CommonRootsHelper {
                 xx = resolveRootIdOr(xx, resolveRootId0(y[i]));
             }
             return xx;
-        }
-        if (filter instanceof NutsJavascriptIdFilter) {
-            NutsJavascriptIdFilter f = ((NutsJavascriptIdFilter) filter);
-            return null;
         }
         if (filter instanceof NutsPatternIdFilter) {
             NutsPatternIdFilter f = ((NutsPatternIdFilter) filter);

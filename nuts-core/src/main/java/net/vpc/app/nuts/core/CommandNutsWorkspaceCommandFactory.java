@@ -14,6 +14,11 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
     private String[] findCommand;
     private String[] execCommand;
     private String[] listCommand;
+    private NutsWorkspace ws;
+
+    public CommandNutsWorkspaceCommandFactory(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public void configure(NutsCommandAliasFactoryConfig config) {
         factoryId = config.getFactoryId();
@@ -27,7 +32,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : NutsCommandLine.parseCommandLine(slistCommand);
+            listCommand = slistCommand == null ? new String[0] : ws.parser().parseCommandLine(slistCommand).toArray();
             if(listCommand.length>0 && !listCommand[0].contains(":")){
                 listCommand=new String[0];
             }
@@ -47,7 +52,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
         if(command==null){
             return new String[0];
         }
-        String[] commandArr= NutsCommandLine.parseCommandLine(command);
+        String[] commandArr= ws.parser().parseCommandLine(command).toArray();
         if(commandArr.length==0){
             return commandArr;
         }

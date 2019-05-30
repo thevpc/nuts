@@ -71,10 +71,11 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        Path folder = executionContext.getWorkspace().io().createTempFolder("jj");
+        NutsWorkspace ws = executionContext.getWorkspace();
+        Path folder = ws.io().createTempFolder("jj");
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException("Compiation Failed",res);
+            throw new NutsExecutionException(ws,"Compilation Failed",res);
         }
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getNutsDefinition();
@@ -87,7 +88,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         String fileName = javaFile.getFileName().toString();
         NutsExecutionContext executionContext2 = new NutsExecutionContextImpl(
                 d,
-                executionContext.getArgs(),
+                executionContext.getArguments(),
                 CoreCommonUtils.concatArrays(
                         executionContext.getExecutorOptions(),
                         new String[]{
@@ -100,7 +101,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getExecutorProperties(),
                 executionContext.getCwd(),
                 executionContext.getSession(),
-                executionContext.getWorkspace(),
+                ws,
                 true,
                 executionContext.getCommandName()
         );

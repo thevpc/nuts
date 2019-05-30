@@ -29,12 +29,19 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreJsonUtils;
 
 public class JsonStringBuffer {
 
     private final StringBuilder sb = new StringBuilder();
-    private final JsonStatus status = new JsonStatus();
+    private final JsonStatus status;
+    private final NutsWorkspace ws;
+
+    public JsonStringBuffer(NutsWorkspace ws) {
+        this.ws = ws;
+        status= new JsonStatus(ws);
+    }
 
     public boolean append(String line) {
         CoreJsonUtils.readJsonPartialString(line, status);

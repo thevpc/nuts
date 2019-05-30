@@ -1,9 +1,6 @@
 package net.vpc.app.nuts.core.filters.dependency;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyFilter;
-import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 
 import java.util.Collection;
 import java.util.EnumSet;
@@ -19,7 +16,7 @@ public class NutsDependencyScopeFilter implements NutsDependencyFilter {
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
         return scope.contains(NutsDependencyScope.lenientParse(dependency.getScope()));
     }
 }

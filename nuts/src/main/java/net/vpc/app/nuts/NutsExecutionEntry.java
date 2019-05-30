@@ -30,39 +30,16 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsExecutionEntry {
-    private final String name;
-    private final boolean defaultEntry;
-    private final boolean app;
+public interface NutsExecutionEntry extends Comparable<NutsExecutionEntry> {
 
-    public NutsExecutionEntry(String name, boolean defaultEntry, boolean app) {
-        this.name = name;
-        this.defaultEntry = defaultEntry;
-        this.app = app;
-    }
+    boolean isApp();
 
-    public boolean isApp() {
-        return app;
-    }
+    String getName();
 
-    public String getName() {
-        return name;
-    }
+    boolean isDefaultEntry();
 
-    public boolean isDefaultEntry() {
-        return defaultEntry;
-    }
-
-    @Override
-    public String toString() {
-        return "NutsExecutionEntry{" +
-                "name='" + name + '\'' +
-                ", app=" + app +
-                ", defaultEntry=" + defaultEntry +
-                '}';
-    }
 }

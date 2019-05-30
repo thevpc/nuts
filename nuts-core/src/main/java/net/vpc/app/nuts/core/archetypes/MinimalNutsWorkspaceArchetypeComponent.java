@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.archetypes;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 /**
  * Created by vpc on 1/23/17.
@@ -63,11 +62,11 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                         )
         );
         if (defaultRepo == null) {
-            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
+            throw new NutsIllegalArgumentException(workspace, "Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
         }
 
         //simple rights for minimal utilization
-        NutsUpdateUserCommand uu = workspace.security().updateUser(NutsConstants.Names.USER_ANONYMOUS);
+        NutsUpdateUserCommand uu = workspace.security().updateUser(NutsConstants.Users.ANONYMOUS);
         for (String right : NutsConstants.Rights.RIGHTS) {
             if (!NutsConstants.Rights.ADMIN.equals(right)) {
                 uu.addRights(right);

@@ -16,7 +16,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -100,6 +100,11 @@ public class DefaultNutsPushRepositoryCommand extends NutsRepositoryCommandBase<
     }
 
     @Override
+    public NutsPushRepositoryCommand arg(String arg) {
+        return addArg(arg);
+    }
+
+    @Override
     public NutsPushRepositoryCommand addArg(String arg) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -134,7 +139,7 @@ public class DefaultNutsPushRepositoryCommand extends NutsRepositoryCommandBase<
 
     @Override
     public NutsPushRepositoryCommand run() {
-        CoreNutsUtils.checkSession(getSession());
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
         getRepo().security().checkAllowed(NutsConstants.Rights.PUSH, "push");
         try {
             NutsRepositoryExt.of(getRepo()).pushImpl(this);

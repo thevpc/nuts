@@ -1,7 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
@@ -106,7 +130,7 @@ public class MavenRepositoryFolderHelper {
         return groupFolder.resolve(id.getName());
     }
 
-    public Iterator<NutsId> findVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
         if (id.getVersion().isSingleValue()) {
             NutsId id1 = id.setFaceDescriptor();
             Path localFile = getIdLocalFile(id1);
@@ -115,12 +139,12 @@ public class MavenRepositoryFolderHelper {
             }
             return null;
         }
-        return findInFolder(getLocalGroupAndArtifactFile(id), filter,
+        return searchInFolder(getLocalGroupAndArtifactFile(id), filter,
                 deep ? Integer.MAX_VALUE : 1,
                 session);
     }
 
-    public Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
+    public Iterator<NutsId> searchInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         folder = rootPath.resolve(folder);
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             //            return Collections.emptyIterator();
@@ -148,7 +172,7 @@ public class MavenRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         NutsId bestId = null;
         File file = getLocalGroupAndArtifactFile(id).toFile();
         if (file.exists()) {

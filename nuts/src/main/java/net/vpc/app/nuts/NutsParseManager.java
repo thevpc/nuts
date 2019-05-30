@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -45,9 +44,11 @@ public interface NutsParseManager {
 
     NutsId parseId(String id);
 
-    NutsCommandLine parseCommandLine(String[] arguments);
+    NutsCommand parseCommandLine(String line);
 
-    NutsCommandLine parseCommandLine(Collection<String> arguments);
+    NutsCommand parseCommand(String... arguments);
+
+    NutsCommand parseCommand(Collection<String> arguments);
 
     NutsDescriptor parseDescriptor(URL url);
 
@@ -82,28 +83,6 @@ public interface NutsParseManager {
     NutsExecutionEntry[] parseExecutionEntries(Path file);
 
     NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
-
-    /**
-     * this method removes all {@link NutsFormattedPrintStream}'s special
-     * formatting sequences and returns the raw string to be printed on an
-     * ordinary {@link PrintStream}
-     *
-     * @param value input string
-     * @return string without any escape sequences so that the text printed
-     * correctly on any non formatted {@link PrintStream}
-     */
-    String filterText(String value);
-
-    /**
-     * This method escapes all special characters that are interpreted by
-     * {@link NutsFormattedPrintStream} so that this exact string is printed on
-     * such print streams When str is null, an empty string is return
-     *
-     * @param value input string
-     * @return string with escaped characters so that the text printed correctly
-     * on {@link NutsFormattedPrintStream}
-     */
-    String escapeText(String value);
 
     Object parseExpression(Object object, String expression);
 }

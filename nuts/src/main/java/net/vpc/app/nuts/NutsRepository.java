@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Iterator;
-
 /**
  * Created by vpc on 1/5/17.
  *
@@ -68,9 +66,9 @@ public interface NutsRepository {
 
     NutsFetchContentRepositoryCommand fetchContent();
 
-    NutsFindRepositoryCommand find();
+    NutsSearchRepositoryCommand search();
 
-    NutsFindVersionsRepositoryCommand findVersions();
+    NutsSearchVersionsRepositoryCommand searchVersions();
 
     /**
      * @param listener

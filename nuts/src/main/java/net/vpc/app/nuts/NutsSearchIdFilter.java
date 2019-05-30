@@ -37,5 +37,5 @@ package net.vpc.app.nuts;
  */
 public interface NutsSearchIdFilter {
 
-    boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws);
+    boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session);
 }

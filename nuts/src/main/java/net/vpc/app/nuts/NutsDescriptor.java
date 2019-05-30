@@ -80,8 +80,6 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDependency[] getDependencies();
 
-    NutsDependency[] getDependencies(NutsDependencyFilter dependencyFilter);
-
     NutsExecutorDescriptor getExecutor();
 
     NutsExecutorDescriptor getInstaller();
@@ -89,10 +87,6 @@ public interface NutsDescriptor extends Serializable {
     Map<String, String> getProperties();
 
     String getDescription();
-
-    boolean matchesEnv(String arch, String os, String dist, String platform);
-
-    boolean matchesPackaging(String packaging);
 
     NutsDescriptor setExecutable(boolean executable);
 
@@ -146,13 +140,13 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptor applyProperties(Map<String, String> properties);
 
-    boolean matchesPlatform(String platform);
-
-    boolean matchesOs(String os);
-
-    boolean matchesArch(String arch);
-
-    boolean matchesOsdist(String oddist);
+//    boolean matchesPlatform(String platform);
+//
+//    boolean matchesOs(String os);
+//
+//    boolean matchesArch(String arch);
+//
+//    boolean matchesOsdist(String oddist);
 
     NutsDescriptorBuilder builder();
 

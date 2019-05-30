@@ -29,20 +29,15 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsUserConfig;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsAddUserCommand;
 
 /**
  *
@@ -53,17 +48,17 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
 
     private String login;
     private String remoteIdentity;
-    private String password;
+    private char[] password;
     private final Set<String> rights = new HashSet<>();
     private final Set<String> groups = new HashSet<>();
     private NutsRepository repo;
 
     public DefaultNutsAddUserCommand(NutsWorkspace ws) {
-        super(ws);
+        super(ws,"add-user");
     }
 
     public DefaultNutsAddUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace());
+        super(repo.getWorkspace(),"add-user");
         this.repo = repo;
     }
 
@@ -84,17 +79,17 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
     }
 
     @Override
-    public String getCredentials() {
+    public char[] getCredentials() {
         return password;
     }
 
     @Override
-    public DefaultNutsAddUserCommand credentials(String password) {
+    public DefaultNutsAddUserCommand credentials(char[] password) {
         return setCredentials(password);
     }
 
     @Override
-    public DefaultNutsAddUserCommand setCredentials(String password) {
+    public DefaultNutsAddUserCommand setCredentials(char[] password) {
         this.password = password;
         return this;
     }
@@ -254,16 +249,18 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
     @Override
     public NutsAddUserCommand run() {
         if (CoreStringUtils.isBlank(getLogin())) {
-            throw new NutsIllegalArgumentException("Invalid user");
+            throw new NutsIllegalArgumentException(ws, "Invalid user");
         }
         if (repo != null) {
-            NutsUserConfig security = new NutsUserConfig(getLogin(), repo.security().getAuthenticationAgent()
-                    .setCredentials(getCredentials(), repo.config()), getGroups(), getRights());
+            NutsUserConfig security = new NutsUserConfig(getLogin(),
+                    new String(repo.security().getAuthenticationAgent().setCredentials(getCredentials(), repo.config()))
+                    , getGroups(), getRights());
             security.setMappedUser(remoteIdentity);
             NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security);
         } else {
-            NutsUserConfig security = new NutsUserConfig(getLogin(), ws.security().getAuthenticationAgent()
-                    .setCredentials(getCredentials(), ws.config()), getGroups(), getRights());
+            NutsUserConfig security = new NutsUserConfig(getLogin(),
+                    new String(ws.security().getAuthenticationAgent().setCredentials(getCredentials(),ws.config())),
+                    getGroups(), getRights());
             security.setMappedUser(remoteIdentity);
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security);
         }
@@ -271,12 +268,12 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommand cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.strKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

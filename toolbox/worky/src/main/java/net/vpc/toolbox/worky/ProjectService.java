@@ -16,18 +16,18 @@ import java.util.List;
 public class ProjectService {
 
     private ProjectConfig config;
-    private NutsApplicationContext appContext;
+    private NutsApplicationContext context;
     private RepositoryAddress defaultRepositoryAddress;
 
-    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
-        this.appContext = appContext;
+    public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
+        this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = appContext.getWorkspace().io().json().read(file, ProjectConfig.class);
+        config = context.getWorkspace().io().json().read(file, ProjectConfig.class);
     }
 
-    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
+    public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
-        this.appContext = appContext;
+        this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
     }
 
@@ -45,20 +45,20 @@ public class ProjectService {
     }
 
     public Path getConfigFile() {
-        Path storeLocation = appContext.getConfigFolder().resolve("projects");
+        Path storeLocation = context.getConfigFolder().resolve("projects");
         return storeLocation.resolve(config.getId() + ".config");
     }
 
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        appContext.getWorkspace().io().json().pretty().write(config, configFile);
+        context.getWorkspace().io().json().write(config, configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = appContext.getWorkspace().io().json().read(configFile, ProjectConfig.class);
+            ProjectConfig u = context.getWorkspace().io().json().read(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -152,7 +152,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isEmpty(nutsRepository)) {
-                        throw new NutsExecutionException("Missing Repository", 2);
+                        throw new NutsExecutionException(context.getWorkspace(),"Missing Repository", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
@@ -163,10 +163,10 @@ public class ProjectService {
                                         .setWorkspace(a.getNutsWorkspace())
                         );
                         NutsSession s = ws2.createSession();
-                        List<NutsId> found = ws2.find()
+                        List<NutsId> found = ws2.search()
                                 .id(g.getGroupId() + ":" + g.getArtifactId())
-                                .setRepository(nutsRepository)
-                                .latestVersions().setSession(s).getResultIds().list();
+                                .repository(nutsRepository)
+                                .latest().session(s).getResultIds().list();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

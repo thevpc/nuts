@@ -41,8 +41,10 @@ import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsContentEvent;
+import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 
 /**
  *
@@ -124,7 +126,7 @@ public class NutsRepositoryFolderHelper {
                         if (Files.isDirectory(subFolder)) {
                             NutsDescriptor choice = null;
                             try {
-                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id).setAlternative(subFolder.getFileName().toString());
+                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id,session.getSession()).setAlternative(subFolder.getFileName().toString());
                             } catch (Exception ex) {
                                 //
                             }
@@ -160,7 +162,7 @@ public class NutsRepositoryFolderHelper {
         return null;
     }
 
-    protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id) {
+    protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (Files.exists(file)) {
             NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().parser().parseDescriptor(file) : null;
             if (d != null) {
@@ -169,7 +171,7 @@ public class NutsRepositoryFolderHelper {
                 String arch = query.get("arch");
                 String dist = query.get("dist");
                 String platform = query.get("platform");
-                if (d.matchesEnv(arch, os, dist, platform)) {
+                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, d, ws, session)) {
                     return d;
                 }
             }
@@ -188,7 +190,7 @@ public class NutsRepositoryFolderHelper {
         return groupFolder.resolve(id.getName());
     }
 
-    public Iterator<NutsId> findVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
         if (id.getVersion().isSingleValue()) {
             NutsId id1 = id.setFaceDescriptor();
             Path localFile = getIdLocalFile(id1);
@@ -235,7 +237,7 @@ public class NutsRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         NutsId bestId = null;
         File file = getLocalGroupAndArtifactFile(id).toFile();
         if (file.exists()) {
@@ -262,10 +264,10 @@ public class NutsRepositoryFolderHelper {
         Path pckFile = getIdLocalFile(deployment.getId());
         NutsRepositorySession session = deployment.getSession();
         if (Files.exists(descFile) && !session.getSession().isForce()) {
-            throw new NutsAlreadyDeployedException(deployment.toString());
+            throw new NutsAlreadyDeployedException(ws, deployment.toString());
         }
         if (Files.exists(pckFile) && !session.getSession().isForce()) {
-            throw new NutsAlreadyDeployedException(deployment.toString());
+            throw new NutsAlreadyDeployedException(ws, deployment.toString());
         }
         if (Files.exists(descFile)) {
             LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
@@ -274,7 +276,7 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
         }
 
-        getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), descFile);
+        getWorkspace().formatter().createDescriptorFormat().print(deployment.getDescriptor(), descFile);
         getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         getWorkspace().io().copy().from(deployment.getContent()).to(pckFile).safeCopy().run();
         getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();

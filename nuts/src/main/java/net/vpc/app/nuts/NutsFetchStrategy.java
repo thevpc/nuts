@@ -39,12 +39,10 @@ import java.util.Iterator;
  */
 public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
 
-    OFFLINE(true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL),
-    WIRED(true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
-    ONLINE(true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+    OFFLINE(true, NutsFetchMode.LOCAL),
+    ONLINE(true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
     ANYWHERE(false, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
     INSTALLED(true, NutsFetchMode.INSTALLED),
-    LOCAL(true, NutsFetchMode.LOCAL),
     REMOTE(true, NutsFetchMode.REMOTE);
 
     private final boolean stopFast;

@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.filters.id;
 
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
@@ -33,12 +34,12 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
     }
 
     @Override
-    public boolean accept(NutsId id, NutsWorkspace ws) {
+    public boolean accept(NutsId id, NutsWorkspace ws, NutsSession session) {
         if (children.length == 0) {
             return true;
         }
         for (NutsIdFilter filter : children) {
-            if (filter.accept(id,ws)) {
+            if (filter.accept(id,ws, session)) {
                 return true;
             }
         }

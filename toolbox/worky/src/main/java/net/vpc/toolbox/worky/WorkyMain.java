@@ -2,7 +2,7 @@ package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 public class WorkyMain extends NutsApplication {
@@ -16,29 +16,29 @@ public class WorkyMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArgs();
+        String[] args = appContext.getArguments();
         this.service = new WorkspaceService(appContext);
-        NutsCommandLine cmdLine = appContext.getCommandLine();
+        NutsCommand cmdLine = appContext.getCommandLine();
         NutsArgument a;
         do {
-            if (appContext.configure(cmdLine)) {
+            if (appContext.configureFirst(cmdLine)) {
                 //
-            } else if ((a = cmdLine.readNonOption("scan")) != null) {
+            } else if ((a = cmdLine.next("scan")) != null) {
                 service.scan(cmdLine, appContext);
                 return ;
-            } else if ((a = cmdLine.readNonOption("check")) != null) {
+            } else if ((a = cmdLine.next("check")) != null) {
                 service.check(cmdLine, appContext);
                 return ;
-            } else if (cmdLine.readAll("enable scan")) {
+            } else if (cmdLine.next("enable scan")!=null) {
                 service.enableScan(cmdLine, appContext, true);
                 return ;
-            } else if (cmdLine.readAll("disable scan")) {
+            } else if (cmdLine.next("disable scan")!=null) {
                 service.enableScan(cmdLine, appContext, false);
                 return ;
-            } else if ((a = cmdLine.readNonOption("list")) != null) {
+            } else if ((a = cmdLine.next("list")) != null) {
                 service.list(cmdLine, appContext);
                 return ;
-            } else if ((a = cmdLine.readNonOption("set")) != null) {
+            } else if ((a = cmdLine.next("set")) != null) {
                 service.setWorkspaceConfigParam(cmdLine, appContext);
                 return ;
             } else {

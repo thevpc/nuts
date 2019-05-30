@@ -68,7 +68,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
         String[] execArgs = executionContext.getExecutorOptions();
-        String[] appArgs = executionContext.getArgs();
+        String[] appArgs = executionContext.getArguments();
 
         String dir = null;
         boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.always-show-command",false);

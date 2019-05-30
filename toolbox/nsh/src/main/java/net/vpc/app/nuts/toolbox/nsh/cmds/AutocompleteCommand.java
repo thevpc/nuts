@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 
@@ -41,7 +41,7 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class AutocompleteCommand extends AbstractNutsCommand {
+public class AutocompleteCommand extends AbstractNshCommand {
 
     public AutocompleteCommand() {
         super("autocomplete", DEFAULT_SUPPORT);
@@ -49,16 +49,16 @@ public class AutocompleteCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         List<String> items = new ArrayList<>();
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         int index = -1;
         String cmd = null;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
             } else {
                 while (cmdLine.hasNext()) {
-                    String s = cmdLine.read().getString();
+                    String s = cmdLine.next().getString();
                     if (cmd == null) {
                         cmd = s;
                     } else {
@@ -76,13 +76,15 @@ public class AutocompleteCommand extends AbstractNutsCommand {
             return 0;
         }
         if (cmd == null) {
-            throw new NutsExecutionException("Missing Command", 1);
+            throw new NutsExecutionException(context.getWorkspace(),"Missing Command", 1);
         }
         if (index < 0) {
             index = items.size();
             items.add("");
         }
-        List<AutoCompleteCandidate> aa = context.consoleContext().resolveAutoCompleteCandidates(cmd, items, index, NutsCommandLine.escapeArguments(items.toArray(new String[0])));
+        List<AutoCompleteCandidate> aa = context.shellContext().resolveAutoCompleteCandidates(cmd, items, index,
+                context.getWorkspace().parser().parseCommand(items).getCommandLine()
+        );
         Properties p = new Properties();
         for (AutoCompleteCandidate autoCompleteCandidate : aa) {
             String value = autoCompleteCandidate.getValue();

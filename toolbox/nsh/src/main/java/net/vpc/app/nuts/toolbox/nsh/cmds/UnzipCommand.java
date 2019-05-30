@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
@@ -42,13 +43,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
+
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnzipCommand extends AbstractNutsCommand {
+public class UnzipCommand extends AbstractNshCommand {
 
 
     public UnzipCommand() {
@@ -62,27 +63,27 @@ public class UnzipCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
         NutsArgument a;
         while (cmdLine.hasNext()) {
-            if (context.configure(cmdLine)) {
+            if (context.configureFirst(cmdLine)) {
                 //
-            }else if (cmdLine.readAll("-l")) {
+            }else if (cmdLine.next("-l")!=null) {
                 options.l = true;
-            } else if (cmdLine.readAll("-d")) {
-                options.dir = cmdLine.read().getString();
-            } else if (cmdLine.get().isOption()) {
-                throw new NutsExecutionException("Not yet supported",2);
+            } else if (cmdLine.next("-d")!=null) {
+                options.dir = cmdLine.next().getString();
+            } else if (cmdLine.peek().isOption()) {
+                throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
             } else {
-                String path = cmdLine.readRequiredNonOption(cmdLine.createNonOption("file")).getString();
+                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException("Not yet supported",2);
+            throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
         }
         for (String file : files) {
             if (options.l) {
