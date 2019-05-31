@@ -494,6 +494,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     @Override
     NutsSearchCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsSearchCommand run();
 

@@ -98,7 +98,11 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
     @Override
     NutsUninstallCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsUninstallCommand run();
-//
+
 }

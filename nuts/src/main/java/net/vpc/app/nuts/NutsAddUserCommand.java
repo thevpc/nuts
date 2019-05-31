@@ -116,6 +116,10 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     @Override
     NutsAddUserCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsAddUserCommand run();
 }

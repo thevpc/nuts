@@ -120,6 +120,10 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand{
     @Override
     NutsInstallCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsInstallCommand run();
 }

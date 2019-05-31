@@ -133,6 +133,10 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     @Override
     NutsPushCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsPushCommand run();
 

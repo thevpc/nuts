@@ -281,6 +281,10 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     @Override
     NutsFetchCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsFetchCommand run();
 }

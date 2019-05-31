@@ -171,6 +171,10 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
     @Override
     NutsDeployCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsDeployCommand run();
 

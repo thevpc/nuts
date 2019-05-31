@@ -94,6 +94,10 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand{
     @Override
     NutsUndeployCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsUndeployCommand run();
 }

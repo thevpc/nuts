@@ -57,6 +57,10 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand{
     @Override
     NutsRemoveUserCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsRemoveUserCommand run();
 }

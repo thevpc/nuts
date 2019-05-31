@@ -79,6 +79,10 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     @Override
     NutsUpdateStatisticsCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     @Override
     NutsUpdateStatisticsCommand run();
 }

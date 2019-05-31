@@ -79,6 +79,10 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
     @Override
     NutsWorkspaceCommand configure(String... args);
 
+    /**
+     * execute the command and return this instance
+     * @return this instance
+     */
     NutsWorkspaceCommand run();
 
 }
