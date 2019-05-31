@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
@@ -32,7 +33,15 @@ public class DefaultNutsPushRepositoryCommand extends NutsRepositoryCommandBase<
     private String repository;
 
     public DefaultNutsPushRepositoryCommand(NutsRepository repo) {
-        super(repo);
+        super(repo,"push");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

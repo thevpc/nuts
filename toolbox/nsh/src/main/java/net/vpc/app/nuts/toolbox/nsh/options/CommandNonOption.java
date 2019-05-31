@@ -59,7 +59,7 @@ public class CommandNonOption implements NutsArgumentNonOption {
     
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         for (JavaShellCommand command : context.getShell().getCommands()) {
             all.add(new NutsDefaultArgumentCandidate(command.getName()));

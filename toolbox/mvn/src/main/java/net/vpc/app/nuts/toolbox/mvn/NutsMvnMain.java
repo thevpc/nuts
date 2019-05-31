@@ -37,7 +37,7 @@ public class NutsMvnMain extends NutsApplication {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        NutsCommand cmd = appContext.getCommandLine();
+        NutsCommand cmd = appContext.commandLine();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (command == null) {

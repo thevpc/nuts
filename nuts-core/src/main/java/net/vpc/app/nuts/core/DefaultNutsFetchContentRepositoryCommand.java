@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -58,7 +59,15 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
     private Path localPath;
     
     public DefaultNutsFetchContentRepositoryCommand(NutsRepository repo) {
-        super(repo);
+        super(repo,"fetch");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -31,28 +31,53 @@ package net.vpc.app.nuts;
 
 
 /**
- *
+ * Application Life Cycle interface to define methods to be overridden to perform 
+ * specific business for each of the predefined modes {@link NutsApplicationMode}
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsApplicationListener {
+public interface NutsApplicationLifeCycle {
 
+    /**
+     * this method should be implemented to perform specific business when application is running (default mode)
+     * @param applicationContext context
+     */
     default void onRunApplication(NutsApplicationContext applicationContext){
         
     }
 
+    /**
+     * this method should be implemented to perform specific business when application is installed
+     * @param applicationContext context
+     */
     default void onInstallApplication(NutsApplicationContext applicationContext){
         
     }
 
+    /**
+     * this method should be implemented to perform specific business when application is updated
+     * @param applicationContext context
+     */
     default void onUpdateApplication(NutsApplicationContext applicationContext){
         
     }
 
+    /**
+     * this method should be implemented to perform specific business when application is un-installed
+     * @param applicationContext context
+     */
     default void onUninstallApplication(NutsApplicationContext applicationContext){
         
     }
 
+    /**
+     * this method should be implemented to create specific ApplicationContext implementation or 
+     * return null to use default one
+     * @param ws workspace
+     * @param args application arguments
+     * @param startTimeMillis start time in milliseconds
+     * @return new NutsApplicationContext instance or null
+     */
     default NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis){
         return null;
     }

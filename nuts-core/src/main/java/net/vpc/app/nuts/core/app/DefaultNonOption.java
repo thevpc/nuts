@@ -54,7 +54,7 @@ public class DefaultNonOption implements NutsArgumentNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> list = new ArrayList<>();
         list.add(new NutsDefaultArgumentCandidate("<" + getName() + ">"));
         return list;

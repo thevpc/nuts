@@ -58,6 +58,13 @@ public interface NutsIncrementalFormat extends NutsConfigurable{
 
     void formatComplete(long count);
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsIncrementalFormat configure(String ... args);
 

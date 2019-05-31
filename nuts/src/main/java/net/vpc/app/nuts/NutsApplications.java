@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 import java.io.PrintStream;
 
 /**
- *
+ * HElper class for Nuts Applications
  * @author vpc
  * @since 0.5.5
  */
@@ -42,13 +42,12 @@ public class NutsApplications {
     }
 
     /**
-     *
+     * process throwables and return exit code
      * @param ex exception
-     * @param args app arguments to check from if a '--verbose' or '--debug'
+     * @param args application arguments to check from if a '--verbose' or '--debug'
      * option is armed
-     *
-     * @param out
-     * @return
+     * @param out out stream
+     * @return exit code
      */
     public static int processThrowable(Throwable ex, String[] args, PrintStream out) {
         if (ex == null) {
@@ -114,35 +113,41 @@ public class NutsApplications {
         return (errorCode);
     }
 
-    public static void runApplication(String[] args, NutsWorkspace ws, NutsApplicationListener listener) {
+    /**
+     * run application life cycle
+     * @param args application arguments
+     * @param ws workspace
+     * @param lifeCycle application life cycle
+     */
+    public static void runApplication(String[] args, NutsWorkspace ws, NutsApplicationLifeCycle lifeCycle) {
         long startTimeMillis = System.currentTimeMillis();
-        if(listener==null){
+        if(lifeCycle==null){
             throw new NullPointerException("Null Application");
         }
         if (ws == null) {
             ws = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext = null;
-        applicationContext = listener.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
+        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
         if(applicationContext==null){
-            applicationContext=ws.io().createApplicationContext(args, listener.getClass(), null,startTimeMillis);
+            applicationContext=ws.io().createApplicationContext(args, lifeCycle.getClass(), null,startTimeMillis);
         }
         switch (applicationContext.getMode()) {
             case RUN:
             case AUTO_COMPLETE: {
-                listener.onRunApplication(applicationContext);
+                lifeCycle.onRunApplication(applicationContext);
                 return;
             }
             case INSTALL: {
-                listener.onInstallApplication(applicationContext);
+                lifeCycle.onInstallApplication(applicationContext);
                 return;
             }
             case UPDATE: {
-                listener.onUpdateApplication(applicationContext);
+                lifeCycle.onUpdateApplication(applicationContext);
                 return;
             }
             case UNINSTALL: {
-                listener.onUninstallApplication(applicationContext);
+                lifeCycle.onUninstallApplication(applicationContext);
                 return;
             }
         }

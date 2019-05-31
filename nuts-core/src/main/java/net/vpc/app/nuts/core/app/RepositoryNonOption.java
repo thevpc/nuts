@@ -57,7 +57,7 @@ public class RepositoryNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
             for (NutsRepository repository : workspace.config().getRepositories()) {

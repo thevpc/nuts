@@ -136,6 +136,13 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
     @Override
     NutsUpdateUserCommand setSession(NutsSession session);
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsUpdateUserCommand configure(String... args);
 

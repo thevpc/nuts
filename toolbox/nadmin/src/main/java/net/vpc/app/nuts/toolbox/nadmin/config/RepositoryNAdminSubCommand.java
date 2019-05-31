@@ -87,7 +87,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             }
                             
                             @Override
-                            public List<NutsArgumentCandidate> getValues() {
+                            public List<NutsArgumentCandidate> getCandidates() {
                                 ArrayList<NutsArgumentCandidate> arrayList = new ArrayList<>();
                                 for (Map.Entry<String, NutsRepositoryDefinition> e : repoPatterns.entrySet()) {
                                     arrayList.add(new NutsDefaultArgumentCandidate(e.getKey()));

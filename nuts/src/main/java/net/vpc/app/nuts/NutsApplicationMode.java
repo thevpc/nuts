@@ -1,7 +1,7 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Modes Application can run with
  * @since 0.5.5
  */
 public enum NutsApplicationMode {

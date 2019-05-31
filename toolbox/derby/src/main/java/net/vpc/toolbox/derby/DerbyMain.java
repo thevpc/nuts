@@ -47,7 +47,7 @@ public class DerbyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
         NutsWorkspace ws=appContext.getWorkspace();
-        NutsCommand cmdLine = appContext.getCommandLine();
+        NutsCommand cmdLine = appContext.commandLine();
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if (appContext.configureFirst(cmdLine)) {

@@ -48,7 +48,7 @@ public class FileVersionMain extends NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NutsCommand commandLine = context.getCommandLine();
+        NutsCommand commandLine = context.commandLine();
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {

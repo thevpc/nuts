@@ -30,22 +30,42 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Generic Add options
+ * @see NutsWorkspaceConfigManager#addSdk(net.vpc.app.nuts.NutsSdkLocation, net.vpc.app.nuts.NutsAddOptions) 
+ * @see NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig, net.vpc.app.nuts.NutsAddOptions)
+ * @see NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig, net.vpc.app.nuts.NutsAddOptions)
  * @author vpc
  * @since 0.5.4
  */
 public class NutsAddOptions {
 
+    /**
+     * current session
+     */
     private NutsSession session;
 
+    /**
+     * current session
+     * @return current session
+     */
     public NutsSession getSession() {
         return session;
     }
 
+    /**
+     * update current session
+     * @param session session
+     * @return this instance
+     */
     public NutsAddOptions session(NutsSession session) {
         return setSession(session);
     }
 
+    /**
+     * update current session
+     * @param session session
+     * @return this instance
+     */
     public NutsAddOptions setSession(NutsSession session) {
         this.session = session;
         return this;

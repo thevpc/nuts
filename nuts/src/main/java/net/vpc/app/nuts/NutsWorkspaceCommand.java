@@ -30,29 +30,55 @@
 package net.vpc.app.nuts;
 
 /**
+ * Generic Command for usual workspace operations. All Command classes have a
+ * 'run' method to perform the operation.
  *
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsWorkspaceCommand extends NutsConfigurable{
+public interface NutsWorkspaceCommand extends NutsConfigurable {
 
     /**
-     * 
-     * @param autoCreate
-     * @return 
+     * return session
+     *
+     * @param autoCreate if true session will be created if null
+     * @return
      */
     NutsSession getSession(boolean autoCreate);
-    
+
+    /**
+     * return session
+     *
+     * @return session
+     */
     NutsSession getSession();
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return this instance
+     */
     NutsWorkspaceCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return this instance
+     */
     NutsWorkspaceCommand setSession(NutsSession session);
-    
+
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsWorkspaceCommand configure(String... args);
-    
-    NutsWorkspaceCommand run();
 
+    NutsWorkspaceCommand run();
 
 }

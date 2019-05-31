@@ -30,12 +30,21 @@
 package net.vpc.app.nuts;
 
 /**
+ * Argument Candidate used in Auto Complete
  * Created by vpc on 3/7/17.
  * @since 0.5.5
  */
 public interface NutsArgumentCandidate {
 
+    /**
+     * argument value
+     * @return argument value
+     */
     String getValue();
 
+    /**
+     * human display
+     * @return human display
+     */
     String getDisplay();
 }

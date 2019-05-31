@@ -52,7 +52,15 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
     private NutsDescriptor result;
 
     public DefaultNutsFetchDescriptorRepositoryCommand(NutsRepository repo) {
-        super(repo);
+        super(repo,"fetch-descriptor");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

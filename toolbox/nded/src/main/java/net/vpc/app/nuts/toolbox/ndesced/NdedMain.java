@@ -19,7 +19,7 @@ public class NdedMain extends NutsApplication {
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        NutsCommand commandLine = appContext.getCommandLine();
+        NutsCommand commandLine = appContext.commandLine();
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (appContext.configureFirst(commandLine)) {

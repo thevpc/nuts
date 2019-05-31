@@ -34,13 +34,20 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsUpdateRepositoryStatisticsCommand extends NutsWorkspaceCommand {
+public interface NutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCommand {
     @Override
-    NutsUpdateRepositoryStatisticsCommand session(NutsSession session);
+    NutsUpdateRepositoryStatisticsCommand session(NutsRepositorySession session);
 
     @Override
-    NutsUpdateRepositoryStatisticsCommand setSession(NutsSession session);
+    NutsUpdateRepositoryStatisticsCommand setSession(NutsRepositorySession session);
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsUpdateRepositoryStatisticsCommand configure(String... args);
 

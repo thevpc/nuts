@@ -50,7 +50,7 @@ public class ExtensionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         all.add(new NutsDefaultArgumentCandidate(NutsConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"

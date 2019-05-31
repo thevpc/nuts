@@ -37,10 +37,14 @@ package net.vpc.app.nuts;
  */
 public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
 
+    /**
+     * nuts id
+     */
     private final String id;
 
     /**
-     *
+     * Custom Constructor
+     * @param workspace workspace
      * @param id nuts id
      */
     public NutsAlreadyDeployedException(NutsWorkspace workspace,NutsId id) {
@@ -48,7 +52,8 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
     }
 
     /**
-     *
+     * Custom Constructor
+     * @param workspace
      * @param id nuts id
      */
     public NutsAlreadyDeployedException(NutsWorkspace workspace,String id) {
@@ -57,7 +62,8 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
     }
 
     /**
-     *
+     * Custom Constructor
+     * @param workspace workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception

@@ -50,6 +50,13 @@ public interface NutsWorkspaceInfoFormat extends NutsFormat {
     @Override
     NutsWorkspaceInfoFormat setSession(NutsSession session);
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsWorkspaceInfoFormat configure(String[] args);
 

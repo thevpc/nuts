@@ -38,20 +38,41 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
 
     private final String id;
 
+    /**
+     * Custom Constructor
+     * @param workspace workspace
+     * @param id nuts id
+     */
     public NutsAlreadyInstalledException(NutsWorkspace workspace,NutsId id) {
         this(workspace,id == null ? null : id.toString());
     }
 
+    /**
+     * 
+     * @param workspace
+     * @param id 
+     */
     public NutsAlreadyInstalledException(NutsWorkspace workspace,String id) {
         super(workspace, "Already Installed nuts " + (id == null ? "<null>" : id));
         this.id = id;
     }
 
-    public NutsAlreadyInstalledException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
-        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
-        this.id = nuts;
+    /**
+     * Custom Constructor
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsAlreadyInstalledException(NutsWorkspace workspace,String id, String msg, Exception ex) {
+        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (id == null ? "<null>" : id) : msg,ex);
+        this.id = id;
     }
 
+    /**
+     * nuts id
+     * @return nuts id
+     */
     public String getId() {
         return id;
     }

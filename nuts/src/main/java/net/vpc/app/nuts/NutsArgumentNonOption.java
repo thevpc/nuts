@@ -33,13 +33,21 @@ package net.vpc.app.nuts;
 import java.util.List;
 
 /**
- * 
+ * Non Option Argument specification
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsArgumentNonOption {
 
+    /**
+     * argument name
+     * @return argument name
+     */
     String getName();
 
-    List<NutsArgumentCandidate> getValues();
+    /**
+     * argument candidate values
+     * @return 
+     */
+    List<NutsArgumentCandidate> getCandidates();
 }

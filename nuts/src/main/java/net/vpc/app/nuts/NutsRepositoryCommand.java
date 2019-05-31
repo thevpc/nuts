@@ -29,11 +29,12 @@
  */
 package net.vpc.app.nuts;
 
+
 /**
  *
  * @author vpc
  */
-public interface NutsRepositoryCommand {
+public interface NutsRepositoryCommand extends NutsConfigurable{
 
     NutsRepositoryCommand setSession(NutsRepositorySession session);
 
@@ -43,4 +44,13 @@ public interface NutsRepositoryCommand {
 
     NutsRepositoryCommand run();
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
+    @Override
+    NutsRepositoryCommand configure(String... args);
 }

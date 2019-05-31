@@ -33,6 +33,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import net.vpc.app.nuts.*;
 import java.util.*;
+import net.vpc.app.nuts.core.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
 
 /**
@@ -57,6 +58,9 @@ public class NutsWorkspaceHelper {
     }
 
     public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
+        if(options==null){
+            options=new DefaultNutsFetchCommand(repo.getWorkspace()).setIndexed(true);
+        }
         return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 

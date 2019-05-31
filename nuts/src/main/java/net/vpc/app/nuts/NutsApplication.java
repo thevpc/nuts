@@ -30,6 +30,23 @@
 package net.vpc.app.nuts;
 
 /**
+ * Nuts Application is the Top class to be handled by nuts as rich console
+ * application. By default NutsApplication classes :
+ * <ul>
+ * <li>have a nutsApplication=true in their descriptor file</li>
+ * <li>support inheritance of all workspace options (from caller nuts
+ * process)</li>
+ * <li>enables auto-complete mode to help forecasting the next token in the
+ * command line</li>
+ * <li>enables on-install mode to be executed when the jar is installed in nuts
+ * repos</li>
+ * <li>enables on-uninstall mode to be executed when the jar is uninstaleld from
+ * nuts repos</li>
+ * <li>enables on-update mode to be executed when the a new version of the same
+ * jar has been installed</li>
+ * <li>have many default options enabled (such as --help, --version, --json, --table, etc.) and thus support natively multi output channels</li>
+ * </ul>
+ *  Typically a Nuts Application has follows this code pattern : 
  * <pre>
  *   public class MyApplication extends NutsApplication{
  *     public static void main(String[] args) {
@@ -40,42 +57,75 @@ package net.vpc.app.nuts;
  *     public void run(NutsApplicationContext appContext) {
  *         boolean myBooleanOption=false;
  *         NutsCommand cmdLine=appContext.getCommandLine()
+ *         boolean boolOption=false;
+ *         String stringOption=null;
  *         Argument a;
  *         while(cmdLine.hasNext()){
  *             if(appContext.configure(cmd)){
  *                 //do nothing
- *             }else if((a=cmd.nextBoolean("-o","--option"))!=null){
- *                 myBooleanOption=a.getValue().getBoolean();
- *             }else{
- *                 cmd.unexpectedArgument("myapp");
+ *             }else {
+ *                  a=cmd.peek();
+ *                  switch(a.getKey().getString())[
+ *                      case "-o": case "--option":{
+ *                          boolOption=cmd.nextBoolean().getValue().getBoolean();
+ *                          break;
+ *                      }
+ *                      case "-n": case "--name":{
+ *                          stringOption=cmd.nextString().getValue().getString();
+ *                          break;
+ *                      }
+ *                      default:{
+ *                          cmd.unexpectedArgument();
+ *                      }
+ *                  }
  *             }
  *         }
  *         // test if application is running in exec mode
  *         // (and not in autoComplete mode)
  *         if(cmd.isExecMode()){
- *
+ *              //do the good staff here
  *         }
  *     }
  *   }
  * </pre>
+ *
  * @since 0.5.5
  */
 public abstract class NutsApplication {
 
+    /**
+     * run the application and <strong>EXIT</strong> process
+     * @param args arguments
+     */
     public void runAndExit(String[] args) {
         try {
             run((NutsWorkspace) null, args);
         } catch (Exception ex) {
             System.exit(NutsApplications.processThrowable(ex, args, null));
+            return;
         }
+        System.exit(0);
     }
 
+    /**
+     * run the application with the given arguments.
+     * If the first arguments is in the form of --nuts-exec-mode=...
+     * the argument will be removed and the corresponding mode is activated.
+     * @param args application arguments. should not be null or contain nulls
+     */
     public void run(String[] args) {
         run(null, args);
     }
 
+    /**
+     * run the application with the given arguments against the given workspace
+     * If the first arguments is in the form of --nuts-exec-mode=...
+     * the argument will be removed and the corresponding mode is activated.
+     * @param ws workspace (can be null)
+     * @param args application arguments. should not be null or contain nulls
+     */
     public void run(NutsWorkspace ws, String[] args) {
-        NutsApplications.runApplication(args, ws, new NutsApplicationListener() {
+        NutsApplications.runApplication(args, ws, new NutsApplicationLifeCycle() {
             @Override
             public void onRunApplication(NutsApplicationContext applicationContext) {
                 NutsApplication.this.run(applicationContext);
@@ -100,24 +150,36 @@ public abstract class NutsApplication {
             public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
                 NutsApplicationContext c = NutsApplication.this.createApplicationContext(ws, args, startTimeMillis);
                 if (c == null) {
-                    c = ws.io().createApplicationContext(args, NutsApplication.this.getClass(), null,startTimeMillis);
+                    c = ws.io().createApplicationContext(args, NutsApplication.this.getClass(), null, startTimeMillis);
                 }
                 return c;
             }
         });
     }
 
+    /**
+     * this method should be overridden to perform specific business when application is installed
+     * @param applicationContext context
+     */
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
     }
 
+    /**
+     * this method should be overridden to perform specific business when application is updated
+     * @param applicationContext context
+     */
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
     }
 
+    /**
+     * this method should be overridden to perform specific business when application is uninstalled
+     * @param applicationContext context
+     */
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 
     protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
-        return ws.io().createApplicationContext(args, getClass(), null,startTimeMillis);
+        return ws.io().createApplicationContext(args, getClass(), null, startTimeMillis);
     }
 
     public abstract void run(NutsApplicationContext applicationContext);

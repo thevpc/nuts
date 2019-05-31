@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsException;
@@ -47,6 +48,7 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
  * @author vpc
  */
 public class DefaultNutsDeployRepositoryCommand extends NutsRepositoryCommandBase<NutsDeployRepositoryCommand> implements NutsDeployRepositoryCommand {
+
     private static final Logger LOG = Logger.getLogger(DefaultNutsDeployRepositoryCommand.class.getName());
 
     private NutsId id;
@@ -57,10 +59,17 @@ public class DefaultNutsDeployRepositoryCommand extends NutsRepositoryCommandBas
     private boolean transitive = true;
 
     public DefaultNutsDeployRepositoryCommand(NutsRepository repo) {
-        super(repo);
+        super(repo, "deploy");
     }
 
-    
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public NutsId getId() {
         return id;
@@ -163,7 +172,6 @@ public class DefaultNutsDeployRepositoryCommand extends NutsRepositoryCommandBas
 //                .setTransitive(transitive);
 //
 //    }
-
     @Override
     public NutsDeployRepositoryCommand run() {
         getRepo().security().checkAllowed(NutsConstants.Rights.DEPLOY, "deploy");
@@ -215,6 +223,5 @@ public class DefaultNutsDeployRepositoryCommand extends NutsRepositoryCommandBas
         }
         return this;
     }
-    
 
 }

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
@@ -34,7 +35,15 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
     private NutsIdFilter filter;
 
     public DefaultNutsSeachVersionsRepositoryCommand(NutsRepository repo) {
-        super(repo);
+        super(repo,"search-versions");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

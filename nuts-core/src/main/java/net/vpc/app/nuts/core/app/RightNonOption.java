@@ -62,7 +62,7 @@ public class RightNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         for (String r : NutsConstants.Rights.RIGHTS) {
             all.add(new NutsDefaultArgumentCandidate(r));

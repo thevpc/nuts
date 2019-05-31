@@ -23,7 +23,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsCommand cmd = context.getCommandLine()
+        NutsCommand cmd = context.commandLine()
                 .setCommandName("ndi")
                 .required();
         NutsArgument a;
@@ -107,7 +107,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext context) {
-        NutsCommand cmd = context.getCommandLine()
+        NutsCommand cmd = context.commandLine()
                 .setCommandName("ndi --nuts-exec-mode=on-install")
                 ;
         NutsArgument a;

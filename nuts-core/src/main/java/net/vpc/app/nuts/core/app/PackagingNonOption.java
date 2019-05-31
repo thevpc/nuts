@@ -50,7 +50,7 @@ public class PackagingNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         all.add(new NutsDefaultArgumentCandidate("jar"));
         all.add(new NutsDefaultArgumentCandidate("war"));

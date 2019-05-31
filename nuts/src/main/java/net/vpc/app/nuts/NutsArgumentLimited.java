@@ -38,11 +38,18 @@ package net.vpc.app.nuts;
  * @since 0.5.5
  */
 class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument {
-
+    /**
+     * equal character
+     */
     private final char eq;
 
-    public NutsArgumentLimited(String line, char eq) {
-        super(line);
+    /**
+     * Constructor
+     * @param expression expression
+     * @param eq equals
+     */
+    public NutsArgumentLimited(String expression, char eq) {
+        super(expression);
         this.eq = eq;
     }
 
@@ -311,9 +318,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
         return String.valueOf(expression);
     }
 
+    @Override
     public NutsArgument required() {
         if (expression == null) {
-            throw new IllegalArgumentException("Missing value");
+            throw new NutsIllegalArgumentException(null,"Missing value");
         }
         return this;
     }

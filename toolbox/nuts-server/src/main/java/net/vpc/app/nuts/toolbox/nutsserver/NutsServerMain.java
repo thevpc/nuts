@@ -28,7 +28,7 @@ public class NutsServerMain extends NutsApplication {
             boolean autoSave = false;
             NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
 
-            NutsCommand cmdLine = context.getCommandLine();
+            NutsCommand cmdLine = context.commandLine();
 
             class SrvInfo {
 

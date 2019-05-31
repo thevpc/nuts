@@ -161,6 +161,13 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
     @Override
     NutsDeployCommand setSession(NutsSession session);
 
+    /**
+     * configure the current command with the given arguments.
+     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     * @param args argument to configure with
+     * @return this instance
+     */
     @Override
     NutsDeployCommand configure(String... args);
 

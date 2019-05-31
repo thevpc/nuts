@@ -52,7 +52,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
         for (NutsRepositoryDefinition repo : workspace.config().getDefaultRepositories()) {

@@ -12,13 +12,13 @@ import net.vpc.app.nuts.NutsCommand;
  *
  * @author vpc
  */
-public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsWorkspaceCommandBase<NutsUpdateRepositoryStatisticsCommand>
+public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCommandBase<NutsUpdateRepositoryStatisticsCommand>
         implements NutsUpdateRepositoryStatisticsCommand {
 
     protected NutsRepository repo;
 
     public DefaultNutsUpdateRepositoryStatisticsCommand(NutsRepository repo) {
-        super(repo.getWorkspace(),"update-repo-statistics");
+        super(repo,"update-repo-statistics");
         this.repo = repo;
     }
 

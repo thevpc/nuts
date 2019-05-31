@@ -18,6 +18,9 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.bridges.maven.MavenRepositoryFolderHelper;
 import net.vpc.app.nuts.core.repos.NutsRepositoryFolderHelper;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsFetchMode;
+import net.vpc.app.nuts.NutsRepository;
+import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 
 /**
  *
@@ -154,8 +157,11 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateStatisticsCommand run() {
         for (String repository : getRepositrories()) {
-            ws.config().getRepository(repository).updateStatistics()
-                    .session(getValidSession())
+            NutsRepository repo = ws.config().getRepository(repository);
+            repo.updateStatistics()
+                    .session(
+                            NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, null)
+                            )
                     .run();
         }
         for (String repositoryPath : getPaths()) {

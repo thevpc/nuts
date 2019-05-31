@@ -30,8 +30,8 @@
 package net.vpc.app.nuts;
 
 /**
- * Text align constant
- * Created by vpc on 12/19/13.
+ * Text align constants
+ * @author vpc
  * @since 0.5.5
  */
 public enum NutsAlignFormat {

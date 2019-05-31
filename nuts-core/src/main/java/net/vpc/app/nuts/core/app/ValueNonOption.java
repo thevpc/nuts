@@ -49,7 +49,7 @@ public class ValueNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getCandidates() {
         return new ArrayList(Arrays.asList(values));
     }
 

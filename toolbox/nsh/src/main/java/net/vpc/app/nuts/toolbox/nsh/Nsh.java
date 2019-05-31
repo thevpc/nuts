@@ -35,7 +35,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommand cmd = applicationContext.getCommandLine();
+        NutsCommand cmd = applicationContext.commandLine();
         NutsArgument a;
         boolean force = false;
         boolean trace = true;

@@ -368,11 +368,11 @@ class NutsCommandLimited implements NutsCommand {
     public NutsArgument nextNonOption(NutsArgumentNonOption name, boolean error) {
         if (hasNext() && !peek().isOption()) {
             if (isAutoComplete()) {
-                List<NutsArgumentCandidate> values = name.getValues();
+                List<NutsArgumentCandidate> values = name.getCandidates();
                 if (values == null || values.isEmpty()) {
                     autoComplete.addExpectedTypedValue(null, name.getName());
                 } else {
-                    for (NutsArgumentCandidate value : name.getValues()) {
+                    for (NutsArgumentCandidate value : name.getCandidates()) {
                         autoComplete.addCandidate(value);
                     }
                 }
@@ -383,11 +383,11 @@ class NutsCommandLimited implements NutsCommand {
         } else {
             if (autoComplete != null) {
                 if (isAutoComplete()) {
-                    List<NutsArgumentCandidate> values = name.getValues();
+                    List<NutsArgumentCandidate> values = name.getCandidates();
                     if (values == null || values.isEmpty()) {
                         autoComplete.addExpectedTypedValue(null, name.getName());
                     } else {
-                        for (NutsArgumentCandidate value : name.getValues()) {
+                        for (NutsArgumentCandidate value : name.getCandidates()) {
                             autoComplete.addCandidate(value);
                         }
                     }

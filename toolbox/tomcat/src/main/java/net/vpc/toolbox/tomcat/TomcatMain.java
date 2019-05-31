@@ -16,7 +16,7 @@ public class TomcatMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        NutsCommand cmdLine = appContext.getCommandLine();
+        NutsCommand cmdLine = appContext.commandLine();
         Boolean local = null;
         boolean skipFirst = false;
         while (cmdLine.hasNext()) {

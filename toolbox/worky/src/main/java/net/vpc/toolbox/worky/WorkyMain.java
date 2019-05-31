@@ -18,7 +18,7 @@ public class WorkyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArguments();
         this.service = new WorkspaceService(appContext);
-        NutsCommand cmdLine = appContext.getCommandLine();
+        NutsCommand cmdLine = appContext.commandLine();
         NutsArgument a;
         do {
             if (appContext.configureFirst(cmdLine)) {

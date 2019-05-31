@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
@@ -29,11 +30,17 @@ public class DefaultNutsRepositoryUndeployCommand extends NutsRepositoryCommandB
     private boolean transitive = true;
 
     public DefaultNutsRepositoryUndeployCommand(NutsRepository repo) {
-        super(repo);
+        super(repo, "undeploy");
     }
 
-    
-    
+    @Override
+    public boolean configureFirst(NutsCommand cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public NutsId getId() {
         return id;
@@ -117,13 +124,12 @@ public class DefaultNutsRepositoryUndeployCommand extends NutsRepositoryCommandB
 //                .setTransitive(transitive);
 //
 //    }
-
     @Override
     public NutsRepositoryUndeployCommand run() {
         NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
         getRepo().security().checkAllowed(NutsConstants.Rights.UNDEPLOY, "undeploy");
         try {
-            NutsRepositoryExt xrepo=NutsRepositoryExt.of(getRepo());
+            NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
             if (getSession().isIndexed() && xrepo.getIndexStoreClient() != null && xrepo.getIndexStoreClient().isEnabled()) {
                 try {
@@ -143,5 +149,4 @@ public class DefaultNutsRepositoryUndeployCommand extends NutsRepositoryCommandB
         return this;
     }
 
-    
 }

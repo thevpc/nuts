@@ -190,7 +190,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             case "--help": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    showHelp();
+                    printHelp();
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(workspace,"Help", 0);
@@ -285,7 +285,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public void showHelp() {
+    public void printHelp() {
         String h = getWorkspace().resolveDefaultHelpForClass(getAppClass());
         if (h == null) {
             h = "Help is @@missing@@.";
@@ -449,7 +449,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return appId == null ? null : appId.getVersion();
     }
 
-    @Override
+//    @Override
     public DefaultNutsApplicationContext setAppId(NutsId appId) {
         this.appId = appId;
         return this;
