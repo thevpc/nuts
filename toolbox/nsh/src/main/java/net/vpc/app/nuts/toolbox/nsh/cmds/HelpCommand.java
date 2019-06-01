@@ -44,6 +44,8 @@ import java.util.function.Function;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellCommandTypeResolver;
 
 /**
  * Created by vpc on 1/7/17.
@@ -74,7 +76,7 @@ public class HelpCommand extends AbstractNshCommand {
                     throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
                 }
             } else {
-                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.shellContext())).required().getString());
+                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.getGlobalContext())).required().getString());
             }
         }
         Function<String, String> ss = code ? new Function<String, String>() {
@@ -92,21 +94,21 @@ public class HelpCommand extends AbstractNshCommand {
                     String helpText = context.getWorkspace().io().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
                     context.out().println(ss.apply(helpText));
                     context.out().println(ss.apply("@@AVAILABLE COMMANDS ARE:@@"));
-                    NshCommand[] commands = context.getShell().getCommands();
-                    Arrays.sort(commands, new Comparator<NshCommand>() {
+                    JShellCommand[] commands = context.getGlobalContext().builtins().getAll();
+                    Arrays.sort(commands, new Comparator<JShellCommand>() {
                         @Override
-                        public int compare(NshCommand o1, NshCommand o2) {
+                        public int compare(JShellCommand o1, JShellCommand o2) {
                             return o1.getName().compareTo(o2.getName());
                         }
                     });
                     int max = 1;
-                    for (NshCommand cmd : commands) {
+                    for (JShellCommand cmd : commands) {
                         int x = cmd.getName().length();
                         if (x > max) {
                             max = x;
                         }
                     }
-                    for (NshCommand cmd : commands) {
+                    for (JShellCommand cmd : commands) {
                         if (code) {
                             context.out().printf("\\#\\#%s\\#\\# : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
@@ -116,7 +118,7 @@ public class HelpCommand extends AbstractNshCommand {
                     }
                 } else {
                     for (String commandName : commandNames) {
-                        NshCommand command1 = context.getShell().findCommand(commandName);
+                        JShellCommand command1 = context.getGlobalContext().builtins().find(commandName);
                         if (command1 == null) {
                                 context.err().printf("Command not found : %s\n", ss.apply(commandName));
                         } else {

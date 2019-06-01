@@ -124,9 +124,12 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
 
     @Override
     public NutsAuthenticationAgent getAuthenticationAgent() {
-        return repo.getWorkspace().config().createAuthenticationAgent(
+        NutsAuthenticationAgent t = repo.getWorkspace().config().createAuthenticationAgent(
                 ((DefaultNutsRepositoryConfigManager) repo.config())
                         .getStoredConfig().getAuthenticationAgent());
+        t.setEnv(repo.config());
+        
+        return t;
     }
 
     @Override

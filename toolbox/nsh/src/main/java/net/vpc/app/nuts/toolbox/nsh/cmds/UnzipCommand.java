@@ -78,7 +78,7 @@ public class UnzipCommand extends AbstractNshCommand {
                 throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
             } else {
                 String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getShell().getAbsolutePath(path));
+                File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }
@@ -97,10 +97,10 @@ public class UnzipCommand extends AbstractNshCommand {
             } else {
                 String dir = options.dir;
                 if (StringUtils.isEmpty(dir)) {
-                    dir = context.getShell().getCwd();
+                    dir = context.getGlobalContext().getCwd();
                 }
-                dir = context.getShell().getAbsolutePath(dir);
-                ZipUtils.unzip(context.getShell().getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
+                dir = context.getGlobalContext().getAbsolutePath(dir);
+                ZipUtils.unzip(context.getGlobalContext().getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
             }
         }
         return 0;

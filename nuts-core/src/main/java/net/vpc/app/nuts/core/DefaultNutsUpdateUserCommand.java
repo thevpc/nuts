@@ -425,11 +425,8 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
                 }
                 if (!repo.security().isAllowed(NutsConstants.Rights.ADMIN)) {
                     repo.security().getAuthenticationAgent()
-                            .checkCredentials(
-                                    u.getCredentials().toCharArray(),
-                                    getCredentials(),
-                                    repo.config()
-                            );
+                            .checkCredentials(u.getCredentials().toCharArray(),
+                                    getCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
@@ -445,7 +442,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 
                 u.setCredentials(
                         new String(repo.security().getAuthenticationAgent()
-                                .setCredentials(credentials, repo.config()))
+                                .setCredentials(credentials, null))
                 );
                 if (resetGroups) {
                     u.setGroups(new String[0]);
@@ -482,11 +479,8 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
                 }
                 if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
                     ws.security().getAuthenticationAgent()
-                            .checkCredentials(
-                                    u.getCredentials().toCharArray(),
-                                    getCredentials(),
-                                    ws.config()
-                            );
+                            .checkCredentials(u.getCredentials().toCharArray(),
+                                    getCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
@@ -501,7 +495,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
                 }
 
                 u.setCredentials(new String(ws.security().getAuthenticationAgent()
-                        .setCredentials(credentials, ws.config())));
+                        .setCredentials(credentials, null)));
                 if (resetGroups) {
                     u.setGroups(new String[0]);
                 }

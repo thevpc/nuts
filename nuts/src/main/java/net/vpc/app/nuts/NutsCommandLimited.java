@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -100,7 +100,6 @@ class NutsCommandLimited implements NutsCommand {
     }
 
     //End Constructors
-
     @Override
     public NutsCommand autoComplete(NutsCommandAutoComplete autoComplete) {
         return setAutoComplete(autoComplete);
@@ -143,15 +142,24 @@ class NutsCommandLimited implements NutsCommand {
     }
 
     @Override
-    public NutsCommand unexpectedArgument() {
+    public NutsCommand unexpectedArgument(String errorMessage) {
         if (!isEmpty()) {
             if (autoComplete != null) {
                 skipAll();
                 return this;
             }
-            throwError("Unexpected Argument " + peek());
+            String m = "Unexpected Argument " + peek();
+            if(errorMessage!=null && errorMessage.trim().length()>0){
+                m+=" , "+errorMessage;
+            }
+            throwError(m);
         }
         return this;
+    }
+    
+    @Override
+    public NutsCommand unexpectedArgument() {
+        return unexpectedArgument(null);
     }
 
     @Override
@@ -259,16 +267,19 @@ class NutsCommandLimited implements NutsCommand {
 
     @Override
     public NutsArgument next(String... names) {
-        return next(NutsArgumentType.NONE, names);
+        return next(NutsArgumentType.ANY, names);
     }
 
     @Override
     public NutsArgument next(NutsArgumentType expectValue, String... names) {
+        if(expectValue==null){
+            expectValue=NutsArgumentType.ANY;
+        }
         if (names.length == 0) {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                        peeked.getKey().getString("")
+                    peeked.getKey().getString("")
                 };
             }
         }
@@ -292,7 +303,7 @@ class NutsCommandLimited implements NutsCommand {
             if (p != null) {
                 if (p.getKey().getString("").equals(name)) {
                     switch (expectValue) {
-                        case NONE: {
+                        case ANY: {
                             skip(nameSeqArray.length);
                             return p;
                         }
@@ -368,11 +379,11 @@ class NutsCommandLimited implements NutsCommand {
     public NutsArgument nextNonOption(NutsArgumentNonOption name, boolean error) {
         if (hasNext() && !peek().isOption()) {
             if (isAutoComplete()) {
-                List<NutsArgumentCandidate> values = name.getCandidates();
+                List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates();
                 if (values == null || values.isEmpty()) {
-                    autoComplete.addExpectedTypedValue(null, name.getName());
+                    autoComplete.addExpectedTypedValue(null, name == null ? "value" : name.getName());
                 } else {
-                    for (NutsArgumentCandidate value : name.getCandidates()) {
+                    for (NutsArgumentCandidate value : values) {
                         autoComplete.addCandidate(value);
                     }
                 }
@@ -383,11 +394,11 @@ class NutsCommandLimited implements NutsCommand {
         } else {
             if (autoComplete != null) {
                 if (isAutoComplete()) {
-                    List<NutsArgumentCandidate> values = name.getCandidates();
+                    List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates();
                     if (values == null || values.isEmpty()) {
-                        autoComplete.addExpectedTypedValue(null, name.getName());
+                        autoComplete.addExpectedTypedValue(null, name == null ? "value" : name.getName());
                     } else {
-                        for (NutsArgumentCandidate value : name.getCandidates()) {
+                        for (NutsArgumentCandidate value : values) {
                             autoComplete.addCandidate(value);
                         }
                     }
@@ -400,7 +411,7 @@ class NutsCommandLimited implements NutsCommand {
             if (hasNext() && peek().isOption()) {
                 throwError("Unexpected option " + peek());
             }
-            throwError("Missing argument " + name);
+            throwError("Missing argument " + (name==null?"value":name.getName()));
         }
         //ignored
         return null;
@@ -605,7 +616,7 @@ class NutsCommandLimited implements NutsCommand {
                         String nextArg = new String(chars, i, chars.length - i);
                         if (last != null) {
                             nextArg = last + nextArg;
-                            last=null;
+                            last = null;
                         }
                         if (negate) {
                             nextArg = "!" + nextArg;

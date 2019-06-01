@@ -127,44 +127,87 @@ public interface NutsCommand {
     ////////////////////////////////////////////////
     NutsCommand requireNonOption();
 
+    NutsCommand unexpectedArgument(String errorMessage);
+    
     NutsCommand unexpectedArgument();
 
     NutsCommand required();
 
     NutsCommand pushBack(NutsArgument a);
 
+    /**
+     * consume (remove) the first argument and return it
+     * return null if not argument is left
+     * @return 
+     */
     NutsArgument next();
 
+    /**
+     * the first argument to consume without removing/consuming it
+     * or null if not argument is left
+     * @return the first argument to consume without removing/consuming it
+     */
     NutsArgument peek();
 
+    /**
+     * true if there still at least one argument to consume
+     * @return true if there still at least one argument to consume
+     */
     boolean hasNext();
 
     /**
      * next argument with boolean value
-     *
-     * @param names
-     * @return
+     * equivalent to next(NutsArgumentType.STRING,names)
+     * @param names names
+     * @return next argument
      */
     NutsArgument nextBoolean(String... names);
 
     /**
-     * next argument with string value
-     *
-     * @param names
-     * @return
+     * next argument with string value.
+     * equivalent to next(NutsArgumentType.STRING,names)
+     * @param names names
+     * @return next argument
      */
     NutsArgument nextString(String... names);
 
+    /**
+     * next argument with immediate string value.
+     * equivalent to next(NutsArgumentType.IMMEDIATE,names)
+     * @param names names
+     * @return next argument
+     */
     NutsArgument nextImmediate(String... names);
 
+    /**
+     * next argument with any value type (may having not a value).
+     * equivalent to next(NutsArgumentType.VOID,names)
+     * @param names names
+     * @return next argument
+     */
     NutsArgument next(String... names);
 
     NutsArgument next(NutsArgumentType expectValue, String... names);
 
+    /**
+     * next argument if it exists and it is a non option. 
+     * Throw an error in all other cases.
+     * @param name argument specification (may be null)
+     * @return next argument if it exists and it is a non option
+     */
     NutsArgument nextRequiredNonOption(NutsArgumentNonOption name);
 
+    /**
+     * next argument if it exists and it is a non option. Return null in all other cases.
+     * @return next argument if it exists and it is a non option
+     */
     NutsArgument nextNonOption();
 
+    /**
+     * next argument if it exists and it is a non option. Return null in all other cases.
+     * @param name argument specification (may be null)
+     * @return next argument if it exists and it is a non option
+     */
     NutsArgument nextNonOption(NutsArgumentNonOption name);
 
     int skipAll();

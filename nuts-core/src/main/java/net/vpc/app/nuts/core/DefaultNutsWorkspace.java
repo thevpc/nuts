@@ -71,8 +71,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
     private final ObservableMap<String, Object> userProperties = new ObservableMap<>();
 
-    private NutsSessionTerminal terminal;
-    private NutsSystemTerminal systemTerminal;
     private NutsIOManager ioManager;
     private NutsParseManager parseManager;
     private NutsWorkspaceFormatManager formatManager;
@@ -101,7 +99,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(getTerminal());
+        nutsSession.setTerminal(io().getTerminal());
         return nutsSession;
     }
 
@@ -172,38 +170,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public NutsWorkspace setSystemTerminal(NutsSystemTerminalBase term) {
-        if (term == null) {
-            throw new NutsExtensionMissingException(this, NutsSystemTerminalBase.class, "SystemTerminalBase");
-        }
-        NutsSystemTerminal syst;
-        if ((term instanceof NutsSystemTerminal)) {
-            syst = (NutsSystemTerminal) term;
-        } else {
-            try {
-                syst = new DefaultSystemTerminal(term);
-                syst.install(this);
-            } catch (Exception ex) {
-                syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
-                syst.install(this);
-
-            }
-        }
-        if (this.systemTerminal != null) {
-            this.systemTerminal.uninstall();
-        }
-        NutsSystemTerminal old = this.systemTerminal;
-        this.systemTerminal = syst;
-
-        if (old != this.systemTerminal) {
-            for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
-                workspaceListener.onUpdateProperty("systemTerminal", old, this.systemTerminal);
-            }
-        }
-        return this;
-    }
-
-    @Override
     public boolean initializeWorkspace(NutsWorkspaceFactory factory,
             NutsBootConfig runningBootConfig, NutsBootConfig wsBootConfig,
             URL[] bootClassWorldURLs, ClassLoader bootClassLoader,
@@ -252,8 +218,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
         NutsSystemTerminalBase termb = extensions().createSupported(NutsSystemTerminalBase.class, null);
 
-        setSystemTerminal(termb);
-        setTerminal(io().createTerminal());
+        io().setSystemTerminal(termb);
+        io().setTerminal(io().createTerminal());
         NutsSession session = createSession();
 
         initializing = true;
@@ -316,7 +282,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             if (options.getLogin() != null && options.getLogin().trim().length() > 0) {
                 char[] password = options.getPassword();
                 if (CoreStringUtils.isBlank(password)) {
-                    password = this.getTerminal().readPassword("Password : ");
+                    password = io().getTerminal().readPassword("Password : ");
                 }
                 this.security().login(options.getLogin(), password);
             }
@@ -327,7 +293,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             }
             LOG.log(Level.FINE, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
             if (CoreCommonUtils.getSystemBoolean("nuts.perf", false) || CoreCommonUtils.getSystemBoolean("nuts.export.perf", false)) {
-                getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]%n",
+                io().getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
             }
@@ -344,7 +310,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         session = NutsWorkspaceUtils.validateSession(this, session);
         if (!config().getOptions().isSkipInstallCompanions()) {
             if (session.isTrace()) {
-                PrintStream out = terminal.fout();
+                PrintStream out = io().getTerminal().fout();
                 StringBuilder version = new StringBuilder(config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString());
                 while (version.length() < 25) {
                     version.append(' ');
@@ -670,7 +636,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public String[] getInstalledVersions(NutsId id, NutsSession session) {
         NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(this));
-        return Arrays.stream(getInstalledRepository().findInstalledVersions(id,rsession))
+        return Arrays.stream(getInstalledRepository().findInstalledVersions(id, rsession))
                 .map(x -> x.getVersion().getValue())
                 .sorted((a, b) -> DefaultNutsVersion.compareVersions(a, b))
                 .toArray(String[]::new);
@@ -1002,27 +968,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public String getLicenseText() {
         return this.io().getResourceString("/net/vpc/app/nuts/nuts-license.help", getClass(), "no license found");
-    }
-
-    @Override
-    public NutsSystemTerminal getSystemTerminal() {
-        return systemTerminal;
-    }
-
-    @Override
-    public NutsSessionTerminal getTerminal() {
-        return terminal;
-    }
-
-    @Override
-    public void setTerminal(NutsSessionTerminal terminal) {
-        if (terminal == null) {
-            terminal = io().createTerminal();
-        }
-        if (!(terminal instanceof UnmodifiableTerminal)) {
-            terminal = new UnmodifiableTerminal(terminal);
-        }
-        this.terminal = terminal;
     }
 
     @Override

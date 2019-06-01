@@ -35,7 +35,8 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 import net.vpc.common.javashell.JShell;
-import net.vpc.common.javashell.cmds.JavaShellCommand;
+import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellCommandType;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,7 +47,7 @@ public class TypeCommand extends SimpleNshCommand {
         super("type", DEFAULT_SUPPORT);
     }
 
-    private static class Config {
+    private static class Options {
 
         List<String> commands = new ArrayList<>();
     }
@@ -69,33 +70,28 @@ public class TypeCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected Object createConfiguration() {
-        return new Config();
+    protected Object createOptions() {
+        return new Options();
     }
 
     @Override
     protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
-        Config config = context.getConfigObject();
+        Options config = context.getOptions();
         NutsArgument a = commandLine.peek();
-        if (a == null) {
-            return false;
-        }
-        if (commandLine.hasNext()) {
-            if (a.isNonOption()) {
-                config.commands.add(a.getString());
-                return true;
-            }
+        if (a.isNonOption()) {
+            config.commands.add(commandLine.next().getString());
+            return true;
         }
         return false;
     }
 
     @Override
-    protected Object createResult(SimpleNshCommandContext context) {
-        Config config = context.getConfigObject();
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options config = context.getOptions();
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JavaShellCommand ic = shell.findCommand(cmd);
+            JShellCommand ic = context.getGlobalContext().builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -103,7 +99,7 @@ public class TypeCommand extends SimpleNshCommand {
                         cmd + " is a shell builtin"
                 ));
             } else {
-                String alias = shell.getAlias(cmd);
+                String alias = context.getGlobalContext().aliases().get(cmd);
                 if (alias != null) {
                     result.add(new ResultItem(
                             cmd,
@@ -111,12 +107,12 @@ public class TypeCommand extends SimpleNshCommand {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    String pp = shell.which(cmd, context.consoleContext());
+                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getGlobalContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,
-                                "command",
-                                cmd + " is " + pp
+                                pp.getType(),
+                                pp.getDescription()
                         ));
                     } else {
                         if (ic != null) {
@@ -136,12 +132,12 @@ public class TypeCommand extends SimpleNshCommand {
                 }
             }
         }
-        return result;
+        context.setOutObject(result);
     }
 
     @Override
-    protected void printObjectPlain(Object resultObject, SimpleNshCommandContext context) {
-        List<ResultItem> result = (List<ResultItem>) resultObject;
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        List<ResultItem> result = context.getResult();
         for (ResultItem resultItem : result) {
             context.out().println(resultItem.message);
         }

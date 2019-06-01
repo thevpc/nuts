@@ -35,3 +35,9 @@ net.vpc.app.nuts.toolbox.nsh.cmds.FindCommandCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.AutocompleteCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.DirNameCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.BaseNameCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.TrueCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.FalseCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.BuiltinCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.CommandCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.EnableCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.TestCommand

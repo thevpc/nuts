@@ -43,7 +43,7 @@ public class NutsObjectFormatBaseSimple extends NutsObjectFormatBase {
                 extraConfig.add(a.getString());
                 addMultilineProperty(i.getKey().getString(), i.getValue().getString());
             } else {
-                extraConfig.add(n.getString());
+                extraConfig.add(commandLine.next().getString());
             }
             return true;
         }

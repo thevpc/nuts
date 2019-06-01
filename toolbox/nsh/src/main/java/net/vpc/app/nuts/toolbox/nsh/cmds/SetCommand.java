@@ -3,99 +3,89 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import java.rmi.RemoteException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import net.vpc.common.javashell.JShell;
-import net.vpc.common.javashell.cmds.CmdSyntaxError;
-import net.vpc.common.javashell.cmds.JShellCommandContext;
+import java.util.Map;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.common.javashell.JShellFunction;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SetCommand extends AbstractNshCommand {
-
+public class SetCommand extends SimpleNshCommand {
 
     public SetCommand() {
         super("set", DEFAULT_SUPPORT);
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JShell shell = context.getShell();
-        int commandArgsCount = args.length;
-        if (commandArgsCount == 0) {
-            throw new CmdSyntaxError(1, args, getName(), getHelpHeader(), getHelp());
-        }
-        context.out().println("setting");
-        for (int i = 0; i < commandArgsCount; i++) {
-            String name = args[i];
-            boolean isSetted = false;
-            if (i < (commandArgsCount - 1)) {
-                String eq = args[i + 1];
-                if ("=".equals(eq)) {
-                    if (i < (commandArgsCount - 2)) {
-                        doSet(name, args[i + 2], context);
-                        i += 2;
-                        isSetted = true;
-                    } else {
-                        doSet(name, null, context);
-                        i += 1;
-                        isSetted = true;
-                    }
-                }
-            }
-            if (!isSetted) {
-                throw new CmdSyntaxError(1, args, getName(), getHelpHeader(), getHelp());
-            }
-        }
-        return 0;
+    private static class Options {
+
+        LinkedHashMap<String, String> vars = new LinkedHashMap<>();
     }
-    
-    private void doSet(String name, String value, JShellCommandContext context) throws RemoteException {
-        if (value == null) {
-            context.env().setEnv(name, value);
-        } else {
-            String valsEnv = context.env().getEnv().getProperty(name + ".VALUES");
-            if (valsEnv != null) {
-                List<String> stringList = Arrays.asList(valsEnv.split(":"));
-                if (!stringList.contains(value)) {
-                    System.err.printf("Invalid value %s=%s\n", name,value);
-                    System.err.printf("Valid values are \n");
-                    for (String s : stringList) {
-                        System.err.printf("\t%s\n" , s);
-                    }
-                    return;
-                }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        if (a.isNonOption()) {
+            if (a.isKeyValue()) {
+                options.vars.put(a.getKey().getString(), a.getValue().getString());
+                return true;
             }
-            context.env().setEnv(name, value);
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.vars.isEmpty()) {
+            List<String> results = new ArrayList<>();
+            for (Map.Entry<Object, Object> entry : context.getCommandContext().vars().getAll().entrySet()) {
+                results.add(entry.getKey() + "=" + entry.getValue());
+            }
+            for (JShellFunction function : context.getGlobalContext().functions().getAll()) {
+                results.add(function.getDefinition());
+            }
+            context.setOutObject(results);
+        } else {
+            for (Map.Entry<String, String> entry : options.vars.entrySet()) {
+                context.getCommandContext().vars().set(entry.getKey(), entry.getValue());
+            }
         }
     }
 }

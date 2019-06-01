@@ -19,6 +19,9 @@ import net.vpc.app.nuts.core.DefaultNutsHashCommand;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
+import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
+import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
+import net.vpc.app.nuts.core.terminals.UnmodifiableTerminal;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -83,6 +86,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return "${" + from + "}";
         }
     };
+    private NutsSessionTerminal terminal;
+    private NutsSystemTerminal systemTerminal;
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
@@ -271,7 +276,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 return new PrintStream(out);
             }
         }
-        throw new NutsUnsupportedArgumentException(ws,"Unsupported NutsTerminalMode " + mode);
+        throw new NutsUnsupportedArgumentException(ws, "Unsupported NutsTerminalMode " + mode);
     }
 
     @Override
@@ -285,13 +290,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
             parent = new AbstractSystemTerminalAdapter() {
                 @Override
                 public NutsSystemTerminalBase getParent() {
-                    return ws.getSystemTerminal();
+                    return ws.io().getSystemTerminal();
                 }
             };
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
-            throw new NutsExtensionMissingException(ws,NutsSessionTerminal.class, "Terminal");
+            throw new NutsExtensionMissingException(ws, NutsSessionTerminal.class, "Terminal");
         }
         try {
             NutsSessionTerminal term = null;
@@ -417,6 +422,60 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsTerminalFormat getTerminalFormat() {
         return terminalMetrics;
+    }
+
+    @Override
+    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase term) {
+        if (term == null) {
+            throw new NutsExtensionMissingException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
+        }
+        NutsSystemTerminal syst;
+        if ((term instanceof NutsSystemTerminal)) {
+            syst = (NutsSystemTerminal) term;
+        } else {
+            try {
+                syst = new DefaultSystemTerminal(term);
+                syst.install(getWorkspace());
+            } catch (Exception ex) {
+                syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
+                syst.install(getWorkspace());
+
+            }
+        }
+        if (this.systemTerminal != null) {
+            this.systemTerminal.uninstall();
+        }
+        NutsSystemTerminal old = this.systemTerminal;
+        this.systemTerminal = syst;
+
+        if (old != this.systemTerminal) {
+            for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
+                workspaceListener.onUpdateProperty("systemTerminal", old, this.systemTerminal);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsSystemTerminal getSystemTerminal() {
+        return systemTerminal;
+    }
+
+    @Override
+    public NutsSessionTerminal getTerminal() {
+        return terminal;
+    }
+
+    @Override
+    public NutsIOManager setTerminal(NutsSessionTerminal terminal) {
+        if (terminal == null) {
+            terminal = createTerminal();
+        }
+        if (!(terminal instanceof UnmodifiableTerminal)) {
+            terminal = new UnmodifiableTerminal(terminal);
+        }
+        this.terminal = terminal;
+        return this;
     }
 
 }

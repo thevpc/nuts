@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
 
 import java.util.*;
+import net.vpc.common.javashell.JShellCommand;
 
 public class Nsh extends NutsApplication {
 
@@ -20,11 +21,11 @@ public class Nsh extends NutsApplication {
     @Override
     public void run(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArguments();
-        NutsSystemTerminal st = applicationContext.getWorkspace().getSystemTerminal();
+        NutsSystemTerminal st = applicationContext.getWorkspace().io().getSystemTerminal();
         if (st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal) {
             //that's ok
         } else {
-            applicationContext.getWorkspace().setSystemTerminal(new NutsJLineTerminal());
+            applicationContext.getWorkspace().io().setSystemTerminal(new NutsJLineTerminal());
         }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         int r = c.run(args);
@@ -62,12 +63,12 @@ public class Nsh extends NutsApplication {
 //                        .setParameters(parameters)
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        NshCommand[] commands = c.getCommands();
+        JShellCommand[] commands = c.getGlobalContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = applicationContext.getSession().copy();
         sessionCopy.setTrace(false);
-        for (NshCommand command : commands) {
+        for (JShellCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.addCommandAlias(new NutsCommandAliasConfig()

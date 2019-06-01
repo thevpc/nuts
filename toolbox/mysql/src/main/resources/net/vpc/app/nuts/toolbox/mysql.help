@@ -1,27 +1,148 @@
-update
-check-updates
-create workspace ...
-set workspace ...
-create repo ...
-add repo ...
-remove repo ...
-list repos ...
-add extension ...
-list extensions ...
-edit repo <repoId> ...
-list imports
-clear imports
-list archetypes
-import
-list imports
-clear imports
-unimport
-list users
-add user
-edit user
-passwd
-secure
-unsecure
-set loglevel verbose|fine|finer|finest|error|severe|config|all|none
+mysql --local list <global-options> <list-options>
 
+    list application config properties
 
+    list options are :
+        --name      <VALUE>  : mysql config in the form database@config
+        --app       <VALUE>  : app config
+        --property  <VALUE>  : property expression
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+    if --property  is not armed, all properties are listed
+
+mysql --local add <global-options> <add-options>
+
+    add application config
+
+    add options are :
+        --name      <VALUE>  : mysql config in the form database@config
+        --user      <VALUE>  : app user
+        --password  <VALUE>  : app password
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --local set <global-options> <set-options>
+
+    update application config
+
+    set options are :
+        --name      <VALUE>  : mysql config in the form database@config
+        --app       <VALUE>  : app config
+        --user      <VALUE>  : app user
+        --password  <VALUE>  : app password
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --local remove <global-options> <remove-options>
+
+    remove application config
+
+    add options are :
+        --name      <VALUE>  : mysql config in the form database@config
+        --app       <VALUE>  : app config
+
+    if --name is not armed, default application is considered
+    if --name is in the form of
+
+mysql --local archive <global-options> <archive-options> <path>
+mysql --local archive <global-options> <name> <path>
+
+    archive to db data file <path>
+
+    archive options are :
+        --name      <name>  : mysql config in the form database@config
+        --path      <path>  : archive path
+
+    if <name> is not present, default application is considered
+
+mysql --local restore <global-options> <restore-options> <path>
+
+    restore db data file from <path>
+
+    add options are :
+        --name      <VALUE>  : mysql config in the form database@config
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --remote list <global-options> <list-options>
+
+    list application config properties
+
+    list options are :
+        --name      <VALUE>  : mysql config instance
+        --app       <VALUE>  : app config
+        --property  <VALUE>  : property expression
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+    if --property  is not armed, all properties are listed
+
+mysql --remote add <global-options> <add-options>
+
+    add application config
+
+    add options are :
+        --name          <VALUE>  : local config instance
+        --remote-name   <VALUE>  : remote config instance
+        --app           <VALUE>  : local app config
+        --remote-app    <VALUE>  : remote app config
+        --user          <VALUE>  : app user
+        --server        <VALUE>  : server address
+        --password  <VALUE>  : app password
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --remote set <global-options> <set-options>
+
+    update application config
+
+    set options are :
+        --name      <VALUE>  : mysql config instance
+        --app       <VALUE>  : app config
+        --user      <VALUE>  : app user
+        --password  <VALUE>  : app password
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --remote remove <global-options> <remove-options>
+
+    remove application config
+
+    remove options are :
+        --name      <VALUE>  : mysql config instance
+        --app       <VALUE>  : app config
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, instance will removed
+
+mysql --remote push <global-options> <push-options> <path>
+
+    push db to remote
+
+    push options are :
+        --name      <VALUE>  : mysql config instance
+        --app       <VALUE>  : app config
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered
+
+mysql --remote pull <global-options> <pull-options>
+
+    pull db from remote
+
+    add options are :
+        --name      <VALUE>  : mysql config instance
+        --app       <VALUE>  : app config
+
+    if --name is not armed, default application is considered
+    if --app  is not armed, default application is considered

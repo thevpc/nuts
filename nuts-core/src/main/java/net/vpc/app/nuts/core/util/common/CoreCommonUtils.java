@@ -51,7 +51,7 @@ import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceArgument;
+import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
 public class CoreCommonUtils {
 
@@ -149,7 +149,7 @@ public class CoreCommonUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return new NutsDefaultWorkspaceArgument(System.getProperty(property),'=').getBoolean(defaultValue);
+        return new DefaultNutsArgument(System.getProperty(property),'=').getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {

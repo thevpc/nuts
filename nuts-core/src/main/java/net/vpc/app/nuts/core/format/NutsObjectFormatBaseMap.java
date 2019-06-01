@@ -22,7 +22,6 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
  */
 public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
 
-
     final NutsOutputFormat t;
     final NutsWorkspace ws;
     final Map<Object, Object> data;
@@ -31,26 +30,26 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatBaseMap(NutsOutputFormat t, NutsWorkspace ws, Map<Object, Object> data) {
-        super(ws,(t == null ? NutsOutputFormat.PLAIN : t).name().toLowerCase()+"-format");
+        super(ws, (t == null ? NutsOutputFormat.PLAIN : t).name().toLowerCase() + "-format");
         this.t = t == null ? NutsOutputFormat.PLAIN : t;
         this.ws = ws;
         this.data = data;
     }
 
-
     @Override
     public boolean configureFirst(NutsCommand commandLine) {
         NutsArgument n = commandLine.peek();
-        if(n!=null) {
+        if (n != null) {
             NutsArgument a;
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 NutsArgument i = a.getValue();
                 extraConfig.add(a.getString());
                 addMultilineProperty(i.getKey().getString(), i.getValue().getString());
-            }else{
-                extraConfig.add(n.getString());
+                return true;
+            } else {
+                extraConfig.add(commandLine.next().getString());
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -61,16 +60,16 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
             case PLAIN: {
                 PrintWriter out = getValidPrintWriter(w);
                 NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(data);
-                ff.configure(ws.parser().parseCommand(extraConfig),true);
-                ff.configure(ws.parser().parseCommand("--compact=false"),true);
+                ff.configure(ws.parser().parseCommand(extraConfig), true);
+                ff.configure(ws.parser().parseCommand("--compact=false"), true);
                 ff.print(out);
                 break;
             }
             case PROPS: {
                 PrintWriter out = getValidPrintWriter(w);
                 NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(data);
-                ff.configure(ws.parser().parseCommand(extraConfig),true);
-                ff.configure(ws.parser().parseCommand("--props"),true);
+                ff.configure(ws.parser().parseCommand(extraConfig), true);
+                ff.configure(ws.parser().parseCommand("--props"), true);
                 ff.print(out);
                 break;
             }
@@ -101,7 +100,7 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
             case TREE: {
                 NutsTreeFormat t = ws.formatter().createTreeFormat();
                 t.configure(ws.parser().parseCommand(extraConfig), true);
-                t.setModel(new MyNutsTreeModel(ws,rootName,data){
+                t.setModel(new MyNutsTreeModel(ws, rootName, data) {
                     @Override
                     protected String[] getMultilineArray(String key, Object value) {
                         return NutsObjectFormatBaseMap.this.getMultilineArray(key, value);
@@ -115,7 +114,7 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(null,"Unsupported " + t);
+                throw new NutsUnsupportedArgumentException(null, "Unsupported " + t);
             }
         }
     }

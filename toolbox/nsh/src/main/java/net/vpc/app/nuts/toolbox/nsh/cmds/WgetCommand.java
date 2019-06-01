@@ -87,7 +87,7 @@ public class WgetCommand extends AbstractNshCommand {
         if (!StringUtils.isEmpty(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = context.getWorkspace().io().path(context.getShell().getAbsolutePath(StringUtils.isEmpty(output2) ? urlName : output2));
+        Path file = context.getWorkspace().io().path(context.getGlobalContext().getAbsolutePath(StringUtils.isEmpty(output2) ? urlName : output2));
         context.getWorkspace().io()
                 .copy().from(path).to(file).setTerminalProvider(context.getSession())
                 .monitorable().run();

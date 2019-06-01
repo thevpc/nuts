@@ -41,6 +41,8 @@ public interface NutsExecutableInfo {
     NutsId getId();
 
     String getName();
+    
+    String getValue();
 
     String getHelpText();
     

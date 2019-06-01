@@ -26,7 +26,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     @Override
     public void setMode(NutsTerminalMode mode) {
         if(mode==null){
-            throw new NullPointerException();
+//            throw new NullPointerException();
         }
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsSystemTerminal) {

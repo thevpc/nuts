@@ -29,35 +29,157 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.NutsObjectFormat;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-
-import java.io.*;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsExecCommand;
+import net.vpc.app.nuts.NutsExecutionType;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EnvCommand extends AbstractNshCommand {
+public class EnvCommand extends SimpleNshCommand {
 
     public EnvCommand() {
         super("env", DEFAULT_SUPPORT);
     }
 
     public static class Options {
+
+        int readStatus = 0;
+        LinkedHashMap<String, String> newEnv = new LinkedHashMap<>();
+        List<String> command = new ArrayList<String>();
+        Set<String> unsetVers = new HashSet<String>();
         boolean sort = true;
+        boolean ignoreEnvironment = false;
+        String dir = null;
+        NutsExecutionType executionType = null;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommand cmdLine = cmdLine(args, context);
-        Options o = new Options();
-        PrintStream out = context.out();
-        NutsObjectFormat f = context.getWorkspace().formatter().createObjectFormat(context.getSession(),context.env().getEnv());
-        if(o.sort){
-            f.configure("--sort");
-        }
-        f.print(out);
-        return 0;
+    @Override
+    protected Object createOptions() {
+        return new Options();
     }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        switch (options.readStatus) {
+            case 0: {
+                switch (a.getKey().getString()) {
+                    case "--sort": {
+                        options.sort = (commandLine.nextBoolean().getValue().getBoolean());
+                        return true;
+                    }
+                    case "--external":
+                    case "--spawn":
+                    case "-x": {
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.SPAWN);
+                        return true;
+                    }
+                    case "--embedded":
+                    case "-b": {
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.EMBEDDED);
+                        return true;
+                    }
+                    case "--native":
+                    case "--syscall":
+                    case "-n": {
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.SYSCALL);
+                        return true;
+                    }
+                    case "-C":
+                    case "--chdir": {
+                        options.dir = commandLine.nextString().getValue().getString();
+                        return true;
+                    }
+                    case "-u":
+                    case "--unset": {
+                        options.unsetVers.add(commandLine.nextString().getValue().getString());
+                        return true;
+                    }
+                    case "-i":
+                    case "--ignore-environment": {
+                        options.ignoreEnvironment = (commandLine.nextBoolean().getValue().getBoolean());
+                        return true;
+                    }
+                    case "-": {
+                        commandLine.skip();
+                        options.readStatus = 1;
+                        return true;
+                    }
+                    default: {
+                        if (a.isKeyValue()) {
+                            options.newEnv.put(a.getKey().getString(), a.getKey().getValue().getString());
+                            commandLine.skip();
+                            options.readStatus = 1;
+                            return true;
+                        } else {
+                            options.command.add(a.getString());
+                            commandLine.skip();
+                            options.readStatus = 2;
+                            return true;
+                        }
+                    }
+                }
+            }
+            case 1: {
+                if (a.isKeyValue()) {
+                    options.newEnv.put(a.getKey().getString(), a.getKey().getValue().getString());
+                } else {
+                    options.command.add(a.getString());
+                    options.readStatus = 2;
+                }
+                commandLine.skip();
+                return true;
+            }
+            case 2: {
+                options.command.add(a.getString());
+                commandLine.skip();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.sort) {
+            context.addDisplayOption("--sort");
+        }
+        LinkedHashMap<String, String> env = new LinkedHashMap<>();
+        if (!options.ignoreEnvironment) {
+            env.putAll((Map) context.getGlobalContext().vars().getAll());
+        }
+        for (String v : options.unsetVers) {
+            env.remove(v);
+        }
+        env.putAll(options.newEnv);
+        if (commandLine.isEmpty()) {
+            context.setOutObject(env);
+        } else {
+            final NutsExecCommand e = context.getWorkspace().exec().command(options.command)
+                    .env(env)
+                    .failFast();
+            if (options.dir != null) {
+                e.setDirectory(options.dir);
+            }
+            if (options.executionType != null) {
+                e.setExecutionType(options.executionType);
+            }
+            e.run();
+        }
+    }
+
 }

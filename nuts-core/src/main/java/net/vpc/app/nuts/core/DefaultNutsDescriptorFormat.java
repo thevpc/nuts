@@ -125,12 +125,12 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void print(NutsDescriptor descriptor) {
-        print(descriptor, ws.getTerminal());
+        print(descriptor, ws.io().getTerminal());
     }
 
     @Override
     public void println(NutsDescriptor descriptor) {
-        println(descriptor, ws.getTerminal());
+        println(descriptor, ws.io().getTerminal());
     }
 
     @Override

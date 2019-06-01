@@ -1,12 +1,12 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.common.javashell.cmds.JavaShellCommand;
+import net.vpc.common.javashell.JShellCommand;
 
 public class ShellToNshCommand extends AbstractNshCommand {
 
-    private final JavaShellCommand command;
+    private final JShellCommand command;
 
-    public ShellToNshCommand(JavaShellCommand command) {
+    public ShellToNshCommand(JShellCommand command) {
         super(command.getName(), DEFAULT_SUPPORT);
         this.command = command;
     }

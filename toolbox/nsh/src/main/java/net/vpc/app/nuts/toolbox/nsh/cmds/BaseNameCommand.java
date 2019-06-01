@@ -32,81 +32,89 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class BaseNameCommand extends AbstractNshCommand {
+public class BaseNameCommand extends SimpleNshCommand {
 
     public BaseNameCommand() {
         super("basename", DEFAULT_SUPPORT);
     }
 
-    @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
+    private static class Options {
+
         String sep = "\n";
         List<String> names = new ArrayList<>();
         boolean multi = false;
         String suffix = null;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else {
-                a = cmdLine.peek();
-                switch (a.getKey().getString()) {
-                    case "-z":
-                    case "--zero": {
-                        cmdLine.skip();
-                        sep = "\0";
-                        break;
-                    }
-                    case "-a": 
-                    case "--all": 
-                    case "--multi": 
-                    {
-                        multi = cmdLine.nextBoolean().getValue().getBoolean();
-                        break;
-                    }
-                    case "-s": 
-                    case "--suffix": 
-                    {
-                        suffix = cmdLine.nextString().getValue().getString();
-                        multi = true;
-                        break;
-                    }
-                    default: {
-                        if (a.isOption()) {
-                            cmdLine.unexpectedArgument();
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+    
+    @Override
+    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = cmdLine.peek();
+        switch (a.getKey().getString()) {
+            case "-z":
+            case "--zero": {
+                cmdLine.skip();
+                options.sep = "\0";
+                return true;
+            }
+            case "-a":
+            case "--all":
+            case "--multi": {
+                options.multi = cmdLine.nextBoolean().getValue().getBoolean();
+                return true;
+            }
+            case "-s":
+            case "--suffix": {
+                options.suffix = cmdLine.nextString().getValue().getString();
+                options.multi = true;
+                return true;
+            }
+            default: {
+                if (a.isOption()) {
+
+                } else {
+                    while (!cmdLine.isEmpty()) {
+                        NutsArgument n = cmdLine.nextNonOption();
+                        if (options.names.isEmpty()) {
+                            options.names.add(n.toString());
                         } else {
-                            while (!cmdLine.isEmpty()) {
-                                NutsArgument n = cmdLine.nextNonOption();
-                                if (names.isEmpty()) {
-                                    names.add(n.toString());
-                                } else {
-                                    if (multi) {
-                                        names.add(n.toString());
-                                    } else if (names.size() == 1 && suffix==null) {
-                                        suffix = n.toString();
-                                    } else {
-                                        cmdLine.pushBack(n);
-                                        cmdLine.unexpectedArgument();
-                                    }
-                                }
+                            if (options.multi) {
+                                options.names.add(n.toString());
+                            } else if (options.names.size() == 1 && options.suffix == null) {
+                                options.suffix = n.toString();
+                            } else {
+                                cmdLine.pushBack(n);
+                                cmdLine.unexpectedArgument();
                             }
                         }
                     }
+                    return true;
                 }
             }
         }
-        if (names.isEmpty()) {
-            cmdLine.required();
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.names.isEmpty()) {
+            commandLine.required();
         }
-        for (String name : names) {
+        List<String> results = new ArrayList<>();
+        for (String name : options.names) {
             StringBuilder sb = new StringBuilder(name);
             int lastNameLen = 0;
             while (sb.length() - lastNameLen > 0 && sb.charAt(sb.length() - 1 - lastNameLen) != '/') {
@@ -121,12 +129,22 @@ public class BaseNameCommand extends AbstractNshCommand {
                 }
             }
             String basename = (lastNameLen == 0) ? sb.toString() : sb.substring(sb.length() - lastNameLen);
-            if (suffix != null && basename.endsWith(suffix)) {
-                basename = basename.substring(0, basename.length() - suffix.length());
+            if (options.suffix != null && basename.endsWith(options.suffix)) {
+                basename = basename.substring(0, basename.length() - options.suffix.length());
             }
-            context.out().print(basename);
-            context.out().print(sep);
+            results.add(basename);
         }
-        return 0;
+        context.setOutObject(results);
     }
+
+    @Override
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        List<String> results = context.getResult();
+        Options options = context.getOptions();
+        for (String name : results) {
+            context.out().print(name);
+            context.out().print(options.sep);
+        }
+    }
+
 }

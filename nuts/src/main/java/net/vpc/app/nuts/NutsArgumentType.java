@@ -38,7 +38,7 @@ public enum NutsArgumentType {
     /**
      * option that accepts no argument.
      */
-    NONE,
+    ANY,
     /**
      * option that accepts a string as argument.
      * Either the string is included in the argument itself (--option=value)

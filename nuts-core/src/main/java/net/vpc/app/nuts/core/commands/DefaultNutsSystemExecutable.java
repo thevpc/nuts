@@ -27,7 +27,9 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     NutsWorkspace ws;
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
-        super(cmd[0], NutsExecutableType.SYSTEM);
+        super(cmd[0], 
+                ws.parser().parseCommand(cmd).getCommandLine(),
+                NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.ws = ws;
         this.execCommand = execCommand;

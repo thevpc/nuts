@@ -257,7 +257,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 newLogin = login;
             }
             credentials = getWorkspace().security().getAuthenticationAgent()
-                    .getCredentials(credentials, config());
+                    .getCredentials(credentials);
         }
 
         String passphrase = config().getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE, true);

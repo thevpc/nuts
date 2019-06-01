@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh.term;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 import net.vpc.common.strings.StringUtils;
 import org.jline.reader.Candidate;
@@ -11,7 +10,8 @@ import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.common.javashell.cmds.JavaShellCommand;
+import net.vpc.common.javashell.JShellCommand;
+import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 
 class NutsJLineCompleter implements Completer {
     private final NutsWorkspace workspace;
@@ -22,10 +22,10 @@ class NutsJLineCompleter implements Completer {
 
     @Override
     public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-        NutsConsoleContext nutsConsoleContext = (NutsConsoleContext) workspace.getUserProperties().get(NutsConsoleContext.class.getName());
+        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.getUserProperties().get(NutsShellContext.class.getName());
         if (nutsConsoleContext != null) {
             if (line.wordIndex() == 0) {
-                for (JavaShellCommand command : nutsConsoleContext.getShell().getCommands()) {
+                for (JShellCommand command : nutsConsoleContext.builtins().getAll()) {
                     candidates.add(new Candidate(command.getName()));
                 }
             } else {

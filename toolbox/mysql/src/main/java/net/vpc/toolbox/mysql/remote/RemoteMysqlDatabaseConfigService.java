@@ -14,10 +14,11 @@ import net.vpc.toolbox.mysql.local.LocalMysqlDatabaseConfigService;
 import java.io.PrintStream;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandStringFormat;
 import net.vpc.app.nuts.NutsExecCommand;
+import net.vpc.app.nuts.NutsCommandLineFormat;
 
 public class RemoteMysqlDatabaseConfigService {
+
     private RemoteMysqlDatabaseConfig config;
     private NutsApplicationContext context;
     private RemoteMysqlConfigService client;
@@ -50,7 +51,62 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public int pull() {
-        return 1;
+        LocalMysql ms = new LocalMysql(context);
+        LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
+        String localDatabase = getConfig().getLocalDatabase();
+        if (StringUtils.isEmpty(localDatabase)) {
+            throw new NutsExecutionException(context.getWorkspace(), "Missing local database name", 2);
+        }
+
+        RemoteMysqlDatabaseConfig cconfig = getConfig();
+        String server = cconfig.getServer();
+        if (StringUtils.isEmpty(server)) {
+            server = "ssh://localhost";
+        }
+        if (!server.startsWith("ssh://")) {
+            server = "ssh://" + server;
+        }
+        String remoteTempPath = StringUtils.trim(cconfig.getRemoteTempPath());
+        String localTempPath = cconfig.getPath();
+        if (StringUtils.isEmpty(localTempPath)) {
+            localTempPath = context.getTempFolder().toString();
+        }
+        context.out().printf("==[%s]== remote restore '%s'%n", name, remoteTempPath);
+        remoteTempPath=execRemoteNuts(
+                "net.vpc.app.nuts.toolbox:mysql",
+                "restore",
+                "--name",
+                config.getRemoteInstance(),
+                "--app",
+                config.getRemoteDatabase(),
+                remoteTempPath
+        );
+        String remoteFullFilePath = new SshAddress(server).getPath(remoteTempPath).getPath();
+//        LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
+//        if (archiveResult.execResult != 0) {
+//            return archiveResult.execResult;
+//        }
+
+        context.out().printf("==[%s]== copy '%s' to '%s'%n", name, remoteFullFilePath, localTempPath);
+        context.getWorkspace().exec()
+                .command(
+                        "nsh",
+                        "cp",
+                        "--no-color",
+                        remoteFullFilePath,
+                        cconfig.getPath()
+                ).setSession(context.getSession())
+                .redirectErrorStream()
+                .grabOutputString()
+                .failFast()
+                .run();
+        context.out().printf("==[%s]== delete %s%n", name, remoteFullFilePath);
+        execRemoteNuts(
+                "nsh",
+                "rm",
+                remoteFullFilePath
+        );
+        return 0;
     }
 
     public int push() {
@@ -58,7 +114,7 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
         String localDatabase = getConfig().getLocalDatabase();
         if (StringUtils.isEmpty(localDatabase)) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing local database name",2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing local database name", 2);
         }
         LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
         if (archiveResult.execResult != 0) {
@@ -76,13 +132,12 @@ public class RemoteMysqlDatabaseConfigService {
         if (StringUtils.isEmpty(remoteTempPath)) {
             String home = null;
             try (SShConnection c = new SShConnection(new SshAddress(server))
-                 .addListener(SShConnection.LOGGER)
-            ) {
+                    .addListener(SShConnection.LOGGER)) {
                 if (c.grabOutputString()
-                        .exec("echo","$HOME") == 0) {
+                        .exec("echo", "$HOME") == 0) {
                     home = c.getOutputString().trim();
                 } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"Unable to detect user remote home : " + c.getOutputString().trim(),2);
+                    throw new NutsExecutionException(context.getWorkspace(), "Unable to detect user remote home : " + c.getOutputString().trim(), 2);
                 }
             }
             remoteTempPath = home + "/tmp";
@@ -109,46 +164,45 @@ public class RemoteMysqlDatabaseConfigService {
                 "net.vpc.app.nuts.toolbox:mysql",
                 "restore",
                 "--name",
-                client.getName(),
-                "--db",
-                name,
+                config.getRemoteInstance(),
+                "--app",
+                config.getRemoteDatabase(),
                 remoteFilePath
         );
         context.out().printf("==[%s]== delete %s%n", name, remoteFilePath);
-        return execRemoteNuts(
+        execRemoteNuts(
                 "nsh",
                 "rm",
                 remoteFilePath
         );
+        return 0;
     }
 
-
-    public int execRemoteNuts(List<String> cmd) {
+    public String execRemoteNuts(List<String> cmd) {
         return execRemoteNuts(cmd.toArray(new String[0]));
     }
 
-    public int execRemoteNuts(String... cmd) {
+    public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
                 .setSession(context.getSession());
-        b.addCommand("nsh", "ssh");
+        b.addCommand("nsh", "-c","ssh");
         b.addCommand("--nuts");
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
-        context.out().printf("[[EXEC]] %s%n", b.setCommandStringFormat(new NutsCommandStringFormat() {
+        context.out().printf("[[EXEC]] %s%n", b.setCommandLineFormat(new NutsCommandLineFormat() {
             @Override
             public String replaceEnvValue(String envName, String envValue) {
-                if (
-                        envName.toLowerCase().contains("password")
-                                || envName.toLowerCase().contains("pwd")
-                ) {
+                if (envName.toLowerCase().contains("password")
+                        || envName.toLowerCase().contains("pwd")) {
                     return "****";
                 }
                 return null;
             }
         }).getCommandString());
         b.redirectErrorStream()
+                .grabOutputString()
                 .failFast();
-        return b.run().getResult();
+        return b.run().getOutputString();
 
     }
 

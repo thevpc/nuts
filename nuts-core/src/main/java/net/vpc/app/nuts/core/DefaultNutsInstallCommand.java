@@ -306,7 +306,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                 companions = false;
             } else {
                 NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to install recommended companion tools").setDefaultValue(true);
-                if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
+                if (getValidSession().isAsk() && !ws.io().getTerminal().ask(q)) {
                     companions = false;
                 }
             }

@@ -1,0 +1,16 @@
+End the application
+
+@@SYNOPSIS:@@
+##exit## [<code>] ...
+
+End the application returning code
+
+@@EXAMPLES:@@
+
+##exit##
+    exit with code 0
+##exit## 1
+    exit with code 1
+
+
+

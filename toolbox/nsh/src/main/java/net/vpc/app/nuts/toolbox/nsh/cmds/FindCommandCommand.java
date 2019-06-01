@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.common.javashell.JShellCommand;
 
 /**
  * Created by vpc on 1/7/17.
@@ -63,17 +64,17 @@ public class FindCommandCommand extends AbstractNshCommand {
             }
         }
         if(commands.isEmpty()){
-            for (NshCommand command : context.getShell().getCommands()) {
+            for (JShellCommand command : context.getGlobalContext().builtins().getAll()) {
                 context.out().println(command.getName());
             }
             return 0;
         }else{
             for (String command : commands) {
-                NshCommand c = context.getShell().findCommand(command);
+                JShellCommand c = context.getGlobalContext().builtins().find(command);
                 if(c!=null){
                     context.out().println(c.getName());
                 }else{
-                    String alias = context.getShell().getAlias(command);
+                    String alias = context.getGlobalContext().aliases().get(command);
                     if(alias!=null){
                         context.out().println("=="+command+"==");
                     }else{

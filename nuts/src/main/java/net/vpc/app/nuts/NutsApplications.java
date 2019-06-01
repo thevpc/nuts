@@ -96,7 +96,7 @@ public class NutsApplications {
         }
         if(out==null && ws!=null){
             try {
-                out = ws.getSystemTerminal().getOut();
+                out = ws.io().getSystemTerminal().getOut();
                 m="@@"+m+"@@";
             }catch (Exception ex2){
                 //

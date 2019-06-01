@@ -73,7 +73,7 @@ public class HeadCommand extends AbstractNshCommand {
                 }
             } else {
                 String path = cmdLine.next().getString();
-                File file = new File(context.getShell().getAbsolutePath(path));
+                File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }

@@ -104,11 +104,8 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             if (registeredUser != null) {
                 try {
                     workspace.security().getAuthenticationAgent()
-                            .checkCredentials(
-                                    registeredUser.getCredentials().toCharArray(),
-                                    password,
-                                    workspace.config()
-                            );
+                            .checkCredentials(registeredUser.getCredentials().toCharArray(),
+                                    password);
                     this.login = name;
                     return true;
                 } catch (Exception ex) {

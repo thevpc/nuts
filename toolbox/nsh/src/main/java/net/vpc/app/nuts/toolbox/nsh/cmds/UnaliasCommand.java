@@ -29,35 +29,61 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JShell;
-import net.vpc.common.javashell.cmds.CmdSyntaxError;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnaliasCommand extends AbstractNshCommand {
+public class UnaliasCommand extends SimpleNshCommand {
 
     public UnaliasCommand() {
         super("unalias", DEFAULT_SUPPORT);
     }
 
+    private static class Options {
+
+        boolean all;
+        Set<String> list = new HashSet<>();
+    }
+
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JShell shell=context.getShell();
-        int commandArgsCount = args.length;
-        if (commandArgsCount == 1 && args[0].equals("-a")) {
-            for (String k : shell.getAliases()) {
-                shell.setAlias(k, null);
-            }
-        } else if (commandArgsCount > 0) {
-            for (String a : args) {
-                shell.setAlias(a, null);
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        if (a.isOption()) {
+            if (a.getKey().getString().equals("-a")) {
+                options.all = commandLine.nextBoolean().getValue().getBoolean();
+                return true;
             }
         } else {
-            throw new CmdSyntaxError(1,args, getName(), getHelp(), "Wrong arguments");
+            options.list.addAll(Arrays.asList(commandLine.toArray()));
+            commandLine.skipAll();
+            return true;
         }
-        return 0;
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.all) {
+            for (String k : context.getGlobalContext().aliases().getAll()) {
+                context.getGlobalContext().aliases().set(k, null);
+            }
+        } else {
+            for (String k : options.list) {
+                context.getGlobalContext().aliases().set(k, null);
+            }
+        }
     }
 }

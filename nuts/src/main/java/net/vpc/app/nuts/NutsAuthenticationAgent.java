@@ -31,39 +31,57 @@ package net.vpc.app.nuts;
 
 /**
  * an Authentication Agent is responsible of storing and retrieving credentials
- * in external repository (password manager, kwallet, keypass, gnome-keyring...).
- * And Id of the stored password is then saved as plain text in nuts config file.
+ * in external repository (password manager, kwallet, keypass,
+ * gnome-keyring...). And Id of the stored password is then saved as plain text
+ * in nuts config file.
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsAuthenticationAgent extends NutsComponent<String> {
 
     /**
-     * check if the given <code>password</code> is valid against the one stored by the
-     * Authentication Agent for  <code>credentialsId</code>
+     * update environment provider
+     *
+     * @param envProvider workspace of repository instance
+     * @since 0.5.5
+     */
+    void setEnv(NutsEnvProvider envProvider);
+
+    /**
+     * check if the given <code>password</code> is valid against the one stored
+     * by the Authentication Agent for  <code>credentialsId</code>
+     *
      * @param credentialsId credentialsId
      * @param password password
-     * @param envProvider envProvider
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id.
      *
      * @param credentialsId credentials-id
-     * @param envProvider  envProvider
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider);
+    char[] getCredentials(char[] credentialsId);
+
+    /**
+     * remove existing credentials with the given id
+     *
+     * @param credentialsId credentials-id
+     * @return credentials
+     */
+    boolean removeCredentials(char[] credentialsId);
 
     /**
      * store credentials in the agent and return the credential id to store into
-     * the config
+     * the config. if credentialId is not null, the given credentialId will be
+     * updated and the credentialId is returned.
      *
      * @param credentials credential
-     * @param envProvider envProvider
+     * @param credentialId preferred credentialId, if null, a new one is created
      * @return credentials-id
      */
-    char[] setCredentials(char[] credentials, NutsEnvProvider envProvider);
+    char[] setCredentials(char[] credentials, char[] credentialId);
 }

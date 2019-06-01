@@ -186,9 +186,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     session.setTerminal(terminal);
                                     cli = new NutsJavaShell(invokerWorkspace,session);
 //                                    cli.uninstallCommand("server");
-                                    cli.undeclareCommand("connect");
+                                    cli.getGlobalContext().builtins().unset("connect");
                                     cli.setServiceName(serverId);
-                                    cli.declareCommand(new AbstractNshCommand("stop-server", DEFAULT_SUPPORT) {
+                                    cli.getGlobalContext().builtins().set(new AbstractNshCommand("stop-server", DEFAULT_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
                                             PrintStream out2 = MyNutsServer.this.terminal.fout();

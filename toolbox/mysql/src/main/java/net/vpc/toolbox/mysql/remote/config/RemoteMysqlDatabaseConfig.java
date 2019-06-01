@@ -1,13 +1,14 @@
 package net.vpc.toolbox.mysql.remote.config;
 
 public class RemoteMysqlDatabaseConfig {
+
     private String localInstance;
     private String localDatabase;
     private String path;
     private String remoteInstance;
+    private String remoteDatabase;
     private String server;
     private String remoteTempPath;
-
 
     public String getPath() {
         return path;
@@ -17,9 +18,16 @@ public class RemoteMysqlDatabaseConfig {
         this.path = appPath;
     }
 
-
     public String getLocalInstance() {
         return localInstance;
+    }
+
+    public String getRemoteDatabase() {
+        return remoteDatabase;
+    }
+
+    public void setRemoteDatabase(String remoteDatabase) {
+        this.remoteDatabase = remoteDatabase;
     }
 
     public RemoteMysqlDatabaseConfig setLocalInstance(String localInstance) {

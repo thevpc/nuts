@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.DefaultNutsExecCommand;
  * @author vpc
  */
 public class ComponentExecutable extends AbstractNutsExecutableCommand {
-    
+
     NutsWorkspace ws;
     NutsDefinition def;
     String commandName;
@@ -29,7 +29,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     DefaultNutsExecCommand execCommand;
 
     public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsWorkspace ws, NutsSession session, boolean embedded, DefaultNutsExecCommand execCommand) {
-        super(commandName, NutsExecutableType.COMPONENT);
+        super(commandName, def.getId().getLongName(), NutsExecutableType.COMPONENT);
         this.def = def;
         this.ws = ws;
         this.commandName = commandName;
@@ -65,5 +65,5 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     public String toString() {
         return "NUTS " + getId().toString() + " " + ws.parser().parseCommand(appArgs).getCommandLine();
     }
-    
+
 }

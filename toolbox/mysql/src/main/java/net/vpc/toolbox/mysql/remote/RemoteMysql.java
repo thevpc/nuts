@@ -30,7 +30,7 @@ public class RemoteMysql {
             if ((a = cmd.next("list")) != null) {
                 return list(cmd);
             } else if ((a = cmd.next("add", "set")) != null) {
-                return list(cmd);
+                return add(cmd);
             } else if ((a = cmd.next("remove")) != null) {
                 return remove(cmd);
             } else if ((a = cmd.next("push")) != null) {
@@ -51,11 +51,11 @@ public class RemoteMysql {
         String property = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("--json")) != null) {
-                json = a.getValue().getBoolean();
+            if (context.configureFirst(args)) {
+                //
             } else if ((a = args.nextBoolean("--name")) != null) {
                 instance = a.getValue().getString();
-            } else if ((a = args.nextBoolean("--db")) != null) {
+            } else if ((a = args.nextBoolean("--app")) != null) {
                 app = a.getValue().getString();
             } else if ((a = args.nextBoolean("--property")) != null) {
                 property = a.getValue().getString();
@@ -104,7 +104,9 @@ public class RemoteMysql {
         String instanceName = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextString("--name")) != null) {
+            if (context.configureFirst(args)) {
+                //
+            } else if ((a = args.nextString("--name")) != null) {
                 if (c == null) {
                     instanceName = a.getValue().getString();
                     c = loadOrCreateMysqlConfig(instanceName);
@@ -117,7 +119,7 @@ public class RemoteMysql {
                 }
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
                 db.getConfig().setServer(a.getValue().getString());
-            } else if ((a = args.nextString("--remote-instance")) != null) {
+            } else if ((a = args.nextString("--remote-name")) != null) {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
                 }
@@ -135,7 +137,14 @@ public class RemoteMysql {
                     c = loadOrCreateMysqlConfig(null);
                 }
                 c.getDatabaseOrCreate(appName);
-            } else if ((a = args.nextString("--app.path")) != null) {
+            } else if ((a = args.nextString("--remote-app")) != null) {
+                appName = a.getValue().getString();
+                if (c == null) {
+                    c = loadOrCreateMysqlConfig(null);
+                }
+                RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
+                db.getConfig().setRemoteDatabase(a.getValue().getString());
+            } else if ((a = args.nextString("--app-path")) != null) {
                 String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(null);
@@ -185,7 +194,9 @@ public class RemoteMysql {
         String appName = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextString("--db")) != null) {
+            if (context.configureFirst(args)) {
+                //
+            } else if ((a = args.nextString("--app")) != null) {
                 appName = a.getValue().getString();
             } else if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
@@ -212,9 +223,11 @@ public class RemoteMysql {
         String app = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextString("--name")) != null) {
+            if (context.configureFirst(args)) {
+                //
+            } else if ((a = args.nextString("--name")) != null) {
                 conf = a.getValue().getString();
-            } else if ((a = args.nextString("--db")) != null) {
+            } else if ((a = args.nextString("--app")) != null) {
                 app = a.getValue().getString();
             } else {
                 args.setCommandName("mysql --remote pull").unexpectedArgument();
@@ -230,9 +243,11 @@ public class RemoteMysql {
         String app = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextString("--name")) != null) {
+            if (context.configureFirst(args)) {
+                //
+            } else if ((a = args.nextString("--name")) != null) {
                 conf = a.getValue().getString();
-            } else if ((a = args.nextString("--db")) != null) {
+            } else if ((a = args.nextString("--app")) != null) {
                 app = a.getValue().getString();
             } else {
                 args.setCommandName("mysql --remote push").unexpectedArgument();

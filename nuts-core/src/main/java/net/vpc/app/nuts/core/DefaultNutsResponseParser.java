@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.app.NutsDefaultWorkspaceArgument;
+import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
 
@@ -61,7 +61,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsArgument a = new NutsDefaultWorkspaceArgument(sReponse,'=');
+                NutsArgument a = new DefaultNutsArgument(sReponse,'=');
                 if (!a.isBoolean()) {
                     throw new NutsIllegalArgumentException(ws, "Invalid response " + sReponse);
                 }

@@ -95,7 +95,7 @@ public class GrepCommand extends AbstractNshCommand {
                     expression = cmdLine.required().nextNonOption(cmdLine.createNonOption("expression")).getString();
                 } else {
                     String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                    File file = new File(context.getShell().getAbsolutePath(path));
+                    File file = new File(context.getGlobalContext().getAbsolutePath(path));
                     files.add(file);
                 }
             }

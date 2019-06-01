@@ -61,7 +61,7 @@ public abstract class AbstractNshCommand implements NshCommand {
     protected NutsCommand cmdLine(String[] args, NutsCommandContext context) {
         return context.getWorkspace().parser()
                 .parseCommand(args)
-                .autoComplete(context.shellContext().getAutoComplete())
+                .autoComplete(context.getGlobalContext().getAutoComplete())
                 .commandName(getName());
     }
 
@@ -124,8 +124,8 @@ public abstract class AbstractNshCommand implements NshCommand {
 
     @Override
     public void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete) {
-        NutsCommandAutoComplete oldAutoComplete = context.shellContext().getAutoComplete();
-        context.shellContext().setAutoComplete(autoComplete);
+        NutsCommandAutoComplete oldAutoComplete = context.getGlobalContext().getAutoComplete();
+        context.getGlobalContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
@@ -144,7 +144,7 @@ public abstract class AbstractNshCommand implements NshCommand {
                 }
             }
         } finally {
-            context.shellContext().setAutoComplete(oldAutoComplete);
+            context.getGlobalContext().setAutoComplete(oldAutoComplete);
         }
     }
 

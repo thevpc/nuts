@@ -82,4 +82,12 @@ public interface NutsIOManager extends NutsComponent<Object> {
     NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis);
 
     NutsTerminalFormat getTerminalFormat();
+
+    NutsSystemTerminal getSystemTerminal();
+
+    NutsSessionTerminal getTerminal();
+    
+    NutsIOManager setSystemTerminal(NutsSystemTerminalBase term);
+    
+    NutsIOManager setTerminal(NutsSessionTerminal terminal);
 }

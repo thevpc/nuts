@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsArgumentNonOption;
-import net.vpc.common.javashell.cmds.JavaShellCommand;
+import net.vpc.common.javashell.JShellCommand;
+import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 
 /**
  *
@@ -44,10 +44,10 @@ import net.vpc.common.javashell.cmds.JavaShellCommand;
  */
 public class CommandNonOption implements NutsArgumentNonOption {
 
-    private NutsConsoleContext context;
+    private NutsShellContext context;
     private String name;
 
-    public CommandNonOption(String name, NutsConsoleContext context) {
+    public CommandNonOption(String name, NutsShellContext context) {
         this.name=name;
         this.context = context;
     }
@@ -61,7 +61,7 @@ public class CommandNonOption implements NutsArgumentNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        for (JavaShellCommand command : context.getShell().getCommands()) {
+        for (JShellCommand command : context.builtins().getAll()) {
             all.add(new NutsDefaultArgumentCandidate(command.getName()));
         }
         return all;

@@ -30,61 +30,48 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.io.FileUtils;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.PrintStream;
-
-import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CdCommand extends AbstractNshCommand {
+public class CdCommand extends SimpleNshCommand {
 
     public CdCommand() {
         super("cd", DEFAULT_SUPPORT);
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        while(cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            }else {
-                break;
+    private static class Options {
+
+        String dirname;
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (commandLine.peek().isNonOption()) {
+            if (options.dirname == null) {
+                options.dirname = commandLine.peek().getString();
+                return true;
+            } else {
+                commandLine.unexpectedArgument();
             }
         }
-        String folder = cmdLine.required().nextNonOption(cmdLine.createNonOption("folder")).getString();
-        File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.shellContext().getShell().getCwd()), new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        });
-        PrintStream out = context.out();
-        int result = 0;
-        switch (validFiles.length) {
-            case 1:
-                context.shellContext().getShell().setCwd(validFiles[0].getPath());
-                result = 0;
-                break;
-            case 0:
-                out.printf("@@invalid folder %s @@%n", folder);
-                result = 1;
-                break;
-            default:
-                for (File validFile : validFiles) {
-                    out.printf("%s%n", validFile.getPath());
-                }
-                result = 0;
-                break;
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.dirname == null) {
+            options.dirname = System.getProperty("user.home");
         }
-        cmdLine.setCommandName(getName()).unexpectedArgument();
-        return result;
+        context.getGlobalContext().setCwd(options.dirname);
+        context.setOutObject("");
     }
 }

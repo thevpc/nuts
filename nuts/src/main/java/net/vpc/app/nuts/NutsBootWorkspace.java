@@ -1139,7 +1139,7 @@ public class NutsBootWorkspace {
                 if (workspace == null) {
                     System.err.println("reset cancelled (applied '--no' argument)");
                 } else {
-                    workspace.getTerminal().out().println(" cancelled (applied '--no' argument)");
+                    workspace.io().getTerminal().out().println(" cancelled (applied '--no' argument)");
                 }
                 throw new NutsUserCancelException(workspace);
             }
@@ -1167,7 +1167,7 @@ public class NutsBootWorkspace {
                 + "**************\n"
                 + "You are about to delete workspace files.\n"
                 + "Are you sure this is what you want ?";
-        NutsUtilsLimited.deleteAndConfirmAll(folders.toArray(new File[0]), force, header, workspace != null ? workspace.getTerminal() : null);
+        NutsUtilsLimited.deleteAndConfirmAll(folders.toArray(new File[0]), force, header, workspace != null ? workspace.io().getTerminal() : null);
     }
 
     private void fallbackInstallActionUnavailable(String message) {

@@ -9,6 +9,7 @@ import net.vpc.app.nuts.NutsCommandExecOptions;
 import net.vpc.app.nuts.NutsExecutableType;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
 /**
@@ -22,8 +23,10 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
     NutsSession session;
     String[] args;
 
-    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsSession session, String[] args) {
-        super(command.getName(), NutsExecutableType.ALIAS);
+    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsWorkspace workspace,NutsSession session, String[] args) {
+        super(command.getName(), 
+                workspace.parser().parseCommand(command.getCommand()).getCommandLine(),
+                NutsExecutableType.ALIAS);
         this.command = command;
         this.o = o;
         this.session = session;

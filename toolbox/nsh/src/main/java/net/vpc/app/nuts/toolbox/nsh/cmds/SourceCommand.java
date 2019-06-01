@@ -29,39 +29,78 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JShell;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 import net.vpc.common.javashell.JShellContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SourceCommand extends AbstractNshCommand {
+public class SourceCommand extends SimpleNshCommand {
 
     public SourceCommand() {
         super("source", DEFAULT_SUPPORT);
     }
 
+    private static class Options {
+
+        List<String> files = new ArrayList<>();
+    }
+
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else {
-                JShell shell = context.getShell();
-                String dPaths = shell.which(args[0], context.shellContext());
-                if (dPaths != null) {
-                    JShellContext c2 = context.getShell().createContext(context.shellContext());
-                    c2.setArgs(args);
-                    return shell.executeFile(dPaths, c2, false);
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        final NutsArgument a = commandLine.peek();
+        if (!a.isOption()) {
+            options.files.add(a.getString());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        final String[] paths = context.getCommandContext().getGlobalContext().vars().get("PATH", "").split(":|;");
+        List<String> goodFiles = new ArrayList<>();
+        for (String file : options.files) {
+            if (!file.contains("/")) {
+                for (String path : paths) {
+                    if (new File(path, file).isFile()) {
+                        file = new File(path, file).getPath();
+                        break;
+                    }
                 }
+                if (!new File(file).isFile()) {
+                    if (new File(context.getGlobalContext().getCwd(), file).isFile()) {
+                        file = new File(context.getGlobalContext().getCwd(), file).getPath();
+                    }
+                }
+                if (!new File(file).isFile()) {
+                    throw new NutsExecutionException(context.getWorkspace(), "File not found " + file, 1);
+                }
+                goodFiles.add(file);
             }
         }
-        return 1;
+        JShellContext c2 = context.getShell().createContext(context.getGlobalContext());
+        c2.setArgs(context.getArgs());
+        int a = 0;
+        for (String goodFile : goodFiles) {
+            a = context.getShell().executeFile(goodFile, c2, false);
+            if (a != 0) {
+                throw new NutsExecutionException(context.getWorkspace(), "Error", a);
+            }
+        }
     }
+
 }

@@ -70,19 +70,11 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsUpdateCommand update();
 
     NutsPushCommand push();
-    
+
     NutsUpdateStatisticsCommand updateStatistics();
 
     ///////////////////// Environment
-    NutsWorkspace setSystemTerminal(NutsSystemTerminalBase term);
-
-    void setTerminal(NutsSessionTerminal newTerminal);
-
     Map<String, Object> getUserProperties();
-
-    NutsSystemTerminal getSystemTerminal();
-
-    NutsSessionTerminal getTerminal();
 
     ///////////////////// sub system
     NutsWorkspaceExtensionManager extensions();

@@ -59,7 +59,7 @@ public class UndeclareCommandCommand extends AbstractNshCommand {
             } else {
                 String cmd = cmdLine.nextNonOption(cmdLine.createNonOption("name")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getShell().undeclareCommand(cmd);
+                    context.getGlobalContext().builtins().unset(cmd);
                 }
             }
         }

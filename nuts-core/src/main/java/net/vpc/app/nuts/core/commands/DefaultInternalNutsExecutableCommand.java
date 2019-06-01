@@ -21,7 +21,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     private NutsSession session;
 
     public DefaultInternalNutsExecutableCommand(String name, String[] args, NutsWorkspace ws, NutsSession session) {
-        super(name, NutsExecutableType.INTERNAL);
+        super(name, name,NutsExecutableType.INTERNAL);
         this.args = args;
         this.ws = ws;
         this.session = session;

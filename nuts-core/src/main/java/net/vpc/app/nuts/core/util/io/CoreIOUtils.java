@@ -234,13 +234,13 @@ public class CoreIOUtils {
         PrintStream out = terminal.out();
         PrintStream err = terminal.err();
         InputStream in = terminal.in();
-        if (ws.getSystemTerminal().isStandardOutputStream(out)) {
+        if (ws.io().getSystemTerminal().isStandardOutputStream(out)) {
             out = null;
         }
-        if (ws.getSystemTerminal().isStandardErrorStream(err)) {
+        if (ws.io().getSystemTerminal().isStandardErrorStream(err)) {
             err = null;
         }
-        if (ws.getSystemTerminal().isStandardInputStream(in)) {
+        if (ws.io().getSystemTerminal().isStandardInputStream(in)) {
             in = null;
         }
         ProcessBuilder2 pb = new ProcessBuilder2(ws)

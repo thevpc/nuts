@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh.test;
 
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsJavaShell;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,6 +62,22 @@ public class CommandsTest {
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         int x = c.execCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
+        Assert.assertEquals(
+                "/\n"
+                + "a\n"
+                + "a\n"
+                + "a\n"
+                + "", out.toString());
+        Assert.assertEquals("", err.toString());
+        Assert.assertEquals(0, x);
+    }
+    
+    @Test
+    public void testEnv() {
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        StringBuilder out = new StringBuilder();
+        StringBuilder err = new StringBuilder();
+        int x = c.execCommand(new String[]{"env"}, null, out, err);
         Assert.assertEquals(
                 "/\n"
                 + "a\n"

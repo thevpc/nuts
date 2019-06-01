@@ -71,7 +71,7 @@ public class MkdirCommand extends AbstractNshCommand {
                     o.p = a.getValue().getBoolean();
                 }
             } else {
-                files.add(ShellHelper.xfileOf(cmdLine.next().getString(),context.getShell().getCwd()));
+                files.add(ShellHelper.xfileOf(cmdLine.next().getString(),context.getGlobalContext().getCwd()));
             }
         }
         if (files.size() < 1) {

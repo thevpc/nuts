@@ -46,7 +46,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     private NutsExecutionType executionType = NutsExecutionType.SPAWN;
     private boolean redirectErrorStream;
     private boolean failFast;
-    private NutsCommandStringFormat commandStringFormatter;
+    private NutsCommandLineFormat commandStringFormatter;
 
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws, "exec");
@@ -443,7 +443,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 
     @Override
     public String getCommandString() {
-        NutsCommandStringFormat f = getCommandStringFormat();
+        NutsCommandLineFormat f = getCommandLineFormat();
         StringBuilder sb = new StringBuilder();
         if (env != null) {
             for (Map.Entry<Object, Object> e : env.entrySet()) {
@@ -558,7 +558,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws,"Invalid executionType " + executionType);
+                throw new NutsUnsupportedArgumentException(ws, "Invalid executionType " + executionType);
             }
         }
         return exec;
@@ -588,12 +588,12 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     }
 
     @Override
-    public NutsCommandStringFormat getCommandStringFormat() {
+    public NutsCommandLineFormat getCommandLineFormat() {
         return commandStringFormatter;
     }
 
     @Override
-    public NutsExecCommand setCommandStringFormat(NutsCommandStringFormat commandStringFormatter) {
+    public NutsExecCommand setCommandLineFormat(NutsCommandLineFormat commandStringFormatter) {
         this.commandStringFormatter = commandStringFormatter;
         return this;
     }
@@ -607,7 +607,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         } catch (NutsExecutionException ex) {
             result = ex;
         } catch (Exception ex) {
-            result = new NutsExecutionException(ws,ex, 244);
+            result = new NutsExecutionException(ws, ex, 244);
         }
         if (result != null) {
             throw result;
@@ -681,7 +681,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         if (executorComponent != null) {
             return executorComponent;
         }
-        throw new NutsExecutorNotFoundException(ws,nutsDefinition.getId());
+        throw new NutsExecutorNotFoundException(ws, nutsDefinition.getId());
     }
 
     public boolean isGrabOutputString() {
@@ -768,7 +768,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             if (command != null) {
                 NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                         .setExecutionType(embedded ? NutsExecutionType.EMBEDDED : NutsExecutionType.SPAWN).setEnv(env);
-                return new DefaultNutsAliasExecutable(command, o, session, args);
+                return new DefaultNutsAliasExecutable(command, o, ws, session, args);
             } else {
                 return ws_exec(cmdName, args, executorOptions, env, directory, failFast, session, embedded);
             }
@@ -898,11 +898,11 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                     th = e;
                 }
                 if (th != null) {
-                    throw new NutsExecutionException(ws,"Error Executing " + nutToRun.getId(), th);
+                    throw new NutsExecutionException(ws, "Error Executing " + nutToRun.getId(), th);
                 }
             }
         }
-        throw new NutsNotFoundException(ws,nutToRun == null ? null : nutToRun.getId());
+        throw new NutsNotFoundException(ws, nutToRun == null ? null : nutToRun.getId());
     }
 
     private static class SPrintStream2 extends NutsDefaultFormattedPrintStream {

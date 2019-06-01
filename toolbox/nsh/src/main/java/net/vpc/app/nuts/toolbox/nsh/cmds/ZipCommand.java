@@ -71,7 +71,7 @@ public class ZipCommand extends AbstractNshCommand {
                 throw new NutsExecutionException(context.getWorkspace(),"Not yet supported",2);
             } else {
                 String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getShell().getAbsolutePath(path));
+                File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;
                 }else {

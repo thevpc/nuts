@@ -91,15 +91,15 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
                 LOG.log(Level.CONFIG, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
-            u.setCredentials(new String(getAuthenticationAgent().setCredentials("admin".toCharArray(), ws.config())));
+            u.setCredentials(new String(getAuthenticationAgent().setCredentials("admin".toCharArray(), null)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u);
         }
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
-            Arrays.fill(credentials,'\0');
-            throw new NutsSecurityException(ws,"Invalid credentials");
+            Arrays.fill(credentials, '\0');
+            throw new NutsSecurityException(ws, "Invalid credentials");
         }
-        Arrays.fill(credentials,'\0');
+        Arrays.fill(credentials, '\0');
         boolean activated = false;
         if (isSecure()) {
             NutsWorkspaceConfigManagerExt.of(ws.config()).setSecure(false);
@@ -121,10 +121,10 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         boolean deactivated = false;
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
-            Arrays.fill(credentials,'\0');
-            throw new NutsSecurityException(ws,"Invalid credentials");
+            Arrays.fill(credentials, '\0');
+            throw new NutsSecurityException(ws, "Invalid credentials");
         }
-        Arrays.fill(credentials,'\0');
+        Arrays.fill(credentials, '\0');
         if (!isSecure()) {
             NutsWorkspaceConfigManagerExt.of(ws.config()).setSecure(true);
             deactivated = true;
@@ -136,13 +136,13 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     public void logout() {
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
-            throw new NutsLoginException(ws,"Not logged in");
+            throw new NutsLoginException(ws, "Not logged in");
         }
         try {
             LoginContext loginContext = r.pop();
             loginContext.logout();
         } catch (LoginException ex) {
-            throw new NutsLoginException(ws,ex);
+            throw new NutsLoginException(ws, ex);
         }
     }
 
@@ -297,9 +297,9 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     public void checkAllowed(String right, String operationName) {
         if (!isAllowed(right)) {
             if (CoreStringUtils.isBlank(operationName)) {
-                throw new NutsSecurityException(ws,right + " not allowed!");
+                throw new NutsSecurityException(ws, right + " not allowed!");
             } else {
-                throw new NutsSecurityException(ws,operationName + ": " + right + " not allowed!");
+                throw new NutsSecurityException(ws, operationName + ": " + right + " not allowed!");
             }
         }
     }
@@ -407,7 +407,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             }, NutsWorkspaceLoginModule.class.getClassLoader());
             login.login();
         } catch (LoginException ex) {
-            throw new NutsLoginException(ws,ex);
+            throw new NutsLoginException(ws, ex);
         }
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null) {
@@ -431,9 +431,11 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     @Override
     public NutsAuthenticationAgent getAuthenticationAgent() {
-        return ws.config().createAuthenticationAgent(
+        final NutsAuthenticationAgent a = ws.config().createAuthenticationAgent(
                 ((DefaultNutsWorkspaceConfigManager) ws.config())
                         .getStoredConfig().getAuthenticationAgent());
+        a.setEnv(ws.config());
+        return a;
     }
 
     @Override
@@ -442,7 +444,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         DefaultNutsWorkspaceConfigManager cc = (DefaultNutsWorkspaceConfigManager) ws.config();
 
         if (cc.createAuthenticationAgent(authenticationAgent) == null) {
-            throw new NutsIllegalArgumentException(ws,"Unsupported Authentication Agent " + authenticationAgent);
+            throw new NutsIllegalArgumentException(ws, "Unsupported Authentication Agent " + authenticationAgent);
         }
 
         NutsWorkspaceConfig conf = cc.getStoredConfig();

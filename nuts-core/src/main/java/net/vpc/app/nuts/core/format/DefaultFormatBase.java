@@ -93,12 +93,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
 
     @Override
     public void print() {
-        print(ws.getTerminal());
+        print(ws.io().getTerminal());
     }
 
     @Override
     public void println() {
-        println(ws.getTerminal());
+        println(ws.io().getTerminal());
     }
 
     @Override

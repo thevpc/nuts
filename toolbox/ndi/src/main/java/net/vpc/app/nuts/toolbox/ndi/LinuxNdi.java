@@ -206,15 +206,16 @@ public class LinuxNdi implements SystemNdi {
             IOUtils.saveString(goodNdiRc.toString(), nutsndirc);
         }
         if ((force || updatedBashrc || updatedNdirc) && trace) {
-            if (updatedNdirc) {
-                appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", appContext.getWorkspace().config().getWorkspaceLocation());
-            } else if (force) {
-                appContext.out().printf("Force updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", appContext.getWorkspace().config().getWorkspaceLocation());
-            }
-            if (updatedBashrc) {
-                appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
+            if (force) {
+                    appContext.out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
             } else {
-                appContext.out().printf("Force updating ==%s== file to point to ==%s==%n", "~/.bashrc", "~/.nuts-ndirc");
+                if (updatedNdirc && updatedBashrc) {
+                    appContext.out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
+                }else if (updatedNdirc) {
+                    appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", appContext.getWorkspace().config().getWorkspaceLocation());
+                }else if (updatedBashrc) {
+                    appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
+                }
             }
             appContext.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
             if (updatedNdirc || updatedBashrc) {
@@ -257,9 +258,6 @@ public class LinuxNdi implements SystemNdi {
         Path script = getScriptFile(name);
         if (script.getParent() != null) {
             if (!Files.exists(script.getParent())) {
-                if (trace) {
-                    appContext.out().printf("Creating folder ==%s==%n", script.getParent());
-                }
                 Files.createDirectories(script.getParent());
             }
         }

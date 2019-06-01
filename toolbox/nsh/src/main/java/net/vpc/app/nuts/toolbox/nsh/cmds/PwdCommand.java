@@ -56,7 +56,7 @@ public class PwdCommand extends AbstractNshCommand {
             }
         }
         PrintStream out = context.out();
-        out.printf("%s%n", context.getShell().getCwd());
+        out.printf("%s%n", context.getGlobalContext().getCwd());
         return 0;
     }
 }

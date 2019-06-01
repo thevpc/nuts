@@ -32,14 +32,11 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
@@ -51,7 +48,7 @@ public class UnameCommand extends SimpleNshCommand {
         super("uname", DEFAULT_SUPPORT);
     }
 
-    private static class Config {
+    private static class Options {
 
         boolean farch = false;
         boolean fos = false;
@@ -66,34 +63,39 @@ public class UnameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected Object createConfiguration() {
-        return new Config();
+    protected Object createOptions() {
+        return new Options();
     }
 
     @Override
     protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
-        Config config = context.getConfigObject();
-        if (cmdLine.next("-m") != null) {
-            config.farch = true;
-            return true;
-        } else if (cmdLine.next("-r") != null) {
-            config.fos = true;
-            return true;
-        } else if (cmdLine.next("-d") != null) {
-            config.fdist = true;
-            return true;
-        } else if (cmdLine.next("-a") != null) {
-            config.fdist = true;
-            config.fos = true;
-            config.farch = true;
-            return true;
+        Options config = context.getOptions();
+        switch (cmdLine.peek().getKey().getString()) {
+            case "-m": {
+                config.farch = true;
+                return true;
+            }
+            case "-r": {
+                config.fos = true;
+                return true;
+            }
+            case "-d": {
+                config.fdist = true;
+                return true;
+            }
+            case "-a": {
+                config.fdist = true;
+                config.fos = true;
+                config.farch = true;
+                return true;
+            }
         }
         return false;
     }
 
     @Override
-    protected Object createResult(SimpleNshCommandContext context) {
-        Config config = context.getConfigObject();
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options config = context.getOptions();
         NutsWorkspace ws = context.getWorkspace();
 
         Result rr = new Result();
@@ -114,12 +116,12 @@ public class UnameCommand extends SimpleNshCommand {
         if (!config.fdist && rr.osdist != null) {
             rr.osdist = null;
         }
-        return rr;
+        context.setOutObject(rr);
     }
 
     @Override
-    protected void printObjectPlain(Object resultObject, SimpleNshCommandContext context) {
-        Result result = (Result) resultObject;
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        Result result = context.getResult();
         List<String> sb = new ArrayList<>();
         if (result.arch != null) {
             sb.add(result.arch.toString());

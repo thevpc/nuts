@@ -69,8 +69,7 @@ public final class NutsArgumentsParser {
         List<String> applicationArguments = new ArrayList<>();
         NutsCommand cmdLine = new NutsCommandLimited(bootArguments)
                 .setCommandName("nuts")
-                .addSpecialSimpleOption("version")
-                .expandSimpleOptions();
+                ;
         while (cmdLine.hasNext()) {
             NutsArgument a=cmdLine.peek();
 

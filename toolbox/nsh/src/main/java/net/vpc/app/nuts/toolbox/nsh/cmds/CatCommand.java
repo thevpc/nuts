@@ -76,7 +76,7 @@ public class CatCommand extends AbstractNshCommand {
                 o.E = true;
             } else {
                 String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getShell().getAbsolutePath(path));
+                File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 files.add(file);
             }
         }

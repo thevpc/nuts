@@ -618,7 +618,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             return;
         }
         NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to apply updates").setDefaultValue(true);
-        if (getValidSession().isAsk() && !ws.getTerminal().ask(q)) {
+        if (getValidSession().isAsk() && !ws.io().getTerminal().ask(q)) {
             throw new NutsUserCancelException(ws);
         }
         NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);

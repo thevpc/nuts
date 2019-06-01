@@ -260,7 +260,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
 
     @Override
     public void format(NutsId id) {
-        format(id, ws.getTerminal());
+        format(id, ws.io().getTerminal());
     }
 
     @Override

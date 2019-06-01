@@ -52,7 +52,7 @@ public class WhoamiCommand extends SimpleNshCommand {
         super("whoami", DEFAULT_SUPPORT);
     }
 
-    private static class Config {
+    private static class Options {
 
         boolean argAll = false;
         boolean nutsUser = false;
@@ -68,6 +68,11 @@ public class WhoamiCommand extends SimpleNshCommand {
 
     }
 
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
     private static class Result {
 
         private String login;
@@ -80,28 +85,30 @@ public class WhoamiCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected Object createConfiguration() {
-        return new Config();
-    }
-
-    @Override
     protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
-        Config config = context.getConfigObject();
-        if (commandLine.next("--all", "-a") != null) {
-            config.argAll = true;
-            config.nutsUser = true;
-            return true;
-        } else if (commandLine.next("--nuts", "-n") != null) {
-            config.nutsUser = true;
-            return true;
+        Options config = context.getOptions();
+        switch (commandLine.peek().getKey().getString()) {
+            case "--all":
+            case "-a": {
+                config.argAll = true;
+                config.nutsUser = true;
+                commandLine.skip();
+                return true;
+            }
+            case "--nuts":
+            case "-n": {
+                config.nutsUser = true;
+                commandLine.skip();
+                return true;
+            }
         }
         return false;
     }
 
     @Override
-    protected Object createResult(SimpleNshCommandContext context) {
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
         Result result = new Result();
-        Config config = context.getConfigObject();
+        Options config = context.getOptions();
         if (!config.nutsUser) {
             result.login = System.getProperty("user.name");
         } else {
@@ -171,12 +178,12 @@ public class WhoamiCommand extends SimpleNshCommand {
                 result.repos = rr.isEmpty() ? null : rr.toArray(new RepoResult[0]);
             }
         }
-        return 0;
+        context.setOutObject(result);
     }
 
     @Override
-    protected void printObjectPlain(Object resultObject, SimpleNshCommandContext context) {
-        Result result = (Result) resultObject;
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        Result result = context.getResult();
         context.out().printf("%s\n", result.login);
         if (result.loginStack != null) {
             context.out().print("===stack===      :");

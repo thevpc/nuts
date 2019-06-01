@@ -15,10 +15,21 @@ import net.vpc.app.nuts.NutsExecutableType;
 public abstract class AbstractNutsExecutableCommand implements NutsExecutableInfoExt {
     protected NutsExecutableType type;
     protected String name;
+    protected String value;
 
     public AbstractNutsExecutableCommand(String name, NutsExecutableType type) {
         this.type = type;
         this.name = name;
+    }
+    public AbstractNutsExecutableCommand(String name, String value,NutsExecutableType type) {
+        this.type = type;
+        this.name = name;
+        this.value = value;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
     }
 
     @Override

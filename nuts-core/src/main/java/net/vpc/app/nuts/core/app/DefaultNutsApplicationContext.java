@@ -133,7 +133,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.libFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.LIB));
         this.cacheFolder = (cfg.getStoreLocation(this.storeId, NutsStoreLocation.CACHE));
         if (mode==NutsApplicationMode.AUTO_COMPLETE) {
-            this.workspace.getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+            this.workspace.io().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
@@ -295,7 +295,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public void setTerminalMode(NutsTerminalMode mode) {
-        getWorkspace().getSystemTerminal().setMode(mode);
+        getWorkspace().io().getSystemTerminal().setMode(mode);
     }
 
     @Override
@@ -544,7 +544,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsTerminalMode getTerminalMode() {
-        return getWorkspace().getSystemTerminal().getOutMode();
+        return getWorkspace().io().getSystemTerminal().getOutMode();
     }
 
     @Override

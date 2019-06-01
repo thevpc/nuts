@@ -27,47 +27,36 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.toolbox.nsh.cmds;
+
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
- * Formatted used to format command line by {@link NutsExecCommand}
- * 
- * @see NutsExecCommand#setCommandStringFormat(NutsCommandStringFormat)
- * @see NutsExecCommand#getCommandString()
- * @author vpc
- * @since 0.5.4
+ * Created by vpc on 1/7/17.
  */
-public interface NutsCommandStringFormat {
+public class TrueCommand extends SimpleNshCommand {
 
-    default boolean acceptArgument(int argIndex, String arg){
-        return true;
+    public TrueCommand() {
+        super("true", DEFAULT_SUPPORT);
     }
 
-    default boolean acceptEnvName(String envName, String envValue){
-        return true;
-    }
 
-    default boolean acceptRedirectInput(){
-        return true;
-    }
-
-    default boolean acceptRedirectOutput(){
-        return true;
-    }
-
-    default boolean acceptRedirectError(){
-        return true;
-    }
-
-    default String replaceArgument(int argIndex, String arg){
+    @Override
+    protected Object createOptions() {
         return null;
     }
 
-    default String replaceEnvName(String envName, String envValue){
-        return null;
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        //ignore all
+        commandLine.skip();
+        return true;
     }
 
-    default String replaceEnvValue(String envName, String envValue){
-        return null;
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        //do nothing, return true
     }
+
 }

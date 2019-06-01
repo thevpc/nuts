@@ -30,8 +30,11 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -41,6 +44,7 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public abstract class SimpleNshCommand extends AbstractNshCommand {
 
+
     public SimpleNshCommand(String name, int supportLevel) {
         super(name, supportLevel);
     }
@@ -48,58 +52,113 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
     public static class SimpleNshCommandContext {
 
         private NutsCommandContext context;
-        private Object configObject;
+        private String[] args;
+        private Object options;
+        private List<String> displayOptions = new ArrayList<>();
+        private int exitCode = 0;
+        private Object outObject;
+        private Object errObject;
+        private boolean err;
 
-        public SimpleNshCommandContext(NutsCommandContext context, Object configObject) {
+        public SimpleNshCommandContext(String[] args,NutsCommandContext context, Object configObject) {
             this.context = context;
-            this.configObject = configObject;
+            this.options = configObject;
+            this.args = args;
         }
 
-        public NutsCommandContext getContext() {
+        public String[] getArgs() {
+            return args;
+        }
+        
+
+        public <T> T getResult() {
+            return (T) (err ? errObject : outObject);
+        }
+
+        public Object getOutObject() {
+            return outObject;
+        }
+
+        public void setOutObject(Object outObject) {
+            this.outObject = outObject;
+        }
+
+        public Object getErrObject() {
+            return errObject;
+        }
+
+        public void setErrObject(Object errObject) {
+            this.errObject = errObject;
+        }
+
+        public int getExitCode() {
+            return exitCode;
+        }
+
+        public void setExitCode(int exitCode) {
+            this.exitCode = exitCode;
+        }
+
+        public String[] getDisplayOptions() {
+            return displayOptions.toArray(new String[0]);
+        }
+
+        public NutsCommandContext getCommandContext() {
             return context;
         }
 
         public NutsJavaShell getShell() {
             return context.getShell();
         }
-        
-        public <T> T getConfigObject() {
-            return (T) configObject;
+
+        public <T> T getOptions() {
+            return (T) options;
         }
 
         public PrintStream out() {
-            return context.out();
+            return err ? context.err() : context.out();
+        }
+
+        public SimpleNshCommandContext setErr(boolean err) {
+            this.err = err;
+            return this;
         }
 
         public PrintStream err() {
             return context.err();
         }
 
-        public void printObject(Object any) {
-            context.printObject(any);
+        public void printObject(Object any, String[] options) {
+            context.printObject(any, options, false);
         }
 
         public NutsWorkspace getWorkspace() {
             return context.getWorkspace();
         }
-        public NutsConsoleContext consoleContext() {
-            return context.shellContext();
+
+        public NutsShellContext getGlobalContext() {
+            return context.getGlobalContext();
+        }
+
+        public SimpleNshCommandContext addDisplayOption(String sort) {
+            displayOptions.add(sort);
+            return this;
         }
     }
 
-    protected abstract Object createConfiguration();
+    protected abstract Object createOptions() ;
 
     protected abstract boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context);
 
-    protected abstract Object createResult(SimpleNshCommandContext context);
+    protected abstract void createResult(NutsCommand commandLine, SimpleNshCommandContext context);
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public final int exec(String[] args, NutsCommandContext context) throws Exception {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
         NutsCommand commandLine = context.getWorkspace().parser().parseCommand(args);
-        SimpleNshCommandContext context2 = new SimpleNshCommandContext(context, createConfiguration());
+        SimpleNshCommandContext context2 = new SimpleNshCommandContext(args,context, createOptions());
         while (commandLine.hasNext()) {
             if (robustMode) {
                 String[] before = commandLine.toArray();
@@ -133,25 +192,36 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         if (commandLine.isAutoCompleteMode()) {
             return 0;
         }
-        Object result = createResult(context2);
-        context.printObject(result);
+        createResult(commandLine, context2);
+        final Object outObject = context2.getOutObject();
+        printObject(outObject, context2.setErr(false));
+        final Object errObject = context2.getErrObject();
+        if (errObject != null) {
+            printObject(outObject, context2.setErr(true));
+        }
         return 0;
     }
 
     protected void printObject(Object result, SimpleNshCommandContext context) {
-        switch (context.getContext().getSession().getOutputFormat(NutsOutputFormat.PLAIN)) {
+        switch (context.getCommandContext().getSession().getOutputFormat(NutsOutputFormat.PLAIN)) {
             case PLAIN: {
-                printObjectPlain(result, context);
+                printObjectPlain(context);
                 break;
             }
             default: {
-                context.printObject(result);
+                printObject0(context);
             }
         }
     }
 
-    protected void printObjectPlain(Object result, SimpleNshCommandContext context) {
-        context.printObject(result);
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        printObject0(context);
+    }
+
+    protected void printObject0(SimpleNshCommandContext context) {
+        final NutsObjectFormat o = context.getWorkspace().formatter().createObjectFormat(context.getCommandContext().getSession(), context.getResult());
+        o.configure(context.getWorkspace().parser().parseCommand(context.getDisplayOptions()), true);
+        o.print(context.out());
     }
 
 }

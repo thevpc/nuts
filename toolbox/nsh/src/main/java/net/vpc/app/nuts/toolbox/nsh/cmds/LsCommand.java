@@ -78,7 +78,7 @@ public class LsCommand extends AbstractNshCommand {
                 options.l = a.getValue().getBoolean();
             } else {
                 String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getShell().getAbsolutePath(path));
+                File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 ;
                 if (file.isDirectory()) {
                     folders.add(file);
@@ -110,7 +110,7 @@ public class LsCommand extends AbstractNshCommand {
                 ls(f, options, context, out, folders.size() > 0 || files.size() > 0);
             }
             if (invalids.size() + files.size() + folders.size() == 0) {
-                ls(new File(context.getShell().getCwd()), options, context, out, false);
+                ls(new File(context.getGlobalContext().getCwd()), options, context, out, false);
             }
             return exitCode;
         }

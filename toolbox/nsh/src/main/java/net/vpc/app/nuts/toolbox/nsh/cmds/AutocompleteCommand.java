@@ -31,59 +31,66 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 
 import java.util.*;
-import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class AutocompleteCommand extends AbstractNshCommand {
+public class AutocompleteCommand extends SimpleNshCommand {
 
     public AutocompleteCommand() {
         super("autocomplete", DEFAULT_SUPPORT);
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        List<String> items = new ArrayList<>();
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        int index = -1;
+    private static class Options {
+
         String cmd = null;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else {
-                while (cmdLine.hasNext()) {
-                    String s = cmdLine.next().getString();
-                    if (cmd == null) {
-                        cmd = s;
+        List<String> items = new ArrayList<>();
+        int index = -1;
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+    @Override
+    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (!cmdLine.peek().isOption()) {
+            while (cmdLine.hasNext()) {
+                String s = cmdLine.next().getString();
+                if (options.cmd == null) {
+                    options.cmd = s;
+                } else {
+                    if (s.startsWith("[]") && options.index < 0) {
+                        options.index = options.items.size();
+                        options.items.add(s.substring(2));
                     } else {
-                        if (s.startsWith("[]") && index < 0) {
-                            index = items.size();
-                            items.add(s.substring(2));
-                        } else {
-                            items.add(s);
-                        }
+                        options.items.add(s);
                     }
                 }
             }
+            return true;
         }
-        if (!cmdLine.isExecMode()) {
-            return 0;
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.cmd == null) {
+            throw new NutsExecutionException(context.getWorkspace(), "Missing Command", 1);
         }
-        if (cmd == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing Command", 1);
+        if (options.index < 0) {
+            options.index = options.items.size();
+            options.items.add("");
         }
-        if (index < 0) {
-            index = items.size();
-            items.add("");
-        }
-        List<AutoCompleteCandidate> aa = context.shellContext().resolveAutoCompleteCandidates(cmd, items, index,
-                context.getWorkspace().parser().parseCommand(items).getCommandLine()
+        List<AutoCompleteCandidate> aa = context.getGlobalContext().resolveAutoCompleteCandidates(
+                options.cmd, options.items, options.index,
+                context.getWorkspace().parser().parseCommand(options.items).getCommandLine()
         );
         Properties p = new Properties();
         for (AutoCompleteCandidate autoCompleteCandidate : aa) {
@@ -94,6 +101,12 @@ public class AutocompleteCommand extends AbstractNshCommand {
             }
             p.setProperty(value == null ? "" : value, dvalue == null ? "" : dvalue);
         }
+        context.setOutObject(p);
+    }
+
+    @Override
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        Properties p = context.getResult();
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {
                 // option
@@ -104,6 +117,5 @@ public class AutocompleteCommand extends AbstractNshCommand {
                 context.out().printf("<<%s>>\n", o);
             }
         }
-        return 0;
     }
 }

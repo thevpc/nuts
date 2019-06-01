@@ -70,7 +70,7 @@ public class RmCommand extends AbstractNshCommand {
             } else if (cmdLine.next("-R")!=null) {
                 o.R = true;
             } else {
-                files.add(ShellHelper.xfileOf(cmdLine.next().getString(),context.getShell().getCwd()));
+                files.add(ShellHelper.xfileOf(cmdLine.next().getString(),context.getGlobalContext().getCwd()));
             }
         }
         if (files.size() < 1) {

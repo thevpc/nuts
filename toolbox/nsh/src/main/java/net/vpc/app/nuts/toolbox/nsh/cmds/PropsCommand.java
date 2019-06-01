@@ -32,12 +32,12 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.xfile.XFile;
 
 import java.io.*;
 import java.util.*;
+import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -278,7 +278,7 @@ public class PropsCommand extends AbstractNshCommand {
     private Properties readProperties(Options o,NutsCommandContext context) throws IOException {
         Properties p = new Properties();
         String sourceFile = o.sourceFile;
-        XFile filePath = ShellHelper.xfileOf(sourceFile,context.getShell().getCwd());
+        XFile filePath = ShellHelper.xfileOf(sourceFile,context.getGlobalContext().getCwd());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -299,7 +299,7 @@ public class PropsCommand extends AbstractNshCommand {
         return p;
     }
 
-    private void storeProperties(Properties p, Options o, NutsConsoleContext context) throws IOException {
+    private void storeProperties(Properties p, Options o, NutsShellContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -341,7 +341,7 @@ public class PropsCommand extends AbstractNshCommand {
                 }
             }
         } else {
-            XFile filePath = ShellHelper.xfileOf(targetFile,context.getShell().getCwd());
+            XFile filePath = ShellHelper.xfileOf(targetFile,context.getCwd());
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {

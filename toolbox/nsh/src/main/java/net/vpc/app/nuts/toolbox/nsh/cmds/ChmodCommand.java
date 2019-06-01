@@ -186,7 +186,7 @@ public class ChmodCommand extends AbstractNshCommand {
                 }
             } else {
                 cmdLine.skip();
-                files.add(new File(context.getShell().getAbsolutePath(s)));
+                files.add(new File(context.getGlobalContext().getAbsolutePath(s)));
             }
         }
         if (files.isEmpty()) {

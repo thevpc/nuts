@@ -41,15 +41,15 @@ import net.vpc.common.javashell.JShellContext;
 /**
  * Created by vpc on 1/13/17.
  */
-public interface NutsConsoleContext extends JShellContext {
+public interface NutsShellContext extends JShellContext {
 
     String getServiceName();
 
-    NutsConsoleContext setServiceName(String serviceName);
+    NutsShellContext setServiceName(String serviceName);
 
     NutsSession getSession();
 
-    NutsConsoleContext setSession(NutsSession session);
+    NutsShellContext setSession(NutsSession session);
 
     NutsSessionTerminal getTerminal();
 
@@ -61,7 +61,7 @@ public interface NutsConsoleContext extends JShellContext {
 
     void setAutoComplete(NutsCommandAutoComplete value);
 
-    NutsConsoleContext copy();
+    NutsShellContext copy();
 
     PrintStream getFormattedOut();
 
@@ -73,12 +73,12 @@ public interface NutsConsoleContext extends JShellContext {
 
     boolean isVerbose();
 
-    NutsConsoleContext setVerbose(boolean verbose);
+    NutsShellContext setVerbose(boolean verbose);
 
     NutsTerminalMode getTerminalMode();
 
-    NutsConsoleContext setTerminalMode(NutsTerminalMode mode);
+    NutsShellContext setTerminalMode(NutsTerminalMode mode);
     
-    NutsConsoleContext setTerminal(NutsSessionTerminal terminal);
+    NutsShellContext setTerminal(NutsSessionTerminal terminal);
 
 }

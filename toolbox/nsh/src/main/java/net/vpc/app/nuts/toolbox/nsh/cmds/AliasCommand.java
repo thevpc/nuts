@@ -29,53 +29,110 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsObjectFormat;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import java.io.PrintStream;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
 import net.vpc.common.javashell.JShell;
-import net.vpc.common.javashell.cmds.CmdSyntaxError;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class AliasCommand extends AbstractNshCommand {
+public class AliasCommand extends SimpleNshCommand {
 
     public AliasCommand() {
         super("alias", DEFAULT_SUPPORT);
     }
 
+    private static class Options {
+
+        LinkedHashMap<String, String> add = new LinkedHashMap<String, String>();
+        Set<String> show = new LinkedHashSet<String>();
+        List<String> displayOptions = new ArrayList<String>();
+    }
+
+    private static class ResultItem {
+
+        String name;
+        String value;
+
+        public ResultItem(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+    }
+
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        JShell shell = context.getShell();
+    protected Object createOptions() {
+        return new Options();
+    }
 
-        int commandArgsCount = args.length;
-        if (commandArgsCount == 0) {
-            Properties p = new Properties();
-            for (String k : shell.getAliases()) {
-                p.setProperty(k, shell.getAlias(k));
+    @Override
+    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        final NutsArgument a = commandLine.peek();
+        if (a.isOption()) {
+            if (a.getKey().getString().equals("--sort")) {
+                commandLine.skip();
+                options.displayOptions.add(a.toString());
+                return true;
             }
-            PrintStream out = context.out();
-            NutsObjectFormat f = context.getWorkspace().formatter().createObjectFormat(context.getSession(),p);
-            f.configure("--sort");
-            f.println(out);
-
+        } else if (a.isKeyValue()) {
+            commandLine.skip();
+            options.add.put(a.getKey().getString(), a.getValue().getString());
+            return true;
         } else {
-            for (int i = 0; i < args.length; i++) {
-                int p = args[i].indexOf('=');
-                if (p > 0) {
-                    shell.setAlias(args[i].substring(0, p), args[i].substring(p + 1));
-                } else {
-                    throw new CmdSyntaxError(1,
-                            args,
-                            getName(),
-                            getHelp(),
-                            "wrong number of arguments " + commandArgsCount);
+            commandLine.skip();
+            options.show.add(a.getString());
+            return true;
+        }
+        return false;
+    }
 
-                }
+    @Override
+    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        JShell shell = context.getShell();
+        if (options.add.isEmpty() && options.show.isEmpty()) {
+            for (String k : context.getGlobalContext().aliases().getAll()) {
+                options.show.add(k);
             }
         }
-        return 0;
+        for (Map.Entry<String, String> entry : options.add.entrySet()) {
+            context.getGlobalContext().aliases().set(entry.getKey(), entry.getValue());
+        }
+        List<ResultItem> outRes = new ArrayList<>();
+        List<ResultItem> errRes = new ArrayList<>();
+        for (String a : options.show) {
+            final String v = context.getGlobalContext().aliases().get(a);
+            if (v == null) {
+                errRes.add(new ResultItem(a, v));
+            } else {
+                outRes.add(new ResultItem(a, v));
+            }
+        }
+        context.setOutObject(outRes);
+        if (!errRes.isEmpty()) {
+            context.setErrObject(errRes);
+        }
     }
+
+    @Override
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        List<ResultItem> r = context.getResult();
+        for (ResultItem resultItem : r) {
+            if (resultItem.value == null) {
+                context.out().printf("alias : %s @@not found@@%n", resultItem.name);
+            } else {
+                context.out().printf("alias : %s ='%s'%n", resultItem.name, resultItem.value);
+            }
+        }
+    }
+
 }

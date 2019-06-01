@@ -37,9 +37,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     private AnsiPrintStreamSupport.Type convertMode(NutsTerminalMode outMode) {
-        if (outMode == null) {
-            outMode = NutsTerminalMode.FORMATTED;
-        }
         switch (outMode) {
             case INHERITED: {
                 return (AnsiPrintStreamSupport.Type.INHERIT);
@@ -61,12 +58,18 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void setOutMode(NutsTerminalMode mode) {
+        if (mode == null) {
+            mode = NutsTerminalMode.FORMATTED;
+        }
         LOG.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
         FPrint.installStdOut(convertMode(this.outMode = mode));
     }
 
     @Override
     public void setErrorMode(NutsTerminalMode mode) {
+        if (mode == null) {
+            mode = NutsTerminalMode.FORMATTED;
+        }
         LOG.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
         FPrint.installStdErr(convertMode(this.errMode = mode));
     }

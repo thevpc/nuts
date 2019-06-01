@@ -37,28 +37,34 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 /**
  * @author vpc
  */
-public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter implements NutsArgument {
+public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
 
     private final char eq;
 
-    public NutsDefaultWorkspaceArgument(String expression,char eq) {
+    public DefaultNutsArgument(String expression, char eq) {
         super(expression);
         this.eq = eq;
     }
 
     public boolean isUnsupported() {
         return expression != null
-                && (expression.startsWith("---") || expression.startsWith("-!!") || expression.startsWith("--!!") || expression.startsWith("!!"));
+                && (expression.startsWith("-!!")
+                || expression.startsWith("--!!")
+                || expression.startsWith("---")
+                || expression.startsWith("++")
+                || expression.startsWith("!!"));
     }
 
     @Override
     public boolean isOption() {
-        return expression != null && expression.startsWith("-");
+        return expression != null
+                && expression.length() > 0
+                && (expression.charAt(0) == '-' || expression.charAt(0) == '+');
     }
 
     @Override
     public boolean isNonOption() {
-        return expression == null || !expression.startsWith("-");
+        return !isOption();
     }
 
     @Override
@@ -84,23 +90,27 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
                     sb.append(p.charAt(i));
                     break;
                 }
+                case '+': {
+                    sb.append(p.charAt(i));
+                    break;
+                }
                 case '!': {
                     sb.append(p.substring(i + 1));
-                    return new NutsDefaultWorkspaceArgument(sb.toString(),eq);
+                    return new DefaultNutsArgument(sb.toString(), eq);
                 }
                 case '/': {
                     if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
                         sb.append(p.substring(i + 2));
-                        return new NutsDefaultWorkspaceArgument(sb.toString(),eq);
+                        return new DefaultNutsArgument(sb.toString(), eq);
                     }
                 }
                 default: {
-                    return new NutsDefaultWorkspaceArgument(p,eq);
+                    return new DefaultNutsArgument(p, eq);
                 }
             }
             i++;
         }
-        return new NutsDefaultWorkspaceArgument(p,eq);
+        return new DefaultNutsArgument(p, eq);
     }
 
     @Override
@@ -110,9 +120,9 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
         }
         int x = expression.indexOf(eq);
         if (x >= 0) {
-            return new NutsDefaultWorkspaceArgument(expression.substring(x + 1),eq);
+            return new DefaultNutsArgument(expression.substring(x + 1), eq);
         }
-        return new NutsDefaultWorkspaceArgument(null,eq);
+        return new DefaultNutsArgument(null, eq);
     }
 
     @Override
@@ -147,6 +157,10 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
                     //ignore leading dashes
                     break;
                 }
+                case '+': {
+                    //ignore leading dashes
+                    break;
+                }
                 case '!': {
                     return true;
                 }
@@ -170,6 +184,10 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
         while (i < expression.length()) {
             switch (expression.charAt(i)) {
                 case '-': {
+                    opt = true;
+                    break;
+                }
+                case '+': {
                     opt = true;
                     break;
                 }
@@ -288,7 +306,7 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
     @Override
     public boolean getBoolean() {
         Boolean bb = CoreCommonUtils.parseBoolean(expression, null);
-        boolean b = CoreStringUtils.isBlank(expression)?false:bb==null?false:bb.booleanValue();
+        boolean b = CoreStringUtils.isBlank(expression) ? false : bb == null ? false : bb.booleanValue();
         if (isNegated()) {
             return !b;
         }
@@ -316,6 +334,7 @@ public class NutsDefaultWorkspaceArgument extends DefaultNutsTokenFilter impleme
         return String.valueOf(expression);
     }
 
+    @Override
     public NutsArgument required() {
         if (expression == null) {
             throw new IllegalArgumentException("Missing value");
