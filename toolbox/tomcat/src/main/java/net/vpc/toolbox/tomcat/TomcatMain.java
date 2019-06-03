@@ -19,34 +19,24 @@ public class TomcatMain extends NutsApplication {
         NutsCommand cmdLine = appContext.commandLine();
         Boolean local = null;
         boolean skipFirst = false;
-        while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.next();
-            if (local == null) {
-                if (appContext.configureFirst(cmdLine)) {
-                    //
-                } else if ((a.getString().equals("--remote") || a.getString().equals("-r"))) {
-                    local = false;
-                } else if ((a.getString().equals("--local") || a.getString().equals("-l"))) {
-                    local = true;
-                } else if (a.isOption()) {
-                    cmdLine.pushBack(a);
-                } else {
-                    cmdLine.pushBack(a);
-                    local = true;
-                }
-            } else {
-                cmdLine.pushBack(a);
+        if (cmdLine.hasNext()) {
+            NutsArgument a = cmdLine.peek();
+            if ((a.getString().equals("--remote") || a.getString().equals("-r"))) {
+                cmdLine.skip();
+                local = false;
+            } else if ((a.getString().equals("--local") || a.getString().equals("-l"))) {
+                cmdLine.skip();
+                local = true;
             }
         }
         if (local == null) {
             local = true;
         }
-
         if (local) {
             LocalTomcat m = new LocalTomcat(appContext, cmdLine);
             m.runArgs();
         } else {
-            RemoteTomcat m = new RemoteTomcat(appContext,cmdLine);
+            RemoteTomcat m = new RemoteTomcat(appContext, cmdLine);
             m.runArgs();
         }
     }
