@@ -201,15 +201,19 @@ public class NutsJavaShell extends JShell {
                     //ok
                 } else if ((a = cmd.nextString("-c", "--command")) != null) {
                     command = true;
-                    nonOptions.add(a.getValue().getString());
+                    String cc = a.getValue().getString();
+                    if(StringUtils.isEmpty(cc)){
+                        cmd.required("missing command for -c");
+                    }
+                    nonOptions.add(cc);
+                    nonOptions.addAll(Arrays.asList(cmd.toArray()));
+                    cmd.skipAll();
                 } else if ((a = cmd.nextBoolean("-i", "--interactive")) != null) {
                     interactive = a.getValue().getBoolean();
                 } else if ((a = cmd.nextBoolean("--perf")) != null) {
                     perf = a.getValue().getBoolean();
                 } else if ((a = cmd.nextBoolean("-x")) != null) {
                     getOptions().setXtrace(a.getValue().getBoolean());
-                } else if ((a = cmd.nextBoolean("-c")) != null) {
-                    nonOptions.add(cmd.next().getString());
                 } else if (cmd.peek().isOption()) {
                     cmd.setCommandName("nsh").unexpectedArgument();
                 } else {

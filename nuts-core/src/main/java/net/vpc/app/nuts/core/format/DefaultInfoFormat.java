@@ -166,9 +166,9 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("nuts-store-layout", stringValue(configManager.getStoreLocationLayout()));
         props.put("nuts-store-strategy", stringValue(configManager.getStoreLocationStrategy()));
         props.put("nuts-repo-store-strategy", stringValue(configManager.getRepositoryStoreLocationStrategy()));
-        props.put("nuts-option-open-mode", stringValue(configManager.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.getOptions().getOpenMode()));
-        props.put("nuts-option-read-only", stringValue(configManager.getOptions().isReadOnly()));
-        props.put("nuts-option-skip-companions", stringValue(configManager.getOptions().isSkipInstallCompanions()));
+        props.put("nuts-open-mode", stringValue(configManager.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.getOptions().getOpenMode()));
+        props.put("nuts-read-only", stringValue(configManager.getOptions().isReadOnly()));
+        props.put("nuts-skip-companions", stringValue(configManager.getOptions().isSkipInstallCompanions()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
         }

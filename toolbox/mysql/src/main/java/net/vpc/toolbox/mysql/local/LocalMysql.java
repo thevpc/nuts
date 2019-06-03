@@ -41,27 +41,34 @@ public class LocalMysql {
                 switch (val.getString()) {
                     case "list":
                         list(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     case "add":
                         add(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     case "set":
                         set(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     case "remove":
                         remove(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     case "backup":
                         backup(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     case "restore":
                         restore(cmd);
-                        break;
+                        cmd.unexpectedArgument();
+                        return;
                     default:
                         cmd.unexpectedArgument();
                 }
             }
         }
+        cmd.required("missing command (list,add,set,remove,backup or restore)");
     }
 
     public void list(NutsCommand args) {

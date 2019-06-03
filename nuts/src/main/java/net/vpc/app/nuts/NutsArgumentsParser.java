@@ -636,9 +636,8 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "-o": 
-                    case "--open-mode": 
-                    {
+                    case "-o":
+                    case "--open-mode": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
@@ -673,8 +672,10 @@ public final class NutsArgumentsParser {
                                 throw new NutsIllegalArgumentException(null, "Invalid argument for workspace : " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
-                            applicationArguments.add("-c");
-                            applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
+                            if (!cmdLine.isEmpty()) {
+                                applicationArguments.add("-c");
+                                applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
+                            }
                             cmdLine.skipAll();
                         } else {
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
