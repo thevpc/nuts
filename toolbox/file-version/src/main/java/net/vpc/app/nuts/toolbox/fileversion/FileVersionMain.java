@@ -307,7 +307,7 @@ public class FileVersionMain extends NutsApplication {
 
     private Set<VersionDescriptor> detectJarWarEarVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = XFile.of(context.getWorkspace().io().expandPath("filePath")).getInputStream()) {
+        try (InputStream is = XFile.of(context.getWorkspace().io().expandPath(filePath)).getInputStream()) {
             ZipUtils.visitZipStream(is, new PathFilter() {
                 @Override
                 public boolean accept(String path) {
