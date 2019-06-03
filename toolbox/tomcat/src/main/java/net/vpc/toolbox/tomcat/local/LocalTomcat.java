@@ -248,7 +248,7 @@ public class LocalTomcat {
         if (x.m.isEmpty()) {
             throw new NutsExecutionException(context.getWorkspace(),"No properties to show", 2);
         }
-        getContext().getWorkspace().formatter().createObjectFormat(context.getSession(),x.m).println(context.out());
+        getContext().printOutObject(x.m);
     }
 
     public void add(NutsCommand args) {

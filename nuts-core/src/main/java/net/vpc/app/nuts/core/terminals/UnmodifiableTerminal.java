@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsSession;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsTerminalBase;
@@ -133,8 +134,8 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public <T> T ask(NutsQuestion<T> question) {
-        return base.ask(question);
+    public <T> NutsQuestion<T> ask() {
+        return base.ask();
     }
 
     @Override

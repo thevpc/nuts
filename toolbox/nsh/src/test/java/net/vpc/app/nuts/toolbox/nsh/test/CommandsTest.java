@@ -71,20 +71,46 @@ public class CommandsTest {
         Assert.assertEquals("", err.toString());
         Assert.assertEquals(0, x);
     }
-    
+
     @Test
     public void testEnv() {
         NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
-        StringBuilder out = new StringBuilder();
-        StringBuilder err = new StringBuilder();
-        int x = c.execCommand(new String[]{"env"}, null, out, err);
-        Assert.assertEquals(
-                "/\n"
-                + "a\n"
-                + "a\n"
-                + "a\n"
-                + "", out.toString());
-        Assert.assertEquals("", err.toString());
-        Assert.assertEquals(0, x);
+        {
+            StringBuilder out = new StringBuilder();
+            StringBuilder err = new StringBuilder();
+            int x = c.execCommand(new String[]{"env"}, null, out, err);
+            Assert.assertTrue(out.toString().contains("==PWD "));
+            Assert.assertEquals("", err.toString());
+            Assert.assertEquals(0, x);
+        }
+        {
+            StringBuilder out = new StringBuilder();
+            StringBuilder err = new StringBuilder();
+            int x = c.execCommand(new String[]{"env", "--json"}, null, out, err);
+            Assert.assertTrue(out.toString().contains("\"PWD\""));
+            Assert.assertEquals("", err.toString());
+            Assert.assertEquals(0, x);
+        }
+    }
+
+    @Test
+    public void testCheck() {
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        {
+            StringBuilder out = new StringBuilder();
+            StringBuilder err = new StringBuilder();
+            int x = c.execCommand(new String[]{"test", "1", "-lt", "2"}, null, out, err);
+            Assert.assertEquals("", out.toString());
+            Assert.assertEquals("", err.toString());
+            Assert.assertEquals(0, x);
+        }
+        {
+            StringBuilder out = new StringBuilder();
+            StringBuilder err = new StringBuilder();
+            int x = c.execCommand(new String[]{"test", "2", "-lt", "1"}, null, out, err);
+            Assert.assertEquals("", out.toString());
+            Assert.assertEquals("", err.toString());
+            Assert.assertEquals(1, x);
+        }
     }
 }

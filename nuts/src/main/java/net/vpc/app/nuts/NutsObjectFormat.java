@@ -52,7 +52,7 @@ public interface NutsObjectFormat extends NutsFormat {
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
      * @param args argument to configure with
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
     NutsObjectFormat configure(String ... args);

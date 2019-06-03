@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,48 +27,42 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.toolbox.ndi;
+
+import java.nio.file.Path;
+import net.vpc.app.nuts.NutsId;
 
 /**
- * Generic Add options
- * @see NutsWorkspaceConfigManager#addSdk(net.vpc.app.nuts.NutsSdkLocation, net.vpc.app.nuts.NutsAddOptions) 
- * @see NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig, net.vpc.app.nuts.NutsAddOptions)
- * @see NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig, net.vpc.app.nuts.NutsAddOptions)
+ *
  * @author vpc
- * @since 0.5.4
  */
-public class NutsAddOptions {
+public class NdiScriptnfo {
+    private NutsId id;
+    private final String name;
+    private final Path path;
 
-    /**
-     * current session
-     */
-    private NutsSession session;
-
-    /**
-     * current session
-     * @return current session
-     */
-    public NutsSession getSession() {
-        return session;
+    public NdiScriptnfo(String name, NutsId id,Path path) {
+        this.path = path;
+        this.name = name;
+        this.id = id;
     }
 
-    /**
-     * update current session
-     * @param session session
-     * @return {@code this} instance
-     */
-    public NutsAddOptions session(NutsSession session) {
-        return setSession(session);
+    public Path getPath() {
+        return path;
     }
 
-    /**
-     * update current session
-     * @param session session
-     * @return {@code this} instance
-     */
-    public NutsAddOptions setSession(NutsSession session) {
-        this.session = session;
-        return this;
+    public NutsId getId() {
+        return id;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "{ id=" + id + ", name=" + name + ", path=" + path + '}';
+    }
+    
 
 }

@@ -55,6 +55,6 @@ public interface NutsWorkspaceFormatManager {
 
     NutsObjectFormat createObjectFormat(NutsOutputFormat format, Object value);
 
-    NutsIncrementalFormat createIncrementalFormat(NutsOutputFormat format);
+    NutsIncrementalOutputFormat createIncrementalFormat(NutsOutputFormat format);
 
 }

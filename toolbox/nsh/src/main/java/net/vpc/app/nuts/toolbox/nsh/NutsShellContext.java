@@ -81,4 +81,7 @@ public interface NutsShellContext extends JShellContext {
     
     NutsShellContext setTerminal(NutsSessionTerminal terminal);
 
+    NutsShellContext printOutObject(Object any);
+    
+    NutsShellContext printErrObject(Object any);
 }

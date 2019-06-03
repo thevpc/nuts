@@ -33,8 +33,9 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * Nuts Arguments parser.
- * Creates a {@link NutsWorkspaceOptions} instance from string array of valid nuts options
+ * Nuts Arguments parser. Creates a {@link NutsWorkspaceOptions} instance from
+ * string array of valid nuts options
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -44,7 +45,9 @@ public final class NutsArgumentsParser {
     }
 
     /**
-     * Creates a {@link NutsWorkspaceOptions} instance from string array of valid nuts options
+     * Creates a {@link NutsWorkspaceOptions} instance from string array of
+     * valid nuts options
+     *
      * @param bootArguments input arguments to parse
      * @return newly created and filled options instance
      */
@@ -55,7 +58,9 @@ public final class NutsArgumentsParser {
     }
 
     /**
-     * Fills a {@link NutsWorkspaceOptions} instance from string array of valid nuts options
+     * Fills a {@link NutsWorkspaceOptions} instance from string array of valid
+     * nuts options
+     *
      * @param bootArguments input arguments to parse
      * @param options options instance to fill
      */
@@ -68,10 +73,9 @@ public final class NutsArgumentsParser {
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
         NutsCommand cmdLine = new NutsCommandLimited(bootArguments)
-                .setCommandName("nuts")
-                ;
+                .setCommandName("nuts");
         while (cmdLine.hasNext()) {
-            NutsArgument a=cmdLine.peek();
+            NutsArgument a = cmdLine.peek();
 
             if (a.isOption()) {
                 boolean enabled = a.isEnabled();
@@ -90,16 +94,16 @@ public final class NutsArgumentsParser {
 
                     case "-w":
                     case "--workspace": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String file = a.getValue().getString();
                         if (enabled) {
                             options.setWorkspace(file);
                         }
                         break;
                     }
-                    case "--login":
-                    case "-o": {
-                        a=cmdLine.nextString();
+                    case "--user":
+                    case "-u": {
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setLogin(v);
@@ -108,7 +112,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--password":
                     case "-p": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setPassword(v.toCharArray());
@@ -118,7 +122,7 @@ public final class NutsArgumentsParser {
                     case "-V":
                     case "--boot-version":
                     case "--boot-api-version": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setRequiredBootVersion(v);
@@ -126,7 +130,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--boot-runtime": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String br = a.getValue().getString();
                         if (enabled) {
                             if (br.indexOf("#") > 0) {
@@ -139,7 +143,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--runtime-source-url": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setBootRuntimeSourceURL(v);
@@ -149,7 +153,7 @@ public final class NutsArgumentsParser {
                     case "--java":
                     case "--boot-java":
                     case "-j": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setBootJavaCommand(v);
@@ -159,7 +163,7 @@ public final class NutsArgumentsParser {
                     case "--java-home":
                     case "--boot-java-home":
                     case "--J": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setBootJavaCommand(NutsUtilsLimited.resolveJavaCommand(v));
@@ -169,7 +173,7 @@ public final class NutsArgumentsParser {
                     case "--java-options":
                     case "--boot-java-options":
                     case "-O": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setBootJavaOptions(v);
@@ -188,7 +192,7 @@ public final class NutsArgumentsParser {
                     // exists : configured parameters will be in use.
                     case "--archetype":
                     case "-A": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             options.setArchetype(v);
@@ -196,10 +200,10 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--store-strategy": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            options.setStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
+                            options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
                         }
                         break;
                     }
@@ -236,10 +240,10 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--repo-store-strategy": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            options.setRepositoryStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
+                            options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
                         }
                         break;
                     }
@@ -256,10 +260,10 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--store-layout": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            options.setStoreLocationLayout(v.isEmpty() ? null : NutsStoreLocationLayout.valueOf(v.toUpperCase()));
+                            options.setStoreLocationLayout(parseNutsStoreLocationLayout(v));
                         }
                         break;
                     }
@@ -298,7 +302,7 @@ public final class NutsArgumentsParser {
                     case "--temp-location":
                     case "--cache-location":
                     case "--lib-location": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-')).toUpperCase());
@@ -334,7 +338,7 @@ public final class NutsArgumentsParser {
                     case "--linux-temp-home":
                     case "--linux-cache-home":
                     case "--linux-lib-home": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         NutsStoreLocationLayout layout = NutsStoreLocationLayout.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         NutsStoreLocation folder = NutsStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
@@ -345,7 +349,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--skip-install-companions":
                     case "-k": {
-                        a=cmdLine.nextBoolean();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setSkipInstallCompanions(a.getValue().getBoolean());
                         }
@@ -364,7 +368,7 @@ public final class NutsArgumentsParser {
                     // to any java child process (as system property -D...) 
                     case "-g":
                     case "--global": {
-                        a=cmdLine.nextBoolean();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setGlobal(a.getValue().getBoolean());
                         }
@@ -380,7 +384,7 @@ public final class NutsArgumentsParser {
 
                     case "--color":
                     case "-C": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         if (enabled) {
                             String v = a.getValue().getString();
                             switch (NutsUtilsLimited.trim(v).toLowerCase()) {
@@ -450,20 +454,20 @@ public final class NutsArgumentsParser {
                     }
                     case "--term":
                     case "-t": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(null);
                             } else {
-                                options.setTerminalMode(NutsTerminalMode.valueOf(v.trim().toUpperCase()));
+                                options.setTerminalMode(parseNutsTerminalMode(v));
                             }
                         }
                         break;
                     }
                     case "-R":
                     case "--read-only": {
-                        a=cmdLine.nextBoolean();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setReadOnly(a.getValue().getBoolean());
                         }
@@ -492,7 +496,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--exclude-extension": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             excludedExtensions.add(v);
@@ -501,7 +505,7 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--exclude-repository": {
-                        a=cmdLine.nextString();
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             excludedRepositories.add(v);
@@ -509,8 +513,8 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--repository":
-                    case "-P": {
-                        a=cmdLine.nextString();
+                    case "-r": {
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
                             tempRepositories.add(v);
@@ -518,11 +522,56 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
+                    case "--output-format-option":
+                    case "-T":
+                        if (enabled) {
+                            options.addOutputFormatOptions(cmdLine.nextString().getValue().getString());
+                        } else {
+                            cmdLine.skip();
+                        }
+                        break;
+                    case "--json":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.JSON);
+                        }
+                        break;
+                    case "--plain":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.PLAIN);
+                        }
+                        break;
+                    case "--xml":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.XML);
+                        }
+                        break;
+                    case "--table":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.TABLE);
+                        }
+                        break;
+                    case "--tree":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.TREE);
+                        }
+                        break;
+                    case "--props":
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setOutputFormat(NutsOutputFormat.PROPS);
+                        }
+                        break;
+                    case "--force":
                     case "--yes":
                     case "-y": {
                         cmdLine.skip();
                         if (enabled) {
-                            options.setDefaultResponse(Boolean.TRUE);
+                            options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
                     }
@@ -530,7 +579,21 @@ public final class NutsArgumentsParser {
                     case "-N": {
                         cmdLine.skip();
                         if (enabled) {
-                            options.setDefaultResponse(Boolean.FALSE);
+                            options.setConfirm(NutsConfirmationMode.NO);
+                        }
+                        break;
+                    }
+                    case "--cancel": {
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setConfirm(NutsConfirmationMode.CANCEL);
+                        }
+                        break;
+                    }
+                    case "--ask": {
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;
                     }
@@ -546,23 +609,6 @@ public final class NutsArgumentsParser {
                     // in use in the current process (and ignored elsewhere). 
                     // Such options will be considered in creating worspaces 
                     // as well but still they are not persistent.
-                    case "--recover":
-                    case "-0": {
-                        cmdLine.skip();
-                        if (enabled) {
-                            options.setInitMode(NutsBootInitMode.RECOVER);
-                        }
-                        break;
-                    }
-                    case "--init":
-                    case "-I": {
-                        a=cmdLine.nextString();
-                        String v = a.getValue().getString("");
-                        if (enabled) {
-                            options.setInitMode(v.isEmpty()?NutsBootInitMode.RECOVER:NutsBootInitMode.valueOf(v.toUpperCase()));
-                        }
-                        break;
-                    }
                     case "--embedded":
                     case "-b": {
                         cmdLine.skip();
@@ -590,39 +636,13 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--open-mode": {
-                        a=cmdLine.nextString();
+                    case "-o": 
+                    case "--open-mode": 
+                    {
+                        a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            v = v.toUpperCase().replace('-', '_').replace('/', '_');
-                            switch (v) {
-                                case "R":
-                                case "READ":
-                                case "O":
-                                case "OPEN": {
-                                    v = NutsWorkspaceOpenMode.OPEN_EXISTING.name();
-                                    break;
-                                }
-                                case "W":
-                                case "WRITE":
-                                case "N":
-                                case "NEW":
-                                case "C":
-                                case "CREATE": {
-                                    v = NutsWorkspaceOpenMode.CREATE_NEW.name();
-                                    break;
-                                }
-                                case "RW":
-                                case "READ_WRITE":
-                                case "ON":
-                                case "OPEN_NEW":
-                                case "OC":
-                                case "OPEN_CREATE": {
-                                    v = NutsWorkspaceOpenMode.OPEN_OR_CREATE.name();
-                                    break;
-                                }
-                            }
-                            options.setOpenMode(v.isEmpty() ? null : NutsWorkspaceOpenMode.valueOf(v));
+                            options.setOpenMode(parseNutsWorkspaceOpenMode(v));
                         }
                         break;
                     }
@@ -668,7 +688,8 @@ public final class NutsArgumentsParser {
                     case "--version": {
                         cmdLine.skip();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.VERSION);
+                            options.setBootCommand(NutsBootCommand.EXEC);
+                            applicationArguments.add("version");
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                             cmdLine.skipAll();
                         } else {
@@ -677,8 +698,8 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--reset":
-                    case "-r": {
+                    case "-Z":
+                    case "--reset": {
                         cmdLine.skip();
                         if (enabled) {
                             options.setBootCommand(NutsBootCommand.RESET);
@@ -687,7 +708,15 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--e":
+                    case "-z":
+                    case "--recover": {
+                        cmdLine.skip();
+                        if (enabled) {
+                            options.setBootCommand(NutsBootCommand.RECOVER);
+                        }
+                        break;
+                    }
+                    case "-e":
                     case "--exec": {
                         cmdLine.skip();
                         if (enabled) {
@@ -711,7 +740,8 @@ public final class NutsArgumentsParser {
                     case "-h": {
                         cmdLine.skip();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.HELP);
+                            options.setBootCommand(NutsBootCommand.EXEC);
+                            applicationArguments.add("help");
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                             cmdLine.skipAll();
                         } else {
@@ -739,7 +769,8 @@ public final class NutsArgumentsParser {
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         options.setTransientRepositories(tempRepositories.toArray(new String[0]));
-        if (options.getBootCommand() != NutsBootCommand.HELP) {
+        //error only if not asking for help
+        if (!(options.getBootCommand() == NutsBootCommand.EXEC && applicationArguments.size() > 0 && applicationArguments.get(0).equals("help"))) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
                 for (String s : showError) {
@@ -754,10 +785,10 @@ public final class NutsArgumentsParser {
     }
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsCommand cmdLine, boolean enabled) {
-        NutsArgument a=cmdLine.peek();
+        NutsArgument a = cmdLine.peek();
         switch (a.getKey().getString()) {
             case "--log-size": {
-                a=cmdLine.nextString();
+                a = cmdLine.nextString();
                 String v = a.getValue().getString();
                 if (enabled) {
                     logConfig.setLogSize(Integer.parseInt(v));
@@ -766,7 +797,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-count": {
-                a=cmdLine.nextString();
+                a = cmdLine.nextString();
                 if (enabled) {
                     logConfig.setLogCount(a.getValue().getInt());
                 }
@@ -774,7 +805,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-name": {
-                a=cmdLine.nextString();
+                a = cmdLine.nextString();
                 String v = a.getValue().getString();
                 if (enabled) {
                     logConfig.setLogName(v);
@@ -783,7 +814,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-folder": {
-                a=cmdLine.nextString();
+                a = cmdLine.nextString();
                 String v = a.getValue().getString();
                 if (enabled) {
                     logConfig.setLogFolder(v);
@@ -876,4 +907,107 @@ public final class NutsArgumentsParser {
         }
     }
 
+    private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
+        String s0 = s;
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        s = s.toUpperCase().replace('-', '_');
+        switch (s) {
+            case "S":
+            case "STANDALONE":
+                return NutsStoreLocationStrategy.STANDALONE;
+            case "E":
+            case "EXPLODED":
+                return NutsStoreLocationStrategy.EXPLODED;
+        }
+        throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationStrategy : " + s0);
+    }
+
+    private static NutsStoreLocationLayout parseNutsStoreLocationLayout(String s) {
+        String s0 = s;
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        s = s.toUpperCase().replace('-', '_');
+        switch (s) {
+            case "L":
+            case "LINUX":
+                return NutsStoreLocationLayout.LINUX;
+            case "W":
+            case "WINDOWS":
+                return NutsStoreLocationLayout.WINDOWS;
+            case "M":
+            case "MACOS":
+                return NutsStoreLocationLayout.MACOS;
+            case "S":
+            case "SYSTEM":
+                return NutsStoreLocationLayout.SYSTEM;
+        }
+        throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationLayout : " + s0);
+    }
+
+    private static NutsTerminalMode parseNutsTerminalMode(String s) {
+        String s0 = s;
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        s = s.toUpperCase().replace('-', '_');
+        switch (s) {
+            case "L":
+            case "FILTERED":
+                return NutsTerminalMode.FILTERED;
+            case "F":
+            case "FORMATTED":
+                return NutsTerminalMode.FORMATTED;
+            case "H":
+            case "INHERITED":
+                return NutsTerminalMode.INHERITED;
+        }
+        throw new IllegalArgumentException("Unable to parse value for NutsTerminalMode : " + s0);
+    }
+
+    private static NutsWorkspaceOpenMode parseNutsWorkspaceOpenMode(String s) {
+        String s0 = s;
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        s = s.toUpperCase().replace('-', '_').replace('/', '_');
+        switch (s) {
+            case "R":
+            case "READ":
+            case "O":
+            case "OPEN": {
+                return NutsWorkspaceOpenMode.OPEN_EXISTING;
+            }
+            case "W":
+            case "WRITE":
+            case "N":
+            case "NEW":
+            case "C":
+            case "CREATE": {
+                return NutsWorkspaceOpenMode.CREATE_NEW;
+            }
+            case "RW":
+            case "R_W":
+            case "READ_WRITE":
+            case "ON":
+            case "O_N":
+            case "OPEN_NEW":
+            case "OC":
+            case "O_C":
+            case "OPEN_CREATE": {
+                return NutsWorkspaceOpenMode.OPEN_OR_CREATE;
+            }
+        }
+        throw new IllegalArgumentException("Unable to parse value for NutsWorkspaceOpenMode : " + s0);
+    }
+
+//    private static <T extends Enum> T parseEnum(Class<T> c, String s) {
+//        if (s == null || s.isEmpty()) {
+//            return null;
+//        }
+//        s = s.toUpperCase().replace('-', '_');
+//        return (T) Enum.valueOf(c, s);
+//    }
 }

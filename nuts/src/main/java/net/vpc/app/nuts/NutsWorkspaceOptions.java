@@ -33,7 +33,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/23/17.
@@ -106,7 +105,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String login = null;
+    private String userName = null;
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -129,7 +128,17 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private Boolean defaultResponse = null;
+    private NutsConfirmationMode confirm = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private NutsOutputFormat outputFormat = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final List<String> outputFormatOptions = new ArrayList<>();
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -140,13 +149,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsWorkspaceOpenMode openMode = NutsWorkspaceOpenMode.OPEN_OR_CREATE;
-    /**
-     * if true, all means are deployed to recover from corrupted workspace. This
-     * flag may alter current used version of nuts to update to latest.
-     *
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private NutsBootInitMode initMode;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -171,7 +173,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsExecutionType executionType = NutsExecutionType.SPAWN;
+    private NutsExecutionType executionType;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -275,12 +277,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUserName() {
+        return userName;
     }
 
     public NutsWorkspaceOptions setLogin(String login) {
-        this.login = login;
+        this.userName = login;
         return this;
     }
 
@@ -313,7 +315,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(null,"Should never Happen", e);
+            throw new NutsUnsupportedOperationException(null, "Should never Happen", e);
         }
     }
 
@@ -370,223 +372,8 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getExportedBootArgumentsString() {
-        return getBootArgumentsString(true, false, false);
-    }
-
-    public String[] getExportedBootArguments() {
-        return getBootArguments(true, false, false);
-    }
-
-    public String getBootArgumentsString(boolean exportedOptions, boolean runtimeOptions, boolean createOptions) {
-        return NutsUtilsLimited.escapeArguments(getBootArguments(exportedOptions, runtimeOptions, createOptions));
-    }
-
-    public String[] getBootArguments(boolean exportedOptions, boolean runtimeOptions, boolean createOptions) {
-        List<String> all = new ArrayList<>();
-        if (exportedOptions) {
-            for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
-                for (int j = 0; j < NutsStoreLocation.values().length; j++) {
-                    String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    if (!NutsUtilsLimited.isBlank(s)) {
-                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
-                        NutsStoreLocation folder = NutsStoreLocation.values()[j];
-                        //config is exported!
-                        if ((folder == NutsStoreLocation.CONFIG)) {
-                            all.add("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home");
-                            all.add(s);
-                        }
-                    }
-                }
-            }
-            if (!NutsUtilsLimited.isBlank(bootRuntime)) {
-                all.add("--boot-runtime");
-                all.add(bootRuntime);
-            }
-            if (!NutsUtilsLimited.isBlank(bootJavaCommand)) {
-                all.add("--java");
-                all.add(bootJavaCommand);
-            }
-            if (!NutsUtilsLimited.isBlank(bootJavaOptions)) {
-                all.add("--java-options");
-                all.add(bootJavaOptions);
-            }
-            if (!NutsUtilsLimited.isBlank(bootJavaOptions)) {
-                all.add("--java-options");
-                all.add(bootJavaOptions);
-            }
-            if (!NutsUtilsLimited.isBlank(workspace)) {
-                all.add("--workspace");
-                all.add(NutsUtilsLimited.getAbsolutePath(workspace));
-            }
-            if (!NutsUtilsLimited.isBlank(login)) {
-                all.add("--login");
-                all.add(login);
-            }
-            if (password!=null && !NutsUtilsLimited.isBlank(new String(password))) {
-                all.add("--password");
-                all.add(new String(password));
-            }
-            if (!NutsUtilsLimited.isBlank(requiredBootVersion)) {
-                all.add("--boot-version");
-                all.add(requiredBootVersion);
-            }
-            if (terminalMode != null) {
-                all.add("--term");
-                all.add(terminalMode.toString());
-            }
-            if (logConfig != null) {
-                if (logConfig.getLogLevel() != null) {
-                    if (logConfig.getLogLevel() == Level.FINEST) {
-                        if (logConfig.isDebug()) {
-                            all.add("--debug");
-                        } else {
-                            all.add("--verbose");
-                        }
-                    } else {
-                        all.add("--log-" + logConfig.getLogLevel().toString().toLowerCase());
-                    }
-                }
-                if (logConfig.getLogCount() > 0) {
-                    all.add("--log-count");
-                    all.add(String.valueOf(logConfig.getLogCount()));
-                }
-                if (logConfig.getLogSize() > 0) {
-                    all.add("--log-size");
-                    all.add(String.valueOf(logConfig.getLogSize()));
-                }
-                if (!NutsUtilsLimited.isBlank(logConfig.getLogFolder())) {
-                    all.add("--log-folder");
-                    all.add(NutsUtilsLimited.getAbsolutePath(logConfig.getLogFolder()));
-                }
-                if (!NutsUtilsLimited.isBlank(logConfig.getLogName())) {
-                    all.add("--log-name");
-                    all.add(logConfig.getLogName());
-                }
-                if (logConfig.isLogInherited()) {
-                    all.add("--log-inherited");
-                }
-            }
-            if (excludedExtensions != null && excludedExtensions.length > 0) {
-                all.add("--exclude-extension");
-                all.add(NutsUtilsLimited.join(";", excludedExtensions));
-            }
-            if (excludedRepositories != null && excludedRepositories.length > 0) {
-                all.add("--exclude-repository");
-                all.add(NutsUtilsLimited.join(";", excludedRepositories));
-            }
-            if (transientRepositories != null && transientRepositories.length > 0) {
-                all.add("--repository");
-                all.add(NutsUtilsLimited.join(";", transientRepositories));
-            }
-
-            if (global) {
-                all.add("--global");
-            }
-            if (gui) {
-                all.add("--gui");
-            }
-            if (readOnly) {
-                all.add("--read-only");
-            }
-            if (skipInstallCompanions) {
-                all.add("--skip-install-companions");
-            }
-            if (defaultResponse != null) {
-                all.add((defaultResponse ? "--yes" : "--no"));
-            }
-        }
-        if (createOptions) {
-            if (!NutsUtilsLimited.isBlank(archetype)) {
-                all.add("--archetype");
-                all.add(archetype);
-            }
-            if (storeLocationLayout != null) {
-                all.add("--store-layout");
-                all.add(storeLocationLayout.toString().toLowerCase());
-            }
-            if (storeLocationStrategy != null) {
-                all.add("--store-strategy");
-                all.add(storeLocationStrategy.toString().toLowerCase());
-            }
-            if (repositoryStoreLocationStrategy != null) {
-                all.add("--repo-store-strategy");
-                all.add(repositoryStoreLocationStrategy.toString().toLowerCase());
-            }
-            for (int i = 0; i < storeLocations.length; i++) {
-                if (!NutsUtilsLimited.isBlank(storeLocations[i])) {
-                    all.add("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location");
-                    all.add(storeLocations[i]);
-                }
-            }
-            for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
-                for (int j = 0; j < NutsStoreLocation.values().length; j++) {
-                    String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    if (!NutsUtilsLimited.isBlank(s)) {
-                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
-                        NutsStoreLocation folder = NutsStoreLocation.values()[j];
-                        //config is exported!
-                        if (!(folder == NutsStoreLocation.CONFIG)) {
-                            all.add("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home");
-                            all.add(s);
-                        }
-                    }
-                }
-            }
-        }
-        if (runtimeOptions) {
-
-            if (initMode != null) {
-                switch (initMode) {
-                    case RECOVER: {
-                        all.add("--recover");
-                        break;
-                    }
-                    case CLEANUP: {
-                        all.add("--cleanup");
-                        break;
-                    }
-                    case RESET: {
-                        all.add("--reset");
-                        break;
-                    }
-                }
-            }
-            if (executionType != null) {
-                switch (executionType) {
-                    case EMBEDDED: {
-                        all.add("--embedded");
-                        break;
-                    }
-                    case SYSCALL: {
-                        all.add("--native");
-                        break;
-                    }
-                }
-            }
-            if (bootCommand != null) {
-                switch (bootCommand) {
-                    case EXEC: {
-                        all.add("--exec");
-                        break;
-                    }
-                    case HELP: {
-                        all.add("--help");
-                        break;
-                    }
-                    case RESET: {
-                        all.add("--reset");
-                        break;
-                    }
-                    case VERSION: {
-                        all.add("--version");
-                        break;
-                    }
-                }
-            }
-            all.addAll(Arrays.asList(getApplicationArguments()));
-        }
-        return all.toArray(new String[0]);
+    public NutsWorkspaceOptionsFormat format() {
+        return new NutsWorkspaceOptionsFormat(this);
     }
 
     public String[] getApplicationArguments() {
@@ -706,15 +493,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsBootInitMode getInitMode() {
-        return initMode;
-    }
-
-    public NutsWorkspaceOptions setInitMode(NutsBootInitMode initMode) {
-        this.initMode = initMode;
-        return this;
-    }
-
     public boolean isSkipInstallCompanions() {
         return skipInstallCompanions;
     }
@@ -733,55 +511,22 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public Boolean getDefaultResponse() {
-        return defaultResponse;
+    public NutsConfirmationMode getConfirm() {
+        return confirm;
     }
 
-    public void setDefaultResponse(Boolean defaultResponse) {
-        this.defaultResponse = defaultResponse;
+    public NutsWorkspaceOptions setConfirm(NutsConfirmationMode confirm) {
+        this.confirm = confirm;
+        return this;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("NutsBootOptions(");
-        boolean empty = true;
-        if (bootRuntime != null) {
-            if (!empty) {
-                sb.append(", ");
-            }
-            sb.append("bootRuntime=").append(bootRuntime);
-            empty = false;
-        }
-        if (bootRuntimeSourceURL != null) {
-            if (!empty) {
-                sb.append(", ");
-            }
-            sb.append("bootRuntimeSourceURL=").append(bootRuntimeSourceURL);
-            empty = false;
-        }
-        if (classLoaderProvider != null) {
-            if (!empty) {
-                sb.append(", ");
-            }
-            sb.append("classLoaderProvider=").append(classLoaderProvider);
-            empty = false;
-        }
-        if (!empty) {
-            sb.append(", ");
-        }
-        sb.append(", archetype=").append(archetype);
-        sb.append(", excludedExtensions=").append(Arrays.toString(excludedExtensions == null ? new String[0] : excludedExtensions));
-        sb.append(", excludedRepositories=").append(Arrays.toString(excludedRepositories == null ? new String[0] : excludedRepositories));
-        sb.append(")");
-        return sb.toString();
+    public NutsOutputFormat getOutputFormat() {
+        return outputFormat;
     }
 
-    public boolean isYes() {
-        return getDefaultResponse() != null && getDefaultResponse();
-    }
-
-    public boolean isNo() {
-        return getDefaultResponse() != null && !getDefaultResponse();
+    public NutsWorkspaceOptions setOutputFormat(NutsOutputFormat outputFormat) {
+        this.outputFormat = outputFormat;
+        return this;
     }
 
     public String[] getStoreLocations() {
@@ -790,6 +535,27 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
+    }
+
+    public NutsWorkspaceOptions addOutputFormatOptions(String... options) {
+        if (options != null) {
+            outputFormatOptions.addAll(Arrays.asList(options));
+        }
+        return this;
+    }
+
+    public NutsWorkspaceOptions setOutputFormatOptions(String... options) {
+        outputFormatOptions.clear();
+        return addOutputFormatOptions(options);
+    }
+
+    public String[] getOutputFormatOptions() {
+        return outputFormatOptions.toArray(new String[0]);
+    }
+
+    @Override
+    public String toString() {
+        return format().getBootCommandLine();
     }
 
 }

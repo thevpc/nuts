@@ -38,7 +38,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
     private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsDeployCommand(NutsWorkspace ws) {
-        super(ws,"deploy");
+        super(ws, "deploy");
     }
 
     @Override
@@ -414,7 +414,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         }
                     }
                     if (descriptor == null) {
-                        throw new NutsNotFoundException(ws," at " + contentFile);
+                        throw new NutsNotFoundException(ws, " at " + contentFile);
                     }
                     //remove workspace
                     descriptor = descriptor.setId(descriptor.getId().setNamespace(null));
@@ -449,10 +449,10 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
                         NutsRepository repo = ws.config().getRepository(repository);
                         if (repo == null) {
-                            throw new NutsRepositoryNotFoundException(ws,repository);
+                            throw new NutsRepositoryNotFoundException(ws, repository);
                         }
                         if (!repo.config().isEnabled()) {
-                            throw new NutsRepositoryNotFoundException(ws,"Repository " + repository + " is disabled.");
+                            throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
                         NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                         effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
@@ -468,7 +468,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         addResult(effId);
                         return this;
                     }
-                    throw new NutsRepositoryNotFoundException(ws,repository);
+                    throw new NutsRepositoryNotFoundException(ws, repository);
                 } finally {
                     if (tempFile2 != null) {
                         try {
@@ -498,10 +498,8 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             result = new ArrayList<>();
         }
         result.add(nid);
-        if (getValidSession().isTrace()) {
-            if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
-            }
+        if (getValidSession().isPlainTrace()) {
+            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 
@@ -535,7 +533,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             }
 
         } else {
-            throw new NutsException(ws,"Unexpected type " + descriptor.getClass().getName());
+            throw new NutsException(ws, "Unexpected type " + descriptor.getClass().getName());
         }
     }
 

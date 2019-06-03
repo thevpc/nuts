@@ -13,16 +13,16 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyTreeNode;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
 import net.vpc.app.nuts.NutsTreeFormat;
 import net.vpc.app.nuts.NutsTreeModel;
 import net.vpc.app.nuts.NutsTreeNodeFormat;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatTree extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatTree extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     private Object lastObject;
 
@@ -31,7 +31,11 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase<NutsIncreme
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void startImpl() {
+    }
+    
+    @Override
+    public void nextImpl(Object object, long index) {
         if (index > 0) {
             formatElement(lastObject, index - 1, false);
         }
@@ -39,7 +43,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase<NutsIncreme
     }
 
     @Override
-    public void formatComplete(long count) {
+    public void completeImpl(long count) {
         if (count > 0) {
             formatElement(lastObject, count - 1, true);
         }

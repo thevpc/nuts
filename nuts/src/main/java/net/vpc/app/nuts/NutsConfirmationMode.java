@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,23 +30,30 @@
 package net.vpc.app.nuts;
 
 /**
+ * user interaction mode. Some operations may require user confirmation before
+ performing critical operations such as overriding existing values, deleting
+ sensitive informations ; in such cases several modes are available : 
+ either to require user interaction (ASK mode) or force the processing (YES mode),
+ or ignoring the processing and continuing the next (NO) or cancel the processing 
+ and exit with an error message (the default value)
  *
  * @author vpc
- * @since 0.5.4
  */
-public enum NutsBootInitMode {
+public enum NutsConfirmationMode {
     /**
-     * deletes workspace 's cache, log and temps folders
+     * force interactive mode
      */
-    CLEANUP,
-    
+    ASK,
     /**
-     * deletes all workspace 's files and folders
+     * always perform operation
      */
-    RESET,
-    
+    YES,
     /**
-     * do best effort in recovering from an invalid configuration
+     * ignore operation and process next
      */
-    RECOVER
+    NO,
+    /**
+     * ignore operation throw exception
+     */
+    CANCEL,
 }

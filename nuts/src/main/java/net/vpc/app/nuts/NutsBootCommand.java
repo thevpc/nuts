@@ -41,22 +41,15 @@ package net.vpc.app.nuts;
  */
 public enum NutsBootCommand {
     /**
-     * show Nuts version and exit.
-     * If the Workspace can be booted, this command will run "internal command" version
-     * otherwise (when workspace fails to boot), it shows nuts api version and exists.
-     */
-    VERSION,
-    /**
-     * show Nuts help and exit.
-     * If the Workspace can be booted, this command will run "internal command" help
-     * otherwise (when workspace fails to boot), it shows nuts minimal help and exist.
-     */
-    HELP,
-    /**
-     * deletes workspace files and exits.
-     * The workspace will never boot up.
+     * deletes workspace files and continue with EXEC command.
+     * If there is no arguments exit and the workspace will not boot up.
      */
     RESET,
+    /**
+     * deletes workspace cache files and continue with EXEC command.
+     * If there is no arguments exit and the workspace will not boot up.
+     */
+    RECOVER,
     /**
      * runs a command on nuts workspace and exit. requires the workspace to boot
      * correctly.

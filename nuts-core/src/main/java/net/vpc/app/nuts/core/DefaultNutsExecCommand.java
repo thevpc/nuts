@@ -865,7 +865,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                         mainMethod.setAccessible(true);
                         Class p = cls.getSuperclass();
                         while (p != null) {
-                            if (p.getName().equals("net.vpc.app.nuts.app.NutsApplication")) {
+                            if (p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
                                 isNutsApp = true;
                                 break;
                             }
@@ -885,7 +885,9 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                         mainMethod.invoke(nutsApp, new Object[]{ws, options.getApp().toArray(new String[0])});
                     } else {
                         //NutsWorkspace
-                        System.setProperty("nuts.boot.args", ws.config().getOptions().getExportedBootArgumentsString());
+                        System.setProperty("nuts.boot.args", ws.config().getOptions()
+                                .format().exported().compact().getBootCommandLine()
+                        );
                         mainMethod = cls.getMethod("main", String[].class);
                         List<String> nargs = new ArrayList<>();
                         nargs.addAll(options.getApp());

@@ -7,20 +7,29 @@ package net.vpc.app.nuts.core.format;
 
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatPlain extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatPlain extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     public DefaultSearchFormatPlain(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.PLAIN);
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void startImpl() {
+    }
+    
+    @Override
+    public void completeImpl(long count) {
+        
+    }
+
+    @Override
+    public void nextImpl(Object object, long index) {
         FormattableNutsId fid = FormattableNutsId.of(object, getWs(), getValidSession());
         if (fid != null) {
             formatElement(fid, index);

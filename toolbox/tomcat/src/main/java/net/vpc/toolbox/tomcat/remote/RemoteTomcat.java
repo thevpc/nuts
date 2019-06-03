@@ -120,7 +120,7 @@ public class RemoteTomcat {
                     instanceName = a.getValue().getString();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"instance already defined", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "instance already defined", 2);
                 }
             } else if ((a = args.nextString("--server")) != null) {
                 if (c == null) {
@@ -171,20 +171,33 @@ public class RemoteTomcat {
                 ok = true;
                 if (TomcatUtils.isBlank(c.getConfig().getServer())) {
                     ok = false;
-                    c.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefaultValue("ssh://login@myserver/instanceName")));
+                    c.getConfig().setServer(
+                            context.terminal()
+                                    .ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server")
+                                    .defaultValue("ssh://login@myserver/instanceName").session(context.getSession())
+                                    .getResult()
+                    );
                 }
                 if (TomcatUtils.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
-                    c.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")));
+                    c.getConfig()
+                            .setRemoteTempPath(context.terminal().ask()
+                                    .forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
+                                    .session(context.getSession())
+                                    .getResult()
+                            );
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")));
+                        aa.getConfig().setPath(context.terminal().ask()
+                                .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")
+                                .session(context.getSession())
+                                .getResult());
                     }
                 }
             } catch (NutsUserCancelException ex) {
-                throw new NutsExecutionException(context.getWorkspace(),"Cancelled", 1);
+                throw new NutsExecutionException(context.getWorkspace(), "Cancelled", 1);
             }
         }
         c.save();
@@ -210,10 +223,10 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new NutsExecutionException(context.getWorkspace(),"Invalid parameters", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Invalid parameters", 2);
         }
         if (lastExitCode != 0) {
-            throw new NutsExecutionException(context.getWorkspace(),lastExitCode);
+            throw new NutsExecutionException(context.getWorkspace(), lastExitCode);
         }
     }
 
@@ -424,9 +437,9 @@ public class RemoteTomcat {
         }
         x.build();
         if (x.m.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(),"No properties to show", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "No properties to show", 2);
         }
-        getContext().getWorkspace().formatter().createObjectFormat(context.getSession(),x.m).println(context.out());
+        getContext().printOutObject(x.m);
     }
 
     public RemoteTomcatConfigService loadTomcatConfig(String name) {
@@ -465,7 +478,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NutsExecutionException(context.getWorkspace(),"Unknown name " + name + ". it is no domain or app", 3);
+                throw new NutsExecutionException(context.getWorkspace(), "Unknown name " + name + ". it is no domain or app", 3);
             }
             return a;
         }

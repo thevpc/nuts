@@ -82,7 +82,7 @@ public class RemoteMysqlDatabaseConfigService {
                 remoteTempPath
         );
         String remoteFullFilePath = new SshAddress(server).getPath(remoteTempPath).getPath();
-//        LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
+//        LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).backup(null);
 //        if (archiveResult.execResult != 0) {
 //            return archiveResult.execResult;
 //        }

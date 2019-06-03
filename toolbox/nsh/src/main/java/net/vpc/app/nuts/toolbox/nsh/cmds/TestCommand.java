@@ -82,6 +82,8 @@ public class TestCommand extends AbstractNshCommand {
             }
             case "=":
             case "!=":
+            case "-a":
+            case "-o":
             case "-eq":
             case "-ge":
             case "-gt":
@@ -129,6 +131,8 @@ public class TestCommand extends AbstractNshCommand {
             }
             case "=":
             case "!=":
+            case "-a":
+            case "-o":
             case "-eq":
             case "-ge":
             case "-gt":
@@ -148,7 +152,7 @@ public class TestCommand extends AbstractNshCommand {
         while (!operators.isEmpty()
                 && !operators.peek().equals("(")
                 && !operators.peek().equals("[")
-                && getArgsPrio(operators.peek()) <= prio) {
+                && getArgsPrio(operators.peek()) >= prio) {
             String op = operators.pop();
             int c = getArgsCount(op);
             switch (c) {
@@ -187,7 +191,7 @@ public class TestCommand extends AbstractNshCommand {
                         break;
                     }
                     case ")": {
-                        reduce(operators, operands, Integer.MAX_VALUE);
+                        reduce(operators, operands, 0);
                         if (operators.size() < 1 || !operators.peek().equals("(")) {
                             throw new IllegalArgumentException("')' has no euivalent '('");
                         }
@@ -195,7 +199,7 @@ public class TestCommand extends AbstractNshCommand {
                         break;
                     }
                     case "]": {
-                        reduce(operators, operands, Integer.MAX_VALUE);
+                        reduce(operators, operands, 0);
                         if (operators.size() >0 && !operators.peek().equals("[")) {
                             throw new IllegalArgumentException("']' has no euivalent '['");
                         }
@@ -433,6 +437,22 @@ public class TestCommand extends AbstractNshCommand {
                     String s1 = evalStr(arg1, context);
                     String s2 = evalStr(arg2, context);
                     return (!s1.equals(s2)) ? 0 : 1;
+                }
+                case "-a": {
+                    int i1 = evalInt(arg1, context);
+                    if(i1==1){
+                        return 1;
+                    }
+                    int i2 = evalInt(arg2, context);
+                    return (i1==0 && i2==0) ? 0 : 1;
+                }
+                case "-o": {
+                    int i1 = evalInt(arg1, context);
+                    if(i1==0){
+                        return 0;
+                    }
+                    int i2 = evalInt(arg2, context);
+                    return (i1==0 && i2==0) ? 0 : 1;
                 }
                 case "-eq": {
                     int s1 = evalInt(arg1, context);

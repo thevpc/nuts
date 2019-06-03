@@ -42,7 +42,7 @@ public interface NutsTerminal extends NutsTerminalBase {
 
     char[] readPassword(String prompt, Object... params);
 
-    <T> T ask(NutsQuestion<T> question);
+    <T> NutsQuestion<T> ask();
 
     InputStream in();
 

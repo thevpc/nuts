@@ -46,6 +46,8 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
                 extraConfig.add(a.getString());
                 addMultilineProperty(i.getKey().getString(), i.getValue().getString());
                 return true;
+            }else if ((a = commandLine.nextBoolean("escape-text")) != null) {
+                extraConfig.add(a.getString());
             } else {
                 extraConfig.add(commandLine.next().getString());
                 return true;
@@ -83,11 +85,11 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
                 t.addHeaderCells("Name", "Value");
                 for (Map.Entry<String, String> entry : ObjectOutputFormatWriterHelper.indentMap(data, "").entrySet()) {
                     t.newRow();
-                    String[] arr = getMultilineArray(CoreCommonUtils.stringValue(entry.getKey()), entry.getValue());
+                    String[] arr = getMultilineArray(stringValue(entry.getKey()), entry.getValue());
                     if (arr == null) {
-                        t.addCells(CoreCommonUtils.stringValue(entry.getKey()), CoreCommonUtils.stringValue(entry.getValue()));
+                        t.addCells(stringValue(entry.getKey()), stringValue(entry.getValue()));
                     } else {
-                        t.addCells(CoreCommonUtils.stringValue(entry.getKey()), arr[0]);
+                        t.addCells(stringValue(entry.getKey()), arr[0]);
                         for (int i = 1; i < arr.length; i++) {
                             t.newRow();
                             t.addCells("", arr[i]);
@@ -100,7 +102,7 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
             case TREE: {
                 NutsTreeFormat t = ws.formatter().createTreeFormat();
                 t.configure(ws.parser().parseCommand(extraConfig), true);
-                t.setModel(new MyNutsTreeModel(ws, rootName, data) {
+                t.setModel(new MyNutsTreeModel(ws, rootName, data,getValidSession()) {
                     @Override
                     protected String[] getMultilineArray(String key, Object value) {
                         return NutsObjectFormatBaseMap.this.getMultilineArray(key, value);
@@ -124,7 +126,7 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
         if (sep == null) {
             return null;
         }
-        String[] vv = CoreCommonUtils.stringValue(value).split(sep);
+        String[] vv = stringValue(value).split(sep);
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
@@ -144,4 +146,7 @@ public class NutsObjectFormatBaseMap extends NutsObjectFormatBase {
         return this;
     }
 
+    public String stringValue(Object o) {
+        return CoreCommonUtils.stringValueFormatted(o, ws, getValidSession());
+    }
 }

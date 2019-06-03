@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.term;
 
 import net.vpc.app.nuts.*;
 import net.vpc.common.io.FileUtils;
-import net.vpc.common.javashell.InterruptShellException;
+import net.vpc.common.javashell.JShellInterruptException;
 import org.jline.reader.*;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
@@ -141,7 +141,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             out.printf(prompt, params);
             readLine = reader.readLine("");
         } catch (UserInterruptException e) {
-            throw new InterruptShellException();
+            throw new JShellInterruptException();
         }
         try {
             reader.getHistory().save();

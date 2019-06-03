@@ -11,7 +11,9 @@ public interface NutsCommandContext extends JShellCommandContext {
 
     NutsWorkspace getWorkspace();
     
-    void printObject(Object any, String[] options, boolean err);
+    NutsCommandContext printOutObject(Object any);
+    
+    NutsCommandContext printErrObject(Object any);
 
     NutsSession getSession();
 
@@ -24,5 +26,5 @@ public interface NutsCommandContext extends JShellCommandContext {
 
     boolean isVerbose();
 
-    void setTerminalMode(NutsTerminalMode outMode);
+    NutsCommandContext setTerminalMode(NutsTerminalMode outMode);
 }

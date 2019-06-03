@@ -30,140 +30,85 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
- * @param <T> 
+ * @param <T>
  * @since 0.5.4
  */
-public class NutsQuestion<T> {
+public interface NutsQuestion<T> extends NutsConfigurable {
 
-    private String message;
-    private Object[] messageParameters;
-    private Object[] acceptedValues;
-    private Object defaultValue;
-    private Class<T> valueType;
-    private NutsResponseParser parser;
+    public NutsQuestion<Boolean> forBoolean(String msg, Object... params);
 
-    public static NutsQuestion<Boolean> forBoolean(String msg, Object... params) {
-        return new NutsQuestion<>(Boolean.class).setMessage(msg, params);
-    }
+    public NutsQuestion<String> forString(String msg, Object... params);
 
-    public static NutsQuestion<String> forString(String msg, Object... params) {
-        return new NutsQuestion<>(String.class).setMessage(msg, params);
-    }
+    public NutsQuestion<Integer> forInteger(String msg, Object... params);
 
-    public static NutsQuestion<Integer> forInteger(String msg, Object... params) {
-        return new NutsQuestion<>(Integer.class).setMessage(msg, params);
-    }
+    public NutsQuestion<Long> forLong(String msg, Object... params);
 
-    public static NutsQuestion<Long> forLong(String msg, Object... params) {
-        return new NutsQuestion<>(Long.class).setMessage(msg, params);
-    }
+    public NutsQuestion<Float> forFloat(String msg, Object... params);
 
-    public static NutsQuestion<Float> forFloat(String msg, Object... params) {
-        return new NutsQuestion<>(Float.class).setMessage(msg, params);
-    }
+    public NutsQuestion<Double> forDouble(String msg, Object... params);
 
-    public static NutsQuestion<Double> forDouble(String msg, Object... params) {
-        return new NutsQuestion<>(Double.class).setMessage(msg, params);
-    }
+    public <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params);
 
-    public static <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params) {
-        K[] values = enumType.getEnumConstants();
-        return new NutsQuestion<>(enumType)
-                .setMessage(msg, params)
-                .setAcceptedValues(values);
-    }
+    String getMessage();
 
-    public NutsQuestion(Class<T> valueType) {
-        this.valueType = valueType;
-    }
+    NutsQuestion<T> message(String message, Object... messageParameters);
 
-    public String getMessage() {
-        return message;
-    }
+    NutsQuestion<T> setMessage(String message, Object... messageParameters);
 
-    public NutsQuestion<T> message(String message, Object... messageParameters) {
-        return setMessage(message, messageParameters);
-    }
+    NutsQuestion<T> message(String message);
 
-    public NutsQuestion<T> setMessage(String message, Object... messageParameters) {
-        this.message = message;
-        this.messageParameters = messageParameters;
-        return this;
-    }
+    NutsQuestion<T> setMessage(String message);
 
-    public NutsQuestion<T> message(String message) {
-        return setMessage(message);
-    }
+    Object[] getMessageParameters();
 
-    public NutsQuestion<T> setMessage(String message) {
-        this.message = message;
-        return this;
-    }
+    NutsQuestion<T> messageParameters(Object... messageParameters);
 
-    public Object[] getMessageParameters() {
-        return messageParameters;
-    }
+    NutsQuestion<T> setMessageParameters(Object... messageParameters);
 
-    public NutsQuestion<T> messageParameters(Object... messageParameters) {
-        return setMessageParameters(messageParameters);
-    }
+    Object[] getAcceptedValues();
 
-    public NutsQuestion<T> setMessageParameters(Object... messageParameters) {
-        this.messageParameters = messageParameters;
-        return this;
-    }
+    NutsQuestion<T> acceptedValues(Object[] acceptedValues);
 
-    public Object[] getAcceptedValues() {
-        return acceptedValues;
-    }
+    NutsQuestion<T> setAcceptedValues(Object[] acceptedValues);
 
-    public NutsQuestion<T> acceptedValues(Object[] acceptedValues) {
-        return setAcceptedValues(acceptedValues);
-    }
+    Object getDefaultValue();
 
-    public NutsQuestion<T> setAcceptedValues(Object[] acceptedValues) {
-        this.acceptedValues = acceptedValues;
-        return this;
-    }
+    NutsQuestion<T> defaultValue(Object defautValue);
 
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
+    NutsQuestion<T> setDefaultValue(Object defaultValue);
 
-    public NutsQuestion<T> defaultValue(Object defautValue) {
-        return setDefaultValue(defautValue);
-    }
+    Class getValueType();
 
-    public NutsQuestion<T> setDefaultValue(Object defaultValue) {
-        this.defaultValue = defaultValue;
-        return this;
-    }
+    NutsQuestion<T> valueType(Class valueType);
 
-    public Class getValueType() {
-        return valueType;
-    }
+    NutsQuestion<T> setValueType(Class valueType);
 
-    public NutsQuestion<T> valueType(Class valueType) {
-        return setValueType(valueType);
-    }
+    NutsResponseParser getParser();
 
-    public NutsQuestion<T> setValueType(Class valueType) {
-        this.valueType = valueType;
-        return this;
-    }
+    NutsQuestion<T> parser(NutsResponseParser parser);
 
-    public NutsResponseParser getParser() {
-        return parser;
-    }
+    NutsQuestion<T> setParser(NutsResponseParser parser);
 
-    public NutsQuestion<T> parser(NutsResponseParser parser) {
-        return setParser(parser);
-    }
+    NutsQuestion<T> run();
 
-    public NutsQuestion<T> setParser(NutsResponseParser parser) {
-        this.parser = parser;
-        return this;
-    }
+    /**
+     * equivalent to (Boolean) getResult()
+     * as type dereferencing may cause some troubles
+     * @return 
+     */
+    Boolean getBooleanResult();
+    
+    <T> T getResult();
+
+    NutsSession getSession();
+    
+    NutsQuestion<T> session(NutsSession session);
+
+    NutsQuestion<T> setSession(NutsSession session);
+
+    @Override
+    NutsQuestion<T> configure(String... args);
+    
 }

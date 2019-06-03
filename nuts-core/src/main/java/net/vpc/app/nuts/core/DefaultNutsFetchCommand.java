@@ -350,12 +350,11 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
             }
             if (getValidSession().isTrace()) {
-                final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-                NutsIncrementalFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
+                NutsIncrementalOutputFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
                         .session(getValidSession());
-                ff.formatStart();
-                ff.formatNext(foundDefinition, -1);
-                ff.formatComplete(1);
+                ff.start();
+                ff.next(foundDefinition);
+                ff.complete();
             }
             return foundDefinition;
         }

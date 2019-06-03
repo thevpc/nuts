@@ -135,7 +135,7 @@ public interface NutsArgument extends NutsTokenFilter{
 
     /**
      * Throw an exception if the argument is null
-     * @return this instance
+     * @return {@code this} instance
      */
     NutsArgument required() throws NutsIllegalArgumentException;
 

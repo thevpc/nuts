@@ -9,13 +9,16 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsOutputFormat;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;
 import net.vpc.toolbox.mysql.util.AtName;
 
@@ -48,8 +51,8 @@ public class LocalMysql {
                     case "remove":
                         remove(cmd);
                         break;
-                    case "archive":
-                        archive(cmd);
+                    case "backup":
+                        backup(cmd);
                         break;
                     case "restore":
                         restore(cmd);
@@ -85,17 +88,28 @@ public class LocalMysql {
                 result.put(c.getName(), c.getConfig());
             }
         }
-        switch (context.getSession().getOutputFormat(NutsOutputFormat.PLAIN)) {
-            case PLAIN: {
-                for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {
-                    for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                        getContext().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
-                    }
+        NutsSession session = context.getSession();
+        if (session.isIncrementalOut()) {
+            session.getIncrementalOutputFormat().start();
+            for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {
+                for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
+                    session.getIncrementalOutputFormat().next(new Object[]{db.getKey(), cnf.getKey()});
                 }
-                break;
             }
-            default: {
-                context.getWorkspace().formatter().createObjectFormat(context.getSession(), result).print(context.out());
+            session.getIncrementalOutputFormat().complete();
+        } else {
+            switch (session.getOutputFormat()) {
+                case PLAIN: {
+                    for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {
+                        for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
+                            getContext().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    context.printOutObject(result);
+                }
             }
         }
     }
@@ -187,7 +201,11 @@ public class LocalMysql {
                         break;
                     }
                     default: {
-                        commandLine.unexpectedArgument();
+                        if (name == null) {
+                            name = AtName.nextAppOption(commandLine);
+                        } else {
+                            commandLine.unexpectedArgument("Already defined");
+                        }
                         break;
                     }
                 }
@@ -346,8 +364,8 @@ public class LocalMysql {
         }
     }
 
-    private void archiveOrRestore(NutsCommand commandLine, boolean archive) {
-        commandLine.setCommandName("mysql --local " + (archive ? "archive" : "restore"));
+    private void backupOrRestore(NutsCommand commandLine, boolean backup) {
+        commandLine.setCommandName("mysql --local " + (backup ? "backup" : "restore"));
         AtName name = null;
         String path = null;
         NutsArgument a;
@@ -372,9 +390,6 @@ public class LocalMysql {
                         }
                         break;
                     }
-                    default: {
-                        commandLine.unexpectedArgument();
-                    }
                 }
             } else {
                 if (name == null) {
@@ -389,24 +404,28 @@ public class LocalMysql {
         if (name == null) {
             name = new AtName("");
         }
-        if (path == null) {
-            commandLine.required();
-        }
         LocalMysqlConfigService c = loadMysqlConfig(name.getConfigName());
         LocalMysqlDatabaseConfigService d = c.getDatabaseOrError(name.getDatabaseName());
-        if (archive) {
-            d.archive(path);
-        } else {
-            d.restore(path);
+        if (path == null) {
+            if (backup) {
+                path = d.getDatabaseName() + new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date());
+            } else {
+                commandLine.required("missing --path");
+            }
+            if (backup) {
+                d.archive(path);
+            } else {
+                d.restore(path);
+            }
         }
     }
 
     public void restore(NutsCommand commandLine) {
-        archiveOrRestore(commandLine, false);
+        backupOrRestore(commandLine, false);
     }
 
-    public void archive(NutsCommand commandLine) {
-        archiveOrRestore(commandLine, true);
+    public void backup(NutsCommand commandLine) {
+        backupOrRestore(commandLine, true);
     }
 
     public void reset() {
@@ -430,7 +449,6 @@ public class LocalMysql {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        ;
         return all.toArray(new LocalMysqlConfigService[0]);
     }
 

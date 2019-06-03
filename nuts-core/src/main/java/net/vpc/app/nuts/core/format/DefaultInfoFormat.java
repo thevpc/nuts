@@ -25,7 +25,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
     private boolean fancy = false;
 
     public DefaultInfoFormat(NutsWorkspace ws) {
-        super(ws,"info");
+        super(ws, "info");
     }
 
     @Override
@@ -78,17 +78,18 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
     @Override
     public void print(Writer w) {
         NutsObjectFormat m = ws.formatter().createObjectFormat(getValidSession(), buildWorkspaceMap(isShowRepositories()));
+        List<String> args = new ArrayList<>();
+        args.add("--escape-text=false");
         if (isFancy()) {
-            List<String> args = new ArrayList<>();
             args.add("--multiline-property=nuts-runtime-path=:|;");
             args.add("--multiline-property=nuts-boot-runtime-path=:|;");
             args.add("--multiline-property=java.class.path=" + File.pathSeparator);
             args.add("--multiline-property=java-class-path=" + File.pathSeparator);
             args.add("--multiline-property=java.library.path=" + File.pathSeparator);
             args.add("--multiline-property=java-library-path=" + File.pathSeparator);
-            NutsCommand cmd = ws.parser().parseCommand(args.toArray(new String[0]));
-            m.configure(cmd, true);
         }
+        NutsCommand cmd = ws.parser().parseCommand(args.toArray(new String[0]));
+        m.configure(cmd, true);
         m.print(w);
     }
 
@@ -139,9 +140,9 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
             extraKeys = new TreeSet(extraProperties.keySet());
         }
 
-        props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
-        props.put("nuts-api-id", rtcontext.getApiId().toString());
-        props.put("nuts-runtime-id", rtcontext.getRuntimeId().toString());
+        props.put("nuts-api-version", stringValue(rtcontext.getApiId().getVersion().toString()));
+        props.put("nuts-api-id", stringValue(rtcontext.getApiId().toString()));
+        props.put("nuts-runtime-id", stringValue(rtcontext.getRuntimeId().toString()));
         URL[] cl = configManager.getBootClassWorldURLs();
         List<String> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
@@ -158,17 +159,16 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
             }
         }
 
-        props.put("nuts-runtime-path", CoreStringUtils.join(";", runtimeClassPath));
-        props.put("nuts-workspace", configManager.getWorkspaceLocation().toString());
-        props.put("nuts-workspace-id", configManager.getUuid());
-        props.put("nuts-secure", CoreCommonUtils.stringValue(ws.security().isSecure()));
-        props.put("nuts-store-layout", CoreCommonUtils.stringValue(configManager.getStoreLocationLayout()));
-        props.put("nuts-store-strategy", CoreCommonUtils.stringValue(configManager.getStoreLocationStrategy()));
-        props.put("nuts-repo-store-strategy", CoreCommonUtils.stringValue(configManager.getRepositoryStoreLocationStrategy()));
-        props.put("nuts-option-open-mode", CoreCommonUtils.stringValue(configManager.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.getOptions().getOpenMode()));
-        props.put("nuts-option-init", CoreCommonUtils.stringValue(configManager.getOptions().getInitMode()));
-        props.put("nuts-option-read-only", CoreCommonUtils.stringValue(configManager.getOptions().isReadOnly()));
-        props.put("nuts-option-skip-companions", CoreCommonUtils.stringValue(configManager.getOptions().isSkipInstallCompanions()));
+        props.put("nuts-runtime-path", stringValue(CoreStringUtils.join(";", runtimeClassPath)));
+        props.put("nuts-workspace", stringValue(configManager.getWorkspaceLocation().toString()));
+        props.put("nuts-workspace-id", stringValue(configManager.getUuid()));
+        props.put("nuts-secure", stringValue(ws.security().isSecure()));
+        props.put("nuts-store-layout", stringValue(configManager.getStoreLocationLayout()));
+        props.put("nuts-store-strategy", stringValue(configManager.getStoreLocationStrategy()));
+        props.put("nuts-repo-store-strategy", stringValue(configManager.getRepositoryStoreLocationStrategy()));
+        props.put("nuts-option-open-mode", stringValue(configManager.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.getOptions().getOpenMode()));
+        props.put("nuts-option-read-only", stringValue(configManager.getOptions().isReadOnly()));
+        props.put("nuts-option-skip-companions", stringValue(configManager.getOptions().isSkipInstallCompanions()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
         }
@@ -177,7 +177,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("java-classpath", System.getProperty("java.class.path"));
         props.put("java-library-path", System.getProperty("java.library.path"));
         props.put("os-name", ws.config().getPlatformOs().toString());
-        props.put("os-family", CoreCommonUtils.stringValue(ws.config().getPlatformOsFamily()));
+        props.put("os-family", stringValue(ws.config().getPlatformOsFamily()));
         if (ws.config().getPlatformOsDist() != null) {
             props.put("os-dist", ws.config().getPlatformOsDist().toString());
         }
@@ -185,10 +185,12 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("user-name", System.getProperty("user.name"));
         props.put("user-home", System.getProperty("user.home"));
         props.put("user-dir", System.getProperty("user.dir"));
-        props.put("creation-started", CoreCommonUtils.stringValue(new Date(ws.config().getCreationStartTimeMillis())));
-        props.put("creation-finished", CoreCommonUtils.stringValue(new Date(ws.config().getCreationFinishTimeMillis())));
+        props.put("command-line-long", ws.config().getOptions().format().compact(false).getBootCommandLine());
+        props.put("command-line-short", ws.config().getOptions().format().compact(true).getBootCommandLine());
+        props.put("creation-started", stringValue(new Date(ws.config().getCreationStartTimeMillis())));
+        props.put("creation-finished", stringValue(new Date(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
-        props.put("repositories-count", CoreCommonUtils.stringValue(ws.config().getRepositories().length));
+        props.put("repositories-count", stringValue(ws.config().getRepositories().length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.getProperty(extraKey));
         }
@@ -205,27 +207,27 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
 
     private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, String prefix) {
         LinkedHashMap<String, Object> props = new LinkedHashMap<>();
-        props.put(key(prefix, "name"), CoreCommonUtils.stringValue(repo.config().getName()));
+        props.put(key(prefix, "name"), stringValue(repo.config().getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
-        props.put(key(prefix, "uuid"), CoreCommonUtils.stringValue(repo.config().getUuid()));
+        props.put(key(prefix, "uuid"), stringValue(repo.config().getUuid()));
         props.put(key(prefix, "type"), repo.config().getType());
-        props.put(key(prefix, "speed"), CoreCommonUtils.stringValue(repo.config().getSpeed()));
-        props.put(key(prefix, "enabled"), CoreCommonUtils.stringValue(repo.config().isEnabled()));
-        props.put(key(prefix, "index-enabled"), CoreCommonUtils.stringValue(repo.config().isIndexEnabled()));
-        props.put(key(prefix, "index-subscribed"), CoreCommonUtils.stringValue(repo.config().isIndexSubscribed()));
+        props.put(key(prefix, "speed"), stringValue(repo.config().getSpeed()));
+        props.put(key(prefix, "enabled"), stringValue(repo.config().isEnabled()));
+        props.put(key(prefix, "index-enabled"), stringValue(repo.config().isIndexEnabled()));
+        props.put(key(prefix, "index-subscribed"), stringValue(repo.config().isIndexSubscribed()));
         props.put(key(prefix, "location"), repo.config().getLocation(false));
         if (repo.config().getLocation(false) != null) {
             props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
         }
-        props.put(key(prefix, "deploy-order"), CoreCommonUtils.stringValue(repo.config().getDeployOrder()));
-        props.put(key(prefix, "store-location-strategy"), CoreCommonUtils.stringValue(repo.config().getStoreLocationStrategy()));
-        props.put(key(prefix, "store-location"), CoreCommonUtils.stringValue(repo.config().getStoreLocation()));
+        props.put(key(prefix, "deploy-order"), stringValue(repo.config().getDeployOrder()));
+        props.put(key(prefix, "store-location-strategy"), stringValue(repo.config().getStoreLocationStrategy()));
+        props.put(key(prefix, "store-location"), stringValue(repo.config().getStoreLocation()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.name().toLowerCase()), CoreCommonUtils.stringValue(repo.config().getStoreLocation(value)));
+            props.put(key(prefix, "store-location-" + value.name().toLowerCase()), stringValue(repo.config().getStoreLocation(value)));
         }
-        props.put(key(prefix, "supported-mirroring"), CoreCommonUtils.stringValue(repo.config().isSupportedMirroring()));
+        props.put(key(prefix, "supported-mirroring"), stringValue(repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {
-            props.put(key(prefix, "mirrors-count"), CoreCommonUtils.stringValue((!repo.config().isSupportedMirroring()) ? 0 : repo.config().getMirrors().length));
+            props.put(key(prefix, "mirrors-count"), stringValue((!repo.config().isSupportedMirroring()) ? 0 : repo.config().getMirrors().length));
         }
         if (deep) {
             if (repo.config().isSupportedMirroring()) {
@@ -237,5 +239,8 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
             }
         }
         return props;
+    }
+    private String stringValue(Object s){
+        return CoreCommonUtils.stringValue(s);
     }
 }

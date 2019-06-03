@@ -36,6 +36,11 @@ package net.vpc.app.nuts;
  */
 public interface NutsConfigurable {
 
+    /**
+     * configure the current command with the given arguments.
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     Object configure(String... args);
 
     boolean configure(NutsCommand commandLine, boolean skipIgnored);

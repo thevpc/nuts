@@ -57,7 +57,7 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * update session
      *
      * @param session session
-     * @return this instance
+     * @return {@code this} instance
      */
     NutsWorkspaceCommand session(NutsSession session);
 
@@ -65,7 +65,7 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * update session
      *
      * @param session session
-     * @return this instance
+     * @return {@code this} instance
      */
     NutsWorkspaceCommand setSession(NutsSession session);
 
@@ -74,14 +74,14 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
      * @param args argument to configure with
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
     NutsWorkspaceCommand configure(String... args);
 
     /**
      * execute the command and return this instance
-     * @return this instance
+     * @return {@code this} instance
      */
     NutsWorkspaceCommand run();
 

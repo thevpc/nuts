@@ -11,21 +11,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import net.vpc.app.nuts.NutsSearchResult;
 
 /**
  *

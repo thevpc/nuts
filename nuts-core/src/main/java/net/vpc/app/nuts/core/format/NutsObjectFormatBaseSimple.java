@@ -84,7 +84,7 @@ public class NutsObjectFormatBaseSimple extends NutsObjectFormatBase {
             case TREE: {
                 NutsTreeFormat t = ws.formatter().createTreeFormat();
                 t.configure(ws.parser().parseCommand(extraConfig), true);
-                t.setModel(new MyNutsTreeModel(ws, rootName, data) {
+                t.setModel(new MyNutsTreeModel(ws, rootName, data, getValidSession()) {
                     @Override
                     protected String[] getMultilineArray(String key, Object value) {
                         return NutsObjectFormatBaseSimple.this.getMultilineArray(key, value);

@@ -132,6 +132,8 @@ public interface NutsCommand {
     NutsCommand unexpectedArgument();
 
     NutsCommand required();
+    
+    NutsCommand required(String errorMessage);
 
     NutsCommand pushBack(NutsArgument a);
 

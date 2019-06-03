@@ -27,22 +27,22 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin config";
         NutsArgument a;
-        if (cmdLine.next("delete log")!=null) {
+        if (cmdLine.next("delete log") != null) {
             deleteLog(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("delete var")!=null) {
+        } else if (cmdLine.next("delete var") != null) {
             deleteVar(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("delete programs")!=null) {
+        } else if (cmdLine.next("delete programs") != null) {
             deletePrograms(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("delete config")!=null) {
+        } else if (cmdLine.next("delete config") != null) {
             deleteConfig(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("delete cache")!=null) {
+        } else if (cmdLine.next("delete cache") != null) {
             deleteCache(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("cleanup")!=null) {
+        } else if (cmdLine.next("cleanup") != null) {
             boolean force = readForce(cmdLine, name);
             deleteCache(context, force);
             deleteLog(context, force);
@@ -82,8 +82,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             if (Files.exists(storeLocation)) {
                 context.out().printf("@@Deleting@@ ##%s## folder %s ...%n", name, storeLocation);
                 if (force
-                        || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefaultValue(false))) {
+                        || context.getTerminal().ask()
+                                .forBoolean("Force Delete").setDefaultValue(false).session(context.getSession())
+                                .getBooleanResult()) {
                     try {
                         Files.delete(storeLocation);
                     } catch (IOException ex) {
@@ -117,8 +118,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             if (Files.exists(s)) {
                 context.out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
-                        || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefaultValue(false))) {
+                        || context.getTerminal().ask()
+                                .forBoolean("Force Delete").setDefaultValue(false)
+                                .session(context.getSession()).getBooleanResult()) {
                     try {
                         Files.delete(s);
                     } catch (IOException ex) {

@@ -5,6 +5,8 @@ import net.vpc.app.nuts.NutsApplication;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NdiMain extends NutsApplication {
 
@@ -26,22 +28,19 @@ public class NdiMain extends NutsApplication {
         NutsCommand cmd = context.commandLine()
                 .setCommandName("ndi")
                 .required();
+        List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
+        ArrayList<String> ids = new ArrayList<>();
+        boolean force = false;
+        boolean trace = true;
+        boolean forceAll = false;
+        boolean fetch = false;
+        ArrayList<String> executorOptions = new ArrayList<>();
+        NutsExecutionType execType = null;
         NutsArgument a;
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
                 // ignore
             } else if ((a = cmd.next("in", "install")) != null) {
-                SystemNdi ndi = createNdi(context);
-                if (ndi == null) {
-                    throw new NutsExecutionException(context.getWorkspace(),"Platform not supported : " + context.getWorkspace().config().getPlatformOs(), 2);
-                }
-                boolean force = false;
-                boolean trace = true;
-                boolean forceAll = false;
-                boolean fetch = false;
-                boolean run = false;
-                ArrayList<String> executorOptions = new ArrayList<>();
-                NutsExecutionType execType = null;
                 while (cmd.hasNext()) {
                     if ((a = cmd.nextBoolean("-f", "--force")) != null) {
                         force = a.getValue().getBoolean();
@@ -71,36 +70,51 @@ public class NdiMain extends NutsApplication {
                     } else if (cmd.peek().isOption()) {
                         cmd.unexpectedArgument();
                     } else {
-                        run = true;
-                        NutsArgument aa = null;
-                        aa = cmd.next();
-                        if (cmd.isExecMode()) {
-                            try {
-                                ndi.createNutsScript(
-                                        new NdiScriptOptions().setId(aa.getString())
-                                                .setForce(force)
-                                                .setForceBoot(forceAll)
-                                                .setFetch(fetch)
-                                                .setTrace(trace)
-                                                .setExecType(execType)
-                                                .setExecutorOptions(executorOptions)
-                                );
-                            } catch (IOException e) {
-                                throw new NutsExecutionException(context.getWorkspace(),"Unable to run script " + aa + " : " + e.toString(), e);
-                            }
-                        }
+                        ids.add(cmd.next().getString());
                     }
-                }
-                if (!run) {
-                    throw new NutsExecutionException(context.getWorkspace(),"Missing arguments", 1);
-                }
-                try {
-                    ndi.configurePath(force, trace);
-                } catch (IOException e) {
-                    throw new NutsExecutionException(context.getWorkspace(),"Unable to configure path : " + e.toString(), e);
                 }
             } else {
                 cmd.unexpectedArgument();
+            }
+        }
+
+        if (ids.isEmpty()) {
+            cmd.required();
+        }
+        if (cmd.isExecMode()) {
+            SystemNdi ndi = createNdi(context);
+            if (ndi == null) {
+                throw new NutsExecutionException(context.getWorkspace(), "Platform not supported : " + context.getWorkspace().config().getPlatformOs(), 2);
+            }
+            boolean subTrace = trace;
+            if (!context.getSession().isPlainTrace()) {
+                subTrace = false;
+            }
+            for (String id : ids) {
+                try {
+                    result.addAll(
+                            Arrays.asList(
+                                    ndi.createNutsScript(
+                                            new NdiScriptOptions().setId(id)
+                                                    .setForce(force)
+                                                    .setForceBoot(forceAll)
+                                                    .setFetch(fetch)
+                                                    .setTrace(subTrace)
+                                                    .setExecType(execType)
+                                                    .setExecutorOptions(executorOptions)
+                                    )
+                            ));
+                } catch (IOException e) {
+                    throw new NutsExecutionException(context.getWorkspace(), "Unable to run script " + id + " : " + e.toString(), e);
+                }
+            }
+            try {
+                ndi.configurePath(force, trace);
+            } catch (IOException e) {
+                throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
+            }
+            if(trace){
+                context.printOutObject(context.out());
             }
         }
     }
@@ -108,8 +122,7 @@ public class NdiMain extends NutsApplication {
     @Override
     protected void onInstallApplication(NutsApplicationContext context) {
         NutsCommand cmd = context.commandLine()
-                .setCommandName("ndi --nuts-exec-mode=on-install")
-                ;
+                .setCommandName("ndi --nuts-exec-mode=on-install");
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
@@ -127,21 +140,31 @@ public class NdiMain extends NutsApplication {
             try {
                 ndi.configurePath(force, trace);
             } catch (IOException e) {
-                throw new NutsExecutionException(context.getWorkspace(),"ndi: install failed : " + e.toString(), 1);
+                throw new NutsExecutionException(context.getWorkspace(), "ndi: install failed : " + e.toString(), 1);
+            }
+            List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
+            boolean subTrace = trace;
+            if (context.getSession().isPlainOut()) {
+                subTrace = false;
             }
             for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin"}) {
                 try {
-                    ndi.createNutsScript(
-                            new NdiScriptOptions().setId(s)
-                                    .setForce(force)
-                                    .setForceBoot(false)
-                                    .setFetch(false)
-                                    .setTrace(trace)
-                                    .setExecType(NutsExecutionType.SPAWN)
-                                    .setExecutorOptions(new ArrayList<>()));
+                    result.addAll(Arrays.asList(
+                            ndi.createNutsScript(
+                                    new NdiScriptOptions().setId(s)
+                                            .setForce(force)
+                                            .setForceBoot(false)
+                                            .setFetch(false)
+                                            .setTrace(subTrace)
+                                            .setExecType(NutsExecutionType.SPAWN)
+                                            .setExecutorOptions(new ArrayList<>()))
+                    ));
                 } catch (IOException e) {
-                    throw new NutsExecutionException(context.getWorkspace(),"ndi: " + s + "install failed : " + e.toString(), 1);
+                    throw new NutsExecutionException(context.getWorkspace(), "ndi: " + s + "install failed : " + e.toString(), 1);
                 }
+            }
+            if (trace && !context.getSession().isPlainOut()) {
+                context.printOutObject(result);
             }
         }
     }

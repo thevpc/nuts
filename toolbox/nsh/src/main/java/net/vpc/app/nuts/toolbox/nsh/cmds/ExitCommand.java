@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
-import net.vpc.common.javashell.QuitShellException;
+import net.vpc.common.javashell.JShellQuitException;
 
 /**
  * Created by vpc on 1/7/17.
@@ -69,7 +69,7 @@ public class ExitCommand extends SimpleNshCommand {
     @Override
     protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        throw new QuitShellException(options.code);
+        throw new JShellQuitException(options.code);
     }
 
 }

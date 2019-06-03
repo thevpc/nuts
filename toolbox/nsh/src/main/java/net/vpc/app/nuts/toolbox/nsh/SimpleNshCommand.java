@@ -30,12 +30,9 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.NutsObjectFormat;
-import net.vpc.app.nuts.NutsOutputFormat;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
@@ -43,7 +40,6 @@ import net.vpc.app.nuts.NutsWorkspace;
  * @author vpc
  */
 public abstract class SimpleNshCommand extends AbstractNshCommand {
-
 
     public SimpleNshCommand(String name, int supportLevel) {
         super(name, supportLevel);
@@ -54,13 +50,12 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         private NutsCommandContext context;
         private String[] args;
         private Object options;
-        private List<String> displayOptions = new ArrayList<>();
         private int exitCode = 0;
         private Object outObject;
         private Object errObject;
         private boolean err;
 
-        public SimpleNshCommandContext(String[] args,NutsCommandContext context, Object configObject) {
+        public SimpleNshCommandContext(String[] args, NutsCommandContext context, Object configObject) {
             this.context = context;
             this.options = configObject;
             this.args = args;
@@ -69,7 +64,6 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         public String[] getArgs() {
             return args;
         }
-        
 
         public <T> T getResult() {
             return (T) (err ? errObject : outObject);
@@ -99,10 +93,6 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
             this.exitCode = exitCode;
         }
 
-        public String[] getDisplayOptions() {
-            return displayOptions.toArray(new String[0]);
-        }
-
         public NutsCommandContext getCommandContext() {
             return context;
         }
@@ -111,6 +101,10 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
             return context.getShell();
         }
 
+        public NutsSession getSession() {
+            return context.getSession();
+        }
+        
         public <T> T getOptions() {
             return (T) options;
         }
@@ -128,8 +122,12 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
             return context.err();
         }
 
-        public void printObject(Object any, String[] options) {
-            context.printObject(any, options, false);
+        public void printObject(Object any) {
+            if (err) {
+                context.printErrObject(any);
+            } else {
+                context.printOutObject(any);
+            }
         }
 
         public NutsWorkspace getWorkspace() {
@@ -139,14 +137,9 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         public NutsShellContext getGlobalContext() {
             return context.getGlobalContext();
         }
-
-        public SimpleNshCommandContext addDisplayOption(String sort) {
-            displayOptions.add(sort);
-            return this;
-        }
     }
 
-    protected abstract Object createOptions() ;
+    protected abstract Object createOptions();
 
     protected abstract boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context);
 
@@ -158,7 +151,7 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         int maxLoops = 1000;
         boolean robustMode = false;
         NutsCommand commandLine = context.getWorkspace().parser().parseCommand(args);
-        SimpleNshCommandContext context2 = new SimpleNshCommandContext(args,context, createOptions());
+        SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {
             if (robustMode) {
                 String[] before = commandLine.toArray();
@@ -203,13 +196,18 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
     }
 
     protected void printObject(Object result, SimpleNshCommandContext context) {
-        switch (context.getCommandContext().getSession().getOutputFormat(NutsOutputFormat.PLAIN)) {
-            case PLAIN: {
-                printObjectPlain(context);
-                break;
-            }
-            default: {
-                printObject0(context);
+        NutsSession session = context.getCommandContext().getSession();
+        if (session.isIncrementalTrace()) {
+            //already processed
+        } else {
+            switch (session.getOutputFormat()) {
+                case PLAIN: {
+                    printObjectPlain(context);
+                    break;
+                }
+                default: {
+                    printObject0(context);
+                }
             }
         }
     }
@@ -219,9 +217,7 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
     }
 
     protected void printObject0(SimpleNshCommandContext context) {
-        final NutsObjectFormat o = context.getWorkspace().formatter().createObjectFormat(context.getCommandContext().getSession(), context.getResult());
-        o.configure(context.getWorkspace().parser().parseCommand(context.getDisplayOptions()), true);
-        o.print(context.out());
+        context.printObject(context.getResult());
     }
 
 }

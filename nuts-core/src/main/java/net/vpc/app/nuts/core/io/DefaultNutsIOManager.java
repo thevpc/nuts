@@ -416,7 +416,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis) {
-        return new DefaultNutsApplicationContext(ws, appClass, storeId, startTimeMillis);
+        return new DefaultNutsApplicationContext(ws, args, appClass, storeId, startTimeMillis);
     }
 
     @Override

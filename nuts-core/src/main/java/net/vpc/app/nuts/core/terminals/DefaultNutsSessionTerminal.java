@@ -56,7 +56,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public InputStream in() {
-       return getIn();
+        return getIn();
     }
 
     @Override
@@ -260,9 +260,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public <T> T ask(NutsQuestion<T> question) {
-        return new DefaultNutsQuestionExecutor<T>(ws, question, this, fout())
-                .execute();
+    public <T> NutsQuestion<T> ask() {
+        return new DefaultNutsQuestionExecutor<T>(ws, this, fout());
     }
 
     @Override

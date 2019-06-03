@@ -36,36 +36,37 @@ import java.io.PrintWriter;
  *
  * @author vpc
  */
-public interface NutsIncrementalFormat extends NutsConfigurable{
+public interface NutsIncrementalOutputFormat extends NutsConfigurable {
 
-    NutsIncrementalFormat out(PrintStream out);
+    NutsIncrementalOutputFormat out(PrintStream out);
 
-    NutsIncrementalFormat setOut(PrintStream out);
+    NutsIncrementalOutputFormat setOut(PrintStream out);
 
-    NutsIncrementalFormat out(PrintWriter out);
+    NutsIncrementalOutputFormat out(PrintWriter out);
 
-    NutsIncrementalFormat setOut(PrintWriter out);
+    NutsIncrementalOutputFormat setOut(PrintWriter out);
 
-    NutsIncrementalFormat session(NutsSession session);
+    NutsIncrementalOutputFormat session(NutsSession session);
 
-    NutsIncrementalFormat setSession(NutsSession session);
+    NutsIncrementalOutputFormat setSession(NutsSession session);
 
-    NutsOutputFormat getSupportedFormat();
+    NutsOutputFormat getOutputFormat();
 
-    void formatStart();
+    void start();
 
-    void formatNext(Object object, long index);
+    void next(Object object);
 
-    void formatComplete(long count);
+    void complete();
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param args argument to configure with
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
-    NutsIncrementalFormat configure(String ... args);
+    NutsIncrementalOutputFormat configure(String... args);
 
 }

@@ -9,28 +9,30 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class LinuxNdi implements SystemNdi {
 
-    private NutsApplicationContext appContext;
+    private NutsApplicationContext context;
 
     public LinuxNdi(NutsApplicationContext appContext) {
-        this.appContext = appContext;
+        this.context = appContext;
     }
 
     @Override
-    public void createNutsScript(NdiScriptOptions options) throws IOException {
+    public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
         if ("nuts".equals(options.getId())) {
-            createBootScript(options.isForceBoot() || options.isForce(), true);
+            return createBootScript(options.isForceBoot() || options.isForce(), true);
         } else {
-            createBootScript(false, false);
-            NutsId nutsId = appContext.getWorkspace().parser().parseId(options.getId());
+            List<NdiScriptnfo> r = new ArrayList<>();
+            r.addAll(Arrays.asList(createBootScript(false, false)));
+            NutsId nutsId = context.getWorkspace().parser().parseId(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isBlank()) {
-                fetched = appContext.getWorkspace().search().id(options.getId()).latest().getResultDefinitions().required();
+                fetched = context.getWorkspace().search().id(options.getId()).latest().getResultDefinitions().required();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
@@ -44,12 +46,12 @@ public class LinuxNdi implements SystemNdi {
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
             if (!options.isForce() && exists) {
-                if (options.isTrace()) {
-                    appContext.out().printf("Script already exists ==%s==%n", ff);
+                if (options.isTrace() && context.getSession().isPlainTrace()) {
+                    context.out().printf("Script already exists ==%s==%n", ff);
                 }
             } else {
                 final NutsId fnutsId = nutsId;
-                createScript(n, options.isTrace(), nutsId.toString(),
+                NdiScriptnfo p = createScript(n, fnutsId, options.isTrace(), nutsId.toString(),
                         x -> {
                             switch (x) {
                                 case "NUTS_ID":
@@ -68,45 +70,56 @@ public class LinuxNdi implements SystemNdi {
                             return null;
                         }
                 );
+                r.add(p);
             }
+            return r.toArray(new NdiScriptnfo[0]);
         }
     }
 
-    public void createBootScript(boolean force, boolean trace) throws IOException {
-        NutsId b = appContext.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getApiId();
-        NutsDefinition f = appContext.getWorkspace().search().id(b).setOptional(false).latest().getResultDefinitions().required();
+    public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
+        NutsId b = context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getApiId();
+        NutsDefinition f = context.getWorkspace().search().id(b).setOptional(false).latest().getResultDefinitions().required();
         Path ff = getScriptFile("nuts");
+        List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {
-            if (trace) {
-                appContext.out().printf("Script already exists ==%s==%n", ff);
+            if (trace && context.getSession().isPlainTrace()) {
+                context.out().printf("Script already exists ==%s==%n", ff);
             }
         } else {
-            createScript("nuts", trace, f.getId().getLongName(),
-                    x -> {
-                        switch (x) {
-                            case "NUTS_ID":
-                                return "BOOT : " + f.getId().toString();
-                            case "BODY":
-                                return NdiUtils.generateScriptAsString("/net/vpc/app/nuts/toolbox/template_nuts_linux.text",
-                                        ss -> {
-                                            switch (ss) {
-                                                case "NUTS_JAR":
-                                                    return f.getPath().toString();
-                                            }
-                                            return null;
-                                        }
-                                );
-                        }
-                        return null;
-                    }
-            );
+            all.add(
+                    createScript("nuts", b, trace, f.getId().getLongName(),
+                            x -> {
+                                switch (x) {
+                                    case "NUTS_ID":
+                                        return "BOOT : " + f.getId().toString();
+                                    case "BODY":
+                                        return NdiUtils.generateScriptAsString("/net/vpc/app/nuts/toolbox/template_nuts_linux.text",
+                                                ss -> {
+                                                    switch (ss) {
+                                                        case "NUTS_JAR":
+                                                            return f.getPath().toString();
+                                                    }
+                                                    return null;
+                                                }
+                                        );
+                                }
+                                return null;
+                            }
+                    ));
         }
-        Path ff2 = appContext.getWorkspace().config().getWorkspaceLocation().resolve("nuts");
+        Path ff2 = context.getWorkspace().config().getWorkspaceLocation().resolve("nuts");
         if (!force && Files.exists(ff2)) {
-            if (trace) {
-                appContext.out().printf("Script already exists ==%s==%n", ff2);
+            if (trace && context.getSession().isPlainTrace()) {
+                context.out().printf("Script already exists ==%s==%n", ff2);
             }
         } else {
+            if (trace && context.getSession().isPlainTrace()) {
+                if (force) {
+                    context.out().printf("Force updating ==%s== %n", ff2.toString());
+                } else {
+                    context.out().printf("Updating ==%s== %n", ff2.toString());
+                }
+            }
             try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
                 NdiUtils.generateScript("/net/vpc/app/nuts/toolbox/template_body_linux.text", w, x -> {
                     switch (x) {
@@ -125,7 +138,9 @@ public class LinuxNdi implements SystemNdi {
                 });
             }
             NdiUtils.setExecutable(ff2);
+            all.add(new NdiScriptnfo("nuts", b, ff2));
         }
+        return all.toArray(new NdiScriptnfo[0]);
     }
 
     public String longuestCommonParent(String path1, String path2) {
@@ -151,7 +166,7 @@ public class LinuxNdi implements SystemNdi {
         boolean updatedBashrc = false;
         boolean updatedNdirc = false;
         List<String> lines = new ArrayList<>();
-        Path programsFolder = appContext.getProgramsFolder();
+        Path programsFolder = context.getProgramsFolder();
         String goodLine = "source ~/.nuts-ndirc";
         if (bashrc.isFile()) {
             String fileContent = IOUtils.loadString(bashrc);
@@ -192,9 +207,9 @@ public class LinuxNdi implements SystemNdi {
         goodNdiRc.append("# This file aims to prepare bash environment against current nuts\n");
         goodNdiRc.append("# workspace installation.\n");
         goodNdiRc.append("#\n");
-        goodNdiRc.append("NUTS_VERSION='").append(appContext.getWorkspace().config().getApiId().getVersion().getValue()).append("'\n");
-        goodNdiRc.append("NUTS_JAR='").append(appContext.getWorkspace().search().id(appContext.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
-        goodNdiRc.append("NUTS_WORKSPACE='").append(appContext.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
+        goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().getApiId().getVersion().getValue()).append("'\n");
+        goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search().id(context.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
+        goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("PATH='").append(programsFolder).append("':$PATH\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");
 
@@ -207,69 +222,85 @@ public class LinuxNdi implements SystemNdi {
         }
         if ((force || updatedBashrc || updatedNdirc) && trace) {
             if (force) {
-                    appContext.out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
+                if (context.getSession().isPlainOut()) {
+                    context.out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                }
             } else {
-                if (updatedNdirc && updatedBashrc) {
-                    appContext.out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
-                }else if (updatedNdirc) {
-                    appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", appContext.getWorkspace().config().getWorkspaceLocation());
-                }else if (updatedBashrc) {
-                    appContext.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
+                if (context.getSession().isPlainOut()) {
+                    if (updatedNdirc && updatedBashrc) {
+                        context.out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                    } else if (updatedNdirc) {
+                        context.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", context.getWorkspace().config().getWorkspaceLocation());
+                    } else if (updatedBashrc) {
+                        context.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                    }
                 }
             }
-            appContext.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
+            if (context.getSession().isPlainOut()) {
+                context.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
+            }
             if (updatedNdirc || updatedBashrc) {
+
                 while (true) {
-                    if (appContext.getWorkspace().config().getOptions().isYes()) {
-                        break;
-                    }
-                    if (appContext.getWorkspace().config().getOptions().isNo()) {
-                        return;
-                    }
-                    String r = appContext.getTerminal().ask(
-                            NutsQuestion.forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
-                    );
-                    if ("ok".equalsIgnoreCase(r)) {
-                        break;
-                    }
-                    if ("why".equalsIgnoreCase(r)) {
-                        appContext.out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
-                        appContext.out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
-                        appContext.out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                        appContext.out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
-                        appContext.out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                        appContext.out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
-                    } else if ("cancel".equalsIgnoreCase(r)) {
-                        return;
-                    } else {
-                        appContext.out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !%n");
+                    switch (context.getSession().getConfirm()) {
+                        case CANCEL: {
+                            throw new NutsUserCancelException(context.getWorkspace());
+                        }
+                        case YES: {
+                            return;
+                        }
+                        case NO: {
+                            return;
+                        }
+                        case ASK: {
+                            String r = context.getTerminal().ask()
+                                    .forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
+                                    .session(context.getSession())
+                                    .getResult();
+                            if ("ok".equalsIgnoreCase(r)) {
+                                break;
+                            }
+                            if ("why".equalsIgnoreCase(r)) {
+                                context.out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
+                                context.out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
+                                context.out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
+                                context.out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
+                                context.out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
+                                context.out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
+                            } else if ("cancel".equalsIgnoreCase(r)) {
+                                return;
+                            } else {
+                                context.out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !%n");
+                            }
+                        }
                     }
                 }
+
             }
         }
     }
 
     public Path getScriptFile(String name) {
-        Path bin = appContext.getProgramsFolder();
+        Path bin = context.getProgramsFolder();
         return bin.resolve(name);
     }
 
-    public Path createScript(String name, boolean trace, String desc, Function<String, String> mapper) throws IOException {
+    public NdiScriptnfo createScript(String name, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) throws IOException {
         Path script = getScriptFile(name);
         if (script.getParent() != null) {
             if (!Files.exists(script.getParent())) {
                 Files.createDirectories(script.getParent());
             }
         }
-        if (trace) {
-            appContext.out().printf("Install %s script ==%s== for ==%s== at ==%s==%n", Files.exists(script) ? "(with override)" : "", script.getFileName(), desc, script);
+        if (trace && context.getSession().isPlainTrace()) {
+            context.out().printf("Install %s script ==%s== for ==%s== at ==%s==%n", Files.exists(script) ? "(with override)" : "", script.getFileName(), desc, script);
         }
 
         try (BufferedWriter w = Files.newBufferedWriter(script)) {
             NdiUtils.generateScript("/net/vpc/app/nuts/toolbox/template_body_linux.text", w, mapper);
         }
         NdiUtils.setExecutable(script);
-        return script;
+        return new NdiScriptnfo(name, fnutsId, script);
     }
 
 }

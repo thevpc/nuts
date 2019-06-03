@@ -59,40 +59,61 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         super();
         this.workspace = workspace;
         this.session = (workspace == null ? null : workspace.createSession());
-        this.terminalMode=workspace.io().getSystemTerminal().getOutMode();
+        this.terminalMode = workspace.io().getSystemTerminal().getOutMode();
     }
 
     public NutsJavaShellEvalContext(JShellContext parentContext) {
         super(parentContext);
 //        if (parentContext instanceof NutsJavaShellEvalContext) {
-            NutsJavaShellEvalContext parentContext1 = (NutsJavaShellEvalContext) parentContext;
-            this.commandContext = parentContext1.commandContext.copy();
-            this.commandContext.getUserProperties().put(JShellContext.class.getName(), this);
-            this.workspace = parentContext1.workspace;
-            this.session = (this.workspace == null ? null : this.workspace.createSession());
-            this.terminalMode=parentContext1.getTerminalMode();
+        NutsJavaShellEvalContext parentContext1 = (NutsJavaShellEvalContext) parentContext;
+        this.commandContext = parentContext1.commandContext.copy();
+        this.commandContext.getUserProperties().put(JShellContext.class.getName(), this);
+        this.workspace = parentContext1.workspace;
+        this.session = (this.workspace == null ? null : this.workspace.createSession());
+        this.terminalMode = parentContext1.getTerminalMode();
 //        }
     }
 
-    public NutsJavaShellEvalContext(NutsJavaShell shell, String[] args, Node root, Node parent, NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables env) {
+    public NutsJavaShellEvalContext(NutsJavaShell shell, String[] args, Node root, Node parent, NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
         super(shell);
-        setEnv(env);
-        setRoot(root);
-        setArgs(args);
-        setParent(parent);
-        setEnv(env);
         this.commandContext = parentContext;//.copy();
-        this.workspace = workspace==null?parentContext.getWorkspace():workspace;
+        this.workspace = workspace == null ? parentContext.getWorkspace() : workspace;
         if (session == null) {
             if (this.workspace != null) {
                 session = this.workspace.createSession();
             }
         }
         this.session = session;
-            this.terminalMode=parentContext!=null?parentContext.getTerminalMode():
-                    this.workspace!=null?this.workspace.io().getSystemTerminal().getOutMode():
-                    NutsTerminalMode.FORMATTED
-                    ;
+        this.terminalMode = parentContext != null ? parentContext.getTerminalMode()
+                : this.workspace != null ? this.workspace.io().getSystemTerminal().getOutMode()
+                        : NutsTerminalMode.FORMATTED;
+        setRoot(root);
+        setArgs(args);
+        setParent(parent);
+        if (parentContext != null) {
+            vars().set(parentContext.vars());
+            setBuiltins(parentContext.builtins());
+            for (String a : parentContext.aliases().getAll()) {
+                aliases().set(a, parentContext.aliases().get(a));
+            }
+        } else {
+            for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+                vars().export(entry.getKey(), entry.getValue());
+            }
+            setBuiltins(new NutsJavaShell.NutsBuiltinManager());
+            JShellAliasManager a = aliases();
+            a.set(".", "source");
+            a.set("[", "test");
+
+            a.set("ll", "ls");
+            a.set("..", "cd ..");
+            a.set("...", "cd ../..");
+        }
+        if (vars != null) {
+            for (Map.Entry<Object, Object> entry : vars.getAll().entrySet()) {
+                vars().set((String) entry.getKey(), (String) entry.getValue());
+            }
+        }
     }
 
     public NutsShellContext getCommandContext() {
@@ -101,7 +122,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
 
     @Override
     public NutsSessionTerminal getTerminal() {
-        if(terminal!=null){
+        if (terminal != null) {
             return terminal;
         }
         if (commandContext != null) {
@@ -146,7 +167,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             this.commandContext = o.commandContext;
             this.terminalMode = o.terminalMode;
             this.verbose = o.verbose;
-            this.session = o.session==null?null:o.session.copy();
+            this.session = o.session == null ? null : o.session.copy();
         }
     }
 
@@ -342,8 +363,30 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
 
     @Override
     public NutsShellContext setTerminal(NutsSessionTerminal terminal) {
-        this.terminal=terminal;
+        this.terminal = terminal;
         return this;
     }
-    
+
+//    @Override
+    public NutsShellContext printObject(Object anyObject, PrintStream out) {
+        NutsObjectFormat a = this.getWorkspace().formatter().createObjectFormat(this.getSession(), anyObject);
+        a.configure(
+                this.getWorkspace().parser().parseCommand(this.getWorkspace().config().getOptions().getOutputFormatOptions()), true
+        );
+        a.configure(
+                this.getWorkspace().parser().parseCommand(this.getSession().getOutputFormatOptions()), true
+        );
+        a.println(out);
+        return this;
+    }
+
+    @Override
+    public NutsShellContext printOutObject(Object anyObject) {
+        return printObject(anyObject, out());
+    }
+
+    @Override
+    public NutsShellContext printErrObject(Object anyObject) {
+        return printObject(anyObject, err());
+    }
 }

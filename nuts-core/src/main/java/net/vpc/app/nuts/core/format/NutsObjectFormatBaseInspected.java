@@ -79,11 +79,11 @@ public class NutsObjectFormatBaseInspected extends NutsObjectFormatBase {
                 t.addHeaderCells("Name", "Value");
                 for (Map.Entry<String, String> entry : ObjectOutputFormatWriterHelper.indentMap(toMap(), "").entrySet()) {
                     t.newRow();
-                    String[] arr = getMultilineArray(CoreCommonUtils.stringValue(entry.getKey()), entry.getValue());
+                    String[] arr = getMultilineArray(stringValue(entry.getKey()), entry.getValue());
                     if (arr == null) {
-                        t.addCells(CoreCommonUtils.stringValue(entry.getKey()), CoreCommonUtils.stringValue(entry.getValue()));
+                        t.addCells(stringValue(entry.getKey()), stringValue(entry.getValue()));
                     } else {
-                        t.addCells(CoreCommonUtils.stringValue(entry.getKey()), arr[0]);
+                        t.addCells(stringValue(entry.getKey()), arr[0]);
                         for (int i = 1; i < arr.length; i++) {
                             t.newRow();
                             t.addCells("", arr[i]);
@@ -96,7 +96,7 @@ public class NutsObjectFormatBaseInspected extends NutsObjectFormatBase {
             case TREE: {
                 NutsTreeFormat t = ws.formatter().createTreeFormat();
                 t.configure(ws.parser().parseCommand(extraConfig), true);
-                t.setModel(new MyNutsTreeModel(ws, rootName, toMap()) {
+                t.setModel(new MyNutsTreeModel(ws, rootName, toMap(),getValidSession()) {
                     @Override
                     protected String[] getMultilineArray(String key, Object value) {
                         return NutsObjectFormatBaseInspected.this.getMultilineArray(key, value);
@@ -125,7 +125,7 @@ public class NutsObjectFormatBaseInspected extends NutsObjectFormatBase {
         if (sep == null) {
             return null;
         }
-        String[] vv = CoreCommonUtils.stringValue(value).split(sep);
+        String[] vv = stringValue(value).split(sep);
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
@@ -143,5 +143,9 @@ public class NutsObjectFormatBaseInspected extends NutsObjectFormatBase {
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {
         multilineProperties.put(property, separator);
         return this;
+    }
+    
+     public String stringValue(Object o) {
+        return CoreCommonUtils.stringValueFormatted(o, ws, getValidSession());
     }
 }

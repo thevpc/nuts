@@ -124,6 +124,8 @@ public class EnvCommand extends SimpleNshCommand {
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
+                        }else if (a.isOption()) {
+                            return false;
                         } else {
                             options.command.add(a.getString());
                             commandLine.skip();
@@ -156,7 +158,7 @@ public class EnvCommand extends SimpleNshCommand {
     protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.sort) {
-            context.addDisplayOption("--sort");
+            context.getSession().addOutputFormatOptions("--sort");
         }
         LinkedHashMap<String, String> env = new LinkedHashMap<>();
         if (!options.ignoreEnvironment) {

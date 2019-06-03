@@ -87,7 +87,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         HashMap<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().config().getOptions().getExportedBootArgumentsString();
+        String bootArgumentsString = executionContext.getWorkspace().config().getOptions()
+                .format().exported().compact().getBootCommandLine();
         if (!CoreStringUtils.isBlank(bootArgumentsString)) {
             osEnv.put("nuts_boot_args", bootArgumentsString);
             joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -147,7 +148,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         xargs.addAll(joptions.getApp());
         args.addAll(joptions.getApp());
-        if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command",false)) {
+        if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
             PrintStream out = executionContext.getTerminal().fout();
             out.println("==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {

@@ -879,7 +879,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
         }
         defaultCommandFactory.installCommand(command);
-        if (session.isTrace()) {
+        if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(ws, session);
             out.printf("[[install]] command alias ==%s==%n", command.getName());
         }
@@ -900,7 +900,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new NutsIllegalArgumentException(ws, "Command alias does not exists " + name);
         }
         defaultCommandFactory.uninstallCommand(name);
-        if (session.isTrace()) {
+        if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(ws, session);
             out.printf("[[uninstall]] command alias ==%s==%n", name);
         }

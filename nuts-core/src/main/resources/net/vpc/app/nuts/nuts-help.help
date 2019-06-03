@@ -77,9 +77,9 @@ Java         Version: ${java.version} (${java.vm.name})
       (when [[--system-config-home]] is not specified). workspace location contains both config and component 
       data (from repositories).
 
- [[--login]]     {{\<login\>}}
- [[-o]]     {{\<login\>}}
-      workspace login
+ [[--user]]      {{\<username\>}}
+ [[-u]]          {{\<username\>}}
+      workspace username
       if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
       specify user credentials (see --password)
 
@@ -87,7 +87,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[-p]]  {{\<password\>}}
       workspace password
       if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
-      specify user credentials (see --login)
+      specify user credentials (see --user)
 
  [[-V]] {{\<boot-api-version\>}}
  [[--boot-version]] {{\<boot-api-version\>}}
@@ -365,8 +365,14 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--recover]]  or [[-0]]
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
 
- [[--init=]]reset|cleanup
+ [[--init=]]reset
        reset (delete) ==nuts== workspace folder before starting the workspace
+ 
+[[--init=]]recover
+       reset boot libraries cache before starting the workspace
+
+ [[--init=]]clanup
+       delete cache,log and temp folders before starting the workspace
 
  [[--embedded]]  or [[-b]]
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)

@@ -200,11 +200,11 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
-                if (getValidSession().isTrace()) {
+                if (getValidSession().isPlainTrace()) {
                     out.printf("%N uninstalled ##successfully##%n", ws.formatter().createIdFormat().toString(id));
                 }
             } else {
-                if (getValidSession().isTrace()) {
+                if (getValidSession().isPlainTrace()) {
                     out.printf("%N @@could not@@ be uninstalled%n", ws.formatter().createIdFormat().toString(id));
                 }
             }

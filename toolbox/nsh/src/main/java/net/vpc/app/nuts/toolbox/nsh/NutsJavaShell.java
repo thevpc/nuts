@@ -109,7 +109,6 @@ public class NutsJavaShell extends JShell {
             allCommand.add(command);
         }
         context.builtins().set(allCommand.toArray(new JShellCommand[0]));
-        context.setShell(this);
         context.getUserProperties().put(JShellContext.class.getName(), context);
         try {
             histFile = this.workspace.config().getStoreLocation(this.workspace.resolveIdForClass(NutsJavaShell.class),
@@ -145,32 +144,22 @@ public class NutsJavaShell extends JShell {
             JShellCommand exec = context.builtins().get(command[0]);
             return exec.exec(Arrays.copyOfRange(command, 1, command.length), context.createCommandContext(exec));
         } catch (Exception ex) {
-            return onResult(1, ex,context);
+            return onResult(1, ex, context);
         }
     }
 
     @Override
     public NutsShellContext createContext() {
-        NutsShellContext global = createContext(context, null, null, null, args);
-        global.setBuiltinManager(new NutsBuiltinManager());
-
-        JShellAliasManager a = global.aliases();
-        a.set(".", "source");
-        a.set("[", "test");
-
-        a.set("ll", "ls");
-        a.set("..", "cd ..");
-        a.set("...", "cd ../..");
-        return global;
+        return createContext(null, null, null, null, null);
     }
 
     @Override
-    public JShellContext createContext(JShellContext parentContext) {
-        return new NutsJavaShellEvalContext(parentContext);
+    public JShellContext createContext(JShellContext ctx) {
+        return createContext((NutsShellContext) ctx, null, null, null, null);
     }
 
-    public NutsShellContext createContext(NutsShellContext commandContext, Node root, Node parent, JShellVariables env, String[] args) {
-        return new NutsJavaShellEvalContext(this, args, root, parent, commandContext, workspace, appContext.getSession(), env);
+    public NutsShellContext createContext(NutsShellContext ctx, Node root, Node parent, JShellVariables env, String[] args) {
+        return new NutsJavaShellEvalContext(this, args, root, parent, ctx, workspace, appContext.getSession(), env);
     }
 
     public int runFile(String file, String[] args) {
@@ -295,7 +284,7 @@ public class NutsJavaShell extends JShell {
             String line = null;
             try {
                 line = terminal.readLine(prompt);
-            } catch (InterruptShellException ex) {
+            } catch (JShellInterruptException ex) {
                 terminal.ferr().printf("@@Exit Shell@@: ==%s==\n", ex.getMessage());
                 break;
             }
@@ -305,7 +294,7 @@ public class NutsJavaShell extends JShell {
             if (line.trim().length() > 0) {
                 try {
                     runLine(line);
-                } catch (QuitShellException q) {
+                } catch (JShellQuitException q) {
                     try {
                         if (histFile != null) {
                             getHistory().save(histFile);
@@ -352,16 +341,17 @@ public class NutsJavaShell extends JShell {
         return context;
     }
 
-    private class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JShellNodeEvaluator {
+    public static class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JShellNodeEvaluator {
 
         public int evalBinaryPipeOperation(InstructionNode left, InstructionNode right, JShellContext context) {
             final PrintStream nout;
             final PipedOutputStream out;
             final PipedInputStream in;
             final JavaShellNonBlockingInputStream in2;
+            NutsShellContext ncontext = (NutsShellContext) context;
             try {
                 out = new PipedOutputStream();
-                nout = workspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+                nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
                 in = new PipedInputStream(out, 1024);
                 in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
             } catch (IOException ex) {
@@ -413,32 +403,45 @@ public class NutsJavaShell extends JShell {
 
     }
 
-    private class NutsExternalExecutor implements JShellExternalExecutor {
+    public static class NutsExternalExecutor implements JShellExternalExecutor {
 
         @Override
         public int execExternalCommand(String[] command, JShellContext context) throws Exception {
-            return workspace.exec()
+            return ((NutsShellContext) context).getWorkspace().exec()
                     //                .session(context.get)
                     .command(command).getResult();
         }
 
     }
 
-    private class NutsErrorHandler implements JShellErrorHandler {
+    public static class NutsErrorHandler implements JShellErrorHandler {
 
+        @Override
+        public boolean isRequireExit(Throwable th) {
+            return th instanceof JShellQuitException;
+        }
+        
+        @Override
+        public int errorToCode(Throwable th) {
+            if(th instanceof NutsExecutionException){
+                return ((NutsExecutionException) th).getExitCode();
+            }
+            return 1;
+        }
+        
         @Override
         public String errorToMessage(Throwable th) {
             return StringUtils.exceptionToString(th);
         }
 
         @Override
-        public void onErrorImpl(String message, Throwable th) {
-            context.getTerminal().ferr().printf("@@%s@@\n", message);
+        public void onErrorImpl(String message, Throwable th, JShellContext context) {
+            ((NutsShellContext) context).getTerminal().ferr().printf("@@%s@@\n", message);
         }
 
     }
 
-    private class NutsBuiltinManager implements JShellBuiltinManager {
+    public static class NutsBuiltinManager implements JShellBuiltinManager {
 
         private Map<String, NshCommand> commands = new HashMap<>();
 

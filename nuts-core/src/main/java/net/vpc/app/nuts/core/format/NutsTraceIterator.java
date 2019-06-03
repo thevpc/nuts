@@ -10,7 +10,7 @@ import java.util.Iterator;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
@@ -20,13 +20,13 @@ public class NutsTraceIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
-    NutsIncrementalFormat listFormat;
+    NutsIncrementalOutputFormat listFormat;
     PrintStream out;
     NutsOutputFormat format;
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NutsTraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsIncrementalFormat conv, NutsFetchDisplayOptions displayOptions, NutsSession session) {
+    public NutsTraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsIncrementalOutputFormat conv, NutsFetchDisplayOptions displayOptions, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;
@@ -44,7 +44,7 @@ public class NutsTraceIterator<T> implements Iterator<T> {
     public boolean hasNext() {
         boolean p = curr.hasNext();
         if (!p) {
-            listFormat.formatComplete(count);
+            listFormat.complete();
         }
         return p;
     }
@@ -53,9 +53,9 @@ public class NutsTraceIterator<T> implements Iterator<T> {
     public T next() {
         T n = curr.next();
         if (count == 0) {
-            listFormat.formatStart();
+            listFormat.start();
         }
-        listFormat.formatNext(n, count);
+        listFormat.next(n);
         count++;
         return n;
     }

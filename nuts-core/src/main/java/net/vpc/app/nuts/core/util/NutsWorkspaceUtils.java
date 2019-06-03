@@ -325,11 +325,11 @@ public class NutsWorkspaceUtils {
 //        ws.io().writeJson(o, out, true);
 //        out.println();
 //    }
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsIncrementalFormat format, NutsFetchDisplayOptions displayOptions) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsIncrementalOutputFormat format, NutsFetchDisplayOptions displayOptions) {
         return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
     }
 
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsIncrementalFormat format, NutsFetchDisplayOptions displayOptions) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsIncrementalOutputFormat format, NutsFetchDisplayOptions displayOptions) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
         return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
     }

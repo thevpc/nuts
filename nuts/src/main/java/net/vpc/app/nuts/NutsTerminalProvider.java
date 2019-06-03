@@ -36,8 +36,10 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsTerminalProvider extends NutsPropertiesProvider{
+public interface NutsTerminalProvider extends NutsPropertiesProvider {
+
     NutsSessionTerminal getTerminal();
+
     @Override
     NutsTerminalProvider setProperty(String key, Object value);
 

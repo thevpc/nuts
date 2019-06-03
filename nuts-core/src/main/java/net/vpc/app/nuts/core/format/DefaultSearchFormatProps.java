@@ -11,20 +11,29 @@ import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.NutsIncrementalFormat;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatProps extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatProps extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     public DefaultSearchFormatProps(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.PROPS);
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void startImpl() {
+    }
+    
+    @Override
+    public void completeImpl(long count) {
+        
+    }
+
+    @Override
+    public void nextImpl(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
         CoreCommonUtils.putAllInProps(String.valueOf(index + 1), p, getValidCanonicalBuilder().toCanonical(object));
         CoreIOUtils.storeProperties(p, getValidOut(),false);

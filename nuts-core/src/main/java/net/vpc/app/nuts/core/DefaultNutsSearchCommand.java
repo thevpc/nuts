@@ -817,7 +817,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     private Iterator<NutsId> applyTraceDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean trace) {
-        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()) : curr;
+        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()) : curr;
     }
 
     private NutsCollectionSearchResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean trace) {
@@ -960,7 +960,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -976,7 +976,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -992,7 +992,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -1008,7 +1008,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -1024,7 +1024,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -1040,7 +1040,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -1057,7 +1057,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<NutsExecutionEntry>(ws, resolveFindIdBase(),
                 a.build()
@@ -1073,7 +1073,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             a = a.sort(null, !isDuplicates());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<String>(ws, resolveFindIdBase(),
                 a.build()
@@ -1203,7 +1203,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             if (!trace) {
                 return ii;
             }
-            return NutsWorkspaceUtils.decorateTrace(ws, ii, getSession(), getValidSession().getOutputFormat(), getValidSession().getOutputCustomFormat(), getDisplayOptions());
+            return NutsWorkspaceUtils.decorateTrace(ws, ii, getSession(), getValidSession().getOutputFormat(), getValidSession().getIncrementalOutputFormat(), getDisplayOptions());
         }
 
     }

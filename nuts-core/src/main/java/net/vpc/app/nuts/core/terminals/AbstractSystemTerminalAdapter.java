@@ -109,15 +109,15 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     }
 
     @Override
-    public <T> T ask(NutsQuestion<T> question) {
+    public <T> NutsQuestion<T> ask() {
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).ask(question);
+            return ((NutsTerminal) p).ask();
         } else {
             return new DefaultNutsQuestionExecutor<T>(
                     ws,
-                    question, this, out())
-                    .execute();
+                    this, out()
+            );
         }
     }
 

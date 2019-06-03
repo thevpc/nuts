@@ -35,7 +35,7 @@ public class DefaultNutsWorkspaceFormatManager implements NutsWorkspaceFormatMan
     }
 
     @Override
-    public NutsIncrementalFormat createIncrementalFormat(NutsOutputFormat format) {
+    public NutsIncrementalOutputFormat createIncrementalFormat(NutsOutputFormat format) {
         if (format == null) {
             format = NutsOutputFormat.PLAIN;
         }

@@ -11,16 +11,16 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public abstract class DefaultSearchFormatBase<T extends NutsIncrementalFormat> implements NutsIncrementalFormat {
+public abstract class DefaultSearchFormatBase<T extends NutsIncrementalOutputFormat> implements NutsIncrementalOutputFormat {
 
     private CanonicalBuilder canonicalBuilder;
     private NutsWorkspace ws;
@@ -28,6 +28,7 @@ public abstract class DefaultSearchFormatBase<T extends NutsIncrementalFormat> i
     private PrintWriter out;
     private NutsOutputFormat format;
     private NutsFetchDisplayOptions displayOptions;
+    private long index;
 
     public DefaultSearchFormatBase(NutsWorkspace ws, NutsOutputFormat format) {
         this.ws = ws;
@@ -40,12 +41,33 @@ public abstract class DefaultSearchFormatBase<T extends NutsIncrementalFormat> i
     }
 
     @Override
-    public void formatStart() {
+    public void start() {
+        index=0;
+        startImpl();
         //
     }
 
     @Override
-    public void formatComplete(long count){
+    public void complete() {
+        completeImpl(index);
+        //
+    }
+    
+    @Override
+    public void next(Object object) {
+        nextImpl(object,index);
+        //
+    }
+    
+    public void startImpl() {
+        //
+    }
+    
+    public void nextImpl(Object object,long index) {
+        //
+    }
+
+    public void completeImpl(long count){
         //
     }
     
@@ -60,7 +82,7 @@ public abstract class DefaultSearchFormatBase<T extends NutsIncrementalFormat> i
     }
 
     @Override
-    public final NutsIncrementalFormat configure(String... args) {
+    public final NutsIncrementalOutputFormat configure(String... args) {
         return NutsConfigurableHelper.configure(this, ws, args,"search");
     }
 
@@ -177,7 +199,7 @@ public abstract class DefaultSearchFormatBase<T extends NutsIncrementalFormat> i
     }
 
     @Override
-    public NutsOutputFormat getSupportedFormat() {
+    public NutsOutputFormat getOutputFormat() {
         return format;
     }
 

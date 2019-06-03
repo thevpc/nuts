@@ -201,10 +201,10 @@ final class NutsUtilsLimited {
     }
 
     public static Properties loadURLPropertiesFromLocalFile(File file) {
-        
-        Properties p=new Properties();
-        if(file.isFile()){
-            try(InputStream in=Files.newInputStream(file.toPath())){
+
+        Properties p = new Properties();
+        if (file.isFile()) {
+            try (InputStream in = Files.newInputStream(file.toPath())) {
                 p.load(in);
             } catch (IOException ex) {
                 //ignore...
@@ -212,7 +212,7 @@ final class NutsUtilsLimited {
         }
         return p;
     }
-    
+
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
@@ -345,7 +345,7 @@ final class NutsUtilsLimited {
                 }
             }
         }
-        throw new NutsNotFoundException(null,nutsId);
+        throw new NutsNotFoundException(null, nutsId);
     }
 
     public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
@@ -830,11 +830,11 @@ final class NutsUtilsLimited {
         return null;
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term) {
-        return deleteAndConfirmAll(folders, force, new boolean[1], header, term);
+    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
+        return deleteAndConfirmAll(folders, force, new boolean[1], header, term,session);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll, String header, NutsTerminal term) {
+    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll, String header, NutsTerminal term, NutsSession session) {
         int count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -852,7 +852,7 @@ final class NutsUtilsLimited {
                             }
                         }
                     }
-                    NutsUtilsLimited.deleteAndConfirm(child, force, refForceAll, term);
+                    NutsUtilsLimited.deleteAndConfirm(child, force, refForceAll, term, session);
                     count++;
                 }
             }
@@ -860,12 +860,12 @@ final class NutsUtilsLimited {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll, NutsTerminal term) {
+    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll, NutsTerminal term, NutsSession session) {
         if (directory.exists()) {
             if (!force && !refForceAll[0]) {
                 String line = null;
                 if (term != null) {
-                    line = term.ask(NutsQuestion.forString("Do you confirm deleting %s [y/n/a] ? : ", directory));
+                    line = term.ask().forString("Do you confirm deleting %s [y/n/a] ? : ", directory).session(session).getResult();
                 } else {
                     Scanner s = new Scanner(System.in);
                     System.out.printf("Do you confirm deleting %s [y/n/a] ? : ", directory);
@@ -873,7 +873,7 @@ final class NutsUtilsLimited {
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll[0] = true;
-                } else if (new NutsArgumentLimited(line,'=').getBoolean()) {
+                } else if (new NutsArgumentLimited(line, '=').getBoolean()) {
                     //ok
                 } else {
                     throw new NutsUserCancelException(null);
@@ -1070,9 +1070,8 @@ final class NutsUtilsLimited {
     }
 
     /**
-     * v1 and v2 are supposed in the following form 
-     *  nbr1.nbr2, ... 
-     * where all items (nbr) between dots are positive numbers
+     * v1 and v2 are supposed in the following form nbr1.nbr2, ... where all
+     * items (nbr) between dots are positive numbers
      *
      * @param v1 version 1
      * @param v2 version 2
@@ -1198,10 +1197,10 @@ final class NutsUtilsLimited {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(null,"Illegal char " + c);
+                            throw new NutsParseException(null, "Illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(null,"Illegal char " + c);
+                            throw new NutsParseException(null, "Illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -1270,7 +1269,7 @@ final class NutsUtilsLimited {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(null,"Expected '");
+                throw new NutsParseException(null, "Expected '");
             }
         }
         return args.toArray(new String[0]);

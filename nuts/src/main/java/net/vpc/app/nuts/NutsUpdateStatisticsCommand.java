@@ -74,14 +74,14 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
      * @param args argument to configure with
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
     NutsUpdateStatisticsCommand configure(String... args);
 
     /**
      * execute the command and return this instance
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
     NutsUpdateStatisticsCommand run();

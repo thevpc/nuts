@@ -111,7 +111,7 @@ public class RemoteMysql {
                     instanceName = a.getValue().getString();
                     c = loadOrCreateMysqlConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"instance already defined", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "instance already defined", 2);
                 }
             } else if ((a = args.nextString("--server")) != null) {
                 if (c == null) {
@@ -165,20 +165,26 @@ public class RemoteMysql {
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
                 if (StringUtils.isEmpty(db.getConfig().getServer())) {
                     ok = false;
-                    db.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefaultValue("ssh://login@myserver")));
+                    db.getConfig().setServer(context.terminal().ask()
+                            .forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server")
+                            .defaultValue("ssh://login@myserver").session(context.getSession()).getResult());
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteInstance())) {
                     ok = false;
-                    db.getConfig().setRemoteInstance(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-instance").setDefaultValue("default")));
+                    db.getConfig().setRemoteInstance(context.terminal().ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-instance").setDefaultValue("default").session(context.getSession())
+                            .getResult());
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteTempPath())) {
                     ok = false;
-                    db.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")));
+                    db.getConfig().setRemoteTempPath(context.terminal().ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp").session(context.getSession())
+                            .getResult());
                 }
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
                     if (StringUtils.isEmpty(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")));
+                        aa.getConfig().setPath(context.terminal().ask()
+                                .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path").session(context.getSession())
+                                .getResult());
                     }
                 }
             } catch (UserCancelException ex) {

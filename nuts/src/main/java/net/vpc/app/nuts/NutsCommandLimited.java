@@ -149,29 +149,34 @@ class NutsCommandLimited implements NutsCommand {
                 return this;
             }
             String m = "Unexpected Argument " + peek();
-            if(errorMessage!=null && errorMessage.trim().length()>0){
-                m+=" , "+errorMessage;
+            if (errorMessage != null && errorMessage.trim().length() > 0) {
+                m += " , " + errorMessage;
             }
             throwError(m);
         }
         return this;
     }
-    
+
     @Override
     public NutsCommand unexpectedArgument() {
         return unexpectedArgument(null);
     }
 
     @Override
-    public NutsCommand required() {
+    public NutsCommand required(String errorMessage) {
         if (isEmpty()) {
             if (autoComplete != null) {
                 skipAll();
                 return this;
             }
-            throwError("Missing Arguments");
+            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "Missing Arguments" : errorMessage);
         }
         return this;
+    }
+
+    @Override
+    public NutsCommand required() {
+        return required(null);
     }
 
     @Override
@@ -272,8 +277,8 @@ class NutsCommandLimited implements NutsCommand {
 
     @Override
     public NutsArgument next(NutsArgumentType expectValue, String... names) {
-        if(expectValue==null){
-            expectValue=NutsArgumentType.ANY;
+        if (expectValue == null) {
+            expectValue = NutsArgumentType.ANY;
         }
         if (names.length == 0) {
             if (hasNext()) {
@@ -411,7 +416,7 @@ class NutsCommandLimited implements NutsCommand {
             if (hasNext() && peek().isOption()) {
                 throwError("Unexpected option " + peek());
             }
-            throwError("Missing argument " + (name==null?"value":name.getName()));
+            throwError("Missing argument " + (name == null ? "value" : name.getName()));
         }
         //ignored
         return null;

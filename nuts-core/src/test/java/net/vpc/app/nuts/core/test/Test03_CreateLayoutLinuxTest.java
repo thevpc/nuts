@@ -31,7 +31,8 @@ import org.junit.Test;
  * @author vpc
  */
 public class Test03_CreateLayoutLinuxTest {
-
+    private static final int NSH_BUILTINS=34;
+    private static final int NDI_COMPANIONS=4;
     @Test
     public void customLayout_use_export() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
@@ -57,11 +58,11 @@ public class Test03_CreateLayoutLinuxTest {
                 listNamesSet(new File(base, "system.config/default-workspace/config/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
-                29,
+                NSH_BUILTINS,
                 listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
-                4,
+                NDI_COMPANIONS,
                 listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
@@ -94,11 +95,11 @@ public class Test03_CreateLayoutLinuxTest {
                 listNamesSet(new File(base, "config/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
-                29,
+                NSH_BUILTINS,
                 listNamesSet(new File(base, "programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
-                4,
+                NDI_COMPANIONS,
                 listNamesSet(new File(base, "programs/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
@@ -106,7 +107,7 @@ public class Test03_CreateLayoutLinuxTest {
                 listNamesSet(new File(base, "cache"), x -> x.isDirectory())
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            Assert.assertFalse(new File(f).exists());
+            Assert.assertFalse(f+" should not exist", new File(f).exists());
         }
 //        Assert.assertEquals(
 //                false,
@@ -124,11 +125,11 @@ public class Test03_CreateLayoutLinuxTest {
                 listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
-                29,
+                NSH_BUILTINS,
                 listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
-                4,
+                NDI_COMPANIONS,
                 listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + TestUtils.NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(

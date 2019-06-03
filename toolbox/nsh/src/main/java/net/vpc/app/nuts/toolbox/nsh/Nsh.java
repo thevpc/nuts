@@ -9,7 +9,7 @@ import net.vpc.common.javashell.JShellCommand;
 
 public class Nsh extends NutsApplication {
 
-    private static final HashSet<String> INTERNAL_COMMANDS = new HashSet<>(Arrays.asList(
+    private static final HashSet<String> CONTEXTUAL_BUILTINS = new HashSet<>(Arrays.asList(
             "showerr", "cd", "set", "unset", "declare-command", "undeclare-command",
             "login", "logout", "help", "alias"
     ));
@@ -30,7 +30,7 @@ public class Nsh extends NutsApplication {
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         int r = c.run(args);
         if (r != 0) {
-            throw new NutsExecutionException(applicationContext.getWorkspace(),r);
+            throw new NutsExecutionException(applicationContext.getWorkspace(), r);
         }
     }
 
@@ -39,7 +39,7 @@ public class Nsh extends NutsApplication {
         NutsCommand cmd = applicationContext.commandLine();
         NutsArgument a;
         boolean force = false;
-        boolean trace = true;
+        boolean trace = applicationContext.getSession().isTrace();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("-f", "--force")) != null) {
                 force = a.getValue().getBoolean();
@@ -69,7 +69,7 @@ public class Nsh extends NutsApplication {
         NutsSession sessionCopy = applicationContext.getSession().copy();
         sessionCopy.setTrace(false);
         for (JShellCommand command : commands) {
-            if (!INTERNAL_COMMANDS.contains(command.getName())) {
+            if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.addCommandAlias(new NutsCommandAliasConfig()
                         .setFactoryId("nsh")
@@ -87,11 +87,13 @@ public class Nsh extends NutsApplication {
             }
         }
         if (trace) {
-            if (firstInstalled.size() > 0) {
-                applicationContext.out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
-            }
-            if (reinstalled.size() > 0) {
-                applicationContext.out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+            if (applicationContext.getSession().isPlainOut()) {
+                if (firstInstalled.size() > 0) {
+                    applicationContext.out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+                }
+                if (reinstalled.size() > 0) {
+                    applicationContext.out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+                }
             }
         }
         cfg.save(false);
@@ -117,7 +119,9 @@ public class Nsh extends NutsApplication {
                 try {
                     cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {
-                    applicationContext.out().printf("Unable to uninstall ==%s== .\n", command.getName());
+                    if (applicationContext.getSession().isPlainTrace()) {
+                        applicationContext.err().printf("Unable to uninstall ==%s== .\n", command.getName());
+                    }
                 }
             }
         } catch (Exception ex) {

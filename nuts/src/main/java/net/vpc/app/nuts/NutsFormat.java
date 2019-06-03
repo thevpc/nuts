@@ -88,7 +88,7 @@ public interface NutsFormat extends NutsConfigurable{
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
      * @param args argument to configure with
-     * @return this instance
+     * @return {@code this} instance
      */
     @Override
     NutsFormat configure(String ... args);

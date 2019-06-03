@@ -453,6 +453,7 @@ public class FormattedPrintStream extends PrintStream implements ExtendedFormatA
         } catch (Exception ex) {
             System.out.print("");
         }
+        super.flush();
     }
 
 }

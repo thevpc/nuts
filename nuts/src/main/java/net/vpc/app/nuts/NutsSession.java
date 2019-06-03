@@ -38,41 +38,157 @@ import java.util.Map;
  */
 public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider, NutsConfigurable {
 
+    /**
+     * When true, operations are invited to print to output stream extra 
+     * information about processing. Output may be in different formats according to
+     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormat()}
+     *
+     * @return true if trace flag is armed
+     */
     boolean isTrace();
 
+    /**
+     * true if non incremental and plain formats along with trace flag are armed. 
+     * equivalent to {@code isTrace()
+     * && !isIncrementalOut()
+     * && getOutputFormat() == NutsOutputFormat.PLAIN}
+     *
+     * @return true plain non incremental format AND trace are armed
+     */
+    boolean isPlainTrace();
+
+    /**
+     * true if incremental format and trace flag are armed. 
+     * equivalent to {@code isTrace()
+     * && isIncrementalOut()}
+     *
+     * @return true plain non incremental format AND trace are armed
+     */
+    boolean isIncrementalTrace();
+
+    /**
+     * true if NON incremental and NON plain formats along with trace flag are armed. 
+     * equivalent to {@code isTrace()
+     * && !isIncrementalOut()
+     * && getOutputFormat() == NutsOutputFormat.PLAIN}
+     *
+     * @return true if NON incremental and NON plain formats along with trace flag are armed. 
+     */
+    boolean isStructuredTrace();
+
+    /**
+     * true if incremental format is armed. equivalent to
+     * {@code  getIncrementalOutputFormat()!=null}
+     *
+     * @return true if incremental format is armed.
+     */
+    boolean isIncrementalOut();
+
+    /**
+     * true if NON incremental and NON plain formats are armed.
+     * equivalent to {@code !isIncrementalOut()
+     * && getOutputFormat() != NutsOutputFormat.PLAIN}
+     *
+     * @return true if non incremental format AND structured outpt format are
+     * armed.
+     */
+    boolean isStructuredOut();
+    
+    /**
+     * true if NON incremental and plain format are armed.
+     *
+     * @return true if non incremental format AND structured outpt format are
+     * armed.
+     */
+    boolean isPlainOut();
+
+    /**
+     * change trace flag value.
+     * When true, operations are invited to print to output stream information
+     * about processing. Output may be in different formats according to
+     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormat()}
+     * @param trace new value
+     * @return {@code this} instance
+     */
     NutsSession setTrace(boolean trace);
 
+    /**
+     * equivalent to {@ setConfirm(true)}
+     * @return {@code this} instance
+     */
     NutsSession trace();
 
+    /**
+     * equivalent to {@ setTrace(trace)}
+     * @param trace new value
+     * @return {@code this} instance
+     */
     NutsSession trace(boolean trace);
 
+    /**
+     * true if force flag is armed.
+     * some operations may require user confirmation before performing critical 
+     * operations such as overriding existing values, deleting sensitive informations ; 
+     * in such cases, arming force flag will provide an implicit confirmation.
+     * 
+     * @return true if force flag is armed.
+     */
     boolean isForce();
 
     /**
-     * arm or disarm force install non already installed components
-     *
-     * @param enable if true force install if not yet installed
-     * @return current builder instance
+    /**
+     * change force flag value.
+     * some operations may require user confirmation before performing critical 
+     * operations such as overriding existing values, deleting sensitive informations ; 
+     * in such cases, arming force flag will provide an implicit confirmation.
+     * 
+     * @param enable if true force flag is armed
+     * @return {@code this} instance
      */
     NutsSession setForce(boolean enable);
 
     /**
-     * @see #setForce(boolean)
-     * @return
+     * equivalent to {@code setForce(true)}
+     * @return {@code this} instance
      */
     NutsSession force();
 
+    /**
+     * equivalent to {@code setForce(force)}
+     * @param force new value
+     * @return {@code this} instance
+     */
     NutsSession force(boolean force);
+
+    NutsSession ask();
+
+    NutsSession ask(boolean enable);
+
+    NutsSession setAsk(boolean enable);
+
+    boolean isAsk();
 
     NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue);
 
+    /**
+     * return effective trace output format. The effective trace output format
+     * is the value of {@code getIncrementalOutputFormat().getOutputFormat()}
+     * whenever {@code getIncrementalOutputFormat()!=null } otherwise it returns
+     * simply the value defined by calling
+     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of {@link #setIncrementalOutputFormat(net.vpc.app.nuts.NutsIncrementalOutputFormat)
+     * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat) } has
+     * been called (or called with null values) {@link NutsOutputFormat#PLAIN}
+     * should be returned.
+     *
+     * @return effective trace output format
+     */
     NutsOutputFormat getOutputFormat();
 
-    NutsIncrementalFormat getOutputCustomFormat();
+    NutsIncrementalOutputFormat getIncrementalOutputFormat();
 
-    NutsSession outputCustomFormat(NutsIncrementalFormat customFormat);
+    NutsSession incrementalOutputFormat(NutsIncrementalOutputFormat customFormat);
 
-    NutsSession setOutputCustomFormat(NutsIncrementalFormat customFormat);
+    NutsSession setIncrementalOutputFormat(NutsIncrementalOutputFormat customFormat);
 
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
@@ -108,12 +224,24 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     @Override
     NutsSession setProperties(Map<String, Object> properties);
 
-    NutsSession ask();
+    /**
+     * return confirmation mode or {@link NutsConfirmationMode#CANCEL}
+     * @return confirmation mode
+     */
+    NutsConfirmationMode getConfirm();
 
-    NutsSession ask(boolean enable);
+    /**
+     * 
+     * @param confirm
+     * @return 
+     */
+    NutsSession confirm(NutsConfirmationMode confirm);
 
-    NutsSession setAsk(boolean enable);
+    NutsSession setConfirm(NutsConfirmationMode confirm);
 
-    boolean isAsk();
+    NutsSession setOutputFormatOptions(String... options);
 
+    NutsSession addOutputFormatOptions(String... options);
+
+    String[] getOutputFormatOptions();
 }

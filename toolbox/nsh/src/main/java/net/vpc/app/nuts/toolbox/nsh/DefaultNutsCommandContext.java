@@ -12,40 +12,39 @@ import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsObjectFormat;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
 
-    private NutsShellContext consoleContext;
+    private NutsShellContext shellContext;
     private NshCommand command;
     private NutsTerminalMode terminalMode = null;
     private boolean verbose = false;
 
     public DefaultNutsCommandContext(NutsShellContext consoleContext, NshCommand command) {
-        this.consoleContext = consoleContext;
+        this.shellContext = consoleContext;
         this.command = command;
     }
 
     @Override
-    public void printObject(Object any, String[] options, boolean err) {
-        final NutsObjectFormat o = this.getWorkspace().formatter().createObjectFormat(this.getSession(), any);
-        o.configure(this.getWorkspace().parser().parseCommand(options), true);
-        final NutsSessionTerminal t = this.getSession().getTerminal();
-        if (err) {
-            o.print(t.ferr());
-        } else {
-            o.print(t.fout());
-        }
+    public NutsCommandContext printOutObject(Object anyObject) {
+        shellContext.printOutObject(anyObject);
+        return this;
     }
 
     @Override
+    public NutsCommandContext printErrObject(Object anyObject) {
+        shellContext.printErrObject(anyObject);
+        return this;
+    }
+    
+    @Override
     public NutsJavaShell getShell() {
-        return (NutsJavaShell) consoleContext.getShell();
+        return (NutsJavaShell) shellContext.getShell();
     }
 
     @Override
     public NutsShellContext getGlobalContext() {
-        return consoleContext;
+        return shellContext;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
                     showHelp();
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(consoleContext.getWorkspace(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getWorkspace(), "Help", 0);
             }
             case "--version": {
                 cmd.skip();
@@ -69,7 +68,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
                     out().printf("%s%n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(consoleContext.getWorkspace(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getWorkspace(), "Help", 0);
             }
             case "--term-system": {
                 cmd.skip();
@@ -163,12 +162,12 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
 
     @Override
     public PrintStream out() {
-        return consoleContext.out();
+        return shellContext.out();
     }
 
     @Override
     public PrintStream err() {
-        return consoleContext.err();
+        return shellContext.err();
     }
 
     public NutsTerminalMode geTerminalMode() {
@@ -176,8 +175,9 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public void setTerminalMode(NutsTerminalMode outMode) {
+    public NutsCommandContext setTerminalMode(NutsTerminalMode outMode) {
         getWorkspace().io().getSystemTerminal().setMode(outMode);
+        return this;
     }
 
     @Override
@@ -191,27 +191,27 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
 
     @Override
     public NutsWorkspace getWorkspace() {
-        return consoleContext.getWorkspace();
+        return shellContext.getWorkspace();
     }
 
     @Override
     public InputStream in() {
-        return consoleContext.getTerminal().getIn();
+        return shellContext.getTerminal().getIn();
     }
 
     @Override
     public NutsSession getSession() {
-        return consoleContext.getSession();
+        return shellContext.getSession();
     }
 
     @Override
     public NutsSessionTerminal getTerminal() {
-        return consoleContext.getTerminal();
+        return shellContext.getTerminal();
     }
 
     @Override
     public JShellVariables vars() {
-        return consoleContext.vars();
+        return shellContext.vars();
     }
 
 }

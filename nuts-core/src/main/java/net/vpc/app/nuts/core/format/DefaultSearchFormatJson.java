@@ -9,13 +9,13 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatJson extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatJson extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     private boolean compact;
 
@@ -24,7 +24,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase<NutsIncreme
     }
 
     @Override
-    public void formatStart() {
+    public void startImpl() {
         getValidOut().println("[");
     }
 
@@ -44,7 +44,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase<NutsIncreme
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void nextImpl(Object object, long index) {
         if (index > 0) {
             getValidOut().print(", ");
         }
@@ -57,7 +57,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase<NutsIncreme
     }
 
     @Override
-    public void formatComplete(long count) {
+    public void completeImpl(long count) {
         getValidOut().println("]");
     }
 

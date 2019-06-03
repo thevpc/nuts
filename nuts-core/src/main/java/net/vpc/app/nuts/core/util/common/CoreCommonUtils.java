@@ -51,6 +51,9 @@ import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
 public class CoreCommonUtils {
@@ -100,10 +103,10 @@ public class CoreCommonUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(null,x);
+                throw new NutsException(null, x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException(null,"Not a valid type " + c + " <> " + service);
+                throw new NutsException(null, "Not a valid type " + c + " <> " + service);
             }
             classes.add(c);
         }
@@ -149,7 +152,7 @@ public class CoreCommonUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return new DefaultNutsArgument(System.getProperty(property),'=').getBoolean(defaultValue);
+        return new DefaultNutsArgument(System.getProperty(property), '=').getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {
@@ -324,6 +327,62 @@ public class CoreCommonUtils {
             return null;
         }
         throw new NoSuchElementException(val + " of type " + e.getSimpleName());
+    }
+
+    public static String stringValueFormatted(Object o, NutsWorkspace ws, NutsSession session) {
+        if (o == null) {
+            return "";
+        }
+        if (o instanceof Boolean) {
+            return ws.io().getTerminalFormat().escapeText(String.valueOf(o));
+        }
+        if (o.getClass().isEnum()) {
+            return ws.io().getTerminalFormat().escapeText(getEnumString((Enum) o));
+        }
+        if (o instanceof Date) {
+            return ws.io().getTerminalFormat().escapeText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o));
+        }
+        if (o instanceof NutsId) {
+            return ws.formatter().createIdFormat().toString((NutsId) o);
+        }
+        if (o instanceof Collection) {
+            Collection c = ((Collection) o);
+            Object[] a = c.toArray();
+            if (a.length == 0) {
+                return "";
+            }
+            if (a.length == 1) {
+                return stringValue(a[0]);
+            }
+            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, ws, session)).collect(Collectors.toList())) + "\\]";
+        }
+        if (o.getClass().isArray()) {
+            int len = Array.getLength(o);
+            if (len == 0) {
+                return "";
+            }
+            if (len == 1) {
+                return stringValueFormatted(Array.get(o, 0), ws, session);
+            }
+            List<String> all = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                all.add(stringValueFormatted(Array.get(o, i), ws, session));
+            }
+            return "\\[" + CoreStringUtils.join(", ", all) + "\\]";
+        }
+        if (o instanceof Iterable) {
+            Iterable x = (Iterable) o;
+            return stringValueFormatted(x.iterator(), ws, session);
+        }
+        if (o instanceof Iterator) {
+            Iterator x = (Iterator) o;
+            List<String> all = new ArrayList<>();
+            while (x.hasNext()) {
+                all.add(stringValueFormatted(x.next(), ws, session));
+            }
+            return "\\[" + CoreStringUtils.join(", ", (List) all.stream().collect(Collectors.toList())) + "\\]";
+        }
+        return o.toString();
     }
 
     public static String stringValue(Object o) {

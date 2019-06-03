@@ -9,6 +9,7 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsPropertiesFormat;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -19,12 +20,13 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private boolean sort;
     private boolean compact;
     private boolean javaProps;
+    private boolean escapeText = true;
     private String separator = " = ";
     private Map model;
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public DefaultPropertiesFormat(NutsWorkspace ws) {
-        super(ws,"props-format");
+        super(ws, "props-format");
     }
 
     @Override
@@ -34,11 +36,14 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             NutsArgument i = a.getValue();
             addMultilineProperty(i.getKey().getString(), i.getValue().getString());
             return true;
-        }else if ((a = commandLine.nextBoolean("--compact")) != null) {
-            this.compact=a.getValue().getBoolean();
+        } else if ((a = commandLine.nextBoolean("--compact")) != null) {
+            this.compact = a.getValue().getBoolean();
             return true;
-        }else if ((a = commandLine.nextBoolean("--props")) != null) {
-            this.javaProps=a.getValue().getBoolean();
+        } else if ((a = commandLine.nextBoolean("--props")) != null) {
+            this.javaProps = a.getValue().getBoolean();
+            return true;
+        } else if ((a = commandLine.nextBoolean("--escape-text")) != null) {
+            this.escapeText = a.getValue().getBoolean();
             return true;
         }
         return false;
@@ -58,12 +63,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return setModel(model);
     }
 
-
     @Override
     public NutsPropertiesFormat sort() {
         return sort(true);
     }
-
 
     @Override
     public NutsPropertiesFormat separator(String separator) {
@@ -100,7 +103,6 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        this.table = table;
 //        return this;
 //    }
-
     public String getSeparator() {
         return separator;
     }
@@ -122,24 +124,24 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     @Override
     public void print(Writer w) {
         PrintWriter out = getValidPrintWriter(w);
-        Map<Object,Object> mm;
-        if(sort){
-            mm=new LinkedHashMap<>();
+        Map<Object, Object> mm;
+        if (sort) {
+            mm = new LinkedHashMap<>();
             List<Object> keys = new ArrayList(getModel().keySet());
             if (sort) {
                 keys.sort(null);
             }
             for (Object k : keys) {
                 Object v = getModel().get(k);
-                mm.put(k,v);
+                mm.put(k, v);
             }
-        }else{
-            mm=getModel();
+        } else {
+            mm = getModel();
         }
-        if(javaProps){
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w,sort);
-        }else {
-            printMap(out,"",mm);
+        if (javaProps) {
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sort);
+        } else {
+            printMap(out, "", mm);
         }
     }
 
@@ -163,11 +165,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return sb.toString();
 //    }
-
     private void printMap(PrintWriter out, String prefix, Map<Object, Object> props) {
-        int len = 23;
+        int len = 1;
         for (Object extraKey : props.keySet()) {
-            int x = ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(extraKey)).length();
+            int x = ws.io().getTerminalFormat().textLength(stringValue(extraKey));
             if (x > len) {
                 len = x;
             }
@@ -179,33 +180,34 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             } else {
                 out.println();
             }
-            printKeyValue(out, prefix, len, CoreCommonUtils.stringValue(e.getKey()), "" + e.getValue());
+            printKeyValue(out, prefix, len, stringValue(e.getKey()), stringValue(e.getValue()));
         }
+        out.flush();
     }
 
-    private Map<String, String> getMultilineMap(String key, Object value) {
-        String[] a = getMultilineArray(key, value);
-        if (a == null) {
-            return null;
-        }
-        LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        for (int i = 0; i < a.length; i++) {
-            m.put(String.valueOf(i + 1), a[i]);
-        }
-        return m;
-    }
+//    private Map<String, String> getMultilineMap(String key, Object value) {
+//        String[] a = getMultilineArray(key, value);
+//        if (a == null) {
+//            return null;
+//        }
+//        LinkedHashMap<String, String> m = new LinkedHashMap<>();
+//        for (int i = 0; i < a.length; i++) {
+//            m.put(String.valueOf(i + 1), a[i]);
+//        }
+//        return m;
+//    }
 
-    private String[] getMultilineArray(String key, Object value) {
-        String sep = getMultilineSeparator(key);
-        if (sep == null) {
-            return null;
-        }
-        String[] vv = CoreCommonUtils.stringValue(value).split(sep);
-        if (vv.length == 0 || vv.length == 1) {
-            return null;
-        }
-        return vv;
-    }
+//    private String[] getMultilineArray(String key, Object value) {
+//        String sep = getMultilineSeparator(key);
+//        if (sep == null) {
+//            return null;
+//        }
+//        String[] vv = stringValue(value).split(sep);
+//        if (vv.length == 0 || vv.length == 1) {
+//            return null;
+//        }
+//        return vv;
+//    }
 
     private String getMultilineSeparator(String key) {
         String sep = multilineProperties.get(key);
@@ -223,28 +225,37 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (prefix == null) {
             prefix = "";
         }
-        String formattedKey = compact?key: CoreStringUtils.alignLeft(key, len - key.length() + ws.io().getTerminalFormat().escapeText(key).length());
+        String ekey = ws.io().getTerminalFormat().escapeText(key);
+        int delta = key.length() - ekey.length();
+        String formattedKey = compact ? key : CoreStringUtils.alignLeft(ekey, len - delta);
         if (fancySep != null) {
-            String cc=compact?key:CoreStringUtils.alignLeft("", len + 3);
+            String cc = compact ? key : CoreStringUtils.alignLeft("", len + 3);
             String space = prefix + "==%s==%s%s";
             String[] split = value.split(fancySep);
             if (split.length == 0) {
-                out.printf(prefix + "==%s==%s",formattedKey ,separator);
+                out.printf(prefix + "==%N==%s", formattedKey, separator);
             } else {
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];
                     if (i == 0) {
-                        out.printf(prefix + "==%s==%s%s", formattedKey,separator,s);
+                        out.printf(prefix + "==%N==%s%s", formattedKey, separator, s);
                     } else {
                         out.println();
-                        out.printf(space, cc,separator,s);
+                        out.printf(space, cc, separator, s);
                     }
                     //                    }
                 }
             }
         } else {
-            out.printf(prefix + "==%s==%s%s",formattedKey,separator,value);
+            out.printf(prefix + "==%N==%s%s", formattedKey, separator, value);
         }
     }
 
+    private String stringValue(Object o) {
+        if (escapeText) {
+            return CoreCommonUtils.stringValueFormatted(o, ws, getValidSession());
+        } else {
+            return String.valueOf(o);
+        }
+    }
 }

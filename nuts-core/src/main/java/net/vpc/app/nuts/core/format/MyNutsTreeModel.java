@@ -5,12 +5,15 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsSession;
 
 class MyNutsTreeModel implements NutsTreeModel {
     private final XNode root;
     private final NutsWorkspace ws;
-    public MyNutsTreeModel(NutsWorkspace ws,String rootName,Object data) {
+    private final NutsSession session;
+    public MyNutsTreeModel(NutsWorkspace ws,String rootName,Object data,NutsSession session) {
         this.ws = ws;
+        this.session = session;
         this.root = new XNode(rootName, data);
     }
 
@@ -25,11 +28,11 @@ class MyNutsTreeModel implements NutsTreeModel {
         if (t.value instanceof Map) {
             List<XNode> all = new ArrayList<>();
             for (Map.Entry<Object, Object> me : ((Map<Object, Object>) t.value).entrySet()) {
-                String[] map = getMultilineArray(CoreCommonUtils.stringValue(me.getKey()), me.getValue());
+                String[] map = getMultilineArray(stringValue(me.getKey()), me.getValue());
                 if (map == null) {
-                    all.add(new XNode(CoreCommonUtils.stringValue(me.getKey()), me.getValue()));
+                    all.add(new XNode(stringValue(me.getKey()), me.getValue()));
                 } else {
-                    all.add(new XNode(CoreCommonUtils.stringValue(me.getKey()), Arrays.asList(map)));
+                    all.add(new XNode(stringValue(me.getKey()), Arrays.asList(map)));
                 }
             }
             return all;
@@ -67,21 +70,24 @@ class MyNutsTreeModel implements NutsTreeModel {
         @Override
         public String toString() {
             if (value instanceof Map) {
-                return ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(name));
+                return ws.io().getTerminalFormat().escapeText(stringValue(name));
             } else if (value instanceof Collection) {
-                return ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(name));
+                return ws.io().getTerminalFormat().escapeText(stringValue(name));
             } else {
-                String[] p = getMultilineArray(CoreCommonUtils.stringValue(name), value);
+                String[] p = getMultilineArray(stringValue(name), value);
                 if (p != null) {
-                    return ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(name));
+                    return ws.io().getTerminalFormat().escapeText(stringValue(name));
                 }
                 if (noName) {
-                    return ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(value));
+                    return ws.io().getTerminalFormat().escapeText(stringValue(value));
                 } else {
-                    return "==" + ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(name)) + "==" + "\\=" + ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(value));
+                    return "==" + ws.io().getTerminalFormat().escapeText(stringValue(name)) + "==" + "\\=" + ws.io().getTerminalFormat().escapeText(stringValue(value));
                 }
             }
         }
     }
 
+    public String stringValue(Object o) {
+        return CoreCommonUtils.stringValueFormatted(o, ws, session);
+    }
 }

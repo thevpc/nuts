@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
  *
  * @author vpc
  */
-public class DefaultSearchFormatTable extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatTable extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     private boolean compact;
     private NutsTableFormat table;
@@ -41,12 +41,12 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase<NutsIncrem
     }
 
     @Override
-    public void formatStart() {
+    public void startImpl() {
         table.addHeaderCells(Arrays.stream(getDisplayOptions().getDisplays()).map(x -> CoreCommonUtils.getEnumString(x)).toArray());
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void nextImpl(Object object, long index) {
         FormattableNutsId fid = FormattableNutsId.of(object, getWs(), getValidSession());
         if (fid != null) {
             formatElement(fid, index);
@@ -61,7 +61,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase<NutsIncrem
     }
 
     @Override
-    public void formatComplete(long count) {
+    public void completeImpl(long count) {
         table.println(getValidOut());
     }
 

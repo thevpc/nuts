@@ -161,15 +161,20 @@ public class DefaultNutsCommand implements NutsCommand {
     }
 
     @Override
-    public NutsCommand required() {
+    public NutsCommand required(String errorMessage) {
         if (isEmpty()) {
             if (autoComplete != null) {
                 skipAll();
                 return this;
             }
-            throwError("Missing Arguments");
+            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "Missing Arguments" : errorMessage);
         }
         return this;
+    }
+
+    @Override
+    public NutsCommand required() {
+        return required(null);
     }
 
     @Override
@@ -689,7 +694,7 @@ public class DefaultNutsCommand implements NutsCommand {
                             nextArg = last + nextArg;
                             last = null;
                         }
-                        lookahead.add(newArgument(prefix+nextArg));
+                        lookahead.add(newArgument(prefix + nextArg));
                         i = chars.length;
                     } else {
                         if (last != null) {

@@ -183,49 +183,49 @@ public class FormattableNutsId {
             }
             case ARCH: {
                 if (desc != null) {
-                    return CoreCommonUtils.stringValue(desc.getArch());
+                    return stringValue(desc.getArch());
                 }
                 return "@@missing-arch@@";
             }
             case NAME: {
                 if (desc != null) {
-                    return String.valueOf(desc.getName());
+                    return stringValue(desc.getName());
                 }
                 return "@@missing-name@@";
             }
             case OS: {
                 if (desc != null) {
-                    return CoreCommonUtils.stringValue(desc.getOs());
+                    return stringValue(desc.getOs());
                 }
                 return "@@missing-os@@";
             }
             case OSDIST: {
                 if (desc != null) {
-                    return CoreCommonUtils.stringValue(desc.getOsdist());
+                    return stringValue(desc.getOsdist());
                 }
                 return "@@missing-os@@";
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return CoreCommonUtils.stringValue(desc.getPackaging());
+                    return stringValue(desc.getPackaging());
                 }
                 return "@@missing-packaging@@";
             }
             case PLATFORM: {
                 if (desc != null) {
-                    return CoreCommonUtils.stringValue(desc.getPlatform());
+                    return stringValue(desc.getPlatform());
                 }
                 return "@@missing-platform@@";
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallation()!=null) {
-                    return CoreCommonUtils.stringValue(def.getInstallation().getInstallDate());
+                    return stringValue(def.getInstallation().getInstallDate());
                 }
                 return "    -  -     :  :  .   ";
             }
             case INSTALL_USER: {
                 if (def != null && def.getInstallation()!=null) {
-                    return CoreCommonUtils.stringValue(def.getInstallation().getInstallUser());
+                    return stringValue(def.getInstallation().getInstallUser());
                 }
                 return "@@nobody@@";
             }
@@ -378,5 +378,9 @@ public class FormattableNutsId {
             return "<<\\[" + status_f + status_i + status_s + "\\]>>";
         }
         return "<<\\[" + status_f + status_i + "\\]>>";
+    }
+    
+    private String stringValue(Object any){
+        return CoreCommonUtils.stringValueFormatted(any,ws,session);
     }
 }

@@ -19,7 +19,6 @@ import java.util.*;
  */
 public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
 
-
     final NutsOutputFormat t;
     final NutsWorkspace ws;
     final Collection<Object> data;
@@ -28,23 +27,22 @@ public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatBaseCollection(NutsOutputFormat t, NutsWorkspace ws, Collection<Object> data) {
-        super(ws,(t == null ? NutsOutputFormat.PLAIN : t).name().toLowerCase()+"-format");
+        super(ws, (t == null ? NutsOutputFormat.PLAIN : t).name().toLowerCase() + "-format");
         this.t = t == null ? NutsOutputFormat.PLAIN : t;
         this.ws = ws;
         this.data = data;
     }
 
-
     @Override
     public boolean configureFirst(NutsCommand commandLine) {
         NutsArgument n = commandLine.peek();
-        if(n!=null) {
+        if (n != null) {
             NutsArgument a;
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 NutsArgument i = a.getValue();
                 extraConfig.add(a.getString());
                 addMultilineProperty(i.getKey().getString(), i.getValue().getString());
-            }else{
+            } else {
                 extraConfig.add(commandLine.next().getString());
             }
             return true;
@@ -57,17 +55,17 @@ public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
         switch (t) {
             case PLAIN: {
                 PrintWriter out = getValidPrintWriter(w);
-                NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(toMap());
-                ff.configure(ws.parser().parseCommand(extraConfig),true);
-                ff.configure(ws.parser().parseCommand("--compact=false"),true);
-                ff.print(out);
+                for (Object datum : data) {
+                    out.printf("%s", formatObject(datum));
+                    out.flush();
+                }
                 break;
             }
             case PROPS: {
                 PrintWriter out = getValidPrintWriter(w);
                 NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(toMap());
-                ff.configure(ws.parser().parseCommand(extraConfig),true);
-                ff.configure(ws.parser().parseCommand("--props"),true);
+                ff.configure(ws.parser().parseCommand(extraConfig), true);
+                ff.configure(ws.parser().parseCommand("--props"), true);
                 ff.print(out);
                 break;
             }
@@ -88,7 +86,7 @@ public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
             case TREE: {
                 NutsTreeFormat t = ws.formatter().createTreeFormat();
                 t.configure(ws.parser().parseCommand(extraConfig), true);
-                t.setModel(new MyNutsTreeModel(ws,rootName,data){
+                t.setModel(new MyNutsTreeModel(ws, rootName, data,getValidSession()) {
                     @Override
                     protected String[] getMultilineArray(String key, Object value) {
                         return NutsObjectFormatBaseCollection.this.getMultilineArray(key, value);
@@ -102,16 +100,16 @@ public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws,"Unsupported " + t);
+                throw new NutsUnsupportedArgumentException(ws, "Unsupported " + t);
             }
         }
     }
 
     private Map toMap() {
-        LinkedHashMap<String,Object> a=new LinkedHashMap<>();
-        int index=1;
+        LinkedHashMap<String, Object> a = new LinkedHashMap<>();
+        int index = 1;
         for (Object datum : data) {
-            a.put(String.valueOf(index),datum);
+            a.put(String.valueOf(index), datum);
             index++;
         }
         return a;
@@ -140,5 +138,9 @@ public class NutsObjectFormatBaseCollection extends NutsObjectFormatBase {
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {
         multilineProperties.put(property, separator);
         return this;
+    }
+    
+    private String formatObject(Object any){
+        return CoreCommonUtils.stringValueFormatted(any,ws,getValidSession());
     }
 }

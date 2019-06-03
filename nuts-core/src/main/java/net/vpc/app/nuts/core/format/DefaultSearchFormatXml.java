@@ -9,24 +9,29 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
 import net.vpc.app.nuts.core.util.NutsXmlUtils;
+import net.vpc.app.nuts.NutsIncrementalOutputFormat;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatXml extends DefaultSearchFormatBase<NutsIncrementalFormat> {
+public class DefaultSearchFormatXml extends DefaultSearchFormatBase<NutsIncrementalOutputFormat> {
 
     private boolean compact;
+    private String rootName = "root";
 
     public DefaultSearchFormatXml(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.XML);
     }
 
+    public String getRootName() {
+        return rootName;
+    }
+
     @Override
-    public void formatStart() {
-        getValidOut().println("<root>");
+    public void start() {
+        getValidOut().println("<" + rootName + ">");
     }
 
     @Override
@@ -40,18 +45,22 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase<NutsIncremen
                 this.compact = cmd.nextBoolean().getValue().getBoolean();
                 return true;
             }
+            case "--root-name": {
+                this.rootName = cmd.nextString().getValue().getString();
+                return true;
+            }
         }
         return super.configureFirst(cmd);
     }
 
     @Override
-    public void formatNext(Object object, long index) {
+    public void nextImpl(Object object, long index) {
         NutsXmlUtils.print(String.valueOf(index), object, getValidOut(), compact, getCanonicalBuilder());
     }
 
     @Override
-    public void formatComplete(long count) {
-        getValidOut().println("</root>");
+    public void completeImpl(long count) {
+        getValidOut().println("</" + rootName + ">");
     }
 
 }
