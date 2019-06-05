@@ -130,7 +130,7 @@ public class NutsServerMain extends NutsApplication {
                         Map<String, NutsWorkspace> workspaces = new HashMap<>();
                         for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
                             NutsWorkspace nutsWorkspace = null;
-                            if (StringUtils.isEmpty(entry.getValue())) {
+                            if (StringUtils.isBlank(entry.getValue())) {
                                 if (context.getWorkspace() == null) {
                                     throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Missing workspace");
                                 }

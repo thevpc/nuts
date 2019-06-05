@@ -31,6 +31,7 @@ package net.vpc.toolbox.mysql.util;
 
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
+import net.vpc.common.strings.StringUtils;
 
 /**
  *
@@ -53,6 +54,12 @@ public class AtName {
         }
         return name2;
     }
+
+    @Override
+    public String toString() {
+        return StringUtils.coalesce(name,"default")+"@"+StringUtils.coalesce(config,"default");
+    }
+    
 
     public static AtName nextAppOption(NutsCommand cmd) {
         NutsArgument a = cmd.nextString();

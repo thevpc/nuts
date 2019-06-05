@@ -63,22 +63,12 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getIdLocalFile(NutsId id) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            return null;
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            return null;
-        }
-        if (id.getVersion().isBlank()) {
-            return null;
-        }
-        String alt = CoreStringUtils.trim(id.getAlternative());
-        String defaultIdFilename = NutsRepositoryExt.of(repo).getIdFilename(id);
-        return (alt.isEmpty() || alt.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE)) ? getLocalVersionFolder(id).resolve(defaultIdFilename) : getLocalVersionFolder(id).resolve(alt).resolve(defaultIdFilename);
+        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id))
+                .resolve(NutsRepositoryExt.of(repo).getIdFilename(id));
     }
 
     public Path getLocalVersionFolder(NutsId id) {
-        return CoreIOUtils.resolveNutsDefaultPath(id, getStoreLocation());
+        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id.setVersion("")));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -126,7 +116,7 @@ public class NutsRepositoryFolderHelper {
                         if (Files.isDirectory(subFolder)) {
                             NutsDescriptor choice = null;
                             try {
-                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id,session.getSession()).setAlternative(subFolder.getFileName().toString());
+                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id, session.getSession()).setAlternative(subFolder.getFileName().toString());
                             } catch (Exception ex) {
                                 //
                             }

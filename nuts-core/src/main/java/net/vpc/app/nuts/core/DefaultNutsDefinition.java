@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 
 /**
  * Created by vpc on 1/6/17.
@@ -122,7 +123,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
         if (effectiveDescriptor == null) {
-            effectiveDescriptor = ((DefaultNutsWorkspace) ws).resolveEffectiveDescriptor(getDescriptor(), null);
+            effectiveDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(getDescriptor(), null);
         }
         return effectiveDescriptor;
     }

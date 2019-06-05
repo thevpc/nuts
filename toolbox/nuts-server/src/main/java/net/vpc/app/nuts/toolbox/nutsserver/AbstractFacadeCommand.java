@@ -60,7 +60,7 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
         userLogin = new String(configManager.decryptString(userLogin==null?null:userLogin.getBytes()));
         userPassword = configManager.decryptString(userPassword);
-        if (!StringUtils.isEmpty(userLogin)) {
+        if (!StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
                 context.getWorkspace().security().login(userLogin, userPassword);

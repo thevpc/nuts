@@ -36,12 +36,12 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
             throw new NutsExecutionException(context.getWorkspace(),"Missing source war file " + localWarPath,2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
-        if (StringUtils.isEmpty(remoteTempPath)) {
+        if (StringUtils.isBlank(remoteTempPath)) {
             remoteTempPath = "/tmp";
         }
         String remoteFilePath = IOUtils.concatPath('/', remoteTempPath + "/" + FileUtils.getFileName(localWarPath));
         String server = cconfig.getServer();
-        if (StringUtils.isEmpty(server)) {
+        if (StringUtils.isBlank(server)) {
             server = "localhost";
         }
         if (!server.startsWith("ssh://")) {
@@ -59,7 +59,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                 ).setSession(context.getSession())
                 .run();
         String v = config.getVersionCommand();
-        if (StringUtils.isEmpty(v)) {
+        if (StringUtils.isBlank(v)) {
             v = "nsh file-version --color=never %file";
         }
         List<String> cmd = Arrays.asList(StringUtils.parseCommandline(v));

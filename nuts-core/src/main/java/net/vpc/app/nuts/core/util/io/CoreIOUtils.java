@@ -67,7 +67,6 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
-import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -258,7 +257,7 @@ public class CoreIOUtils {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
-        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command",false)) {
+        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
             if (terminal.out() instanceof NutsFormattedPrintStream) {
                 terminal.out().print("==[exec]== ");
             } else {
@@ -449,7 +448,7 @@ public class CoreIOUtils {
 
                 return Paths.get(uri);
             } catch (URISyntaxException ex) {
-                throw new NutsParseException(null,"Not a file Path : " + s);
+                throw new NutsParseException(null, "Not a file Path : " + s);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -460,10 +459,10 @@ public class CoreIOUtils {
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")
                 || s.startsWith("ssh:")) {
-            throw new NutsParseException(null,"Not a file Path");
+            throw new NutsParseException(null, "Not a file Path");
         }
         if (isURL(s)) {
-            throw new NutsParseException(null,"Not a file Path");
+            throw new NutsParseException(null, "Not a file Path");
         }
         return Paths.get(s);
     }
@@ -543,69 +542,9 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static CharacterizedFile characterize(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
-        CharacterizedFile c = new CharacterizedFile();
-        try {
-            c.contentFile = contentFile;
-            if (c.contentFile.getSource() instanceof Path) {
-                //okkay
-            } else if (c.contentFile.getSource() instanceof File) {
-                c.contentFile = createInputSource(((File) c.contentFile.getSource()).toPath());
-            } else {
-                Path temp = ws.io().createTempFile(contentFile.getName());
-                contentFile.copyTo(temp);
-                c.contentFile = createInputSource(temp).multi();
-                if (c.descriptor == null && c.contentFile.isURL()) {
-                    try {
-                        c.descriptor = ws.parser().parseDescriptor(CoreIOUtils.createInputSource(c.contentFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                }
-                c.addTemp(temp);
-                return characterize(ws, createInputSource(temp).multi(), options, session);
-            }
-            Path fileSource = (Path) c.contentFile.getSource();
-            if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(ws, "File does not exists " + fileSource);
-            }
-            if (Files.isDirectory(fileSource)) {
-                if (c.descriptor == null) {
-                    Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-                    if (Files.exists(ext)) {
-                        c.descriptor = ws.parser().parseDescriptor(ext);
-                    } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
-                    }
-                }
-                if (c.descriptor != null) {
-                    if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
-                        ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentFile = createInputSource(zipFilePath).multi();
-                        c.addTemp(zipFilePath);
-                    } else {
-                        throw new NutsIllegalArgumentException(ws, "Invalid Nut Folder source. expected 'zip' ext in descriptor");
-                    }
-                }
-            } else if (Files.isRegularFile(fileSource)) {
-                if (c.descriptor == null) {
-                    File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
-                    if (ext.exists()) {
-                        c.descriptor = ws.parser().parseDescriptor(ext);
-                    } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
-                    }
-                }
-            } else {
-                throw new NutsIllegalArgumentException(ws, "Path does not denote a valid file or folder " + c.contentFile);
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        return c;
-    }
+    
+
+    
 
     public static String syspath(String s) {
         return s.replace('/', File.separatorChar);
@@ -640,21 +579,6 @@ public class CoreIOUtils {
             }
         }
         return sb.toString();
-    }
-
-    public static Path resolveNutsDefaultPath(NutsId id, Path storeLocation) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException(null, "Missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
-        }
-        if (id.getVersion().isBlank()) {
-            throw new NutsElementNotFoundException(null, "Missing version for " + id.toString());
-        }
-        Path groupFolder = storeLocation.resolve(id.getGroup().replace('.', File.separatorChar));
-        Path artifactFolder = groupFolder.resolve(id.getName());
-        return artifactFolder.resolve(id.getVersion().getValue());
     }
 
     public static NutsRepositoryConfig loadNutsRepositoryConfig(Path file, NutsWorkspace ws) {
@@ -1064,7 +988,7 @@ public class CoreIOUtils {
             return new URLInputSource(source, baseURL);
         }
 
-        throw new NutsUnsupportedArgumentException(null,"Unsupported source : " + source);
+        throw new NutsUnsupportedArgumentException(null, "Unsupported source : " + source);
     }
 
     public static boolean isValidInputStreamSource(Class type) {
@@ -1095,7 +1019,7 @@ public class CoreIOUtils {
         } else if (source instanceof String) {
             return createInputSource((String) source);
         } else {
-            throw new NutsUnsupportedArgumentException(null,"Unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(null, "Unsupported type " + source.getClass().getName());
         }
     }
 
@@ -1143,7 +1067,7 @@ public class CoreIOUtils {
         if (baseURL != null) {
             return createTarget(baseURL);
         }
-        throw new NutsUnsupportedArgumentException(null,"Unsuported source : " + target);
+        throw new NutsUnsupportedArgumentException(null, "Unsuported source : " + target);
     }
 
     public static TargetItem createTarget(Path target) {
@@ -1202,7 +1126,7 @@ public class CoreIOUtils {
         } else if (target instanceof String) {
             return createTarget((String) target);
         } else {
-            throw new NutsUnsupportedArgumentException(null,"Unsupported type " + target.getClass().getName());
+            throw new NutsUnsupportedArgumentException(null, "Unsupported type " + target.getClass().getName());
         }
     }
 
@@ -1318,10 +1242,10 @@ public class CoreIOUtils {
 
     public static char[] toHexChars(byte[] bytes) {
         char[] sb = new char[bytes.length * 2];
-        int x=0;
+        int x = 0;
         for (byte aByte : bytes) {
-            sb[x++]=toHex(aByte >> 4);
-            sb[x++]=toHex(aByte);
+            sb[x++] = toHex(aByte >> 4);
+            sb[x++] = toHex(aByte);
         }
         return sb;
     }
@@ -1436,7 +1360,7 @@ public class CoreIOUtils {
         return bytes;
     }
 
-    public static char[] bytesToChars(byte[] bytes){
+    public static char[] bytesToChars(byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         CharBuffer charBuffer = Charset.forName("UTF-8").decode(byteBuffer);
         char[] chars = Arrays.copyOfRange(charBuffer.array(),
@@ -1447,9 +1371,9 @@ public class CoreIOUtils {
     }
 
     public static char[] evalSHA1(char[] input) {
-        byte[] bytes=charsToBytes(input);
+        byte[] bytes = charsToBytes(input);
         char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true);
-        Arrays.fill(bytes,(byte)0);
+        Arrays.fill(bytes, (byte) 0);
         return r;
     }
 
@@ -1755,7 +1679,9 @@ public class CoreIOUtils {
     }
 
     private static class URLInputSource extends AbstractSourceItem {
-        private NutsURLHeader cachedNutsURLHeader=null;
+
+        private NutsURLHeader cachedNutsURLHeader = null;
+
         public URLInputSource(String name, URL value) {
             super(name, value, false, true);
         }
@@ -1765,13 +1691,13 @@ public class CoreIOUtils {
             return (URL) getSource();
         }
 
-        protected NutsURLHeader getURLHeader(){
-            if(cachedNutsURLHeader==null){
+        protected NutsURLHeader getURLHeader() {
+            if (cachedNutsURLHeader == null) {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
                         NutsHttpConnectionFacade hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
-                        cachedNutsURLHeader= hf.getURLHeader();
+                        cachedNutsURLHeader = hf.getURLHeader();
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -1786,13 +1712,13 @@ public class CoreIOUtils {
             if (CoreIOUtils.isPathHttp(u.toString())) {
                 try {
                     NutsURLHeader uh = getURLHeader();
-                    return uh==null?-1:uh.getContentLength();
+                    return uh == null ? -1 : uh.getContentLength();
                 } catch (Exception ex) {
                     //ignore
                 }
             }
             File file = toFile(u);
-            if (file!=null) {
+            if (file != null) {
                 return file.length();
             }
             return -1;
@@ -1805,7 +1731,7 @@ public class CoreIOUtils {
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
                         NutsURLHeader uh = getURLHeader();
-                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), uh==null?-1:uh.getContentLength()));
+                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -1893,15 +1819,15 @@ public class CoreIOUtils {
         }
     }
 
-    public static void storeProperties(Map<String, String> props, OutputStream out,boolean sort) {
-        storeProperties(props, new OutputStreamWriter(out),sort);
+    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
+        storeProperties(props, new OutputStreamWriter(out), sort);
     }
 
-    public static void storeProperties(Map<String, String> props, Writer w,boolean sort) {
+    public static void storeProperties(Map<String, String> props, Writer w, boolean sort) {
         try {
             Set<String> keys = props.keySet();
-            if(sort){
-                keys=new TreeSet<>(keys);
+            if (sort) {
+                keys = new TreeSet<>(keys);
             }
             for (String key : keys) {
                 String value = props.get(key);
@@ -1985,5 +1911,19 @@ public class CoreIOUtils {
             }
         }
         return buffer.toString();
+    }
+
+    public static InputSource toPathInputSource(InputSource is, List<Path> tempPaths, NutsWorkspace ws) {
+        if (is.getSource() instanceof Path) {
+            //okkay
+            return is;
+        } else if (is.getSource() instanceof File) {
+            return createInputSource(((File) is.getSource()).toPath());
+        } else {
+            Path temp = ws.io().createTempFile(is.getName());
+            is.copyTo(temp);
+            tempPaths.add(temp);
+            return createInputSource(temp).multi();
+        }
     }
 }

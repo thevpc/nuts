@@ -152,7 +152,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
     }
 
     public JShellCommandContext createCommandContext(JShellCommand command) {
-        DefaultNutsCommandContext c = new DefaultNutsCommandContext(this, (NshCommand) command);
+        DefaultNutsCommandContext c = new DefaultNutsCommandContext(this, (NshBuiltin) command);
         c.setTerminalMode(getTerminalMode());
         c.setVerbose(isVerbose());
         return c;
@@ -268,8 +268,8 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             }
         };
 
-        if (command != null && command instanceof NshCommand) {
-            ((NshCommand) command).autoComplete(new DefaultNutsCommandContext(this, (NshCommand) command), autoComplete);
+        if (command != null && command instanceof NshBuiltin) {
+            ((NshBuiltin) command).autoComplete(new DefaultNutsCommandContext(this, (NshBuiltin) command), autoComplete);
         } else {
             NutsWorkspace ws = this.getWorkspace();
             List<NutsId> nutsIds = ws.search()

@@ -55,7 +55,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setOpenMode(ignoreIdFound ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.CREATE_NEW)
                                         .setReadOnly(!save)
                         );
-                        if (!StringUtils.isEmpty(login)) {
+                        if (!StringUtils.isBlank(login)) {
                             workspace.security().login(login, password);
                         }
                         trySave(context, workspace, null, autoSave, cmdLine);
@@ -127,7 +127,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setReadOnly(!save)
                                         .setOpenMode(createIfNotFound ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
                         );
-                        if (!StringUtils.isEmpty(login)) {
+                        if (!StringUtils.isBlank(login)) {
                             workspace.security().login(login, password);
                         }
                         //TODO Unsupported set workspace

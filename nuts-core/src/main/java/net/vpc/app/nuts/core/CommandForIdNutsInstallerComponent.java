@@ -48,8 +48,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     @Override
     public void install(NutsExecutionContext executionContext) {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
-        NutsId id = executionContext.getNutsDefinition().getId();
-        NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
+        NutsId id = executionContext.getDefinition().getId();
+        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
@@ -64,8 +64,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     @Override
     public void update(NutsExecutionContext executionContext) {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
-        NutsId id = executionContext.getNutsDefinition().getId();
-        NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
+        NutsId id = executionContext.getDefinition().getId();
+        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-update", "--force")
@@ -77,9 +77,9 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
-        NutsId id = executionContext.getNutsDefinition().getId();
-        if ("jar".equals(executionContext.getNutsDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parser().parseExecutionEntries(executionContext.getNutsDefinition().getPath());
+        NutsId id = executionContext.getDefinition().getId();
+        if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
+            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parser().parseExecutionEntries(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //

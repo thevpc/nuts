@@ -55,10 +55,24 @@ public class NutsObjectFormatBaseSimple extends NutsObjectFormatBase {
         switch (t) {
             case PLAIN: {
                 PrintWriter out = getValidPrintWriter(w);
-                NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(toMap());
-                ff.configure(ws.parser().parseCommand(extraConfig), true);
-                ff.configure(ws.parser().parseCommand("--compact=false"), true);
-                ff.print(out);
+                if (data instanceof Map) {
+                    NutsPropertiesFormat ff = ws.formatter().createPropertiesFormat().model(toMap());
+                    ff.configure(ws.parser().parseCommand(extraConfig), true);
+                    ff.configure(ws.parser().parseCommand("--compact=false"), true);
+                    ff.print(out);
+                } else if (data instanceof Collection) {
+                    boolean first = true;
+                    for (Object object : ((Collection) data)) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            out.println();
+                        }
+                        out.print(object);
+                    }
+                } else {
+                    out.print(data);
+                }
                 break;
             }
             case PROPS: {

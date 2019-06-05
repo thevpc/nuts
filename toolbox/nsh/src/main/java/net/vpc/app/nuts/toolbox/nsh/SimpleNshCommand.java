@@ -39,7 +39,7 @@ import net.vpc.app.nuts.NutsWorkspace;
  *
  * @author vpc
  */
-public abstract class SimpleNshCommand extends AbstractNshCommand {
+public abstract class SimpleNshCommand extends AbstractNshBuiltin {
 
     public SimpleNshCommand(String name, int supportLevel) {
         super(name, supportLevel);
@@ -104,7 +104,7 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
         public NutsSession getSession() {
             return context.getSession();
         }
-        
+
         public <T> T getOptions() {
             return (T) options;
         }
@@ -146,7 +146,7 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
     protected abstract void createResult(NutsCommand commandLine, SimpleNshCommandContext context);
 
     @Override
-    public final int exec(String[] args, NutsCommandContext context) throws Exception {
+    public final void exec(String[] args, NutsCommandContext context){
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
@@ -183,16 +183,17 @@ public abstract class SimpleNshCommand extends AbstractNshCommand {
             }
         }
         if (commandLine.isAutoCompleteMode()) {
-            return 0;
+            return;
         }
         createResult(commandLine, context2);
         final Object outObject = context2.getOutObject();
-        printObject(outObject, context2.setErr(false));
+        if (outObject != null) {
+            printObject(outObject, context2.setErr(false));
+        }
         final Object errObject = context2.getErrObject();
         if (errObject != null) {
             printObject(outObject, context2.setErr(true));
         }
-        return 0;
     }
 
     protected void printObject(Object result, SimpleNshCommandContext context) {

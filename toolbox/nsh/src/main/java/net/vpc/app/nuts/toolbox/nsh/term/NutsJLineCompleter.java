@@ -40,9 +40,9 @@ class NutsJLineCompleter implements Completer {
                     AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
-                        if (!StringUtils.isEmpty(value)) {
+                        if (!StringUtils.isBlank(value)) {
                             String display = cmdCandidate.getDisplay();
-                            if (StringUtils.isEmpty(display)) {
+                            if (StringUtils.isBlank(display)) {
                                 display = value;
                             }
                             candidates.add(new Candidate(

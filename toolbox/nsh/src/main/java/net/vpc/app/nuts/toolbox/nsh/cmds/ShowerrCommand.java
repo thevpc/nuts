@@ -29,21 +29,21 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.javashell.JShellResult;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ShowerrCommand extends AbstractNshCommand {
+public class ShowerrCommand extends AbstractNshBuiltin {
 
     public ShowerrCommand() {
         super("showerr", DEFAULT_SUPPORT);
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         JShellResult r = context.getGlobalContext().getLastResult();
         if (r.getCode() == 0) {
             context.out().println("##Last command ended successfully with no errors.##");
@@ -56,7 +56,6 @@ public class ShowerrCommand extends AbstractNshCommand {
                 r.getThrowable().printStackTrace(context.err());
             }
         }
-        return 0;
     }
 
 }

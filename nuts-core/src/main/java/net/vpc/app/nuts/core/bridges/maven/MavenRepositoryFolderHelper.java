@@ -64,6 +64,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  *
@@ -82,22 +83,8 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Path getIdLocalFile(NutsId id) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            return null;
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            return null;
-        }
-        if (id.getVersion().isBlank()) {
-            return null;
-        }
-        String alt = CoreStringUtils.trim(id.getAlternative());
-        String defaultIdFilename = NutsRepositoryExt.of(repo).getIdFilename(id);
-        return (alt.isEmpty() || alt.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE)) ? getLocalVersionFolder(id).resolve(defaultIdFilename) : getLocalVersionFolder(id).resolve(alt).resolve(defaultIdFilename);
-    }
-
-    public Path getLocalVersionFolder(NutsId id) {
-        return CoreIOUtils.resolveNutsDefaultPath(id, getStoreLocation());
+        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id))
+                .resolve(ws.config().getDefaultIdFilename(id));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -195,10 +182,10 @@ public class MavenRepositoryFolderHelper {
     }
 
     public void reindexFolder() {
-        reindexFolder(getStoreLocation(),true);
+        reindexFolder(getStoreLocation(), true);
     }
 
-    private void reindexFolder(Path path,boolean applyRawNavigation) {
+    private void reindexFolder(Path path, boolean applyRawNavigation) {
         try {
             Files.walkFileTree(path, new FileVisitor<Path>() {
                 @Override
@@ -222,8 +209,8 @@ public class MavenRepositoryFolderHelper {
                     File[] children = folder.listFiles();
                     TreeSet<String> files = new TreeSet<>();
                     TreeSet<String> folders = new TreeSet<>();
-                    String subPath = dir.toString().equals(path.toString()) ? "":
-                            dir.toString().substring(path.toString().length() + 1).replace('\\', '/');
+                    String subPath = dir.toString().equals(path.toString()) ? ""
+                            : dir.toString().substring(path.toString().length() + 1).replace('\\', '/');
                     int iii = subPath.lastIndexOf('/');
                     String artifactId = null;
                     String groupId = null;
@@ -276,15 +263,15 @@ public class MavenRepositoryFolderHelper {
                                 }
                             });
                             m.setVersions(ll);
-                            if(m.getLastUpdated()==null){
+                            if (m.getLastUpdated() == null) {
                                 m.setLastUpdated(new Date());
                             }
 //                            System.out.println(MavenMetadataParser.toXmlString(m));
-                            MavenMetadataParser.writeMavenMetaData(m,metadataxml);
-                            String md5=CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
-                            Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"),md5.getBytes());
-                            String sha1=CoreIOUtils.evalSHA1Hex(metadataxml).toLowerCase();
-                            Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"),sha1.getBytes());
+                            MavenMetadataParser.writeMavenMetaData(m, metadataxml);
+                            String md5 = CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
+                            Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
+                            String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml).toLowerCase();
+                            Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {
                             for (File child : children) {

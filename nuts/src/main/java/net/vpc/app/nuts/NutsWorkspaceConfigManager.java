@@ -199,6 +199,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 
     String getDefaultIdFilename(NutsId id);
+    
+    String getDefaultIdBasedir(NutsId id);
 
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
 

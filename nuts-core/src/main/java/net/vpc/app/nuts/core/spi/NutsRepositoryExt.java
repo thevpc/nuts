@@ -31,6 +31,8 @@ public interface NutsRepositoryExt {
         return (NutsRepositoryExt) repo;
     }
 
+    String getIdBasedir(NutsId id);
+    
     String getIdFilename(NutsId id);
 
     int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode);

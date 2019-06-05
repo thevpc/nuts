@@ -6,6 +6,7 @@ import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
 
 import java.util.*;
 import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellException;
 
 public class Nsh extends NutsApplication {
 
@@ -28,9 +29,14 @@ public class Nsh extends NutsApplication {
             applicationContext.getWorkspace().io().setSystemTerminal(new NutsJLineTerminal());
         }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        int r = c.run(args);
-        if (r != 0) {
-            throw new NutsExecutionException(applicationContext.getWorkspace(), r);
+        try {
+            c.run(args);
+        } catch (NutsExecutionException ex) {
+            throw ex;
+        } catch (JShellException ex) {
+            throw new NutsExecutionException(applicationContext.getWorkspace(), ex.getMessage(), ex, ex.getResult());
+        } catch (Exception ex) {
+            throw new NutsExecutionException(applicationContext.getWorkspace(), ex.getMessage(), ex, 100);
         }
     }
 

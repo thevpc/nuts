@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;
 import net.vpc.toolbox.mysql.util.AtName;
@@ -232,11 +231,19 @@ public class LocalMysql {
             if (add) {
                 if (name.getDatabaseName().isEmpty()) {
                     if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
-                        throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
+                        if (!context.getSession().getTerminal().ask()
+                                .forBoolean("Already exists ==%S==. override?", name)
+                                .defaultValue(false).getBooleanResult()) {
+                            throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
+                        }
                     }
                 } else {
                     if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
-                        throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
+                        if (!context.getSession().getTerminal().ask()
+                                .forBoolean("Already exists ==%S==. override?", name)
+                                .defaultValue(false).getBooleanResult()) {
+                            throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
+                        }
                     }
                 }
             } else {
@@ -292,7 +299,10 @@ public class LocalMysql {
                 }
                 if (password != null) {
                     someUpdates = true;
-                    r.getConfig().setPassword(password);
+                    r.getConfig().setPassword(
+                            new String(context.getWorkspace().security().getAuthenticationAgent().setCredentials(password.toCharArray(), true,
+                                    null))
+                    );
                 }
                 if (add && dbname == null) {
                     dbname = name.getDatabaseName();
@@ -305,8 +315,7 @@ public class LocalMysql {
                     r.getConfig().setPassword(
                             new String(context.getWorkspace().security()
                                     .getAuthenticationAgent()
-                                    .setCredentials(
-                                            context.getSession().getTerminal().readPassword("Password"),
+                                    .setCredentials(context.getSession().getTerminal().readPassword("Password"), true,
                                             null
                                     )
                             )
@@ -420,7 +429,7 @@ public class LocalMysql {
                 commandLine.required("missing --path");
             }
             if (backup) {
-                d.archive(path);
+                d.backup(path);
             } else {
                 d.restore(path);
             }

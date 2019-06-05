@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.security.NutsWorkspaceLoginModule;
+import net.vpc.app.nuts.core.security.WrapperNutsAuthenticationAgent;
+import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
@@ -55,9 +58,11 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceSecurityManager.class.getName());
     private ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNutsWorkspace ws;
+    private final NutsAuthenticationAgent agent;
 
     protected DefaultNutsWorkspaceSecurityManager(final DefaultNutsWorkspace ws) {
         this.ws = ws;
+        this.agent = new WrapperNutsAuthenticationAgent(ws, x -> getAuthenticationAgent(x));
     }
 
     @Override
@@ -91,9 +96,10 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
                 LOG.log(Level.CONFIG, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
-            u.setCredentials(new String(getAuthenticationAgent().setCredentials("admin".toCharArray(), null)));
+            u.setCredentials(CoreStringUtils.chrToStr(getAuthenticationAgent().setCredentials("admin".toCharArray(), false, null)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u);
         }
+
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
@@ -430,12 +436,20 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public NutsAuthenticationAgent getAuthenticationAgent() {
-        final NutsAuthenticationAgent a = ws.config().createAuthenticationAgent(
-                ((DefaultNutsWorkspaceConfigManager) ws.config())
-                        .getStoredConfig().getAuthenticationAgent());
-        a.setEnv(ws.config());
+    public NutsAuthenticationAgent getAuthenticationAgent(String name) {
+        name = CoreStringUtils.trim(name);
+        if (CoreStringUtils.isBlank(name)) {
+            name = ((DefaultNutsWorkspaceConfigManager) ws.config())
+                    .getStoredConfig().getAuthenticationAgent();
+        }
+        NutsAuthenticationAgent a = ws.config().createAuthenticationAgent(name);
+        ((NutsAuthenticationAgentSpi) a).setEnv(ws.config());
         return a;
+    }
+
+    @Override
+    public NutsAuthenticationAgent getAuthenticationAgent() {
+        return agent;
     }
 
     @Override

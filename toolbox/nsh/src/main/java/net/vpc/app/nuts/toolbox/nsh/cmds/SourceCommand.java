@@ -96,10 +96,7 @@ public class SourceCommand extends SimpleNshCommand {
         c2.setArgs(context.getArgs());
         int a = 0;
         for (String goodFile : goodFiles) {
-            a = context.getShell().executeFile(goodFile, c2, false);
-            if (a != 0) {
-                throw new NutsExecutionException(context.getWorkspace(), "Error", a);
-            }
+            context.getShell().executeFile(goodFile, c2, false);
         }
     }
 

@@ -47,6 +47,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 
 /**
  * @author vpc
@@ -1032,25 +1033,16 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
-        if (id == null) {
-            throw new NutsElementNotFoundException(ws, "Missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException(ws, "Missing group for " + id);
-        }
         Path storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
         }
-        return CoreIOUtils.resolveNutsDefaultPath(id, storeLocation);
+        return storeLocation.resolve(getDefaultIdBasedir(id));
     }
 
     @Override
     public Path getStoreLocation(NutsId id, Path path) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException(ws, "Missing group for " + id);
-        }
-        return CoreIOUtils.resolveNutsDefaultPath(id, path);
+        return path.resolve(getDefaultIdBasedir(id));
     }
 
     @Override
@@ -1122,10 +1114,22 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
-        NutsAuthenticationAgent supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, authenticationAgent);
+        authenticationAgent = CoreStringUtils.trim(authenticationAgent);
+        NutsAuthenticationAgent supported = null;
+        if (authenticationAgent.isEmpty()) {
+            supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, "");
+        } else {
+            List<NutsAuthenticationAgent> agents = ws.extensions().createAllSupported(NutsAuthenticationAgent.class, "");
+            for (NutsAuthenticationAgent agent : agents) {
+                if (agent.getId().equals(authenticationAgent)) {
+                    supported = agent;
+                }
+            }
+        }
         if (supported == null) {
             throw new NutsExtensionMissingException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
+        ((NutsAuthenticationAgentSpi) supported).setWorkspace(ws);
         return supported;
     }
 
@@ -1372,6 +1376,32 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
+    public String getDefaultIdBasedir(NutsId id) {
+        if (id == null) {
+            throw new NutsElementNotFoundException(null, "Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsElementNotFoundException(null, "Missing group for " + id);
+        }
+        if (CoreStringUtils.isBlank(id.getName())) {
+            throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
+        }
+        String groupId = id.getGroup();
+        String artifactId = id.getName();
+        String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
+        if (id.getVersion().isBlank()) {
+            return plainIdPath;
+        }
+        String version = id.getVersion().getValue();
+        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
+        String x = plainIdPath + "/" + version;
+        if (a != null) {
+            x += "/" + a;
+        }
+        return x;
+    }
+
+    @Override
     public String getDefaultIdFilename(NutsId id) {
         String classifier = "";
         String ext = getDefaultIdExtension(id);
@@ -1418,7 +1448,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         return "." + packaging;
     }
-
+    
     @Override
     public String getDefaultIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();

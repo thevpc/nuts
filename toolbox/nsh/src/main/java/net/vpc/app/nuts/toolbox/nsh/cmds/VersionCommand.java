@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.mvn.PomIdResolver;
 import net.vpc.app.nuts.NutsArgument;
@@ -40,14 +40,14 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class VersionCommand extends AbstractNshCommand {
+public class VersionCommand extends AbstractNshBuiltin {
 
     public VersionCommand() {
         super("version", DEFAULT_SUPPORT);
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context){
         NutsWorkspace ws = context.getWorkspace();
         boolean min = false;
         NutsCommand cmdLine = context.getWorkspace().parser().parseCommand(args);
@@ -68,6 +68,5 @@ public class VersionCommand extends AbstractNshCommand {
                 .setSession(context.getSession())
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
-        return 0;
     }
 }

@@ -150,7 +150,7 @@ public class WhoamiCommand extends SimpleNshCommand {
                     NutsEffectiveUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getRights().length > 0
-                            || !StringUtils.isEmpty(ruser.getMappedUser()))) {
+                            || !StringUtils.isBlank(ruser.getMappedUser()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
                         rt.name = repository.config().getName();

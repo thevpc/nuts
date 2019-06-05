@@ -73,7 +73,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     for (NutsEffectiveUser u : security) {
                         out.printf("User: %s%n", u.getUser());
-                        if (!StringUtils.isEmpty(u.getMappedUser())) {
+                        if (!StringUtils.isBlank(u.getMappedUser())) {
                             out.printf("   Mapper to  : %s%n", u.getMappedUser());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));

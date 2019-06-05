@@ -2,7 +2,7 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.common.javashell.JShellCommand;
 
-public class ShellToNshCommand extends AbstractNshCommand {
+public class ShellToNshCommand extends AbstractNshBuiltin {
 
     private final JShellCommand command;
 
@@ -17,8 +17,8 @@ public class ShellToNshCommand extends AbstractNshCommand {
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        return command.exec(args, context);
+    public void exec(String[] args, NutsCommandContext context){
+        command.exec(args, context);
     }
 
     @Override

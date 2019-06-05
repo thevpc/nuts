@@ -36,17 +36,10 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;
-import net.vpc.app.nuts.core.filters.descriptor.*;
-import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterAnd;
-import net.vpc.app.nuts.core.filters.version.NutsVersionFilterAnd;
-import net.vpc.app.nuts.core.filters.version.NutsVersionFilterOr;
 
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -355,7 +348,6 @@ public class CoreNutsUtils {
         return null;
     }
 
-
     public static <T> T simplify(T any) {
         if (any == null) {
             return null;
@@ -385,7 +377,6 @@ public class CoreNutsUtils {
         }
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
-
 
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
         if (parent != null) {
@@ -834,26 +825,33 @@ public class CoreNutsUtils {
         NutsArgument a = cmdLine.peek();
         switch (a.getKey().getString()) {
             case "--output-format": {
-                a=cmdLine.nextString();
+                a = cmdLine.nextString();
                 return CoreCommonUtils.parseEnumString(a.getValue().getString(), NutsOutputFormat.class, false);
             }
             case "--json": {
-                return  (NutsOutputFormat.JSON);
+                return (NutsOutputFormat.JSON);
             }
             case "--props": {
-                return  (NutsOutputFormat.PROPS);
+                return (NutsOutputFormat.PROPS);
             }
             case "--table": {
-                return  (NutsOutputFormat.TABLE);
+                return (NutsOutputFormat.TABLE);
             }
             case "--tree": {
-                return  (NutsOutputFormat.TREE);
+                return (NutsOutputFormat.TREE);
             }
             case "--plain": {
-                return  (NutsOutputFormat.PLAIN);
+                return (NutsOutputFormat.PLAIN);
             }
         }
         return null;
     }
 
+    public static String trimToNullAlternative(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = s.trim();
+        return (s.isEmpty() || NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
+    }
 }

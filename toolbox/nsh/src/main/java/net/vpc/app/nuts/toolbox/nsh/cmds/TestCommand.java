@@ -40,13 +40,13 @@ import java.util.Stack;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class TestCommand extends AbstractNshCommand {
+public class TestCommand extends AbstractNshBuiltin {
 
     public TestCommand() {
         super("test", DEFAULT_SUPPORT);
@@ -174,7 +174,7 @@ public class TestCommand extends AbstractNshCommand {
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context){
         NutsCommand commandLine = context.getWorkspace().parser().parseCommand(args)
                 .setCommandName("test");
         if (commandLine.isEmpty()) {
@@ -200,10 +200,10 @@ public class TestCommand extends AbstractNshCommand {
                     }
                     case "]": {
                         reduce(operators, operands, 0);
-                        if (operators.size() >0 && !operators.peek().equals("[")) {
+                        if (operators.size() > 0 && !operators.peek().equals("[")) {
                             throw new IllegalArgumentException("']' has no euivalent '['");
                         }
-                        if (operators.size() ==1 && operators.peek().equals("[")) {
+                        if (operators.size() == 1 && operators.peek().equals("[")) {
                             operators.pop();
                         }
                         break;
@@ -226,9 +226,10 @@ public class TestCommand extends AbstractNshCommand {
             if (!operators.isEmpty()) {
                 throw new IllegalArgumentException("Too many operators");
             }
-            return operands.pop().eval(context);
-        } else {
-            return 0;
+            int result = operands.pop().eval(context);
+            if (result != 0) {
+                throw new NutsExecutionException(context.getWorkspace(), "result=" + result, result);
+            }
         }
     }
 
@@ -440,19 +441,19 @@ public class TestCommand extends AbstractNshCommand {
                 }
                 case "-a": {
                     int i1 = evalInt(arg1, context);
-                    if(i1==1){
+                    if (i1 == 1) {
                         return 1;
                     }
                     int i2 = evalInt(arg2, context);
-                    return (i1==0 && i2==0) ? 0 : 1;
+                    return (i1 == 0 && i2 == 0) ? 0 : 1;
                 }
                 case "-o": {
                     int i1 = evalInt(arg1, context);
-                    if(i1==0){
+                    if (i1 == 0) {
                         return 0;
                     }
                     int i2 = evalInt(arg2, context);
-                    return (i1==0 && i2==0) ? 0 : 1;
+                    return (i1 == 0 && i2 == 0) ? 0 : 1;
                 }
                 case "-eq": {
                     int s1 = evalInt(arg1, context);

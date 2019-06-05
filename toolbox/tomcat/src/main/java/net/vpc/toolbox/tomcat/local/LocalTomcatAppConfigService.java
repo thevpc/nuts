@@ -147,7 +147,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             if (!Files.isRegularFile(f)) {
                 throw new UncheckedIOException(new IOException("File not found " + f));
             }
-            if (StringUtils.isEmpty(version)) {
+            if (StringUtils.isBlank(version)) {
                 version = getCurrentVersion();
             }
             Path domainDeployPath = getArchiveFile(version);

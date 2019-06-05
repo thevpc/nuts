@@ -44,7 +44,7 @@ public interface NutsExecutionContext {
 
     Properties getExecutorProperties();
 
-    NutsDefinition getNutsDefinition();
+    NutsDefinition getDefinition();
 
     String[] getArguments();
 

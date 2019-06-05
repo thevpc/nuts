@@ -49,6 +49,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     private String cwd;
     private String commandName;
     private boolean failFast;
+    private boolean temporary;
 
 //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
 //        this.nutsDefinition = nutsDefinition;
@@ -70,9 +71,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
 //        }
 //        this.cwd = cwd;
 //    }
-
-
-    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, String[] args, String[] executorArgs, Properties env, Properties executorProperties, String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast, String commandName) {
+    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, String[] args, String[] executorArgs, Properties env, Properties executorProperties, String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast, boolean temporary, String commandName) {
         if (args == null) {
             args = new String[0];
         }
@@ -95,7 +94,12 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         }
         this.env = env;
         this.failFast = failFast;
+        this.temporary = temporary;
         this.executorDescriptor = nutsDefinition.getDescriptor().getExecutor();
+    }
+
+    public boolean isTemporary() {
+        return temporary;
     }
 
     @Override
@@ -114,7 +118,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     }
 
     @Override
-    public NutsDefinition getNutsDefinition() {
+    public NutsDefinition getDefinition() {
         return nutsDefinition;
     }
 

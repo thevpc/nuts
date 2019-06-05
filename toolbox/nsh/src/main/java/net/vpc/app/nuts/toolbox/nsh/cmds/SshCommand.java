@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.FileUtils;
@@ -47,7 +47,7 @@ import net.vpc.app.nuts.NutsCommand;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class SshCommand extends AbstractNshCommand {
+public class SshCommand extends AbstractNshBuiltin {
 
     public SshCommand() {
         super("ssh", DEFAULT_SUPPORT);
@@ -62,7 +62,7 @@ public class SshCommand extends AbstractNshCommand {
         List<String> cmd = new ArrayList<>();
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context){
         NutsCommand cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -112,15 +112,15 @@ public class SshCommand extends AbstractNshCommand {
                         c.skip();
                     }
                 }
-                if (!StringUtils.isEmpty(o.nutsCommand)) {
+                if (!StringUtils.isBlank(o.nutsCommand)) {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
-                    sshSession.setFailFast()
+                    sshSession.failFast()
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
-                    if (StringUtils.isEmpty(workspace)) {
+                    if (StringUtils.isBlank(workspace)) {
                         workspace = userHome + "/.nuts/default-workspace";
                     }
                     boolean nutsCommandFound = false;
@@ -156,7 +156,7 @@ public class SshCommand extends AbstractNshCommand {
                 }
             }
             cmd.addAll(o.cmd);
-            return sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
+            sshSession.grabOutputString(false).failFast().exec(cmd);
         }
     }
 

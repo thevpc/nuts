@@ -38,7 +38,7 @@ import net.vpc.common.javashell.JShellCommand;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public interface NshCommand extends NutsComponent<NutsJavaShell>, JShellCommand<NutsCommandContext> {
+public interface NshBuiltin extends NutsComponent<NutsJavaShell>, JShellCommand<NutsCommandContext> {
 
 //    String getName();
 

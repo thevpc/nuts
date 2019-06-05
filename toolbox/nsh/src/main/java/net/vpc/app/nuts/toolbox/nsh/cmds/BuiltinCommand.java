@@ -30,26 +30,24 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.util.Arrays;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.javashell.JShellCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class BuiltinCommand extends AbstractNshCommand {
+public class BuiltinCommand extends AbstractNshBuiltin {
 
     public BuiltinCommand() {
         super("builtin", DEFAULT_SUPPORT);
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         if (args.length > 0) {
             JShellCommand a = context.getGlobalContext().builtins().get(args[0]);
-            return a.exec(Arrays.copyOfRange(args, 1, args.length), context);
-        } else {
-            return 0;
+            a.exec(Arrays.copyOfRange(args, 1, args.length), context);
         }
     }
 

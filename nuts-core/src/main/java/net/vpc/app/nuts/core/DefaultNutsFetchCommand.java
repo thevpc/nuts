@@ -205,7 +205,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         try {
             //add env parameters to fetch adequate nuts
             id = NutsWorkspaceUtils.configureFetchEnv(ws, id);
-            NutsFetchMode modeForSuccessfulDescRetreival = null;
+            NutsFetchMode modeForSuccessfulDescRetrieval = null;
             //use
             for (NutsFetchMode mode : nutsFetchModes) {
                 try {
@@ -222,14 +222,14 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                             }
                         }
                         if (foundDefinition != null) {
-                            modeForSuccessfulDescRetreival = mode;
+                            modeForSuccessfulDescRetrieval = mode;
                             break;
                         }
                         throw new NutsNotFoundException(ws,id);
                     }
                     foundDefinition = fetchDescriptorAsDefinition(id, options, mode);
                     if (foundDefinition != null) {
-                        modeForSuccessfulDescRetreival = mode;
+                        modeForSuccessfulDescRetrieval = mode;
                         break;
                     }
                 } catch (NutsNotFoundException ex) {
@@ -292,7 +292,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                     break;
                                 }
                             } catch (NutsNotFoundException ex) {
-                                if (mode.ordinal() < modeForSuccessfulDescRetreival.ordinal()) {
+                                if (mode.ordinal() < modeForSuccessfulDescRetrieval.ordinal()) {
                                     //ignore because actually there is more chance to find it in later modes!
                                 } else {
                                     escalateMode = true;

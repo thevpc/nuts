@@ -16,7 +16,7 @@ public class NutsIndexSubscriberListManager {
 
     public NutsIndexSubscriberListManager(NutsWorkspace ws, String name) {
         this.defaultWorkspace = ws;
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();

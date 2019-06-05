@@ -30,8 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ import net.vpc.common.javashell.JShellCommand;
 /**
  * Created by vpc on 1/7/17.
  */
-public class FindCommandCommand extends AbstractNshCommand {
+public class FindCommandCommand extends AbstractNshBuiltin {
 
 
     public FindCommandCommand() {
@@ -50,7 +49,7 @@ public class FindCommandCommand extends AbstractNshCommand {
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         List<String> commands=new ArrayList<>();
@@ -67,7 +66,6 @@ public class FindCommandCommand extends AbstractNshCommand {
             for (JShellCommand command : context.getGlobalContext().builtins().getAll()) {
                 context.out().println(command.getName());
             }
-            return 0;
         }else{
             for (String command : commands) {
                 JShellCommand c = context.getGlobalContext().builtins().find(command);
@@ -82,7 +80,6 @@ public class FindCommandCommand extends AbstractNshCommand {
                     }
                 }
             }
-            return 0;
         }
     }
 }

@@ -44,6 +44,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -72,7 +73,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (executor == null) {
             executor = new ThreadPoolExecutor(2, 10, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
         }
-        if (StringUtils.isEmpty(serverId)) {
+        if (StringUtils.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_ADMIN_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -177,24 +178,27 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 NutsJavaShell cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out,NutsTerminalMode.FORMATTED);
+                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
                                     NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
                                     terminal.setIn(finalAccept.getInputStream());
                                     terminal.setOut(eout);
                                     terminal.setErr(eout);
                                     session.setTerminal(terminal);
-                                    cli = new NutsJavaShell(invokerWorkspace,session);
+                                    cli = new NutsJavaShell(invokerWorkspace, session);
 //                                    cli.uninstallCommand("server");
                                     cli.getGlobalContext().builtins().unset("connect");
                                     cli.setServiceName(serverId);
-                                    cli.getGlobalContext().builtins().set(new AbstractNshCommand("stop-server", DEFAULT_SUPPORT) {
+                                    cli.getGlobalContext().builtins().set(new AbstractNshBuiltin("stop-server", DEFAULT_SUPPORT) {
                                         @Override
-                                        public int exec(String[] args, NutsCommandContext context) throws Exception {
+                                        public void exec(String[] args, NutsCommandContext context) {
                                             PrintStream out2 = MyNutsServer.this.terminal.fout();
                                             out2.println("Stopping Server ...");
-                                            finalServerSocket.close();
-                                            return 0;
+                                            try {
+                                                finalServerSocket.close();
+                                            } catch (IOException ex) {
+                                                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                                            }
                                         }
                                     });
                                     cli.runCommand(args);

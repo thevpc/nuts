@@ -68,17 +68,17 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public void exec(NutsExecutionContext executionContext) {
-        NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
         Path folder = ws.io().createTempFolder("jj");
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException(ws,"Compilation Failed",res);
+            throw new NutsExecutionException(ws, "Compilation Failed", res);
         }
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
-        NutsDefinition d = executionContext.getNutsDefinition();
+        NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
         ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
                 folder,
@@ -102,7 +102,10 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getCwd(),
                 executionContext.getSession(),
                 ws,
+                //failFast
                 true,
+                //temporary
+                true, 
                 executionContext.getCommandName()
         );
         cc.exec(executionContext2);

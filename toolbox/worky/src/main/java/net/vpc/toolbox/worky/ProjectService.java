@@ -151,7 +151,7 @@ public class ProjectService {
                         a = new RepositoryAddress();
                     }
                     String nutsRepository = a.getNutsRepository();
-                    if (StringUtils.isEmpty(nutsRepository)) {
+                    if (StringUtils.isBlank(nutsRepository)) {
                         throw new NutsExecutionException(context.getWorkspace(),"Missing Repository", 2);
                     }
                     try {

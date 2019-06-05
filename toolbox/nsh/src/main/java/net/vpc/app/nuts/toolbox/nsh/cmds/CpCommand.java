@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.URLUtils;
@@ -51,8 +51,6 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsArgument;
@@ -61,7 +59,7 @@ import net.vpc.app.nuts.NutsArgument;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class CpCommand extends AbstractNshCommand {
+public class CpCommand extends AbstractNshBuiltin {
 
     public CpCommand() {
         super("cp", DEFAULT_SUPPORT);
@@ -73,7 +71,7 @@ public class CpCommand extends AbstractNshCommand {
         ShellHelper.WsSshListener sshlistener;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         List<XFile> files = new ArrayList<>();
         Options o = new Options();
@@ -85,7 +83,7 @@ public class CpCommand extends AbstractNshCommand {
                 o.mkdir = a.getValue().getBoolean();
             } else {
                 String value = cmdLine.requireNonOption().next().getString();
-                if (StringUtils.isEmpty(value)) {
+                if (StringUtils.isBlank(value)) {
                     throw new NutsExecutionException(context.getWorkspace(), "Empty File Path", 2);
                 }
                 files.add(XFile.of(value.contains("://") ? value : context.getWorkspace().io().expandPath(value)));
@@ -98,7 +96,6 @@ public class CpCommand extends AbstractNshCommand {
         for (int i = 0; i < files.size() - 1; i++) {
             copy(files.get(i), files.get(files.size() - 1), o, context);
         }
-        return 0;
     }
 
     public void copy(XFile from, XFile to, Options o, NutsCommandContext context) {

@@ -89,11 +89,11 @@ public class LocalMysqlDatabaseConfigService {
         }
     }
 
-    public ArchiveResult archive(String path) {
+    public ArchiveResult backup(String path) {
         try {
-            if (StringUtils.isEmpty(path)) {
+            if (StringUtils.isBlank(path)) {
                 String databaseName = getConfig().getDatabaseName();
-                if (StringUtils.isEmpty(databaseName)) {
+                if (StringUtils.isBlank(databaseName)) {
                     databaseName = name;
                 }
                 path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
@@ -203,7 +203,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public String getDatabaseName() {
         String s = getConfig().getDatabaseName();
-        if (StringUtils.isEmpty(s)) {
+        if (StringUtils.isBlank(s)) {
             s = name;
         }
         return s;

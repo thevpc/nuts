@@ -48,11 +48,12 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 
     private String login;
     private String remoteIdentity;
-    private boolean remoteIdentityUpdated;
+//    private boolean remoteIdentityUpdated;
     private boolean resetRights;
     private boolean resetGroups;
     private char[] credentials;
     private char[] oldCredentials;
+    private char[] remoteCredentials;
     private final Set<String> rights = new HashSet<>();
     private final Set<String> groups = new HashSet<>();
     private final Set<String> rm_rights = new HashSet<>();
@@ -60,11 +61,11 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     private NutsRepository repo;
 
     public DefaultNutsUpdateUserCommand(NutsWorkspace ws) {
-        super(ws,"update-user");
+        super(ws, "update-user");
     }
 
     public DefaultNutsUpdateUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace(),"update-user");
+        super(repo.getWorkspace(), "update-user");
         this.repo = repo;
     }
 
@@ -101,6 +102,22 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     }
 
     @Override
+    public char[] getRemoteCredentials() {
+        return remoteCredentials;
+    }
+
+    @Override
+    public DefaultNutsUpdateUserCommand remoteCredentials(char[] password) {
+        return setRemoteCredentials(password);
+    }
+
+    @Override
+    public DefaultNutsUpdateUserCommand setRemoteCredentials(char[] password) {
+        this.remoteCredentials = password;
+        return this;
+    }
+
+    @Override
     public String getRemoteIdentity() {
         return remoteIdentity;
     }
@@ -113,7 +130,6 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     @Override
     public DefaultNutsUpdateUserCommand setRemoteIdentity(String remoteIdentity) {
         this.remoteIdentity = remoteIdentity;
-        this.remoteIdentityUpdated = true;
         return this;
     }
 
@@ -420,51 +436,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
                 if (u == null) {
                     throw new NutsIllegalArgumentException(ws, "No such user " + login);
                 }
-                if (!currentLogin.equals(login)) {
-                    repo.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
-                }
-                if (!repo.security().isAllowed(NutsConstants.Rights.ADMIN)) {
-                    repo.security().getAuthenticationAgent()
-                            .checkCredentials(u.getCredentials().toCharArray(),
-                                    getCredentials());
-//
-//            if (CoreStringUtils.isEmpty(password)) {
-//                throw new NutsSecurityException("Missing old password");
-//            }
-//            //check old password
-//            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
-//                throw new NutsSecurityException("Invalid password");
-//            }
-                }
-                if (CoreStringUtils.isBlank(getCredentials())) {
-                    throw new NutsIllegalArgumentException(ws, "Missing password");
-                }
-
-                u.setCredentials(
-                        new String(repo.security().getAuthenticationAgent()
-                                .setCredentials(credentials, null))
-                );
-                if (resetGroups) {
-                    u.setGroups(new String[0]);
-                }
-                if (resetRights) {
-                    u.setRights(new String[0]);
-                }
-                for (String group : groups) {
-                    u.addGroup(group);
-                }
-                for (String group : rm_groups) {
-                    u.removeGroup(group);
-                }
-                for (String group : rights) {
-                    u.addRight(group);
-                }
-                for (String group : rm_rights) {
-                    u.removeRight(group);
-                }
-                if (remoteIdentityUpdated) {
-                    u.setMappedUser(remoteIdentity);
-                }
+                fillNutsUserConfig(u);
 
                 NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u);
 
@@ -474,13 +446,23 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
                 if (u == null) {
                     throw new NutsIllegalArgumentException(ws, "No such user " + login);
                 }
-                if (!currentLogin.equals(login)) {
-                    ws.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
-                }
-                if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
-                    ws.security().getAuthenticationAgent()
-                            .checkCredentials(u.getCredentials().toCharArray(),
-                                    getCredentials());
+
+                fillNutsUserConfig(u);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u);
+            }
+        }
+        return this;
+    }
+
+    protected void fillNutsUserConfig(NutsUserConfig u) {
+        String currentLogin = ws.security().getCurrentLogin();
+        if (!currentLogin.equals(login)) {
+            repo.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
+        }
+        if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
+            ws.security().getAuthenticationAgent()
+                    .checkCredentials(u.getCredentials().toCharArray(),
+                            getOldCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
@@ -489,39 +471,38 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 //            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
 //                throw new NutsSecurityException("Invalid password");
 //            }
-                }
-                if (CoreStringUtils.isBlank(getCredentials())) {
-                    throw new NutsIllegalArgumentException(ws, "Missing password");
-                }
-
-                u.setCredentials(new String(ws.security().getAuthenticationAgent()
-                        .setCredentials(credentials, null)));
-                if (resetGroups) {
-                    u.setGroups(new String[0]);
-                }
-                if (resetRights) {
-                    u.setRights(new String[0]);
-                }
-                for (String group : groups) {
-                    u.addGroup(group);
-                }
-                for (String group : rm_groups) {
-                    u.removeGroup(group);
-                }
-                for (String group : rights) {
-                    u.addRight(group);
-                }
-                for (String group : rm_rights) {
-                    u.removeRight(group);
-                }
-                if (remoteIdentityUpdated) {
-                    u.setMappedUser(remoteIdentity);
-                }
-
-                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u);
-            }
         }
-        return this;
+        if (getCredentials() != null) {
+            u.setCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()))));
+        }
+        if (getRemoteCredentials() != null) {
+            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()))));
+        }
+
+        if (resetGroups) {
+            u.setGroups(new String[0]);
+        }
+        if (resetRights) {
+            u.setRights(new String[0]);
+        }
+        for (String group : groups) {
+            u.addGroup(group);
+        }
+        for (String group : rm_groups) {
+            u.removeGroup(group);
+        }
+        for (String group : rights) {
+            u.addRight(group);
+        }
+        for (String group : rm_rights) {
+            u.removeRight(group);
+        }
+        if (remoteIdentity != null) {
+            u.setRemoteIdentity(remoteIdentity);
+        }
+        if (remoteCredentials != null) {
+            u.setRemoteCredentials(remoteIdentity);
+        }
     }
 
     @Override

@@ -152,4 +152,10 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateUserCommand run();
+
+    NutsUpdateUserCommand setRemoteCredentials(char[] password);
+
+    NutsUpdateUserCommand remoteCredentials(char[] password);
+
+    char[] getRemoteCredentials();
 }

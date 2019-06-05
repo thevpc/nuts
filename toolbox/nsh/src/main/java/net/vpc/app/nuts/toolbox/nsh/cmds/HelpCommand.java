@@ -30,8 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
-import net.vpc.app.nuts.toolbox.nsh.NshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
 import net.vpc.common.strings.StringUtils;
@@ -45,19 +44,18 @@ import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.common.javashell.JShellCommand;
-import net.vpc.common.javashell.JShellCommandTypeResolver;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HelpCommand extends AbstractNshCommand {
+public class HelpCommand extends AbstractNshBuiltin {
 
     public HelpCommand() {
         super("help", DEFAULT_SUPPORT);
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context){
         NutsCommand cmdLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
@@ -135,6 +133,5 @@ public class HelpCommand extends AbstractNshCommand {
                 }
             }
         }
-        return 0;
     }
 }

@@ -41,6 +41,7 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.NutsExecutionContextImpl;
 
 /**
  * Created by vpc on 1/7/17.
@@ -68,10 +69,13 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public void exec(NutsExecutionContext executionContext) {
-        NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        NutsDefinition nutsMainDef = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path contentFile = nutsMainDef.getPath();
+        NutsExecutionContextImpl impl=(NutsExecutionContextImpl)executionContext;
         JavaExecutorOptions joptions = new JavaExecutorOptions(
-                nutsMainDef, executionContext.getArguments(),
+                nutsMainDef, 
+                impl.isTemporary(),
+                executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
                 CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getWorkspace(),

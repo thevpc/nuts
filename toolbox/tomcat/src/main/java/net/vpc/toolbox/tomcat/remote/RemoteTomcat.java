@@ -295,7 +295,7 @@ public class RemoteTomcat {
             } else if ((a = args.nextString("--deploy")) != null) {
                 for (String s : a.getValue().getString().split(",")) {
                     s = s.trim();
-                    if (!StringUtils.isEmpty(s)) {
+                    if (!StringUtils.isBlank(s)) {
                         apps.add(s);
                     }
                 }

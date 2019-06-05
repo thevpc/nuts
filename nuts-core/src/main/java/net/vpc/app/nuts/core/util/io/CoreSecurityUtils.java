@@ -43,6 +43,10 @@ public class CoreSecurityUtils {
     public static final String DEFAULT_PASSPHRASE = CoreIOUtils.bytesToHex("It's completely nuts!!".getBytes());
 
 
+    public static char[] httpDecryptChars(char[] data, String passphrase) {
+        return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
+    }
+    
     public static byte[] httpDecrypt(byte[] data, String passphrase) {
         try {
             byte[] key = CoreIOUtils.evalMD5(passphrase);
@@ -62,6 +66,7 @@ public class CoreSecurityUtils {
         byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
         return CoreIOUtils.bytesToChars(bytes);
     }
+    
     public static byte[] httpEncrypt(byte[] data, String passphrase) {
         try {
             byte[] key = CoreIOUtils.evalMD5(passphrase);

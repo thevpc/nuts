@@ -3,35 +3,35 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.File;
@@ -44,11 +44,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsExecutionException;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class LsCommand extends AbstractNshCommand {
+public class LsCommand extends AbstractNshBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
 
@@ -62,7 +63,7 @@ public class LsCommand extends AbstractNshCommand {
         boolean l = false;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> folders = new ArrayList<>();
@@ -72,7 +73,7 @@ public class LsCommand extends AbstractNshCommand {
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //
-            }else if ((a = cmdLine.nextBoolean("-d", "--dir")) != null) {
+            } else if ((a = cmdLine.nextBoolean("-d", "--dir")) != null) {
                 options.d = a.getValue().getBoolean();
             } else if ((a = cmdLine.nextBoolean("-l", "--list")) != null) {
                 options.l = a.getValue().getBoolean();
@@ -93,8 +94,10 @@ public class LsCommand extends AbstractNshCommand {
             int exitCode = 0;
             boolean first = true;
             PrintStream out = context.out();
+            PrintStream err = context.err();
             for (File f : invalids) {
                 exitCode = 1;
+                err.printf("Invalid file %s%n", f.getPath());
                 ls(f, options, context, out, false);
             }
             for (File f : files) {
@@ -112,14 +115,15 @@ public class LsCommand extends AbstractNshCommand {
             if (invalids.size() + files.size() + folders.size() == 0) {
                 ls(new File(context.getGlobalContext().getCwd()), options, context, out, false);
             }
-            return exitCode;
+            if (exitCode > 0) {
+                throw new NutsExecutionException(context.getWorkspace(), err.toString().trim(), exitCode);
+            }
         }
-        return 0;
     }
 
     private void ls(File path, Options options, NutsCommandContext context, PrintStream out, boolean addPrefix) {
         if (!path.exists()) {
-            throw new NutsIllegalArgumentException(context.getWorkspace(),"ls: cannot access '" + path.getPath() + "': No such file or directory");
+            throw new NutsIllegalArgumentException(context.getWorkspace(), "ls: cannot access '" + path.getPath() + "': No such file or directory");
         } else if (path.isDirectory()) {
             if (addPrefix) {
                 out.printf("%s:\n", path.getName());
@@ -186,10 +190,8 @@ public class LsCommand extends AbstractNshCommand {
                     String suffix = p.substring(i + 1);
                     if (new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr")).contains(suffix)) {
                         out.printf("##%s##\n", name);
-                    } else if (
-                            new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh")).contains(suffix)
-                                    || path.canExecute()
-                    ) {
+                    } else if (new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh")).contains(suffix)
+                            || path.canExecute()) {
                         out.printf("[[%s]]\n", name);
                     } else {
                         out.printf("%s\n", name);

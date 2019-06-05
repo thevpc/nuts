@@ -409,7 +409,7 @@ public class WorkspaceService {
                     appContext.out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
                     if (interactive) {
                         String id = appContext.getTerminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
-                        if (!StringUtils.isEmpty(id)) {
+                        if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }
                     }

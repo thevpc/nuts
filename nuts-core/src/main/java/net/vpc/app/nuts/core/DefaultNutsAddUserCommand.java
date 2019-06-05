@@ -48,17 +48,18 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
 
     private String login;
     private String remoteIdentity;
+    private char[] remoteCredentials;
     private char[] password;
     private final Set<String> rights = new HashSet<>();
     private final Set<String> groups = new HashSet<>();
     private NutsRepository repo;
 
     public DefaultNutsAddUserCommand(NutsWorkspace ws) {
-        super(ws,"add-user");
+        super(ws, "add-user");
     }
 
     public DefaultNutsAddUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace(),"add-user");
+        super(repo.getWorkspace(), "add-user");
         this.repo = repo;
     }
 
@@ -91,6 +92,22 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
     @Override
     public DefaultNutsAddUserCommand setCredentials(char[] password) {
         this.password = password;
+        return this;
+    }
+
+    @Override
+    public char[] getRemoteCredentials() {
+        return remoteCredentials;
+    }
+
+    @Override
+    public DefaultNutsAddUserCommand remoteCredentials(char[] password) {
+        return setRemoteCredentials(password);
+    }
+
+    @Override
+    public DefaultNutsAddUserCommand setRemoteCredentials(char[] password) {
+        this.remoteCredentials = password;
         return this;
     }
 
@@ -253,15 +270,17 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
         }
         if (repo != null) {
             NutsUserConfig security = new NutsUserConfig(getLogin(),
-                    new String(repo.security().getAuthenticationAgent().setCredentials(getCredentials(), null))
-                    , getGroups(), getRights());
-            security.setMappedUser(remoteIdentity);
+                    CoreStringUtils.chrToStr(repo.security().getAuthenticationAgent().setCredentials(getCredentials(), false, null)),
+                     getGroups(), getRights());
+            security.setRemoteIdentity(getRemoteIdentity());
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, null)));
             NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security);
         } else {
             NutsUserConfig security = new NutsUserConfig(getLogin(),
-                    new String(ws.security().getAuthenticationAgent().setCredentials(getCredentials(), null)),
+                    CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getCredentials(), false, null)),
                     getGroups(), getRights());
-            security.setMappedUser(remoteIdentity);
+            security.setRemoteIdentity(getRemoteIdentity());
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, null)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security);
         }
         return this;

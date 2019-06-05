@@ -51,12 +51,12 @@ public interface NutsWorkspaceSecurityManager {
     NutsAddUserCommand addUser(String name);
 
     NutsUpdateUserCommand updateUser(String name);
-    
+
     NutsRemoveUserCommand removeUser(String name);
 
     NutsEffectiveUser[] findUsers();
 
-    NutsEffectiveUser findUser(String username);
+NutsEffectiveUser findUser(String username);
 
     boolean isAllowed(String right);
 
@@ -69,6 +69,8 @@ public interface NutsWorkspaceSecurityManager {
     boolean isAdmin();
 
     void setAuthenticationAgent(String authenticationAgent);
+
+    NutsAuthenticationAgent getAuthenticationAgent(String id);
 
     NutsAuthenticationAgent getAuthenticationAgent();
 

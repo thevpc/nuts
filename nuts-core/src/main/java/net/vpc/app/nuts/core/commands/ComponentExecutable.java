@@ -59,7 +59,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
                 throw new NutsUserCancelException(ws);
             }
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
+        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false,session, embedded);
     }
 
     @Override

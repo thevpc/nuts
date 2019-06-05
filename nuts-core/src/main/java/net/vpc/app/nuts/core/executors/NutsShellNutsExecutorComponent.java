@@ -66,7 +66,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     public void exec(NutsExecutionContext executionContext) {
-        NutsDefinition nutMainFile = executionContext.getNutsDefinition();
+        NutsDefinition nutMainFile = executionContext.getDefinition();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArguments();
 

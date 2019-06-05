@@ -145,10 +145,12 @@ public class DefaultNutsId implements NutsId {
     public NutsTokenFilter versionToken() {
         return new DefaultNutsTokenFilter(getVersion().getValue());
     }
+
     @Override
     public NutsTokenFilter nameToken() {
         return new DefaultNutsTokenFilter(getName());
     }
+
     @Override
     public NutsTokenFilter namespaceToken() {
         return new DefaultNutsTokenFilter(getNamespace());
@@ -156,12 +158,12 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsTokenFilter anyToken() {
-        NutsTokenFilter[] oo={groupToken(), queryToken(),versionToken(),nameToken(),namespaceToken()};
+        NutsTokenFilter[] oo = {groupToken(), queryToken(), versionToken(), nameToken(), namespaceToken()};
         return new NutsTokenFilter() {
             @Override
             public boolean isNull() {
-                for (NutsTokenFilter t: oo) {
-                    if(t.isNull()){
+                for (NutsTokenFilter t : oo) {
+                    if (t.isNull()) {
                         return true;
                     }
                 }
@@ -170,8 +172,8 @@ public class DefaultNutsId implements NutsId {
 
             @Override
             public boolean isBlank() {
-                for (NutsTokenFilter t: oo) {
-                    if(t.isBlank()){
+                for (NutsTokenFilter t : oo) {
+                    if (t.isBlank()) {
                         return true;
                     }
                 }
@@ -180,8 +182,8 @@ public class DefaultNutsId implements NutsId {
 
             @Override
             public boolean like(String pattern) {
-                for (NutsTokenFilter t: oo) {
-                    if(t.like(pattern)){
+                for (NutsTokenFilter t : oo) {
+                    if (t.like(pattern)) {
                         return true;
                     }
                 }
@@ -190,17 +192,18 @@ public class DefaultNutsId implements NutsId {
 
             @Override
             public boolean matches(String pattern) {
-                for (NutsTokenFilter t: oo) {
-                    if(t.matches(pattern)){
+                for (NutsTokenFilter t : oo) {
+                    if (t.matches(pattern)) {
                         return true;
                     }
                 }
                 return false;
             }
+
             @Override
             public boolean contains(String pattern) {
-                for (NutsTokenFilter t: oo) {
-                    if(t.contains(pattern)){
+                for (NutsTokenFilter t : oo) {
+                    if (t.contains(pattern)) {
                         return true;
                     }
                 }
@@ -217,8 +220,6 @@ public class DefaultNutsId implements NutsId {
         return CoreStringUtils.trim(name).equals(CoreStringUtils.trim(other.getName()))
                 && CoreStringUtils.trim(group).equals(CoreStringUtils.trim(other.getGroup()));
     }
-
-
 
     @Override
     public boolean like(String pattern) {
@@ -349,10 +350,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setAlternative(String value) {
-        if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(value)) {
-            value = null;
-        }
-        return setQueryProperty(NutsConstants.QueryKeys.ALTERNATIVE, CoreStringUtils.trimToNull(value))
+        return setQueryProperty(NutsConstants.QueryKeys.ALTERNATIVE, CoreNutsUtils.trimToNullAlternative(value))
                 .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
@@ -645,6 +643,5 @@ public class DefaultNutsId implements NutsId {
     public NutsIdFilter toFilter() {
         return new NutsPatternIdFilter(this);
     }
-
 
 }

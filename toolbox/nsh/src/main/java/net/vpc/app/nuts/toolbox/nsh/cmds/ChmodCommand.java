@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.File;
@@ -43,7 +43,7 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class ChmodCommand extends AbstractNshCommand {
+public class ChmodCommand extends AbstractNshBuiltin {
 
 
     public ChmodCommand() {
@@ -103,7 +103,7 @@ public class ChmodCommand extends AbstractNshCommand {
         }
     }
 
-    public void apply(String s, Mods m, int v) throws Exception {
+    public void apply(String s, Mods m, int v) {
         for (char c : s.toCharArray()) {
             switch (c) {
                 case 'r': {
@@ -123,7 +123,7 @@ public class ChmodCommand extends AbstractNshCommand {
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
@@ -196,7 +196,6 @@ public class ChmodCommand extends AbstractNshCommand {
         for (File f : files) {
             chmod(f, m, out);
         }
-        return 0;
     }
 
     protected void chmod(File f, Mods m, PrintStream out) {

@@ -52,6 +52,8 @@ public interface NutsRepositorySecurityManager {
 
     void setAuthenticationAgent(String authenticationAgent);
 
+    NutsAuthenticationAgent getAuthenticationAgent(String id);
+    
     NutsAuthenticationAgent getAuthenticationAgent();
 
 }

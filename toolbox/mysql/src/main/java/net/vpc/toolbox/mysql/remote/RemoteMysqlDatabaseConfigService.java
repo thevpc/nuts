@@ -54,13 +54,13 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysql ms = new LocalMysql(context);
         LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
         String localDatabase = getConfig().getLocalDatabase();
-        if (StringUtils.isEmpty(localDatabase)) {
+        if (StringUtils.isBlank(localDatabase)) {
             throw new NutsExecutionException(context.getWorkspace(), "Missing local database name", 2);
         }
 
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String server = cconfig.getServer();
-        if (StringUtils.isEmpty(server)) {
+        if (StringUtils.isBlank(server)) {
             server = "ssh://localhost";
         }
         if (!server.startsWith("ssh://")) {
@@ -68,7 +68,7 @@ public class RemoteMysqlDatabaseConfigService {
         }
         String remoteTempPath = StringUtils.trim(cconfig.getRemoteTempPath());
         String localTempPath = cconfig.getPath();
-        if (StringUtils.isEmpty(localTempPath)) {
+        if (StringUtils.isBlank(localTempPath)) {
             localTempPath = context.getTempFolder().toString();
         }
         context.out().printf("==[%s]== remote restore '%s'%n", name, remoteTempPath);
@@ -113,23 +113,23 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysql ms = new LocalMysql(context);
         LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
         String localDatabase = getConfig().getLocalDatabase();
-        if (StringUtils.isEmpty(localDatabase)) {
+        if (StringUtils.isBlank(localDatabase)) {
             throw new NutsExecutionException(context.getWorkspace(), "Missing local database name", 2);
         }
-        LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
+        LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).backup(null);
         if (archiveResult.execResult != 0) {
             return archiveResult.execResult;
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = cconfig.getRemoteTempPath();
         String server = cconfig.getServer();
-        if (StringUtils.isEmpty(server)) {
+        if (StringUtils.isBlank(server)) {
             server = "ssh://localhost";
         }
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        if (StringUtils.isEmpty(remoteTempPath)) {
+        if (StringUtils.isBlank(remoteTempPath)) {
             String home = null;
             try (SShConnection c = new SShConnection(new SshAddress(server))
                     .addListener(SShConnection.LOGGER)) {

@@ -45,15 +45,15 @@ import net.vpc.app.nuts.NutsCommandAutoComplete;
 /**
  * Created by vpc on 1/7/17.
  */
-public abstract class AbstractNshCommand implements NshCommand {
+public abstract class AbstractNshBuiltin implements NshBuiltin {
 
-    private static final Logger LOG = Logger.getLogger(AbstractNshCommand.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractNshBuiltin.class.getName());
     private final String name;
     private final int supportLevel;
     private String help;
     private boolean enabled = true;
 
-    public AbstractNshCommand(String name, int supportLevel) {
+    public AbstractNshBuiltin(String name, int supportLevel) {
         this.name = name;
         this.supportLevel = supportLevel;
     }
@@ -97,7 +97,7 @@ public abstract class AbstractNshCommand implements NshCommand {
             if (line == null) {
                 break;
             }
-            if (!StringUtils.isEmpty(line)) {
+            if (!StringUtils.isBlank(line)) {
                 return line;
             }
         }
@@ -130,8 +130,7 @@ public abstract class AbstractNshCommand implements NshCommand {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
             }
-            NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(
-                    NutsCommandAutoCompleteComponent.class, NshCommand.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
+            NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(this);
             if (best != null) {
                 best.autoComplete(this, context);
@@ -149,6 +148,6 @@ public abstract class AbstractNshCommand implements NshCommand {
     }
 
     @Override
-    public abstract int exec(String[] args, NutsCommandContext context) throws Exception;
+    public abstract void exec(String[] args, NutsCommandContext context);
 
 }

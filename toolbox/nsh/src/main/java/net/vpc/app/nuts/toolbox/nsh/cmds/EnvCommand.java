@@ -120,7 +120,7 @@ public class EnvCommand extends SimpleNshCommand {
                     }
                     default: {
                         if (a.isKeyValue()) {
-                            options.newEnv.put(a.getKey().getString(), a.getKey().getValue().getString());
+                            options.newEnv.put(a.getKey().getString(), a.getValue().getString());
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
@@ -137,7 +137,7 @@ public class EnvCommand extends SimpleNshCommand {
             }
             case 1: {
                 if (a.isKeyValue()) {
-                    options.newEnv.put(a.getKey().getString(), a.getKey().getValue().getString());
+                    options.newEnv.put(a.getKey().getString(), a.getValue().getString());
                 } else {
                     options.command.add(a.getString());
                     options.readStatus = 2;
@@ -168,7 +168,7 @@ public class EnvCommand extends SimpleNshCommand {
             env.remove(v);
         }
         env.putAll(options.newEnv);
-        if (commandLine.isEmpty()) {
+        if (options.command.isEmpty()) {
             context.setOutObject(env);
         } else {
             final NutsExecCommand e = context.getWorkspace().exec().command(options.command)

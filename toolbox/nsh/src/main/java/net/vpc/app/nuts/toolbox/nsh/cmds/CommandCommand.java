@@ -30,35 +30,33 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.util.Arrays;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.javashell.JShellCommand;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CommandCommand extends AbstractNshCommand {
+public class CommandCommand extends AbstractNshBuiltin {
 
     public CommandCommand() {
         super("command", DEFAULT_SUPPORT);
     }
 
     @Override
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         if (args.length > 0) {
             JShellCommand a = context.getGlobalContext().builtins().find(args[0]);
             if (a != null) {
-                return a.exec(Arrays.copyOfRange(args, 1, args.length), context);
+                a.exec(Arrays.copyOfRange(args, 1, args.length), context);
+            } else {
+                context.getWorkspace()
+                        .exec().command(Arrays.copyOfRange(args, 1, args.length))
+                        .setDirectory(context.getGlobalContext().getCwd())
+                        .setEnv(context.vars().getExported())
+                        .run()
+                        .failFast();
             }
-            return context.getWorkspace()
-                    .exec().command(Arrays.copyOfRange(args, 1, args.length))
-                    .setDirectory(context.getGlobalContext().getCwd())
-                    .setEnv(context.vars().getExported())
-                    .run()
-                    .failFast()
-                    .getResult();
-        } else {
-            return 0;
         }
     }
 

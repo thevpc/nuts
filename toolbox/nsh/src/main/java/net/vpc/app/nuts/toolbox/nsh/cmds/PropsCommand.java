@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.xfile.XFile;
@@ -42,7 +42,7 @@ import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 /**
  * Created by vpc on 1/7/17.
  */
-public class PropsCommand extends AbstractNshCommand {
+public class PropsCommand extends AbstractNshBuiltin {
 
     public PropsCommand() {
         super("props", DEFAULT_SUPPORT);
@@ -80,7 +80,7 @@ public class PropsCommand extends AbstractNshCommand {
         String comments;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -196,29 +196,36 @@ public class PropsCommand extends AbstractNshCommand {
         }
         switch (o.action) {
             case "get": {
-                return action_get(context, o);
+                action_get(context, o);
+                return;
             }
             case "set": {
                 switch (o.sourceType) {
                     case FILE: {
                         Properties p = readProperties(o, context);
-                        if (o.targetType == TargetType.FILE) {
-                            try (FileWriter os = new FileWriter(
-                                    o.targetFile == null ? o.targetFile : o.sourceFile
-                            )) {
-                                p.store(os, o.comments);
+                        try {
+                            if (o.targetType == TargetType.FILE) {
+                                try (FileWriter os = new FileWriter(
+                                        o.targetFile == null ? o.targetFile : o.sourceFile
+                                )) {
+                                    p.store(os, o.comments);
+                                }
+                            } else {
+                                try (FileWriter os = new FileWriter(o.sourceFile)) {
+                                    p.store(os, o.comments);
+                                }
                             }
-                        } else {
-                            try (FileWriter os = new FileWriter(o.sourceFile)) {
-                                p.store(os, o.comments);
-                            }
+                        } catch (Exception ex) {
+                            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
                         }
                     }
                 }
-                return action_get(context, o);
+                action_get(context, o);
+                return;
             }
             case "list": {
-                return action_list(context, o);
+                action_list(context, o);
+                return;
             }
             default: {
                 throw new NutsExecutionException(context.getWorkspace(), "props: Unsupported action " + o.action, 2);
@@ -226,20 +233,17 @@ public class PropsCommand extends AbstractNshCommand {
         }
     }
 
-    private int action_list(NutsCommandContext context, Options o) throws IOException {
+    private void action_list(NutsCommandContext context, Options o) {
         context.printOutObject(getProperties(o, context));
-        return 0;
     }
 
-    private int action_get(NutsCommandContext context, Options o) throws IOException {
+    private void action_get(NutsCommandContext context, Options o) {
         Properties p = getProperties(o, context);
-        PrintStream out = context.out();
         String v = p.getProperty(o.property);
         context.printOutObject(v == null ? "" : v);
-        return 1;
     }
 
-    private Properties getProperties(Options o, NutsCommandContext context) throws IOException {
+    private Properties getProperties(Options o, NutsCommandContext context) {
         Properties p = new Properties();
         switch (o.sourceType) {
             case FILE: {
@@ -264,7 +268,7 @@ public class PropsCommand extends AbstractNshCommand {
         throw new NutsExecutionException(context.getWorkspace(), "Unknown file format " + file, 2);
     }
 
-    private Properties readProperties(Options o, NutsCommandContext context) throws IOException {
+    private Properties readProperties(Options o, NutsCommandContext context) {
         Properties p = new Properties();
         String sourceFile = o.sourceFile;
         XFile filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd());
@@ -284,6 +288,8 @@ public class PropsCommand extends AbstractNshCommand {
                     break;
                 }
             }
+        } catch (Exception ex) {
+            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
         }
         return p;
     }

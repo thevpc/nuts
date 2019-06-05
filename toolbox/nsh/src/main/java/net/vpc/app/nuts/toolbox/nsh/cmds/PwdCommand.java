@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import java.io.PrintStream;
 
@@ -39,13 +39,13 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class PwdCommand extends AbstractNshCommand {
+public class PwdCommand extends AbstractNshBuiltin {
 
     public PwdCommand() {
         super("pwd", DEFAULT_SUPPORT);
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context){
         NutsCommand cmdLine = cmdLine(args, context);
         NutsArgument a;
         while(cmdLine.hasNext()) {
@@ -57,6 +57,5 @@ public class PwdCommand extends AbstractNshCommand {
         }
         PrintStream out = context.out();
         out.printf("%s%n", context.getGlobalContext().getCwd());
-        return 0;
     }
 }

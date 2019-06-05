@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.*;
@@ -44,7 +44,7 @@ import net.vpc.app.nuts.NutsArgument;
 /**
  * Created by vpc on 1/7/17.
  */
-public class GrepCommand extends AbstractNshCommand {
+public class GrepCommand extends AbstractNshBuiltin {
 
     public GrepCommand() {
         super("grep", DEFAULT_SUPPORT);
@@ -60,7 +60,7 @@ public class GrepCommand extends AbstractNshCommand {
         boolean n = false;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
@@ -70,26 +70,26 @@ public class GrepCommand extends AbstractNshCommand {
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.next("-")!=null) {
+            } else if (cmdLine.next("-") != null) {
                 files.add(null);
-            } else if (cmdLine.next("-e", "--regexp")!=null) {
+            } else if (cmdLine.next("-e", "--regexp") != null) {
                 options.regexp = true;
-            } else if (cmdLine.next("-v", "--invert-match")!=null) {
+            } else if (cmdLine.next("-v", "--invert-match") != null) {
                 options.invertMatch = true;
-            } else if (cmdLine.next("-w", "--word-regexp")!=null) {
+            } else if (cmdLine.next("-w", "--word-regexp") != null) {
                 options.word = true;
-            } else if (cmdLine.next("-x", "--line-regexp")!=null) {
+            } else if (cmdLine.next("-x", "--line-regexp") != null) {
                 options.lineRegexp = true;
-            } else if (cmdLine.next("-i", "--ignore-case")!=null) {
+            } else if (cmdLine.next("-i", "--ignore-case") != null) {
                 options.ignoreCase = true;
-            } else if (cmdLine.next("--version")!=null) {
+            } else if (cmdLine.next("--version") != null) {
                 out.printf("%s\n", "1.0");
-                return 0;
-            } else if (cmdLine.next("-n")!=null) {
+                return;
+            } else if (cmdLine.next("-n") != null) {
                 options.n = true;
-            } else if (cmdLine.next("--help")!=null) {
+            } else if (cmdLine.next("--help") != null) {
                 out.printf("%s\n", getHelp());
-                return 0;
+                return;
             } else {
                 if (expression == null) {
                     expression = cmdLine.required().nextNonOption(cmdLine.createNonOption("expression")).getString();
@@ -104,7 +104,7 @@ public class GrepCommand extends AbstractNshCommand {
             files.add(null);
         }
         if (expression == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing Expression", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing Expression", 2);
         }
         String baseExpr = options.regexp ? ("^" + simpexpToRegexp(expression, false) + "$") : expression;
         if (options.word) {
@@ -122,52 +122,55 @@ public class GrepCommand extends AbstractNshCommand {
         for (File f : files) {
             grepFile(f, p, options, context, prefixFileName);
         }
-        return 0;
     }
 
-    protected void grepFile(File f, Pattern p, Options options, NutsCommandContext context, boolean prefixFileName) throws IOException {
+    protected void grepFile(File f, Pattern p, Options options, NutsCommandContext context, boolean prefixFileName) {
 
         Reader reader = null;
         try {
-            String fileName = null;
-            if (f == null) {
-                reader = new InputStreamReader(context.in());
-            } else if (f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File ff : files) {
-                        grepFile(ff, p, options, context, true);
+            try {
+                String fileName = null;
+                if (f == null) {
+                    reader = new InputStreamReader(context.in());
+                } else if (f.isDirectory()) {
+                    File[] files = f.listFiles();
+                    if (files != null) {
+                        for (File ff : files) {
+                            grepFile(ff, p, options, context, true);
+                        }
                     }
+                    return;
+                } else {
+                    fileName = f.getPath();
+                    reader = new FileReader(f);
                 }
-                return;
-            } else {
-                fileName = f.getPath();
-                reader = new FileReader(f);
-            }
-            try (BufferedReader r = new BufferedReader(reader)) {
-                String line = null;
-                int nn = 1;
-                PrintStream out = context.out();
-                while ((line = r.readLine()) != null) {
-                    boolean matches = p.matcher(line).matches();
-                    if (matches != options.invertMatch) {
-                        if (options.n) {
-                            if (fileName != null && prefixFileName) {
-                                out.print(fileName);
+                try (BufferedReader r = new BufferedReader(reader)) {
+                    String line = null;
+                    int nn = 1;
+                    PrintStream out = context.out();
+                    while ((line = r.readLine()) != null) {
+                        boolean matches = p.matcher(line).matches();
+                        if (matches != options.invertMatch) {
+                            if (options.n) {
+                                if (fileName != null && prefixFileName) {
+                                    out.print(fileName);
+                                    out.print(":");
+                                }
+                                out.print(nn);
                                 out.print(":");
                             }
-                            out.print(nn);
-                            out.print(":");
+                            out.println(line);
                         }
-                        out.println(line);
+                        nn++;
                     }
-                    nn++;
+                }
+            } finally {
+                if (reader != null) {
+                    reader.close();
                 }
             }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
+        } catch (IOException ex) {
+            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
         }
     }
 

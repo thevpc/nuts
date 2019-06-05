@@ -30,23 +30,26 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class WgetCommand extends AbstractNshCommand {
+public class WgetCommand extends AbstractNshBuiltin {
 
     public WgetCommand() {
         super("wget", DEFAULT_SUPPORT);
@@ -57,7 +60,7 @@ public class WgetCommand extends AbstractNshCommand {
         String outputDocument = null;
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) {
         NutsCommand cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
@@ -65,29 +68,33 @@ public class WgetCommand extends AbstractNshCommand {
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //
-            } else if (cmdLine.next("-O", "--output-document")!=null) {
+            } else if (cmdLine.next("-O", "--output-document") != null) {
                 options.outputDocument = cmdLine.requireNonOption().next().getString();
             } else {
                 files.add(cmdLine.requireNonOption().next().getString());
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(),"wget: Missing Files", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "wget: Missing Files", 2);
         }
         for (String file : files) {
             download(file, options.outputDocument, context);
         }
-        return 0;
     }
 
-    protected void download(String path, String output, NutsCommandContext context) throws IOException {
+    protected void download(String path, String output, NutsCommandContext context) {
         String output2 = output;
-        URL url = new URL(path);
+        URL url;
+        try {
+            url = new URL(path);
+        } catch (MalformedURLException ex) {
+            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+        }
         String urlName = URLUtils.getURLName(url);
-        if (!StringUtils.isEmpty(output2)) {
+        if (!StringUtils.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = context.getWorkspace().io().path(context.getGlobalContext().getAbsolutePath(StringUtils.isEmpty(output2) ? urlName : output2));
+        Path file = context.getWorkspace().io().path(context.getGlobalContext().getAbsolutePath(StringUtils.isBlank(output2) ? urlName : output2));
         context.getWorkspace().io()
                 .copy().from(path).to(file).setTerminalProvider(context.getSession())
                 .monitorable().run();

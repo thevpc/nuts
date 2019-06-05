@@ -102,8 +102,8 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
-            throw new NutsNotFoundException(getWorkspace(),id);
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id);
         }
         boolean transitive = session.isTransitive();
         InputStream stream = null;
@@ -118,7 +118,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                     }
                 }
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id);
+                throw new NutsNotFoundException(getWorkspace(), id);
             }
         } finally {
             if (stream != null) {
@@ -129,7 +129,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 }
             }
         }
-        throw new NutsNotFoundException(getWorkspace(),id);
+        throw new NutsNotFoundException(getWorkspace(), id);
     }
 
     protected void copyToImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -145,7 +145,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        throw new NutsNotFoundException(getWorkspace(),id);
+        throw new NutsNotFoundException(getWorkspace(), id);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
         if (idFilter != null) {
-            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(idFilter,getWorkspace(),session.getSession())).iterator();
+            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(idFilter, getWorkspace(), session.getSession())).iterator();
         }
         return it;
     }
@@ -179,7 +179,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter,getWorkspace(),session.getSession())).iterator();
+                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, getWorkspace(), session.getSession())).iterator();
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
@@ -193,7 +193,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         if (filter == null) {
             return new NamedNutIdFromStreamIterator(ret);
         }
-        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter,getWorkspace(),session.getSession())).iterator();
+        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, getWorkspace(), session.getSession())).iterator();
 
     }
 
@@ -215,10 +215,10 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 return new DefaultNutsContent(localPath, false, temp);
             }
         } catch (IOException ex) {
-            throw new NutsNotFoundException(getWorkspace(),id, ex);
+            throw new NutsNotFoundException(getWorkspace(), id, ex);
             //
         }
-        throw new NutsNotFoundException(getWorkspace(),id);
+        throw new NutsNotFoundException(getWorkspace(), id);
 
     }
 
@@ -246,7 +246,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             newLogin = "anonymous";
             credentials = "anonymous".toCharArray();
         } else {
-            newLogin = security.getMappedUser();
+            newLogin = security.getRemoteIdentity();
             if (CoreStringUtils.isBlank(newLogin)) {
                 NutsEffectiveUser security2 = getWorkspace().security().findUser(login);
                 if (security2 != null) {
@@ -255,9 +255,17 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             }
             if (CoreStringUtils.isBlank(newLogin)) {
                 newLogin = login;
+            } else {
+                security = NutsRepositoryConfigManagerExt.of(config()).getUser(newLogin);
+                if (security == null) {
+                    newLogin = "anonymous";
+                    credentials = "anonymous".toCharArray();
+                }
             }
-            credentials = getWorkspace().security().getAuthenticationAgent()
-                    .getCredentials(credentials);
+            if (security != null) {
+                credentials = security.getRemoteCredentials() == null ? null : security.getRemoteCredentials().toCharArray();
+                credentials = getWorkspace().security().getAuthenticationAgent().getCredentials(credentials);
+            }
         }
 
         String passphrase = config().getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE, true);
@@ -280,7 +288,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(),id);
+            throw new NutsNotFoundException(getWorkspace(), id);
         }
     }
 

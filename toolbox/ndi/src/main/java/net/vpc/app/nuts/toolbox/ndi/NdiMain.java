@@ -156,7 +156,7 @@ public class NdiMain extends NutsApplication {
                                             .setForceBoot(false)
                                             .setFetch(false)
                                             .setTrace(subTrace)
-                                            .setExecType(NutsExecutionType.SPAWN)
+                                            .setExecType(NutsExecutionType.EMBEDDED)
                                             .setExecutorOptions(new ArrayList<>()))
                     ));
                 } catch (IOException e) {

@@ -191,7 +191,7 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 //Content-type
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if (StringUtils.isEmpty(boundary)) {
+                if (StringUtils.isBlank(boundary)) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }
@@ -234,7 +234,7 @@ public class NutsHttpServletFacade {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if (StringUtils.isEmpty(boundary)) {
+                if (StringUtils.isBlank(boundary)) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }

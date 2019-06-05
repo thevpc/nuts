@@ -294,7 +294,7 @@ public class FileVersionMain extends NutsApplication {
                     }
                 }
                 p.setProperty("nuts.version-provider", "win-pe");
-                if (!StringUtils.isEmpty(artifactId) && !StringUtils.isEmpty(artifactVersion)) {
+                if (!StringUtils.isBlank(artifactId) && !StringUtils.isBlank(artifactVersion)) {
                     d.add(new VersionDescriptor(
                             ws.createIdBuilder().setName(artifactId).setVersion(artifactVersion).build(),
                             p
@@ -352,9 +352,9 @@ public class FileVersionMain extends NutsApplication {
                         }
                         properties.setProperty("nuts.version-provider", "OSGI");
                         //OSGI
-                        if (!StringUtils.isEmpty(Bundle_SymbolicName)
-                                && !StringUtils.isEmpty(Bundle_Name)
-                                && !StringUtils.isEmpty(Bundle_Version)) {
+                        if (!StringUtils.isBlank(Bundle_SymbolicName)
+                                && !StringUtils.isBlank(Bundle_Name)
+                                && !StringUtils.isBlank(Bundle_Version)) {
                             all.add(new VersionDescriptor(
                                     ws.createIdBuilder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties

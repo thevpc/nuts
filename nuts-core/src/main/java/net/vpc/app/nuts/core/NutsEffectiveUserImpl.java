@@ -26,7 +26,7 @@ public class NutsEffectiveUserImpl implements NutsEffectiveUser {
 
     public NutsEffectiveUserImpl(NutsUserConfig config, String[] inheritedRights) {
         user = config.getUser();
-        mappedUser = config.getMappedUser();
+        mappedUser = config.getRemoteIdentity();
         credentials = !CoreStringUtils.isBlank(config.getCredentials());
 
         String[] rights0 = config.getRights();

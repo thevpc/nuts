@@ -184,7 +184,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
                 return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
             }
         }
-        throw new NutsUnsupportedArgumentException(workspace,"Unsupported action " + supportedAction);
+        throw new NutsUnsupportedArgumentException(workspace, "Unsupported action " + supportedAction);
     }
 
     @Override
@@ -300,7 +300,13 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
+    public String getIdBasedir(NutsId id) {
+        return getWorkspace().config().getDefaultIdBasedir(id);
+    }
+
+    @Override
     public String getIdFilename(NutsId id) {
+        //return getWorkspace().config().getDefaultIdFilename(id);
         String classifier = "";
         String ext = getIdExtension(id);
         if (!ext.equals(".nuts") && !ext.equals(".pom")) {
@@ -422,15 +428,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     protected String getIdRelativePath(NutsId id) {
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
-        String version = id.getVersion().getValue();
-        String idFilename = getIdFilename(id);
-        String a = id.getAlternative();
-        if (!CoreStringUtils.isBlank(a) && !NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(a)) {
-            idFilename = a + "/" + idFilename;
-        }
-        return groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + idFilename;
+        return getIdBasedir(id) + "/" + getIdFilename(id);
     }
 
     @Override

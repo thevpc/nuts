@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,47 +27,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util;
+package net.vpc.app.nuts.core.spi;
 
-import net.vpc.app.nuts.core.util.io.InputSource;
-import net.vpc.app.nuts.NutsDescriptor;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import net.vpc.app.nuts.NutsEnvProvider;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
  * @author vpc
  */
-public class CharacterizedFile implements AutoCloseable {
+public interface NutsAuthenticationAgentSpi {
 
-    public InputSource contentFile;
-    public List<Path> temps = new ArrayList<>();
-    public NutsDescriptor descriptor;
+    /**
+     * update environment provider
+     *
+     * @param envProvider workspace of repository instance
+     * @since 0.5.5
+     */
+    void setEnv(NutsEnvProvider envProvider);
 
-    public Path getContentPath(){
-        return (Path)contentFile.getSource();
-    }
-    public void addTemp(Path f) {
-        temps.add(f);
-    }
-
-    @Override
-    public void close() {
-        for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
-            Path temp = it.next();
-            try {
-                Files.delete(temp);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            it.remove();
-        }
-    }
+    void setWorkspace(NutsWorkspace workspace);
 
 }

@@ -163,24 +163,24 @@ public class RemoteMysql {
             try {
                 ok = true;
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
-                if (StringUtils.isEmpty(db.getConfig().getServer())) {
+                if (StringUtils.isBlank(db.getConfig().getServer())) {
                     ok = false;
                     db.getConfig().setServer(context.terminal().ask()
                             .forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server")
                             .defaultValue("ssh://login@myserver").session(context.getSession()).getResult());
                 }
-                if (StringUtils.isEmpty(db.getConfig().getRemoteInstance())) {
+                if (StringUtils.isBlank(db.getConfig().getRemoteInstance())) {
                     ok = false;
                     db.getConfig().setRemoteInstance(context.terminal().ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-instance").setDefaultValue("default").session(context.getSession())
                             .getResult());
                 }
-                if (StringUtils.isEmpty(db.getConfig().getRemoteTempPath())) {
+                if (StringUtils.isBlank(db.getConfig().getRemoteTempPath())) {
                     ok = false;
                     db.getConfig().setRemoteTempPath(context.terminal().ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp").session(context.getSession())
                             .getResult());
                 }
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
-                    if (StringUtils.isEmpty(aa.getConfig().getPath())) {
+                    if (StringUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(context.terminal().ask()
                                 .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path").session(context.getSession())

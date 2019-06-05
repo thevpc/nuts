@@ -16,11 +16,11 @@ import net.vpc.app.nuts.NutsExecutionException;
 public class DefaultNutsCommandContext implements NutsCommandContext {
 
     private NutsShellContext shellContext;
-    private NshCommand command;
+    private NshBuiltin command;
     private NutsTerminalMode terminalMode = null;
     private boolean verbose = false;
 
-    public DefaultNutsCommandContext(NutsShellContext consoleContext, NshCommand command) {
+    public DefaultNutsCommandContext(NutsShellContext consoleContext, NshBuiltin command) {
         this.shellContext = consoleContext;
         this.command = command;
     }

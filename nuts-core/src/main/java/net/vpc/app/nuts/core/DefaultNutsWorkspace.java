@@ -309,9 +309,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             if (session.isPlainTrace()) {
                 PrintStream out = io().getTerminal().fout();
                 StringBuilder version = new StringBuilder(config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString());
-                while (version.length() < 25) {
-                    version.append(' ');
-                }
+                CoreStringUtils.fillString(' ',25-version.length(), version);
                 out.println("{{/------------------------------------------------------------------------------\\\\}}");
                 out.println("{{|}}==      _   _\\_      _\\_        ==                                                  {{|}}");
                 out.println("{{|}}==     / | / /_  _\\_/ /_\\_\\_\\_\\_\\_  == ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
@@ -324,7 +322,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
             }
-            install().setIncludeCompanions(true).setSession(session.copy().trace()).run();
+            install().includeCompanions().session(session.copy().trace()).run();
         }
     }
 
@@ -667,7 +665,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         if (installerComponent != null) {
             if (def.getPath() != null) {
                 NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session, true, null);
-                getInstalledRepository().install(executionContext.getNutsDefinition().getId());
+                getInstalledRepository().install(executionContext.getDefinition().getId());
                 if (isUpdate) {
                     try {
                         installerComponent.update(executionContext);
@@ -689,7 +687,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                         if (session.isPlainTrace()) {
                             out.printf("%N @@Failed@@ to install : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
                         }
-                        getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
+                        getInstalledRepository().uninstall(executionContext.getDefinition().getId());
                         throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);
                     }
                 }
@@ -743,11 +741,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, String commandName) {
+    public NutsExecutionContext createNutsExecutionContext(NutsDefinition def, String[] args, String[] executorArgs, NutsSession session, boolean failFast, String commandName) {
         if (commandName == null) {
-            commandName = resolveCommandName(nutToInstall.getId());
+            commandName = resolveCommandName(def.getId());
         }
-        NutsDescriptor descriptor = nutToInstall.getDescriptor();
+        NutsDescriptor descriptor = def.getDescriptor();
         NutsExecutorDescriptor installer = descriptor.getInstaller();
         List<String> eargs = new ArrayList<>();
         List<String> aargs = new ArrayList<>();
@@ -764,9 +762,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         if (args != null) {
             aargs.addAll(Arrays.asList(args));
         }
-        Path installFolder = config().getStoreLocation(nutToInstall.getId(), NutsStoreLocation.PROGRAMS);
+        Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);
         Properties env = new Properties();
-        return new NutsExecutionContextImpl(nutToInstall, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, commandName);
+        return new NutsExecutionContextImpl(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, false,commandName);
     }
 
     public String resolveCommandName(NutsId id) {

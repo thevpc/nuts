@@ -12,15 +12,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import static net.vpc.app.nuts.core.util.io.CoreIOUtils.createInputSource;
+import static net.vpc.app.nuts.core.util.io.CoreIOUtils.resolveNutsDescriptorFromFileContent;
+import static net.vpc.app.nuts.core.util.io.CoreIOUtils.toPathInputSource;
 import net.vpc.app.nuts.core.util.io.ZipOptions;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
@@ -353,12 +356,12 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             contentSource = CoreIOUtils.createInputSource(content).multi();
             NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
-            CharacterizedFile characterizedFile = null;
+            CharacterizedDeployFile characterizedFile = null;
             Path contentFile2 = null;
             try {
                 if (descriptor == null) {
                     NutsFetchCommand p = ws.fetch().setTransitive(this.isTransitive()).setSession(getValidSession());
-                    characterizedFile = CoreIOUtils.characterize(ws, contentSource, p, getValidSession());
+                    characterizedFile = characterizeForDeploy(ws, contentSource, p, getValidSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "Missing descriptor");
                     }
@@ -695,4 +698,89 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         return false;
     }
+    
+    
+    private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
+        session = NutsWorkspaceUtils.validateSession(ws, session);
+        CharacterizedDeployFile c = new CharacterizedDeployFile();
+        try {
+            c.baseFile = toPathInputSource(contentFile, c.temps, ws);
+            c.contentFile = contentFile;
+            Path fileSource = c.contentFile.getPath();
+            if (!Files.exists(fileSource)) {
+                throw new NutsIllegalArgumentException(ws, "File does not exists " + fileSource);
+            }
+            if (c.descriptor == null && c.baseFile.isURL()) {
+                try {
+                    c.descriptor = ws.parser().parseDescriptor(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+            if (Files.isDirectory(fileSource)) {
+                if (c.descriptor == null) {
+                    Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
+                    if (Files.exists(ext)) {
+                        c.descriptor = ws.parser().parseDescriptor(ext);
+                    } else {
+                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    }
+                }
+                if (c.descriptor != null) {
+                    if ("zip".equals(c.descriptor.getPackaging())) {
+                        Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
+                        ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        c.contentFile = createInputSource(zipFilePath).multi();
+                        c.addTemp(zipFilePath);
+                    } else {
+                        throw new NutsIllegalArgumentException(ws, "Invalid Nut Folder source. expected 'zip' ext in descriptor");
+                    }
+                }
+            } else if (Files.isRegularFile(fileSource)) {
+                if (c.descriptor == null) {
+                    File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
+                    if (ext.exists()) {
+                        c.descriptor = ws.parser().parseDescriptor(ext);
+                    } else {
+                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    }
+                }
+            } else {
+                throw new NutsIllegalArgumentException(ws, "Path does not denote a valid file or folder " + c.contentFile);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return c;
+    }
+    
+    private static class CharacterizedDeployFile implements AutoCloseable {
+
+    public InputSource baseFile;
+    public InputSource contentFile;
+    public List<Path> temps = new ArrayList<>();
+    public NutsDescriptor descriptor;
+
+    public Path getContentPath(){
+        return (Path)contentFile.getSource();
+    }
+    public void addTemp(Path f) {
+        temps.add(f);
+    }
+
+    @Override
+    public void close() {
+        for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
+            Path temp = it.next();
+            try {
+                Files.delete(temp);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            it.remove();
+        }
+    }
+
+}
+
 }

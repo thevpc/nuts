@@ -356,7 +356,6 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
     }
 
 //    private String httpGetString(String url) {

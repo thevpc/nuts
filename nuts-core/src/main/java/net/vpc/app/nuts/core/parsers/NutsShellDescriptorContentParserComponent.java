@@ -47,7 +47,7 @@ import java.util.Set;
  */
 public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final NutsId NSH = CoreNutsUtils.parseNutsId("nuts");
+    public static final NutsId NSH = CoreNutsUtils.parseNutsId("nsh");
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "nuts"));
 
     @Override
