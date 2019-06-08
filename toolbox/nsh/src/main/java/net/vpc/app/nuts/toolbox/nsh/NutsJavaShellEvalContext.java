@@ -248,11 +248,11 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                     .addScope(NutsDependencyScope.PROFILE_RUN)
                     .optional(false)
                     .offline()
-                    .setSession(this.getSession())
+                    .setSession(this.getSession().copy().trace(false))
                     .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.search().id(selectedId).effective(true).session(this.getSession()).offline().getResultDefinitions().required();
+                NutsDefinition def = ws.search().id(selectedId).effective(true).session(this.getSession().copy().trace(false)).offline().getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isNutsApplication()

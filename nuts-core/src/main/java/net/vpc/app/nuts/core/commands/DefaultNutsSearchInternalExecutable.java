@@ -5,8 +5,6 @@
  */
 package net.vpc.app.nuts.core.commands;
 
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsSearchResult;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -27,7 +25,7 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        ws.search().session(getSession(true).trace()).configure(false, args).run();
+        ws.search().session(getSession(true).copy().trace()).configure(false, args).run();
     }
     
 }

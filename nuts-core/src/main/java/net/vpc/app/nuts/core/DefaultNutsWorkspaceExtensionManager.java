@@ -162,6 +162,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
+        NutsSession searchSession = session.trace(false);
         if (id == null) {
             throw new NutsIllegalArgumentException(ws,"Extension Id could not be null");
         }
@@ -172,6 +173,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         LOG.log(Level.FINE, "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
+                .session(searchSession)
                 .addId(id).setSession(session)
                 .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
                 .optional(false)

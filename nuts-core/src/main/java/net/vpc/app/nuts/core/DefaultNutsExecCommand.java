@@ -793,7 +793,8 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     protected NutsExecutableInfoExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
         NutsDefinition def = null;
         NutsId nid = ws.parse().id(commandName);
-        NutsSearchCommand ff = ws.search().id(nid).session(session).setOptional(false).inlineDependencies().latest().failFast(false)
+        NutsSession searchSession=session.copy().trace(false);
+        NutsSearchCommand ff = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().latest().failFast(false)
                 .scope(NutsDependencyScope.PROFILE_RUN)
                 .defaultVersions()
                 .installed();
@@ -801,10 +802,10 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         if (def == null) {
             //retest whhout checking it the version is default or not
             // this help recovering from "invalid default version" issue
-            def = ws.search().id(nid).session(session).setOptional(false).inlineDependencies().latest().failFast(false).scope(NutsDependencyScope.PROFILE_RUN).installed().getResultDefinitions().first();
+            def = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().latest().failFast(false).scope(NutsDependencyScope.PROFILE_RUN).installed().getResultDefinitions().first();
         }
         if (def == null) {
-            def = ws.search().id(nid).session(session).setOptional(false).inlineDependencies().failFast(false).online().latest().scope(NutsDependencyScope.PROFILE_RUN).getResultDefinitions().required();
+            def = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().failFast(false).online().latest().scope(NutsDependencyScope.PROFILE_RUN).getResultDefinitions().required();
         }
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, ws, session, executionType, this);
     }

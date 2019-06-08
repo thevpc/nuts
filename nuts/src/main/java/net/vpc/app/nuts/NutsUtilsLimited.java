@@ -1055,10 +1055,10 @@ final class NutsUtilsLimited {
             return defaultValue;
         }
         value = value.trim().toLowerCase();
-        if (value.matches("true|enable|enabled|yes|always|y|on|ok")) {
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
             return true;
         }
-        if (value.matches("false|disable|disabled|no|none|never|n|off|ko")) {
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
             return false;
         }
         return defaultValue;

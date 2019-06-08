@@ -209,6 +209,16 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                     } catch (Exception ex) {
                         out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                     }
+                } else {
+                    try {
+                        parsed = (T) p.parse(v, this.getValueType());
+                        if (this.validator != null) {
+                            parsed = this.validator.validate(parsed, this);
+                        }
+                        return parsed;
+                    } catch (Exception ex) {
+                        out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                    }
                 }
             }
             extraInfo = true;

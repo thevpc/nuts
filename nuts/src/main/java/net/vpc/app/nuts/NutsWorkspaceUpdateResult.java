@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Arrays;
-
 /**
  * Created by vpc on 6/23/17.
  * @since 0.5.5
@@ -54,4 +52,8 @@ public interface NutsWorkspaceUpdateResult {
     boolean isUpdateAvailable() ;
     
     int getUpdatesCount() ;
+
+    NutsUpdateResult[] getAllUpdates();
+
+    NutsUpdateResult[] getAllResults();
 }

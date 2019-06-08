@@ -18,7 +18,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
     private boolean transitive = true;
 
     public DefaultNutsUndeployCommand(NutsWorkspace ws) {
-        super(ws,"undeploy");
+        super(ws, "undeploy");
     }
 
     @Override
@@ -135,10 +135,12 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
 
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
         if (ids.isEmpty()) {
-            throw new NutsExecutionException(ws,"No component to undeploy", 1);
+            throw new NutsExecutionException(ws, "No component to undeploy", 1);
         }
+        NutsSession searchSession = getValidSession().copy().trace(false);
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
+                    .session(searchSession)
                     .ids(id)
                     .repositories(getRepository())
                     .setTransitive(isTransitive())
@@ -147,8 +149,8 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .failFast()
                     .getResultDefinitions().required();
             NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), 
-                    repository1, 
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(),
+                    repository1,
                     NutsFetchMode.LOCAL, fetchOptions);
             repository1.undeploy()
                     .id(p.getId()).session(rsession)

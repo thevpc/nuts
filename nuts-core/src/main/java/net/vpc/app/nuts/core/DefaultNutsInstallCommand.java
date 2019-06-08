@@ -293,6 +293,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         boolean emptyCommand = true;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
+        NutsSession searchSession = session.copy().trace(false);
         PrintStream out = CoreIOUtils.resolveOut(ws, session);
         ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "install");
 
@@ -320,13 +321,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                         out.println("Installing Nuts companion tools...");
                                     }
                                 }
-                                r = ws.search().id(companionTool).latest().getResultDefinitions().required();
+                                r = ws.search().session(searchSession).id(companionTool).latest().getResultDefinitions().required();
                                 String d = r.getDescriptor().getDescription();
                                 if (getValidSession().isPlainTrace()) {
                                     out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
                                 }
                             } else {
-                                r = ws.search().id(companionTool).latest().getResultDefinitions().required();
+                                r = ws.search().session(searchSession).id(companionTool).latest().getResultDefinitions().required();
                             }
                             if (LOG.isLoggable(Level.CONFIG)) {
                                 LOG.log(Level.FINE, "Installing companion tool : {0}", r.getId().getLongName());

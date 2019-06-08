@@ -94,18 +94,18 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
     @Override
     public void start() {
         index = 0;
-        handler.start(context);
-    }
-
-    @Override
-    public void complete() {
-        handler.complete(context, index);
+        getHandler().start(context);
     }
 
     @Override
     public void next(Object object) {
-        handler.next(context, object, index);
+        getHandler().next(context, object, index);
         index++;
+    }
+
+    @Override
+    public void complete() {
+        getHandler().complete(context, index);
     }
 
     public PrintWriter getValidOut() {

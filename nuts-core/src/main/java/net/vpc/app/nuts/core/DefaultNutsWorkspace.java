@@ -383,6 +383,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(this, session);
+        NutsSession searchSession = session.copy().trace(false);
         NutsDefinition nutToInstall;
         try {
             nutToInstall = search().id(id).setSession(session).setTransitive(false).inlineDependencies(checkDependencies)

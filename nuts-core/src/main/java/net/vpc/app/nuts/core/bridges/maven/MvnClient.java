@@ -3,55 +3,58 @@ package net.vpc.app.nuts.core.bridges.maven;
 import net.vpc.app.nuts.*;
 
 public class MvnClient {
+
     public static final String NET_VPC_APP_NUTS_MVN = "net.vpc.app.nuts.toolbox:mvn";
     private NutsWorkspace ws;
-    private Status status=Status.INIT;
-    public enum Status{
+    private Status status = Status.INIT;
+
+    public enum Status {
         INIT,
         DIRTY,
         SUCCESS,
         FAIL,
     }
 
-
     public MvnClient(NutsWorkspace ws) {
         this.ws = ws;
     }
 
-    public boolean get(NutsId id, String repoURL, NutsSession session){
-        if(id.getSimpleName().equals(NET_VPC_APP_NUTS_MVN)){
+    public boolean get(NutsId id, String repoURL, NutsSession session) {
+        if (id.getSimpleName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
-        switch (status){
-            case INIT:{
-                status=Status.DIRTY;
+        NutsSession searchSession = session.copy().trace(false);
+        switch (status) {
+            case INIT: {
+                status = Status.DIRTY;
                 try {
-                    NutsDefinition ff = ws.search().id(NET_VPC_APP_NUTS_MVN).setSession(session.copy())
+                    NutsDefinition ff = ws.search()
+                            .id(NET_VPC_APP_NUTS_MVN).setSession(searchSession)
                             .online()
                             .setOptional(false)
                             .inlineDependencies().latest().getResultDefinitions().required();
                     for (NutsId nutsId : ws.search().id(ff.getId()).inlineDependencies().getResultIds()) {
-                        ws.fetch().id(nutsId).setSession(session)
+                        ws.fetch().id(nutsId).setSession(searchSession)
                                 .online()
                                 .setOptional(false)
                                 .dependencies().getResultDefinition();
                     }
-                    status=Status.SUCCESS;
-                }catch (Exception ex){
+                    status = Status.SUCCESS;
+                } catch (Exception ex) {
                     ex.printStackTrace();
-                    status=Status.FAIL;
+                    status = Status.FAIL;
                     return false;
                 }
                 break;
             }
-            case FAIL:{
+            case FAIL: {
                 return false;
             }
-            case SUCCESS:{
+            case SUCCESS: {
                 //OK
                 break;
             }
-            case DIRTY:{
+            case DIRTY: {
                 return false;
             }
         }
@@ -67,7 +70,7 @@ public class MvnClient {
                             repoURL == null ? "" : repoURL
                     ).setSession(session).run();
             return (b.getResult() == 0);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
     }

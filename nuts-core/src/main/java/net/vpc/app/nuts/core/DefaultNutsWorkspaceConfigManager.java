@@ -426,7 +426,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             other = new NutsBootConfig();
         }
         if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
-            other.setRuntimeDependencies(ws.search().addId(other.getRuntimeId())
+            NutsSession searchSession=ws.createSession().trace(false);
+            other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
                     .scope(NutsDependencyScope.PROFILE_RUN)
                     .inlineDependencies()
                     .duplicates(false)

@@ -137,7 +137,7 @@ public class JavaExecutorOptions {
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = ws.search();
+        NutsSearchCommand se = ws.search().session(session.copy().trace(false));
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.getId());
@@ -148,7 +148,6 @@ public class JavaExecutorOptions {
         if (se.getIds().length > 0) {
             nutsDefinitions.addAll(
                     se
-                            .session(session)
                             .transitive()
                             .scope(NutsDependencyScope.PROFILE_RUN)
                             .optional(false)
@@ -278,8 +277,9 @@ public class JavaExecutorOptions {
     }
 
     private void npToCp(List<String> classPath, String value) {
+        NutsSession searchSession = this.session.copy().trace(false);
         NutsSearchCommand ns = getWorkspace().search().latest()
-                .setSession(this.session);
+                .setSession(searchSession);
         for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!CoreStringUtils.isBlank(n)) {
                 ns.addId(n);
@@ -287,7 +287,7 @@ public class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWorkspace()
-                    .search().id(nutsId).setSession(this.session).installInformation().latest().getResultDefinitions().required();
+                    .search().id(nutsId).setSession(searchSession).installInformation().latest().getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }

@@ -44,6 +44,11 @@ class WrapperNutsAuthenticationAgent {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
+            if(ws.config().options().getBootCommand()==NutsBootCommand.RECOVER){
+                //All stored passwords will be reset to 'secret'
+                ws.createSession().err().println("@@RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent@@");
+                return null;
+            }
             throw new NutsSecurityException(ws, "credential id must start with authentication agent id");
         }
         return b.substring(0, x);
