@@ -3,7 +3,6 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.commands.*;
 import net.vpc.app.nuts.core.executors.CustomNutsExecutorComponent;
-import net.vpc.app.nuts.core.executors.JavaExecutorOptions;
 import net.vpc.app.nuts.core.spi.NutsExecutableInfoExt;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
@@ -13,9 +12,6 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.logging.Logger;
 

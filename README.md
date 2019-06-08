@@ -5,13 +5,13 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.5.4.0
+/_/ |_/\__,_/\__/____/   version 0.5.5.0
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
 components, installing these  components to the current machine and executing such  components on need.
 Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
-Nuts components are  stored  into repositories. A  *repository*  may be local for  storing local Nuts
+Nuts components are  stored  into repositories. A  **repository**  may be local for  storing local Nuts
 or remote for accessing  remote components (good examples  are  remote maven  repositories). It may
 also be a proxy repository so that remote components are fetched and cached locally to save network
 resources.
@@ -19,25 +19,25 @@ One manages a set of repositories called a  workspace. Managed **nuts**  (compon
 that depicts dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to
 resolve and download on-need dependencies over the wire.
 
-**nuts** is a swiss army knife tool as it acts like (and supports) *maven* build tool to have an abstract
-view of the the  components dependency and like  *npm*, **pip** or *zypper/apt-get*  package manager tools  
+**nuts** is a swiss army knife tool as it acts like (and supports) **maven** build tool to have an abstract
+view of the the  components dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools  
 to  install and uninstall components allowing multiple versions of the very same component to  be installed.
 
 ## COMMON VERBS:
 + deploy,undeploy   : handle components (package installers) on the local repositories
 + install,uninstall : install/uninstall a package (using its fetched/deployed installer)
 + update            : update a package (using its fetched/deployed installer)
-+ fetch,push        : download, upload to remote repositories
++ fetch,push        : download from, upload to remote repositories
 + find              : searches for existing/installable components
 
 ## Download Latest stable version
-+ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar)
++ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar)
 
 ## Requirements
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 
 ## Installation
-java -jar nuts-0.5.4.jar
+java -jar nuts-0.5.5.jar
 
 ## Launching
 + [Linux] nuts ...your command here...
@@ -47,22 +47,23 @@ java -jar nuts-0.5.4.jar
     + nuts help
         show help
 
-    + nuts install derby
-        install derby
+    + nuts install tomcat
+        install tomcat
 
     + nuts derby start
         start derby
 
     + nuts -y netbeans-launcher
-        install and run netbeans-launcher
+        install and run netbeans-launcher (auto-confirm is force with -y flag)
 
     + nuts update --all
         update nuts and all installed components
 
-+ [Windows,iOS] java -jar nuts-0.5.4.jar ...your command here...
++ [Windows,iOS] java -jar nuts-0.5.5.jar ...your command here...
 
 ## Latest News
 
++ 2019/06/08 	nuts 0.5.5.0 released [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.5.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md)
 + 2019/04/21 	nuts 0.5.4.0 released [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.4.0.md)
 + 2019/01/05 	nuts 0.5.3.0 released [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.3.0.md)
 + 2018/12/28 	nuts 0.5.2.0 released [nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.2.0.md)
