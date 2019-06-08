@@ -18,7 +18,7 @@ import java.io.PrintStream;
 public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("show location")!=null) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
@@ -40,13 +40,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.next("-s", "--save")!=null) {
                     save = true;
                 } else if (cmdLine.next("-h", "--archetype")!=null) {
-                    archetype = cmdLine.required().nextNonOption(cmdLine.createNonOption("Archetype")).required().getString();
+                    archetype = cmdLine.required().nextNonOption(cmdLine.createName("Archetype")).required().getString();
                 } else if (cmdLine.next("-u", "--login")!=null) {
-                    login = cmdLine.required().nextNonOption(cmdLine.createNonOption("Login")).required().getString();
+                    login = cmdLine.required().nextNonOption(cmdLine.createName("Login")).required().getString();
                 } else if (cmdLine.next("-x", "--password")!=null) {
-                    password = cmdLine.required().nextNonOption(cmdLine.createNonOption("Password")).required().getString().toCharArray();
+                    password = cmdLine.required().nextNonOption(cmdLine.createName("Password")).required().getString().toCharArray();
                 } else {
-                    String ws = cmdLine.required().nextNonOption(cmdLine.createNonOption("NewWorkspaceName")).getString();
+                    String ws = cmdLine.required().nextNonOption(cmdLine.createName("NewWorkspaceName")).getString();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
                                 new NutsWorkspaceOptions()
@@ -71,14 +71,14 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.next("set workspace boot-version")!=null) {
-            String version = cmdLine.required().nextNonOption(cmdLine.createNonOption("version")).getString();
+            String version = cmdLine.required().nextNonOption(cmdLine.createName("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
         } else if (cmdLine.next("set workspace runtime-version", "set workspace runtime-id")!=null) {
-            String version = cmdLine.required().nextNonOption(cmdLine.createNonOption("version")).getString();
+            String version = cmdLine.required().nextNonOption(cmdLine.createName("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             if (version.contains("#")) {
                 c.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + version);
@@ -91,8 +91,8 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("get workspace version", "gwv")!=null) {
             cmdLine.setCommandName("config get workspace version").unexpectedArgument();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
-            context.out().printf("boot-version  : %s%n", StringUtils.trim(c.getApiVersion()));
-            context.out().printf("runtime-id    : %s%n", StringUtils.trim(c.getRuntimeId()));
+            context.session().out().printf("boot-version  : %s%n", StringUtils.trim(c.getApiVersion()));
+            context.session().out().printf("runtime-id    : %s%n", StringUtils.trim(c.getRuntimeId()));
         } else if (cmdLine.next("set workspace", "sw")!=null) {
             boolean createIfNotFound = false;
             boolean save = true;
@@ -109,13 +109,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.next("-s", "--nosave")!=null) {
                     save = false;
                 } else if (cmdLine.next("-h", "--archetype")!=null) {
-                    archetype = cmdLine.required().nextNonOption(cmdLine.createNonOption("Archetype")).required().getString();
+                    archetype = cmdLine.required().nextNonOption(cmdLine.createName("Archetype")).required().getString();
                 } else if (cmdLine.next("-u", "--login")!=null) {
-                    login = cmdLine.required().nextNonOption(cmdLine.createNonOption("Username")).required().getString();
+                    login = cmdLine.required().nextNonOption(cmdLine.createName("Username")).required().getString();
                 } else if (cmdLine.next("-x", "--password")!=null) {
-                    password = cmdLine.required().nextNonOption(cmdLine.createNonOption("Password")).required().getString().toCharArray();
+                    password = cmdLine.required().nextNonOption(cmdLine.createName("Password")).required().getString().toCharArray();
                 } else {
-                    String ws = cmdLine.required().nextNonOption(cmdLine.createNonOption("WorkspacePath")).getString();
+                    String ws = cmdLine.required().nextNonOption(cmdLine.createName("WorkspacePath")).getString();
                     wsCount++;
                     cmdLine.setCommandName("config set workspace").unexpectedArgument();
                     processed = true;
@@ -131,7 +131,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                             workspace.security().login(login, password);
                         }
                         //TODO Unsupported set workspace
-                        context.out().print("Unsupported set workspace....");
+                        context.session().out().print("Unsupported set workspace....");
                         //context.consoleContext().setWorkspace(workspace);
                         trySave(context, workspace, null, autoSave, cmdLine);
                     }

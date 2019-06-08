@@ -35,16 +35,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsExecutionType;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EnvCommand extends SimpleNshCommand {
+public class EnvCommand extends SimpleNshBuiltin {
 
     public EnvCommand() {
         super("env", DEFAULT_SUPPORT);
@@ -68,14 +68,14 @@ public class EnvCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         switch (options.readStatus) {
             case 0: {
-                switch (a.getKey().getString()) {
+                switch (a.getStringKey()) {
                     case "--sort": {
-                        options.sort = (commandLine.nextBoolean().getValue().getBoolean());
+                        options.sort = (commandLine.nextBoolean().getBooleanValue());
                         return true;
                     }
                     case "--external":
@@ -100,17 +100,17 @@ public class EnvCommand extends SimpleNshCommand {
                     }
                     case "-C":
                     case "--chdir": {
-                        options.dir = commandLine.nextString().getValue().getString();
+                        options.dir = commandLine.nextString().getStringValue();
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        options.unsetVers.add(commandLine.nextString().getValue().getString());
+                        options.unsetVers.add(commandLine.nextString().getStringValue());
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        options.ignoreEnvironment = (commandLine.nextBoolean().getValue().getBoolean());
+                        options.ignoreEnvironment = (commandLine.nextBoolean().getBooleanValue());
                         return true;
                     }
                     case "-": {
@@ -120,7 +120,7 @@ public class EnvCommand extends SimpleNshCommand {
                     }
                     default: {
                         if (a.isKeyValue()) {
-                            options.newEnv.put(a.getKey().getString(), a.getValue().getString());
+                            options.newEnv.put(a.getStringKey(), a.getStringValue());
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
@@ -137,7 +137,7 @@ public class EnvCommand extends SimpleNshCommand {
             }
             case 1: {
                 if (a.isKeyValue()) {
-                    options.newEnv.put(a.getKey().getString(), a.getValue().getString());
+                    options.newEnv.put(a.getStringKey(), a.getStringValue());
                 } else {
                     options.command.add(a.getString());
                     options.readStatus = 2;
@@ -155,7 +155,7 @@ public class EnvCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.sort) {
             context.getSession().addOutputFormatOptions("--sort");
@@ -169,7 +169,7 @@ public class EnvCommand extends SimpleNshCommand {
         }
         env.putAll(options.newEnv);
         if (options.command.isEmpty()) {
-            context.setOutObject(env);
+            context.setPrintlnOutObject(env);
         } else {
             final NutsExecCommand e = context.getWorkspace().exec().command(options.command)
                     .env(env)

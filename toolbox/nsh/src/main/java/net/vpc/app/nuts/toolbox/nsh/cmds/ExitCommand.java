@@ -30,14 +30,14 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShellQuitException;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ExitCommand extends SimpleNshCommand {
+public class ExitCommand extends SimpleNshBuiltin {
 
     public ExitCommand() {
         super("exit", DEFAULT_SUPPORT);
@@ -54,7 +54,7 @@ public class ExitCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
@@ -67,7 +67,7 @@ public class ExitCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         throw new JShellQuitException(options.code);
     }

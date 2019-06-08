@@ -80,7 +80,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.createIdBuilder()
+                NutsId id = ws.idBuilder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -123,7 +123,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.createIdBuilder()
+                NutsId id = ws.idBuilder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -163,7 +163,7 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        ws.createIdBuilder()
+                        ws.idBuilder()
                                 .setName(name)
                                 .setNamespace(namespace)
                                 .setGroup(group)
@@ -202,7 +202,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.createIdBuilder()
+                NutsId id = ws.idBuilder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -228,7 +228,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.io().json().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
+                        data.put("dependencies", ws.format().json().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
 
                         this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                     } else {
@@ -247,18 +247,18 @@ public class NutsComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = ws.io().json().read(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = ws.format().json().read(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = ws.io().json().read(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = ws.format().json().read(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)));
                 }
                 d.put("allDependencies", allDependencies);
             }

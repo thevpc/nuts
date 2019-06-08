@@ -38,11 +38,11 @@ package net.vpc.app.nuts;
  * process)</li>
  * <li>enables auto-complete mode to help forecasting the next token in the
  * command line</li>
- * <li>enables on-install mode to be executed when the jar is installed in nuts
+ * <li>enables install mode to be executed when the jar is installed in nuts
  * repos</li>
- * <li>enables on-uninstall mode to be executed when the jar is uninstaleld from
+ * <li>enables uninstall mode to be executed when the jar is uninstaleld from
  * nuts repos</li>
- * <li>enables on-update mode to be executed when the a new version of the same
+ * <li>enables update mode to be executed when the a new version of the same
  * jar has been installed</li>
  * <li>have many default options enabled (such as --help, --version, --json, --table, etc.) and thus support natively multi output channels</li>
  * </ul>
@@ -65,13 +65,13 @@ package net.vpc.app.nuts;
  *                 //do nothing
  *             }else {
  *                  a=cmd.peek();
- *                  switch(a.getKey().getString())[
+ *                  switch(a.getStringKey())[
  *                      case "-o": case "--option":{
- *                          boolOption=cmd.nextBoolean().getValue().getBoolean();
+ *                          boolOption=cmd.nextBoolean().getBooleanValue();
  *                          break;
  *                      }
  *                      case "-n": case "--name":{
- *                          stringOption=cmd.nextString().getValue().getString();
+ *                          stringOption=cmd.nextString().getStringValue();
  *                          break;
  *                      }
  *                      default:{

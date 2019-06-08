@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.TextFiles;
 
@@ -42,8 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -59,8 +59,8 @@ public class TailCommand extends AbstractNshBuiltin {
         int max = 0;
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
+    public void exec(String[] args, NshExecutionContext context) {
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
         PrintStream out = context.out();

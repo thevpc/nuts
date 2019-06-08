@@ -42,47 +42,48 @@ import java.util.Collection;
  */
 public interface NutsParseManager {
 
-    NutsId parseId(String id);
+    NutsId id(String id);
 
-    NutsCommand parseCommandLine(String line);
+    NutsCommandLine commandLine(String line);
 
-    NutsCommand parseCommand(String... arguments);
+    NutsCommandLine command(String... arguments);
 
-    NutsCommand parseCommand(Collection<String> arguments);
+    NutsCommandLine command(Collection<String> arguments);
 
-    NutsDescriptor parseDescriptor(URL url);
+    NutsDescriptor descriptor(URL url);
 
-    NutsDescriptor parseDescriptor(byte[] bytes);
+    NutsDescriptor descriptor(byte[] bytes);
 
-    NutsDescriptor parseDescriptor(Path file);
+    NutsDescriptor descriptor(Path file);
 
-    NutsDescriptor parseDescriptor(File file);
+    NutsDescriptor descriptor(File file);
 
-    NutsDescriptor parseDescriptor(InputStream stream);
+    NutsDescriptor descriptor(InputStream stream);
 
-    NutsDescriptor parseDescriptor(InputStream stream, boolean close);
+    NutsDescriptor descriptor(InputStream stream, boolean close);
 
-    NutsDescriptor parseDescriptor(String descriptorString);
+    NutsDescriptor descriptor(String descriptorString);
 
-    NutsDependency parseDependency(String dependency);
+    NutsDependency dependency(String dependency);
 
-    NutsVersion parseVersion(String version);
+    NutsVersion version(String version);
 
-    NutsVersionFilter parseVersionFilter(String versionFilter);
+    NutsVersionFilter versionFilter(String versionFilter);
 
-    NutsId parseRequiredId(String nutFormat);
+    NutsId requiredId(String nutFormat);
 
     /**
-     * parseExecutionEntries
+     * executionEntries
      *
      * @param file jar file
      * @return execution entries (class names with main method)
      */
-    NutsExecutionEntry[] parseExecutionEntries(File file);
+    NutsExecutionEntry[] executionEntries(File file);
 
-    NutsExecutionEntry[] parseExecutionEntries(Path file);
+    NutsExecutionEntry[] executionEntries(Path file);
 
-    NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
+    NutsExecutionEntry[] executionEntries(InputStream inputStream, String type, String sourceName);
 
+    @Deprecated
     Object parseExpression(Object object, String expression);
 }

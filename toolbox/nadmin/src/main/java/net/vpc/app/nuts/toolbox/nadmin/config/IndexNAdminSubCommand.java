@@ -11,10 +11,10 @@ import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * @author vpc
@@ -22,7 +22,7 @@ import net.vpc.app.nuts.NutsArgument;
 public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin update stats";
         NutsArgument a;
         if (cmdLine.next("update stats")!=null) {
@@ -46,9 +46,9 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
     private void updateStatistics(NutsApplicationContext context, String[] repos) {
         NutsWorkspaceConfigManager cfg = context.getWorkspace().config();
         if (repos.length == 0) {
-            context.out().printf("[[%s]] Updating all indices%n", cfg.getWorkspaceLocation());
+            context.session().out().printf("[[%s]] Updating all indices%n", cfg.getWorkspaceLocation());
             for (NutsRepository repo : cfg.getRepositories()) {
-                context.out().printf("[[%s]] Updating index %s%n", cfg.getWorkspaceLocation(), repo);
+                context.session().out().printf("[[%s]] Updating index %s%n", cfg.getWorkspaceLocation(), repo);
                 repo.updateStatistics();
             }
         } else {

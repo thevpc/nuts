@@ -488,7 +488,7 @@ final class NutsUtilsLimited {
                                 case "programsSystemHome":
                                 case "configSystemHome":
                                 case "varSystemHome":
-                                case "logsSystemHome":
+                                case "logSystemHome":
                                 case "tempSystemHome":
                                 case "cacheSystemHome":
                                 case "libSystemHome": {
@@ -502,7 +502,7 @@ final class NutsUtilsLimited {
                                 case "programsWindowsHome":
                                 case "configWindowsHome":
                                 case "varWindowsHome":
-                                case "logsWindowsHome":
+                                case "logWindowsHome":
                                 case "tempWindowsHome":
                                 case "cacheWindowsHome":
                                 case "libWindowsHome": {
@@ -516,7 +516,7 @@ final class NutsUtilsLimited {
                                 case "programsMacOsHome":
                                 case "configMacOsHome":
                                 case "varMacOsHome":
-                                case "logsMacOsHome":
+                                case "logMacOsHome":
                                 case "tempMacOsHome":
                                 case "cacheMacOsHome":
                                 case "libMacOsHome": {
@@ -530,7 +530,7 @@ final class NutsUtilsLimited {
                                 case "programsLinuxHome":
                                 case "configLinuxHome":
                                 case "varLinuxHome":
-                                case "logsLinuxHome":
+                                case "logLinuxHome":
                                 case "tempLinuxHome":
                                 case "cacheLinuxHome":
                                 case "libLinuxHome": {
@@ -865,10 +865,11 @@ final class NutsUtilsLimited {
             if (!force && !refForceAll[0]) {
                 String line = null;
                 if (term != null) {
-                    line = term.ask().forString("Do you confirm deleting %s [y/n/a] ? : ", directory).session(session).getResult();
+                    line = term.ask().forString("Do you confirm deleting %s [y/n/a] ? : ", directory).session(session).getValue();
                 } else {
                     Scanner s = new Scanner(System.in);
                     System.out.printf("Do you confirm deleting %s [y/n/a] ? : ", directory);
+                    System.out.flush();
                     line = s.nextLine();
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {

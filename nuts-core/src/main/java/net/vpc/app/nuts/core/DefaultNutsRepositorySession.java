@@ -110,6 +110,10 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession {
     public NutsSessionTerminal getTerminal() {
         return getSession().getTerminal();
     }
-    
+
+    @Override
+    public NutsSessionTerminal terminal() {
+        return getTerminal();
+    }
 
 }

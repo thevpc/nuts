@@ -35,9 +35,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -460,8 +460,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
             repo.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
         }
         if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
-            ws.security().getAuthenticationAgent()
-                    .checkCredentials(u.getCredentials().toCharArray(),
+            ws.security().checkCredentials(u.getCredentials().toCharArray(),
                             getOldCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
@@ -473,10 +472,10 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
 //            }
         }
         if (getCredentials() != null) {
-            u.setCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()))));
+            u.setCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()))));
         }
         if (getRemoteCredentials() != null) {
-            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()))));
+            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()))));
         }
 
         if (resetGroups) {
@@ -506,12 +505,12 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

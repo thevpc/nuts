@@ -32,16 +32,16 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShellContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SourceCommand extends SimpleNshCommand {
+public class SourceCommand extends SimpleNshBuiltin {
 
     public SourceCommand() {
         super("source", DEFAULT_SUPPORT);
@@ -58,7 +58,7 @@ public class SourceCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
@@ -69,9 +69,9 @@ public class SourceCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        final String[] paths = context.getCommandContext().getGlobalContext().vars().get("PATH", "").split(":|;");
+        final String[] paths = context.getExecutionContext().getGlobalContext().vars().get("PATH", "").split(":|;");
         List<String> goodFiles = new ArrayList<>();
         for (String file : options.files) {
             if (!file.contains("/")) {

@@ -7,14 +7,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URI;
@@ -22,8 +16,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 
 public class PomXmlParser {
+
     private static Map<String, String> map = new HashMap<>();
     private static Pattern ENTITY_PATTERN = Pattern.compile("&[a-zA-Z]+;");
 
@@ -59,7 +55,6 @@ public class PomXmlParser {
 //            ex.printStackTrace();
 //        }
 //    }
-
     public static final ErrorHandler EH = null;
 //            new ErrorHandler() {
 //        @Override
@@ -134,9 +129,10 @@ public class PomXmlParser {
     }
 
     public Pom parse(InputStream stream, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
-        Document doc = createDocumentBuilder().parse(preValidateStream(stream));
+        Document doc = NutsXmlUtils.createDocumentBuilder(true).parse(preValidateStream(stream));
         return parse(doc, visitor);
     }
+
     private byte[] loadAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         int size = in.available();
@@ -152,12 +148,12 @@ public class PomXmlParser {
     }
 
     private InputStream preValidateStream(InputStream in) throws IOException {
-        byte[] bytes0=loadAllBytes(in);
+        byte[] bytes0 = loadAllBytes(in);
         int skip = 0;
         while (skip < bytes0.length && Character.isWhitespace(bytes0[skip])) {
             skip++;
         }
-        String x = new String(bytes0,skip,bytes0.length-skip);
+        String x = new String(bytes0, skip, bytes0.length - skip);
         StringBuffer sb = new StringBuffer();
         Matcher m = ENTITY_PATTERN.matcher(x);
         while (m.find()) {
@@ -173,46 +169,6 @@ public class PomXmlParser {
         m.appendTail(sb);
 
         return new ByteArrayInputStream(sb.toString().getBytes());
-    }
-
-    private DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        dbFactory.setExpandEntityReferences(false);
-        // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
-        // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
-        setLenientFeature(dbFactory, "http://apache.org/xml/features/disallow-doctype-decl", true);
-
-        // If you can't completely disable DTDs, then at least do the following:
-        // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
-        // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
-        // JDK7+ - http://xml.org/sax/features/external-general-entities
-        setLenientFeature(dbFactory, "http://xerces.apache.org/xerces-j/features.html#external-general-entities", false);
-        setLenientFeature(dbFactory, "http://xerces.apache.org/xerces2-j/features.html#external-general-entities", false);
-        setLenientFeature(dbFactory, "http://xml.org/sax/features/external-general-entities", false);
-
-        // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
-        // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
-        // JDK7+ - http://xml.org/sax/features/external-parameter-entities
-        setLenientFeature(dbFactory, "http://xerces.apache.org/xerces-j/features.html#external-parameter-entities", false);
-        setLenientFeature(dbFactory, "http://xml.org/sax/features/external-parameter-entities", false);
-        setLenientFeature(dbFactory, "http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities", false);
-
-        // Disable external DTDs as well
-        setLenientFeature(dbFactory, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-        dbFactory.setXIncludeAware(false);
-        dbFactory.setValidating(false);
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//        dBuilder.setErrorHandler(EH);
-        return dBuilder;
-    }
-
-    private void setLenientFeature(DocumentBuilderFactory dbFactory, String s, boolean b) {
-        try {
-            dbFactory.setFeature(s, b);
-        } catch (Exception ex) {
-            //
-        }
     }
 
     public Pom parse(Document doc) {
@@ -441,7 +397,7 @@ public class PomXmlParser {
                 depsMan.toArray(new PomDependency[0]),
                 repos.toArray(new PomRepository[0]),
                 pluginRepos.toArray(new PomRepository[0]),
-                modules.toArray(new String[0]),doc
+                modules.toArray(new String[0]), doc
         );
         if (visitor != null) {
             visitor.visitEndDocument(doc, pom);
@@ -727,13 +683,7 @@ public class PomXmlParser {
     }
 
     public static void writeDocument(Document doc, StreamResult result) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        DOMSource source = new DOMSource(doc);
-        transformer.transform(source, result);
+        NutsXmlUtils.writeDocument(doc, result, false);
     }
 
     public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement) {

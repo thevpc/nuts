@@ -29,17 +29,17 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.common.javashell.AutoCompleteCandidate;
 
 import java.util.*;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class AutocompleteCommand extends SimpleNshCommand {
+public class AutocompleteCommand extends SimpleNshBuiltin {
 
     public AutocompleteCommand() {
         super("autocomplete", DEFAULT_SUPPORT);
@@ -57,7 +57,7 @@ public class AutocompleteCommand extends SimpleNshCommand {
         return new Options();
     }
     @Override
-    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (!cmdLine.peek().isOption()) {
             while (cmdLine.hasNext()) {
@@ -79,7 +79,7 @@ public class AutocompleteCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.cmd == null) {
             throw new NutsExecutionException(context.getWorkspace(), "Missing Command", 1);
@@ -90,7 +90,7 @@ public class AutocompleteCommand extends SimpleNshCommand {
         }
         List<AutoCompleteCandidate> aa = context.getGlobalContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                context.getWorkspace().parser().parseCommand(options.items).getCommandLine()
+                context.getWorkspace().parse().command(options.items).toString()
         );
         Properties p = new Properties();
         for (AutoCompleteCandidate autoCompleteCandidate : aa) {
@@ -101,7 +101,7 @@ public class AutocompleteCommand extends SimpleNshCommand {
             }
             p.setProperty(value == null ? "" : value, dvalue == null ? "" : dvalue);
         }
-        context.setOutObject(p);
+        context.setPrintlnOutObject(p);
     }
 
     @Override

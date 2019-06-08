@@ -33,16 +33,16 @@ import java.io.*;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsIOManager extends NutsComponent<Object> {
 
     NutsMonitorCommand monitor();
-    
-    NutsJsonCommand json();
-    
+
+    NutsJsonFormat json();
+
     String expandPath(Path path);
 
     String expandPath(String path);
@@ -52,7 +52,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
     String getResourceString(String resource, Class cls, String defaultValue);
 
     NutsHashCommand hash();
-    
+
     InputStream nullInputStream();
 
     PrintStream nullPrintStream();
@@ -76,18 +76,24 @@ public interface NutsIOManager extends NutsComponent<Object> {
     Path createTempFolder(String name, NutsRepository repository);
 
     NutsPathCopyAction copy();
-    
+
     Path path(String first, String... more);
-    
+
     NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis);
+
+    NutsTerminalFormat terminalFormat();
 
     NutsTerminalFormat getTerminalFormat();
 
+    NutsSystemTerminal systemTerminal();
+
     NutsSystemTerminal getSystemTerminal();
 
+    NutsSessionTerminal terminal();
+
     NutsSessionTerminal getTerminal();
-    
+
     NutsIOManager setSystemTerminal(NutsSystemTerminalBase term);
-    
+
     NutsIOManager setTerminal(NutsSessionTerminal terminal);
 }

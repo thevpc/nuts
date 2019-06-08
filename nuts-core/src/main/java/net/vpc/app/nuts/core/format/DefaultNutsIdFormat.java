@@ -290,52 +290,52 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
     }
 
     @Override
-    public final NutsIdFormat configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws, args, "nuts-id-format");
+    public final NutsIdFormat configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-id-format");
     }
 
     @Override
-    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine, skipIgnored);
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--omit-env": {
-                setOmitEnv(cmdLine.nextBoolean().getValue().getBoolean());
+                setOmitEnv(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-face": {
-                setOmitFace(cmdLine.nextBoolean().getValue().getBoolean());
+                setOmitFace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-group": {
-                setOmitGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                setOmitGroup(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-imported-group": {
-                setOmitImportedGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                setOmitImportedGroup(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-namespace": {
-                setOmitNamespace(cmdLine.nextBoolean().getValue().getBoolean());
+                setOmitNamespace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-imported-group": {
-                setHighlightImportedGroup(cmdLine.nextBoolean().getValue().getBoolean());
+                setHighlightImportedGroup(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-optional": {
-                setHighlightOptional(cmdLine.nextBoolean().getValue().getBoolean());
+                setHighlightOptional(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-scope": {
-                setHighlightScope(cmdLine.nextBoolean().getValue().getBoolean());
+                setHighlightScope(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
         }

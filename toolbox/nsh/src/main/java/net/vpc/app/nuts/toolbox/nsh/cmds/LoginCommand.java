@@ -29,39 +29,60 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class LoginCommand extends AbstractNshBuiltin {
+public class LoginCommand extends SimpleNshBuiltin {
 
     public LoginCommand() {
         super("login", DEFAULT_SUPPORT);
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else {
-                String login = cmdLine.required().nextNonOption(cmdLine.createNonOption("username")).getString();
-                char[] password = cmdLine.nextNonOption(cmdLine.createNonOption("password")).getString().toCharArray();
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-                if (cmdLine.isExecMode()) {
-                    if (!NutsConstants.Users.ANONYMOUS.equals(login) && StringUtils.isBlank(new String(password))) {
-                        password = context.getTerminal().readPassword("Password:");
-                    }
-                    context.getWorkspace().security().login(login, password);
-                }
+    private static class Options {
+
+        String login;
+        char[] password;
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        if (!a.isOption()) {
+            if (options.login == null) {
+                options.login = commandLine.next(commandLine.createName("username")).getString();
+                return true;
+            } else if (options.password == null) {
+                options.password = commandLine.next(commandLine.createName("password")).getString().toCharArray();
+                return true;
             }
         }
+        return false;
     }
+
+    @Override
+    protected void prepareOptions(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (!NutsConstants.Users.ANONYMOUS.equals(options.login) && StringUtils.isBlank(new String(options.password))) {
+            options.password = context.getSession().getTerminal().ask().forPassword("Password").getValue();
+        }
+    }
+    
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        context.getWorkspace().security().login(options.login, options.password);
+    }
+
 }

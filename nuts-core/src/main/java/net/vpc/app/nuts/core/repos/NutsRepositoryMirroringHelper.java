@@ -121,7 +121,7 @@ public class NutsRepositoryMirroringHelper {
                     } else {
                         goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
                     }
-                    getWorkspace().formatter().createDescriptorFormat().print(nutsDescriptor, goodFile);
+                    getWorkspace().format().descriptor().print(nutsDescriptor, goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -179,7 +179,7 @@ public class NutsRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = repo.config().getMirror(repository);
+            repo = this.repo.config().getMirror(repository,false);
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createComponentFaceId(id.unsetQuery(), desc).setAlternative(CoreStringUtils.trim(desc.getAlternative()));
@@ -217,7 +217,7 @@ public class NutsRepositoryMirroringHelper {
                                     .setTransitive(session.isTransitive())
                                     .setIndexed(session.isIndexed())).setFaceDescriptor();
                     Path localNutFile = cache.getIdLocalFile(id2);
-                    getWorkspace().formatter().createDescriptorFormat().print(nutsDescriptor, localNutFile);
+                    getWorkspace().format().descriptor().print(nutsDescriptor, localNutFile);
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                         bestId = id2;
                     }

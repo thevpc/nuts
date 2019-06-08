@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsFetchStrategy;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -22,6 +21,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -492,7 +492,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         if (super.configureFirst(cmdLine)) {
             return true;
         }
@@ -503,31 +503,31 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--failfast": {
-                this.setFailFast(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setFailFast(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-r":
             case "--repository": {
-                this.addRepository(cmdLine.nextString().getValue().getString());
+                this.addRepository(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "-f":
             case "--fetch": {
-                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.nextString().getValue().getString().toUpperCase().replace("-", "_")));
+                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.nextString().getStringValue().toUpperCase().replace("-", "_")));
                 return true;
             }
             case "--dependencies": {
-                this.dependencies(cmdLine.nextBoolean().getValue().getBoolean());
+                this.dependencies(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--dependencies-tree": {
-                this.dependenciesTree(cmdLine.nextBoolean().getValue().getBoolean());
+                this.dependenciesTree(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--scope": {
-                this.addScope(CoreCommonUtils.parseEnumString(cmdLine.nextString().getValue().getString(), NutsDependencyScope.class, false));
+                this.addScope(CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false));
                 return true;
             }
             case "--anywhere": {
@@ -561,27 +561,27 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--cached": {
-                this.setCached(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setCached(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--effective": {
-                this.setEffective(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setEffective(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--indexed": {
-                this.setIndexed(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setIndexed(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--content": {
-                this.setContent(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setContent(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--install-info": {
-                this.setInstallInformation(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setInstallInformation(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--location": {
-                String location = cmdLine.nextString().getValue().getString();
+                String location = cmdLine.nextString().getStringValue();
                 this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
                 return true;
             }

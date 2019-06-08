@@ -18,7 +18,7 @@ public class NutsIndexerUtils {
         String m = (String) ws.getUserProperties().get(k);
         if (m == null) {
             m = ws.config()
-                    .getStoreLocation(ws.resolveIdForClass(NutsIndexerUtils.class)
+                    .getStoreLocation(ws.resolveId(NutsIndexerUtils.class)
                             .getSimpleNameId(),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.getUserProperties().put(k, m);
@@ -49,7 +49,7 @@ public class NutsIndexerUtils {
 
     public static String mapToJson(Map<String, String> map, NutsWorkspace ws) {
         StringWriter s = new StringWriter();
-        ws.io().json().write(map, s);
+        ws.format().json().write(map, s);
         return s.toString();
     }
 
@@ -128,7 +128,7 @@ public class NutsIndexerUtils {
     }
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
-        return ws.createIdBuilder()
+        return ws.idBuilder()
                 .setName(trim(map.get("name")))
                 .setNamespace(trim(map.get("namespace")))
                 .setGroup(trim(map.get("group")))

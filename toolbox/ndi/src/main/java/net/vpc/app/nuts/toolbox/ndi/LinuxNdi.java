@@ -25,11 +25,11 @@ public class LinuxNdi implements SystemNdi {
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
         if ("nuts".equals(options.getId())) {
-            return createBootScript(options.isForceBoot() || options.isForce(), true);
+            return createBootScript(options.isForceBoot() || options.isForce(), options.isTrace());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>();
             r.addAll(Arrays.asList(createBootScript(false, false)));
-            NutsId nutsId = context.getWorkspace().parser().parseId(options.getId());
+            NutsId nutsId = context.getWorkspace().parse().id(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search().id(options.getId()).latest().getResultDefinitions().required();
@@ -47,7 +47,7 @@ public class LinuxNdi implements SystemNdi {
             boolean exists = Files.exists(ff);
             if (!options.isForce() && exists) {
                 if (options.isTrace() && context.getSession().isPlainTrace()) {
-                    context.out().printf("Script already exists ==%s==%n", ff);
+                    context.session().out().printf("Script already exists ==%s==%n", ff);
                 }
             } else {
                 final NutsId fnutsId = nutsId;
@@ -83,7 +83,7 @@ public class LinuxNdi implements SystemNdi {
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.out().printf("Script already exists ==%s==%n", ff);
+                context.session().out().printf("Script already exists ==%s==%n", ff);
             }
         } else {
             all.add(
@@ -110,14 +110,14 @@ public class LinuxNdi implements SystemNdi {
         Path ff2 = context.getWorkspace().config().getWorkspaceLocation().resolve("nuts");
         if (!force && Files.exists(ff2)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.out().printf("Script already exists ==%s==%n", ff2);
+                context.session().out().printf("Script already exists ==%s==%n", ff2);
             }
         } else {
             if (trace && context.getSession().isPlainTrace()) {
                 if (force) {
-                    context.out().printf("Force updating ==%s== %n", ff2.toString());
+                    context.session().out().printf("Force updating ==%s== %n", ff2.toString());
                 } else {
-                    context.out().printf("Updating ==%s== %n", ff2.toString());
+                    context.session().out().printf("Updating ==%s== %n", ff2.toString());
                 }
             }
             try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
@@ -223,27 +223,27 @@ public class LinuxNdi implements SystemNdi {
         if ((force || updatedBashrc || updatedNdirc) && trace) {
             if (force) {
                 if (context.getSession().isPlainOut()) {
-                    context.out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                    context.session().out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                 }
             } else {
                 if (context.getSession().isPlainOut()) {
                     if (updatedNdirc && updatedBashrc) {
-                        context.out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                     } else if (updatedNdirc) {
-                        context.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", context.getWorkspace().config().getWorkspaceLocation());
                     } else if (updatedBashrc) {
-                        context.out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                     }
                 }
             }
             if (context.getSession().isPlainOut()) {
-                context.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
+                context.session().out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
             }
             if (updatedNdirc || updatedBashrc) {
 
                 while (true) {
                     switch (context.getSession().getConfirm()) {
-                        case CANCEL: {
+                        case ERROR: {
                             throw new NutsUserCancelException(context.getWorkspace());
                         }
                         case YES: {
@@ -253,24 +253,24 @@ public class LinuxNdi implements SystemNdi {
                             return;
                         }
                         case ASK: {
-                            String r = context.getTerminal().ask()
+                            String r = context.session().terminal().ask()
                                     .forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
                                     .session(context.getSession())
-                                    .getResult();
+                                    .getValue();
                             if ("ok".equalsIgnoreCase(r)) {
                                 break;
                             }
                             if ("why".equalsIgnoreCase(r)) {
-                                context.out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
-                                context.out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
-                                context.out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                                context.out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
-                                context.out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                context.out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
-                            } else if ("cancel".equalsIgnoreCase(r)) {
+                                context.session().out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
+                                context.session().out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
+                                context.session().out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
+                                context.session().out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
+                                context.session().out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
+                                context.session().out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
+                            } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 return;
                             } else {
-                                context.out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !%n");
+                                context.session().out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !%n");
                             }
                         }
                     }
@@ -293,7 +293,7 @@ public class LinuxNdi implements SystemNdi {
             }
         }
         if (trace && context.getSession().isPlainTrace()) {
-            context.out().printf("Install %s script ==%s== for ==%s== at ==%s==%n", Files.exists(script) ? "(with override)" : "", script.getFileName(), desc, script);
+            context.session().out().printf("Install %s script ==%s== for ==%s== at ==%s==%n", Files.exists(script) ? "(with override)" : "", script.getFileName(), desc, script);
         }
 
         try (BufferedWriter w = Files.newBufferedWriter(script)) {

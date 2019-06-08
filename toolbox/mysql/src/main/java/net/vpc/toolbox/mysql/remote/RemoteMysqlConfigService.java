@@ -101,7 +101,7 @@ public class RemoteMysqlConfigService {
         return getDatabaseOrError(appName);
     }
 
-    public RemoteMysqlDatabaseConfigService getAppOrNull(String appName) {
+    public RemoteMysqlDatabaseConfigService getDatabaseOrNull(String appName) {
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
         if (a == null) {
             return null;
@@ -126,7 +126,7 @@ public class RemoteMysqlConfigService {
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }
 
-    public List<RemoteMysqlDatabaseConfigService> getApps() {
+    public List<RemoteMysqlDatabaseConfigService> getDatabases() {
         List<RemoteMysqlDatabaseConfigService> a = new ArrayList<>();
         for (String s : getConfig().getDatabases().keySet()) {
             a.add(new RemoteMysqlDatabaseConfigService(s, getConfig().getDatabases().get(s), this));

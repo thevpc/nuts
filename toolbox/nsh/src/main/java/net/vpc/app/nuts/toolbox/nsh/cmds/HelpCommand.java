@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
 import net.vpc.common.strings.StringUtils;
 
@@ -40,10 +39,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellBuiltin;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -55,8 +55,8 @@ public class HelpCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NutsCommandContext context){
-        NutsCommand cmdLine = cmdLine(args, context);
+    public void exec(String[] args, NshExecutionContext context){
+        NutsCommandLine cmdLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         NutsArgument a;
@@ -68,7 +68,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 showColors = true;
             } else if (cmdLine.next("--code")!=null) {
                 code = true;
-                context.setTerminalMode(NutsTerminalMode.FILTERED);
+                context.session().setTerminalMode(NutsTerminalMode.FILTERED);
             } else if (cmdLine.peek().isOption()) {
                 if (cmdLine.isExecMode()) {
                     throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
@@ -92,21 +92,21 @@ public class HelpCommand extends AbstractNshBuiltin {
                     String helpText = context.getWorkspace().io().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
                     context.out().println(ss.apply(helpText));
                     context.out().println(ss.apply("@@AVAILABLE COMMANDS ARE:@@"));
-                    JShellCommand[] commands = context.getGlobalContext().builtins().getAll();
-                    Arrays.sort(commands, new Comparator<JShellCommand>() {
+                    JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
+                    Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                         @Override
-                        public int compare(JShellCommand o1, JShellCommand o2) {
+                        public int compare(JShellBuiltin o1, JShellBuiltin o2) {
                             return o1.getName().compareTo(o2.getName());
                         }
                     });
                     int max = 1;
-                    for (JShellCommand cmd : commands) {
+                    for (JShellBuiltin cmd : commands) {
                         int x = cmd.getName().length();
                         if (x > max) {
                             max = x;
                         }
                     }
-                    for (JShellCommand cmd : commands) {
+                    for (JShellBuiltin cmd : commands) {
                         if (code) {
                             context.out().printf("\\#\\#%s\\#\\# : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
@@ -116,7 +116,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                 } else {
                     for (String commandName : commandNames) {
-                        JShellCommand command1 = context.getGlobalContext().builtins().find(commandName);
+                        JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                         if (command1 == null) {
                                 context.err().printf("Command not found : %s\n", ss.apply(commandName));
                         } else {

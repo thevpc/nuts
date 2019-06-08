@@ -42,6 +42,7 @@ import net.vpc.app.nuts.NutsExecutionEntry;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallInfo;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
@@ -100,7 +101,7 @@ public class FormattableNutsId {
     }
 
     public FormattableNutsId(NutsDependencyTreeNode id, NutsWorkspace ws, NutsSession session) {
-        this(null, id.getDefinition() == null ? null : id.getDefinition().getDescriptor(), id.getDefinition(), id.getDependency(), ws, session);
+        this(null, null, null, id.getDependency(), ws, session);
     }
 
     public FormattableNutsId(NutsId id, NutsWorkspace ws, NutsSession session) {
@@ -143,7 +144,7 @@ public class FormattableNutsId {
     }
 
     public String[] getMultiColumnRow(NutsFetchDisplayOptions oo) {
-        NutsDisplayType[] a = oo.getDisplays();
+        NutsDisplayProperty[] a = oo.getDisplayProperties();
         String[] b = new String[a.length];
         for (int j = 0; j < b.length; j++) {
             b[j] = buildMain(oo, a[j]);
@@ -155,12 +156,12 @@ public class FormattableNutsId {
         return CoreStringUtils.join(" ", Arrays.asList(getMultiColumnRow(oo)));
     }
 
-    public String buildMain(NutsFetchDisplayOptions oo, NutsDisplayType dp) {
+    public String buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
         if (oo.isRequireDefinition()) {
             buildLong();
         }
         if (dp == null) {
-            dp = NutsDisplayType.ID;
+            dp = NutsDisplayProperty.ID;
         }
         switch (dp) {
             case ID: {
@@ -229,10 +230,52 @@ public class FormattableNutsId {
                 }
                 return "@@nobody@@";
             }
+            case CACHE_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.CACHE));
+                }
+                return "@@nobody@@";
+            }
+            case CONFIG_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.CONFIG));
+                }
+                return "@@nobody@@";
+            }
+            case LIB_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.LIB));
+                }
+                return "@@nobody@@";
+            }
+            case LOG_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.LOG));
+                }
+                return "@@nobody@@";
+            }
+            case TEMP_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.TEMP));
+                }
+                return "@@nobody@@";
+            }
+            case VAR_LOCATION: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.VAR));
+                }
+                return "@@nobody@@";
+            }
+            case PROGRAMS_FOLDER: {
+                if (def != null) {
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS));
+                }
+                return "@@nobody@@";
+            }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<String> results = new ArrayList<String>();
-                    for (NutsExecutionEntry entry : ws.parser().parseExecutionEntries(def.getContent().getPath())) {
+                    for (NutsExecutionEntry entry : ws.parse().executionEntries(def.getContent().getPath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(entry.getName());

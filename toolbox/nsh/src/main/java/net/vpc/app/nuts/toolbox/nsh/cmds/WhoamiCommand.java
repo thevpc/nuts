@@ -40,13 +40,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class WhoamiCommand extends SimpleNshCommand {
+public class WhoamiCommand extends SimpleNshBuiltin {
 
     public WhoamiCommand() {
         super("whoami", DEFAULT_SUPPORT);
@@ -85,9 +85,9 @@ public class WhoamiCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
-        switch (commandLine.peek().getKey().getString()) {
+        switch (commandLine.peek().getStringKey()) {
             case "--all":
             case "-a": {
                 config.argAll = true;
@@ -106,7 +106,7 @@ public class WhoamiCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Result result = new Result();
         Options config = context.getOptions();
         if (!config.nutsUser) {
@@ -178,7 +178,7 @@ public class WhoamiCommand extends SimpleNshCommand {
                 result.repos = rr.isEmpty() ? null : rr.toArray(new RepoResult[0]);
             }
         }
-        context.setOutObject(result);
+        context.setPrintlnOutObject(result);
     }
 
     @Override

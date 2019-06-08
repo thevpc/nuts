@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -40,6 +38,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -60,8 +60,8 @@ public class GrepCommand extends AbstractNshBuiltin {
         boolean n = false;
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
+    public void exec(String[] args, NshExecutionContext context) {
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
@@ -92,9 +92,9 @@ public class GrepCommand extends AbstractNshBuiltin {
                 return;
             } else {
                 if (expression == null) {
-                    expression = cmdLine.required().nextNonOption(cmdLine.createNonOption("expression")).getString();
+                    expression = cmdLine.next().getString();
                 } else {
-                    String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
+                    String path = cmdLine.next().getString();
                     File file = new File(context.getGlobalContext().getAbsolutePath(path));
                     files.add(file);
                 }
@@ -124,7 +124,7 @@ public class GrepCommand extends AbstractNshBuiltin {
         }
     }
 
-    protected void grepFile(File f, Pattern p, Options options, NutsCommandContext context, boolean prefixFileName) {
+    protected void grepFile(File f, Pattern p, Options options, NshExecutionContext context, boolean prefixFileName) {
 
         Reader reader = null;
         try {

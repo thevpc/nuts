@@ -39,6 +39,8 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     public NutsQuestion<Boolean> forBoolean(String msg, Object... params);
 
+    public NutsQuestion<char[]> forPassword(String msg, Object... params);
+
     public NutsQuestion<String> forString(String msg, Object... params);
 
     public NutsQuestion<Integer> forInteger(String msg, Object... params);
@@ -91,24 +93,29 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     NutsQuestion<T> setParser(NutsResponseParser parser);
 
+    NutsQuestion<T> setValidator(NutsResponseValidator<T> validator);
+
+    NutsResponseValidator<T> getValidator();
+
     NutsQuestion<T> run();
 
     /**
-     * equivalent to (Boolean) getResult()
-     * as type dereferencing may cause some troubles
-     * @return 
+     * equivalent to (Boolean) getValue() as type dereferencing may cause some
+     * troubles
+     *
+     * @return
      */
-    Boolean getBooleanResult();
-    
-    <T> T getResult();
+    Boolean getBooleanValue();
+
+    <T> T getValue();
 
     NutsSession getSession();
-    
+
     NutsQuestion<T> session(NutsSession session);
 
     NutsQuestion<T> setSession(NutsSession session);
 
     @Override
-    NutsQuestion<T> configure(String... args);
-    
+    NutsQuestion<T> configure(boolean skipUnsupported, String... args);
+
 }

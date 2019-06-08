@@ -32,16 +32,16 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShell;
-import net.vpc.common.javashell.JShellCommand;
 import net.vpc.common.javashell.JShellCommandType;
+import net.vpc.common.javashell.JShellBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class TypeCommand extends SimpleNshCommand {
+public class TypeCommand extends SimpleNshBuiltin {
 
     public TypeCommand() {
         super("type", DEFAULT_SUPPORT);
@@ -75,7 +75,7 @@ public class TypeCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isNonOption()) {
@@ -86,12 +86,12 @@ public class TypeCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JShellCommand ic = context.getGlobalContext().builtins().find(cmd);
+            JShellBuiltin ic = context.getGlobalContext().builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -132,7 +132,7 @@ public class TypeCommand extends SimpleNshCommand {
                 }
             }
         }
-        context.setOutObject(result);
+        context.setPrintlnOutObject(result);
     }
 
     @Override

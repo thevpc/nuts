@@ -30,8 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.TextFiles;
 
@@ -40,15 +38,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HeadCommand extends AbstractNshBuiltin {
+public class HeadCommand extends SimpleNshBuiltin {
 
     public HeadCommand() {
         super("head", DEFAULT_SUPPORT);
@@ -57,35 +55,40 @@ public class HeadCommand extends AbstractNshBuiltin {
     private static class Options {
 
         int max = 0;
+        List<String> files = new ArrayList<>();
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        Options options = new Options();
-        List<String> files = new ArrayList<>();
-        PrintStream out = context.out();
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (cmdLine.peek().isOption()) {
-                if (context.configureFirst(cmdLine)) {
-                    //
-                } else if (ShellHelper.isInt(cmdLine.peek().getString().substring(1))) {
-                    options.max = Integer.parseInt(cmdLine.next().getString().substring(1));
-                } else {
-                    throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
-                }
-            } else {
-                String path = cmdLine.next().getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
-                files.add(file.getPath());
-            }
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        if (a.isOption() && a.getArgumentKey().isInt()) {
+            options.max = a.getArgumentKey().getInt();
+            commandLine.skip();
+            return true;
+        } else if (!a.isOption()) {
+            String path = commandLine.next().getString();
+            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            options.files.add(file.getPath());
+            return true;
         }
-        if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.files.isEmpty()) {
+            commandLine.required();
         }
-        for (String file : files) {
+        for (String file : options.files) {
             try {
-                TextFiles.head(TextFiles.create(file), options.max, out);
+                TextFiles.head(TextFiles.create(file), options.max, context.out());
             } catch (IOException ex) {
                 throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
             }

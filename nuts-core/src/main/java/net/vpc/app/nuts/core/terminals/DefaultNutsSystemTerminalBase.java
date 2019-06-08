@@ -22,7 +22,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void install(NutsWorkspace workspace) {
-        NutsTerminalMode terminalMode = workspace.config().getOptions().getTerminalMode();
+        NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
         if (terminalMode == null) {
             terminalMode = NutsTerminalMode.FORMATTED;
         }

@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class FalseCommand extends SimpleNshCommand {
+public class FalseCommand extends SimpleNshBuiltin {
 
     public FalseCommand() {
         super("false", DEFAULT_SUPPORT);
@@ -48,14 +48,14 @@ public class FalseCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         //ignore all
         commandLine.skip();
         return true;
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         //do nothing, return true
         throw new NutsExecutionException(context.getWorkspace(), 1);
     }

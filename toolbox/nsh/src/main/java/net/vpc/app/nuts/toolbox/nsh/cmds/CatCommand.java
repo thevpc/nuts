@@ -29,22 +29,21 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CatCommand extends AbstractNshBuiltin {
+public class CatCommand extends SimpleNshBuiltin {
 
     public CatCommand() {
         super("cat", DEFAULT_SUPPORT);
@@ -55,81 +54,112 @@ public class CatCommand extends AbstractNshBuiltin {
         boolean n = false;
         boolean T = false;
         boolean E = false;
+        List<File> files = new ArrayList<>();
+        long currentNumber;
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        Options o = new Options();
-        List<File> files = new ArrayList<>();
-        PrintStream out = context.out();
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-") != null) {
-                files.add(null);
-            } else if (cmdLine.next("-n", "--number") != null) {
-                o.n = true;
-            } else if (cmdLine.next("-t", "--show-tabs") != null) {
-                o.T = true;
-            } else if (cmdLine.next("-E", "--show-ends") != null) {
-                o.E = true;
-            } else {
-                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
-                files.add(file);
-            }
+
+        if (commandLine.next("-") != null) {
+            options.files.add(null);
+            return true;
+        } else if ((a = commandLine.next("-n", "--number")) != null) {
+            options.n = a.getBooleanValue();
+            return true;
+        } else if ((a = commandLine.next("-t", "--show-tabs")) != null) {
+            options.T = a.getBooleanValue();
+            return true;
+        } else if ((a = commandLine.next("-E", "--show-ends")) != null) {
+            options.E = a.getBooleanValue();
+            return true;
+        } else if (!commandLine.peek().isOption()) {
+            String path = commandLine.next().getString();
+            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            options.files.add(file);
+            return true;
         }
-        if (files.isEmpty()) {
-            files.add(null);
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.files.isEmpty()) {
+            options.files.add(null);
         }
+        PrintStream out = context.out();
         try {
-            if (o.n || o.T || o.E) {
-                int nn = 1;
+            if (options.n || options.T || options.E) {
+                options.currentNumber = 1;
                 //text mode
-                for (File f : files) {
-                    Reader reader = null;
+                for (File f : options.files) {
+                    boolean close = false;
+                    InputStream in = null;
+                    if (f == null) {
+                        in = context.in();
+                    } else {
+                        in = new FileInputStream(f);
+                        close = true;
+                    }
                     try {
-                        if (f == null) {
-                            reader = new InputStreamReader(context.in());
-                        } else {
-                            reader = new FileReader(f);
-                        }
-                        try (BufferedReader r = new BufferedReader(reader)) {
-                            String line = null;
-                            while ((line = r.readLine()) != null) {
-                                if (o.n) {
-                                    out.print(StringUtils.alignRight(String.valueOf(nn), 6));
-                                    out.print("  ");
-                                }
-                                if (o.T) {
-                                    line = line.replace("\t", "^I");
-                                }
-                                out.print(line);
-                                if (o.E) {
-                                    out.println("$");
-                                }
-                                out.println();
-                                nn++;
-                            }
-                        }
+                        catText(in, out, options, context);
                     } finally {
-                        if (reader != null) {
-                            reader.close();
+                        if (close) {
+                            in.close();
                         }
                     }
                 }
             } else {
-                for (File f : files) {
+                for (File f : options.files) {
                     if (f == null) {
-                        IOUtils.copy(context.in(), out);
+                        IOUtils.copy(context.in(), out, 4096 * 2);
                     } else {
-                        IOUtils.copy(f, out);
+                        IOUtils.copy(f, out, 4096 * 2);
                     }
                 }
             }
         } catch (IOException ex) {
             throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+        }
+    }
+
+    private void catText(InputStream in, OutputStream os, Options options, SimpleNshCommandContext context) throws IOException {
+        PrintStream out = null;
+        if (os instanceof PrintStream) {
+            out = (PrintStream) os;
+        } else {
+            out = new PrintStream(os);
+        }
+        out = context.getWorkspace().io().getTerminalFormat().prepare(out);
+        try {
+            //do not close!!
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                if (options.n) {
+                    out.print(StringUtils.alignRight(String.valueOf(options.currentNumber), 6));
+                    out.print("  ");
+                }
+                if (options.T) {
+                    line = line.replace("\t", "^I");
+                }
+                out.print(line);
+                if (options.E) {
+                    out.println("$");
+                }
+                out.println();
+                options.currentNumber++;
+            }
+        } finally {
+            out.flush();
         }
     }
 }

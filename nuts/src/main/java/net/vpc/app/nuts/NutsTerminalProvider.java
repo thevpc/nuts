@@ -38,6 +38,8 @@ import java.util.Map;
  */
 public interface NutsTerminalProvider extends NutsPropertiesProvider {
 
+    NutsSessionTerminal terminal();
+    
     NutsSessionTerminal getTerminal();
 
     @Override

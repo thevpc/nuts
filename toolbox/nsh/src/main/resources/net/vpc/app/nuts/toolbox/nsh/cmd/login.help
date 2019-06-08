@@ -3,7 +3,7 @@ log in as a given user for the current workspace
 @@SYNOPSIS:@@
 ##login## <username> [user-password]
 
-logs in as <username>. If user-password is not specified, will be asked for
+log in as <username>. If user-password is not specified, will be asked for
 
 
 @@EXAMPLES:@@

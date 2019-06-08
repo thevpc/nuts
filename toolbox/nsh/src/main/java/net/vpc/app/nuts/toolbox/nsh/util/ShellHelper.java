@@ -8,22 +8,33 @@ import net.vpc.common.xfile.XFile;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import net.vpc.app.nuts.NutsSessionTerminal;
 
 public class ShellHelper {
+
+    public static List<XFile> xfilesOf(List<String> all, String cwd) {
+        List<XFile> xall = new ArrayList<>();
+        for (String v : all) {
+            xall.add(xfileOf(v, cwd));
+        }
+        return xall;
+    }
+
     public static XFile xfileOf(String expression, String cwd) {
         if (expression.startsWith("file:") || expression.contains("://")) {
             return XFile.of(expression);
         }
-        return XFile.of(FileUtils.getAbsoluteFile2(expression,cwd));
+        return XFile.of(FileUtils.getAbsoluteFile2(expression, cwd));
     }
 
     public static String[] splitNameAndValue(String arg) {
         int i = arg.indexOf('=');
         if (i >= 0) {
             return new String[]{
-                    i == 0 ? "" : arg.substring(0, i),
-                    i == arg.length() - 1 ? "" : arg.substring(i + 1),};
+                i == 0 ? "" : arg.substring(0, i),
+                i == arg.length() - 1 ? "" : arg.substring(i + 1),};
         }
         return null;
     }
@@ -40,8 +51,8 @@ public class ShellHelper {
         }
     }
 
-
     public static class WsSshListener implements SshListener {
+
         PrintStream out;
         NutsWorkspace ws;
         NutsSession session;
@@ -52,19 +63,29 @@ public class ShellHelper {
             out = session.getTerminal().fout();
         }
 
+        private boolean isTrace() {
+            return session.isPlainTrace() && session.isVerbose();
+        }
+
         @Override
         public void onExec(String command) {
-            out.printf("[[\\[SSH-EXEC\\]]] %s\n", command);
+            if (isTrace()) {
+                out.printf("[[\\[SSH-EXEC\\]]] %s\n", command);
+            }
         }
 
         @Override
         public void onGet(String from, String to, boolean mkdir) {
-            out.printf("[[\\[SSH-GET \\]]] %s -> %s\n", from, to);
+            if (isTrace()) {
+                out.printf("[[\\[SSH-GET \\]]] %s -> %s\n", from, to);
+            }
         }
 
         @Override
         public void onPut(String from, String to, boolean mkdir) {
-            out.printf("[[\\[SSH-PUT \\]]] %s -> %s\n", from, to);
+            if (isTrace()) {
+                out.printf("[[\\[SSH-PUT \\]]] %s -> %s\n", from, to);
+            }
         }
 
         @Override

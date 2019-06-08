@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -52,6 +51,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -85,7 +85,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 
     @Override
     public NutsInstallCommand addId(String id) {
-        return addId(id == null ? null : ws.parser().parseId(id));
+        return addId(id == null ? null : ws.parse().id(id));
     }
 
     @Override
@@ -125,7 +125,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     @Override
     public NutsInstallCommand removeId(String id) {
         if (id != null) {
-            this.ids.remove(ws.parser().parseId(id));
+            this.ids.remove(ws.parse().id(id));
         }
         return this;
     }
@@ -254,15 +254,15 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-c":
             case "--companions": {
-                this.setIncludeCompanions(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setIncludeCompanions(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-g":
@@ -301,7 +301,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             if (ws.io().getTerminal().ask()
                     .forBoolean("Would you like to install recommended companion tools")
                     .defaultValue(true)
-                    .session(getValidSession()).getResult()) {
+                    .session(getValidSession()).getValue()) {
                 String[] companionTools = dws.getCompanionTools();
                 if (companionTools.length > 0) {
                     long cr = System.currentTimeMillis();
@@ -312,7 +312,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        NutsCommandExecBuilder e = createExecBuilder();
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
-                        if (getValidSession().isForce() || !dws.isInstalled(ws.parser().parseRequiredId(companionTool), false, session)) {
+                        if (getValidSession().isForce() || !dws.isInstalled(ws.parse().requiredId(companionTool), false, session)) {
                             NutsDefinition r = null;
                             if (getValidSession().isTrace()) {
                                 if (companionCount == 0) {
@@ -389,7 +389,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         }
         for (NutsDefinition def : defsToIgnore) {
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already installed%n", ws.formatter().createIdFormat().toString(def.getId()));
+                out.printf("%N already installed%n", ws.format().id().toString(def.getId()));
             }
         }
         for (NutsDefinition def : defsToInstall) {
@@ -398,7 +398,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already ==installed==. Set as ##default##.%n", ws.formatter().createIdFormat().toString(def.getId()));
+                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().toString(def.getId()));
             }
         }
         if (emptyCommand) {

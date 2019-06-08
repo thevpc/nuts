@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.common.io.ByteArrayPrintStream;
-import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellBuiltin;
 
 public class NutsJavaShell extends JShell {
 
@@ -108,10 +108,10 @@ public class NutsJavaShell extends JShell {
             }
             allCommand.add(command);
         }
-        context.builtins().set(allCommand.toArray(new JShellCommand[0]));
+        context.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         context.getUserProperties().put(JShellContext.class.getName(), context);
         try {
-            histFile = this.workspace.config().getStoreLocation(this.workspace.resolveIdForClass(NutsJavaShell.class),
+            histFile = this.workspace.config().getStoreLocation(this.workspace.resolveId(NutsJavaShell.class),
                     NutsStoreLocation.VAR).resolve("nsh.history").toFile();
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
@@ -132,7 +132,7 @@ public class NutsJavaShell extends JShell {
         tt.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         tt.setOut(oout);
         tt.setErr(oerr);
-        cc.setTerminal(tt);
+        cc.getSession().setTerminal(tt);
         execCommand(command, cc);
         out.append(oout.toString());
         err.append(oerr.toString());
@@ -170,7 +170,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     public void run(String[] args) {
-        NutsSessionTerminal terminal = context.getTerminal();
+        NutsSessionTerminal terminal = context.getSession().getTerminal();
         PrintStream out = terminal.fout();
         PrintStream err = terminal.ferr();
         List<String> nonOptions = new ArrayList<>();
@@ -179,8 +179,8 @@ public class NutsJavaShell extends JShell {
         boolean command = false;
 //        String command = null;
         long startMillis = appContext.getStartTimeMillis();
-        NutsCommand cmd = null;
-        cmd = appContext.getWorkspace().parser().parseCommand(args).setAutoComplete(appContext.getAutoComplete());
+        NutsCommandLine cmd = null;
+        cmd = appContext.getWorkspace().parse().command(args).setAutoComplete(appContext.getAutoComplete());
         NutsArgument a;
         while (cmd.hasNext()) {
             if (nonOptions.isEmpty()) {
@@ -191,7 +191,7 @@ public class NutsJavaShell extends JShell {
                     //ok
                 } else if ((a = cmd.nextString("-c", "--command")) != null) {
                     command = true;
-                    String cc = a.getValue().getString();
+                    String cc = a.getStringValue();
                     if (StringUtils.isBlank(cc)) {
                         cmd.required("missing command for -c");
                     }
@@ -199,11 +199,11 @@ public class NutsJavaShell extends JShell {
                     nonOptions.addAll(Arrays.asList(cmd.toArray()));
                     cmd.skipAll();
                 } else if ((a = cmd.nextBoolean("-i", "--interactive")) != null) {
-                    interactive = a.getValue().getBoolean();
+                    interactive = a.getBooleanValue();
                 } else if ((a = cmd.nextBoolean("--perf")) != null) {
-                    perf = a.getValue().getBoolean();
+                    perf = a.getBooleanValue();
                 } else if ((a = cmd.nextBoolean("-x")) != null) {
-                    getOptions().setXtrace(a.getValue().getBoolean());
+                    getOptions().setXtrace(a.getBooleanValue());
                 } else if (cmd.peek().isOption()) {
                     cmd.setCommandName("nsh").unexpectedArgument();
                 } else {
@@ -220,8 +220,8 @@ public class NutsJavaShell extends JShell {
             return;
         }
         if (appContext != null) {
-            context.setTerminalMode(appContext.getTerminalMode());
-            context.setVerbose(appContext.isVerbose());
+            context.getSession().setTerminalMode(appContext.session().getTerminalMode());
+//            context.setVerbose(appContext.isVerbose());
         }
         context.setSession(context.getSession());
         if (nonOptions.size() > 0) {
@@ -262,7 +262,7 @@ public class NutsJavaShell extends JShell {
 
         while (true) {
 
-            terminal = context.getTerminal();
+            terminal = context.getSession().getTerminal();
             NutsWorkspace ws = context.getWorkspace();
             String wss = ws == null ? "" : new File(context.getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
             String login = null;
@@ -426,7 +426,7 @@ public class NutsJavaShell extends JShell {
             NutsShellContext jc = (NutsShellContext) context;
             jc.getWorkspace().exec()
                     //                .session(context.get)
-                    .command(command).failFast().run();
+                    .command(command).failFast().executionType(jc.getWorkspace().config().options().getExecutionType()).run();
         }
 
     }
@@ -456,7 +456,7 @@ public class NutsJavaShell extends JShell {
 
         @Override
         public void onErrorImpl(String message, Throwable th, JShellContext context) {
-            ((NutsShellContext) context).getTerminal().ferr().printf("@@%s@@\n", message);
+            ((NutsShellContext) context).getSession().getTerminal().ferr().printf("@@%s@@\n", message);
         }
 
     }
@@ -475,8 +475,8 @@ public class NutsJavaShell extends JShell {
             return commands.get(command);
         }
 
-        public JShellCommand get(String cmd) {
-            JShellCommand command = find(cmd);
+        public JShellBuiltin get(String cmd) {
+            JShellBuiltin command = find(cmd);
             if (command == null) {
                 throw new NoSuchElementException("Command not found : " + cmd);
             }
@@ -487,7 +487,7 @@ public class NutsJavaShell extends JShell {
         }
 
         @Override
-        public void set(JShellCommand command) {
+        public void set(JShellBuiltin command) {
             if (!(command instanceof NshBuiltin)) {
                 command = new ShellToNshCommand(command);
             }
@@ -502,13 +502,13 @@ public class NutsJavaShell extends JShell {
         }
 
         @Override
-        public void set(JShellCommand... cmds) {
+        public void set(JShellBuiltin... cmds) {
             StringBuilder installed = new StringBuilder();
             StringBuilder reinstalled = new StringBuilder();
             int installedCount = 0;
             int reinstalledCount = 0;
             boolean loggable = LOG.isLoggable(Level.FINE);
-            for (JShellCommand command : cmds) {
+            for (JShellBuiltin command : cmds) {
                 if (!(command instanceof NshBuiltin)) {
                     command = new ShellToNshCommand(command);
                 }

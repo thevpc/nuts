@@ -77,7 +77,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
-            return getWorkspace().parser().parseDescriptor(in, true);
+            return getWorkspace().parse().descriptor(in, true);
         }
     };
 
@@ -131,7 +131,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         InputStream stream = null;
         try {
             try {
-                NutsDescriptor descriptor = getWorkspace().parser().parseDescriptor(stream = getDescStream(id, session), true);
+                NutsDescriptor descriptor = getWorkspace().parse().descriptor(stream = getDescStream(id, session), true);
                 if (descriptor != null) {
                     //String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     //if (hash.equals(descriptor.toString())) {
@@ -195,7 +195,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(),id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().io().json().read(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = getWorkspace().format().json().read(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {

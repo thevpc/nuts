@@ -39,8 +39,6 @@ import java.nio.file.Path;
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 
-    NutsRepository getRepository();
-
     NutsId getId();
 
     NutsContent getContent();
@@ -66,8 +64,8 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsDescriptor getEffectiveDescriptor();
 
     /**
-     * all of some of the transitive dependencies of the current Nuts
-     * as List result of the search command
+     * all of some of the transitive dependencies of the current Nuts as List
+     * result of the search command
      *
      * optional
      *
@@ -76,9 +74,9 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsDependency[] getDependencies();
 
     /**
-     * all of some of the transitive dependencies of the current Nuts
-     * as Tree result of the search command
-     * 
+     * all of some of the transitive dependencies of the current Nuts as Tree
+     * result of the search command
+     *
      * optional
      *
      * @return
@@ -87,5 +85,9 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     @Override
     int compareTo(NutsDefinition other);
+
+    String getRepositoryUuid();
+
+    String getRepositoryName();
 
 }

@@ -39,10 +39,10 @@ public class NutsCreateRepositoryOptions {
     private String name;
     private String location;
     private boolean enabled;
-    private boolean temporay;
     private boolean failSafe;
     private boolean create;
     private boolean proxy;
+    private boolean temporary;
     private int deployOrder;
     private NutsRepositoryConfig config;
 
@@ -54,12 +54,21 @@ public class NutsCreateRepositoryOptions {
         this.name = o.name;
         this.location = o.location;
         this.enabled = o.enabled;
-        this.temporay = o.temporay;
         this.failSafe = o.failSafe;
         this.create = o.create;
         this.config = o.config;
         this.proxy = o.proxy;
+        this.temporary = o.temporary;
         this.deployOrder = o.deployOrder;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public NutsCreateRepositoryOptions setTemporary(boolean temporary) {
+        this.temporary = temporary;
+        return this;
     }
 
     public String getName() {
@@ -86,15 +95,6 @@ public class NutsCreateRepositoryOptions {
 
     public NutsCreateRepositoryOptions setEnabled(boolean enabled) {
         this.enabled = enabled;
-        return this;
-    }
-
-    public boolean isTemporay() {
-        return temporay;
-    }
-
-    public NutsCreateRepositoryOptions setTemporay(boolean temporay) {
-        this.temporay = temporay;
         return this;
     }
 
@@ -146,7 +146,5 @@ public class NutsCreateRepositoryOptions {
         this.deployOrder = deployPriority;
         return this;
     }
-    
-    
-    
+
 }

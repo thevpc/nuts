@@ -38,7 +38,7 @@ public enum NutsStoreLocation {
     PROGRAMS,
     CONFIG,
     VAR,
-    LOGS,
+    LOG,
     TEMP,
     CACHE,
     LIB

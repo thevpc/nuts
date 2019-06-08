@@ -33,13 +33,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnaliasCommand extends SimpleNshCommand {
+public class UnaliasCommand extends SimpleNshBuiltin {
 
     public UnaliasCommand() {
         super("unalias", DEFAULT_SUPPORT);
@@ -57,12 +57,12 @@ public class UnaliasCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getKey().getString().equals("-a")) {
-                options.all = commandLine.nextBoolean().getValue().getBoolean();
+            if (a.getStringKey().equals("-a")) {
+                options.all = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
         } else {
@@ -74,7 +74,7 @@ public class UnaliasCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.all) {
             for (String k : context.getGlobalContext().aliases().getAll()) {

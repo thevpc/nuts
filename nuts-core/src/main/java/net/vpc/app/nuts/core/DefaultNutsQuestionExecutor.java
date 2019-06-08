@@ -1,9 +1,9 @@
 package net.vpc.app.nuts.core;
 
-import java.io.ByteArrayOutputStream;
 import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
@@ -15,6 +15,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     private Object defaultValue;
     private Class<T> valueType;
     private NutsResponseParser parser;
+    private NutsResponseValidator<T> validator;
 
     private final NutsTerminal terminal;
     private final PrintStream out;
@@ -22,6 +23,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     private NutsSession session;
     private boolean traceConfirmation = false;
     private boolean executed = false;
+    private boolean password = false;
     private Object lastResult = null;
 
     public DefaultNutsQuestionExecutor(NutsWorkspace ws, NutsTerminal terminal, PrintStream out) {
@@ -38,12 +40,12 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public Boolean getBooleanResult() {
-        return (Boolean) getResult();
+    public Boolean getBooleanValue() {
+        return (Boolean) getValue();
     }
 
     @Override
-    public <T> T getResult() {
+    public <T> T getValue() {
         if (!executed) {
             run();
         }
@@ -82,7 +84,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                 case NO: {
                     return (T) Boolean.FALSE;
                 }
-                case CANCEL: {
+                case ERROR: {
                     ByteArrayPrintStream os = new ByteArrayPrintStream();
                     PrintStream os2 = ws.io().getTerminalFormat().prepare(os);
                     os2.printf(message, this.getMessageParameters());
@@ -148,7 +150,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
             }
             out.flush();
             switch (getValidSession().getConfirm()) {
-                case CANCEL: {
+                case ERROR: {
                     out.flush();
                     out.println(" ? : cancel");
                     throw new NutsUserCancelException(ws);
@@ -168,33 +170,46 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                     }
                 }
             }
-
-            String v = null;
-            if (extraInfo) {
-                out.print("?\n");
-                out.flush();
-                v = terminal.readLine("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
-            } else {
-                out.flush();
-                v = terminal.readLine(" ? : ");
-            }
-            if ("cancel!".equals(v)) {
-                throw new NutsUserCancelException(ws);
-            }
-            T parsed = null;
-            if (v == null || v.length() == 0) {
-                try {
-                    parsed = (T) p.parse(this.getDefaultValue(), this.getValueType());
-                    return parsed;
-                } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+            if (password) {
+                char[] v = null;
+                if (extraInfo) {
+                    out.print("?\n");
+                    out.flush();
+                    v = terminal.readPassword("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
+                } else {
+                    out.flush();
+                    v = terminal.readPassword(" ? : ");
                 }
-            }
-            try {
-                parsed = (T) p.parse(v, this.getValueType());
-                return parsed;
-            } catch (Exception ex) {
-                out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                if (Arrays.equals("cancel!".toCharArray(), v)) {
+                    throw new NutsUserCancelException(ws);
+                }
+                return (T) v;
+            } else {
+                String v = null;
+                if (extraInfo) {
+                    out.print("?\n");
+                    out.flush();
+                    v = terminal.readLine("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
+                } else {
+                    out.flush();
+                    v = terminal.readLine(" ? : ");
+                }
+                if ("cancel!".equals(v)) {
+                    throw new NutsUserCancelException(ws);
+                }
+                T parsed = null;
+                if (v == null || v.length() == 0) {
+                    boolean ok = false;
+                    try {
+                        parsed = (T) p.parse(this.getDefaultValue(), this.getValueType());
+                        if (this.validator != null) {
+                            parsed = this.validator.validate(parsed, this);
+                        }
+                        return parsed;
+                    } catch (Exception ex) {
+                        out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                    }
+                }
             }
             extraInfo = true;
         }
@@ -208,6 +223,12 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     @Override
     public NutsQuestion<String> forString(String msg, Object... params) {
         return (NutsQuestion<String>) setValueType(String.class).setMessage(msg, params);
+    }
+
+    @Override
+    public NutsQuestion<char[]> forPassword(String msg, Object... params) {
+        this.password = true;
+        return (NutsQuestion<char[]>) setValueType(char[].class).setMessage(msg, params);
     }
 
     @Override
@@ -348,27 +369,39 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public final NutsQuestion<T> configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws, args, "question");
+    public final NutsQuestion<T> configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "question");
     }
 
     @Override
-    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine, skipIgnored);
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmd) {
+    public boolean configureFirst(NutsCommandLine cmd) {
         NutsArgument a = cmd.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "trace-confirmation": {
-                this.traceConfirmation = cmd.nextBoolean().getValue().getBoolean();
+                this.traceConfirmation = cmd.nextBoolean().getBooleanValue();
                 break;
             }
         }
         return false;
     }
+
+    @Override
+    public NutsQuestion<T> setValidator(NutsResponseValidator<T> validator) {
+        this.validator = validator;
+        return this;
+    }
+
+    @Override
+    public NutsResponseValidator<T> getValidator() {
+        return this.validator;
+    }
+
 }

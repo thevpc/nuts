@@ -10,7 +10,7 @@ import java.util.Iterator;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalOutputFormat;
+import net.vpc.app.nuts.NutsIncrementalFormat;
 
 /**
  *
@@ -20,24 +20,24 @@ public class NutsTraceIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
-    NutsIncrementalOutputFormat listFormat;
+    NutsIncrementalFormat listFormat;
     PrintStream out;
-    NutsOutputFormat format;
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NutsTraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsIncrementalOutputFormat conv, NutsFetchDisplayOptions displayOptions, NutsSession session) {
+    public NutsTraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsFetchDisplayOptions displayOptions, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;
-        this.listFormat = conv;
-        this.format = format;
+        this.listFormat = session.getIncrementalOutput();
         this.displayOptions = displayOptions;
-        if (conv == null) {
-            this.listFormat = ws.formatter().createIncrementalFormat(format);
-            this.listFormat.configure(ws.parser().parseCommand(displayOptions.toCommandLineOptions()), true);
+        if (this.listFormat == null) {
+            this.listFormat = ws.format().iter();
         }
-        this.listFormat.session(session).out(out);
+        this.listFormat
+                .session(session)
+                .configure(true, displayOptions.toCommandLineOptions())
+                .out(out);
     }
 
     @Override

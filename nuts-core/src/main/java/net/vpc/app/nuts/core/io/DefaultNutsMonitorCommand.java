@@ -152,7 +152,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = ws.parser().parseCommand(new String[]{String.valueOf(o)}).next().getBoolean();
+            o = ws.parse().command(new String[]{String.valueOf(o)}).next().getBoolean();
         }
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
@@ -182,7 +182,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
         boolean verboseMode
                 = CoreCommonUtils.getSystemBoolean("nuts.monitor.start", false)
-                || ws.config().getOptions().getLogConfig() != null && ws.config().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
+                || ws.config().options().getLogConfig() != null && ws.config().options().getLogConfig().getLogLevel() == Level.FINEST;
         InputSource stream = null;
         long size = -1;
         try {

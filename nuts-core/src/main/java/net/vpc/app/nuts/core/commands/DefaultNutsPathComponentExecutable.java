@@ -36,19 +36,19 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
     String cmdName;
     String[] args;
     String[] executorOptions;
-    boolean embedded;
+    NutsExecutionType executionType;
     NutsWorkspace ws;
     NutsSession session;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, boolean embedded, NutsWorkspace ws, NutsSession session, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsWorkspace ws, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
-                ws.parser().parseCommand(args).getCommandLine(),
+                ws.parse().command(args).toString(),
                 NutsExecutableType.COMPONENT);
         this.cmdName = cmdName;
         this.args = args;
         this.executorOptions = executorOptions;
-        this.embedded = embedded;
+        this.executionType = executionType;
         this.ws = ws;
         this.session = session;
         this.execCommand = execCommand;
@@ -72,13 +72,15 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 //this is a native file?
                 c.descriptor = DefaultNutsExecCommand.TEMP_DESC;
             }
-            NutsDefinition nutToRun = new DefaultNutsDefinition(ws, null, 
+            NutsDefinition nutToRun = new DefaultNutsDefinition(
+                    null, 
+                    null, 
                     c.descriptor.getId(), 
                     c.descriptor, 
                     new DefaultNutsContent(c.getContentPath(), false, c.temps.size() > 0), 
                     null
             );
-            execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(),true, session, embedded);
+            execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(),true, session, executionType);
         }
     }
 
@@ -95,7 +97,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = ws.parser().parseDescriptor(ext);
+                    c.descriptor = ws.parse().descriptor(ext);
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                 }
@@ -111,7 +113,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 }
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getName().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                    c.descriptor = ws.parser().parseDescriptor(c.contentFile.open());
+                    c.descriptor = ws.parse().descriptor(c.contentFile.open());
                     c.contentFile = null;
                     if (c.baseFile.isURL()) {
                         URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
@@ -154,7 +156,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     if(c.descriptor==null){
-                        c.descriptor=ws.createDescriptorBuilder()
+                        c.descriptor=ws.descriptorBuilder()
                                 .setId("temp")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();
@@ -171,7 +173,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + ws.parser().parseCommand(args).getCommandLine();
+        return "NUTS " + cmdName + " " + ws.parse().command(args).toString();
     }
 
     private static class CharacterizedExecFile implements AutoCloseable {

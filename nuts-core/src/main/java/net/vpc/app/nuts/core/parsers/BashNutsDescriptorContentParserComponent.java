@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core.parsers;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.common.JsonStringBuffer;
+import net.vpc.app.nuts.core.format.json.JsonStringBuffer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -133,7 +133,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         .setExecutor(new NutsExecutorDescriptor(BASH))
                         .build();
             }
-            return ws.parser().parseDescriptor(comment.getValidString());
+            return ws.parse().descriptor(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

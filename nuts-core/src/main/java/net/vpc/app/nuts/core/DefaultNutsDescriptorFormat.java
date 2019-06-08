@@ -8,8 +8,8 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsCommandLine;
 
 public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
@@ -84,13 +84,13 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().json().compact(isCompact()).write(descriptor, out);
+        ws.format().json().compact(isCompact()).write(descriptor, out);
 
     }
 
     @Override
     public void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().json().compact(isCompact()).write(descriptor, out);
+        ws.format().json().compact(isCompact()).write(descriptor, out);
         try {
             out.write("\n");
             out.flush();
@@ -168,17 +168,17 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public final NutsDescriptorFormat configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws, args,"descriptor-format");
+    public final NutsDescriptorFormat configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args,"descriptor-format");
     }
 
     @Override
-    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine,skipIgnored);
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmd) {
+    public boolean configureFirst(NutsCommandLine cmd) {
         return false;
     }
 

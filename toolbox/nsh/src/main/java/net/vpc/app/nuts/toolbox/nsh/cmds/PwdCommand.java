@@ -29,33 +29,35 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import java.io.PrintStream;
-
-import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class PwdCommand extends AbstractNshBuiltin {
+public class PwdCommand extends SimpleNshBuiltin {
 
     public PwdCommand() {
         super("pwd", DEFAULT_SUPPORT);
     }
 
-    public void exec(String[] args, NutsCommandContext context){
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        while(cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            }else {
-                break;
-            }
-        }
-        PrintStream out = context.out();
-        out.printf("%s%n", context.getGlobalContext().getCwd());
+    private static class Options {
+
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        //Options options=context.getOptions();
+        context.setPrintOutObject(context.getGlobalContext().getCwd());
     }
 }

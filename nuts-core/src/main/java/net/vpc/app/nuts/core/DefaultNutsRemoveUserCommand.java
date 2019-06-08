@@ -5,13 +5,13 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.NutsRemoveUserCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -58,12 +58,12 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

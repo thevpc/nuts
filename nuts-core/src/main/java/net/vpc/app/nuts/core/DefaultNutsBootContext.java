@@ -162,7 +162,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public Path getNutsJar() {
         return ws.fetch().id(bootAPI).getResultPath();
 //        try {
-//            NutsId baseId = ws.parser().parseRequiredId(NutsConstants.Ids.NUTS_API);
+//            NutsId baseId = ws.parse().parseRequiredId(NutsConstants.Ids.NUTS_API);
 //            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {
@@ -179,7 +179,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
 //        if (m != null) {
 //            Path f = ws.io().path(System.getProperty("user.home"), ".m2", "repository", m.getGroupId().replace('.', '/'), m.getArtifactId(), m.getVersion(),
 //                    ws.config().getDefaultIdFilename(
-//                            ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
+//                            ws.idBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
 //                                    .setFaceComponent()
 //                                    .setPackaging("jar")
 //                                    .build()

@@ -11,7 +11,7 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
 
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * @author vpc
@@ -19,19 +19,19 @@ import net.vpc.app.nuts.NutsCommand;
 public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
         if (cmdLine.next("add extension", "ax")!=null) {
-            String extensionId = cmdLine.required().nextNonOption(cmdLine.createNonOption("extension")).getString();
+            String extensionId = cmdLine.required().nextNonOption(cmdLine.createName("extension")).getString();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
+                context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parse().id(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
-                extensionId = cmdLine.required().nextNonOption(cmdLine.createNonOption("extension")).getString();
+                extensionId = cmdLine.required().nextNonOption(cmdLine.createName("extension")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
+                    context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parse().id(extensionId), context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -39,7 +39,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else {
-            PrintStream out = context.getTerminal().fout();
+            PrintStream out = context.session().getTerminal().fout();
             if (cmdLine.next("list extensions", "lx")!=null) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {

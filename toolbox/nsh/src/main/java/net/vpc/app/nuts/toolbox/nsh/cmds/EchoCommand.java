@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EchoCommand extends SimpleNshCommand {
+public class EchoCommand extends SimpleNshBuiltin {
 
     public EchoCommand() {
         super("echo", DEFAULT_SUPPORT);
@@ -43,7 +43,7 @@ public class EchoCommand extends SimpleNshCommand {
 
     private static class Options {
 
-        boolean noTrailingNewLine = false;
+        boolean newLine = true;
         boolean plain = false;
         boolean first = true;
         StringBuilder message = new StringBuilder();
@@ -56,21 +56,21 @@ public class EchoCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        switch (commandLine.peek().getKey().getString()) {
+        switch (commandLine.peek().getStringKey()) {
             case "-n": {
-                options.noTrailingNewLine = commandLine.nextBoolean().getValue().getBoolean();
+                options.newLine = !commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "-p": {
-                options.plain = commandLine.nextBoolean().getValue().getBoolean();
+                options.plain = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
-            default:{
-                if(commandLine.peek().isNonOption()){
-                    while(commandLine.hasNext()){
-                        if(options.tokensCount>0){
+            default: {
+                if (commandLine.peek().isNonOption()) {
+                    while (commandLine.hasNext()) {
+                        if (options.tokensCount > 0) {
                             options.message.append(" ");
                         }
                         options.message.append(commandLine.next().toString());
@@ -84,11 +84,12 @@ public class EchoCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        if(!options.noTrailingNewLine){
-            options.message.append("\n");
+        if (options.newLine) {
+            context.setPrintlnOutObject(options.message.toString());
+        } else {
+            context.setPrintOutObject(options.message.toString());
         }
-        context.setOutObject(options.message.toString());
     }
 }

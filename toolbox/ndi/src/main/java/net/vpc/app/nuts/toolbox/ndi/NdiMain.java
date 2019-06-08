@@ -25,7 +25,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsCommand cmd = context.commandLine()
+        NutsCommandLine cmd = context.commandLine()
                 .setCommandName("ndi")
                 .required();
         List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
@@ -43,30 +43,30 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmd.next("in", "install")) != null) {
                 while (cmd.hasNext()) {
                     if ((a = cmd.nextBoolean("-f", "--force")) != null) {
-                        force = a.getValue().getBoolean();
+                        force = a.getBooleanValue();
                     } else if ((a = cmd.nextBoolean("-F", "--force-all")) != null) {
-                        forceAll = a.getValue().getBoolean();
+                        forceAll = a.getBooleanValue();
                         if (forceAll && !force) {
                             force = true;
                         }
                     } else if ((a = cmd.nextBoolean("--trace")) != null) {
-                        trace = a.getValue().getBoolean();
+                        trace = a.getBooleanValue();
                     } else if ((a = cmd.nextBoolean("-t", "--fetch")) != null) {
-                        fetch = a.getValue().getBoolean();
+                        fetch = a.getBooleanValue();
                     } else if ((a = cmd.nextBoolean("-x", "--external", "--spawn")) != null) {
-                        if (a.getValue().getBoolean()) {
+                        if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SPAWN;
                         }
                     } else if ((a = cmd.nextBoolean("-m", "--embedded")) != null) {
-                        if (a.getValue().getBoolean()) {
+                        if (a.getBooleanValue()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
                     } else if ((a = cmd.nextBoolean("-n", "--native", "--syscall")) != null) {
-                        if (a.getValue().getBoolean()) {
+                        if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SYSCALL;
                         }
                     } else if ((a = cmd.nextString("-X", "--exec-options")) != null) {
-                        executorOptions.add(a.getValue().getString());
+                        executorOptions.add(a.getStringValue());
                     } else if (cmd.peek().isOption()) {
                         cmd.unexpectedArgument();
                     } else {
@@ -114,23 +114,23 @@ public class NdiMain extends NutsApplication {
                 throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
             }
             if(trace){
-                context.printOutObject(context.out());
+                context.session().printlnOutObject(context.session().out());
             }
         }
     }
 
     @Override
     protected void onInstallApplication(NutsApplicationContext context) {
-        NutsCommand cmd = context.commandLine()
-                .setCommandName("ndi --nuts-exec-mode=on-install");
+        NutsCommandLine cmd = context.commandLine()
+                .setCommandName("ndi --nuts-exec-mode=install");
         NutsArgument a;
         boolean force = false;
         boolean trace = true;
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("-f", "--force")) != null) {
-                force = a.getValue().getBoolean();
+                force = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("--trace")) != null) {
-                trace = a.getValue().getBoolean();
+                trace = a.getBooleanValue();
             } else {
                 cmd.unexpectedArgument();
             }
@@ -164,7 +164,7 @@ public class NdiMain extends NutsApplication {
                 }
             }
             if (trace && !context.getSession().isPlainOut()) {
-                context.printOutObject(result);
+                context.session().printlnOutObject(result);
             }
         }
     }

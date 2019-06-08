@@ -19,15 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -57,11 +52,7 @@ public class MavenMetadataParser {
     }
 
     public static void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-
-        Document document = documentBuilder.newDocument();
+        Document document = NutsXmlUtils.createDocument();
 
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
@@ -108,14 +99,7 @@ public class MavenMetadataParser {
             lastUpdated.appendChild(document.createTextNode(new SimpleDateFormat("yyyyMMddHHmmss").format(m.getLastUpdated())));
             versioning.appendChild(lastUpdated);
         }
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        document.setXmlStandalone(true);
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.STANDALONE, "false");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        DOMSource domSource = new DOMSource(document);
-        transformer.transform(domSource, writer);
+        NutsXmlUtils.writeDocument(document, writer,false);
     }
 
     public static MavenMetadata parseMavenMetaData(Path stream) {

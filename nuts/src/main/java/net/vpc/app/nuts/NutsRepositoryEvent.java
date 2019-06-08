@@ -41,4 +41,10 @@ public interface NutsRepositoryEvent {
     NutsRepository getParent();
 
     NutsRepository getRepository();
+
+    String getPropertyName();
+
+    Object getPropertyOldValue();
+
+    Object getPropertyValue();
 }

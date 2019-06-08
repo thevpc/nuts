@@ -33,13 +33,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnsetCommand extends SimpleNshCommand {
+public class UnsetCommand extends SimpleNshBuiltin {
 
     public UnsetCommand() {
         super("unset", DEFAULT_SUPPORT);
@@ -57,15 +57,15 @@ public class UnsetCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getKey().getString().equals("-v")) {
-                options.fct = !commandLine.nextBoolean().getValue().getBoolean();
+            if (a.getStringKey().equals("-v")) {
+                options.fct = !commandLine.nextBoolean().getBooleanValue();
                 return true;
-            } else if (a.getKey().getString().equals("-f")) {
-                options.fct = commandLine.nextBoolean().getValue().getBoolean();
+            } else if (a.getStringKey().equals("-f")) {
+                options.fct = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
         } else {
@@ -76,7 +76,7 @@ public class UnsetCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {

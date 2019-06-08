@@ -28,25 +28,25 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
         super(cmd[0], 
-                ws.parser().parseCommand(cmd).getCommandLine(),
+                ws.parse().command(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.ws = ws;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
-        NutsCommand cmdLine = ws.parser().parseCommand(this.executorOptions);
+        NutsCommandLine cmdLine = ws.parse().command(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
-            switch (a.getKey().getString()) {
+            switch (a.getStringKey()) {
                 case "--show-command":
                     {
-                        showCommand = cmdLine.nextBoolean().getValue().getBoolean();
+                        showCommand = cmdLine.nextBoolean().getBooleanValue();
                         break;
                     }
                 case "--fail-fast":
                     {
-                        failFast = cmdLine.nextBoolean().getValue().getBoolean();
+                        failFast = cmdLine.nextBoolean().getBooleanValue();
                         break;
                     }
                     default:{
@@ -87,7 +87,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "SYSEXEC " + ws.parser().parseCommand(cmd).getCommandLine();
+        return "SYSEXEC " + ws.parse().command(cmd).toString();
     }
     
 }

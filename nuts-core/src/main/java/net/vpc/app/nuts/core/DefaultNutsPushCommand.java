@@ -38,7 +38,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -59,6 +58,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -88,12 +88,12 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
 
     @Override
     public NutsPushCommand addId(String id) {
-        return addId(id == null ? null : ws.parser().parseRequiredId(id));
+        return addId(id == null ? null : ws.parse().requiredId(id));
     }
 
     @Override
     public NutsPushCommand addFrozenId(String id) {
-        return addFrozenId(id == null ? null : ws.parser().parseRequiredId(id));
+        return addFrozenId(id == null ? null : ws.parse().requiredId(id));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand removeId(String id) {
         if (id != null) {
-            ids.remove(ws.parser().parseId(id));
+            ids.remove(ws.parse().id(id));
         }
         return this;
     }
@@ -136,7 +136,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     public NutsPushCommand removeFrozenId(String id) {
         if (id != null) {
             if (frozenIds != null) {
-                frozenIds.remove(ws.parser().parseId(id));
+                frozenIds.remove(ws.parse().id(id));
             }
         }
         return this;
@@ -304,7 +304,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                     throw new NutsRepositoryNotFoundException(ws,this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.config().getRepository(this.getRepository());
+                NutsRepository repo = ws.config().getRepository(this.getRepository(),true);
                 NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
                         fetchOptions
                 );
@@ -417,20 +417,20 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-o":
             case "--offline": {
-                setOffline(cmdLine.nextBoolean().getValue().getBoolean());
+                setOffline(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-x":
             case "--freeze": {
-                for (String id : cmdLine.nextString().getValue().getString().split(",")) {
+                for (String id : cmdLine.nextString().getStringValue().split(",")) {
                     frozenId(id);
                 }
                 return true;
@@ -438,7 +438,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
             case "-r":
             case "-repository":
             case "--from": {
-                setRepository(cmdLine.nextString().getValue().getString());
+                setRepository(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "-g":

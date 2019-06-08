@@ -75,11 +75,12 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().config().getOptions()
+        String bootArgumentsString = executionContext.getWorkspace().config().options()
                 .format().exported().compact().getBootCommandLine();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.always-show-command",false);
+        boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)
+            ||CoreCommonUtils.getSystemBoolean("nuts.show-command", false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

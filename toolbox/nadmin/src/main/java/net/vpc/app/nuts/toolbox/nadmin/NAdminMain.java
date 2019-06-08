@@ -22,7 +22,7 @@ public class NAdminMain extends NutsApplication {
             );
         }
         Boolean autoSave = true;
-        NutsCommand cmdLine = context.commandLine();
+        NutsCommandLine cmdLine = context.commandLine();
         boolean empty = true;
         NutsArgument a;
         do {
@@ -45,7 +45,7 @@ public class NAdminMain extends NutsApplication {
                     return;
                 }
                 if (cmdLine.hasNext()) {
-                    PrintStream out = context.err();
+                    PrintStream out = context.session().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : config -h%n");
                     throw new NutsExecutionException(context.getWorkspace(),"Unexpected " + cmdLine.peek(),1);
@@ -54,7 +54,7 @@ public class NAdminMain extends NutsApplication {
             }
         } while (cmdLine.hasNext());
         if (empty) {
-            PrintStream out = context.err();
+            PrintStream out = context.session().err();
             out.printf("Missing config command%n");
             out.printf("type for more help : config -h%n");
             throw new NutsExecutionException(context.getWorkspace(),"Missing config command", 1);
@@ -64,7 +64,7 @@ public class NAdminMain extends NutsApplication {
     public void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        PrintStream out = context.out();
+        PrintStream out = context.session().out();
         out.print(prefix);
         if (enabled) {
             out.print("==" + repository.config().getName() + disabledString + "==");

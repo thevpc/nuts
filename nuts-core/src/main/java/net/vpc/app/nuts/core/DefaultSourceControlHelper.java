@@ -45,11 +45,11 @@ public class DefaultSourceControlHelper {
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = ws.parser().parseDescriptor(file);
+        NutsDescriptor d = ws.parse().descriptor(file);
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = ws.parser().parseVersion(oldVersion).inc().getValue();
+            String newVersion = ws.parse().version(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
                 newVersionFound = ws.fetch().id(d.getId().setVersion(newVersion)).setSession(session).getResultDefinition();
@@ -62,7 +62,7 @@ public class DefaultSourceControlHelper {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            ws.formatter().createDescriptorFormat().print(d, file);
+            ws.format().descriptor().print(d, file);
             try {
                 CoreIOUtils.delete(folder);
             } catch (IOException ex) {
@@ -76,7 +76,7 @@ public class DefaultSourceControlHelper {
 
 //    @Override
     public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(ws.parser().parseRequiredId(id), folder, session);
+        return checkout(ws.parse().requiredId(id), folder, session);
     }
 
 //    @Override
@@ -93,15 +93,16 @@ public class DefaultSourceControlHelper {
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = ws.parser().parseDescriptor(file);
+            NutsDescriptor d = ws.parse().descriptor(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
 
-            ws.formatter().createDescriptorFormat().print(d, file);
+            ws.format().descriptor().print(d, file);
 
             return new DefaultNutsDefinition(
-                    ws, nutToInstall.getRepository(),
+                    nutToInstall.getRepositoryUuid(),
+                    nutToInstall.getRepositoryName(),
                     newId,
                     d,
                     new DefaultNutsContent(folder,

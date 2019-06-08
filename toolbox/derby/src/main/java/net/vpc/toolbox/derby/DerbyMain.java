@@ -47,23 +47,23 @@ public class DerbyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
         NutsWorkspace ws=appContext.getWorkspace();
-        NutsCommand cmdLine = appContext.commandLine();
+        NutsCommandLine cmdLine = appContext.commandLine();
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if (appContext.configureFirst(cmdLine)) {
                 //
             } else if ((a = cmdLine.nextString("--derby-version")) != null) {
-                derbyVersion = a.getValue().getString();
+                derbyVersion = a.getStringValue();
             } else if ((a = cmdLine.nextString("--db")) != null) {
-                derbyDataHome = ws.io().path(getAbsoluteFile(a.getValue().getString(), appContext.getVarFolder().toString()));
+                derbyDataHome = ws.io().path(getAbsoluteFile(a.getStringValue(), appContext.getVarFolder().toString()));
             } else if ((a = cmdLine.nextString("--netbeans")) != null) {
                 derbyDataHome = ws.io().path(System.getProperty("user.home") + "/.netbeans-derby");
             } else if ((a = cmdLine.nextString("-h", "--host")) != null) {
-                host = a.getValue().getString();
+                host = a.getStringValue();
             } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
-                port = a.getValue().getInt();
+                port = a.getArgumentValue().getInt();
             } else if ((a = cmdLine.nextString("-ssl", "--ssl")) != null) {
-                sslmode = SSLMode.valueOf(a.getValue().getString());
+                sslmode = SSLMode.valueOf(a.getStringValue());
             } else if ((a = cmdLine.next("start")) != null) {
                 cmd = Command.start;
             } else if ((a = cmdLine.next("sys", "sysinfo")) != null) {
@@ -74,19 +74,19 @@ public class DerbyMain extends NutsApplication {
                 cmd = Command.runtimeinfo;
             } else if ((a = cmdLine.nextString("trace")) != null) {
                 cmd = Command.trace;
-                extraArg = a.getValue().getString();
+                extraArg = a.getStringValue();
             } else if ((a = cmdLine.nextString("trace-directory")) != null) {
                 cmd = Command.trace;
-                extraArg = a.getValue().getString();
+                extraArg = a.getStringValue();
             } else if ((a = cmdLine.nextString("max-threads")) != null) {
                 cmd = Command.maxthreads;
-                extraArg = a.getValue().getString();
+                extraArg = a.getStringValue();
             } else if ((a = cmdLine.nextString("time-slice")) != null) {
                 cmd = Command.timeslice;
-                extraArg = a.getValue().getString();
+                extraArg = a.getStringValue();
             } else if ((a = cmdLine.nextString("log-connections")) != null) {
                 cmd = Command.logconnections;
-                extraArg = a.getValue().getString();
+                extraArg = a.getStringValue();
             } else if ((a = cmdLine.next("stop", "shutdown")) != null) {
                 cmd = Command.shutdown;
             } else {
@@ -115,7 +115,7 @@ public class DerbyMain extends NutsApplication {
         executorOptions.add(
                 "--classpath=" + derby + ":" + derbynet + ":" + derbyclient + ":" + derbytools + ":" + derbyoptionaltools
         );
-        if (appContext.isVerbose()) {
+        if (appContext.session().isVerbose()) {
             executorOptions.add("--show-command");
         }
         executorOptions.add("--main-class=org.apache.derby.drda.NetworkServerControl");
@@ -147,16 +147,16 @@ public class DerbyMain extends NutsApplication {
     }
 
     private Path download(String id) {
-        final NutsId iid = appContext.getWorkspace().parser().parseId(id);
+        final NutsId iid = appContext.getWorkspace().parse().id(id);
         Path downloadBaseFolder = derbyBinHome.resolve(iid.getVersion().getValue());
         Path targetFile = downloadBaseFolder.resolve(iid.getName() + ".jar");
         if (!Files.exists(targetFile)) {
             appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
-            if (appContext.isVerbose()) {
+            if (appContext.session().isVerbose()) {
                 appContext.getSession().getTerminal().out().println("downloading " + id + " to " + targetFile);
             }
         } else {
-            if (appContext.isVerbose()) {
+            if (appContext.session().isVerbose()) {
                 appContext.getSession().getTerminal().out().println("using " + id + " form " + targetFile);
             }
         }

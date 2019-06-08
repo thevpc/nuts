@@ -23,6 +23,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
     private final Properties extraProperties = new Properties();
     private boolean showRepositories = false;
     private boolean fancy = false;
+    private List<String> requests = new ArrayList<>();
 
     public DefaultInfoFormat(NutsWorkspace ws) {
         super(ws, "info");
@@ -77,7 +78,21 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
 
     @Override
     public void print(Writer w) {
-        NutsObjectFormat m = ws.formatter().createObjectFormat(getValidSession(), buildWorkspaceMap(isShowRepositories()));
+        LinkedHashMap<String, Object> r = null;
+        if (requests.isEmpty()) {
+            r = buildWorkspaceMap(isShowRepositories());
+        } else {
+            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
+            r = new LinkedHashMap<>();
+            NutsCommandLine requestCmd = ws.parse().command(requests);
+            while (!requestCmd.isEmpty()) {
+                NutsArgument a = requestCmd.next();
+                if (t.containsKey(a.toString())) {
+                    r.put(a.toString(), t.get(a.toString()));
+                }
+            }
+        }
+        NutsObjectFormat m = ws.format().object().session(getValidSession()).value(r);
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
@@ -88,29 +103,28 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
             args.add("--multiline-property=java.library.path=" + File.pathSeparator);
             args.add("--multiline-property=java-library-path=" + File.pathSeparator);
         }
-        NutsCommand cmd = ws.parser().parseCommand(args.toArray(new String[0]));
-        m.configure(cmd, true);
+        m.configure(true, args.toArray(new String[0]));
         m.print(w);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--show-repos": {
-                this.setShowRepositories(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setShowRepositories(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--fancy": {
-                this.setFancy(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setFancy(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--add": {
-                NutsArgument r = cmdLine.nextString().getValue();
-                extraProperties.put(r.getKey().getString(), r.getValue().getString());
+                NutsArgument r = cmdLine.nextString().getArgumentValue();
+                extraProperties.put(r.getStringKey(), r.getStringValue());
                 return true;
             }
             default: {
@@ -166,9 +180,10 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("nuts-store-layout", stringValue(configManager.getStoreLocationLayout()));
         props.put("nuts-store-strategy", stringValue(configManager.getStoreLocationStrategy()));
         props.put("nuts-repo-store-strategy", stringValue(configManager.getRepositoryStoreLocationStrategy()));
-        props.put("nuts-open-mode", stringValue(configManager.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.getOptions().getOpenMode()));
-        props.put("nuts-read-only", stringValue(configManager.getOptions().isReadOnly()));
-        props.put("nuts-skip-companions", stringValue(configManager.getOptions().isSkipInstallCompanions()));
+        props.put("nuts-open-mode", stringValue(configManager.options().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : configManager.options().getOpenMode()));
+        props.put("nuts-read-only", stringValue(configManager.options().isReadOnly()));
+        props.put("nuts-skip-companions", stringValue(configManager.options().isSkipInstallCompanions()));
+        props.put("nuts-skip-welcome", stringValue(configManager.options().isSkipWelcome()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
         }
@@ -185,8 +200,8 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("user-name", System.getProperty("user.name"));
         props.put("user-home", System.getProperty("user.home"));
         props.put("user-dir", System.getProperty("user.dir"));
-        props.put("command-line-long", ws.config().getOptions().format().compact(false).getBootCommandLine());
-        props.put("command-line-short", ws.config().getOptions().format().compact(true).getBootCommandLine());
+        props.put("command-line-long", ws.config().options().format().compact(false).getBootCommandLine());
+        props.put("command-line-short", ws.config().options().format().compact(true).getBootCommandLine());
         props.put("creation-started", stringValue(new Date(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(new Date(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
@@ -240,7 +255,8 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         }
         return props;
     }
-    private String stringValue(Object s){
+
+    private String stringValue(Object s) {
         return CoreCommonUtils.stringValue(s);
     }
 }

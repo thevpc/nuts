@@ -25,10 +25,10 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     String dir;
     boolean failFast;
     NutsSession session;
-    boolean embedded;
+    NutsExecutionType executionType;
     DefaultNutsExecCommand execCommand;
 
-    public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsWorkspace ws, NutsSession session, boolean embedded, DefaultNutsExecCommand execCommand) {
+    public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsWorkspace ws, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.COMPONENT);
         this.def = def;
         this.ws = ws;
@@ -39,7 +39,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
         this.dir = dir;
         this.failFast = failFast;
         this.session = session;
-        this.embedded = embedded;
+        this.executionType = executionType;
         this.execCommand = execCommand;
     }
 
@@ -53,18 +53,18 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
         if (!def.getInstallation().isInstalled()) {
             ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
             if (session.getTerminal().ask()
-                    .forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defaultValue(true).session(session).getBooleanResult()) {
+                    .forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defaultValue(true).session(session).getBooleanValue()) {
                 ws.install().id(def.getId()).setSession(session.force()).run();
             } else {
                 throw new NutsUserCancelException(ws);
             }
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false,session, embedded);
+        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false,session, executionType);
     }
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + ws.parser().parseCommand(appArgs).getCommandLine();
+        return "NUTS " + getId().toString() + " " + ws.parse().command(appArgs).toString();
     }
 
 }

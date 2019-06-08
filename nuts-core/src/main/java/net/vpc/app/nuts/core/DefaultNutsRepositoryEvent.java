@@ -42,22 +42,46 @@ public class DefaultNutsRepositoryEvent implements NutsRepositoryEvent{
     private final NutsWorkspace workspace;
     private final NutsRepository parent;
     private final NutsRepository repository;
+    private final String propertyName;
+    private final Object propertyOldValue;
+    private final Object propertyValue;
 
-    public DefaultNutsRepositoryEvent(NutsWorkspace workspace, NutsRepository parent, NutsRepository repository) {
+    public DefaultNutsRepositoryEvent(NutsWorkspace workspace, NutsRepository parent, NutsRepository repository,String propertyName, Object propertyOldValue, Object propertyValue) {
         this.workspace = workspace;
         this.parent = parent;
         this.repository = repository;
+        this.propertyName = propertyName;
+        this.propertyValue = propertyValue;
+        this.propertyOldValue = propertyOldValue;
     }
 
+    @Override
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
 
+    @Override
     public NutsRepository getParent() {
         return parent;
     }
 
+    @Override
     public NutsRepository getRepository() {
         return repository;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    @Override
+    public Object getPropertyOldValue() {
+        return propertyOldValue;
+    }
+
+    @Override
+    public Object getPropertyValue() {
+        return propertyValue;
     }
 }

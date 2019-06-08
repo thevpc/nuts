@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -46,7 +46,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand addId(String id) {
-        return addId(id == null ? null : ws.parser().parseId(id));
+        return addId(id == null ? null : ws.parse().id(id));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand removeId(String id) {
-        return removeId(ws.parser().parseId(id));
+        return removeId(ws.parse().id(id));
     }
 
     @Override
@@ -187,12 +187,16 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
             PrintStream out = CoreIOUtils.resolveOut(ws, session);
             if (ii != null) {
 //        NutsDescriptor descriptor = nutToInstall.getDescriptor();
-                NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session, true, null);
+                NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session, 
+                        true, 
+                        false,
+                        ws.config().options().getExecutionType(),
+                        null);
                 ii.uninstall(executionContext, this.isErase());
                 try {
                     CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.PROGRAMS).toFile());
                     CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOGS).toFile());
+                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
                     if (this.isErase()) {
                         CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
                         CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
@@ -201,11 +205,11 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                     throw new UncheckedIOException(ex);
                 }
                 if (getValidSession().isPlainTrace()) {
-                    out.printf("%N uninstalled ##successfully##%n", ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N uninstalled ##successfully##%n", ws.format().id().toString(id));
                 }
             } else {
                 if (getValidSession().isPlainTrace()) {
-                    out.printf("%N @@could not@@ be uninstalled%n", ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N @@could not@@ be uninstalled%n", ws.format().id().toString(id));
                 }
             }
         }
@@ -224,21 +228,21 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-e":
             case "--earse": {
-                this.setErase(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setErase(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-g":
             case "--args": {
                 while (cmdLine.hasNext()) {
-                    this.addArg(cmdLine.nextString().getValue().getString());
+                    this.addArg(cmdLine.nextString().getStringValue());
                 }
                 return true;
             }

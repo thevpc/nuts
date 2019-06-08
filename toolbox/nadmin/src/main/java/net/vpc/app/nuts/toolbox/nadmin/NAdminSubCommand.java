@@ -6,8 +6,8 @@
 package net.vpc.app.nuts.toolbox.nadmin;
 
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsComponent;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -24,5 +24,5 @@ public interface NAdminSubCommand extends NutsComponent<Object> {
      * @param context
      * @return
      */
-    boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context);
+    boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context);
 }

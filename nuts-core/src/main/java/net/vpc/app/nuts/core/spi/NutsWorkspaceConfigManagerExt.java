@@ -8,10 +8,10 @@ import net.vpc.app.nuts.core.DefaultNutsBootContext;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
-    public static NutsWorkspaceConfigManagerExt of(NutsWorkspaceConfigManager wsc){
-        return (NutsWorkspaceConfigManagerExt)wsc;
+    public static NutsWorkspaceConfigManagerExt of(NutsWorkspaceConfigManager wsc) {
+        return (NutsWorkspaceConfigManagerExt) wsc;
     }
-    
+
     void setStartCreateTimeMillis(long currentTimeMillis);
 
     void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
@@ -44,7 +44,19 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setUsers(NutsUserConfig[] users);
 
-    boolean isSecure();
-
     void setSecure(boolean secure);
+
+    void fireConfigurationChanged();
+
+    NutsWorkspaceConfig getStoredConfig();
+    
+    NutsWorkspace getWorkspace();
+    
+    void removeAllRepositories();
+    
+    Path getRepositoriesRoot();
+    
+//    NutsRepository wireRepository(NutsRepository repository);
+
+    void setExcludedRepositories(String[] excludedRepositories);
 }

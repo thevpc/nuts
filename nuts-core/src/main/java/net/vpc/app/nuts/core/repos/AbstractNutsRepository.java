@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.security.DefaultNutsRepositorySecurityManager;
 import net.vpc.app.nuts.core.DefaultNutsDeployRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsFetchDescriptorRepositoryCommand;
@@ -89,7 +90,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         configManager = new DefaultNutsRepositoryConfigManager(
                 this, options.getLocation(), optionsConfig,
                 Math.max(0, speed), options.getDeployOrder(),
-                options.isTemporay(), options.isEnabled(),
+                options.isTemporary(), options.isEnabled(),
                 optionsConfig.getName(), supportedMirroring,
                 options.getName(), repositoryType
         );
@@ -389,22 +390,40 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public void fireOnAddRepository(NutsRepository repository) {
-        NutsRepositoryEvent event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository);
+        if (LOG.isLoggable(Level.FINEST)) {
+            LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+        }
+        NutsRepositoryEvent event = null;
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            if (event == null) {
+                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
+            }
             listener.onAddRepository(event);
         }
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
+            if (event == null) {
+                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
+            }
             listener.onAddRepository(event);
         }
     }
 
     @Override
     public void fireOnRemoveRepository(NutsRepository repository) {
-        NutsRepositoryEvent event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository);
+        if (LOG.isLoggable(Level.FINEST)) {
+            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+        }
+        NutsRepositoryEvent event = null;
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            if (event == null) {
+                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", repository, null);
+            }
             listener.onRemoveRepository(event);
         }
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
+            if (event == null) {
+                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", repository, null);
+            }
             listener.onRemoveRepository(event);
         }
     }

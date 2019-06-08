@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
@@ -16,6 +15,7 @@ import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -34,7 +34,7 @@ public class DefaultNutsRepositoryUndeployCommand extends NutsRepositoryCommandB
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmd) {
+    public boolean configureFirst(NutsCommandLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

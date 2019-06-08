@@ -31,7 +31,7 @@ public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         PrintStream out = getSession(true).getTerminal().fout();
-        ws.formatter().createWorkspaceVersionFormat().configure(args).println(out);
+        ws.format().version().configure(false, args).println(out);
     }
     
 }

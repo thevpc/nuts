@@ -36,14 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShell;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class AliasCommand extends SimpleNshCommand {
+public class AliasCommand extends SimpleNshBuiltin {
 
     public AliasCommand() {
         super("alias", DEFAULT_SUPPORT);
@@ -74,18 +74,18 @@ public class AliasCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getKey().getString().equals("--sort")) {
+            if (a.getStringKey().equals("--sort")) {
                 commandLine.skip();
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isKeyValue()) {
             commandLine.skip();
-            options.add.put(a.getKey().getString(), a.getValue().getString());
+            options.add.put(a.getStringKey(), a.getStringValue());
             return true;
         } else {
             commandLine.skip();
@@ -96,7 +96,7 @@ public class AliasCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
@@ -117,7 +117,7 @@ public class AliasCommand extends SimpleNshCommand {
                 outRes.add(new ResultItem(a, v));
             }
         }
-        context.setOutObject(outRes);
+        context.setPrintlnOutObject(outRes);
         if (!errRes.isEmpty()) {
             context.setErrObject(errRes);
         }

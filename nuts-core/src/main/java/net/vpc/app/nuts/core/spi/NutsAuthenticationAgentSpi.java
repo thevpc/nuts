@@ -38,14 +38,6 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public interface NutsAuthenticationAgentSpi {
 
-    /**
-     * update environment provider
-     *
-     * @param envProvider workspace of repository instance
-     * @since 0.5.5
-     */
-    void setEnv(NutsEnvProvider envProvider);
-
     void setWorkspace(NutsWorkspace workspace);
 
 }

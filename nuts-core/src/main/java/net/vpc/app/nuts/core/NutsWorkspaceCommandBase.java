@@ -7,8 +7,8 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -21,7 +21,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     private NutsSession session;
     private NutsSession validSession;
     private boolean sessionCopy = false;
-    private String commandName;
+    private final String commandName;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws,String commandName) {
         this.ws = ws;
@@ -87,7 +87,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
         return validSession;
     }
 
-    protected NutsWorkspace getWs() {
+    protected NutsWorkspace getWorkspace() {
         return ws;
     }
 
@@ -97,22 +97,22 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--trace": {
-                getValidSessionCopy().setTrace(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidSessionCopy().setTrace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--ask": {
-                getValidSessionCopy().setAsk(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidSessionCopy().setAsk(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--force": {
-                getValidSessionCopy().setForce(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidSessionCopy().setForce(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
         }
@@ -124,13 +124,13 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     }
 
     @Override
-    public T configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws,args,getCommandName());
+    public T configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported,args,getCommandName());
     }
 
     @Override
-    public boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine,skipIgnored);
+    public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
     }
 
 }

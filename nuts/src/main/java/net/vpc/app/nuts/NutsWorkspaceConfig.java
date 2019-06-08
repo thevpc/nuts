@@ -76,7 +76,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String configStoreLocation = null;
     private String varStoreLocation = null;
     private String libStoreLocation = null;
-    private String logsStoreLocation = null;
+    private String logStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
@@ -87,7 +87,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String configSystemHome = null;
     private String varSystemHome = null;
     private String libSystemHome = null;
-    private String logsSystemHome = null;
+    private String logSystemHome = null;
     private String tempSystemHome = null;
     private String cacheSystemHome = null;
 
@@ -95,7 +95,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String configWindowsHome = null;
     private String varWindowsHome = null;
     private String libWindowsHome = null;
-    private String logsWindowsHome = null;
+    private String logWindowsHome = null;
     private String tempWindowsHome = null;
     private String cacheWindowsHome = null;
 
@@ -103,7 +103,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String configMacOsHome = null;
     private String varMacOsHome = null;
     private String libMacOsHome = null;
-    private String logsMacOsHome = null;
+    private String logMacOsHome = null;
     private String tempMacOsHome = null;
     private String cacheMacOsHome = null;
 
@@ -111,7 +111,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String configLinuxHome = null;
     private String varLinuxHome = null;
     private String libLinuxHome = null;
-    private String logsLinuxHome = null;
+    private String logLinuxHome = null;
     private String tempLinuxHome = null;
     private String cacheLinuxHome = null;
 
@@ -143,7 +143,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.configStoreLocation = other.getConfigStoreLocation();
         this.varStoreLocation = other.getVarStoreLocation();
         this.libStoreLocation = other.getLibStoreLocation();
-        this.logsStoreLocation = other.getLogsStoreLocation();
+        this.logStoreLocation = other.getLogStoreLocation();
         this.tempStoreLocation = other.getTempStoreLocation();
         this.cacheStoreLocation = other.getCacheStoreLocation();
 
@@ -151,7 +151,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.configWindowsHome = other.getConfigWindowsHome();
         this.varWindowsHome = other.getVarWindowsHome();
         this.libWindowsHome = other.getLibWindowsHome();
-        this.logsWindowsHome = other.getLogsWindowsHome();
+        this.logWindowsHome = other.getLogWindowsHome();
         this.tempWindowsHome = other.getTempWindowsHome();
         this.cacheWindowsHome = other.getCacheWindowsHome();
 
@@ -159,7 +159,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.configMacOsHome = other.getConfigMacOsHome();
         this.varMacOsHome = other.getVarMacOsHome();
         this.libMacOsHome = other.getLibMacOsHome();
-        this.logsMacOsHome = other.getLogsMacOsHome();
+        this.logMacOsHome = other.getLogMacOsHome();
         this.tempMacOsHome = other.getTempMacOsHome();
         this.cacheMacOsHome = other.getCacheMacOsHome();
 
@@ -167,7 +167,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.configLinuxHome = other.getConfigLinuxHome();
         this.varLinuxHome = other.getVarLinuxHome();
         this.libLinuxHome = other.getLibLinuxHome();
-        this.logsLinuxHome = other.getLogsLinuxHome();
+        this.logLinuxHome = other.getLogLinuxHome();
         this.tempLinuxHome = other.getTempLinuxHome();
         this.cacheLinuxHome = other.getCacheLinuxHome();
 
@@ -360,12 +360,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getLogsStoreLocation() {
-        return logsStoreLocation;
+    public String getLogStoreLocation() {
+        return logStoreLocation;
     }
 
-    public NutsWorkspaceConfig setLogsStoreLocation(String logsStoreLocation) {
-        this.logsStoreLocation = logsStoreLocation;
+    public NutsWorkspaceConfig setLogStoreLocation(String logStoreLocation) {
+        this.logStoreLocation = logStoreLocation;
         return this;
     }
 
@@ -468,12 +468,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getLogsSystemHome() {
-        return logsSystemHome;
+    public String getLogSystemHome() {
+        return logSystemHome;
     }
 
-    public NutsWorkspaceConfig setLogsSystemHome(String logsSystemHome) {
-        this.logsSystemHome = logsSystemHome;
+    public NutsWorkspaceConfig setLogSystemHome(String logSystemHome) {
+        this.logSystemHome = logSystemHome;
         return this;
     }
 
@@ -531,12 +531,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getLogsWindowsHome() {
-        return logsWindowsHome;
+    public String getLogWindowsHome() {
+        return logWindowsHome;
     }
 
-    public NutsWorkspaceConfig setLogsWindowsHome(String logsWindowsHome) {
-        this.logsWindowsHome = logsWindowsHome;
+    public NutsWorkspaceConfig setLogWindowsHome(String logWindowsHome) {
+        this.logWindowsHome = logWindowsHome;
         return this;
     }
 
@@ -594,12 +594,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getLogsMacOsHome() {
-        return logsMacOsHome;
+    public String getLogMacOsHome() {
+        return logMacOsHome;
     }
 
-    public NutsWorkspaceConfig setLogsMacOsHome(String logsMacOsHome) {
-        this.logsMacOsHome = logsMacOsHome;
+    public NutsWorkspaceConfig setLogMacOsHome(String logMacOsHome) {
+        this.logMacOsHome = logMacOsHome;
         return this;
     }
 
@@ -657,12 +657,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getLogsLinuxHome() {
-        return logsLinuxHome;
+    public String getLogLinuxHome() {
+        return logLinuxHome;
     }
 
-    public NutsWorkspaceConfig setLogsLinuxHome(String logsLinuxHome) {
-        this.logsLinuxHome = logsLinuxHome;
+    public NutsWorkspaceConfig setLogLinuxHome(String logLinuxHome) {
+        this.logLinuxHome = logLinuxHome;
         return this;
     }
 

@@ -56,7 +56,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmd) {
+    public boolean configureFirst(NutsCommandLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

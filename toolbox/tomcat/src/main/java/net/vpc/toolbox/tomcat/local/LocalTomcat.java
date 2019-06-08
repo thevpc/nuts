@@ -1,6 +1,5 @@
 package net.vpc.toolbox.tomcat.local;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatConfig;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
@@ -15,13 +14,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 public class LocalTomcat {
 
     private NutsApplicationContext context;
-    private NutsCommand cmdLine;
+    private NutsCommandLine cmdLine;
 
-    public LocalTomcat(NutsApplicationContext ws, NutsCommand cmdLine) {
+    public LocalTomcat(NutsApplicationContext ws, NutsCommandLine cmdLine) {
         this.setContext(ws);
         this.cmdLine=cmdLine;
     }
@@ -99,7 +99,7 @@ public class LocalTomcat {
                         throw new NutsExecutionException(context.getWorkspace(),"Missing tomcat command. Type help", 1);
     }
 
-    public void list(NutsCommand args) {
+    public void list(NutsCommandLine args) {
         NutsArgument a;
         class Helper {
 
@@ -125,10 +125,10 @@ public class LocalTomcat {
                     List<LocalTomcatAppConfigService> apps = c.getApps();
                     if (!apps.isEmpty()) {
                         if (isHeader()) {
-                            context.out().printf("[[\\[%s\\]]]:\n", "Apps");
+                            context.session().out().printf("[[\\[%s\\]]]:\n", "Apps");
                         }
                         for (LocalTomcatAppConfigService app : apps) {
-                            context.out().printf("%s\n", app.getName());
+                            context.session().out().printf("%s\n", app.getName());
                         }
                     }
                 }
@@ -136,10 +136,10 @@ public class LocalTomcat {
                     List<LocalTomcatDomainConfigService> domains = c.getDomains();
                     if (!domains.isEmpty()) {
                         if (isHeader()) {
-                            context.out().printf("[[\\[%s\\]]]:\n", "Domains");
+                            context.session().out().printf("[[\\[%s\\]]]:\n", "Domains");
                         }
                         for (LocalTomcatDomainConfigService app : domains) {
-                            context.out().printf("%s\n", app.getName());
+                            context.session().out().printf("%s\n", app.getName());
                         }
                     }
                 }
@@ -150,23 +150,23 @@ public class LocalTomcat {
             if (context.configureFirst(args)) {
                 //
             } else if ((a = args.nextBoolean("--apps")) != null) {
-                x.apps = a.getValue().getBoolean();
+                x.apps = a.getBooleanValue();
             } else if ((a = args.nextBoolean("--domains")) != null) {
-                x.domains = a.getValue().getBoolean();
+                x.domains = a.getBooleanValue();
             } else if ((a = args.nextString("--name")) != null) {
-                x.print(loadOrCreateTomcatConfig(a.getValue().getString()));
+                x.print(loadOrCreateTomcatConfig(a.getStringValue()));
             } else {
-                x.print(loadOrCreateTomcatConfig(args.requireNonOption().next().getValue().getString()));
+                x.print(loadOrCreateTomcatConfig(args.requireNonOption().next().getStringValue()));
             }
         }
         if (!x.processed) {
             for (LocalTomcatConfigService tomcatConfig : listConfig()) {
-                getContext().out().println(tomcatConfig.getName());
+                getContext().session().out().println(tomcatConfig.getName());
             }
         }
     }
 
-    public void show(NutsCommand args) {
+    public void show(NutsCommandLine args) {
         NutsArgument a;
         LocalTomcatServiceBase s;
         class Helper {
@@ -175,13 +175,13 @@ public class LocalTomcat {
 
             public void show(LocalTomcatServiceBase aa) {
                 if (json) {
-                    getContext().out().printf("[[%s]] :\n", aa.getName());
-                    aa.write(getContext().out());
-                    getContext().out().println();
+                    getContext().session().out().printf("[[%s]] :\n", aa.getName());
+                    aa.write(getContext().session().out());
+                    getContext().session().out().println();
                 } else {
-                    getContext().out().printf("[[%s]] :\n", aa.getName());
-                    aa.write(getContext().out());
-                    getContext().out().println();
+                    getContext().session().out().printf("[[%s]] :\n", aa.getName());
+                    aa.write(getContext().session().out());
+                    getContext().session().out().println();
                 }
             }
         }
@@ -190,7 +190,7 @@ public class LocalTomcat {
             if (context.configureFirst(args)) {
                 //
             } else if ((a = args.nextBoolean("--json")) != null) {
-                h.json = a.getValue().getBoolean();
+                h.json = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {
@@ -199,7 +199,7 @@ public class LocalTomcat {
         }
     }
 
-    public void showProperty(NutsCommand args) {
+    public void showProperty(NutsCommandLine args) {
         NutsArgument a;
         class Item {
 
@@ -223,7 +223,7 @@ public class LocalTomcat {
             void build() {
                 if (s != null) {
                     for (String prop : props) {
-                        Object o = context.getWorkspace().parser().parseExpression(s.getConfig(), prop);
+                        Object o = context.getWorkspace().parse().parseExpression(s.getConfig(), prop);
                         m.put(new Item(prop), o);
                     }
                     props.clear();
@@ -237,7 +237,7 @@ public class LocalTomcat {
             } else if (x.s == null && (x.s = readBaseServiceArg(args)) != null) {
                 //ok
             } else if ((a = args.nextString("--property")) != null) {
-                x.addProp(a.getValue().getString());
+                x.addProp(a.getStringValue());
             } else if (args.peek().isOption()) {
                 args.setCommandName("tomcat --local show-property").unexpectedArgument();
             } else {
@@ -248,10 +248,10 @@ public class LocalTomcat {
         if (x.m.isEmpty()) {
             throw new NutsExecutionException(context.getWorkspace(),"No properties to show", 2);
         }
-        getContext().printOutObject(x.m);
+        getContext().session().printlnOutObject(x.m);
     }
 
-    public void add(NutsCommand args) {
+    public void add(NutsCommandLine args) {
         LocalTomcatConfigService c = null;
         String appName = null;
         String domainName = null;
@@ -262,7 +262,7 @@ public class LocalTomcat {
             if (context.configureFirst(args)) {
                 //
             } else if ((a = args.nextString("--name")) != null) {
-                instance = a.getValue().getString();
+                instance = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(instance);
                 } else {
@@ -272,30 +272,30 @@ public class LocalTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setCatalinaVersion(a.getValue().getString());
+                c.getConfig().setCatalinaVersion(a.getStringValue());
             } else if ((a = args.nextString("--catalina-base")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setCatalinaBase(a.getValue().getString());
+                c.getConfig().setCatalinaBase(a.getStringValue());
             } else if ((a = args.nextString("--catalina-home")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setCatalinaHome(a.getValue().getString());
+                c.getConfig().setCatalinaHome(a.getStringValue());
             } else if ((a = args.nextString("--shutdown-wait-time")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setShutdownWaitTime(a.getValue().getInt());
+                c.getConfig().setShutdownWaitTime(a.getArgumentValue().getInt());
             } else if ((a = args.nextString("--app")) != null) {
-                appName = a.getValue().getString();
+                appName = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getAppOrCreate(appName);
             } else if ((a = args.nextString("--domain")) != null) {
-                domainName = a.getValue().getString();
+                domainName = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -304,10 +304,10 @@ public class LocalTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getDomainOrCreate(domainName).getConfig().setLogFile(a.getValue().getString());
+                c.getDomainOrCreate(domainName).getConfig().setLogFile(a.getStringValue());
 
             } else if ((a = args.nextString("--app.source")) != null) {
-                String value = a.getValue().getString();
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -317,14 +317,14 @@ public class LocalTomcat {
                 }
                 tomcatAppConfig.getConfig().setSourceFilePath(value);
             } else if ((a = args.nextString("--app.deploy")) != null) {
-                String value = a.getValue().getString();
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 LocalTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setDeployName(value);
             } else if ((a = args.nextString("--app.domain")) != null) {
-                String value = a.getValue().getString();
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -334,12 +334,12 @@ public class LocalTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setArchiveFolder(a.getValue().getString());
+                c.getConfig().setArchiveFolder(a.getStringValue());
             } else if ((a = args.nextString("--running-folder")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setRunningFolder(a.getValue().getString());
+                c.getConfig().setRunningFolder(a.getStringValue());
             } else {
                 args.setCommandName("tomcat --local add").unexpectedArgument();
             }
@@ -354,7 +354,7 @@ public class LocalTomcat {
         }
     }
 
-    public void remove(NutsCommand args) {
+    public void remove(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
         NutsArgument a;
         boolean processed = false;
@@ -381,7 +381,7 @@ public class LocalTomcat {
         }
     }
 
-    public void stop(NutsCommand args) {
+    public void stop(NutsCommandLine args) {
         LocalTomcatConfigService s = null;
         NutsArgument a;
         while (args.hasNext()) {
@@ -402,7 +402,7 @@ public class LocalTomcat {
         }
     }
 
-    public void status(NutsCommand args) {
+    public void status(NutsCommandLine args) {
         LocalTomcatConfigService s = null;
         NutsArgument a;
         while (args.hasNext()) {
@@ -419,7 +419,7 @@ public class LocalTomcat {
         c.printStatus();
     }
 
-    public void install(NutsCommand args) {
+    public void install(NutsCommandLine args) {
         LocalTomcatAppConfigService app = null;
         String version = null;
         String file = null;
@@ -428,11 +428,11 @@ public class LocalTomcat {
             if (context.configureFirst(args)) {
                 //
             } else if ((a = args.nextString("--app")) != null) {
-                app = loadApp(a.getValue().getString());
+                app = loadApp(a.getStringValue());
             } else if ((a = args.nextString("--version")) != null) {
-                version = a.getValue().getString();
+                version = a.getStringValue();
             } else if ((a = args.nextString("--file")) != null) {
-                file = a.getValue().getString();
+                file = a.getStringValue();
             } else {
                 if (file == null) {
                     file = args.requireNonOption().next().getString();
@@ -450,7 +450,7 @@ public class LocalTomcat {
         app.install(version, file, true);
     }
 
-    public void deleteLog(NutsCommand args) {
+    public void deleteLog(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
         boolean all = false;
         NutsArgument a;
@@ -459,7 +459,7 @@ public class LocalTomcat {
             if (context.configureFirst(args)) {
                 //
             } else if ((a = args.nextBoolean("-a", "--all")) != null) {
-                all = a.getValue().getBoolean();
+                all = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 if (all) {
@@ -482,7 +482,7 @@ public class LocalTomcat {
         }
     }
 
-    public void deleteTemp(NutsCommand args) {
+    public void deleteTemp(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
         NutsArgument a;
         boolean processed = false;
@@ -503,7 +503,7 @@ public class LocalTomcat {
         }
     }
 
-    public void deleteWork(NutsCommand args) {
+    public void deleteWork(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
         NutsArgument a;
         boolean processed = false;
@@ -524,7 +524,7 @@ public class LocalTomcat {
         }
     }
 
-    public void showLog(NutsCommand args) {
+    public void showLog(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
         boolean processed = false;
         String instance = null;
@@ -539,7 +539,7 @@ public class LocalTomcat {
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 if (path) {
-                    getContext().out().printf("%s\n", c.getOutLogFile());
+                    getContext().session().out().printf("%s\n", c.getOutLogFile());
                 } else {
                     c.showOutLog(count);
                 }
@@ -555,14 +555,14 @@ public class LocalTomcat {
         if (!processed) {
             LocalTomcatConfigService c = loadTomcatConfig("");
             if (path) {
-                getContext().out().printf("%s\n", c.getOutLogFile());
+                getContext().session().out().printf("%s\n", c.getOutLogFile());
             } else {
                 c.showOutLog(count);
             }
         }
     }
 
-    public void deployFile(NutsCommand args) {
+    public void deployFile(NutsCommandLine args) {
         String instance = null;
         String version = null;
         String file = null;
@@ -572,13 +572,13 @@ public class LocalTomcat {
         NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.nextString("--file")) != null) {
-                file = a.getValue().getString();
+                file = a.getStringValue();
             } else if ((a = args.nextString("--name")) != null) {
-                instance = a.getValue().getString();
+                instance = a.getStringValue();
             } else if ((a = args.nextString("--context")) != null) {
-                contextName = a.getValue().getString();
+                contextName = a.getStringValue();
             } else if ((a = args.nextString("--domain")) != null) {
-                domain = a.getValue().getString();
+                domain = a.getStringValue();
             } else {
                 if (file == null) {
                     file = args.requireNonOption().next().getString();
@@ -594,15 +594,15 @@ public class LocalTomcat {
         c.deployFile(getContext().getWorkspace().io().path(file), contextName, domain);
     }
 
-    public void deployApp(NutsCommand args) {
+    public void deployApp(NutsCommandLine args) {
         String version = null;
         String app = null;
         NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.nextString("--version")) != null) {
-                version = a.getValue().getString();
+                version = a.getStringValue();
             } else if ((a = args.nextString("--app")) != null) {
-                app = a.getValue().getString();
+                app = a.getStringValue();
             } else {
                 if (app == null) {
                     app = args.requireNonOption().next().getString();
@@ -614,18 +614,18 @@ public class LocalTomcat {
         loadApp(app).deploy(version);
     }
 
-    public void restart(NutsCommand args, boolean shutdown) {
+    public void restart(NutsCommandLine args, boolean shutdown) {
         boolean deleteLog = false;
         String instance = null;
         List<String> apps = new ArrayList<>();
         while (args.hasNext()) {
             NutsArgument a = null;
             if ((a = args.nextString("--name")) != null) {
-                instance = a.getValue().getString();
+                instance = a.getStringValue();
             } else if ((a = args.nextBoolean("--delete-out-log")) != null) {
-                deleteLog = a.getValue().getBoolean();
+                deleteLog = a.getBooleanValue();
             } else if ((a = args.nextString("--deploy")) != null) {
-                apps.add(a.getValue().getString());
+                apps.add(a.getStringValue());
             } else {
                 if (instance == null) {
                     instance = args.requireNonOption().next().getString();
@@ -742,19 +742,19 @@ public class LocalTomcat {
         return ((LocalTomcatConfigService) s);
     }
 
-    public LocalTomcatConfigService readTomcatServiceArg(NutsCommand args) {
+    public LocalTomcatConfigService readTomcatServiceArg(NutsCommandLine args) {
         LocalTomcatServiceBase s = readBaseServiceArg(args);
         return toLocalTomcatConfigService(s);
     }
 
-    public LocalTomcatServiceBase readBaseServiceArg(NutsCommand args) {
+    public LocalTomcatServiceBase readBaseServiceArg(NutsCommandLine args) {
         NutsArgument a;
         if ((a = args.nextString("--name")) != null) {
-            return (loadOrCreateTomcatConfig(a.getValue().getString()));
+            return (loadOrCreateTomcatConfig(a.getStringValue()));
         } else if ((a = args.nextString("--app")) != null) {
-            return (loadApp(a.getValue().getString()));
+            return (loadApp(a.getStringValue()));
         } else if ((a = args.nextString("--domain")) != null) {
-            return (loadDomain(a.getValue().getString()));
+            return (loadDomain(a.getStringValue()));
         } else if (args.hasNext() && args.peek().isOption()) {
             return null;
         } else {

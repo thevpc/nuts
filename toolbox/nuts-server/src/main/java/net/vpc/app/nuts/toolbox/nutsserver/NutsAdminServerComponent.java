@@ -30,21 +30,15 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.*;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -100,129 +94,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         PrintStream out = terminal.fout();
         out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.config().getWorkspaceLocation());
-        MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
+        StopServerBuiltin myNutsServer = new StopServerBuiltin(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
 
         executor.execute(myNutsServer);
         return myNutsServer;
     }
 
-    private static class MyNutsServer implements NutsServer, Runnable {
-
-        private final String serverId;
-        int finalPort;
-        int finalBacklog;
-        InetAddress address;
-        Executor finalExecutor;
-        NutsWorkspace invokerWorkspace;
-        boolean running;
-        ServerSocket serverSocket = null;
-        NutsSessionTerminal terminal = null;
-
-        public MyNutsServer(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSessionTerminal terminal) {
-            this.serverId = serverId;
-            this.finalPort = finalPort;
-            this.finalBacklog = finalBacklog;
-            this.address = address;
-            this.finalExecutor = finalExecutor;
-            this.invokerWorkspace = invokerWorkspace;
-            this.terminal = terminal;
-        }
-
-        @Override
-        public String getServerId() {
-            return serverId;
-        }
-
-        @Override
-        public boolean isRunning() {
-            return running;
-        }
-
-        @Override
-        public boolean stop() {
-            if (running) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public void run() {
-            running = true;
-            try {
-                try {
-                    serverSocket = new ServerSocket(finalPort, finalBacklog, address);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    return;
-                }
-                while (running) {
-                    try {
-                        Socket accept = null;
-                        try {
-                            accept = serverSocket.accept();
-                        } catch (Exception ex) {
-                            running = false;
-                            break;
-                        }
-                        final ServerSocket finalServerSocket = serverSocket;
-                        final Socket finalAccept = accept;
-                        finalExecutor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                String[] args = {NutsConstants.Ids.NUTS_SHELL};
-                                NutsJavaShell cli = null;
-                                try {
-                                    PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
-                                    NutsSession session = invokerWorkspace.createSession();
-                                    NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
-                                    terminal.setIn(finalAccept.getInputStream());
-                                    terminal.setOut(eout);
-                                    terminal.setErr(eout);
-                                    session.setTerminal(terminal);
-                                    cli = new NutsJavaShell(invokerWorkspace, session);
-//                                    cli.uninstallCommand("server");
-                                    cli.getGlobalContext().builtins().unset("connect");
-                                    cli.setServiceName(serverId);
-                                    cli.getGlobalContext().builtins().set(new AbstractNshBuiltin("stop-server", DEFAULT_SUPPORT) {
-                                        @Override
-                                        public void exec(String[] args, NutsCommandContext context) {
-                                            PrintStream out2 = MyNutsServer.this.terminal.fout();
-                                            out2.println("Stopping Server ...");
-                                            try {
-                                                finalServerSocket.close();
-                                            } catch (IOException ex) {
-                                                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
-                                            }
-                                        }
-                                    });
-                                    cli.runCommand(args);
-                                    finalAccept.close();
-                                } catch (IOException e) {
-                                    terminal.ferr().printf("%s\n", e);
-                                }
-                            }
-                        });
-                    } catch (Exception ex) {
-                        terminal.ferr().printf("%s\n", ex);
-                    }
-                }
-            } finally {
-                running = false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "Nuts Admin Server{"
-                    + "running=" + running
-                    + '}';
-        }
-
-    }
 }

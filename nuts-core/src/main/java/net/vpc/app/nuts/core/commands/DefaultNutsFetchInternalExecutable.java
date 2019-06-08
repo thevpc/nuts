@@ -25,7 +25,7 @@ public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecu
             showDefaultHelp();
             return;
         }
-        ws.fetch().session(getSession(true).trace()).configure(args).run();
+        ws.fetch().session(getSession(true).trace()).configure(false, args).run();
     }
     
 }

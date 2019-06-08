@@ -52,7 +52,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 aa.remove();
             }
         }
-        context.out().printf("==[%s]== domain removed.\n", name);
+        context.session().out().printf("==[%s]== domain removed.\n", name);
         return this;
     }
 

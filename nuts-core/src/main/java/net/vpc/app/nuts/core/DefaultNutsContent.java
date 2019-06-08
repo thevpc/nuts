@@ -62,4 +62,10 @@ public class DefaultNutsContent implements NutsContent{
     public boolean isTemporary() {
         return temporary;
     }
+
+    @Override
+    public String toString() {
+        return "Content{" + "file=" + file + ", cached=" + cached + ", temporary=" + temporary + '}';
+    }
+    
 }

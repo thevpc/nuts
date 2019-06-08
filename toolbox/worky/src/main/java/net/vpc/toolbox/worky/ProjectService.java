@@ -22,7 +22,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().io().json().read(file, ProjectConfig.class);
+        config = context.getWorkspace().format().json().read(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -52,13 +52,13 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        context.getWorkspace().io().json().write(config, configFile);
+        context.getWorkspace().format().json().write(config, configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = context.getWorkspace().io().json().read(configFile, ProjectConfig.class);
+            ProjectConfig u = context.getWorkspace().format().json().read(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;

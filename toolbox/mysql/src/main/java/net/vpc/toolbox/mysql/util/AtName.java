@@ -30,8 +30,8 @@
 package net.vpc.toolbox.mysql.util;
 
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -42,9 +42,9 @@ public class AtName {
     private String config;
     private String name;
 
-    public static AtName nextConfigOption(NutsCommand cmd) {
+    public static AtName nextConfigOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        AtName name2 = new AtName(a.getValue().getString());
+        AtName name2 = new AtName(a.getStringValue());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
             cmd.unexpectedArgument("should be valid a config name");
@@ -61,18 +61,18 @@ public class AtName {
     }
     
 
-    public static AtName nextAppOption(NutsCommand cmd) {
+    public static AtName nextAppOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        return new AtName(a.getValue().getString());
+        return new AtName(a.getStringValue());
     }
 
-    public static AtName nextAppNonOption(NutsCommand cmd) {
+    public static AtName nextAppNonOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
         return new AtName(a.getString());
     }
 
-    public static AtName nextConfigNonOption(NutsCommand cmd) {
-        NutsArgument a = cmd.next();
+    public static AtName nextConfigNonOption(NutsCommandLine cmd) {
+        NutsArgument a = cmd.peek();
         AtName name2 = new AtName(a.getString());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.unexpectedArgument("should be valid a config name");

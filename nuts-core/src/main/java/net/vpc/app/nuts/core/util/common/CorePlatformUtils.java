@@ -33,8 +33,6 @@ import net.vpc.app.nuts.core.util.io.SimpleClassStream;
 import net.vpc.app.nuts.*;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -340,130 +338,6 @@ public class CorePlatformUtils {
         String property = System.getProperty("os.arch");
         String aliased = SUPPORTED_ARCH_ALIASES.get(property);
         return (aliased == null) ? property : aliased;
-    }
-
-    public static PlatformBeanProperty[] findPlatformBeanProperties(Class platformType) {
-        LinkedHashMap<String, PlatformBeanProperty> visited = new LinkedHashMap<>();
-        Class curr = platformType;
-        while (curr != null && !curr.equals(Object.class)) {
-            for (Method method : curr.getDeclaredMethods()) {
-                String n = method.getName();
-                String field = null;
-                if (method.getParameterTypes().length == 0 && method.getReturnType().equals(Boolean.TYPE) && n.startsWith("is") && n.length() > 2 && Character.isUpperCase(n.charAt(2))) {
-                    field = n.substring(2);
-                } else if (method.getParameterTypes().length == 0 && !method.getReturnType().equals(Boolean.TYPE) && n.startsWith("get") && n.length() > 3 && Character.isUpperCase(n.charAt(3))) {
-                    field = n.substring(3);
-                } else if (method.getParameterTypes().length == 1 && method.getReturnType().equals(Void.TYPE) && n.startsWith("set") && n.length() > 3 && Character.isUpperCase(n.charAt(3))) {
-                    field = n.substring(3);
-                }
-                if (field != null) {
-                    char[] chars = field.toCharArray();
-                    chars[0] = Character.toLowerCase(chars[0]);
-                    field = new String(chars);
-                    if (!visited.containsKey(field)) {
-                        PlatformBeanProperty platformBeanProperty = findPlatformBeanProperty(field, platformType);
-                        if (platformBeanProperty != null) {
-                            visited.put(field, platformBeanProperty);
-                        }
-                    }
-                }
-            }
-            curr = curr.getSuperclass();
-        }
-        return visited.values().toArray(new PlatformBeanProperty[0]);
-    }
-
-    public static PlatformBeanProperty findPlatformBeanProperty(String field, Class platformType) {
-        String ckey = platformType.getName() + "." + field;
-        PlatformBeanProperty old = cachedPlatformBeanProperties.get(ckey);
-        if (old == null) {
-            Field jfield = null;
-            try {
-                jfield = platformType.getDeclaredField(field);
-            } catch (NoSuchFieldException e) {
-                //ignore
-            }
-            String g1 = CoreCommonUtils.getterName(field, Object.class);
-            String g2 = CoreCommonUtils.getterName(field, Boolean.TYPE);
-            String s = CoreCommonUtils.setterName(field);
-            Class<?> x = platformType;
-            Method getter = null;
-            Method setter = null;
-            Class propertyType = null;
-            LinkedHashMap<Class, Method> setters = new LinkedHashMap<>();
-            while (x != null) {
-                for (Method m : x.getDeclaredMethods()) {
-                    if (!Modifier.isStatic(m.getModifiers())) {
-                        String mn = m.getName();
-                        if (getter == null) {
-                            if (g1.equals(mn) || g2.equals(mn)) {
-                                if (m.getParameterTypes().length == 0 && !Void.TYPE.equals(m.getReturnType())) {
-                                    getter = m;
-                                    Class<?> ftype = getter.getReturnType();
-                                    for (Class key : new HashSet<>(setters.keySet())) {
-                                        if (!key.equals(ftype)) {
-                                            setters.remove(key);
-                                        }
-                                    }
-                                    if (setter == null) {
-                                        setter = setters.get(ftype);
-                                    }
-                                }
-                            }
-                        }
-                        if (setter == null) {
-                            if (s.equals(mn)) {
-                                if (m.getParameterTypes().length == 1) {
-                                    Class<?> stype = m.getParameterTypes()[0];
-                                    if (getter != null) {
-                                        Class<?> gtype = getter.getReturnType();
-                                        if (gtype.equals(stype)) {
-                                            if (!setters.containsKey(stype)) {
-                                                setters.put(stype, m);
-                                            }
-                                            if (setter == null) {
-                                                setter = m;
-                                            }
-                                        }
-                                    } else {
-                                        if (!setters.containsKey(stype)) {
-                                            setters.put(stype, m);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (getter != null && setter != null) {
-                            break;
-                        }
-                    }
-                }
-                if (getter != null && setter != null) {
-                    break;
-                }
-                x = x.getSuperclass();
-            }
-            if (getter != null) {
-                propertyType = getter.getReturnType();
-            }
-            if (getter == null && setter == null && setters.size() > 0) {
-                Method[] settersArray = setters.values().toArray(new Method[0]);
-                setter = settersArray[0];
-                if (settersArray.length > 1) {
-                    //TODO log?
-                }
-            }
-            if (getter == null && setter != null && propertyType == null) {
-                propertyType = setter.getParameterTypes()[0];
-            }
-            if (getter != null || setter != null) {
-                old = new DefaultPlatformBeanProperty(field, propertyType, jfield, getter, setter);
-            } else {
-                old = null;
-            }
-            cachedPlatformBeanProperties.put(ckey, old);
-        }
-        return old;
     }
 
     public static Boolean getExecutableJar(File file) {

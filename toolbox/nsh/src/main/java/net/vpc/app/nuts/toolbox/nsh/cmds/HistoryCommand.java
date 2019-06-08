@@ -29,27 +29,25 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.common.javashell.JShellHistory;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class HistoryCommand extends AbstractNshBuiltin {
+public class HistoryCommand extends SimpleNshBuiltin {
 
-    enum Action {
+    private static enum Action {
         CLEAR,
         DELETE,
         REMOVE_DUPLICATES,
@@ -58,72 +56,83 @@ public class HistoryCommand extends AbstractNshBuiltin {
         PRINT
     }
 
+    private static class Options {
+
+        public String sval;
+        int ival = -1;
+        Action action = Action.PRINT;
+    }
+
     public HistoryCommand() {
         super("history", DEFAULT_SUPPORT);
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        NutsArgument a;
-        class Options {
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
 
-            public String sval;
-            int ival = -1;
-            Action action = Action.PRINT;
-        }
-        Options o = new Options();
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-c", "--clear") != null) {
-                o.action = Action.CLEAR;
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.nextString("-d", "--delete")) != null) {
-                o.action = Action.DELETE;
-                o.ival = a.getValue().getInt();
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.next("-D", "--remove-duplicates")) != null) {
-                o.action = Action.REMOVE_DUPLICATES;
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.next("-w", "--write")) != null) {
-                o.action = Action.WRITE;
-                if (a.isKeyValue()) {
-                    o.sval = a.getValue().getString();
-                } else if (!cmdLine.isEmpty()) {
-                    o.sval = cmdLine.next().getString();
-                }
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else if ((a = cmdLine.next("-r", "--read")) != null) {
-                o.action = Action.READ;
-                if (a.isKeyValue()) {
-                    o.sval = a.getValue().getString();
-                } else if (!cmdLine.isEmpty()) {
-                    o.sval = cmdLine.next().getString();
-                }
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            } else {
-                if (cmdLine.peek().getInt(0) != 0) {
-                    o.action = Action.PRINT;
-                    o.ival = Math.abs(cmdLine.next().getInt());
-                } else {
-                    cmdLine.setCommandName(getName()).unexpectedArgument();
-                }
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a;
+        if (commandLine.next("-c", "--clear") != null) {
+            options.action = Action.CLEAR;
+            commandLine.setCommandName(getName()).unexpectedArgument();
+            return true;
+        } else if ((a = commandLine.nextString("-d", "--delete")) != null) {
+            options.action = Action.DELETE;
+            options.ival = a.getArgumentValue().getInt();
+            commandLine.setCommandName(getName()).unexpectedArgument();
+            return true;
+        } else if ((a = commandLine.next("-D", "--remove-duplicates")) != null) {
+            options.action = Action.REMOVE_DUPLICATES;
+            commandLine.setCommandName(getName()).unexpectedArgument();
+            return true;
+        } else if ((a = commandLine.next("-w", "--write")) != null) {
+            options.action = Action.WRITE;
+            if (a.isKeyValue()) {
+                options.sval = a.getStringValue();
+            } else if (!commandLine.isEmpty()) {
+                options.sval = commandLine.next().getString();
+            }
+            commandLine.setCommandName(getName()).unexpectedArgument();
+            return true;
+        } else if ((a = commandLine.next("-r", "--read")) != null) {
+            options.action = Action.READ;
+            if (a.isKeyValue()) {
+                options.sval = a.getStringValue();
+            } else if (!commandLine.isEmpty()) {
+                options.sval = commandLine.next().getString();
+            }
+            commandLine.setCommandName(getName()).unexpectedArgument();
+            return true;
+        } else {
+            if (commandLine.peek().getInt(0) != 0) {
+                options.action = Action.PRINT;
+                options.ival = Math.abs(commandLine.next().getInt());
+                return true;
             }
         }
-        if (!cmdLine.isExecMode()) {
-            return;
-        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         JShellHistory shistory = context.getShell().getHistory();
-        switch (o.action) {
+        switch (options.action) {
             case PRINT: {
                 PrintStream out = context.out();
-                List<String> history = shistory.getElements(o.ival <= 0 ? 1000 : o.ival);
+                List<String> history = shistory.getElements(options.ival <= 0 ? 1000 : options.ival);
                 int offset = shistory.size() - history.size();
+                LinkedHashMap<String, String> result = new LinkedHashMap<>();
                 for (int i = 0; i < history.size(); i++) {
                     String historyElement = history.get(i);
-                    out.println(StringUtils.formatRight(String.valueOf(offset + i + 1), 5) + ". " + historyElement);
+                    result.put(String.valueOf(offset + i + 1), historyElement);
                 }
-                return;
+                context.setPrintlnOutObject(result);
+                break;
             }
             case CLEAR: {
                 shistory.clear();
@@ -134,16 +143,16 @@ public class HistoryCommand extends AbstractNshBuiltin {
                 return;
             }
             case DELETE: {
-                shistory.remove(o.ival - 1);
+                shistory.remove(options.ival - 1);
                 return;
             }
             case WRITE: {
                 try {
-                    if (o.sval == null) {
+                    if (options.sval == null) {
 
                         shistory.save();
                     } else {
-                        shistory.save(new File(context.getWorkspace().io().expandPath(o.sval)));
+                        shistory.save(new File(context.getWorkspace().io().expandPath(options.sval)));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
@@ -152,16 +161,19 @@ public class HistoryCommand extends AbstractNshBuiltin {
             }
             case READ: {
                 try {
-                    if (o.sval == null) {
+                    if (options.sval == null) {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(new File(context.getWorkspace().io().expandPath(o.sval)));
+                        shistory.load(new File(context.getWorkspace().io().expandPath(options.sval)));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
                 }
                 return;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(context.getWorkspace(), String.valueOf(options.action));
             }
         }
     }

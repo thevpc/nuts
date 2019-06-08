@@ -38,6 +38,7 @@ package net.vpc.app.nuts;
  * @since 0.5.5
  */
 class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument {
+
     /**
      * equal character
      */
@@ -45,6 +46,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     /**
      * Constructor
+     *
      * @param expression expression
      * @param eq equals
      */
@@ -69,7 +71,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
     }
 
     @Override
-    public NutsArgument getKey() {
+    public NutsArgument getArgumentKey() {
         if (expression == null) {
             return this;
         }
@@ -88,33 +90,33 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
                 }
                 case '!': {
                     sb.append(p.substring(i + 1));
-                    return new NutsArgumentLimited(sb.toString(),eq);
+                    return new NutsArgumentLimited(sb.toString(), eq);
                 }
                 case '/': {
                     if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
                         sb.append(p.substring(i + 2));
-                        return new NutsArgumentLimited(sb.toString(),eq);
+                        return new NutsArgumentLimited(sb.toString(), eq);
                     }
                 }
                 default: {
-                    return new NutsArgumentLimited(p,eq);
+                    return new NutsArgumentLimited(p, eq);
                 }
             }
             i++;
         }
-        return new NutsArgumentLimited(p,eq);
+        return new NutsArgumentLimited(p, eq);
     }
 
     @Override
-    public NutsArgument getValue() {
+    public NutsArgument getArgumentValue() {
         if (expression == null) {
             return this;
         }
         int x = expression.indexOf(eq);
         if (x >= 0) {
-            return new NutsArgumentLimited(expression.substring(x + 1),eq);
+            return new NutsArgumentLimited(expression.substring(x + 1), eq);
         }
-        return new NutsArgumentLimited(null,eq);
+        return new NutsArgumentLimited(null, eq);
     }
 
     @Override
@@ -290,7 +292,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
     @Override
     public boolean getBoolean() {
         Boolean bb = NutsUtilsLimited.parseBoolean(expression, null);
-        boolean b = NutsUtilsLimited.isBlank(expression)?false:bb==null?false:bb.booleanValue();
+        boolean b = NutsUtilsLimited.isBlank(expression) ? false : bb == null ? false : bb.booleanValue();
         if (isNegated()) {
             return !b;
         }
@@ -321,8 +323,28 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
     @Override
     public NutsArgument required() {
         if (expression == null) {
-            throw new NutsIllegalArgumentException(null,"Missing value");
+            throw new NutsIllegalArgumentException(null, "Missing value");
         }
         return this;
+    }
+
+    @Override
+    public String getStringKey() {
+        return getArgumentKey().getString();
+    }
+
+    @Override
+    public String getStringValue() {
+        return getArgumentValue().getString();
+    }
+
+    @Override
+    public boolean getBooleanValue() {
+        return getArgumentValue().getBoolean();
+    }
+
+    @Override
+    public String getStringValue(String defaultValue) {
+        return getArgumentValue().getString(defaultValue);
     }
 }

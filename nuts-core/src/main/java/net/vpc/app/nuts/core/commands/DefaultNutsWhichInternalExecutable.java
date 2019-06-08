@@ -33,11 +33,11 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             return;
         }
         List<String> commands = new ArrayList<String>();
-        NutsCommand commandLine = ws.parser().parseCommand(args);
+        NutsCommandLine commandLine = ws.parse().command(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
-                switch (a.getKey().getString()) {
+                switch (a.getStringKey()) {
                     case "--help": {
                         commandLine.skipAll();
                         showDefaultHelp();
@@ -60,7 +60,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         for (String arg : this.args) {
             PrintStream out = getSession(true).getTerminal().fout();
             try {
-                NutsExecutableInfo p = execCommand.copy().session(getSession(true)).clearCommand().configure(arg).which();
+                NutsExecutableInfo p = execCommand.copy().session(getSession(true)).clearCommand().configure(false, arg).which();
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
@@ -68,8 +68,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         break;
                     }
                     case ALIAS: {
-                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.formatter().createIdFormat().toString(p.getId()),
-                                ws.parser().parseCommand(ws.config().findCommandAlias(p.getName()).getCommand()).getCommandLine()
+                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.format().id().toString(p.getId()),
+                                ws.parse().command(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
                         );
                         break;
                     }
@@ -77,7 +77,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws,arg);
                         }
-                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.formatter().createIdFormat().toString(p.getId()), p.getDescription());
+                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.format().id().toString(p.getId()), p.getDescription());
                         break;
                     }
                     case INTERNAL: {

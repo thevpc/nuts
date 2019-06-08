@@ -31,14 +31,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class DirNameCommand extends SimpleNshCommand {
+public class DirNameCommand extends SimpleNshBuiltin {
 
     public DirNameCommand() {
         super("dirname", DEFAULT_SUPPORT);
@@ -58,10 +58,10 @@ public class DirNameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -81,7 +81,7 @@ public class DirNameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand cmdLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.names.isEmpty()) {
             cmdLine.required();
@@ -112,11 +112,11 @@ public class DirNameCommand extends SimpleNshCommand {
                 results.add(sb.toString());
             }
         }
-        context.setOutObject(results);
+        context.setPrintlnOutObject(results);
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommand.SimpleNshCommandContext context) {
+    protected void printObjectPlain(SimpleNshBuiltin.SimpleNshCommandContext context) {
         List<String> results = context.getResult();
         Options options = context.getOptions();
         for (String name : results) {

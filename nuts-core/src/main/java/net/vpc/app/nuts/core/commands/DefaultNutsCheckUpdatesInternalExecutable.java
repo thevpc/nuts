@@ -25,7 +25,7 @@ public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNu
             showDefaultHelp();
             return;
         }
-        ws.update().session(getSession(true).trace()).configure(args).checkUpdates();
+        ws.update().session(getSession(true).trace()).configure(false, args).checkUpdates();
     }
     
 }

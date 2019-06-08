@@ -94,7 +94,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 .completer(new NutsJLineCompleter(workspace))
                 .terminal(terminal)
                 //                .completer(completer)
-                //                .parser(parser)
+                //                .parse(parse)
                 .build();
         reader.setVariable(LineReader.HISTORY_FILE, workspace.config().getWorkspaceLocation().resolve("history").normalize().toFile());
         ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));

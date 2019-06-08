@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -41,15 +39,19 @@ import net.vpc.common.strings.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnzipCommand extends AbstractNshBuiltin {
+public class UnzipCommand extends SimpleNshBuiltin {
 
     public UnzipCommand() {
         super("unzip", DEFAULT_SUPPORT);
@@ -60,35 +62,44 @@ public class UnzipCommand extends AbstractNshBuiltin {
         boolean l = false;
         boolean skipRoot = false;
         String dir = null;
+        List<String> files = new ArrayList<>();
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        Options options = new Options();
-        List<String> files = new ArrayList<>();
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-l") != null) {
-                options.l = true;
-            } else if (cmdLine.next("-d") != null) {
-                options.dir = cmdLine.next().getString();
-            } else if (cmdLine.peek().isOption()) {
-                throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
-            } else {
-                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
-                files.add(file.getPath());
+        if ((a = commandLine.nextBoolean("-l")) != null) {
+            options.l = a.getBooleanValue();
+            return true;
+        } else if ((a = commandLine.nextString("-d")) != null) {
+            options.dir = a.getStringValue();
+            return true;
+        } else if (!commandLine.peek().isOption()) {
+            while (commandLine.hasNext()) {
+                options.files.add(commandLine.next().getString());
             }
+            return true;
         }
-        if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.files.isEmpty()) {
+            commandLine.required();
         }
-        try {
-            for (String file : files) {
+        for (String path : options.files) {
+            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            try {
                 if (options.l) {
-                    ZipUtils.visitZipFile(new File(file), null, new InputStreamVisitor() {
+                    ZipUtils.visitZipFile(file, null, new InputStreamVisitor() {
                         @Override
                         public boolean visit(String path, InputStream inputStream) throws IOException {
                             context.out().printf("%s\n", path);
@@ -101,11 +112,13 @@ public class UnzipCommand extends AbstractNshBuiltin {
                         dir = context.getGlobalContext().getCwd();
                     }
                     dir = context.getGlobalContext().getAbsolutePath(dir);
-                    ZipUtils.unzip(context.getGlobalContext().getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
+                    ZipUtils.unzip(file.getPath(), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
                 }
+            } catch (UncheckedIOException ex) {
+                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 1);
+            } catch (IOException ex) {
+                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 1);
             }
-        } catch (IOException ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
         }
     }
 }

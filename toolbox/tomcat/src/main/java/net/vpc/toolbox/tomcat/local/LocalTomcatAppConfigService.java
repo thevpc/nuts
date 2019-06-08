@@ -77,16 +77,16 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService setCurrentVersion(String version) {
         try {
             if (version == null || version.trim().isEmpty()) {
-                context.out().printf("==[%s]== unset version.\n", getFullName());
+                context.session().out().printf("==[%s]== unset version.\n", getFullName());
                 Files.delete(getVersionFile());
-                context.out().printf("==[%s]== [LOG] delete version file [[%s]].\n", getFullName(), getVersionFile());
+                context.session().out().printf("==[%s]== [LOG] delete version file [[%s]].\n", getFullName(), getVersionFile());
                 Files.delete(getRunningFile());
-                context.out().printf("==[%s]== [LOG] delete running file [[%s]].\n", getFullName(), getRunningFile());
+                context.session().out().printf("==[%s]== [LOG] delete running file [[%s]].\n", getFullName(), getRunningFile());
             } else {
-                context.out().printf("==[%s]== set version [[%s]].\n", getFullName(), version);
-                context.out().printf("==[%s]== [LOG] updating version file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), getVersionFile());
+                context.session().out().printf("==[%s]== set version [[%s]].\n", getFullName(), version);
+                context.session().out().printf("==[%s]== [LOG] updating version file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), getVersionFile());
                 Files.write(getVersionFile(), version.getBytes());
-                context.out().printf("==[%s]== [LOG] updating archive file [[%s]] -> [[%s]].\n", getFullName(), getArchiveFile(version), getRunningFile());
+                context.session().out().printf("==[%s]== [LOG] updating archive file [[%s]] -> [[%s]].\n", getFullName(), getArchiveFile(version), getRunningFile());
                 Files.copy(getArchiveFile(version), getRunningFile());
             }
         } catch (IOException ex) {
@@ -116,7 +116,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService resetDeployment() {
         Path deployFile = getDeployFile();
         Path deployFolder = getDeployFolder();
-        context.out().printf("==[%s]== reset deployment (delete [[%s]] ).\n", getFullName(), deployFile);
+        context.session().out().printf("==[%s]== reset deployment (delete [[%s]] ).\n", getFullName(), deployFile);
         try {
             Files.delete(deployFile);
             Files.delete(deployFolder);
@@ -132,7 +132,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         }
         Path runningFile = getRunningFile();
         Path deployFile = getDeployFile();
-        context.out().printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), runningFile, deployFile);
+        context.session().out().printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), runningFile, deployFile);
         try {
             Files.copy(runningFile, deployFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
@@ -152,7 +152,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             }
             Path domainDeployPath = getArchiveFile(version);
             Files.createDirectories(domainDeployPath.getParent());
-            context.out().printf("==[%s]== install version [[%s]] : [[%s]]->[[%s]].\n", getFullName(), version, f, domainDeployPath);
+            context.session().out().printf("==[%s]== install version [[%s]] : [[%s]]->[[%s]].\n", getFullName(), version, f, domainDeployPath);
             Files.copy(f, domainDeployPath);
             if (setVersion) {
                 setCurrentVersion(version);
@@ -176,7 +176,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     @Override
     public LocalTomcatAppConfigService remove() {
         tomcat.getConfig().getApps().remove(name);
-        context.out().printf("==[%s]== app removed.\n", getFullName());
+        context.session().out().printf("==[%s]== app removed.\n", getFullName());
         return this;
     }
 

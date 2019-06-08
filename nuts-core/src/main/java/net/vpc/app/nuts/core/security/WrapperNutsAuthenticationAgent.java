@@ -3,24 +3,23 @@ package net.vpc.app.nuts.core.security;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
-public class WrapperNutsAuthenticationAgent implements NutsAuthenticationAgent {
+class WrapperNutsAuthenticationAgent {
 
-    private final String id;
     protected NutsWorkspace ws;
     protected Function<String, NutsAuthenticationAgent> provider;
+    protected NutsEnvProvider envProvider;
     private final Map<String, NutsAuthenticationAgent> cache = new HashMap<>();
 
-    public WrapperNutsAuthenticationAgent(NutsWorkspace ws, Function<String, NutsAuthenticationAgent> agentProvider) {
-        this.id = "default";
+    public WrapperNutsAuthenticationAgent(NutsWorkspace ws, NutsEnvProvider envProvider, Function<String, NutsAuthenticationAgent> agentProvider) {
+        this.envProvider = envProvider;
         this.provider = agentProvider;
         this.ws = ws;
     }
 
-    public NutsAuthenticationAgent getCached(String name) {
+    public NutsAuthenticationAgent getCachedAuthenticationAgent(String name) {
         name = CoreStringUtils.trim(name);
         NutsAuthenticationAgent a = cache.get(name);
         if (a == null) {
@@ -33,24 +32,12 @@ public class WrapperNutsAuthenticationAgent implements NutsAuthenticationAgent {
         return a;
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
     public boolean removeCredentials(char[] credentialsId) {
-        return getCached(extractId(credentialsId)).removeCredentials(credentialsId);
+        return getCachedAuthenticationAgent(extractId(credentialsId)).removeCredentials(credentialsId, envProvider);
     }
 
-    @Override
-    public int getSupportLevel(String authenticationAgent) {
-        return DEFAULT_SUPPORT;
-    }
-
-    @Override
     public void checkCredentials(char[] credentialsId, char[] password) {
-        getCached(extractId(credentialsId)).checkCredentials(credentialsId, password);
+        getCachedAuthenticationAgent(extractId(credentialsId)).checkCredentials(credentialsId, password, envProvider);
     }
 
     protected String extractId(char[] a) {
@@ -62,17 +49,15 @@ public class WrapperNutsAuthenticationAgent implements NutsAuthenticationAgent {
         return b.substring(0, x);
     }
 
-    @Override
     public char[] getCredentials(char[] credentialsId) {
-        return getCached(extractId(credentialsId)).getCredentials(credentialsId);
+        return getCachedAuthenticationAgent(extractId(credentialsId)).getCredentials(credentialsId, envProvider);
     }
 
-    @Override
-    public char[] setCredentials(char[] credentials, boolean allowRetreive, char[] credentialId) {
+    public char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId) {
         if (credentialId != null) {
-            return getCached(extractId(credentialId)).setCredentials(credentials, allowRetreive, credentialId);
+            return getCachedAuthenticationAgent(extractId(credentialId)).createCredentials(credentials, allowRetreive, credentialId, envProvider);
         } else {
-            return getCached("").setCredentials(credentials, allowRetreive, credentialId);
+            return getCachedAuthenticationAgent("").createCredentials(credentials, allowRetreive, credentialId, envProvider);
         }
     }
 }

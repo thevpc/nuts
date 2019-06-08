@@ -15,10 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.io.SimpleNutsTerminalFormat;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -29,11 +29,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
     protected NutsWorkspace ws;
     private NutsSession session;
     private String name;
-    private NutsTerminalFormat metrics = SimpleNutsTerminalFormat.INSTANCE;
+    private NutsTerminalFormat terminalFormat;
 
     public DefaultFormatBase(NutsWorkspace ws,String name) {
         this.ws = ws;
         this.name = name;
+        this.terminalFormat = ws.io().getTerminalFormat();
     }
 
     public PrintWriter getValidPrintWriter(Writer out) {
@@ -177,22 +178,22 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
 
     @Override
     public T setTerminalFormat(NutsTerminalFormat metrics) {
-        this.metrics = metrics == null ? SimpleNutsTerminalFormat.INSTANCE : metrics;
+        this.terminalFormat = metrics == null ? SimpleNutsTerminalFormat.INSTANCE : metrics;
         return (T) this;
     }
 
     public NutsTerminalFormat getTerminalFormat() {
-        return metrics;
+        return terminalFormat;
     }
 
     @Override
-    public T configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws, args,name);
+    public T configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args,name);
     }
 
     @Override
-    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine,skipIgnored);
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
     }
 
     public abstract void print(Writer out);

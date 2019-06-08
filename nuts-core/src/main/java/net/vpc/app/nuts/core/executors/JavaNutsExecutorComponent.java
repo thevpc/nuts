@@ -38,10 +38,13 @@ import net.vpc.app.nuts.core.util.*;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.NutsExecutionContextImpl;
+import net.vpc.app.nuts.core.NutsURLClassLoader;
 
 /**
  * Created by vpc on 1/7/17.
@@ -69,111 +72,173 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public void exec(NutsExecutionContext executionContext) {
-        NutsDefinition nutsMainDef = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path contentFile = nutsMainDef.getPath();
-        NutsExecutionContextImpl impl=(NutsExecutionContextImpl)executionContext;
+        NutsDefinition def = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        final NutsWorkspace ws = executionContext.getWorkspace();
+        Path contentFile = def.getPath();
         JavaExecutorOptions joptions = new JavaExecutorOptions(
-                nutsMainDef, 
-                impl.isTemporary(),
+                def,
+                executionContext.isTemporary(),
                 executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
-                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
-                executionContext.getWorkspace(),
+                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(), ws,
                 executionContext.getSession());
+        switch (executionContext.getExecutionType()) {
+            case EMBEDDED: {
+                ClassLoader classLoader = null;
+                Throwable th = null;
+                try {
+                    classLoader = new NutsURLClassLoader(
+                            ws,
+                            joptions.getClassPath().toArray(new String[0]),
+                            ws.config().getBootClassLoader()
+                    );
+                    Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
+                    boolean isNutsApp = false;
+                    Method mainMethod = null;
+                    Object nutsApp = null;
+                    try {
+                        mainMethod = cls.getMethod("run", NutsWorkspace.class, String[].class);
+                        mainMethod.setAccessible(true);
+                        Class p = cls.getSuperclass();
+                        while (p != null) {
+                            if (p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
+                                isNutsApp = true;
+                                break;
+                            }
+                            p = p.getSuperclass();
+                        }
+                        if (isNutsApp) {
+                            isNutsApp = false;
+                            nutsApp = cls.getConstructor().newInstance();
+                            isNutsApp = true;
+                        }
+                    } catch (Exception rr) {
+                        //ignore
 
-        StringKeyValueList runnerProps = new StringKeyValueList();
-        if (executionContext.getExecutorDescriptor() != null) {
-            runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
-        }
-
-        if (executionContext.getEnv() != null) {
-            runnerProps.add((Map) executionContext.getEnv());
-        }
-
-        HashMap<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().config().getOptions()
-                .format().exported().compact().getBootCommandLine();
-        if (!CoreStringUtils.isBlank(bootArgumentsString)) {
-            osEnv.put("nuts_boot_args", bootArgumentsString);
-            joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
-        }
-        //nuts.export properties should be propagated!!
-        Properties sysProperties = System.getProperties();
-        for (Object k : sysProperties.keySet()) {
-            String sk = (String) k;
-            if (sk.startsWith("nuts.export.")) {
-                joptions.getJvmArgs().add("-D" + sk + "=" + sysProperties.getProperty(sk));
-            }
-        }
-        // fix infinite recusion
-        int maxDepth = Math.abs(CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
-        if (maxDepth > 512) {
-            maxDepth = 512;
-        }
-        int currentDepth = CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
-        currentDepth++;
-        if (currentDepth > maxDepth) {
-            System.err.println("############# Process Stack Overflow Error");
-            System.err.println("It is very likely that you executed an infinite process creation recusion in your program.");
-            System.err.println("At least " + currentDepth + " (>=" + maxDepth + ") prcosses were created.");
-            System.err.println("Are ou aware of such misconception ?");
-            System.err.println("Sorry but nee to end all of this disgracely...");
-            System.exit(233);
-        }
-
-        List<String> xargs = new ArrayList<>();
-        List<String> args = new ArrayList<>();
-
-        xargs.add(joptions.getJavaHome());
-        xargs.addAll(joptions.getJvmArgs());
-
-        args.add(joptions.getJavaHome());
-        args.addAll(joptions.getJvmArgs());
-
-        if (!CoreStringUtils.isBlank(bootArgumentsString)) {
-            String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
-            xargs.add(Dnuts_boot_args);
-            args.add(Dnuts_boot_args);
-        }
-        if (joptions.isJar()) {
-            xargs.add("-jar");
-            xargs.add(executionContext.getWorkspace().formatter().createIdFormat().toString(nutsMainDef.getId()));
-
-            args.add("-jar");
-            args.add(contentFile.toString());
-        } else {
-            xargs.add("--nuts-path");
-            xargs.add(CoreStringUtils.join(";", joptions.getNutsPath()));
-            xargs.add(joptions.getMainClass());
-
-            args.add("-classpath");
-            args.add(CoreStringUtils.join(File.pathSeparator, joptions.getClassPath()));
-            args.add(joptions.getMainClass());
-        }
-        xargs.addAll(joptions.getApp());
-        args.addAll(joptions.getApp());
-        if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
-            PrintStream out = executionContext.getTerminal().fout();
-            out.println("==[nuts-exec]== ");
-            for (int i = 0; i < xargs.size(); i++) {
-                String xarg = xargs.get(i);
-                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-                    for (String s : xarg.split(";")) {
-                        out.println("\t\t\t " + s);
                     }
-                } else {
-                    out.println("\t\t " + xarg);
+                    if (isNutsApp) {
+                        //NutsWorkspace
+                        mainMethod.invoke(nutsApp, new Object[]{ws, joptions.getApp().toArray(new String[0])});
+                    } else {
+                        //NutsWorkspace
+                        System.setProperty("nuts.boot.args", ws.config().options()
+                                .format().exported().compact().getBootCommandLine()
+                        );
+                        mainMethod = cls.getMethod("main", String[].class);
+                        List<String> nargs = new ArrayList<>();
+                        nargs.addAll(joptions.getApp());
+                        mainMethod.invoke(null, new Object[]{joptions.getApp().toArray(new String[0])});
+                    }
+                    return;
+                } catch (InvocationTargetException e) {
+                    th = e.getTargetException();
+                } catch (MalformedURLException | NoSuchMethodException | SecurityException
+                        | IllegalAccessException | IllegalArgumentException
+                        | ClassNotFoundException e) {
+                    th = e;
                 }
+                if (th != null) {
+                    throw new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                }
+                break;
+            }
+            case SPAWN: 
+            default:
+            {
+                StringKeyValueList runnerProps = new StringKeyValueList();
+                if (executionContext.getExecutorDescriptor() != null) {
+                    runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
+                }
+
+                if (executionContext.getEnv() != null) {
+                    runnerProps.add((Map) executionContext.getEnv());
+                }
+
+                HashMap<String, String> osEnv = new HashMap<>();
+                String bootArgumentsString = ws.config().options()
+                        .format().exported().compact().getBootCommandLine();
+                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
+                    osEnv.put("nuts_boot_args", bootArgumentsString);
+                    joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
+                }
+                //nuts.export properties should be propagated!!
+                Properties sysProperties = System.getProperties();
+                for (Object k : sysProperties.keySet()) {
+                    String sk = (String) k;
+                    if (sk.startsWith("nuts.export.")) {
+                        joptions.getJvmArgs().add("-D" + sk + "=" + sysProperties.getProperty(sk));
+                    }
+                }
+                // fix infinite recusion
+                int maxDepth = Math.abs(CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
+                if (maxDepth > 512) {
+                    maxDepth = 512;
+                }
+                int currentDepth = CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
+                currentDepth++;
+                if (currentDepth > maxDepth) {
+                    System.err.println("############# Process Stack Overflow Error");
+                    System.err.println("It is very likely that you executed an infinite process creation recusion in your program.");
+                    System.err.println("At least " + currentDepth + " (>=" + maxDepth + ") prcosses were created.");
+                    System.err.println("Are ou aware of such misconception ?");
+                    System.err.println("Sorry but nee to end all of this disgracely...");
+                    System.exit(233);
+                }
+
+                List<String> xargs = new ArrayList<>();
+                List<String> args = new ArrayList<>();
+
+                xargs.add(joptions.getJavaHome());
+                xargs.addAll(joptions.getJvmArgs());
+
+                args.add(joptions.getJavaHome());
+                args.addAll(joptions.getJvmArgs());
+
+                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
+                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
+                    xargs.add(Dnuts_boot_args);
+                    args.add(Dnuts_boot_args);
+                }
+                if (joptions.isJar()) {
+                    xargs.add("-jar");
+                    xargs.add(ws.format().id().toString(def.getId()));
+
+                    args.add("-jar");
+                    args.add(contentFile.toString());
+                } else {
+                    xargs.add("--nuts-path");
+                    xargs.add(CoreStringUtils.join(";", joptions.getNutsPath()));
+                    xargs.add(joptions.getMainClass());
+
+                    args.add("-classpath");
+                    args.add(CoreStringUtils.join(File.pathSeparator, joptions.getClassPath()));
+                    args.add(joptions.getMainClass());
+                }
+                xargs.addAll(joptions.getApp());
+                args.addAll(joptions.getApp());
+                if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
+                    PrintStream out = executionContext.getTerminal().fout();
+                    out.println("==[nuts-exec]== ");
+                    for (int i = 0; i < xargs.size(); i++) {
+                        String xarg = xargs.get(i);
+                        if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
+                            for (String s : xarg.split(";")) {
+                                out.println("\t\t\t " + s);
+                            }
+                        } else {
+                            out.println("\t\t " + xarg);
+                        }
+                    }
+                }
+
+                String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
+                CoreIOUtils.execAndWait(def, ws, executionContext.getSession(), executionContext.getExecutorProperties(),
+                        args.toArray(new String[0]),
+                        osEnv, directory,
+                        executionContext.getTerminal(), joptions.isShowCommand(), true
+                );
             }
         }
-
-        String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : executionContext.getWorkspace().io().expandPath(joptions.getDir());
-        CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
-                args.toArray(new String[0]),
-                osEnv, directory,
-                executionContext.getTerminal(), joptions.isShowCommand(), true
-        );
-
     }
 
 }

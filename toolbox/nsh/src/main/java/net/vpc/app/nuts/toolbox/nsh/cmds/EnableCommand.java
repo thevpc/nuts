@@ -36,14 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
-import net.vpc.common.javashell.JShellCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.common.javashell.JShellBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class EnableCommand extends SimpleNshCommand {
+public class EnableCommand extends SimpleNshBuiltin {
 
     public EnableCommand() {
         super("enable", DEFAULT_SUPPORT);
@@ -67,38 +67,38 @@ public class EnableCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getKey().getString().equals("--sort")) {
+            if (a.getStringKey().equals("--sort")) {
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isOption()) {
-            switch (a.getKey().getString()) {
+            switch (a.getStringKey()) {
                 case "-a": {
-                    options.a = commandLine.nextBoolean().getValue().getBoolean();
+                    options.a = commandLine.nextBoolean().getBooleanValue();
                     return true;
                 }
                 case "-d": {
-                    options.d = commandLine.nextBoolean().getValue().getBoolean();
+                    options.d = commandLine.nextBoolean().getBooleanValue();
                     return true;
                 }
                 case "-n": {
-                    options.n = commandLine.nextBoolean().getValue().getBoolean();
+                    options.n = commandLine.nextBoolean().getBooleanValue();
                     return true;
                 }
                 case "-p": {
-                    options.p = commandLine.nextBoolean().getValue().getBoolean();
+                    options.p = commandLine.nextBoolean().getBooleanValue();
                     return true;
                 }
                 case "-s": {
-                    options.s = commandLine.nextBoolean().getValue().getBoolean();
+                    options.s = commandLine.nextBoolean().getBooleanValue();
                     return true;
                 }
                 case "-f": {
-                    options.file = commandLine.nextString().getValue().getString();
+                    options.file = commandLine.nextString().getStringValue();
                     return true;
                 }
             }
@@ -110,18 +110,18 @@ public class EnableCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
-            for (JShellCommand command : context.getGlobalContext().builtins().getAll()) {
+            for (JShellBuiltin command : context.getGlobalContext().builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
-            context.setOutObject(context);
+            context.setPrintlnOutObject(context);
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
-                JShellCommand c = context.getGlobalContext().builtins().find(name);
+                JShellBuiltin c = context.getGlobalContext().builtins().find(name);
                 if (c == null) {
                     nobuiltin.add(name);
                 } else {

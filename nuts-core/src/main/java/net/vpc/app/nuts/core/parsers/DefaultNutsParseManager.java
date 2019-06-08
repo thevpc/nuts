@@ -26,30 +26,30 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsCommand parseCommandLine(String line) {
-        return parseCommand(NutsCommandLineUtils.parseCommandLine(ws,line));
+    public NutsCommandLine commandLine(String line) {
+        return command(NutsCommandLineUtils.parseCommandLine(ws,line));
     }
 
     @Override
-    public NutsCommand parseCommand(String... arguments) {
+    public NutsCommandLine command(String... arguments) {
         return new DefaultNutsCommand(ws, arguments);
     }
 
     @Override
-    public NutsCommand parseCommand(Collection<String> arguments) {
-        return parseCommand(arguments == null ? null : (String[]) arguments.toArray(new String[0]));
+    public NutsCommandLine command(Collection<String> arguments) {
+        return command(arguments == null ? null : (String[]) arguments.toArray(new String[0]));
     }
 
     @Override
-    public NutsId parseId(String id) {
+    public NutsId id(String id) {
         return CoreNutsUtils.parseNutsId(id);
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(URL url) {
+    public NutsDescriptor descriptor(URL url) {
         try {
             try {
-                return parseDescriptor(url.openStream(), true);
+                return descriptor(url.openStream(), true);
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
@@ -61,17 +61,17 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(byte[] bytes) {
-        return parseDescriptor(new ByteArrayInputStream(bytes), true);
+    public NutsDescriptor descriptor(byte[] bytes) {
+        return descriptor(new ByteArrayInputStream(bytes), true);
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(Path path) {
+    public NutsDescriptor descriptor(Path path) {
         if (!Files.exists(path)) {
             throw new NutsNotFoundException(ws,"at file " + path);
         }
         try {
-            return parseDescriptor(Files.newInputStream(path), true);
+            return descriptor(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -80,43 +80,43 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(File file) {
-        return parseDescriptor(file.toPath());
+    public NutsDescriptor descriptor(File file) {
+        return descriptor(file.toPath());
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(String str) {
+    public NutsDescriptor descriptor(String str) {
         if (CoreStringUtils.isBlank(str)) {
             return null;
         }
-        return parseDescriptor(new ByteArrayInputStream(str.getBytes()), true);
+        return descriptor(new ByteArrayInputStream(str.getBytes()), true);
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(InputStream in, boolean closeStream) {
+    public NutsDescriptor descriptor(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return ws.io().json().read(rr, NutsDescriptor.class);
+            return ws.format().json().read(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
 //    @Override
-//    public NutsDescriptor parseDescriptor(File file) {
+//    public NutsDescriptor descriptor(File file) {
 //        return CoreNutsUtils.parseNutsDescriptor(file);
 //    }
     @Override
-    public NutsDescriptor parseDescriptor(InputStream stream) {
-        return parseDescriptor(stream, false);
+    public NutsDescriptor descriptor(InputStream stream) {
+        return descriptor(stream, false);
     }
 
     @Override
-    public NutsDependency parseDependency(String dependency) {
+    public NutsDependency dependency(String dependency) {
         return CoreNutsUtils.parseNutsDependency(ws, dependency);
     }
 
     @Override
-    public NutsId parseRequiredId(String nutFormat) {
+    public NutsId requiredId(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
             throw new NutsParseException(ws,"Invalid Id format : " + nutFormat);
@@ -125,26 +125,26 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsVersionFilter parseVersionFilter(String versionFilter) {
+    public NutsVersionFilter versionFilter(String versionFilter) {
         return DefaultNutsVersionFilter.parse(versionFilter);
     }
 
     @Override
-    public NutsVersion parseVersion(String version) {
+    public NutsVersion version(String version) {
         return DefaultNutsVersion.valueOf(version);
     }
 
     @Override
-    public NutsExecutionEntry[] parseExecutionEntries(File file) {
-        return parseExecutionEntries(file.toPath());
+    public NutsExecutionEntry[] executionEntries(File file) {
+        return executionEntries(file.toPath());
     }
 
     @Override
-    public NutsExecutionEntry[] parseExecutionEntries(Path file) {
+    public NutsExecutionEntry[] executionEntries(Path file) {
         if (file.getFileName().toString().toLowerCase().endsWith(".jar")) {
             try {
                 try (InputStream in = Files.newInputStream(file)) {
-                    return parseExecutionEntries(in, "java", file.toAbsolutePath().normalize().toString());
+                    return executionEntries(in, "java", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -152,7 +152,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
         } else if (file.getFileName().toString().toLowerCase().endsWith(".class")) {
             try {
                 try (InputStream in = Files.newInputStream(file)) {
-                    return parseExecutionEntries(in, "class", file.toAbsolutePath().normalize().toString());
+                    return executionEntries(in, "class", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -163,7 +163,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
+    public NutsExecutionEntry[] executionEntries(InputStream inputStream, String type, String sourceName) {
         if ("java".equals(type)) {
             return CorePlatformUtils.parseJarExecutionEntries(inputStream, sourceName);
         } else if ("class".equals(type)) {

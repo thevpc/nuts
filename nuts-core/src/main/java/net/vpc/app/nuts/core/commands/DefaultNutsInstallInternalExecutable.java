@@ -25,7 +25,7 @@ public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        ws.install().session(getSession(true).trace()).configure(args).run();
+        ws.install().session(getSession(true).trace()).configure(false, args).run();
     }
     
 }

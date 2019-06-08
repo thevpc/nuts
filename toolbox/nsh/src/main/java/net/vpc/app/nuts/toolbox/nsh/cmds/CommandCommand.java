@@ -30,30 +30,68 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.util.Arrays;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.javashell.JShellCommand;
+import java.util.List;
+import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.common.javashell.JShellBuiltin;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CommandCommand extends AbstractNshBuiltin {
+public class CommandCommand extends SimpleNshBuiltin {
 
     public CommandCommand() {
         super("command", DEFAULT_SUPPORT);
     }
 
+    private static class Options {
+
+        boolean p;
+        String commandName;
+        List<String> args;
+    }
+
     @Override
-    public void exec(String[] args, NutsCommandContext context) {
-        if (args.length > 0) {
-            JShellCommand a = context.getGlobalContext().builtins().find(args[0]);
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = null;
+        //inverse configuration order
+        if (context.getExecutionContext().configureFirst(commandLine)) {
+            return true;
+        } else if ((a = commandLine.nextBoolean("-p")) != null) {
+            options.p = a.getBooleanValue();
+        } else if (!commandLine.peek().isOption()) {
+            if (options.commandName == null) {
+                options.commandName = commandLine.next().getString();
+            }
+            options.args.addAll(Arrays.asList(commandLine.toArray()));
+            commandLine.skipAll();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.commandName!=null) {
+            JShellBuiltin a = context.getGlobalContext().builtins().find(options.commandName);
             if (a != null) {
-                a.exec(Arrays.copyOfRange(args, 1, args.length), context);
+                a.exec(options.args.toArray(new String[0]), context.getExecutionContext());
             } else {
                 context.getWorkspace()
-                        .exec().command(Arrays.copyOfRange(args, 1, args.length))
+                        .exec()
+                        .command(options.commandName)
+                        .command(options.args)
                         .setDirectory(context.getGlobalContext().getCwd())
-                        .setEnv(context.vars().getExported())
+                        .setEnv(context.getExecutionContext().vars().getExported())
                         .run()
                         .failFast();
             }

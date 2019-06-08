@@ -29,29 +29,29 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
-import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.common.util.BytesSizeFormat;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class LsCommand extends AbstractNshBuiltin {
+public class LsCommand extends SimpleNshBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
+    private HashSet<String> fileTypeArchive = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "tar", "gz"));
+    private HashSet<String> fileTypeExec2 = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh"));
+    private HashSet<String> fileTypeConfig = new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr"));
 
     public LsCommand() {
         super("ls", DEFAULT_SUPPORT);
@@ -61,146 +61,301 @@ public class LsCommand extends AbstractNshBuiltin {
 
         boolean d = false;
         boolean l = false;
+        boolean h = false;
+        List<String> paths = new ArrayList<>();
+        BytesSizeFormat byteFormat = new BytesSizeFormat("ID1");
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        Options options = new Options();
-        List<File> folders = new ArrayList<>();
-        List<File> files = new ArrayList<>();
-        List<File> invalids = new ArrayList<>();
+    private static class ResultSuccess {
+
+        String workingDir;
+        List<ResultGroup> result = new ArrayList<>();
+    }
+
+    public static class ResultError {
+
+        boolean error = true;
+        String workingDir;
+        Map<String, String> result;
+    }
+
+    public static class ResultGroup {
+
+        String name;
+        ResultItem file;
+        List<ResultItem> children;
+    }
+
+    public static class ResultItem {
+
+        String path;
+        char type;
+        String uperms;
+        String jperms;
+        String owner;
+        String group;
+        long length;
+        Date modified;
+        Date created;
+        Date accessed;
+//        boolean dir;
+//        boolean regular;
+//        boolean link;
+//        boolean other;
+        boolean config;
+        boolean exec2;
+        boolean archive;
+        boolean hidden;
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if ((a = cmdLine.nextBoolean("-d", "--dir")) != null) {
-                options.d = a.getValue().getBoolean();
-            } else if ((a = cmdLine.nextBoolean("-l", "--list")) != null) {
-                options.l = a.getValue().getBoolean();
-            } else {
-                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
-                ;
-                if (file.isDirectory()) {
-                    folders.add(file);
-                } else if (file.exists()) {
-                    files.add(file);
-                } else {
-                    invalids.add(file);
-                }
-            }
+        if ((a = commandLine.nextBoolean("-d", "--dir")) != null) {
+            options.d = a.getBooleanValue();
+            return true;
+        } else if ((a = commandLine.nextBoolean("-l", "--list")) != null) {
+            options.l = a.getBooleanValue();
+            return true;
+        } else if ((a = commandLine.nextBoolean("-h")) != null) {
+            options.h = a.getBooleanValue();
+            return true;
+        } else if (commandLine.peek().isNonOption()) {
+            String path = commandLine.next(commandLine.createName("file")).getString();
+            options.paths.add(path);
+            options.paths.addAll(Arrays.asList(commandLine.toArray()));
+            commandLine.skip();
+            return true;
         }
-        if (cmdLine.isExecMode()) {
-            int exitCode = 0;
-            boolean first = true;
-            PrintStream out = context.out();
-            PrintStream err = context.err();
-            for (File f : invalids) {
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        ResultSuccess success = new ResultSuccess();
+        success.workingDir = context.getGlobalContext().getAbsolutePath(".");
+        ResultError errors = null;
+        int exitCode = 0;
+        if (options.paths.isEmpty()) {
+            options.paths.add(".");
+        }
+        for (String path : options.paths) {
+            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            if (!file.exists()) {
                 exitCode = 1;
-                err.printf("Invalid file %s%n", f.getPath());
-                ls(f, options, context, out, false);
-            }
-            for (File f : files) {
-                first = false;
-                ls(f, options, context, out, false);
-            }
-            for (File f : folders) {
-                if (first) {
-                    first = false;
+                if (errors == null) {
+                    errors = new ResultError();
+                    errors.workingDir = context.getGlobalContext().getAbsolutePath(".");
+                }
+                errors.result.put(path, "cannot access '" + file + "': No such file or directory");
+            } else {
+                ResultGroup g = new ResultGroup();
+                success.result.add(g);
+                g.name = path;
+                if (!file.isDirectory() || options.d) {
+                    g.file = build(file);
                 } else {
-                    out.println();
+                    File[] children = file.listFiles();
+                    if (children != null) {
+                        Arrays.sort(children, FILE_SORTER);
+                        g.children = new ArrayList<>();
+                        for (File ch : children) {
+                            g.children.add(build(ch));
+                        }
+                    }
                 }
-                ls(f, options, context, out, folders.size() > 0 || files.size() > 0);
             }
-            if (invalids.size() + files.size() + folders.size() == 0) {
-                ls(new File(context.getGlobalContext().getCwd()), options, context, out, false);
-            }
-            if (exitCode > 0) {
-                throw new NutsExecutionException(context.getWorkspace(), err.toString().trim(), exitCode);
-            }
+        }
+        context.setPrintlnOutObject(success);
+        context.setPrintlnErrObject(errors);
+        if (exitCode != 0) {
+            throw new NutsExecutionException(context.getWorkspace(), exitCode);
         }
     }
 
-    private void ls(File path, Options options, NutsCommandContext context, PrintStream out, boolean addPrefix) {
-        if (!path.exists()) {
-            throw new NutsIllegalArgumentException(context.getWorkspace(), "ls: cannot access '" + path.getPath() + "': No such file or directory");
-        } else if (path.isDirectory()) {
-            if (addPrefix) {
-                out.printf("%s:\n", path.getName());
-            }
-            File[] arr = path.listFiles();
-            if (arr != null) {
-                Arrays.sort(arr, FILE_SORTER);
-                for (File file1 : arr) {
-                    ls0(file1, options, out);
+    @Override
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        PrintStream out = context.out();
+        Options options = context.getOptions();
+        if (context.getResult() instanceof ResultSuccess) {
+            ResultSuccess s = context.getResult();
+            for (ResultGroup resultGroup : s.result) {
+                if (resultGroup.children != null) {
+                    if (s.result.size() > 1) {
+                        out.printf("%s:\n", resultGroup.name);
+                    }
+                    for (ResultItem resultItem : resultGroup.children) {
+                        printPlain(resultItem, options, out);
+                    }
+                } else {
+                    printPlain(resultGroup.file, options, out);
                 }
+            }
+        } else if (context.getResult() instanceof ResultError) {
+            ResultError s = context.getResult();
+            for (Map.Entry<String, String> e : s.result.entrySet()) {
+                out.printf("{{%s}} : @@%s@@%n", e.getKey(), e.getValue());
             }
         } else {
-            ls0(path, options, out);
+            super.printObjectPlain(context);
         }
     }
 
-    private void ls0(File path, Options options, PrintStream out) {
-        String name = path.getName();
+    private void printPlain(ResultItem item, Options options, PrintStream out) {
         if (options.l) {
-            out.print((path.isDirectory() ? "d" : path.isFile() ? "-" : "?"));
-            out.print((path.canRead() ? "r" : "-"));
-            out.print((path.canWrite() ? "w" : "-"));
-            out.print((path.canExecute() ? "x" : "-"));
+            out.print(item.type);
+            out.print(item.uperms != null ? item.uperms : item.jperms);
             out.print(" ");
-            String owner = null;
-            String group = null;
+            out.print(" ");
 
-            try {
-                owner = Files.getFileAttributeView(path.toPath(), FileOwnerAttributeView.class).getOwner().getName();
-            } catch (IOException ex) {
-                //
-                owner = "unknown";
+            out.printf("%s", item.owner);
+            out.print(" ");
+            out.printf("%s", item.group);
+            out.print(" ");
+            if (options.h) {
+                out.printf("%s", options.byteFormat.format(item.length));
+            } else {
+                out.printf("%s", String.format("%9d", item.length));
             }
-            try {
-                group = Files.readAttributes(path.toPath(), PosixFileAttributes.class).group().getName();
-            } catch (IOException ex) {
-                //
-                group = "unknown";
-            }
-            out.printf("%s", owner);
             out.print(" ");
-            out.printf("%s", group);
+            out.printf("%s", SIMPLE_DATE_FORMAT.format(item.modified));
             out.print(" ");
-            out.printf("%s", String.format("%9d", path.length()));
-            out.print(" ");
-            out.printf("%s", SIMPLE_DATE_FORMAT.format(path.lastModified()));
-            out.print(" ");
-            printPathName(path, name, out);
+        }
+        String name = new File(item.path).getName();
+        if (item.hidden) {
+            out.printf("<<%s>>\n", name);
+        } else if (item.type=='d') {
+            out.printf("==%s==\n", name);
+        } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
+            out.printf("[[%s]]\n", name);
+        } else if (item.config) {
+            out.printf("{{%s}}\n", name);
+        } else if (item.archive) {
+            out.printf("##%s##\n", name);
         } else {
-            printPathName(path, name, out);
+            out.printf("%s\n", name);
         }
     }
 
-    private void printPathName(File path, String name, PrintStream out) {
-        if (path.isDirectory()) {
-            out.printf("==%s==\n", name);
-        } else {
-            String p = path.getName().toLowerCase();
+    private ResultItem build(File path) {
+        ResultItem r = new ResultItem();
+        String name = path.getName();
+        r.path = path.getPath();
+        boolean dir = path.isDirectory();
+        boolean regular = path.isFile();
+        boolean link = false;
+        boolean other = false;
+        r.jperms = (path.canRead() ? "r" : "-") + (path.canWrite() ? "w" : "-") + (path.canExecute() ? "x" : "-");
+        r.modified = new Date(path.lastModified());
+        PosixFileAttributes uattr = null;
+        try {
+            uattr = Files.readAttributes(path.toPath(), PosixFileAttributes.class);
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                r.owner = uattr.owner().getName();
+            }
+        } catch (Exception ex) {
+            r.owner = "unknown";
+        }
+        try {
+            if (uattr != null) {
+                r.group = uattr.group().getName();
+            }
+        } catch (Exception ex) {
+            r.group = "unknown";
+        }
+        try {
+            if (uattr != null) {
+                r.created = new Date(uattr.creationTime().toMillis());
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                r.accessed = new Date(uattr.lastAccessTime().toMillis());
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                r.modified = new Date(uattr.lastModifiedTime().toMillis());
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                link = uattr.isSymbolicLink();
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                other = uattr.isOther();
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            if (uattr != null) {
+                Set<PosixFilePermission> permissions = uattr.permissions();
+                char[] perms = new char[9];
+                perms[0] = permissions.contains(PosixFilePermission.OWNER_READ) ? 'r' : '-';
+                perms[1] = permissions.contains(PosixFilePermission.OWNER_WRITE) ? 'w' : '-';
+                perms[2] = permissions.contains(PosixFilePermission.OWNER_EXECUTE) ? 'x' : '-';
+                perms[3] = permissions.contains(PosixFilePermission.GROUP_READ) ? 'r' : '-';
+                perms[4] = permissions.contains(PosixFilePermission.GROUP_WRITE) ? 'w' : '-';
+                perms[5] = permissions.contains(PosixFilePermission.GROUP_EXECUTE) ? 'x' : '-';
+                perms[6] = permissions.contains(PosixFilePermission.OTHERS_READ) ? 'r' : '-';
+                perms[7] = permissions.contains(PosixFilePermission.OTHERS_WRITE) ? 'w' : '-';
+                perms[8] = permissions.contains(PosixFilePermission.OTHERS_EXECUTE) ? 'x' : '-';
+                r.uperms = new String(perms);
+            }
+        } catch (Exception ex) {
+            //
+        }
+
+        r.length = path.length();
+
+        String p = path.getName().toLowerCase();
+        if (!dir) {
             if (p.startsWith(".") || p.endsWith(".log") || p.contains(".log.")) {
-                out.printf("<<%s>>\n", name);
+                r.hidden = true;
             } else {
                 int i = p.lastIndexOf('.');
                 if (i > -1) {
                     String suffix = p.substring(i + 1);
-                    if (new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr")).contains(suffix)) {
-                        out.printf("##%s##\n", name);
-                    } else if (new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh")).contains(suffix)
-                            || path.canExecute()) {
-                        out.printf("[[%s]]\n", name);
-                    } else {
-                        out.printf("%s\n", name);
+                    if (fileTypeConfig.contains(suffix)) {
+                        r.config = true;
                     }
-                } else {
-                    out.printf("%s\n", name);
+                    if (fileTypeArchive.contains(suffix)) {
+                        r.archive = true;
+                    }
+                    if (fileTypeExec2.contains(suffix)) {
+                        r.exec2 = true;
+                    }
                 }
             }
+        } else {
+            if (p.startsWith(".")) {
+                r.hidden = true;
+            }
         }
+        r.type = dir ? 'd' : regular ? '-' : link ? 'l' : other?'o':'?';
+        return r;
     }
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");

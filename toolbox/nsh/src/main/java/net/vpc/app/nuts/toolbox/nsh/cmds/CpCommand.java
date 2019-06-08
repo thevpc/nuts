@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.ssh.SShConnection;
@@ -54,12 +52,15 @@ import java.util.List;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class CpCommand extends AbstractNshBuiltin {
+public class CpCommand extends SimpleNshBuiltin {
 
     public CpCommand() {
         super("cp", DEFAULT_SUPPORT);
@@ -69,36 +70,49 @@ public class CpCommand extends AbstractNshBuiltin {
 
         boolean mkdir;
         ShellHelper.WsSshListener sshlistener;
+        List<String> files = new ArrayList<>();
+        List<XFile> xfiles = new ArrayList<>();
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        List<XFile> files = new ArrayList<>();
-        Options o = new Options();
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if ((a = cmdLine.nextBoolean("--mkdir")) != null) {
-                o.mkdir = a.getValue().getBoolean();
-            } else {
-                String value = cmdLine.requireNonOption().next().getString();
-                if (StringUtils.isBlank(value)) {
-                    throw new NutsExecutionException(context.getWorkspace(), "Empty File Path", 2);
-                }
-                files.add(XFile.of(value.contains("://") ? value : context.getWorkspace().io().expandPath(value)));
-            }
+        if ((a = commandLine.nextBoolean("--mkdir")) != null) {
+            options.mkdir = a.getBooleanValue();
+            return true;
+        } else if (commandLine.peek().isNonOption()) {
+            options.files.add(commandLine.next().getString());
+            return true;
         }
-        if (files.size() < 2) {
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        for (String value : options.files) {
+            if (StringUtils.isBlank(value)) {
+                throw new NutsExecutionException(context.getWorkspace(), "Empty File Path", 2);
+            }
+            options.xfiles.add(XFile.of(value.contains("://") ? value : context.getWorkspace().io().expandPath(value)));
+        }
+        if (options.xfiles.size() < 2) {
             throw new NutsExecutionException(context.getWorkspace(), "Missing parameters", 2);
         }
-        o.sshlistener = context.isVerbose() ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
-        for (int i = 0; i < files.size() - 1; i++) {
-            copy(files.get(i), files.get(files.size() - 1), o, context);
+
+        options.sshlistener = new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession());
+        for (int i = 0; i < options.xfiles.size() - 1; i++) {
+            copy(options.xfiles.get(i), options.xfiles.get(options.xfiles.size() - 1), options, context.getExecutionContext());
         }
     }
 
-    public void copy(XFile from, XFile to, Options o, NutsCommandContext context) {
+    public void copy(XFile from, XFile to, Options o, NshExecutionContext context) {
         if (from.getProtocol().equals("file") && to.getProtocol().equals("file")) {
             File from1 = ((JavaXFile) from).getFile();
             File to1 = ((JavaXFile) to).getFile();
@@ -115,7 +129,9 @@ public class CpCommand extends AbstractNshBuiltin {
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
-            context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+            if (context.getSession().isPlainTrace()) {
+                context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+            }
             try {
                 IOUtils.copy(from1, to1);
             } catch (IOException ex) {
@@ -151,7 +167,9 @@ public class CpCommand extends AbstractNshBuiltin {
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
-            context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+            if (context.getSession().isPlainTrace()) {
+                context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+            }
             try {
                 IOUtils.copy(from1, to1);
             } catch (IOException ex) {

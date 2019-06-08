@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 
 /**
  * Created by vpc on 1/6/17.
@@ -43,18 +43,18 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsDescriptor effectiveDescriptor;
     private NutsContent content;
     private NutsInstallInfo install;
-    private NutsRepository repository;
-    private NutsWorkspace ws;
+    private String repositoryUuid;
+    private String repositoryName;
     private NutsDependencyTreeNode[] dependencyTreeNodes;
     private NutsDependency[] dependenciesArray;
 
-    public DefaultNutsDefinition(NutsWorkspace ws, NutsRepository repo, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
         this.install = install;
-        this.ws = ws;
-        this.repository = repo;
+        this.repositoryUuid = repoUuid;
+        this.repositoryName = repoName;
     }
 
     public DefaultNutsDefinition(NutsDefinition other) {
@@ -63,10 +63,20 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.content = other.getContent();
             this.id = other.getId();
             this.install = other.getInstallation();
-            this.ws = other.getRepository() == null ? null : other.getRepository().getWorkspace();
-            this.repository = other.getRepository();
+            this.repositoryUuid = other.getRepositoryUuid();
+            this.repositoryName = other.getRepositoryName();
             this.effectiveDescriptor = other.getEffectiveDescriptor();
         }
+    }
+
+    @Override
+    public String getRepositoryUuid() {
+        return repositoryUuid;
+    }
+
+    @Override
+    public String getRepositoryName() {
+        return repositoryName;
     }
 
     public void setId(NutsId id) {
@@ -92,9 +102,9 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public String toString() {
-        return "NutsDefinition{"
+        return "Definition{"
                 + " id=" + id
-                + ", file=" + content
+                + ", content=" + content
                 + '}';
     }
 
@@ -122,9 +132,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
-        if (effectiveDescriptor == null) {
-            effectiveDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(getDescriptor(), null);
-        }
         return effectiveDescriptor;
     }
 
@@ -150,17 +157,33 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return o1.toString().compareTo(o2.toString());
     }
 
-    public void setEffectiveDescriptor(NutsDescriptor effectiveDescriptor) {
-        this.effectiveDescriptor = effectiveDescriptor;
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
     @Override
-    public NutsRepository getRepository() {
-        return repository;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNutsDefinition other = (DefaultNutsDefinition) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
-    public void setRepository(NutsRepository repository) {
-        this.repository = repository;
+    public void setEffectiveDescriptor(NutsDescriptor effectiveDescriptor) {
+        this.effectiveDescriptor = effectiveDescriptor;
     }
 
     public void setInstallation(NutsInstallInfo install) {

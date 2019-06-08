@@ -5,14 +5,15 @@ import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
 
 import java.util.*;
-import net.vpc.common.javashell.JShellCommand;
 import net.vpc.common.javashell.JShellException;
+import net.vpc.common.javashell.JShellBuiltin;
 
 public class Nsh extends NutsApplication {
 
     private static final HashSet<String> CONTEXTUAL_BUILTINS = new HashSet<>(Arrays.asList(
-            "showerr", "cd", "set", "unset", "declare-command", "undeclare-command",
-            "login", "logout", "help", "alias"
+            "showerr", "cd", "set", "unset", "enable",
+            "login", "logout", "help", "version","alias",
+            "unalias","exit"
     ));
 
     public static void main(String[] args) {
@@ -42,17 +43,18 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsCommand cmd = applicationContext.commandLine();
+        NutsCommandLine cmd = applicationContext.commandLine()
+                .setCommandName("nsh --nuts-exec-mode=install");
         NutsArgument a;
         boolean force = false;
         boolean trace = applicationContext.getSession().isTrace();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("-f", "--force")) != null) {
-                force = a.getValue().getBoolean();
+                force = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-t", "--trace")) != null) {
-                trace = a.getValue().getBoolean();
+                trace = a.getBooleanValue();
             } else {
-                cmd.setCommandName("nsh on-install").unexpectedArgument();
+                cmd.unexpectedArgument();
             }
         }
         String nshIdStr = applicationContext.getAppId().toString();
@@ -69,12 +71,12 @@ public class Nsh extends NutsApplication {
 //                        .setParameters(parameters)
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        JShellCommand[] commands = c.getGlobalContext().builtins().getAll();
+        JShellBuiltin[] commands = c.getGlobalContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = applicationContext.getSession().copy();
         sessionCopy.setTrace(false);
-        for (JShellCommand command : commands) {
+        for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.addCommandAlias(new NutsCommandAliasConfig()
@@ -95,10 +97,10 @@ public class Nsh extends NutsApplication {
         if (trace) {
             if (applicationContext.getSession().isPlainOut()) {
                 if (firstInstalled.size() > 0) {
-                    applicationContext.out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+                    applicationContext.session().out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
                 }
                 if (reinstalled.size() > 0) {
-                    applicationContext.out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+                    applicationContext.session().out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
                 }
             }
         }
@@ -126,7 +128,7 @@ public class Nsh extends NutsApplication {
                     cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        applicationContext.err().printf("Unable to uninstall ==%s== .\n", command.getName());
+                        applicationContext.session().err().printf("Unable to uninstall ==%s== .\n", command.getName());
                     }
                 }
             }

@@ -16,8 +16,8 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * @author vpc
@@ -25,7 +25,7 @@ import net.vpc.app.nuts.NutsArgument;
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("connect")!=null) {
             char[] password = null;
             String server = null;
@@ -33,10 +33,10 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
             while (cmdLine.hasNext()) {
                 if (context.configureFirst(cmdLine)) {
                     //
-                } else if (cmdLine.next("--password")!=null) {
-                    password = cmdLine.required().nextNonOption(cmdLine.createNonOption("Password")).required().getString().toCharArray();
+                } else if ((a=cmdLine.nextString("--password"))!=null) {
+                    password = a.getStringValue("").toCharArray();
                 } else {
-                    server = cmdLine.required().nextNonOption(cmdLine.createNonOption("ServerAddress")).required().getString();
+                    server = cmdLine.nextRequiredNonOption(cmdLine.createName("ServerAddress")).getString();
                     cmdLine.setCommandName("nadmin connect").unexpectedArgument();
                 }
             }
@@ -57,20 +57,20 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!StringUtils.isBlank(login) && isBlank(password)) {
-                password = context.getTerminal().readPassword("Password:");
+                password = context.session().getTerminal().readPassword("Password:");
             }
             Socket socket = null;
             try {
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.out());
+                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.session().out());
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!StringUtils.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, password);
                     }
                     while (true) {
-                        String line = context.getTerminal().readLine("");
+                        String line = context.session().getTerminal().readLine("");
                         if (line == null) {
                             break;
                         }

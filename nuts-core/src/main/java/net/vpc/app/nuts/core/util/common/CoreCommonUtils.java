@@ -45,7 +45,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
@@ -267,36 +266,7 @@ public class CoreCommonUtils {
 //        }
 //        return false;
 //    }
-    public static void putAllInProps(String prefix, Map<String, String> dest, Object value) {
-        if (!CoreStringUtils.isBlank(prefix)) {
-            if (value instanceof Map) {
-                for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {
-                    putAllInProps(prefix + "." + e.getKey(), dest, e.getValue());
-                }
-            } else if (value instanceof List) {
-                List<Object> li = (List<Object>) value;
-                for (int i = 0; i < li.size(); i++) {
-                    putAllInProps(prefix + "." + (i + 1), dest, li.get(i));
-                }
-            } else {
-                dest.put(prefix, String.valueOf(value));
-            }
-        } else {
-            if (value instanceof Map) {
-                for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {
-                    putAllInProps(String.valueOf(e.getKey()), dest, (Map) e.getValue());
-                }
-            } else if (value instanceof List) {
-                List<Object> li = (List<Object>) value;
-                for (int i = 0; i < li.size(); i++) {
-                    putAllInProps("" + (i + 1), dest, li.get(i));
-                }
-            } else {
-                dest.put("value", String.valueOf(value));
-            }
-        }
-
-    }
+    
 
     public static Boolean parseBoolean(String value, Boolean defaultValue) {
         if (value == null || value.trim().isEmpty()) {
@@ -343,7 +313,7 @@ public class CoreCommonUtils {
             return ws.io().getTerminalFormat().escapeText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o));
         }
         if (o instanceof NutsId) {
-            return ws.formatter().createIdFormat().toString((NutsId) o);
+            return ws.format().id().toString((NutsId) o);
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

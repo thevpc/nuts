@@ -29,7 +29,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
             showDefaultHelp();
             return;
         }
-        execCommand.copy().session(getSession(true)).clearCommand().configure(args).failFast().run();
+        execCommand.copy().session(getSession(true)).clearCommand().configure(false, args).failFast().run();
     }
     
 }

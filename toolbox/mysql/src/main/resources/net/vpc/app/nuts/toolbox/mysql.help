@@ -1,78 +1,72 @@
-mysql --local list <global-options> <list-options>
+@@SYNOPSIS:@@
+==mysql== [[\[--local \|--remote\]]] {{\<command\>}} {{\<global-options\>}} {{\<command-options\>}}
+manage local mysql database access configurations to help backup/restore data simply
 
-    list application config properties
+@@mysql --local@@
 
-    list options are :
-        --name      <VALUE>  : mysql config in the form database@config
-        --app       <VALUE>  : app config
-        --property  <VALUE>  : property expression
+==mysql== [[\[--local\]]] list
+    list all databases
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
-    if --property  is not armed, all properties are listed
+==mysql== [[\[--local\]]] list [--name] {{\<config-name\>}}
+    list all databases for the given config-name
 
-mysql --local add <global-options> <add-options>
 
-    add application config
+==mysql== [[\[--local\]]] add [--name] {{\<db\@config-name\>}} <command-options>
 
-    add options are :
-        --name      <VALUE>  : mysql config in the form database@config
-        --user      <VALUE>  : app user
-        --password  <VALUE>  : app password
+    add database config
+
+    config options are :
+        --startup-wait-time   <VALUE>  : startup  wait time
         --shutdown-wait-time  <VALUE>  : shutdown wait time
+        --archive-folder      <VALUE>  : archive folder
+        --running-folder      <VALUE>  : running folder
+        --log-file            <VALUE>  : log file path
+        --mysql-command       <VALUE>  : mysql command path
+        --mysqldump-command   <VALUE>  : mysqldump command path
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+    command options are :
+        --db            <VALUE>  : db name
+        --user          <VALUE>  : db user
+        --password      <VALUE>  : db password
+        --ask-password           : if present password is read from standard input
 
-mysql --local set <global-options> <set-options>
+==mysql== [[\[--local\]]] set [--name] {{\<db\@config-name\>}} <command-options>
 
-    update application config
+    update database config
 
-    set options are :
-        --name      <VALUE>  : mysql config in the form database@config
-        --app       <VALUE>  : app config
-        --user      <VALUE>  : app user
-        --password  <VALUE>  : app password
+    config options are :
+        --startup-wait-time   <VALUE>  : startup  wait time
         --shutdown-wait-time  <VALUE>  : shutdown wait time
+        --archive-folder      <VALUE>  : archive folder
+        --running-folder      <VALUE>  : running folder
+        --log-file            <VALUE>  : log file path
+        --mysql-command       <VALUE>  : mysql command path
+        --mysqldump-command   <VALUE>  : mysqldump command path
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+    command options are :
+        --db            <VALUE>  : database name
+        --user          <VALUE>  : app user
+        --password      <VALUE>  : app password
+        --ask-password           : if true password is read from standard input
 
-mysql --local remove <global-options> <remove-options>
 
-    remove application config
+==mysql== [[\[--local\]]] [--name] {{\<db\@config-name\>}}
 
-    add options are :
-        --name      <VALUE>  : mysql config in the form database@config
-        --app       <VALUE>  : app config
+    remove database config
 
-    if --name is not armed, default application is considered
-    if --name is in the form of
-
-mysql --local archive <global-options> <archive-options> <path>
-mysql --local archive <global-options> <name> <path>
+==mysql== [[\[--local\]]] archive [[--name] {{\<db\@config-name\>}}] [[--path] {{\<path\>}}]
 
     archive to db data file <path>
 
-    archive options are :
-        --name      <name>  : mysql config in the form database@config
-        --path      <path>  : archive path
-
-    if <name> is not present, default application is considered
-
-mysql --local restore <global-options> <restore-options> <path>
+==mysql== [[\[--local\]]] archive [[--name] {{\<db\@config-name\>}}] [[--path] {{\<path\>}}]
 
     restore db data file from <path>
 
-    add options are :
-        --name      <VALUE>  : mysql config in the form database@config
+@@mysql --remote@@
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+==mysql== [[--remote]] list <global-options> <list-options>
 
-mysql --remote list <global-options> <list-options>
-
-    list application config properties
+    list database config properties
 
     list options are :
         --name      <VALUE>  : mysql config instance
@@ -83,7 +77,7 @@ mysql --remote list <global-options> <list-options>
     if --app  is not armed, default application is considered
     if --property  is not armed, all properties are listed
 
-mysql --remote add <global-options> <add-options>
+==mysql== [[--remote]] add <global-options> <add-options>
 
     add application config
 
@@ -100,7 +94,7 @@ mysql --remote add <global-options> <add-options>
     if --name is not armed, default application is considered
     if --app  is not armed, default application is considered
 
-mysql --remote set <global-options> <set-options>
+==mysql== [[--remote]] set <global-options> <set-options>
 
     update application config
 
@@ -114,7 +108,7 @@ mysql --remote set <global-options> <set-options>
     if --name is not armed, default application is considered
     if --app  is not armed, default application is considered
 
-mysql --remote remove <global-options> <remove-options>
+==mysql== [[--remote]] remove <global-options> <remove-options>
 
     remove application config
 
@@ -125,7 +119,7 @@ mysql --remote remove <global-options> <remove-options>
     if --name is not armed, default application is considered
     if --app  is not armed, instance will removed
 
-mysql --remote push <global-options> <push-options> <path>
+==mysql== [[--remote]] push <global-options> <push-options> <path>
 
     push db to remote
 
@@ -136,7 +130,7 @@ mysql --remote push <global-options> <push-options> <path>
     if --name is not armed, default application is considered
     if --app  is not armed, default application is considered
 
-mysql --remote pull <global-options> <pull-options>
+==mysql== [[--remote]] pull <global-options> <pull-options>
 
     pull db from remote
 

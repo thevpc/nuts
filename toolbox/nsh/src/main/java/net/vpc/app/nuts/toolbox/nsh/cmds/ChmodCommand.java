@@ -3,48 +3,45 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
+import java.util.Map;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ChmodCommand extends AbstractNshBuiltin {
-
+public class ChmodCommand extends SimpleNshBuiltin {
 
     public ChmodCommand() {
         super("chmod", DEFAULT_SUPPORT);
@@ -66,7 +63,8 @@ public class ChmodCommand extends AbstractNshBuiltin {
         return true;
     }
 
-    public class Mods {
+    private static class Mods {
+
         int x = 0;
         int w = 0;
         int r = 0;
@@ -122,108 +120,121 @@ public class ChmodCommand extends AbstractNshBuiltin {
         }
     }
 
-    @Override
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
+    private static class Options {
+
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            a = cmdLine.peek();
-            String s = a.getString();
-            if (context.configureFirst(cmdLine)) {
-                //
-            }else if (s.startsWith("-")) {
-                if (s.equals("-R") || s.equals("--recursive")) {
-                    cmdLine.skip();
-                    m.recursive = true;
-                } else if (isRights(s.substring(1))) {
-                    cmdLine.skip();
-                    m.user = true;
-                    apply(s.substring(1), m, -1);
-                } else {
-                    cmdLine.unexpectedArgument();
-                }
-            } else if (s.startsWith("+")) {
-                if (isRights(s.substring(1))) {
-                    cmdLine.skip();
-                    m.user = true;
-                    apply(s.substring(1), m, 1);
-                } else {
-                    cmdLine.unexpectedArgument();
-                }
-            } else if (s.startsWith("u-")) {
-                if (isRights(s.substring(2))) {
-                    cmdLine.skip();
-                    m.user = true;
-                    apply(s.substring(2), m, -1);
-                } else {
-                    cmdLine.unexpectedArgument();
-                }
-            } else if (s.startsWith("a-")) {
-                if (isRights(s.substring(2))) {
-                    cmdLine.skip();
-                    m.user = false;
-                    apply(s.substring(2), m, -1);
-                } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"chmod: Unsupported option" + s,2);
-                }
-            } else if (s.startsWith("u+")) {
-                if (isRights(s.substring(2))) {
-                    cmdLine.skip();
-                    m.user = true;
-                    apply(s.substring(2), m, 1);
-                } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"chmod: Unsupported option" + s,2);
-                }
-            } else if (s.startsWith("a+")) {
-                if (isRights(s.substring(2))) {
-                    cmdLine.skip();
-                    m.user = false;
-                    apply(s.substring(2), m, 1);
-                } else {
-                    throw new NutsExecutionException(context.getWorkspace(),"chmod: Unsupported option" + s,2);
-                }
-            } else {
-                cmdLine.skip();
-                files.add(new File(context.getGlobalContext().getAbsolutePath(s)));
-            }
-        }
-        if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(),"chmod: Missing Expression",2);
-        }
-        PrintStream out = context.out();
-        for (File f : files) {
-            chmod(f, m, out);
-        }
     }
 
-    protected void chmod(File f, Mods m, PrintStream out) {
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        //invert processing order!
+        if (context.getExecutionContext().configureFirst(commandLine)) {
+            return true;
+        }
+        NutsArgument a = commandLine.peek();
+        String s = a.getString();
+        if (s.startsWith("-")) {
+            if (s.equals("-R") || s.equals("--recursive")) {
+                commandLine.skip();
+                options.m.recursive = true;
+                return true;
+            } else if (isRights(s.substring(1))) {
+                commandLine.skip();
+                options.m.user = true;
+                apply(s.substring(1), options.m, -1);
+                return true;
+            }
+        } else if (s.startsWith("+")) {
+            if (isRights(s.substring(1))) {
+                commandLine.skip();
+                options.m.user = true;
+                apply(s.substring(1), options.m, 1);
+                return true;
+            }
+        } else if (s.startsWith("u-")) {
+            if (isRights(s.substring(2))) {
+                commandLine.skip();
+                options.m.user = true;
+                apply(s.substring(2), options.m, -1);
+                return true;
+            }
+        } else if (s.startsWith("a-")) {
+            if (isRights(s.substring(2))) {
+                commandLine.skip();
+                options.m.user = false;
+                apply(s.substring(2), options.m, -1);
+                return true;
+            }
+        } else if (s.startsWith("u+")) {
+            if (isRights(s.substring(2))) {
+                commandLine.skip();
+                options.m.user = true;
+                apply(s.substring(2), options.m, 1);
+                return true;
+            }
+        } else if (s.startsWith("a+")) {
+            if (isRights(s.substring(2))) {
+                commandLine.skip();
+                options.m.user = false;
+                apply(s.substring(2), options.m, 1);
+                return true;
+            }
+        } else if (!a.isOption()) {
+            commandLine.skip();
+            options.files.add(new File(context.getGlobalContext().getAbsolutePath(s)));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.files.isEmpty()) {
+            commandLine.required();
+        }
+        LinkedHashMap<String, String> errors = new LinkedHashMap<>();
+        for (File f : options.files) {
+            chmod(f, options.m, errors);
+        }
+        if (errors.isEmpty()) {
+            errors = null;
+        }
+        context.setErrObject(errors);
+    }
+
+    private void chmod(File f, Mods m, Map<String, String> errors) {
         if (m.r == 0 && m.w == 0 && m.x == 0) {
             return;
         }
         if (m.r != 0) {
-            if (!f.canRead() &&
-                    !f.setReadable(m.r == 1, m.user)
-            ) {
-                out.printf("Unable to [[" + ((m.r == 1) ? "set" : "unset") + "]] skip  flag for ==%s==\n", f);
+            if (!f.canRead()
+                    && !f.setReadable(m.r == 1, m.user)) {
+                errors.put(f.getPath(), "Unable to [[" + ((m.r == 1) ? "set" : "unset") + "]] read  flag");
             }
         }
         if (m.w != 0) {
             if (!f.canWrite() && !f.setWritable(m.w == 1, m.user)) {
-                out.printf("Unable to [[" + ((m.w == 1) ? "set" : "unset") + "]] write flag for ==%s==\n", f);
+                errors.put(f.getPath(), "Unable to [[" + ((m.r == 1) ? "set" : "unset") + "]] write  flag");
             }
         }
         if (m.x != 0) {
             if (!f.canExecute() && !f.setExecutable(m.x == 1, m.user)) {
-                out.printf("Unable to [[" + ((m.x == 1) ? "set" : "unset") + "]] exec  flag for ==%s==\n", f);
+                errors.put(f.getPath(), "Unable to [[" + ((m.r == 1) ? "set" : "unset") + "]] exec  flag");
             }
         }
         if (f.isDirectory()) {
             File[] files = f.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    chmod(file, m, out);
+                    chmod(file, m, errors);
                 }
             }
         }

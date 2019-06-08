@@ -39,8 +39,8 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -58,9 +58,9 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         this.supportLevel = supportLevel;
     }
 
-    protected NutsCommand cmdLine(String[] args, NutsCommandContext context) {
-        return context.getWorkspace().parser()
-                .parseCommand(args)
+    protected NutsCommandLine cmdLine(String[] args, NshExecutionContext context) {
+        return context.getWorkspace().parse()
+                .command(args)
                 .autoComplete(context.getGlobalContext().getAutoComplete())
                 .commandName(getName());
     }
@@ -123,7 +123,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     @Override
-    public void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete) {
+    public void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete) {
         NutsCommandAutoComplete oldAutoComplete = context.getGlobalContext().getAutoComplete();
         context.getGlobalContext().setAutoComplete(autoComplete);
         try {
@@ -148,6 +148,6 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     @Override
-    public abstract void exec(String[] args, NutsCommandContext context);
+    public abstract void exec(String[] args, NshExecutionContext context);
 
 }

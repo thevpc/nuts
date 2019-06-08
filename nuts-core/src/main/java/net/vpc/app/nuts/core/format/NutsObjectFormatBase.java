@@ -8,22 +8,40 @@ package net.vpc.app.nuts.core.format;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
  * @author vpc
  */
-public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectFormat> implements NutsObjectFormat {
+public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectFormat> 
+        implements NutsObjectFormat {
+
+    private Object value;
 
     public NutsObjectFormatBase(NutsWorkspace ws, String name) {
-        super(ws,name);
+        super(ws, name);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand commandLine) {
+    public NutsObjectFormat value(Object value) {
+        return setValue(value);
+    }
+
+    @Override
+    public NutsObjectFormat setValue(Object value) {
+        this.value = value;
+        return this;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine commandLine) {
         return false;
     }
 

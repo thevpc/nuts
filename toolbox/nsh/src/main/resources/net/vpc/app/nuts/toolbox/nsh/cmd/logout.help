@@ -3,13 +3,13 @@ log out from current workspace
 @@SYNOPSIS:@@
 ##logout##
 
-logs out (to anonymous)
+log out (to anonymous)
 
 
 @@EXAMPLES:@@
 
 ##logout##
-   logs out to anonymous
+   log out to anonymous
 
 
 

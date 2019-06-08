@@ -38,5 +38,5 @@ import net.vpc.app.nuts.NutsSingleton;
 @NutsSingleton
 public interface NutsCommandAutoCompleteComponent extends NutsComponent<NshBuiltin> {
 
-    void autoComplete(NshBuiltin command, NutsCommandContext context);
+    void autoComplete(NshBuiltin command, NshExecutionContext context);
 }

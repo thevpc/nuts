@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
 
@@ -41,8 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -58,8 +58,8 @@ public class ZipCommand extends AbstractNshBuiltin {
         boolean r = false;
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
+    public void exec(String[] args, NshExecutionContext context) {
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
@@ -73,7 +73,7 @@ public class ZipCommand extends AbstractNshBuiltin {
             } else if (cmdLine.peek().isOption()) {
                 throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
             } else {
-                String path = cmdLine.required().nextNonOption(cmdLine.createNonOption("file")).getString();
+                String path = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
                 File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 if (outZip == null) {
                     outZip = file;

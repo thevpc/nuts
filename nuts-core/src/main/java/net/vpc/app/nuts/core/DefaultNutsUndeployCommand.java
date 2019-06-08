@@ -47,7 +47,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
 
     @Override
     public NutsUndeployCommand addId(String id) {
-        return addId(CoreStringUtils.isBlank(id) ? null : ws.parser().parseRequiredId(id));
+        return addId(CoreStringUtils.isBlank(id) ? null : ws.parse().requiredId(id));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.parser().parseRequiredId(s));
+                    ids.add(ws.parse().requiredId(s));
                 }
             }
         }
@@ -146,14 +146,17 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .duplicates(false)
                     .failFast()
                     .getResultDefinitions().required();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
-            p.getRepository().undeploy()
+            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), 
+                    repository1, 
+                    NutsFetchMode.LOCAL, fetchOptions);
+            repository1.undeploy()
                     .id(p.getId()).session(rsession)
                     .run();
             addResult(id);
         }
         if (getValidSession().isTrace()) {
-            ws.formatter().createObjectFormat(getValidSession(), result).println();
+            ws.format().object().session(getValidSession()).value(result).println();
         }
         return this;
     }
@@ -166,7 +169,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (getValidSession().isTrace()) {
             if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.formatter().createIdFormat().toString(id));
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().toString(id));
                 }
             }
         }
@@ -200,20 +203,20 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--offline": {
-                setOffline(cmdLine.nextBoolean().getValue().getBoolean());
+                setOffline(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                setRepository(cmdLine.nextString().getValue().getString());
+                setRepository(cmdLine.nextString().getStringValue());
                 break;
             }
 

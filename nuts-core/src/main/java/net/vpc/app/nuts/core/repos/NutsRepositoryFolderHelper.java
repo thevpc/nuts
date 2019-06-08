@@ -99,13 +99,13 @@ public class NutsRepositoryFolderHelper {
         if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
             goodFile = versionFolder.resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().parser().parseDescriptor(goodFile);
+                return getWorkspace().parse().descriptor(goodFile);
             }
         } else if (!CoreStringUtils.isBlank(alt)) {
             goodAlt = alt.trim();
             goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().parser().parseDescriptor(goodFile).setAlternative(goodAlt);
+                return getWorkspace().parse().descriptor(goodFile).setAlternative(goodAlt);
             }
         } else {
             //should test all files
@@ -135,7 +135,7 @@ public class NutsRepositoryFolderHelper {
             if (Files.exists(goodFile)) {
                 NutsDescriptor c = null;
                 try {
-                    c = getWorkspace().parser().parseDescriptor(goodFile).setAlternative("");
+                    c = getWorkspace().parse().descriptor(goodFile).setAlternative("");
                 } catch (Exception ex) {
                     //
                 }
@@ -154,7 +154,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (Files.exists(file)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().parser().parseDescriptor(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().parse().descriptor(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getQueryMap();
                 String os = query.get("os");
@@ -218,7 +218,7 @@ public class NutsRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return getWorkspace().parser().parseDescriptor(pathname);
+                return getWorkspace().parse().descriptor(pathname);
             }
         }, maxDepth);
     }
@@ -266,7 +266,7 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
         }
 
-        getWorkspace().formatter().createDescriptorFormat().print(deployment.getDescriptor(), descFile);
+        getWorkspace().format().descriptor().print(deployment.getDescriptor(), descFile);
         getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         getWorkspace().io().copy().from(deployment.getContent()).to(pckFile).safeCopy().run();
         getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();

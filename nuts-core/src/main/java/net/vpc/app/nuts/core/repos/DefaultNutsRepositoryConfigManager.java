@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryEvent;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -22,7 +24,6 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     private final int speed;
     private final String storeLocation;
     private NutsRepositoryConfig config;
-    private final Map<String, NutsRepositoryRef> configMirrorRefs = new LinkedHashMap<>();
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private boolean configurationChanged = false;
     private int deployOrder;
@@ -30,7 +31,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     private boolean enabled = true;
     private String globalName;
     private boolean supportedMirroring = false;
-    private final Map<String, NutsRepository> mirrors = new HashMap<>();
+    private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
     private String repositoryName;
     private String repositoryType;
 
@@ -52,6 +53,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             throw new NutsInvalidRepositoryException(repository.getWorkspace(), storeLocation, "Unable to resolve root as a valid folder " + storeLocation);
         }
 
+        this.repositoryRegistryHelper = new NutsRepositoryRegistryHelper(repository.getWorkspace());
         this.repository = repository;
         this.repositoryName = repositoryName;
         this.globalName = globalName;
@@ -190,8 +192,8 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 n = config.getConfigStoreLocation();
                 break;
             }
-            case LOGS: {
-                n = config.getLogsStoreLocation();
+            case LOG: {
+                n = config.getLogStoreLocation();
                 break;
             }
             case VAR: {
@@ -253,19 +255,21 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 configUsers.put(user.getUser(), user);
             }
         }
-        configMirrorRefs.clear();
+        removeAllMirrors();
         if (config.getMirrors() != null) {
-            for (NutsRepositoryRef repo : config.getMirrors()) {
-                configMirrorRefs.put(repo.getName(), repo);
+            for (NutsRepositoryRef ref : config.getMirrors()) {
+                NutsRepository r = repository.getWorkspace().config().createRepository(CoreNutsUtils.refToOptions(ref), getMirrorsRoot(), repository);
+                addMirror(ref, r);
             }
         }
-        for (NutsRepositoryRef ref : getMirrorRefs()) {
-            wireRepository(repository.getWorkspace().config().createRepository(
-                    CoreNutsUtils.refToOptions(ref).setCreate(true),
-                    getMirrorsRoot(), repository));
-        }
-
         fireConfigurationChanged();
+    }
+
+    protected void addMirror(NutsRepositoryRef ref, NutsRepository repo) {
+        repositoryRegistryHelper.addRepository(ref, repo);
+        if (repo != null) {
+            NutsRepositoryExt.of(repository).fireOnAddRepository(repo);
+        }
     }
 
     @Override
@@ -327,39 +331,28 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     }
 
 //    @Override
-    public NutsRepositoryConfigManager removeMirrorRef(String repositoryId) {
-        if (configMirrorRefs.remove(repositoryId) != null) {
-            fireConfigurationChanged();
-        }
-        return this;
-    }
-
+//    public NutsRepositoryConfigManager removeMirrorRef(String repositoryId) {
+//        if (configMirrorRefs.remove(repositoryId) != null) {
+//            fireConfigurationChanged();
+//        }
+//        return this;
+//    }
 //    @Override
-    public NutsRepositoryConfigManager addMirrorRef(NutsRepositoryRef c) {
-        String mirrorName = c.getName();
-        if (!CoreNutsUtils.isValidIdentifier(mirrorName)) {
-            throw new NutsInvalidRepositoryException(repository.getWorkspace(), mirrorName, "Invalid repository name : " + mirrorName);
-        }
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, CoreStringUtils.alignLeft(getName(), 20) + " add repo " + mirrorName);
-        }
-        if (configMirrorRefs.containsKey(c.getName())) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Mirror with same name already exists : " + c.getName());
-        }
-        configMirrorRefs.put(c.getName(), c);
-
-        fireConfigurationChanged();
-        return this;
-    }
-
+//    public NutsRepositoryConfigManager addMirrorRef(NutsRepositoryRef c) {
+//        repositoryRegistryHelper.addRepositoryRef(c);
+//        if (LOG.isLoggable(Level.FINEST)) {
+//            LOG.log(Level.FINEST, CoreStringUtils.alignLeft(getName(), 20) + " add repo " + c.getName());
+//        }
+//        fireConfigurationChanged();
+//        return this;
+//    }
 //    @Override
-    public NutsRepositoryRef getMirrorRef(String name) {
-        return configMirrorRefs.get(name);
-    }
-
-//    @Override
+//    public NutsRepositoryRef getMirrorRef(String name) {
+//        return configMirrorRefs.get(name);
+//    }
+    @Override
     public NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled) {
-        NutsRepositoryRef e = getMirrorRef(repoName);
+        NutsRepositoryRef e = repositoryRegistryHelper.findRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {
             e.setEnabled(enabled);
             fireConfigurationChanged();
@@ -367,11 +360,10 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         return this;
     }
 
-//    @Override
-    public NutsRepositoryRef[] getMirrorRefs() {
-        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
-    }
-
+////    @Override
+//    public NutsRepositoryRef[] getMirrorRefs() {
+//        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
+//    }
     @Override
     public boolean save(boolean force) {
         boolean ok = false;
@@ -387,9 +379,9 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
             }
-            config.setMirrors(configMirrorRefs.isEmpty() ? null : new ArrayList<>(configMirrorRefs.values()));
+            config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            repository.getWorkspace().io().json().write(config, file);
+            repository.getWorkspace().format().json().write(config, file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
@@ -401,9 +393,9 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             ok = true;
         }
         NutsException error = null;
-        for (NutsRepository repository : mirrors.values()) {
+        for (NutsRepository repo : getMirrors()) {
             try {
-                ok |= repository.config().save(force);
+                ok |= repo.config().save(force);
             } catch (NutsException ex) {
                 error = ex;
             }
@@ -496,59 +488,55 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         if (!isSupportedMirroring()) {
             throw new NutsUnsupportedOperationException(repository.getWorkspace());
         }
-        boolean updated = false;
-        NutsRepository repo = null;
-        try {
-            repo = getMirror(repositoryId);
-        } catch (NutsRepositoryNotFoundException ex) {
-            //ignore
-        }
-        if (repo != null) {
-            updated = true;
-        }
-        if (getMirrorRef(repositoryId) != null) {
-            updated = true;
-        }
-        if (!updated) {
-            throw new NutsRepositoryNotFoundException(repository.getWorkspace(),repositoryId);
-        }
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(getName(), 20), repositoryId});
-        }
-        removeMirrorRef(repositoryId);
-        if (repo != null) {
-            mirrors.remove(repositoryId);
-            NutsRepositoryExt.of(repository).fireOnRemoveRepository(repo);
+        repository.security().checkAllowed(NutsConstants.Rights.REMOVE_REPOSITORY, "remove-repository");
+        final NutsRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
+        if (r != null) {
+            NutsRepositoryExt.of(repository).fireOnRemoveRepository(r);
+        } else {
+            throw new NutsRepositoryNotFoundException(repository.getWorkspace(), repositoryId);
         }
         return this;
     }
 
     @Override
-    public boolean containsMirror(String repositoryIdPath) {
-        return mirrors.containsKey(repositoryIdPath);
+    public NutsRepository getMirror(String repositoryIdOrName) {
+        return getMirror(repositoryIdOrName, false);
     }
 
     @Override
-    public NutsRepository getMirror(String repositoryIdPath) {
-        NutsRepository r = mirrors.get(repositoryIdPath);
+    public NutsRepository getMirror(String repositoryIdPath, boolean transitive) {
+        NutsRepository r = findMirror(repositoryIdPath, transitive);
         if (r != null) {
             return r;
         }
-        throw new NutsRepositoryNotFoundException(repository.getWorkspace(),repositoryIdPath);
+        throw new NutsRepositoryNotFoundException(repository.getWorkspace(), repositoryIdPath);
     }
 
     @Override
-    public NutsRepository findMirror(String repositoryIdPath) {
-        NutsRepository r = mirrors.get(repositoryIdPath);
-        if (r != null) {
-            return r;
+    public NutsRepository findMirror(String repositoryNameOrId, boolean transitive) {
+        NutsRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
+        if (y != null) {
+            return y;
         }
-        return null;
+        if (transitive && isSupportedMirroring()) {
+            for (NutsRepository mirror : getMirrors()) {
+                NutsRepository m = mirror.config().findMirror(repositoryNameOrId, true);
+                if (m != null) {
+                    if (y == null) {
+                        y = m;
+                    } else {
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "Ambigous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                    }
+                }
+
+            }
+        }
+        return y;
     }
 
     @Override
     public NutsRepository[] getMirrors() {
-        return mirrors.values().toArray(new NutsRepository[0]);
+        return repositoryRegistryHelper.getRepositories();
     }
 
     @Override
@@ -561,30 +549,17 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         if (!isSupportedMirroring()) {
             throw new NutsUnsupportedOperationException(repository.getWorkspace());
         }
-        String mirrorName = options.getName();
-        NutsRepositoryRef repoConf = getMirrorRef(mirrorName);
-        if (repoConf != null) {
-            throw new NutsRepositoryAlreadyRegisteredException(repository.getWorkspace(),mirrorName);
+        if (options.isTemporary()) {
+            return null;
         }
-        if (!options.isTemporay()) {
-            addMirrorRef(CoreNutsUtils.optionsToRef(options));
-        }
-        return wireRepository(repository.getWorkspace().config().createRepository(options, getMirrorsRoot(), repository));
+        NutsRepositoryRef ref = CoreNutsUtils.optionsToRef(options);
+        NutsRepository repo = repository.getWorkspace().config().createRepository(options, getMirrorsRoot(), repository);
+        addMirror(ref, repo);
+        return repo;
     }
 
     public Path getMirrorsRoot() {
         return getStoreLocation().resolve(NutsConstants.Folders.REPOSITORIES);
-    }
-
-    protected NutsRepository wireRepository(NutsRepository repository) {
-        if (repository == null) {
-            return null;
-        }
-        //System.out.println(getName()+" -> "+repository.config().getName());
-        NutsWorkspaceUtils.validateRepositoryName(this.repository.getWorkspace(), repository.config().getName(), mirrors.keySet());
-        mirrors.put(repository.config().getName(), repository);
-        NutsRepositoryExt.of(repository).fireOnAddRepository(repository);
-        return repository;
     }
 
     @Override
@@ -598,7 +573,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             }
         }
         if (transitive) {
-            for (NutsRepository remote : mirrors.values()) {
+            for (NutsRepository remote : repositoryRegistryHelper.getRepositories()) {
                 int r = remote.config().getSupportLevel(supportedAction, id, mode, transitive);
                 if (r > 0) {
                     result += 1.0 / r;
@@ -619,4 +594,10 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         return config;
     }
 
+//    @Override
+    public void removeAllMirrors() {
+        for (NutsRepository repo : repositoryRegistryHelper.getRepositories()) {
+            removeMirror(repo.getUuid());
+        }
+    }
 }

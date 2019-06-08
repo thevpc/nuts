@@ -30,63 +30,74 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.io.IOException;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.ssh.SshXFile;
 import net.vpc.common.xfile.XFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class MkdirCommand extends AbstractNshBuiltin {
+public class MkdirCommand extends SimpleNshBuiltin {
 
     public MkdirCommand() {
         super("mkdir", DEFAULT_SUPPORT);
     }
 
     public static class Options {
+        List<String> files = new ArrayList<>();
+        List<XFile> xfiles = new ArrayList<>();
 
         boolean p;
-        boolean verbose;
     }
 
-    public void exec(String[] args, NutsCommandContext context) {
-        NutsCommand cmdLine = cmdLine(args, context);
-        List<XFile> files = new ArrayList<>();
-        Options o = new Options();
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (cmdLine.peek().isOption()) {
-                if (context.configureFirst(cmdLine)) {
-                    //
-                } else if ((a = cmdLine.nextBoolean("-p", "--parent")) != null) {
-                    o.p = a.getValue().getBoolean();
-                }
-            } else {
-                files.add(ShellHelper.xfileOf(cmdLine.next().getString(), context.getGlobalContext().getCwd()));
-            }
+        if ((a = commandLine.nextBoolean( "--parent","-p")) != null) {
+            options.p = a.getBooleanValue();
+            return true;
+        }else if(commandLine.peek().isNonOption()){
+            options.files.addAll(Arrays.asList(commandLine.toArray()));
+            commandLine.skipAll();
+            return true;
         }
-        if (files.size() < 1) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing parameters", 2);
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        options.xfiles=ShellHelper.xfilesOf(options.files, context.getCwd());
+        if (options.xfiles.size() < 1) {
+            commandLine.required();
         }
-        ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
-        for (XFile v : files) {
+        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession());
+        for (XFile v : options.xfiles) {
             if (v instanceof SshXFile) {
                 ((SshXFile) v).setListener(listener);
             }
             try {
-                v.mkdir(o.p);
+                v.mkdir(options.p);
             } catch (IOException ex) {
                 throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
             }

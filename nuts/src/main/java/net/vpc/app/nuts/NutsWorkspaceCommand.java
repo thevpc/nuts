@@ -77,7 +77,7 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * @return {@code this} instance
      */
     @Override
-    NutsWorkspaceCommand configure(String... args);
+    NutsWorkspaceCommand configure(boolean skipUnsupported, String... args);
 
     /**
      * execute the command and return this instance

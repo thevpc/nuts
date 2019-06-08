@@ -105,10 +105,10 @@ public class CoreIOUtils {
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
-        map.put("nuts.id", id.toString());
+        map.put("nuts.id", id.getLongName());
         map.put("nuts.id.version", id.getVersion().getValue());
         map.put("nuts.id.name", id.getName());
-        map.put("nuts.id.fullName", id.getSimpleName());
+        map.put("nuts.id.simpleName", id.getSimpleName());
         map.put("nuts.id.group", id.getGroup());
         map.put("nuts.file", nutMainFile.getPath().toString());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
@@ -168,7 +168,7 @@ public class CoreIOUtils {
         for (String arg : args) {
             String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.parser().parseCommandLine(s).toArray());
+                Collections.addAll(args2, workspace.parse().commandLine(s).toArray());
             } else {
                 args2.add(s);
             }
@@ -209,7 +209,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.parser().parseVersionFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.parse().versionFilter(requestedJavaVersion);
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace, workspace.createSession())) {
                 bestJava = current;
             }
@@ -257,13 +257,16 @@ public class CoreIOUtils {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
-        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
-            if (terminal.out() instanceof NutsFormattedPrintStream) {
+        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)
+                 || CoreCommonUtils.getSystemBoolean("nuts.show-command", false)
+                ) {
+            if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
                 terminal.out().print("==[exec]== ");
+                terminal.out().println(pb.getFormattedCommandString(ws));
             } else {
                 terminal.out().print("exec ");
+                terminal.out().printf("%s%n", pb.getCommandString());
             }
-            terminal.out().printf("%s%n", pb.getCommandString());
         }
         try {
             return pb.start().waitFor().getResult();
@@ -542,10 +545,6 @@ public class CoreIOUtils {
         return false;
     }
 
-    
-
-    
-
     public static String syspath(String s) {
         return s.replace('/', File.separatorChar);
     }
@@ -585,7 +584,7 @@ public class CoreIOUtils {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file)) {
             try {
-                conf = ws.io().json().read(file, NutsRepositoryConfig.class);
+                conf = ws.format().json().read(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!ws.config().isReadOnly()) {

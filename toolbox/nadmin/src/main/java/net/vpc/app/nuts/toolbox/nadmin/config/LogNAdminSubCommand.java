@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
@@ -13,6 +12,7 @@ import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -21,7 +21,7 @@ import net.vpc.app.nuts.NutsApplicationContext;
 public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("set loglevel", "sll")!=null) {
             NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest")!=null) {
@@ -70,7 +70,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("get loglevel")!=null) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                context.getTerminal().fout().printf("%s%n", rootLogger.getLevel().toString());
+                context.session().getTerminal().fout().printf("%s%n", rootLogger.getLevel().toString());
             }
         }
         return false;

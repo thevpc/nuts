@@ -31,7 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * an Authentication Agent is responsible of storing and retrieving credentials
- * in external repository (password manager, kwallet, keypass,
+ * in external repository (password manager, kwallet, keypads,
  * gnome-keyring...). And Id of the stored password is then saved as plain text
  * in nuts config file.
  *
@@ -48,9 +48,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      *
      * @param credentialsId credentialsId
      * @param password password
+     * @param envProvider environment provider, nullable
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password,NutsEnvProvider envProvider) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id. 
@@ -58,9 +59,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentialsId credentials-id
+     * @param envProvider environment provider, nullable
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId);
+    char[] getCredentials(char[] credentialsId,NutsEnvProvider envProvider);
 
     /**
      * remove existing credentials with the given id
@@ -68,9 +70,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentialsId credentials-id
+     * @param envProvider environment provider, nullable
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId);
+    boolean removeCredentials(char[] credentialsId,NutsEnvProvider envProvider);
 
     /**
      * store credentials in the agent's and return the credential id to store into
@@ -82,7 +85,8 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      * @param credentials credential
      * @param allowRetreive when true {@link #getCredentials(char[]) can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
+     * @param envProvider environment provider, nullable
      * @return credentials-id
      */
-    char[] setCredentials(char[] credentials, boolean allowRetreive, char[] credentialId);
+    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId,NutsEnvProvider envProvider);
 }

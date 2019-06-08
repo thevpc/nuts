@@ -48,7 +48,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
     private Subject subject;
     private UserPrincipal userPrincipal;
     private String login;
-    private static ThreadLocal<NutsWorkspace> workspace = new ThreadLocal<>();
+    private static final ThreadLocal<NutsWorkspace> WORKSPACE = new ThreadLocal<>();
 
     static {
         final Configuration configuration = Configuration.getConfiguration();
@@ -59,7 +59,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
     }
 
     public static void configure(NutsWorkspace workspace) {
-        NutsWorkspaceLoginModule.workspace.set(workspace);
+        NutsWorkspaceLoginModule.WORKSPACE.set(workspace);
         //do nothing
     }
 
@@ -90,7 +90,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             PasswordCallback callback = (PasswordCallback) callbacks[1];
             char[] password = callback == null ? null : callback.getPassword();
 
-            NutsWorkspace workspace = NutsWorkspaceLoginModule.workspace.get();
+            NutsWorkspace workspace = NutsWorkspaceLoginModule.WORKSPACE.get();
             if (workspace == null) {
                 throw new LoginException("Authentication failed : No Workspace");
             }
@@ -103,8 +103,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config()).getUser(name);
             if (registeredUser != null) {
                 try {
-                    workspace.security().getAuthenticationAgent()
-                            .checkCredentials(registeredUser.getCredentials().toCharArray(),
+                    workspace.security().checkCredentials(registeredUser.getCredentials().toCharArray(),
                                     password);
                     this.login = name;
                     return true;

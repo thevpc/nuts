@@ -34,7 +34,9 @@ import java.util.*;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
 //    public static void main(String[] args) {
 //        try {
@@ -163,7 +165,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws,"Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException(ws, "Already used Base IO Rediection");
         }
         this.in = in;
         return this;
@@ -323,17 +325,17 @@ public class ProcessBuilder2 {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getOutputString(),result);
+                        throw new NutsExecutionException(ws, "Execution Failed with code " + result + " and message : " + getOutputString(), result);
                     }
                 } else {
                     if (isGrabErrorString()) {
-                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getErrorString(),result);
+                        throw new NutsExecutionException(ws, "Execution Failed with code " + result + " and message : " + getErrorString(), result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(ws,"Execution Failed with code " + result + " and message : " + getOutputString(),result);
+                        throw new NutsExecutionException(ws, "Execution Failed with code " + result + " and message : " + getOutputString(), result);
                     }
                 }
-                throw new NutsExecutionException(ws,"Execution Failed with code " + result,result);
+                throw new NutsExecutionException(ws, "Execution Failed with code " + result, result);
             }
         }
     }
@@ -579,21 +581,23 @@ public class ProcessBuilder2 {
                 r = base.redirectOutput();
                 if (null == r.type()) {
                     sb.append(" > ").append("{?}");
-                } else switch (r.type()) {
-                //sb.append(" > ").append("{inherited}");
-                    case INHERIT:
-                        break;
-                    case PIPE:
-                        break;
-                    case WRITE:
-                        sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
-                        break;
-                    case APPEND:
-                        sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
-                        break;
-                    default:
-                        sb.append(" > ").append("{?}");
-                        break;
+                } else {
+                    switch (r.type()) {
+                        //sb.append(" > ").append("{inherited}");
+                        case INHERIT:
+                            break;
+                        case PIPE:
+                            break;
+                        case WRITE:
+                            sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        case APPEND:
+                            sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        default:
+                            sb.append(" > ").append("{?}");
+                            break;
+                    }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
@@ -604,21 +608,23 @@ public class ProcessBuilder2 {
                         r = base.redirectError();
                         if (null == r.type()) {
                             sb.append(" 2> ").append("{?}");
-                        } else switch (r.type()) {
-                        //sb.append(" 2> ").append("{inherited}");
-                            case INHERIT:
-                                break;
-                            case PIPE:
-                                break;
-                            case WRITE:
-                                sb.append(" 2> ").append(r.file().getPath());
-                                break;
-                            case APPEND:
-                                sb.append(" 2>> ").append(enforceDoubleQuote(r.file().getPath()));
-                                break;
-                            default:
-                                sb.append(" 2> ").append("{?}");
-                                break;
+                        } else {
+                            switch (r.type()) {
+                                //sb.append(" 2> ").append("{inherited}");
+                                case INHERIT:
+                                    break;
+                                case PIPE:
+                                    break;
+                                case WRITE:
+                                    sb.append(" 2> ").append(r.file().getPath());
+                                    break;
+                                case APPEND:
+                                    sb.append(" 2>> ").append(enforceDoubleQuote(r.file().getPath()));
+                                    break;
+                                default:
+                                    sb.append(" 2> ").append("{?}");
+                                    break;
+                            }
                         }
                     }
                 }
@@ -627,18 +633,20 @@ public class ProcessBuilder2 {
                 r = base.redirectInput();
                 if (null == r.type()) {
                     sb.append(" < ").append("{?}");
-                } else switch (r.type()) {
-                //sb.append(" < ").append("{inherited}");
-                    case INHERIT:
-                        break;
-                    case PIPE:
-                        break;
-                    case READ:
-                        sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
-                        break;
-                    default:
-                        sb.append(" < ").append("{?}");
-                        break;
+                } else {
+                    switch (r.type()) {
+                        //sb.append(" < ").append("{inherited}");
+                        case INHERIT:
+                            break;
+                        case PIPE:
+                            break;
+                        case READ:
+                            sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        default:
+                            sb.append(" < ").append("{?}");
+                            break;
+                    }
                 }
             }
         } else if (base.redirectErrorStream()) {
@@ -675,9 +683,216 @@ public class ProcessBuilder2 {
         return sb.toString();
     }
 
+    public String getFormattedCommandString(NutsWorkspace ws) {
+        return getFormattedCommandString(ws, null);
+    }
+
+    public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
+        NutsTerminalFormat tf = ws.io().terminalFormat();
+        StringBuilder sb = new StringBuilder();
+        File ff = getDirectory();
+        if (ff == null) {
+            ff = new File(".");
+        }
+        try {
+            ff = ff.getCanonicalFile();
+        } catch (Exception ex) {
+            ff = ff.getAbsoluteFile();
+        }
+        sb.append("pwd=@@").append(enforceDoubleQuote(ff.getPath(), ws)).append("@@");
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k == null) {
+                    k = "";
+                }
+                if (v == null) {
+                    v = "";
+                }
+                if (f != null) {
+                    if (!f.acceptEnvName(k, v)) {
+                        continue;
+                    }
+                    String k2 = f.replaceEnvName(k, v);
+                    if (k2 != null) {
+                        k = k2;
+                    }
+                    String v2 = f.replaceEnvValue(k, v);
+                    if (v2 != null) {
+                        v = v2;
+                    }
+                }
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append("==").append(enforceDoubleQuote(k, ws)).append("==").append("\\=").append(enforceDoubleQuote(v, ws));
+            }
+        }
+        boolean commandFirstTokenVisited = false;
+        for (int i = 0; i < command.size(); i++) {
+            String s = command.get(i);
+            if (f != null) {
+                if (!f.acceptArgument(i, s)) {
+                    continue;
+                }
+                String k2 = f.replaceArgument(i, s);
+                if (k2 != null) {
+                    s = k2;
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            if (!commandFirstTokenVisited) {
+                commandFirstTokenVisited = true;
+                sb.append("@@").append(enforceDoubleQuote(s, ws)).append("@@");
+            } else {
+                sb.append(formatArg(s, ws));
+            }
+        }
+        if (baseIO) {
+            ProcessBuilder.Redirect r;
+            if (f == null || f.acceptRedirectOutput()) {
+                r = base.redirectOutput();
+                if (null == r.type()) {
+                    sb.append("<<").append(tf.escapeText(" > ")).append(">>").append("{?}");
+                } else {
+                    switch (r.type()) {
+                        //sb.append(" > ").append("{inherited}");
+                        case INHERIT:
+                            break;
+                        case PIPE:
+                            break;
+                        case WRITE:
+                            sb.append("<<").append(tf.escapeText(" > ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        case APPEND:
+                            sb.append("<<").append(tf.escapeText(" >> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        default:
+                            sb.append("<<").append(tf.escapeText(" > ")).append(">>").append("{?}");
+                            break;
+                    }
+                }
+            }
+            if (f == null || f.acceptRedirectError()) {
+                if (base.redirectErrorStream()) {
+                    sb.append("<<").append(tf.escapeText(" 2>&1")).append(">>");
+                } else {
+                    if (f == null || f.acceptRedirectError()) {
+                        r = base.redirectError();
+                        if (null == r.type()) {
+                            sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append("{?}");
+                        } else {
+                            switch (r.type()) {
+                                //sb.append(" 2> ").append("{inherited}");
+                                case INHERIT:
+                                    break;
+                                case PIPE:
+                                    break;
+                                case WRITE:
+                                    sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                                    break;
+                                case APPEND:
+                                    sb.append("<<").append(tf.escapeText(" 2>> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                                    break;
+                                default:
+                                    sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append("{?}");
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (f == null || f.acceptRedirectInput()) {
+                r = base.redirectInput();
+                if (null == r.type()) {
+                    sb.append("<<").append(tf.escapeText(" < ")).append(">>").append("{?}");
+                } else {
+                    switch (r.type()) {
+                        //sb.append(" < ").append("{inherited}");
+                        case INHERIT:
+                            break;
+                        case PIPE:
+                            break;
+                        case READ:
+                            sb.append("<<").append(tf.escapeText(" < ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            break;
+                        default:
+                            sb.append("<<").append(tf.escapeText(" < ")).append(">>").append("{?}");
+                            break;
+                    }
+                }
+            }
+        } else if (base.redirectErrorStream()) {
+            if (out != null) {
+                if (f == null || f.acceptRedirectOutput()) {
+                    sb.append("<<").append(tf.escapeText(" > ")).append(">>").append("{stream}");
+                }
+                if (f == null || f.acceptRedirectError()) {
+                    sb.append("<<").append(tf.escapeText(" 2>&1")).append(">>");
+                }
+            }
+            if (in != null) {
+                if (f == null || f.acceptRedirectInput()) {
+                    sb.append("<<").append(tf.escapeText(" < ")).append(">>").append("{stream}");
+                }
+            }
+        } else {
+            if (out != null) {
+                if (f == null || f.acceptRedirectOutput()) {
+                    sb.append("<<").append(tf.escapeText(" > ")).append(">>").append("{stream}");
+                }
+            }
+            if (err != null) {
+                if (f == null || f.acceptRedirectError()) {
+                    sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append("{stream}");
+                }
+            }
+            if (in != null) {
+                if (f == null || f.acceptRedirectInput()) {
+                    sb.append("<<").append(tf.escapeText(" < ")).append(">>").append("{stream}");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String formatArg(String s, NutsWorkspace ws) {
+        DefaultNutsArgument a = new DefaultNutsArgument(s, '=');
+        StringBuilder sb = new StringBuilder();
+        if (a.isKeyValue()) {
+            if (a.isOption()) {
+                sb.append("{{").append(enforceDoubleQuote(a.getStringKey(), ws)).append("}}");
+                sb.append("\\=");
+                sb.append(enforceDoubleQuote(a.getStringValue(), ws));
+            } else {
+                sb.append("((").append(enforceDoubleQuote(a.getStringKey(), ws)).append("))");
+                sb.append("\\=");
+                sb.append(enforceDoubleQuote(a.getStringValue(), ws));
+            }
+        } else {
+            if (a.isOption()) {
+                sb.append("{{").append(enforceDoubleQuote(a.getString(), ws)).append("}}");
+            } else {
+                sb.append(enforceDoubleQuote(a.getString(), ws));
+            }
+        }
+        return sb.toString();
+    }
+
     private static String enforceDoubleQuote(String s) {
         if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
             s = "\"" + s.replace("\"", "\\\"") + "\"";
+        }
+        return s;
+    }
+
+    private static String enforceDoubleQuote(String s, NutsWorkspace ws) {
+        s = ws.io().terminalFormat().escapeText(s);
+        if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
+            s = "\"" + s + "\"";
         }
         return s;
     }

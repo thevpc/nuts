@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -39,17 +40,28 @@ import java.util.Map;
 public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider, NutsConfigurable {
 
     /**
-     * When true, operations are invited to print to output stream extra 
-     * information about processing. Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormat()}
+     * When true, operations are invited to print to output stream extra
+     * information about processing. Output may be in different formats
+     * according to {@link #getOutputFormat()} and
+     * {@link #getIncrementalOutputFormatHandler()}
      *
      * @return true if trace flag is armed
      */
     boolean isTrace();
 
     /**
-     * true if non incremental and plain formats along with trace flag are armed. 
-     * equivalent to {@code isTrace()
+     * When isTrace() is true and isVerbose() is true, operations are invited to
+     * print to output stream even more extra information about processing.
+     * Output may be in different formats according to
+     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormatHandler()}
+     *
+     * @return true if trace flag is armed
+     */
+    boolean isVerbose();
+
+    /**
+     * true if non incremental and plain formats along with trace flag are
+     * armed. equivalent to {@code isTrace()
      * && !isIncrementalOut()
      * && getOutputFormat() == NutsOutputFormat.PLAIN}
      *
@@ -58,8 +70,7 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     boolean isPlainTrace();
 
     /**
-     * true if incremental format and trace flag are armed. 
-     * equivalent to {@code isTrace()
+     * true if incremental format and trace flag are armed. equivalent to {@code isTrace()
      * && isIncrementalOut()}
      *
      * @return true plain non incremental format AND trace are armed
@@ -67,12 +78,13 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     boolean isIncrementalTrace();
 
     /**
-     * true if NON incremental and NON plain formats along with trace flag are armed. 
-     * equivalent to {@code isTrace()
+     * true if NON incremental and NON plain formats along with trace flag are
+     * armed. equivalent to {@code isTrace()
      * && !isIncrementalOut()
      * && getOutputFormat() == NutsOutputFormat.PLAIN}
      *
-     * @return true if NON incremental and NON plain formats along with trace flag are armed. 
+     * @return true if NON incremental and NON plain formats along with trace
+     * flag are armed.
      */
     boolean isStructuredTrace();
 
@@ -85,15 +97,14 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     boolean isIncrementalOut();
 
     /**
-     * true if NON incremental and NON plain formats are armed.
-     * equivalent to {@code !isIncrementalOut()
+     * true if NON incremental and NON plain formats are armed. equivalent to {@code !isIncrementalOut()
      * && getOutputFormat() != NutsOutputFormat.PLAIN}
      *
      * @return true if non incremental format AND structured outpt format are
      * armed.
      */
     boolean isStructuredOut();
-    
+
     /**
      * true if NON incremental and plain format are armed.
      *
@@ -103,45 +114,78 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     boolean isPlainOut();
 
     /**
-     * change trace flag value.
-     * When true, operations are invited to print to output stream information
-     * about processing. Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormat()}
+     * change trace flag value. When true, operations are invited to print to
+     * output stream information about processing. Output may be in different
+     * formats according to {@link #getOutputFormat()} and
+     * {@link #getIncrementalOutputFormatHandler()}
+     *
      * @param trace new value
      * @return {@code this} instance
      */
     NutsSession setTrace(boolean trace);
 
     /**
-     * equivalent to {@ setConfirm(true)}
+     * When isTrace() is true and verbose is true, operations are invited to
+     * print to output stream even more extra information about processing.
+     * Output may be in different formats according to
+     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormatHandler()}
+     *
+     * @param verbose verbose mode
+     * @return true if trace flag is armed
+     */
+    NutsSession setVerbose(boolean verbose);
+
+    /**
+     * equivalent to {
+     *
+     * @ setConfirm(true)}
      * @return {@code this} instance
      */
     NutsSession trace();
 
     /**
-     * equivalent to {@ setTrace(trace)}
+     * equivalent to {
+     *
+     * @ setTrace(trace)}
      * @param trace new value
      * @return {@code this} instance
      */
     NutsSession trace(boolean trace);
 
     /**
-     * true if force flag is armed.
-     * some operations may require user confirmation before performing critical 
-     * operations such as overriding existing values, deleting sensitive informations ; 
-     * in such cases, arming force flag will provide an implicit confirmation.
-     * 
+     * equivalent to {
+     *
+     * @ setConfirm(true)}
+     * @return {@code this} instance
+     */
+    NutsSession verbose();
+
+    /**
+     * equivalent to {
+     *
+     * @ setTrace(trace)}
+     * @param verbose new value
+     * @return {@code this} instance
+     */
+    NutsSession verbose(boolean verbose);
+
+    /**
+     * true if force flag is armed. some operations may require user
+     * confirmation before performing critical operations such as overriding
+     * existing values, deleting sensitive informations ; in such cases, arming
+     * force flag will provide an implicit confirmation.
+     *
      * @return true if force flag is armed.
      */
     boolean isForce();
 
     /**
-    /**
-     * change force flag value.
-     * some operations may require user confirmation before performing critical 
-     * operations such as overriding existing values, deleting sensitive informations ; 
-     * in such cases, arming force flag will provide an implicit confirmation.
-     * 
+     * /**
+     * change force flag value. some operations may require user confirmation
+     * before performing critical operations such as overriding existing values,
+     * deleting sensitive informations ; in such cases, arming force flag will
+     * provide an implicit confirmation.
+     *
      * @param enable if true force flag is armed
      * @return {@code this} instance
      */
@@ -149,12 +193,14 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     /**
      * equivalent to {@code setForce(true)}
+     *
      * @return {@code this} instance
      */
     NutsSession force();
 
     /**
      * equivalent to {@code setForce(force)}
+     *
      * @param force new value
      * @return {@code this} instance
      */
@@ -184,15 +230,15 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
      */
     NutsOutputFormat getOutputFormat();
 
-    NutsIncrementalOutputFormat getIncrementalOutputFormat();
-
-    NutsSession incrementalOutputFormat(NutsIncrementalOutputFormat customFormat);
-
-    NutsSession setIncrementalOutputFormat(NutsIncrementalOutputFormat customFormat);
-
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
     NutsSession setOutputFormat(NutsOutputFormat outputFormat);
+
+    NutsIncrementalFormatHandler getIncrementalOutputFormatHandler();
+
+    NutsSession incrementalOutputFormat(NutsIncrementalFormatHandler customFormat);
+
+    NutsSession setIncrementalOutputFormat(NutsIncrementalFormatHandler customFormat);
 
     NutsSession json();
 
@@ -226,14 +272,15 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     /**
      * return confirmation mode or {@link NutsConfirmationMode#CANCEL}
+     *
      * @return confirmation mode
      */
     NutsConfirmationMode getConfirm();
 
     /**
-     * 
+     *
      * @param confirm
-     * @return 
+     * @return
      */
     NutsSession confirm(NutsConfirmationMode confirm);
 
@@ -244,4 +291,59 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     NutsSession addOutputFormatOptions(String... options);
 
     String[] getOutputFormatOptions();
+
+    /**
+     * change terminal mode
+     *
+     * @param mode mode
+     */
+    void setTerminalMode(NutsTerminalMode mode);
+
+    /**
+     * current output stream
+     *
+     * @return current output stream
+     */
+    PrintStream out();
+
+    /**
+     * update output stream
+     *
+     * @param out new value
+     * @return {@code this} instance
+     */
+    NutsSession setOut(PrintStream out);
+
+    /**
+     * current error stream
+     *
+     * @return current error stream
+     */
+    PrintStream err();
+
+    /**
+     * update error stream
+     *
+     * @param err new value
+     * @return {@code this} instance
+     */
+    NutsSession setErr(PrintStream err);
+
+    /**
+     * terminal mode
+     *
+     * @return terminal mode
+     */
+    NutsTerminalMode getTerminalMode();
+
+    NutsSession printOutObject(Object anyObject);
+
+    NutsSession printErrObject(Object anyObject);
+
+    NutsSession printlnOutObject(Object anyObject);
+
+    NutsSession printlnErrObject(Object anyObject);
+
+    NutsIncrementalFormat getIncrementalOutput();
+
 }

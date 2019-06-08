@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * @author vpc
@@ -22,12 +22,12 @@ import net.vpc.app.nuts.NutsCommand;
 public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        PrintStream out = context.getTerminal().fout();
+        PrintStream out = context.session().getTerminal().fout();
         NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.next("add java")!=null) {
             if (cmdLine.next("--search")!=null) {
@@ -81,7 +81,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java")!=null) {
-            NutsTableFormat t = context.getWorkspace().formatter().createTableFormat()
+            NutsTableFormat t = context.getWorkspace().format().table()
 //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")

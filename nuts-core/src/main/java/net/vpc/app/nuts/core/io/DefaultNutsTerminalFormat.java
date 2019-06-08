@@ -5,14 +5,17 @@
  */
 package net.vpc.app.nuts.core.io;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Locale;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAware;
 import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAwarePrintStream;
 import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAwarePrintWriter;
+import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 
 /**
  *
@@ -70,4 +73,24 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
         }
         return new ExtendedFormatAwarePrintWriter(out);
     }
+
+    @Override
+    public boolean isFormatted(OutputStream out) {
+        if (out instanceof ExtendedFormatAware) {
+            return true;
+        }
+        if (out instanceof FormattedPrintStream) {
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean isFormatted(Writer out) {
+        if (out instanceof ExtendedFormatAware) {
+            return true;
+        }
+        return false;
+    }
+    
 }

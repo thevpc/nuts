@@ -9,13 +9,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 
 class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
-    private DefaultNutsWorkspaceConfigManager configManager;
+    private NutsWorkspaceConfigManager configManager;
+    private NutsWorkspaceConfigManagerExt configManagerExt;
 
-    public ConfigNutsWorkspaceCommandFactory(DefaultNutsWorkspaceConfigManager defaultNutsWorkspaceConfigManager) {
-        this.configManager = defaultNutsWorkspaceConfigManager;
+    public ConfigNutsWorkspaceCommandFactory(NutsWorkspaceConfigManager cnf) {
+        this.configManager = cnf;
+        this.configManagerExt = NutsWorkspaceConfigManagerExt.of(cnf);
     }
 
     @Override
@@ -50,14 +53,14 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public void installCommand(NutsCommandAliasConfig command) {
         Path file = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        configManager.getWorkspace().io().json().write(command, file);
+        configManagerExt.getWorkspace().format().json().write(command, file);
     }
 
     @Override
     public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = configManager.getWorkspace().io().json().read(file, NutsCommandAliasConfig.class);
+            NutsCommandAliasConfig c = configManagerExt.getWorkspace().format().json().read(file, NutsCommandAliasConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -92,7 +95,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
                     try {
-                        c = configManager.getWorkspace().io().json().read(file, NutsCommandAliasConfig.class);
+                        c = configManagerExt.getWorkspace().format().json().read(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
                         //
                     }

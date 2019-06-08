@@ -6,8 +6,8 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -16,12 +16,12 @@ import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list imports", "li")!=null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
-                    context.getTerminal().fout().printf("%s%n", imp);
+                    context.session().getTerminal().fout().printf("%s%n", imp);
                 }
             }
             return true;
@@ -34,7 +34,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.next("import", "ia")!=null) {
             do {
-                String a = cmdLine.required().nextNonOption(cmdLine.createNonOption("import")).getString();
+                String a = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().addImports(a);
                 }
@@ -45,7 +45,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.next("unimport", "ir")!=null) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.required().nextNonOption(cmdLine.createNonOption("import")).getString();
+                String ii = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().removeImports(ii);
                 }

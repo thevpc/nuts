@@ -27,7 +27,7 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        ws.search().session(getSession(true).trace()).configure(args).run();
+        ws.search().session(getSession(true).trace()).configure(false, args).run();
     }
     
 }

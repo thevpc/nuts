@@ -1,12 +1,12 @@
 package net.vpc.toolbox.tomcat;
 
 import net.vpc.app.nuts.NutsApplication;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.toolbox.tomcat.remote.RemoteTomcat;
 import net.vpc.toolbox.tomcat.local.LocalTomcat;
 
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 public class TomcatMain extends NutsApplication {
 
@@ -16,7 +16,7 @@ public class TomcatMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        NutsCommand cmdLine = appContext.commandLine();
+        NutsCommandLine cmdLine = appContext.commandLine();
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {

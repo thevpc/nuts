@@ -30,9 +30,9 @@
 package net.vpc.app.nuts.core.util;
 
 import java.util.Arrays;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConfigurable;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -40,12 +40,12 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class NutsConfigurableHelper {
 
-    public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, String[] cmdLine,String commandName) {
-        c.configure(ws.parser().parseCommand(cmdLine).setCommandName(commandName), false);
+    public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] cmdLine, String commandName) {
+        c.configure(skipUnsupported, ws.parse().command(cmdLine).setCommandName(commandName));
         return (T) c;
     }
 
-    public static boolean configure(NutsConfigurable c, NutsWorkspace ws, NutsCommand commandLine, boolean skipIgnored) {
+    public static boolean configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, NutsCommandLine commandLine) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
@@ -53,7 +53,7 @@ public class NutsConfigurableHelper {
             if (robustMode) {
                 String[] before = commandLine.toArray();
                 if (!c.configureFirst(commandLine)) {
-                    if (skipIgnored) {
+                    if (skipUnsupported) {
                         commandLine.skip();
                     } else {
                         commandLine.unexpectedArgument();
@@ -69,7 +69,7 @@ public class NutsConfigurableHelper {
                 }
             } else {
                 if (!c.configureFirst(commandLine)) {
-                    if (skipIgnored) {
+                    if (skipUnsupported) {
                         commandLine.skip();
                     } else {
                         commandLine.unexpectedArgument();

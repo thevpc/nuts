@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -33,7 +33,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommand cmdLine = ws.parser().parseCommand(args);
+        NutsCommandLine cmdLine = ws.parse().command(args);
         NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
         while (cmdLine.hasNext()) {
             NutsOutputFormat of = CoreNutsUtils.readOptionOutputFormat(cmdLine);
@@ -42,7 +42,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             }else{
                 NutsArgument a = cmdLine.peek();
                 if (a.isOption()) {
-                    switch (a.getKey().getString()) {
+                    switch (a.getStringKey()) {
                         default: {
                             throw new NutsIllegalArgumentException(ws, "Unsupported option " + a);
                         }

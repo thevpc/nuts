@@ -5,13 +5,10 @@
  */
 package net.vpc.app.nuts.core.format;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -73,55 +70,6 @@ public class ObjectOutputFormatWriterHelper {
         return res;
     }
 
-    public static String createElementName(String name) {
-        if(name==null){
-            name="";
-        }
-        name=name.trim();
-        if(name.isEmpty()){
-            name="node";
-        }
-        if(Character.isDigit(name.charAt(0))){
-            name="_"+name;
-        }
-        if(name.toLowerCase().startsWith("xml")){
-            name="_"+name;
-        }
-        char[] r=name.toCharArray();
-        for (int i = 0; i < r.length; i++) {
-            char c = r[i];
-            if(     Character.isDigit(c) 
-                    || Character.isLetter(c) 
-                    || c=='_'
-                    || c=='-'
-                    || c=='.'
-                            ){
-                //ok
-            }else{
-                r[i]='_';
-            }
-        }
-        return new String(r);
-    }
     
-    public static Element createElement(String name, Object o, Document document) {
-        // root element
-        Element root = document.createElement(createElementName(name));
-        if (o instanceof Map) {
-            Map<Object, Object> m = (Map) o;
-            for (Map.Entry<Object, Object> entry : m.entrySet()) {
-                root.appendChild(createElement(CoreCommonUtils.stringValue(entry.getKey()), entry.getValue(), document));
-            }
-        } else if (o instanceof Collection) {
-            Collection m = (Collection) o;
-            int index = 0;
-            for (Object entry : m) {
-                root.appendChild(createElement(CoreCommonUtils.stringValue(index), entry, document));
-                index++;
-            }
-        } else {
-            root.setTextContent(CoreCommonUtils.stringValue(o));
-        }
-        return root;
-    }
+    
 }

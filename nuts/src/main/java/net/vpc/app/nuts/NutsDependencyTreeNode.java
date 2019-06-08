@@ -36,8 +36,6 @@ package net.vpc.app.nuts;
  */
 public interface NutsDependencyTreeNode {
 
-    NutsDefinition getDefinition();
-    
     NutsDependency getDependency();
 
     NutsDependencyTreeNode[] getChildren();

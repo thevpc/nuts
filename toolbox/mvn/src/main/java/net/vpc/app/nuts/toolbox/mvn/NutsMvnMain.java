@@ -13,7 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 public class NutsMvnMain extends NutsApplication {
 //    public static void main(String[] args) {
@@ -37,14 +37,14 @@ public class NutsMvnMain extends NutsApplication {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        NutsCommand cmd = appContext.commandLine();
+        NutsCommandLine cmd = appContext.commandLine();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (command == null) {
                 if (appContext.configureFirst(cmd)) {
                     //fo nothing
                 } else if ((a = cmd.nextBoolean("-j", "--json")) != null) {
-                    o.json = a.getValue().getBoolean();
+                    o.json = a.getBooleanValue();
                 } else if ((a = cmd.next("build")) != null) {
                     command = "build";
                 } else if ((a = cmd.next("get")) != null) {

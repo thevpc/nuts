@@ -34,14 +34,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShellFunction;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class SetCommand extends SimpleNshCommand {
+public class SetCommand extends SimpleNshBuiltin {
 
     public SetCommand() {
         super("set", DEFAULT_SUPPORT);
@@ -58,12 +58,12 @@ public class SetCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
-                options.vars.put(a.getKey().getString(), a.getValue().getString());
+                options.vars.put(a.getStringKey(), a.getStringValue());
                 return true;
             }
         }
@@ -71,20 +71,20 @@ public class SetCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.vars.isEmpty()) {
             List<String> results = new ArrayList<>();
-            for (Map.Entry<Object, Object> entry : context.getCommandContext().vars().getAll().entrySet()) {
+            for (Map.Entry<Object, Object> entry : context.getExecutionContext().vars().getAll().entrySet()) {
                 results.add(entry.getKey() + "=" + entry.getValue());
             }
             for (JShellFunction function : context.getGlobalContext().functions().getAll()) {
                 results.add(function.getDefinition());
             }
-            context.setOutObject(results);
+            context.setPrintlnOutObject(results);
         } else {
             for (Map.Entry<String, String> entry : options.vars.entrySet()) {
-                context.getCommandContext().vars().set(entry.getKey(), entry.getValue());
+                context.getExecutionContext().vars().set(entry.getKey(), entry.getValue());
             }
         }
     }

@@ -31,15 +31,15 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class BaseNameCommand extends SimpleNshCommand {
+public class BaseNameCommand extends SimpleNshBuiltin {
 
     public BaseNameCommand() {
         super("basename", DEFAULT_SUPPORT);
@@ -59,10 +59,10 @@ public class BaseNameCommand extends SimpleNshCommand {
     }
     
     @Override
-    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -72,12 +72,12 @@ public class BaseNameCommand extends SimpleNshCommand {
             case "-a":
             case "--all":
             case "--multi": {
-                options.multi = cmdLine.nextBoolean().getValue().getBoolean();
+                options.multi = cmdLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "-s":
             case "--suffix": {
-                options.suffix = cmdLine.nextString().getValue().getString();
+                options.suffix = cmdLine.nextString().getStringValue();
                 options.multi = true;
                 return true;
             }
@@ -108,7 +108,7 @@ public class BaseNameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.names.isEmpty()) {
             commandLine.required();
@@ -134,7 +134,7 @@ public class BaseNameCommand extends SimpleNshCommand {
             }
             results.add(basename);
         }
-        context.setOutObject(results);
+        context.setPrintlnOutObject(results);
     }
 
     @Override

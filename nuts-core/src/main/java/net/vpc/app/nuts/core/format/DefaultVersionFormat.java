@@ -7,7 +7,7 @@ import net.vpc.app.nuts.*;
 
 import java.util.*;
 
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -26,23 +26,23 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--min": {
-                this.setMinimal(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setMinimal(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--compact": {
-                this.setCompact(cmdLine.nextBoolean().getValue().getBoolean());
+                this.setCompact(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--add": {
-                NutsArgument r = cmdLine.nextString().getValue();
-                extraProperties.put(r.getKey().getString(), r.getValue().getString());
+                NutsArgument r = cmdLine.nextString().getArgumentValue();
+                extraProperties.put(r.getStringKey(), r.getStringValue());
                 return true;
             }
             default: {
@@ -118,7 +118,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
             NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
             pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
         } else {
-            ws.formatter().createObjectFormat(getValidSession(), buildProps()).print(out);
+            ws.format().object().session(getValidSession()).value(buildProps()).print(out);
         }
     }
 

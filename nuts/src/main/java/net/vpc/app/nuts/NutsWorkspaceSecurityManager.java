@@ -38,15 +38,27 @@ import javax.security.auth.callback.CallbackHandler;
  */
 public interface NutsWorkspaceSecurityManager {
 
+    /**
+     * equivalent to {@link #getCurrentLogin()}.
+     * @return current login
+     */
+    String currentLogin();
+
     String getCurrentLogin();
+
+    /**
+     * equivalent to {@link #getCurrentLoginStack()}.
+     * @return current login
+     */
+    String[] currentLoginStack();
 
     String[] getCurrentLoginStack();
 
-    void login(String login, char[] password);
+    NutsWorkspaceSecurityManager login(String login, char[] password);
 
     String login(CallbackHandler handler);
 
-    void logout();
+    NutsWorkspaceSecurityManager logout();
 
     NutsAddUserCommand addUser(String name);
 
@@ -56,11 +68,11 @@ public interface NutsWorkspaceSecurityManager {
 
     NutsEffectiveUser[] findUsers();
 
-NutsEffectiveUser findUser(String username);
+    NutsEffectiveUser findUser(String username);
 
     boolean isAllowed(String right);
 
-    void checkAllowed(String right, String operationName);
+    NutsWorkspaceSecurityManager checkAllowed(String right, String operationName);
 
     boolean switchUnsecureMode(char[] adminPassword);
 
@@ -68,12 +80,54 @@ NutsEffectiveUser findUser(String username);
 
     boolean isAdmin();
 
-    void setAuthenticationAgent(String authenticationAgent);
+    NutsWorkspaceSecurityManager setAuthenticationAgent(String authenticationAgent);
 
     NutsAuthenticationAgent getAuthenticationAgent(String id);
 
-    NutsAuthenticationAgent getAuthenticationAgent();
-
     boolean isSecure();
+    
+    /**
+     * check if the given <code>password</code> is valid against the one stored
+     * by the Authentication Agent for  <code>credentialsId</code>
+     *
+     * @param credentialsId credentialsId
+     * @param password password
+     * @throws NutsSecurityException when check failed
+     */
+    void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
+
+    /**
+     * get the credentials for the given id. 
+     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
+     * AuthenticationAgent'd id and ':' character
+     *
+     * @param credentialsId credentials-id
+     * @return credentials
+     */
+    char[] getCredentials(char[] credentialsId);
+
+    /**
+     * remove existing credentials with the given id
+     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
+     * AuthenticationAgent'd id and ':' character
+     *
+     * @param credentialsId credentials-id
+     * @return credentials
+     */
+    boolean removeCredentials(char[] credentialsId);
+
+    /**
+     * store credentials in the agent's and return the credential id to store into
+     * the config. if credentialId is not null, the given credentialId will be
+     * updated and the credentialId is returned.
+     * The {@code credentialsId},if present or returned, <strong>MUST</strong> be prefixed with 
+     * AuthenticationAgent'd id and ':' character
+     *
+     * @param credentials credential
+     * @param allowRetreive when true {@link #getCredentials(char[]) can be invoked over {@code credentialId}
+     * @param credentialId preferred credentialId, if null, a new one is created
+     * @return credentials-id
+     */
+    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId);
 
 }

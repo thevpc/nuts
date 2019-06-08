@@ -32,23 +32,23 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
-import net.vpc.common.javashell.JShellCommand;
+import net.vpc.common.javashell.JShellBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public interface NshBuiltin extends NutsComponent<NutsJavaShell>, JShellCommand<NutsCommandContext> {
+public interface NshBuiltin extends NutsComponent<NutsJavaShell>, JShellBuiltin<NshExecutionContext> {
 
 //    String getName();
 
-//    int exec(String[] args, NutsCommandContext context) throws Exception;
+//    int exec(String[] args, NshExecutionContext context) throws Exception;
 
 //    String getHelp();
 
 //    String getHelpHeader();
 
-    default void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete){
+    default void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete){
         
     }
 }

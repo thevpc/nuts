@@ -50,9 +50,9 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().io().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().format().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().parse().id(s.get("stringId").toString()))
                     .collect(Collectors.toList());
         } catch (UncheckedIOException e) {
             setInaccessible();
@@ -69,9 +69,9 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().io().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().format().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().parse().id(s.get("stringId").toString()))
                     .filter(filter != null ? new Predicate<NutsId>() {
                         @Override
                         public boolean test(NutsId t) {

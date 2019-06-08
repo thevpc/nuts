@@ -189,7 +189,7 @@ Java         Version: ${java.version} (${java.vm.name})
         lib      : non executable binaries (libraries) folder
         config   : configuration/settings files folder
         var      : data files folder
-        logs     : log/trace files folder
+        log      : log/trace files folder
         temp     : temporary files folder
         cache    : cache folder
       
@@ -198,7 +198,7 @@ Java         Version: ${java.version} (${java.vm.name})
         lib      : $HOME/AppData/Roaming/nuts
         config   : $HOME/AppData/Roaming/nuts
         var      : $HOME/AppData/Roaming/nuts
-        logs     : $HOME/AppData/Roaming/nuts
+        log      : $HOME/AppData/Roaming/nuts
         temp     : $java.io.tmpdir/nuts
         cache    : $HOME/AppData/Local/nuts
 
@@ -207,7 +207,7 @@ Java         Version: ${java.version} (${java.vm.name})
         lib      : $HOME/.nuts
         config   : $HOME/.nuts
         var      : $HOME/.nuts
-        logs     : $HOME/.nuts
+        log      : $HOME/.nuts
         temp     : $java.io.tmpdir/$username/nuts
         cache    : $HOME/.cache/nuts
      
@@ -216,7 +216,7 @@ Java         Version: ${java.version} (${java.vm.name})
             [[--system-lib-home]] {{\<path\>}}
             [[--system-config-home]] {{\<path\>}}
             [[--system-var-home]] {{\<path\>}}
-            [[--system-logs-home]] {{\<path\>}}
+            [[--system-log-home]] {{\<path\>}}
             [[--system-temp-home]] {{\<path\>}}
             [[--system-cache-home]] {{\<path\>}}
 
@@ -224,7 +224,7 @@ Java         Version: ${java.version} (${java.vm.name})
             [[--windows-lib-home]] {{\<path\>}}
             [[--windows-config-home]] {{\<path\>}}
             [[--windows-var-home]] {{\<path\>}}
-            [[--windows-logs-home]] {{\<path\>}}
+            [[--windows-log-home]] {{\<path\>}}
             [[--windows-temp-home]] {{\<path\>}}
             [[--windows-cache-home]] {{\<path\>}}
 
@@ -232,7 +232,7 @@ Java         Version: ${java.version} (${java.vm.name})
             [[--linux-lib-home]] {{\<path\>}}
             [[--linux-config-home]] {{\<path\>}}
             [[--linux-var-home]] {{\<path\>}}
-            [[--linux-logs-home]] {{\<path\>}}
+            [[--linux-log-home]] {{\<path\>}}
             [[--linux-temp-home]] {{\<path\>}}
             [[--linux-cache-home]] {{\<path\>}}
 
@@ -254,7 +254,7 @@ Java         Version: ${java.version} (${java.vm.name})
             [[--lib-location]] {{\<path\>}}
             [[--config-location]] {{\<path\>}}
             [[--var-location]] {{\<path\>}}
-            [[--logs-location]] {{\<path\>}}
+            [[--log-location]] {{\<path\>}}
             [[--temp-location]] {{\<path\>}}
             [[--cache-location]] {{\<path\>}}
 
@@ -274,7 +274,7 @@ Java         Version: ${java.version} (${java.vm.name})
         lib      : $ProgramFiles/nuts
         config   : $ProgramFiles/nuts
         var      : $ProgramFiles/nuts
-        logs     : $ProgramFiles/nuts
+        log      : $ProgramFiles/nuts
         temp     : $TMP/nuts
         cache    : $ProgramFiles/nuts
       Linux Layout    :
@@ -282,7 +282,7 @@ Java         Version: ${java.version} (${java.vm.name})
         lib      : /opt/nuts/lib
         config   : /etc/opt/nuts
         var      : /var/opt/nuts
-        logs     : /var/log/nuts
+        log      : /var/log/nuts
         temp     : /tmp/nuts/global
         cache    : /var/cache/nuts
 

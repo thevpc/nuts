@@ -140,11 +140,12 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      * configure the current command with the given arguments.
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
-    NutsUpdateUserCommand configure(String... args);
+    NutsUpdateUserCommand configure(boolean skipUnsupported, String... args);
 
     /**
      * execute the command and return this instance

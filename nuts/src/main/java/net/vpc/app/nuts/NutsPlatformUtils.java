@@ -114,7 +114,7 @@ public class NutsPlatformUtils {
                 }
                 break;
             }
-            case LOGS: {
+            case LOG: {
                 switch (getPlatformOsFamily()) {
                     case LINUX:
                     case MACOS:
@@ -244,7 +244,7 @@ public class NutsPlatformUtils {
             return getPlatformOsHome(folderType);
         } else {
             switch (folderType) {
-                case LOGS:
+                case LOG:
                 case VAR:
                 case CONFIG:
                 case PROGRAMS:

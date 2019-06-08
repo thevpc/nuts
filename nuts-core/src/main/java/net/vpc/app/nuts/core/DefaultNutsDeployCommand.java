@@ -338,7 +338,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             throw new NutsIllegalArgumentException(ws, "Missing component to Deploy");
         }
         if (getValidSession().isTrace()) {
-            ws.formatter().createObjectFormat(getValidSession(), result).println();
+            ws.format().object().session(getValidSession()).value(result).println();
         }
         return this;
     }
@@ -384,7 +384,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                         NutsDescriptor descriptor2;
                         if (Files.exists(descFile)) {
-                            descriptor2 = ws.parser().parseDescriptor(descFile);
+                            descriptor2 = ws.parse().descriptor(descFile);
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
                                     CoreIOUtils.createInputSource(contentFile).multi(),
@@ -394,7 +394,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             descriptor = descriptor2;
                         } else {
                             if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                                ws.formatter().createDescriptorFormat().print(descriptor, descFile);
+                                ws.format().descriptor().print(descriptor, descFile);
                             }
                         }
                         if (descriptor != null) {
@@ -427,10 +427,10 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
                     NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(getValidSession()));
                     for (String os : descriptor.getOs()) {
-                        CorePlatformUtils.checkSupportedOs(ws.parser().parseRequiredId(os).getSimpleName());
+                        CorePlatformUtils.checkSupportedOs(ws.parse().requiredId(os).getSimpleName());
                     }
                     for (String arch : descriptor.getArch()) {
-                        CorePlatformUtils.checkSupportedArch(ws.parser().parseRequiredId(arch).getSimpleName());
+                        CorePlatformUtils.checkSupportedArch(ws.parse().requiredId(arch).getSimpleName());
                     }
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
@@ -449,8 +449,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             return this;
                         }
                     } else {
-
-                        NutsRepository repo = ws.config().getRepository(repository);
+                        NutsRepository repo = ws.config().getRepository(repository,true);
                         if (repo == null) {
                             throw new NutsRepositoryNotFoundException(ws, repository);
                         }
@@ -502,7 +501,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         result.add(nid);
         if (getValidSession().isPlainTrace()) {
-            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
+            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.format().id().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 
@@ -530,7 +529,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 }
             }
             try (InputStream is = inputStreamSource.open()) {
-                return ws.parser().parseDescriptor(is, true);
+                return ws.parse().descriptor(is, true);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -550,7 +549,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.parser().parseRequiredId(s));
+                    ids.add(ws.parse().requiredId(s));
                 }
             }
         }
@@ -608,14 +607,14 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
     @Override
     public NutsDeployCommand removeId(String id) {
-        ids.remove(ws.parser().parseId(id));
+        ids.remove(ws.parse().id(id));
         return this;
     }
 
     @Override
     public NutsDeployCommand addId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.parser().parseRequiredId(id));
+            ids.add(ws.parse().requiredId(id));
         }
         return this;
     }
@@ -626,53 +625,53 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "-o":
             case "--offline": {
-                setOffline(cmdLine.nextBoolean().getValue().getBoolean());
+                setOffline(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-d":
             case "--desc": {
-                setDescriptor(cmdLine.nextString().getValue().getString());
+                setDescriptor(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                from(cmdLine.nextString().getValue().getString());
+                from(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                to(cmdLine.nextString().getValue().getString());
+                to(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "--desc-sha1": {
-                this.setDescSha1(cmdLine.nextString().getValue().getString());
+                this.setDescSha1(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "--desc-sha1-file": {
                 try {
-                    this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getValue().getString()))));
+                    this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getStringValue()))));
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
                 return true;
             }
             case "--sha1": {
-                this.setSha1(cmdLine.nextString().getValue().getString());
+                this.setSha1(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "--sha1-file": {
                 try {
-                    this.setSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getValue().getString()))));
+                    this.setSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getStringValue()))));
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
@@ -712,7 +711,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             }
             if (c.descriptor == null && c.baseFile.isURL()) {
                 try {
-                    c.descriptor = ws.parser().parseDescriptor(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    c.descriptor = ws.parse().descriptor(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -721,7 +720,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.descriptor = ws.parser().parseDescriptor(ext);
+                        c.descriptor = ws.parse().descriptor(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }
@@ -740,7 +739,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
                     if (ext.exists()) {
-                        c.descriptor = ws.parser().parseDescriptor(ext);
+                        c.descriptor = ws.parse().descriptor(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }

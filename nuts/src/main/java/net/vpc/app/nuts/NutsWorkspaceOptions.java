@@ -75,6 +75,14 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private boolean skipInstallCompanions;
+    
+    /**
+     * if true, do not run welcome when no application arguments were resolved.
+     * defaults to false
+     * option-type : exported (inherited in child workspaces)
+     * @since 0.5.5
+     */
+    private boolean skipWelcome;
 
     /**
      * if true consider global/system repository
@@ -499,6 +507,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setSkipInstallCompanions(boolean skipInstallCompanions) {
         this.skipInstallCompanions = skipInstallCompanions;
+        return this;
+    }
+
+    public boolean isSkipWelcome() {
+        return skipWelcome;
+    }
+
+    public NutsWorkspaceOptions setSkipWelcome(boolean skipWelcome) {
+        this.skipWelcome = skipWelcome;
         return this;
     }
 

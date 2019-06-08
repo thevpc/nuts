@@ -48,7 +48,7 @@ public class NutsRepositoryConfig implements Serializable {
     private String configStoreLocation = null;
     private String varStoreLocation = null;
     private String libStoreLocation = null;
-    private String logsStoreLocation = null;
+    private String logStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -72,8 +72,7 @@ public class NutsRepositoryConfig implements Serializable {
         this.configStoreLocation = other.configStoreLocation;
         this.varStoreLocation = other.varStoreLocation;
         this.libStoreLocation = other.libStoreLocation;
-        this.logsStoreLocation = other.logsStoreLocation;
-        this.logsStoreLocation = other.logsStoreLocation;
+        this.logStoreLocation = other.logStoreLocation;
         this.tempStoreLocation = other.tempStoreLocation;
         this.cacheStoreLocation = other.cacheStoreLocation;
         this.storeLocationStrategy = other.storeLocationStrategy;
@@ -167,12 +166,12 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public String getLogsStoreLocation() {
-        return logsStoreLocation;
+    public String getLogStoreLocation() {
+        return logStoreLocation;
     }
 
-    public NutsRepositoryConfig setLogsStoreLocation(String logsStoreLocation) {
-        this.logsStoreLocation = logsStoreLocation;
+    public NutsRepositoryConfig setLogStoreLocation(String logStoreLocation) {
+        this.logStoreLocation = logStoreLocation;
         return this;
     }
 
@@ -268,7 +267,7 @@ public class NutsRepositoryConfig implements Serializable {
         hash = 59 * hash + Objects.hashCode(this.configStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.varStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.libStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.logsStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.logStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.tempStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.cacheStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.storeLocationStrategy);
@@ -320,7 +319,7 @@ public class NutsRepositoryConfig implements Serializable {
         if (!Objects.equals(this.libStoreLocation, other.libStoreLocation)) {
             return false;
         }
-        if (!Objects.equals(this.logsStoreLocation, other.logsStoreLocation)) {
+        if (!Objects.equals(this.logStoreLocation, other.logStoreLocation)) {
             return false;
         }
         if (!Objects.equals(this.tempStoreLocation, other.tempStoreLocation)) {
@@ -352,7 +351,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logsStoreLocation=" + logsStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
     

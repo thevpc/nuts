@@ -73,7 +73,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
-    public NutsArgument getKey() {
+    public NutsArgument getArgumentKey() {
         if (expression == null) {
             return this;
         }
@@ -114,7 +114,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
-    public NutsArgument getValue() {
+    public NutsArgument getArgumentValue() {
         if (expression == null) {
             return this;
         }
@@ -340,5 +340,25 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
             throw new IllegalArgumentException("Missing value");
         }
         return this;
+    }
+
+    @Override
+    public String getStringKey() {
+        return getArgumentKey().getString();
+    }
+
+    @Override
+    public String getStringValue() {
+        return getArgumentValue().getString();
+    }
+
+    @Override
+    public boolean getBooleanValue() {
+        return getArgumentValue().getBoolean();
+    }
+
+    @Override
+    public String getStringValue(String defaultValue) {
+        return getArgumentValue().getString(defaultValue);
     }
 }

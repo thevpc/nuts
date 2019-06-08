@@ -67,7 +67,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return this;
     }
 
-    public NutsWorkspace getWs() {
+    public NutsWorkspace getWorkspace() {
         return ws;
     }
 
@@ -132,7 +132,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .grabOutputString()
                         .run()
                         .getOutputString();
-                return ss;//ws.parser().escapeText(ss);
+                return ss;//ws.parse().escapeText(ss);
             } catch (Exception ex) {
                 //ignore
                 return "Failed to retrieve help for " + getName();

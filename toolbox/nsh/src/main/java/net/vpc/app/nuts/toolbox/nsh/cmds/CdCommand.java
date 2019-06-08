@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class CdCommand extends SimpleNshCommand {
+public class CdCommand extends SimpleNshBuiltin {
 
     public CdCommand() {
         super("cd", DEFAULT_SUPPORT);
@@ -52,7 +52,7 @@ public class CdCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (commandLine.peek().isNonOption()) {
             if (options.dirname == null) {
@@ -66,12 +66,12 @@ public class CdCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");
         }
         context.getGlobalContext().setCwd(options.dirname);
-        context.setOutObject("");
+        context.setPrintlnOutObject("");
     }
 }

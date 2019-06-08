@@ -164,6 +164,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--gui", null, options.isGui(), arguments);
             fillOption("--read-only", "-R", options.isReadOnly(), arguments);
             fillOption("--skip-install-companions", "-k", options.isSkipInstallCompanions(), arguments);
+            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments);
             fillOption(options.getConfirm(), arguments);
             fillOption(options.getOutputFormat(), arguments);
             for (String outputFormatOption : options.getOutputFormatOptions()) {

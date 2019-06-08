@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.NutsCommandLine;
 
 public class WorkspaceService {
 
@@ -28,7 +28,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().io().json().read(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().format().json().read(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -60,7 +60,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().io().json().write(c, configFile);
+        appContext.getWorkspace().format().json().write(c, configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -90,7 +90,7 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NutsCommand cmd, NutsApplicationContext context, boolean enable) {
+    public void enableScan(NutsCommandLine cmd, NutsApplicationContext context, boolean enable) {
         int count = 0;
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
@@ -109,9 +109,9 @@ public class WorkspaceService {
         }
     }
 
-    public void list(NutsCommand cmd, NutsApplicationContext appContext) {
+    public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
-        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat().addHeaderCells("Id", "Path", "Technos");
+        NutsTableFormat tf = appContext.getWorkspace().format().table().addHeaderCells("Id", "Path", "Technos");
         List<String> filters = new ArrayList<>();
         while (cmd.hasNext()) {
             if (appContext.configureFirst(cmd)) {
@@ -137,11 +137,11 @@ public class WorkspaceService {
                 }
             }
 
-            appContext.out().printf(tf.toString());
+            appContext.session().out().printf(tf.toString());
         }
     }
 
-    public void scan(NutsCommand cmdLine, NutsApplicationContext context) {
+    public void scan(NutsCommandLine cmdLine, NutsApplicationContext context) {
         boolean interactive = false;
         NutsArgument a;
         boolean run = false;
@@ -149,9 +149,9 @@ public class WorkspaceService {
             if (context.configureFirst(cmdLine)) {
                 //consumed
             } else if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
-                interactive = a.getValue().getBoolean();
+                interactive = a.getBooleanValue();
             } else {
-                String folder = cmdLine.nextNonOption(cmdLine.createNonOption("Folder")).getString();
+                String folder = cmdLine.nextNonOption(cmdLine.createName("Folder")).getString();
                 run = true;
                 if (cmdLine.isExecMode()) {
                     scan(new File(folder), interactive);
@@ -163,14 +163,14 @@ public class WorkspaceService {
         }
     }
 
-    public void check(NutsCommand cmd, NutsApplicationContext appContext) {
+    public void check(NutsCommandLine cmd, NutsApplicationContext appContext) {
         boolean progress = true;
         Boolean commitable = null;
         Boolean newP = null;
         Boolean uptodate = null;
         Boolean old = null;
         Boolean invalid = null;
-        NutsTableFormat tf = appContext.getWorkspace().formatter().createTableFormat()
+        NutsTableFormat tf = appContext.getWorkspace().format().table()
                 .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
         NutsArgument a;
@@ -256,10 +256,10 @@ public class WorkspaceService {
             if (progress) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
                 if (i > 0) {
-                    appContext.out().printf("`move-line-start`");
-                    appContext.out().printf("`move-up`");
+                    appContext.session().out().printf("`move-line-start`");
+                    appContext.session().out().printf("`move-up`");
                 }
-                appContext.out().printf("(%s / %s) %s\n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                appContext.session().out().printf("(%s / %s) %s\n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.loc = projectService.detectLocalVersion();
             d.rem = d.loc == null ? null : projectService.detectRemoteVersion();
@@ -271,7 +271,7 @@ public class WorkspaceService {
                 d.rem = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().parser().parseVersion(d.loc).compareTo(d.rem);
+                int t = appContext.getWorkspace().parse().version(d.loc).compareTo(d.rem);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -327,7 +327,7 @@ public class WorkspaceService {
             //"%s %s %s\n",projectService.getConfig().getId(),loc,rem
             tf.addRow(d.id, d.loc, d.rem, d.status);
         }
-        appContext.out().print(tf.toString());
+        appContext.session().out().print(tf.toString());
     }
 
     private boolean matches(String id, List<String> filters) {
@@ -388,11 +388,11 @@ public class WorkspaceService {
                     ProjectConfig p3 = projectService.getConfig();
                     if (p3.equals(p2)) {
                         //no updates!
-                        appContext.out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        appContext.session().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
                     } else if (!p2.getPath().equals(p3.getPath())) {
-                        appContext.out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + NOSCAN + "=true  :  ==%s== -- ==%s==\n", p2.getId(), p2.getPath(), p3.getPath());
+                        appContext.session().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + NOSCAN + "=true  :  ==%s== -- ==%s==\n", p2.getId(), p2.getPath(), p3.getPath());
                     } else {
-                        appContext.out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        appContext.session().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
 //                String repo = term.readLine("Enter Repository ==%s==: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
@@ -406,9 +406,9 @@ public class WorkspaceService {
                     }
                 } else {
 
-                    appContext.out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                    appContext.session().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
                     if (interactive) {
-                        String id = appContext.getTerminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
+                        String id = appContext.session().terminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }
@@ -481,16 +481,16 @@ public class WorkspaceService {
         return false;
     }
 
-    public int setWorkspaceConfigParam(NutsCommand cmd, NutsApplicationContext appContext) {
+    public int setWorkspaceConfigParam(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
         while (cmd.hasNext()) {
             if ((a = cmd.nextString("-r", "--repo")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
-                conf.getDefaultRepositoryAddress().setNutsRepository(a.getValue().getString());
+                conf.getDefaultRepositoryAddress().setNutsRepository(a.getStringValue());
                 setWorkspaceConfig(conf);
             } else if ((a = cmd.nextString("-w", "--workspace")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
-                conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getValue().getString());
+                conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue());
                 setWorkspaceConfig(conf);
             } else {
                 cmd.setCommandName("worky set").unexpectedArgument();

@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -46,9 +46,10 @@ public class NutsRepositoryDefinition {
     private boolean reference;
     private boolean failSafe;
     private boolean create;
+    private boolean temporary;
     private int order;
     private NutsStoreLocationStrategy storeLocationStrategy;
-    private int deployOrder=100;
+    private int deployOrder = 100;
 
     public NutsRepositoryDefinition() {
 
@@ -65,6 +66,15 @@ public class NutsRepositoryDefinition {
         this.deployOrder = o.deployOrder;
         this.storeLocationStrategy = o.storeLocationStrategy;
         this.order = o.order;
+        this.temporary = o.temporary;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
     }
 
     public int getOrder() {
@@ -156,7 +166,6 @@ public class NutsRepositoryDefinition {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
-    
 
     public NutsRepositoryDefinition copy() {
         return new NutsRepositoryDefinition(this);
@@ -167,5 +176,4 @@ public class NutsRepositoryDefinition {
         return "NutsRepositoryDefinition{" + "name=" + name + ", location=" + location + ", type=" + type + ", proxy=" + proxy + ", reference=" + reference + ", failSafe=" + failSafe + ", create=" + create + ", order=" + order + ", storeLocationStrategy=" + storeLocationStrategy + ", deployOrder=" + deployOrder + '}';
     }
 
-    
 }

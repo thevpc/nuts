@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core.executors;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
-import net.vpc.app.nuts.core.NutsExecutionContextImpl;
+import net.vpc.app.nuts.core.DefaultNutsExecutionContext;
 import net.vpc.app.nuts.core.util.*;
 
 import javax.tools.JavaCompiler;
@@ -86,7 +86,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = new NutsExecutionContextImpl(
+        NutsExecutionContext executionContext2 = new DefaultNutsExecutionContext(
                 d,
                 executionContext.getArguments(),
                 CoreCommonUtils.concatArrays(
@@ -106,6 +106,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 true,
                 //temporary
                 true, 
+                executionContext.getExecutionType(),
                 executionContext.getCommandName()
         );
         cc.exec(executionContext2);

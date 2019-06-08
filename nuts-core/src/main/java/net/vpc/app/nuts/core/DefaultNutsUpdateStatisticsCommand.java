@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUpdateStatisticsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -21,6 +20,7 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -138,12 +138,12 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     }
 
 @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
@@ -157,7 +157,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateStatisticsCommand run() {
         for (String repository : getRepositrories()) {
-            NutsRepository repo = ws.config().getRepository(repository);
+            NutsRepository repo = ws.config().getRepository(repository,true);
             repo.updateStatistics()
                     .session(
                             NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, null)
@@ -186,7 +186,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
             if (mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, ws, pp).reindexFolder();
                 if (getValidSession().isPlainTrace()) {
-                    getValidSession().getTerminal().out().printf("Updated maven index %s%n", getWs().config().getWorkspaceLocation(), pp);
+                    getValidSession().getTerminal().out().printf("Updated maven index %s%n", getWorkspace().config().getWorkspaceLocation(), pp);
                 }
             } else {
                 File[] nutsRepoRootFiles = pp.toFile().listFiles(x
@@ -198,7 +198,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
                     throw new NutsIllegalArgumentException(ws, "Unsupported repository Folder");
                 }
                 if (getValidSession().isPlainTrace()) {
-                    getValidSession().getTerminal().out().printf("Updated nuts index %s%n", getWs().config().getWorkspaceLocation(), pp);
+                    getValidSession().getTerminal().out().printf("Updated nuts index %s%n", getWorkspace().config().getWorkspaceLocation(), pp);
                 }
             }
         }

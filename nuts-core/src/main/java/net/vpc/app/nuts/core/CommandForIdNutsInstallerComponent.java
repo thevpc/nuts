@@ -53,9 +53,9 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-install", "--force")
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=install", "--force")
                     .addExecutorOptions("-Dnuts.export.debug").addCommand(executionContext.getArguments())
-                    .setExecutionType(executionContext.getWorkspace().config().getOptions().getExecutionType())
+                    .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
                     .failFast()
                     .run();
         }
@@ -68,7 +68,7 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-update", "--force")
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .failFast().run();
         }
@@ -79,11 +79,11 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parser().parseExecutionEntries(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parse().executionEntries(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=on-uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
+                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
                     executionContext.getWorkspace().io().getTerminal().fout().printf("Installation Exited with code : " + r + " %n");
                 }
             }

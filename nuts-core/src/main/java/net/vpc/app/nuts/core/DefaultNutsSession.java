@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.io.PrintStream;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsPropertiesHolder;
 import net.vpc.app.nuts.*;
@@ -36,6 +37,8 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import net.vpc.app.nuts.core.format.CustomNutsIncrementalOutputFormat;
+import net.vpc.app.nuts.core.format.DefaultNutsIncrementalOutputFormat;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -47,11 +50,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private List<NutsListener> listeners = new ArrayList<>();
     private boolean trace = false;
+    private boolean verbose = false;
     private NutsConfirmationMode confirm = null;
     private NutsOutputFormat outputFormat;
-    protected NutsIncrementalOutputFormat incrementalOutputFormat = null;
+    protected NutsIncrementalFormatHandler incrementalOutputFormatHandler = null;
+    protected NutsIncrementalFormat incrementalOutputFormat = null;
     protected NutsWorkspace ws = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
+    private PrintStream out;
+    private PrintStream err;
+    private PrintStream out0;
+    private PrintStream err0;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
@@ -141,27 +150,48 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsSessionTerminal terminal() {
+        return getTerminal();
+    }
+
+    @Override
     public NutsSession setTerminal(NutsSessionTerminal terminal) {
         this.terminal = terminal;
+        this.out0 = (terminal.fout());
+        this.err0 = (terminal.ferr());
+        this.out = out0;
+        this.err = err0;
         return this;
     }
 
     @Override
-    public NutsIncrementalOutputFormat getIncrementalOutputFormat() {
+    public NutsIncrementalFormatHandler getIncrementalOutputFormatHandler() {
+        return incrementalOutputFormatHandler;
+    }
+    
+    @Override
+    public NutsIncrementalFormat getIncrementalOutput() {
+        if(incrementalOutputFormatHandler==null){
+            return null;
+        }
+        if(incrementalOutputFormat==null){
+            incrementalOutputFormat=new CustomNutsIncrementalOutputFormat(ws,incrementalOutputFormatHandler);
+            incrementalOutputFormat.session(this);
+        }
         return incrementalOutputFormat;
     }
 
     @Override
-    public NutsSession incrementalOutputFormat(NutsIncrementalOutputFormat traceFormat) {
+    public NutsSession incrementalOutputFormat(NutsIncrementalFormatHandler traceFormat) {
         return setIncrementalOutputFormat(traceFormat);
     }
 
     @Override
-    public NutsSession setIncrementalOutputFormat(NutsIncrementalOutputFormat f) {
+    public NutsSession setIncrementalOutputFormat(NutsIncrementalFormatHandler f) {
         if (f == null) {
-            this.incrementalOutputFormat = null;
+            this.incrementalOutputFormatHandler = null;
         } else {
-            this.incrementalOutputFormat = f;
+            this.incrementalOutputFormatHandler = f;
             this.setOutputFormat(f.getOutputFormat());
         }
         return this;
@@ -212,32 +242,31 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public final boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, ws, commandLine, skipIgnored);
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
     @Override
-    public Object configure(String... args) {
-        return NutsConfigurableHelper.configure(this, ws, args, "nuts-session");
+    public Object configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-session");
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument arg = cmdLine.peek();
         if (arg != null) {
-            switch (arg.getKey().getString()) {
+            switch (arg.getStringKey()) {
                 case "--output-format": {
                     arg = cmdLine.nextString();
-                    NutsOutputFormat outf = CoreCommonUtils.parseEnumString(arg.getValue().getString(), NutsOutputFormat.class, false);
+                    NutsOutputFormat outf = CoreCommonUtils.parseEnumString(arg.getStringValue(), NutsOutputFormat.class, false);
                     this.setOutputFormat(outf);
                     cmdLine.skip();
                     return true;
                 }
-                case "-T": 
-                case "--output-format-option": 
-                {
+                case "-T":
+                case "--output-format-option": {
                     arg = cmdLine.nextString();
-                    this.addOutputFormatOptions(arg.getValue().getString());
+                    this.addOutputFormatOptions(arg.getStringValue());
                     cmdLine.skip();
                     return true;
                 }
@@ -271,10 +300,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     cmdLine.skip();
                     return true;
                 }
-                case "--force": 
-                case "--yes": 
-                case "-y": 
-                {
+                case "--force":
+                case "--yes":
+                case "-y": {
                     this.setConfirm(NutsConfirmationMode.YES);
                     cmdLine.skip();
                     return true;
@@ -284,16 +312,104 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     cmdLine.skip();
                     return true;
                 }
-                case "--no": 
-                case "-N": 
-                {
+                case "--no":
+                case "-N": {
                     this.setConfirm(NutsConfirmationMode.NO);
                     cmdLine.skip();
                     return true;
                 }
-                case "--cancel": {
-                    this.setConfirm(NutsConfirmationMode.CANCEL);
+                case "--error": {
+                    this.setConfirm(NutsConfirmationMode.ERROR);
                     cmdLine.skip();
+                    return true;
+                }
+                case "--trace": {
+                    this.setTrace(cmdLine.nextBoolean().getBooleanValue());
+                    return true;
+                }
+                case "--verbose": {
+                    this.setVerbose(cmdLine.nextBoolean().getBooleanValue());
+                    return true;
+                }
+                case "--term-system": {
+                    cmdLine.skip();
+                    setTerminalMode(null);
+                    return true;
+                }
+                case "--term-filtered": {
+                    cmdLine.skip();
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    return true;
+                }
+                case "--no-color": {
+                    cmdLine.skip();
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    return true;
+                }
+                case "--term-formatted": {
+                    cmdLine.skip();
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    return true;
+                }
+                case "--term-inherited": {
+                    cmdLine.skip();
+                    setTerminalMode(NutsTerminalMode.INHERITED);
+                    return true;
+                }
+                case "--term": {
+                    String s = cmdLine.nextString().getStringValue("").toLowerCase();
+                    switch (s) {
+                        case "":
+                        case "system":
+                        case "auto": {
+                            setTerminalMode(null);
+                            break;
+                        }
+                        case "filtered": {
+                            setTerminalMode(NutsTerminalMode.FILTERED);
+                            break;
+                        }
+                        case "formatted": {
+                            setTerminalMode(NutsTerminalMode.FORMATTED);
+                            break;
+                        }
+                        case "inherited": {
+                            setTerminalMode(NutsTerminalMode.INHERITED);
+                            break;
+                        }
+                    }
+                    return true;
+                }
+                case "--color": {
+                    String s = cmdLine.nextString().getStringValue("").toLowerCase();
+                    switch (s) {
+                        case "":
+                        case "system":
+                        case "auto": {
+                            setTerminalMode(null);
+                            break;
+                        }
+                        case "filtered": 
+                        case "never": 
+                        {
+                            setTerminalMode(NutsTerminalMode.FILTERED);
+                            break;
+                        }
+                        case "always": 
+                        case "formatted": 
+                        {
+                            setTerminalMode(NutsTerminalMode.FORMATTED);
+                            break;
+                        }
+                        case "inherited": {
+                            setTerminalMode(NutsTerminalMode.INHERITED);
+                            break;
+                        }
+                        default: {
+                            Boolean bval = cmdLine.newArgument(s).getBoolean(false);
+                            setTerminalMode(bval ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
+                        }
+                    }
                     return true;
                 }
             }
@@ -308,7 +424,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsOutputFormat getOutputFormat() {
-        NutsIncrementalOutputFormat f = getIncrementalOutputFormat();
+        NutsIncrementalFormatHandler f = getIncrementalOutputFormatHandler();
         if (f != null) {
             NutsOutputFormat o = f.getOutputFormat();
             if (o != null) {
@@ -318,8 +434,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
-        NutsOutputFormat o = ws.config().getOptions().getOutputFormat();
-        if(o!=null){
+        NutsOutputFormat o = ws.config().options().getOutputFormat();
+        if (o != null) {
             return o;
         }
         return NutsOutputFormat.PLAIN;
@@ -350,7 +466,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public boolean isIncrementalOut() {
-        return getIncrementalOutputFormat() != null;
+        return getIncrementalOutputFormatHandler() != null;
     }
 
     @Override
@@ -370,6 +486,27 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setTrace(boolean trace) {
         this.trace = trace;
         return this;
+    }
+
+    @Override
+    public NutsSession setVerbose(boolean verbose) {
+        this.verbose = verbose;
+        return this;
+    }
+
+    @Override
+    public boolean isVerbose() {
+        return isTrace() && verbose;
+    }
+
+    @Override
+    public NutsSession verbose() {
+        return setVerbose(true);
+    }
+
+    @Override
+    public NutsSession verbose(boolean verbose) {
+        return setVerbose(verbose);
     }
 
     @Override
@@ -427,7 +564,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (confirm != null) {
             return confirm;
         }
-        NutsConfirmationMode c = ws.config().getOptions().getConfirm();
+        NutsConfirmationMode c = ws.config().options().getConfirm();
         if (c != null) {
             return c;
         }
@@ -471,4 +608,86 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return "NutsSession(properties=" + properties + '}';
     }
 
+    @Override
+    public PrintStream out() {
+        return out;
+    }
+
+    @Override
+    public NutsSession setOut(PrintStream out) {
+        this.out = out;
+        return this;
+    }
+
+    @Override
+    public PrintStream err() {
+        return err;
+    }
+
+    @Override
+    public NutsSession setErr(PrintStream err) {
+        this.err = err;
+        return this;
+    }
+
+    protected PrintStream getOut0() {
+        return out0;
+    }
+
+    protected NutsSession setOut0(PrintStream out0) {
+        this.out0 = out0;
+        return this;
+    }
+
+    protected PrintStream getErr0() {
+        return err0;
+    }
+
+    protected NutsSession setErr0(PrintStream err0) {
+        this.err0 = err0;
+        return this;
+    }
+
+    @Override
+    public void setTerminalMode(NutsTerminalMode mode) {
+        ws.io().getSystemTerminal().setMode(mode);
+    }
+
+    @Override
+    public NutsTerminalMode getTerminalMode() {
+        return ws.io().getSystemTerminal().getOutMode();
+    }
+
+    private NutsSession printObject(Object anyObject, PrintStream out, boolean newLine) {
+        NutsObjectFormat a = ws.format().object().session(this).value(anyObject);
+        a.configure(true, ws.config().options().getOutputFormatOptions());
+        a.configure(true, this.getOutputFormatOptions()
+        );
+        if (newLine) {
+            a.println(out);
+        } else {
+            a.print(out);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsSession printOutObject(Object anyObject) {
+        return printObject(anyObject, out(),false);
+    }
+
+    @Override
+    public NutsSession printErrObject(Object anyObject) {
+        return printObject(anyObject, err(),false);
+    }
+
+    @Override
+    public NutsSession printlnOutObject(Object anyObject) {
+        return printObject(anyObject, out(),true);
+    }
+
+    @Override
+    public NutsSession printlnErrObject(Object anyObject) {
+        return printObject(anyObject, err(),true);
+    }
 }

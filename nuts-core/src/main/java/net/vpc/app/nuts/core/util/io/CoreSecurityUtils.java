@@ -39,14 +39,23 @@ import java.util.Base64;
  * Created by vpc on 5/16/17.
  */
 public class CoreSecurityUtils {
+
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String DEFAULT_PASSPHRASE = CoreIOUtils.bytesToHex("It's completely nuts!!".getBytes());
 
-
-    public static char[] httpDecryptChars(char[] data, String passphrase) {
+    public static char[] defaultDecryptChars(char[] data, String passphrase) {
         return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
     }
-    
+
+    public static char[] defaultEncryptChars(char[] data, String passphrase) {
+        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
+        return CoreIOUtils.bytesToChars(bytes);
+    }
+
+    public static char[] defaultHashChars(char[] data, String passphrase) {
+        return defaultEncryptChars(CoreIOUtils.evalSHA1(data), passphrase);
+    }
+
     public static byte[] httpDecrypt(byte[] data, String passphrase) {
         try {
             byte[] key = CoreIOUtils.evalMD5(passphrase);
@@ -61,12 +70,6 @@ public class CoreSecurityUtils {
         }
     }
 
-
-    public static char[] httpEncryptChars(char[] data, String passphrase) {
-        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
-        return CoreIOUtils.bytesToChars(bytes);
-    }
-    
     public static byte[] httpEncrypt(byte[] data, String passphrase) {
         try {
             byte[] key = CoreIOUtils.evalMD5(passphrase);

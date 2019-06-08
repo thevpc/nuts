@@ -10,8 +10,8 @@ import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.common.javashell.JShellCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
+import net.vpc.common.javashell.JShellBuiltin;
 
 class NutsJLineCompleter implements Completer {
     private final NutsWorkspace workspace;
@@ -25,7 +25,7 @@ class NutsJLineCompleter implements Completer {
         NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.getUserProperties().get(NutsShellContext.class.getName());
         if (nutsConsoleContext != null) {
             if (line.wordIndex() == 0) {
-                for (JShellCommand command : nutsConsoleContext.builtins().getAll()) {
+                for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
                     candidates.add(new Candidate(command.getName()));
                 }
             } else {

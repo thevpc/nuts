@@ -29,13 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.mvn.PomIdResolver;
 import net.vpc.app.nuts.NutsArgument;
-
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,10 +46,10 @@ public class VersionCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NutsCommandContext context){
+    public void exec(String[] args, NshExecutionContext context) {
         NutsWorkspace ws = context.getWorkspace();
         boolean min = false;
-        NutsCommand cmdLine = context.getWorkspace().parser().parseCommand(args);
+        NutsCommandLine cmdLine = context.getWorkspace().parse().command(args);
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
@@ -63,9 +62,9 @@ public class VersionCommand extends AbstractNshBuiltin {
 
         }
 
-        ws.formatter().createWorkspaceVersionFormat()
-                .setMinimal(min)
-                .setSession(context.getSession())
+        ws.format().version()
+                .minimal(min)
+                .session(context.getSession())
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
     }

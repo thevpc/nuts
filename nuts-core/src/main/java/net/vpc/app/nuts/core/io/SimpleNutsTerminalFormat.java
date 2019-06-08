@@ -5,8 +5,10 @@
  */
 package net.vpc.app.nuts.core.io;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Locale;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
@@ -53,5 +55,16 @@ public class SimpleNutsTerminalFormat implements NutsTerminalFormat {
     public PrintWriter prepare(PrintWriter out) {
         return out;
     }
+
+    @Override
+    public boolean isFormatted(OutputStream out) {
+        return false;
+    }
+
+    @Override
+    public boolean isFormatted(Writer out) {
+        return false;
+    }
+    
 
 }

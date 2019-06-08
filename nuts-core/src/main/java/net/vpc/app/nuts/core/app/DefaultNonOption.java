@@ -34,15 +34,15 @@ import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentNonOption;
+import net.vpc.app.nuts.NutsArgumentName;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNonOption implements NutsArgumentNonOption {
+public class DefaultNonOption implements NutsArgumentName {
 
-    private String name;
+    private final String name;
 
     public DefaultNonOption(String name) {
         this.name = name;

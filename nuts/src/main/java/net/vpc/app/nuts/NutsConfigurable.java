@@ -38,12 +38,33 @@ public interface NutsConfigurable {
 
     /**
      * configure the current command with the given arguments.
-     * @param args argument to configure with
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param args arguments to configure with
      * @return {@code this} instance
      */
-    Object configure(String... args);
+    Object configure(boolean skipUnsupported, String... args);
 
-    boolean configure(NutsCommand commandLine, boolean skipIgnored);
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
+    boolean configure(boolean skipUnsupported, NutsCommandLine commandLine);
 
-    boolean configureFirst(NutsCommand cmd);
+    /**
+     * ask {@code this} instance to configure with the very first argument of {
+     *
+     * @commandLine}. If the first argument is not supported, return
+     * {@code false} and consume (skip/read) the argument. If the argument
+     * required one or more parameters, these arguments are also consumed and
+     * finally return {@code true}
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
+    boolean configureFirst(NutsCommandLine commandLine);
 }

@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.ssh.SShConnection;
@@ -41,7 +40,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.vpc.app.nuts.NutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
@@ -62,8 +62,8 @@ public class SshCommand extends AbstractNshBuiltin {
         List<String> cmd = new ArrayList<>();
     }
 
-    public void exec(String[] args, NutsCommandContext context){
-        NutsCommand cmdLine = cmdLine(args, context);
+    public void exec(String[] args, NshExecutionContext context){
+        NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
         while (cmdLine.hasNext()) {
@@ -73,7 +73,7 @@ public class SshCommand extends AbstractNshBuiltin {
                 } else if ((a = cmdLine.next("--nuts")) != null) {
                     o.invokeNuts = true;
                 } else if ((a = cmdLine.nextString("--nuts-jre")) != null) {
-                    o.nutsJre = a.getValue().getString();
+                    o.nutsJre = a.getStringValue();
                 } else {
                     //suppose this is an other nuts option
                     //just consume the rest as of the command
@@ -95,13 +95,13 @@ public class SshCommand extends AbstractNshBuiltin {
             throw new NutsExecutionException(context.getWorkspace(), "Missing ssh command. Interactive ssh is not yet supported!", 2);
         }
         final NutsWorkspace ws = context.getWorkspace();
-        ShellHelper.WsSshListener listener = context.isVerbose() ? new ShellHelper.WsSshListener(ws, context.getSession()) : null;
+        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(ws, context.getSession());
         try (SShConnection sshSession = new SShConnection(o.address)
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommand c = context.getWorkspace().parser().parseCommand(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
+                NutsCommandLine c = context.getWorkspace().parse().command(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
                 NutsArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace")) != null) {

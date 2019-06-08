@@ -6,7 +6,7 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.format.DefaultSearchFormatPlain;
+import net.vpc.app.nuts.core.format.plain.DefaultSearchFormatPlain;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.format.NutsTraceIterator;
 import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 
 /**
  *
@@ -300,7 +301,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
         NutsIdFormat f = (NutsIdFormat) ws.getUserProperties().get(k);
         if (f == null) {
-            f = ws.formatter().createIdFormat();
+            f = ws.format().id();
             ws.getUserProperties().put(k, f);
         }
         return f;
@@ -310,27 +311,22 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.getUserProperties().get(k);
         if (f == null) {
-            f = ws.formatter().createDescriptorFormat();
+            f = ws.format().descriptor();
             ws.getUserProperties().put(k, f);
         }
         return f;
     }
 
-//    public static void traceJson(NutsWorkspace ws, Object o, PrintStream out) {
-//        ws.io().writeJson(o, out, true);
-//        out.println();
-//    }
-//
-//    public static void traceProperties(NutsWorkspace ws, Object o, PrintStream out) {
-//        ws.io().writeJson(o, out, true);
-//        out.println();
-//    }
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsIncrementalOutputFormat format, NutsFetchDisplayOptions displayOptions) {
-        return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
-    }
-
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsIncrementalOutputFormat format, NutsFetchDisplayOptions displayOptions) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
-        return new NutsTraceIterator<>(it, ws, out, oformat, format, displayOptions, session);
+        return new NutsTraceIterator<>(it, ws, out, displayOptions, session);
+    }
+    
+    public static NutsDescriptor getEffectiveDescriptor(NutsWorkspace ws, NutsDefinition def) {
+        final NutsDescriptor d = def.getEffectiveDescriptor();
+        if(d==null){
+            return NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(def.getDescriptor(), null);
+        }
+        return d;
     }
 }

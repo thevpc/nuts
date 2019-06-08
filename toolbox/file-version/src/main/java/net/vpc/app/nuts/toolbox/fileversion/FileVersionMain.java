@@ -48,34 +48,34 @@ public class FileVersionMain extends NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NutsCommand commandLine = context.commandLine();
+        NutsCommandLine commandLine = context.commandLine();
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
             if (context.configureFirst(commandLine)) {
                 //
             } else if ((a = commandLine.nextBoolean("--maven")) != null) {
-                maven = a.getValue().getBoolean();
+                maven = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--win-pe")) != null) {
-                winPE = a.getValue().getBoolean();
+                winPE = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--exe")) != null) {
-                winPE = a.getValue().getBoolean();
+                winPE = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--dll")) != null) {
-                winPE = a.getValue().getBoolean();
+                winPE = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--long")) != null) {
-                longFormat = a.getValue().getBoolean();
+                longFormat = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--name")) != null) {
-                nameFormat = a.getValue().getBoolean();
+                nameFormat = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--sort")) != null) {
-                sort = a.getValue().getBoolean();
+                sort = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--id")) != null) {
-                idFormat = a.getValue().getBoolean();
+                idFormat = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--all")) != null) {
-                all = a.getValue().getBoolean();
+                all = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--table")) != null) {
-                table = a.getValue().getBoolean();
+                table = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--error")) != null) {
-                error = a.getValue().getBoolean();
+                error = a.getBooleanValue();
             } else {
                 a = commandLine.next();
                 String arg = a.getString();
@@ -128,11 +128,11 @@ public class FileVersionMain extends NutsApplication {
                 throw new NutsExecutionException(context.getWorkspace(),"file-version: Options conflict --table --long", 1);
             }
 
-            PrintStream out = context.out();
-            PrintStream err = context.out();
+            PrintStream out = context.session().out();
+            PrintStream err = context.session().out();
 
             if (table) {
-                NutsPropertiesFormat tt = context.getWorkspace().formatter().createPropertiesFormat().setSort(sort);
+                NutsPropertiesFormat tt = context.getWorkspace().format().props().setSort(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -177,7 +177,7 @@ public class FileVersionMain extends NutsApplication {
                             out.printf("[[%s]]%n", descriptor.getId());
                         } else if (longFormat) {
                             out.printf("[[%s]]%n", descriptor.getId());
-                            NutsPropertiesFormat f = context.getWorkspace().formatter().createPropertiesFormat()
+                            NutsPropertiesFormat f = context.getWorkspace().format().props()
                                     .setSort(true);
                             f.model(descriptor.getProperties()).print(out);
                         } else {
@@ -296,7 +296,7 @@ public class FileVersionMain extends NutsApplication {
                 p.setProperty("nuts.version-provider", "win-pe");
                 if (!StringUtils.isBlank(artifactId) && !StringUtils.isBlank(artifactVersion)) {
                     d.add(new VersionDescriptor(
-                            ws.createIdBuilder().setName(artifactId).setVersion(artifactVersion).build(),
+                            ws.idBuilder().setName(artifactId).setVersion(artifactVersion).build(),
                             p
                     ));
                 }
@@ -356,14 +356,14 @@ public class FileVersionMain extends NutsApplication {
                                 && !StringUtils.isBlank(Bundle_Name)
                                 && !StringUtils.isBlank(Bundle_Version)) {
                             all.add(new VersionDescriptor(
-                                    ws.createIdBuilder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
+                                    ws.idBuilder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties
                             ));
                         }
 
                     } else if ("META-INF/nuts.json".equals(path)) {
                         try {
-                            NutsDescriptor d = ws.parser().parseDescriptor(inputStream);
+                            NutsDescriptor d = ws.parse().descriptor(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));
@@ -412,7 +412,7 @@ public class FileVersionMain extends NutsApplication {
                                 }
                             }
                             all.add(new VersionDescriptor(
-                                    ws.createIdBuilder().setGroup(d.getPomId().getGroupId())
+                                    ws.idBuilder().setGroup(d.getPomId().getGroupId())
                                             .setNamespace(d.getPomId().getArtifactId())
                                             .setVersion(d.getPomId().getVersion())
                                             .build(),
@@ -435,7 +435,7 @@ public class FileVersionMain extends NutsApplication {
                             prop.setProperty("nuts.version-provider", "maven");
                             if (version != null && version.trim().length() != 0) {
                                 all.add(new VersionDescriptor(
-                                        ws.createIdBuilder()
+                                        ws.idBuilder()
                                                 .setGroup(groupId).setName(artifactId).setVersion(version)
                                                 .build(),
                                         prop

@@ -35,9 +35,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -270,29 +270,29 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
         }
         if (repo != null) {
             NutsUserConfig security = new NutsUserConfig(getLogin(),
-                    CoreStringUtils.chrToStr(repo.security().getAuthenticationAgent().setCredentials(getCredentials(), false, null)),
+                    CoreStringUtils.chrToStr(repo.security().createCredentials(getCredentials(), false, null)),
                      getGroups(), getRights());
             security.setRemoteIdentity(getRemoteIdentity());
-            security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, null)));
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null)));
             NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security);
         } else {
             NutsUserConfig security = new NutsUserConfig(getLogin(),
-                    CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getCredentials(), false, null)),
+                    CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, null)),
                     getGroups(), getRights());
             security.setRemoteIdentity(getRemoteIdentity());
-            security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().getAuthenticationAgent().setCredentials(getRemoteCredentials(), true, null)));
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, null)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security);
         }
         return this;
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

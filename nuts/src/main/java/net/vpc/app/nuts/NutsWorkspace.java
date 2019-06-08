@@ -85,25 +85,25 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsIOManager io();
 
-    NutsParseManager parser();
+    NutsParseManager parse();
 
-    NutsWorkspaceFormatManager formatter();
+    NutsFormatManager format();
 
     ///////////////////// utilities
-    String resolveDefaultHelpForClass(Class clazz);
+    String resolveDefaultHelp(Class clazz);
 
-    NutsId resolveIdForClass(Class clazz);
+    NutsId resolveId(Class clazz);
 
-    NutsId[] resolveIdsForClass(Class clazz);
+    NutsId[] resolveIds(Class clazz);
 
     ///////////////////// factory
     NutsSession createSession();
 
-    NutsDescriptorBuilder createDescriptorBuilder();
+    NutsDescriptorBuilder descriptorBuilder();
 
-    NutsDependencyBuilder createDependencyBuilder();
+    NutsDependencyBuilder dependencyBuilder();
 
-    NutsIdBuilder createIdBuilder();
+    NutsIdBuilder idBuilder();
 
     ///////////////////// Listeners
     void removeRepositoryListener(NutsRepositoryListener listener);

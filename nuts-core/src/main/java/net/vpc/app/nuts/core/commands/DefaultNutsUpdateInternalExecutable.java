@@ -25,7 +25,7 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        ws.update().session(getSession(true).ask().trace()).configure(args).update();
+        ws.update().session(getSession(true).ask().trace()).configure(false, args).update();
 
     }
 

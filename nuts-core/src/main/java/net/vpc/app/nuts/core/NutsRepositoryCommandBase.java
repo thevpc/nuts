@@ -6,13 +6,13 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -86,32 +86,32 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     }
 
     @Override
-    public T configure(String... args) {
-        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), args, getCommandName());
+    public T configure(boolean skipUnsupported, String... args) {
+        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), skipUnsupported, args, getCommandName());
     }
 
     @Override
-    public boolean configure(NutsCommand commandLine, boolean skipIgnored) {
-        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), commandLine, skipIgnored);
+    public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmdLine) {
+    public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey()) {
             case "--trace": {
-                getValidWorkspaceSessionCopy().setTrace(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidWorkspaceSessionCopy().setTrace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--ask": {
-                getValidWorkspaceSessionCopy().setAsk(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidWorkspaceSessionCopy().setAsk(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--force": {
-                getValidWorkspaceSessionCopy().setForce(cmdLine.nextBoolean().getValue().getBoolean());
+                getValidWorkspaceSessionCopy().setForce(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
         }

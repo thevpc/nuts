@@ -25,30 +25,30 @@ public enum NutsApplicationMode {
     /**
      * application execution Mode in install mode
      * in which case application MUST accept FIRST argument
-     * in the form of "--nuts-exec-mode=on-install &lt;ARG> ..."
-     * where &lt;ARG> arg an optional arguments to on-install
+     * in the form of "--nuts-exec-mode=install &lt;ARG> ..."
+     * where &lt;ARG> arg an optional arguments to install
      * mode.
-     * It is important to notice that "--nuts-exec-mode=on-install &lt;ARG> ..."
+     * It is important to notice that "--nuts-exec-mode=install &lt;ARG> ..."
      * is a SINGLE argument, so spaces must be escaped.
      */
     INSTALL,
     /**
      * application execution Mode in uninstall mode
      * in which case application MUST accept FIRST argument
-     * in the form of "--nuts-exec-mode=on-uninstall &lt;ARG> ..."
-     * where &lt;ARG> arg an optional arguments to on-uninstall
+     * in the form of "--nuts-exec-mode=uninstall &lt;ARG> ..."
+     * where &lt;ARG> arg an optional arguments to uninstall
      * mode.
-     * It is important to notice that "--nuts-exec-mode=on-install &lt;ARG> ..."
+     * It is important to notice that "--nuts-exec-mode=install &lt;ARG> ..."
      * is a SINGLE argument, so spaces must be escaped.
      */
     UNINSTALL,
     /**
      * application execution Mode in update mode
      * in which case application MUST accept FIRST argument
-     * in the form of "--nuts-exec-mode=on-update &lt;ARG> ..."
-     * where &lt;ARG> arg an optional arguments to on-update
+     * in the form of "--nuts-exec-mode=update &lt;ARG> ..."
+     * where &lt;ARG> arg an optional arguments to update
      * mode.
-     * It is important to notice that "--nuts-exec-mode=on-install &lt;ARG> ..."
+     * It is important to notice that "--nuts-exec-mode=install &lt;ARG> ..."
      * is a SINGLE argument, so spaces must be escaped.
      */
     UPDATE

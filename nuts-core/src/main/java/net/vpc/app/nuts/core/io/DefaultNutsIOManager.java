@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core.io;
 
+import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.NullInputStream;
@@ -16,6 +17,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsHashCommand;
+import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
@@ -44,8 +46,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getHomeLocation(NutsStoreLocation.VAR).toString();
                 case "home.cache":
                     return ws.config().getHomeLocation(NutsStoreLocation.CACHE).toString();
-                case "home.logs":
-                    return ws.config().getHomeLocation(NutsStoreLocation.LOGS).toString();
+                case "home.log":
+                    return ws.config().getHomeLocation(NutsStoreLocation.LOG).toString();
                 case "workspace":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
                 case "user.home":
@@ -60,8 +62,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CACHE);
                 case "temp":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.TEMP);
-                case "logs":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LOGS);
+                case "log":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LOG);
                 case "var":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.VAR);
                 case "nuts.boot.version":
@@ -104,8 +106,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsJsonCommand json() {
-        return new DefaultNutsJsonCommand(ws);
+    public NutsJsonFormat json() {
+        return new DefaultNutsJsonFormat(ws);
     }
 
     @Override
@@ -233,7 +235,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             mode = NutsTerminalMode.INHERITED;
         }
         if (mode == NutsTerminalMode.FORMATTED) {
-            if (ws.config().getOptions().getTerminalMode() == NutsTerminalMode.FILTERED) {
+            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
                 //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
                 mode = NutsTerminalMode.FILTERED;
             }
@@ -449,8 +451,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
         this.systemTerminal = syst;
 
         if (old != this.systemTerminal) {
+            NutsWorkspaceEvent event = null;
             for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
-                workspaceListener.onUpdateProperty("systemTerminal", old, this.systemTerminal);
+                if (event == null) {
+                    event = new DefaultNutsWorkspaceEvent(ws, null, "systemTerminal", old, this.systemTerminal);
+                }
+                workspaceListener.onUpdateProperty(event);
             }
         }
         return this;
@@ -476,6 +482,21 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         this.terminal = terminal;
         return this;
+    }
+
+    @Override
+    public NutsTerminalFormat terminalFormat() {
+        return getTerminalFormat();
+    }
+
+    @Override
+    public NutsSystemTerminal systemTerminal() {
+        return getSystemTerminal();
+    }
+
+    @Override
+    public NutsSessionTerminal terminal() {
+        return getTerminal();
     }
 
 }

@@ -37,7 +37,7 @@ package net.vpc.app.nuts;
  */
 public interface NutsComponent<T> {
 
-    int DEFAULT_SUPPORT = 1;
+    int DEFAULT_SUPPORT = 10;
     int CUSTOM_SUPPORT = 1000;
     int NO_SUPPORT = -1;
 

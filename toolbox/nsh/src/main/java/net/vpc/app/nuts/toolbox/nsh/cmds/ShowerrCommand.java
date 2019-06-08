@@ -29,22 +29,56 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.NutsArgument;
 import net.vpc.common.javashell.JShellResult;
+import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class ShowerrCommand extends AbstractNshBuiltin {
+public class ShowerrCommand extends SimpleNshBuiltin {
 
     public ShowerrCommand() {
         super("showerr", DEFAULT_SUPPORT);
     }
 
+    private static class Options {
+
+        String login;
+        char[] password;
+    }
+
     @Override
-    public void exec(String[] args, NutsCommandContext context) {
-        JShellResult r = context.getGlobalContext().getLastResult();
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        if (!a.isOption()) {
+            if (options.login == null) {
+                options.login = commandLine.next(commandLine.createName("username")).getString();
+                return true;
+            } else if (options.password == null) {
+                options.password = commandLine.next(commandLine.createName("password")).getString().toCharArray();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        context.setPrintOutObject(context.getGlobalContext().getLastResult());
+    }
+
+    @Override
+    protected void printObjectPlain(SimpleNshCommandContext context) {
+        JShellResult r = context.getResult();
         if (r.getCode() == 0) {
             context.out().println("##Last command ended successfully with no errors.##");
         } else {
@@ -52,8 +86,8 @@ public class ShowerrCommand extends AbstractNshBuiltin {
             if (r.getMessage() != null) {
                 context.out().println(r.getMessage());
             }
-            if (r.getThrowable() != null) {
-                r.getThrowable().printStackTrace(context.err());
+            if (r.getStackTrace() != null) {
+                context.err().println(r.getStackTrace());
             }
         }
     }

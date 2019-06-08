@@ -29,8 +29,10 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -103,4 +105,22 @@ public interface NutsTerminalFormat {
      * @return %N pattern format capable PrintWriter
      */
     PrintWriter prepare(PrintWriter out);
+    
+    /**
+     * true if the stream is not null and could be resolved as Formatted Output Stream.
+     * If False is returned this does no mean necessarily that the stream is 
+     * not formatted. 
+     * @param out stream to check
+     * @return true if formatted
+     */
+    boolean isFormatted(OutputStream out);
+    
+    /**
+     * true if the stream is not null and could be resolved as Formatted Output Stream.
+     * If False is returned this does no mean necessarily that the stream is 
+     * not formatted. 
+     * @param out stream to check
+     * @return true if formatted
+     */
+    boolean isFormatted(Writer out);
 }

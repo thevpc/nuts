@@ -5,15 +5,23 @@
  */
 package net.vpc.app.nuts.core.spi;
 
+import java.util.logging.Level;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionContext;
+import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
+import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceEvent;
+import net.vpc.app.nuts.NutsWorkspaceListener;
 import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
+import static net.vpc.app.nuts.core.DefaultNutsWorkspace.LOG;
+import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
@@ -33,7 +41,7 @@ public interface NutsWorkspaceExt {
 
     //    @Override
     //    public boolean isFetched(String id, NutsSession session) {
-    //        return isFetched(parser().parseRequiredId(id), session);
+    //        return isFetched(parse().parseRequiredId(id), session);
     //    }
     //    @Override
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsFetchCommand options);
@@ -73,7 +81,12 @@ public interface NutsWorkspaceExt {
 
     boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session);
 
-    NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, String commandName);
+    NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
+    
+    public void fireOnAddRepository(NutsRepository repository);
+    
+    public void fireOnRemoveRepository(NutsRepository repository);
+    
     /**
      * creates a zip file based on the folder. The folder should contain a
      * descriptor file at its root
@@ -91,7 +104,7 @@ public interface NutsWorkspaceExt {
     //            NutsDescriptor descriptor = null;
     //            Path ext = contentFolder.resolve(NutsConstants.NUTS_DESC_FILE_NAME);
     //            if (Files.exists(ext)) {
-    //                descriptor = parser().parseDescriptor(ext);
+    //                descriptor = parse().parseDescriptor(ext);
     //                if (descriptor != null) {
     //                    if ("zip".equals(descriptor.getPackaging())) {
     //                        if (destFile == null) {

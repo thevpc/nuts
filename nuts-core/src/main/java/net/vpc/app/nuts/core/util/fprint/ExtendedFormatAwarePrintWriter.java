@@ -52,4 +52,11 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         return this;
     }
 
+    @Override
+    public void flush() {
+        super.flush(); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+
 }

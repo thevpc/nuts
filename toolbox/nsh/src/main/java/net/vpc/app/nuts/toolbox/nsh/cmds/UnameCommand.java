@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.strings.StringUtils;
@@ -37,12 +36,13 @@ import net.vpc.common.strings.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshCommand;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class UnameCommand extends SimpleNshCommand {
+public class UnameCommand extends SimpleNshBuiltin {
 
     public UnameCommand() {
         super("uname", DEFAULT_SUPPORT);
@@ -68,9 +68,9 @@ public class UnameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommand cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
-        switch (cmdLine.peek().getKey().getString()) {
+        switch (cmdLine.peek().getStringKey()) {
             case "-m": {
                 config.farch = true;
                 return true;
@@ -94,7 +94,7 @@ public class UnameCommand extends SimpleNshCommand {
     }
 
     @Override
-    protected void createResult(NutsCommand commandLine, SimpleNshCommandContext context) {
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
         NutsWorkspace ws = context.getWorkspace();
 
@@ -116,7 +116,7 @@ public class UnameCommand extends SimpleNshCommand {
         if (!config.fdist && rr.osdist != null) {
             rr.osdist = null;
         }
-        context.setOutObject(rr);
+        context.setPrintlnOutObject(rr);
     }
 
     @Override

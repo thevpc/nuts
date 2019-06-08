@@ -120,7 +120,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
 
     public RemoteTomcatAppConfigService remove() {
         client.getConfig().getApps().remove(name);
-        context.out().printf("==[%s]== app removed.\n", name);
+        context.session().out().printf("==[%s]== app removed.\n", name);
         return this;
 
     }

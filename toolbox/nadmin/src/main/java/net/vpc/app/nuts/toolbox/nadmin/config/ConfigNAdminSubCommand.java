@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
@@ -14,8 +13,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -24,7 +23,7 @@ import net.vpc.app.nuts.NutsArgument;
 public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommand cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin config";
         NutsArgument a;
         if (cmdLine.next("delete log") != null) {
@@ -58,7 +57,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force, NutsStoreLocation.LOGS);
+        deleteFolder(context, force, NutsStoreLocation.LOG);
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
@@ -80,11 +79,11 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     private void deleteFolder(NutsApplicationContext context, Path storeLocation, String name, boolean force) {
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.out().printf("@@Deleting@@ ##%s## folder %s ...%n", name, storeLocation);
+                context.session().out().printf("@@Deleting@@ ##%s## folder %s ...%n", name, storeLocation);
                 if (force
-                        || context.getTerminal().ask()
+                        || context.session().terminal().ask()
                                 .forBoolean("Force Delete").setDefaultValue(false).session(context.getSession())
-                                .getBooleanResult()) {
+                                .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
                     } catch (IOException ex) {
@@ -116,11 +115,11 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
         if (s != null) {
             if (Files.exists(s)) {
-                context.out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
+                context.session().out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
-                        || context.getTerminal().ask()
+                        || context.session().getTerminal().ask()
                                 .forBoolean("Force Delete").setDefaultValue(false)
-                                .session(context.getSession()).getBooleanResult()) {
+                                .session(context.getSession()).getBooleanValue()) {
                     try {
                         Files.delete(s);
                     } catch (IOException ex) {
@@ -136,12 +135,12 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         }
     }
 
-    private boolean readForce(NutsCommand cmdLine, String name) {
+    private boolean readForce(NutsCommandLine cmdLine, String name) {
         boolean force = false;
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextBoolean("-f", "--force")) != null) {
-                force = a.getValue().getBoolean();
+                force = a.getBooleanValue();
             } else {
                 cmdLine.setCommandName(name).unexpectedArgument();
             }

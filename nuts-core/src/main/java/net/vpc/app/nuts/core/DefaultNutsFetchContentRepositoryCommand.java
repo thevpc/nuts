@@ -32,7 +32,6 @@ package net.vpc.app.nuts.core;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -44,6 +43,7 @@ import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
+import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -63,7 +63,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
     }
 
     @Override
-    public boolean configureFirst(NutsCommand cmd) {
+    public boolean configureFirst(NutsCommandLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

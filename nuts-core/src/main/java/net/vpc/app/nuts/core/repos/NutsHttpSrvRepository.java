@@ -88,7 +88,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().formatter().createDescriptorFormat().print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
+        getWorkspace().format().descriptor().print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
@@ -110,7 +110,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         try {
             try {
                 stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
-                NutsDescriptor descriptor = getWorkspace().parser().parseDescriptor(stream, true);
+                NutsDescriptor descriptor = getWorkspace().parse().descriptor(stream, true);
                 if (descriptor != null) {
                     String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     if (hash.equals(descriptor.toString())) {
@@ -264,13 +264,13 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             }
             if (security != null) {
                 credentials = security.getRemoteCredentials() == null ? null : security.getRemoteCredentials().toCharArray();
-                credentials = getWorkspace().security().getAuthenticationAgent().getCredentials(credentials);
+                credentials = getWorkspace().security().getCredentials(credentials);
             }
         }
 
         String passphrase = config().getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE, true);
         newLogin = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase));
-        credentials = CoreSecurityUtils.httpEncryptChars(credentials, passphrase);
+        credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase);
         return new String[]{newLogin, new String(credentials)};
     }
 
@@ -322,7 +322,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().parser().parseRequiredId(line);
+            NutsId nutsId = getWorkspace().parse().requiredId(line);
             return nutsId.setNamespace(config().getName());
         }
     }
