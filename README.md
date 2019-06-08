@@ -39,27 +39,47 @@ Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 ## Installation
 java -jar nuts-0.5.5.jar
 
-## Launching
-+ [Linux] nuts ...your command here...
-    + nuts --version
-      show version and exit  
+## Examples of usage
+### show version and exit
+```
+    nuts version
+```
+
+### show help
     
-    + nuts help
-        show help
+```   
+nuts help
+```
 
-    + nuts install tomcat
-        install tomcat
+### install tomcat
 
-    + nuts derby start
-        start derby
+```    
+nuts install tomcat
+```
 
-    + nuts -y netbeans-launcher
-        install and run netbeans-launcher (auto-confirm is force with -y flag)
+### start derby
 
-    + nuts update --all
-        update nuts and all installed components
+```
+nuts derby start
+```
 
-+ [Windows,iOS] java -jar nuts-0.5.5.jar ...your command here...
+### install and run netbeans-launcher (auto-confirm is force with -y flag)
+
+```    
+nuts -y netbeans-launcher
+```
+
+### update nuts and all installed components
+
+```
+nuts update --all
+```
+
+### run without script nuts [Windows,iOS]
+
+```
+java -jar nuts-0.5.5.jar ...your command here...
+```
 
 ## Latest News
 
