@@ -47,10 +47,7 @@ nuts version
 It should show a result like this
 
 ```
-nuts-api-version = 0.5.5
-nuts-runtime-version = 0.5.5.0
-java-version = 12.0.1
-os-version = 5.1.4-1-default
+0.5.5/0.5.5.0
 ```
 
 
