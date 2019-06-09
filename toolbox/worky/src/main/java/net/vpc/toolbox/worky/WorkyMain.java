@@ -45,6 +45,7 @@ public class WorkyMain extends NutsApplication {
                 cmdLine.setCommandName("worky").unexpectedArgument();
             }
         } while (cmdLine.hasNext());
+        cmdLine.required();
     }
 
 

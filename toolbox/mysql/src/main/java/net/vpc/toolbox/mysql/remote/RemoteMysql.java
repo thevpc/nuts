@@ -99,7 +99,7 @@ public class RemoteMysql {
                     break;
                 }
                 default: {
-                    context.session().printlnOutObject(result);
+                    context.session().oout().println(result);
                 }
             }
         }

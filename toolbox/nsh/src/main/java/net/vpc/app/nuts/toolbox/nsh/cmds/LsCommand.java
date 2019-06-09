@@ -181,7 +181,7 @@ public class LsCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         PrintStream out = context.out();
         Options options = context.getOptions();
         if (context.getResult() instanceof ResultSuccess) {
@@ -204,7 +204,7 @@ public class LsCommand extends SimpleNshBuiltin {
                 out.printf("{{%s}} : @@%s@@%n", e.getKey(), e.getValue());
             }
         } else {
-            super.printObjectPlain(context);
+            super.printPlainObject(context);
         }
     }
 

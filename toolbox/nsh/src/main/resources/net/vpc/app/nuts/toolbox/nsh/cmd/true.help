@@ -1,0 +1,13 @@
+return 0 (true/no error value)
+
+@@SYNOPSIS:@@
+##true##
+return 0 (true/no error value)
+
+@@EXAMPLES:@@
+
+##true##
+    return 0 (true/no error value)
+
+
+

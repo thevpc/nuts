@@ -131,6 +131,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         public PrintStream out() {
             return err ? context.err() : context.out();
         }
+
         public InputStream in() {
             return context.in();
         }
@@ -147,15 +148,15 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         public void printObject(Object any) {
             if (err) {
                 if (errObjectNewLine) {
-                    context.getSession().printlnErrObject(any);
+                    context.getSession().oerr().println(any);
                 } else {
-                    context.getSession().printErrObject(any);
+                    context.getSession().oerr().print(any);
                 }
             } else {
                 if (outObjectNewLine) {
-                    context.getSession().printlnOutObject(any);
+                    context.getSession().oout().println(any);
                 } else {
-                    context.getSession().printlnOutObject(any);
+                    context.getSession().oout().print(any);
                 }
             }
         }
@@ -164,10 +165,10 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return context.getWorkspace();
         }
 
-        public String getCwd(){
+        public String getCwd() {
             return context.getGlobalContext().getCwd();
         }
-        
+
         public NutsShellContext getGlobalContext() {
             return context.getGlobalContext();
         }
@@ -177,10 +178,10 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
     protected abstract boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
-    protected void prepareOptions(NutsCommandLine commandLine, SimpleNshCommandContext context){
-        
+    protected void prepareOptions(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+
     }
-    
+
     protected abstract void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
     @Override
@@ -227,36 +228,32 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         createResult(commandLine, context2);
         final Object outObject = context2.getOutObject();
         if (outObject != null) {
-            printObject(outObject, context2.setErr(false));
+            printObject(context2.setErr(false));
         }
         final Object errObject = context2.getErrObject();
         if (errObject != null) {
-            printObject(outObject, context2.setErr(true));
+            printObject(context2.setErr(true));
         }
     }
 
-    protected void printObject(Object result, SimpleNshCommandContext context) {
+    protected void printObject(SimpleNshCommandContext context) {
         NutsSession session = context.getExecutionContext().getSession();
         if (session.isIncrementalTrace()) {
             //already processed
         } else {
             switch (session.getOutputFormat()) {
                 case PLAIN: {
-                    printObjectPlain(context);
+                    printPlainObject(context);
                     break;
                 }
                 default: {
-                    printObject0(context);
+                    context.printObject(context.getResult());
                 }
             }
         }
     }
 
-    protected void printObjectPlain(SimpleNshCommandContext context) {
-        printObject0(context);
-    }
-
-    protected void printObject0(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         context.printObject(context.getResult());
     }
 

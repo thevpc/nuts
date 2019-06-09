@@ -402,9 +402,9 @@ public class DefaultNutsCommand implements NutsCommandLine {
                     }
                 }
             }
-            String r = args.get(0);
+            NutsArgument r = peek();
             skip();
-            return newArgument(r);
+            return r;
         } else {
             if (autoComplete != null) {
                 if (isAutoComplete()) {

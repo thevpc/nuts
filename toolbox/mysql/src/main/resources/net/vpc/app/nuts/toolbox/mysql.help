@@ -1,5 +1,5 @@
 @@SYNOPSIS:@@
-==mysql== [[\[--local \|--remote\]]] {{\<command\>}} {{\<global-options\>}} {{\<command-options\>}}
+**mysql** [[\[--local \|--remote\]]] {{\<command\>}} {{\<global-options\>}} {{\<command-options\>}}
 manage local mysql database access configurations to help backup/restore data simply
 
 @@mysql --local@@
@@ -50,7 +50,7 @@ manage local mysql database access configurations to help backup/restore data si
         --ask-password           : if true password is read from standard input
 
 
-==mysql== [[\[--local\]]] [--name] {{\<db\@config-name\>}}
+==mysql== [[\[--local\]]] remove [--name] {{\<db\@config-name\>}}
 
     remove database config
 
@@ -64,79 +64,39 @@ manage local mysql database access configurations to help backup/restore data si
 
 @@mysql --remote@@
 
-==mysql== [[--remote]] list <global-options> <list-options>
+==mysql== [[\[--remote\]]] list
+    list all databases
 
-    list database config properties
+==mysql== [[\[--remote\]]] list [--name] {{\<config-name\>}}
+    list all databases for the given config-name
 
-    list options are :
-        --name      <VALUE>  : mysql config instance
-        --app       <VALUE>  : app config
-        --property  <VALUE>  : property expression
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
-    if --property  is not armed, all properties are listed
+==mysql== [[\[--remote\]]] add [--name] {{\<db\@config-name\>}} <command-options>
 
-==mysql== [[--remote]] add <global-options> <add-options>
+    add database config
 
-    add application config
+    command options are :
+        --local-name   <VALUE>  : local config name
+        --remote-name  <VALUE>  : remote config name
+        --server       <VALUE>  : server ssh address
 
-    add options are :
-        --name          <VALUE>  : local config instance
-        --remote-name   <VALUE>  : remote config instance
-        --app           <VALUE>  : local app config
-        --remote-app    <VALUE>  : remote app config
-        --user          <VALUE>  : app user
-        --server        <VALUE>  : server address
-        --password  <VALUE>  : app password
-        --shutdown-wait-time  <VALUE>  : shutdown wait time
+==mysql== [[\[--remote\]]] set [--name] {{\<db\@config-name\>}} <command-options>
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+    update database config
 
-==mysql== [[--remote]] set <global-options> <set-options>
+    command options are :
+        --local-name   <VALUE>  : local config name
+        --remote-name  <VALUE>  : remote config name
+        --server       <VALUE>  : server ssh address
 
-    update application config
+==mysql== [[\[--remote\]]] remove [--name] {{\<db\@config-name\>}}
 
-    set options are :
-        --name      <VALUE>  : mysql config instance
-        --app       <VALUE>  : app config
-        --user      <VALUE>  : app user
-        --password  <VALUE>  : app password
-        --shutdown-wait-time  <VALUE>  : shutdown wait time
+    remove database config
 
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+==mysql== [[\[--remote\]]] pull [[--name] {{\<db\@config-name\>}}]
 
-==mysql== [[--remote]] remove <global-options> <remove-options>
+    restore local config database with remote database data
 
-    remove application config
+==mysql== [[\[--remote\]]] push [[--name] {{\<db\@config-name\>}}]
 
-    remove options are :
-        --name      <VALUE>  : mysql config instance
-        --app       <VALUE>  : app config
-
-    if --name is not armed, default application is considered
-    if --app  is not armed, instance will removed
-
-==mysql== [[--remote]] push <global-options> <push-options> <path>
-
-    push db to remote
-
-    push options are :
-        --name      <VALUE>  : mysql config instance
-        --app       <VALUE>  : app config
-
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
-
-==mysql== [[--remote]] pull <global-options> <pull-options>
-
-    pull db from remote
-
-    add options are :
-        --name      <VALUE>  : mysql config instance
-        --app       <VALUE>  : app config
-
-    if --name is not armed, default application is considered
-    if --app  is not armed, default application is considered
+    restore remote config database with local database data

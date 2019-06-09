@@ -1,0 +1,10 @@
+read  and  execute  commands  from filename in the current shell environment
+
+@@SYNOPSIS:@@
+##source## <filename> {{args...}}
+read  and  execute  commands  from filename in the current shell environment
+
+@@EXAMPLES:@@
+
+##source## myfile.nsh
+    execute myfile.nsh in the current shell

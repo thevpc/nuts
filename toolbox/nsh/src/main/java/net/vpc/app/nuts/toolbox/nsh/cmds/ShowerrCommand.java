@@ -77,7 +77,7 @@ public class ShowerrCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         JShellResult r = context.getResult();
         if (r.getCode() == 0) {
             context.out().println("##Last command ended successfully with no errors.##");

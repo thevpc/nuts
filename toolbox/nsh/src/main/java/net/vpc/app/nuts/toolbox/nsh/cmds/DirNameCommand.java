@@ -116,7 +116,7 @@ public class DirNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshBuiltin.SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshBuiltin.SimpleNshCommandContext context) {
         List<String> results = context.getResult();
         Options options = context.getOptions();
         for (String name : results) {

@@ -340,18 +340,24 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsTerminalMode getTerminalMode();
 
-    NutsSession printOutObject(Object anyObject);
+    /**
+     * Object Print Stream associated to out()
+     *
+     * @return Object Print Stream
+     */
+    NutsObjectPrintStream oout();
 
-    NutsSession printErrObject(Object anyObject);
-
-    NutsSession printlnOutObject(Object anyObject);
-
-    NutsSession printlnErrObject(Object anyObject);
+    /**
+     * Object Print Stream associated to out()
+     *
+     * @return Object Print Stream
+     */
+    NutsObjectPrintStream oerr();
 
     NutsIncrementalFormat getIncrementalOutput();
 
     NutsSessionTerminal terminal();
-    
+
     NutsSessionTerminal getTerminal();
 
 }

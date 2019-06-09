@@ -135,7 +135,7 @@ public class EnableCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         if (context.getResult() instanceof Map) {
             for (Map.Entry<String, String> entry : ((Map<String, String>) context.getResult()).entrySet()) {
                 context.out().println(entry.getValue() + " " + entry.getKey());

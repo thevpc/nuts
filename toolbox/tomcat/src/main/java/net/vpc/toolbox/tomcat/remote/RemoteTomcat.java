@@ -439,7 +439,7 @@ public class RemoteTomcat {
         if (x.m.isEmpty()) {
             throw new NutsExecutionException(context.getWorkspace(), "No properties to show", 2);
         }
-        getContext().session().printlnOutObject(x.m);
+        getContext().session().oout().println(x.m);
     }
 
     public RemoteTomcatConfigService loadTomcatConfig(String name) {

@@ -1,14 +1,14 @@
 show who is logged in
 
 @@SYNOPSIS:@@
-##who## [ options ]
+##whoami## [ options ]
 
 shows who is logged in
 
 --all  -a   : show all information about user
 @@EXAMPLES:@@
 
-who -a
+whoami -a
    shows all information about current user
 
 

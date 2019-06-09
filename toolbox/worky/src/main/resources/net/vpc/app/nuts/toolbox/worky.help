@@ -1,1 +1,40 @@
-This is a help!!
+**worky** is a developer companion
+
+@@SYNOPSIS:@@
+
+**worky** {{scan}} [[\[-i|--interactive\]]]  <path>
+    scan for maven projetcs
+
+**worky** {{check}} <id>
+    check id status
+    Options
+        [[-c]] | [[--commitable]] | [[--changed]] 
+            consider changed projects
+        [[-n]] | [[--new]] 
+            consider new projects
+        [[-o]] | [[--old]] 
+            consider old projects
+        [[-0]] | [[--ok]]  | [[--uptodate]]
+            consider uptodate projects
+        [[-e]] | [[--invalid]]  | [[--error]]
+            consider invalid projects
+        [[-p]] | [[--progress]]
+            show progress
+
+**worky** {{enable scan}} <path>
+    enable scan path for maven projetcs
+
+**worky** {{disable scan}} <path>
+    enable scan path for maven projetcs
+
+**worky** {{list}}
+    list configurations
+
+**worky** {{set}} ...
+    set project configurations
+    Options
+        [[\[-r | --repo\]]] <repo-path>
+            set repository path
+        [[\[-w | --workspace\]]] <workspace-path>
+            set workspace path
+

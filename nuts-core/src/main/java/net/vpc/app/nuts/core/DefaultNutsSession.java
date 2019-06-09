@@ -168,14 +168,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsIncrementalFormatHandler getIncrementalOutputFormatHandler() {
         return incrementalOutputFormatHandler;
     }
-    
+
     @Override
     public NutsIncrementalFormat getIncrementalOutput() {
-        if(incrementalOutputFormatHandler==null){
+        if (incrementalOutputFormatHandler == null) {
             return null;
         }
-        if(incrementalOutputFormat==null){
-            incrementalOutputFormat=new CustomNutsIncrementalOutputFormat(ws,incrementalOutputFormatHandler);
+        if (incrementalOutputFormat == null) {
+            incrementalOutputFormat = new CustomNutsIncrementalOutputFormat(ws, incrementalOutputFormatHandler);
             incrementalOutputFormat.session(this);
         }
         return incrementalOutputFormat;
@@ -389,15 +389,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                             setTerminalMode(null);
                             break;
                         }
-                        case "filtered": 
-                        case "never": 
-                        {
+                        case "filtered":
+                        case "never": {
                             setTerminalMode(NutsTerminalMode.FILTERED);
                             break;
                         }
-                        case "always": 
-                        case "formatted": 
-                        {
+                        case "always":
+                        case "formatted": {
                             setTerminalMode(NutsTerminalMode.FORMATTED);
                             break;
                         }
@@ -658,36 +656,45 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return ws.io().getSystemTerminal().getOutMode();
     }
 
-    private NutsSession printObject(Object anyObject, PrintStream out, boolean newLine) {
-        NutsObjectFormat a = ws.format().object().session(this).value(anyObject);
-        a.configure(true, ws.config().options().getOutputFormatOptions());
-        a.configure(true, this.getOutputFormatOptions()
-        );
-        if (newLine) {
-            a.println(out);
-        } else {
-            a.print(out);
+    public NutsObjectPrintStream oout() {
+        return new NutsObjectPrintStreamImpl(ws, this, out());
+    }
+    public NutsObjectPrintStream oerr() {
+        return new NutsObjectPrintStreamImpl(ws, this, err());
+    }
+
+    private class NutsObjectPrintStreamImpl implements NutsObjectPrintStream {
+        private NutsWorkspace ws;
+        private NutsSession session;
+        private PrintStream out;
+
+        public NutsObjectPrintStreamImpl(NutsWorkspace ws, NutsSession session, PrintStream out) {
+            this.ws = ws;
+            this.session = session;
+            this.out = out;
         }
-        return this;
-    }
+        
 
-    @Override
-    public NutsSession printOutObject(Object anyObject) {
-        return printObject(anyObject, out(),false);
-    }
+        @Override
+        public void print(Object o) {
+            printObject(o, false);
+        }
 
-    @Override
-    public NutsSession printErrObject(Object anyObject) {
-        return printObject(anyObject, err(),false);
-    }
+        @Override
+        public void println(Object o) {
+            printObject(o, true);
+        }
 
-    @Override
-    public NutsSession printlnOutObject(Object anyObject) {
-        return printObject(anyObject, out(),true);
-    }
-
-    @Override
-    public NutsSession printlnErrObject(Object anyObject) {
-        return printObject(anyObject, err(),true);
+        private void printObject(Object anyObject, boolean newLine) {
+            NutsObjectFormat a = ws.format().object().session(session).value(anyObject);
+            a.configure(true, ws.config().options().getOutputFormatOptions());
+            a.configure(true, session.getOutputFormatOptions()
+            );
+            if (newLine) {
+                a.println(out);
+            } else {
+                a.print(out);
+            }
+        }
     }
 }

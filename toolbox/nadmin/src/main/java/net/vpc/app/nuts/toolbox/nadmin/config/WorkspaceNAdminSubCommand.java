@@ -70,7 +70,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("set workspace boot-version")!=null) {
+        } else if (cmdLine.next("set workspace api-version")!=null) {
             String version = cmdLine.required().nextNonOption(cmdLine.createName("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
@@ -88,11 +88,6 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
-        } else if (cmdLine.next("get workspace version", "gwv")!=null) {
-            cmdLine.setCommandName("config get workspace version").unexpectedArgument();
-            NutsBootConfig c = context.getWorkspace().config().getBootConfig();
-            context.session().out().printf("boot-version  : %s%n", StringUtils.trim(c.getApiVersion()));
-            context.session().out().printf("runtime-id    : %s%n", StringUtils.trim(c.getRuntimeId()));
         } else if (cmdLine.next("set workspace", "sw")!=null) {
             boolean createIfNotFound = false;
             boolean save = true;

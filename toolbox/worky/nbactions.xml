@@ -7,12 +7,11 @@
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --help pwd</exec.args>
+                <exec.args>-classpath %classpath net.vpc.toolbox.worky.WorkyMain --help</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
         <action>
@@ -22,13 +21,12 @@
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --help pwd</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.toolbox.worky.WorkyMain --help</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
-                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
         <action>
@@ -38,12 +36,11 @@
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh --help pwd</exec.args>
+                <exec.args>-classpath %classpath net.vpc.toolbox.worky.WorkyMain --help</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.workingdir></exec.workingdir>
             </properties>
         </action>
     </actions>

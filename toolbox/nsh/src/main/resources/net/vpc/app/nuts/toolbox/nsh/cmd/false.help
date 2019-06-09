@@ -1,0 +1,13 @@
+return 1 (false/error value)
+
+@@SYNOPSIS:@@
+##false##
+return 1 (false/error value)
+
+@@EXAMPLES:@@
+
+##false##
+    return 1 (false/error value)
+
+
+

@@ -122,7 +122,7 @@ public class LocalMysql {
                     break;
                 }
                 default: {
-                    context.session().printlnOutObject(result);
+                    context.session().oout().println(result);
                 }
             }
         }

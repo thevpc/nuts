@@ -105,18 +105,15 @@ public class WorkspaceService {
         }
 
         if (count == 0) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing projects", 1);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing projects", 1);
         }
     }
 
     public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
-        NutsTableFormat tf = appContext.getWorkspace().format().table().addHeaderCells("Id", "Path", "Technos");
         List<String> filters = new ArrayList<>();
         while (cmd.hasNext()) {
             if (appContext.configureFirst(cmd)) {
-                //consumed
-            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if ((a = cmd.requireNonOption().next()) != null) {
                 filters.add(a.getString());
@@ -125,19 +122,14 @@ public class WorkspaceService {
             }
         }
         if (cmd.isExecMode()) {
+            List<ProjectConfig> result=new ArrayList<>();
             for (ProjectService projectService : findProjectServices()) {
                 if (matches(projectService.getConfig().getId(), filters)) {
                     ProjectConfig config = projectService.getConfig();
-                    tf.newRow()
-                            .addCells(
-                                    config.getId(),
-                                    config.getPath(),
-                                    config.getTechnologies()
-                            );
+                    result.add(config);
                 }
             }
-
-            appContext.session().out().printf(tf.toString());
+            appContext.session().oout().print(result);
         }
     }
 
@@ -159,7 +151,7 @@ public class WorkspaceService {
             }
         }
         if (!run) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing folders", 1);
+            scan(new File("."), interactive);
         }
     }
 
@@ -179,34 +171,22 @@ public class WorkspaceService {
                 //consumed
             } else if (tf.configureFirst(cmd)) {
                 //consumed
-            } else if (cmd.next("-c", "--commitable", "--changed")!=null) {
-                commitable = true;
-            } else if (cmd.next("-!c", "--!commitable", "--!changed")!=null) {
-                commitable = false;
-            } else if (cmd.next("-n", "--new")!=null) {
-                newP = true;
-            } else if (cmd.next("-!n", "--!new")!=null) {
-                newP = false;
-            } else if (cmd.next("-o", "--old")!=null) {
-                old = true;
-            } else if (cmd.next("-!o", "--!old")!=null) {
-                old = false;
-            } else if (cmd.next("-0", "--ok", "--uptodate")!=null) {
-                uptodate = true;
-            } else if (cmd.next("-!0", "--!ok", "--!uptodate")!=null) {
-                uptodate = false;
-            } else if (cmd.next("-e", "--invalid", "--error")!=null) {
-                invalid = true;
-            } else if (cmd.next("-!e", "--!invalid", "--!error")!=null) {
-                invalid = false;
-            } else if (cmd.next("-p", "--progress")!=null) {
-                progress = true;
-            } else if (cmd.next("-!p", "--!progress")!=null) {
-                progress = false;
-            } else if ((a = cmd.nextNonOption()) != null) {
-                filters.add(a.getString());
-            } else {
+            } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
+                commitable = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-n", "--new")) != null) {
+                newP = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-o", "--old")) != null) {
+                old = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate")) != null) {
+                uptodate = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error")) != null) {
+                invalid = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-p", "--progress")) != null) {
+                progress = a.getBooleanValue();
+            } else if (cmd.peek().isOption()) {
                 cmd.setCommandName("worky check").unexpectedArgument();
+            } else {
+                filters.add(a.getString());
             }
         }
 

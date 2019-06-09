@@ -120,7 +120,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         Result result = context.getResult();
         List<String> sb = new ArrayList<>();
         if (result.arch != null) {

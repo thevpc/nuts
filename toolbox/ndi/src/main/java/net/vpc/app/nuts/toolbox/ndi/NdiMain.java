@@ -57,11 +57,11 @@ public class NdiMain extends NutsApplication {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SPAWN;
                         }
-                    } else if ((a = cmd.nextBoolean("-m", "--embedded")) != null) {
+                    } else if ((a = cmd.nextBoolean("-b", "--embedded")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
-                    } else if ((a = cmd.nextBoolean("-n", "--native", "--syscall")) != null) {
+                    } else if ((a = cmd.nextBoolean("-s", "--native", "--syscall")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SYSCALL;
                         }
@@ -114,7 +114,7 @@ public class NdiMain extends NutsApplication {
                 throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
             }
             if(trace){
-                context.session().printlnOutObject(context.session().out());
+                context.session().oout().println(context.session().out());
             }
         }
     }
@@ -164,7 +164,7 @@ public class NdiMain extends NutsApplication {
                 }
             }
             if (trace && !context.getSession().isPlainOut()) {
-                context.session().printlnOutObject(result);
+                context.session().oout().println(result);
             }
         }
     }

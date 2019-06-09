@@ -138,7 +138,7 @@ public class BaseNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         List<String> results = context.getResult();
         Options options = context.getOptions();
         for (String name : results) {

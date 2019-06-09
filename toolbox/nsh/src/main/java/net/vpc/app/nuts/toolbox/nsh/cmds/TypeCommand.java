@@ -136,7 +136,7 @@ public class TypeCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         List<ResultItem> result = context.getResult();
         for (ResultItem resultItem : result) {
             context.out().println(resultItem.message);

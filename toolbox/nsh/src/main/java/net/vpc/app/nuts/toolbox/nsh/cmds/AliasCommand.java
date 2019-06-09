@@ -124,7 +124,7 @@ public class AliasCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         List<ResultItem> r = context.getResult();
         for (ResultItem resultItem : r) {
             if (resultItem.value == null) {

@@ -105,7 +105,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printObjectPlain(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context) {
         Properties p = context.getResult();
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {

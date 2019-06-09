@@ -193,7 +193,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (h == null) {
             h = "Help is @@missing@@.";
         }
-        getSession().out().print(h);
+        getSession().out().println(h);
     }
 
     @Override

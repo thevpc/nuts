@@ -305,7 +305,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                         Arrays.stream(dws.getCompanionTools())
                                 .map(x->ws.format().id().setOmitImportedGroup(true).toString(ws.parse().id(x)))
                                 .collect(Collectors.joining(", "))
-                        +"%nAccept?"
+                        +"%nAccept"
                         
                 )
                     .defaultValue(true)
@@ -406,7 +406,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                         defsToInstall.stream()
                                 .map(x->ws.format().id().setOmitImportedGroup(true).toString(x.getId().getLongNameId()))
                                 .collect(Collectors.joining(", "))
-                        +"%nAccept?"
+                        +"%nAccept"
                         
                 )
                 .defaultValue(true)

@@ -1,0 +1,10 @@
+read and write variables
+
+@@SYNOPSIS:@@
+##set## <varname> {{value}}
+read and write variables
+
+@@EXAMPLES:@@
+
+##set## elemName "msg"
+    store "msg" in var elemName

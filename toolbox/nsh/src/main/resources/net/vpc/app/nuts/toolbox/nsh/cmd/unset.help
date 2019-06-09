@@ -1,0 +1,10 @@
+delete variables
+
+@@SYNOPSIS:@@
+##unset## <varname> ...
+delete variables
+
+@@EXAMPLES:@@
+
+##unset## elemName
+    delete var elemName
