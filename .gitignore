@@ -7,7 +7,7 @@
 toolbox/nuts-server/target
 /.idea/
 /nuts-core/runtime/
-/deprecated/nfind/target/
+/deprecated/
 /toolbox/mvn/target/
 /toolbox/ndi/target/
 /toolbox/nsh/target/
@@ -23,3 +23,7 @@ toolbox/nuts-server/target
 /lib/nuts-servlet/target/
 /lib/nuts-tomcat-classloader/target/
 /lib/nuts-ssh-cli/target/
+/mk-nuts-bootstrap-pull
+/mk-nuts-bootstrap.nsh
+/mk-nuts-bootstrap-push
+/mk-nuts-bootstrap
