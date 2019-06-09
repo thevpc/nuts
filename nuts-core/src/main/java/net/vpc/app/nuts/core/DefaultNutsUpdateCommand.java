@@ -581,7 +581,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         //then fetch its definition!
         NutsDefinition d1 = d1Id == null ? null : latestDependencies(ws.fetch().id(d1Id).setSession(searchSession))
                 .failFast(false)
-                .anyWhere()
+                .online()
                 .getResultDefinition();
         r.setLocal(d0);
         r.setAvailable(d1);
@@ -619,7 +619,6 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        traceUpdates(result);
         final PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
         boolean accept = ws.io().getTerminal().ask()
                 .forBoolean("Would you like to apply updates").setDefaultValue(true)

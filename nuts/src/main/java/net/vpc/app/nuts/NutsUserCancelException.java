@@ -28,16 +28,25 @@
  * ====================================================================
  */
 package net.vpc.app.nuts;
+
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsUserCancelException extends NutsException {
+public class NutsUserCancelException extends NutsExecutionException {
+
+    public static final int DEFAULT_CANCEL_EXIT_CODE = 245;
+
     public NutsUserCancelException(NutsWorkspace workspace) {
-        this(workspace,null);
+        this(workspace, null);
     }
-    public NutsUserCancelException(NutsWorkspace workspace,String message) {
-        super(workspace,(message==null || message.trim().isEmpty())?"User cancelled operation":message);
+
+    public NutsUserCancelException(NutsWorkspace workspace, String message) {
+        this(workspace, message, DEFAULT_CANCEL_EXIT_CODE);
+    }
+
+    public NutsUserCancelException(NutsWorkspace workspace, String message, int code) {
+        super(workspace, (message == null || message.trim().isEmpty()) ? "User cancelled operation" : message, code);
     }
 }
