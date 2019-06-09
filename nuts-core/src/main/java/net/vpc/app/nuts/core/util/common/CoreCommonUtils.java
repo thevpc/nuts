@@ -42,15 +42,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsArrayElement;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsNamedElement;
+import net.vpc.app.nuts.NutsObjectElement;
+import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.app.DefaultNutsArgument;
@@ -266,8 +272,6 @@ public class CoreCommonUtils {
 //        }
 //        return false;
 //    }
-    
-
     public static Boolean parseBoolean(String value, Boolean defaultValue) {
         if (value == null || value.trim().isEmpty()) {
             return defaultValue;
@@ -302,6 +306,27 @@ public class CoreCommonUtils {
     public static String stringValueFormatted(Object o, NutsWorkspace ws, NutsSession session) {
         if (o == null) {
             return "";
+        }
+        if (o instanceof NutsPrimitiveElement) {
+            o = ((NutsPrimitiveElement) o).getValue();
+        } else if (o instanceof NutsArrayElement) {
+            o = ((NutsArrayElement) o).children();
+        } else if (o instanceof NutsObjectElement) {
+            o = ((NutsObjectElement) o).children();
+        } else if (o instanceof NutsNamedElement) {
+            NutsNamedElement ne = (NutsNamedElement) o;
+            Map<String, Object> m = new HashMap<String, Object>();
+            m.put("name", ne.getName());
+            m.put("value", ne.getValue());
+            o = m;
+        } else if (o instanceof Map.Entry) {
+            Map.Entry ne = (Map.Entry) o;
+            Map<String, Object> m = new HashMap<String, Object>();
+            m.put("name", ne.getKey());
+            m.put("value", ne.getValue());
+            o = m;
+        } else if (o instanceof Map) {
+            o=((Map)o).entrySet();
         }
         if (o instanceof Boolean) {
             return ws.io().getTerminalFormat().escapeText(String.valueOf(o));
@@ -350,7 +375,7 @@ public class CoreCommonUtils {
             while (x.hasNext()) {
                 all.add(stringValueFormatted(x.next(), ws, session));
             }
-            return "\\[" + CoreStringUtils.join(", ", (List) all.stream().collect(Collectors.toList())) + "\\]";
+            return stringValueFormatted(all, ws, session);
         }
         return o.toString();
     }

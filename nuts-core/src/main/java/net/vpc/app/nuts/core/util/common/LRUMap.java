@@ -10,9 +10,6 @@ import java.util.Map;
 public class LRUMap<A, B> extends LinkedHashMap<A, B> {
     private int maxEntries;
 
-    //    public static void main(String[] args) {
-//        LRUMap p=new LRUMap(0);
-//    }
     public LRUMap(final int maxEntries) {
         super(maxEntries + 1, 1.0f, true);
         this.maxEntries = maxEntries;

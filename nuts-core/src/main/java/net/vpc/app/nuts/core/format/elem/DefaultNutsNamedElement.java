@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
-import java.util.Map;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsNamedElement;
 
@@ -37,7 +36,7 @@ import net.vpc.app.nuts.NutsNamedElement;
  *
  * @author vpc
  */
-public class DefaultNutsNamedElement implements Map.Entry<String, NutsElement>, NutsNamedElement {
+public class DefaultNutsNamedElement implements NutsNamedElement {
 
     private String key;
     private NutsElement value;
@@ -53,18 +52,7 @@ public class DefaultNutsNamedElement implements Map.Entry<String, NutsElement>, 
     }
 
     @Override
-    public String getKey() {
-        return key;
-    }
-
-    @Override
     public NutsElement getValue() {
         return value;
     }
-
-    @Override
-    public NutsElement setValue(NutsElement value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

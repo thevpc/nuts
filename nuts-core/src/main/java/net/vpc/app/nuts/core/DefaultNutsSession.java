@@ -38,7 +38,6 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import java.lang.reflect.Array;
 import java.util.*;
 import net.vpc.app.nuts.core.format.CustomNutsIncrementalOutputFormat;
-import net.vpc.app.nuts.core.format.DefaultNutsIncrementalOutputFormat;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -49,7 +48,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private List<NutsListener> listeners = new ArrayList<>();
-    private boolean trace = false;
+    private boolean trace;
     private boolean verbose = false;
     private NutsConfirmationMode confirm = null;
     private NutsOutputFormat outputFormat;
@@ -64,6 +63,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
+        this.trace = ws.config().options().isTrace();
     }
 
     @Override

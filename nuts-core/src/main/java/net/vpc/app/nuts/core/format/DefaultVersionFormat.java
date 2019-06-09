@@ -18,11 +18,10 @@ import net.vpc.app.nuts.NutsCommandLine;
 public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersionFormat> implements NutsWorkspaceVersionFormat {
 
     private final Properties extraProperties = new Properties();
-    private boolean minimal = false;
-    private boolean compact;
+    private boolean all;
 
     public DefaultVersionFormat(NutsWorkspace ws) {
-        super(ws,"version");
+        super(ws, "version");
     }
 
     @Override
@@ -32,15 +31,12 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
             return false;
         }
         switch (a.getStringKey()) {
-            case "--min": {
-                this.setMinimal(cmdLine.nextBoolean().getBooleanValue());
-                return true;
-            }
-            case "--compact": {
-                this.setCompact(cmdLine.nextBoolean().getBooleanValue());
+            case "--all": {
+                this.all = cmdLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "--add": {
+                this.all = true;
                 NutsArgument r = cmdLine.nextString().getArgumentValue();
                 extraProperties.put(r.getStringKey(), r.getStringValue());
                 return true;
@@ -52,48 +48,6 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
             }
         }
         return false;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat minimal() {
-        return minimal(true);
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat minimal(boolean minimal) {
-        return setMinimal(minimal);
-    }
-
-    @Override
-    public boolean isCompact() {
-        return compact;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat compact() {
-        return compact(true);
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat compact(boolean compact) {
-        return setCompact(compact);
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat setCompact(boolean compact) {
-        this.compact = compact;
-        return this;
-    }
-
-    @Override
-    public boolean isMinimal() {
-        return minimal;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat setMinimal(boolean minimal) {
-        this.minimal = minimal;
-        return this;
     }
 
     @Override
@@ -112,8 +66,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
 
     @Override
     public void print(Writer out) {
-        NutsOutputFormat t = getValidSession().getOutputFormat();
-        if ((t == null || t == NutsOutputFormat.PLAIN) && isMinimal()) {
+        if (getValidSession().isPlainOut() && !all) {
             PrintWriter pout = getValidPrintWriter(out);
             NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
             pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
@@ -126,19 +79,16 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
         NutsWorkspaceConfigManager configManager = ws.config();
         NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
-        if (isMinimal()) {
-            props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
-            props.put("nuts-runtime-version", rtcontext.getRuntimeId().getVersion().toString());
-            return props;
-        }
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
         props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
         props.put("nuts-runtime-version", rtcontext.getRuntimeId().getVersion().toString());
-        props.put("java-version", System.getProperty("java.version"));
-        props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
+        if (all) {
+            props.put("java-version", System.getProperty("java.version"));
+            props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
+        }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.getProperty(extraKey));
         }

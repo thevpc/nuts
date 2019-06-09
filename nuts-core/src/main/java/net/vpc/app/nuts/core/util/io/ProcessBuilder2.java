@@ -38,25 +38,6 @@ import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
-//    public static void main(String[] args) {
-//        try {
-//            new ProcessBuilder2()
-//                    .setCommand(
-//                            "/usr/java/jdk1.8.0_171-amd64/bin/java",
-//                            "-cp",
-//                            "/home/vpc/.m2/repository/test/test-read/1.0-SNAPSHOT/test-read-1.0-SNAPSHOT.jar",
-//                            "test.read.Main"
-//                    )
-//                    .setIn(System.in)
-//                    .setOutput(System.out)
-////                    .setErr(System.err)
-//                    .waitFor();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 public class ProcessBuilder2 {
 
     private List<String> command = new ArrayList<>();

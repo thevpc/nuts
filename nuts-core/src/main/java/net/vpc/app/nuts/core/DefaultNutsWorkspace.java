@@ -247,7 +247,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 if (!config().isReadOnly()) {
                     config().save();
                 }
-                reconfigurePostInstall(session.copy().trace());
+                reconfigurePostInstall(session);
                 for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
                     workspaceListener.onCreateWorkspace(new DefaultNutsWorkspaceEvent(this, null, null, null, null));
                 }
@@ -325,7 +325,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
             }
-            install().includeCompanions().session(session.copy().trace()).run();
+            install().includeCompanions().session(session).run();
         }
     }
 

@@ -95,17 +95,6 @@ public class BytesSizeFormat {
         this.depth = depth<=0?Integer.MAX_VALUE:depth;
     }
 
-//    public static void main(String[] args) {
-//        long value=Units.GiBYTE;
-//        for (String s : new String[]{
-//                "0I0BEF0","00BEF0","B0TD1F","B0TD2F","B0TD3F","B0TD1FI","B0TD2FI","B0TD3FI","0I0BEF0","I0BEF","IBEF","0IBTF"
-//        }) {
-//            System.out.println("");
-//            System.out.println(">System.out.println(new BytesSizeFormat(\""+s+"\").format("+value+"));");
-//            System.out.println(new BytesSizeFormat(s).format(value));
-//        }
-//    }
-
     public BytesSizeFormat() {
         this("B0EF");
     }

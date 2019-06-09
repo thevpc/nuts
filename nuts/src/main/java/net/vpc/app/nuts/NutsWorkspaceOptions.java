@@ -131,6 +131,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : exported (inherited in child workspaces)
      */
+    private boolean trace = false;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
     private NutsLogConfig logConfig;
 
     /**
@@ -350,6 +355,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        return this;
+    }
+
+    public boolean isTrace() {
+        return trace;
+    }
+
+    public NutsWorkspaceOptions setTrace(boolean trace) {
+        this.trace = trace;
         return this;
     }
 

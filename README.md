@@ -39,6 +39,21 @@ Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 ## Installation
 java -jar nuts-0.5.5.jar
 
+To check if nuts is installed issue this command:
+```
+nuts version 
+```
+
+It should show a result like this
+
+```
+nuts-api-version = 0.5.5
+nuts-runtime-version = 0.5.5.0
+java-version = 12.0.1
+os-version = 5.1.4-1-default
+```
+
+
 ## Examples of usage
 ### show version and exit
 ```

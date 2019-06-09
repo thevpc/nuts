@@ -61,12 +61,6 @@ public class DefaultNutsArrayElement extends AbstractNutsElement implements Nuts
             for (Object object : (Collection) array) {
                 values.add(object);
             }
-        } else if (array instanceof JsonArray) {
-            JsonArray nl = (JsonArray) array;
-            int count = nl.size();
-            for (int i = 0; i < count; i++) {
-                values.add(nl.get(i));
-            }
         } else if (array instanceof Iterator) {
             Iterator nl = (Iterator) array;
             while (nl.hasNext()) {

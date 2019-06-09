@@ -93,6 +93,8 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     NutsQuestion<T> setParser(NutsResponseParser parser);
 
+    NutsQuestion<T> validator(NutsResponseValidator<T> validator);
+    
     NutsQuestion<T> setValidator(NutsResponseValidator<T> validator);
 
     NutsResponseValidator<T> getValidator();

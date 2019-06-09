@@ -136,7 +136,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--user", "-u", options.getUserName(), arguments);
             fillOption("--password", "-p", options.getPassword(), arguments);
             fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments);
-            fillOption("--term", "-t", options.getTerminalMode(), arguments);
+            fillOption("--term", "-m", options.getTerminalMode(), arguments);
             if (options.getLogConfig() != null) {
                 if (options.getLogConfig().getLogLevel() != null) {
                     if (options.getLogConfig().getLogLevel() == Level.FINEST) {
@@ -163,6 +163,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--global", "-g", options.isGlobal(), arguments);
             fillOption("--gui", null, options.isGui(), arguments);
             fillOption("--read-only", "-R", options.isReadOnly(), arguments);
+            fillOption("--trace", "-t", options.isTrace(), arguments);
             fillOption("--skip-install-companions", "-k", options.isSkipInstallCompanions(), arguments);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments);
             fillOption(options.getConfirm(), arguments);

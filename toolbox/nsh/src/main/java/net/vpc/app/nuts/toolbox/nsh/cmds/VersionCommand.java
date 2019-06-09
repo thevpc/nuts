@@ -32,9 +32,9 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.common.mvn.PomIdResolver;
-import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 /**
  * Created by vpc on 1/7/17.
@@ -48,22 +48,10 @@ public class VersionCommand extends AbstractNshBuiltin {
     @Override
     public void exec(String[] args, NshExecutionContext context) {
         NutsWorkspace ws = context.getWorkspace();
-        boolean min = false;
         NutsCommandLine cmdLine = context.getWorkspace().parse().command(args);
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if ((a = cmdLine.nextBoolean("-m", "--min")) != null) {
-                min = true;
-            } else {
-                cmdLine.setCommandName(getName()).unexpectedArgument();
-            }
-
-        }
-
-        ws.format().version()
-                .minimal(min)
+        NutsWorkspaceVersionFormat version = ws.format().version();
+        version.configure(true, cmdLine);
+        version
                 .session(context.getSession())
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());

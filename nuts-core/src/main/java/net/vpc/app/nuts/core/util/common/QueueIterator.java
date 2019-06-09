@@ -40,14 +40,6 @@ public class QueueIterator<T> implements Iterator<T> {
 
     private Queue<Iterator<T>> children = new LinkedList<Iterator<T>>();
     private int size;
-//    public static void main(String[] args) {
-//        QueueIterator<String> q=new QueueIterator<String>();
-////        q.add(Arrays.asList("a","b").iterator());
-////        q.add(Arrays.asList("c","d").iterator());
-//        while(q.hasNext()){
-//            System.out.println(q.next());
-//        }
-//    }
 
     public void addNonNull(Iterator<T> child) {
         if (child != null) {

@@ -222,11 +222,11 @@ public class LinuxNdi implements SystemNdi {
         }
         if ((force || updatedBashrc || updatedNdirc) && trace) {
             if (force) {
-                if (context.getSession().isPlainOut()) {
+                if (context.getSession().isPlainTrace()) {
                     context.session().out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                 }
             } else {
-                if (context.getSession().isPlainOut()) {
+                if (context.getSession().isPlainTrace()) {
                     if (updatedNdirc && updatedBashrc) {
                         context.session().out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                     } else if (updatedNdirc) {
@@ -236,46 +236,35 @@ public class LinuxNdi implements SystemNdi {
                     }
                 }
             }
-            if (context.getSession().isPlainOut()) {
+            if (context.getSession().isPlainTrace()) {
                 context.session().out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
             }
             if (updatedNdirc || updatedBashrc) {
-
-                while (true) {
-                    switch (context.getSession().getConfirm()) {
-                        case ERROR: {
-                            throw new NutsUserCancelException(context.getWorkspace());
-                        }
-                        case YES: {
-                            return;
-                        }
-                        case NO: {
-                            return;
-                        }
-                        case ASK: {
-                            String r = context.session().terminal().ask()
-                                    .forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
-                                    .session(context.getSession())
-                                    .getValue();
-                            if ("ok".equalsIgnoreCase(r)) {
-                                break;
+                String r = context.session().terminal().ask()
+                        .forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
+                        .session(context.getSession())
+                        .validator(new NutsResponseValidator<String>() {
+                            @Override
+                            public String validate(String r, NutsQuestion<String> question) throws NutsValidationException {
+                                if ("ok".equalsIgnoreCase(r)) {
+                                    return r;
+                                }
+                                if ("why".equalsIgnoreCase(r)) {
+                                    context.session().out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
+                                    context.session().out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
+                                    context.session().out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
+                                    context.session().out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
+                                    context.session().out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
+                                    context.session().out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
+                                    throw new NutsValidationException(context.getWorkspace(), "Try again...'");
+                                } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
+                                    throw new NutsUserCancelException(context.getWorkspace());
+                                } else {
+                                    throw new NutsValidationException(context.getWorkspace(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
+                                }
                             }
-                            if ("why".equalsIgnoreCase(r)) {
-                                context.session().out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
-                                context.session().out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
-                                context.session().out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                                context.session().out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
-                                context.session().out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                context.session().out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
-                            } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                return;
-                            } else {
-                                context.session().out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !%n");
-                            }
-                        }
-                    }
-                }
-
+                        })
+                        .getValue();
             }
         }
     }

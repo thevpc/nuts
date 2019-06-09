@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
@@ -57,7 +58,6 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
 
@@ -96,6 +96,45 @@ public class DefaultNutsInstalledRepository {
         public void setInstallDate(Date installDate) {
             this.installDate = installDate;
         }
+
+        @Override
+        public String toString() {
+            return "InstallInfoConfig{" + "id=" + id + ", installDate=" + installDate + ", installUser=" + installUser + '}';
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 89 * hash + Objects.hashCode(this.id);
+            hash = 89 * hash + Objects.hashCode(this.installDate);
+            hash = 89 * hash + Objects.hashCode(this.installUser);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final InstallInfoConfig other = (InstallInfoConfig) obj;
+            if (!Objects.equals(this.installUser, other.installUser)) {
+                return false;
+            }
+            if (!Objects.equals(this.id, other.id)) {
+                return false;
+            }
+            if (!Objects.equals(this.installDate, other.installDate)) {
+                return false;
+            }
+            return true;
+        }
+        
 
     }
 

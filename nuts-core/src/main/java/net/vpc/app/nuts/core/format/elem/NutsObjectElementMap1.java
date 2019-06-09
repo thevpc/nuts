@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
-import net.vpc.app.nuts.NutsElementType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,16 +50,11 @@ class NutsObjectElementMap1 extends NutsObjectElementBase {
     }
 
     @Override
-    public NutsElementType type() {
-        return NutsElementType.OBJECT;
-    }
-
-    @Override
     public Collection<NutsNamedElement> children() {
         List<NutsNamedElement> all = new ArrayList<>();
         for (Map.Entry<String, Object> entry : value.entrySet()) {
             NutsElement val = context.toElement(entry.getValue());
-            all.add(new DefaultNutsNamedElement(entry.getKey(), (DefaultNutsPrimitiveElement) val));
+            all.add(new DefaultNutsNamedElement(entry.getKey(), val));
         }
         return all;
     }

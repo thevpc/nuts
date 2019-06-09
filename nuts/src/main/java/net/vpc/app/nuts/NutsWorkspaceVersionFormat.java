@@ -48,19 +48,4 @@ public interface NutsWorkspaceVersionFormat extends NutsFormat {
 
     NutsWorkspaceVersionFormat addProperties(Properties p);
 
-    NutsWorkspaceVersionFormat minimal();
-
-    NutsWorkspaceVersionFormat minimal(boolean minimal);
-
-    boolean isMinimal();
-
-    NutsWorkspaceVersionFormat setMinimal(boolean minimal);
-
-    NutsWorkspaceVersionFormat compact();
-
-    NutsWorkspaceVersionFormat compact(boolean compact);
-
-    boolean isCompact();
-
-    NutsWorkspaceVersionFormat setCompact(boolean compact);
 }

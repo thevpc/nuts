@@ -43,6 +43,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.ClassMap;
 import org.w3c.dom.Node;
 import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.json.NutsElementFactoryJsonElement;
 import net.vpc.app.nuts.core.format.xml.NutsElementFactoryXmlDocument;
@@ -61,6 +62,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_COLLECTION = new NutsElementFactoryCollection();
     private static final NutsElementFactory F_ITERATOR = new NutsElementFactoryIterator();
     private static final NutsElementFactory F_MAP = new NutsElementFactoryMap();
+    private static final NutsElementFactory F_NAMED_ELEM = new NutsElementFactoryNamedElement();
     private static final NutsElementFactory F_MAPENTRY = new NutsElementFactoryMapEntry();
     private static final NutsElementFactory F_XML_ELEMENT = new NutsElementFactoryXmlElement();
     private static final NutsElementFactory F_XML_DOCUMENT = new NutsElementFactoryXmlDocument();
@@ -85,12 +87,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addHirarchyFactory(org.w3c.dom.Document.class, F_XML_DOCUMENT);
         addHirarchyFactory(NutsDefinition.class, F_NUTS_DEF);
         addHirarchyFactory(NutsId.class, F_NUTS_ID);
+        addHirarchyFactory(NutsNamedElement.class, F_NAMED_ELEM);
 
         addHirarchyFactory(Collection.class, F_COLLECTION);
         addHirarchyFactory(Iterator.class, F_ITERATOR);
         addHirarchyFactory(Map.class, F_MAP);
         addHirarchyFactory(Map.Entry.class, F_MAPENTRY);
-        this.ws=ws;
+        this.ws = ws;
     }
 
     public final void addHirarchyFactory(Class cls, NutsElementFactory instance) {
@@ -119,13 +122,25 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 return f;
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat)ws.format().json();
-        return create(json.convert(o,JsonElement.class), context);
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.format().json();
+        return create(json.convert(o, JsonElement.class), context);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }
 
     public NutsElement fromJsonElement(JsonElement o) {
         return create(o, null);
+    }
+
+    private static class NutsElementFactoryNamedElement implements NutsElementFactory {
+
+        @Override
+        public NutsElement create(Object o, NutsElementFactoryContext context) {
+            NutsNamedElement je = (NutsNamedElement) o;
+            Map<String, Object> m = new HashMap<>();
+            m.put("name", je.getName());
+            m.put("value", je.getValue());
+            return new NutsObjectElementMap1(m, context);
+        }
     }
 
     private static class NutsElementFactoryMap implements NutsElementFactory {
@@ -153,7 +168,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement create(Object o, NutsElementFactoryContext context) {
             Map.Entry je = (Map.Entry) o;
             Map m = new HashMap();
-            m.put(je.getKey(), je.getValue());
+            m.put("key",je.getKey());
+            m.put("value",je.getValue());
             return context.toElement(m);
         }
     }

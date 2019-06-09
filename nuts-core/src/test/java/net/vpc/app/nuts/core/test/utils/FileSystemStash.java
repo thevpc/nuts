@@ -39,15 +39,6 @@ public class FileSystemStash {
         this.stash.mkdirs();
     }
 
-//    public static void main(String[] args) {
-//        try {
-////            String s = save(new File("/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/customLayout_use_export/"));
-////            System.out.println(s);
-//            restore("stash-17173126093786791717");
-//        } catch (IOException ex) {
-//            Logger.getLogger(FileSystemStash.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
     public void restore(String f) throws IOException {
         File g = new File(stash, f + ".saved");
         if (!g.isDirectory()) {

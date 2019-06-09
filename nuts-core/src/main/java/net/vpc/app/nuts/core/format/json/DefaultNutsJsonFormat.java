@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
@@ -135,6 +136,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
         }
     }
 
+    @Override
     public <T> void write(Object obj, File file) {
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
@@ -264,7 +266,10 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
                 .registerTypeHierarchyAdapter(NutsDependency.class, new NutsNutsDependencyJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsElement.class, new NutsElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
-                .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter());
+                .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter())
+                .registerTypeHierarchyAdapter(Path.class, new PathJsonAdapter())
+                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter())
+                ;
     }
 
     private static class NutsIdJsonAdapter implements
@@ -395,6 +400,36 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
             NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement(),NutsElement.class);
             return toJsonElement(element);
+        }
+    }
+
+    private class PathJsonAdapter implements
+            com.google.gson.JsonSerializer<Path>,
+            com.google.gson.JsonDeserializer<Path> {
+
+        @Override
+        public Path deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return Paths.get(json.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(Path src, Type typeOfSrc, JsonSerializationContext context) {
+            return context.serialize(src.toString());
+        }
+    }
+
+    private class FileJsonAdapter implements
+            com.google.gson.JsonSerializer<File>,
+            com.google.gson.JsonDeserializer<File> {
+
+        @Override
+        public File deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return new File(json.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(File src, Type typeOfSrc, JsonSerializationContext context) {
+            return context.serialize(src.getPath());
         }
     }
 

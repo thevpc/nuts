@@ -99,7 +99,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
             os2.printf(message, this.getMessageParameters());
             os2.flush();
             throw new NutsExecutionException(ws, "Unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response for :" + os.toString(), 243);
+                    + "You need to provide default response (-y|-n) for : " + os.toString(), 243);
         }
         String message = this.getMessage();
         if (message.endsWith("\n")) {
@@ -199,13 +199,14 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                 }
                 T parsed = null;
                 if (v == null || v.length() == 0) {
-                    boolean ok = false;
                     try {
                         parsed = (T) p.parse(this.getDefaultValue(), this.getValueType());
                         if (this.validator != null) {
                             parsed = this.validator.validate(parsed, this);
                         }
                         return parsed;
+                    } catch (NutsUserCancelException ex) {
+                        throw ex;
                     } catch (Exception ex) {
                         out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                     }
@@ -216,6 +217,8 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                             parsed = this.validator.validate(parsed, this);
                         }
                         return parsed;
+                    } catch (NutsUserCancelException ex) {
+                        throw ex;
                     } catch (Exception ex) {
                         out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                     }
@@ -401,6 +404,11 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
             }
         }
         return false;
+    }
+
+    @Override
+    public NutsQuestion<T> validator(NutsResponseValidator<T> validator) {
+        return setValidator(validator);
     }
 
     @Override

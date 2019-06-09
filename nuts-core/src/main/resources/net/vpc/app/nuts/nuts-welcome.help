@@ -8,4 +8,4 @@
 @@SYNOPSIS:@@
 ==nuts== [[\[Nuts Options\]]]... {{\<command\>}} {{\<args\>}} ...
 
-For Help, type ==nuts== [[--help]]
+For Help, type ==nuts== [[help]]

@@ -45,16 +45,6 @@ public class PomXmlParser {
         map.put("&apos;", "&#39;");
     }
 
-//    public static void main(String[] args) {
-//        try {
-////            URL u = new URL("http://repo.maven.apache.org/maven2/qdox/qdox/1.6.1/qdox-1.6.1.pom");
-//            URL u = new File("/home/vpc/.m2/repository/org/apache/commons/commons-parent/43/commons-parent-43.pom").toURI().toURL();
-//            Pom parse = new PomXmlParser().parse(u);
-//            System.out.println(parse);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
     public static final ErrorHandler EH = null;
 //            new ErrorHandler() {
 //        @Override

@@ -412,6 +412,7 @@ public class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.CACHE), runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)));
             LOG.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
             LOG.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
+            LOG.log(Level.CONFIG, "\t option-trace                   : {0}", options.isTrace());
             LOG.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
             LOG.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
             LOG.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
@@ -1209,6 +1210,7 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-boot-args                   : %s%n", options.format().getBootCommandLine());
         System.err.printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-read-only                 : %s%n", options.isReadOnly());
+        System.err.printf("  option-trace                     : %s%n", options.isTrace());
         System.err.printf("  option-open-mode                 : %s%n", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s%n", "<none>");

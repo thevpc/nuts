@@ -468,7 +468,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--term":
-                    case "-t": {
+                    case "-m": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -485,6 +485,14 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setReadOnly(a.getBooleanValue());
+                        }
+                        break;
+                    }
+                    case "-t":
+                    case "--trace": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setTrace(a.getBooleanValue());
                         }
                         break;
                     }

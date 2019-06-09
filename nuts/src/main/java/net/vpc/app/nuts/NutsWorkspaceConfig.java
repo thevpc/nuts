@@ -701,4 +701,259 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.authenticationAgent = authenticationAgent;
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.uuid);
+        hash = 37 * hash + (this.global ? 1 : 0);
+        hash = 37 * hash + Objects.hashCode(this.workspace);
+        hash = 37 * hash + Objects.hashCode(this.bootApiVersion);
+        hash = 37 * hash + Objects.hashCode(this.createApiVersion);
+        hash = 37 * hash + Objects.hashCode(this.bootRuntime);
+        hash = 37 * hash + Objects.hashCode(this.bootRuntimeDependencies);
+        hash = 37 * hash + Objects.hashCode(this.bootRepositories);
+        hash = 37 * hash + Objects.hashCode(this.bootJavaCommand);
+        hash = 37 * hash + Objects.hashCode(this.bootJavaOptions);
+        hash = 37 * hash + Objects.hashCode(this.programsStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.configStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.varStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.libStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.logStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.tempStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.cacheStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.repositoryStoreLocationStrategy);
+        hash = 37 * hash + Objects.hashCode(this.storeLocationStrategy);
+        hash = 37 * hash + Objects.hashCode(this.storeLocationLayout);
+        hash = 37 * hash + Objects.hashCode(this.programsSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.configSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.varSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.libSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.logSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.tempSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.cacheSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.programsWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.configWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.varWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.libWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.logWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.tempWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.cacheWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.programsMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.configMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.varMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.libMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.logMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.tempMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.cacheMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.programsLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.configLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.varLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.libLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.logLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.tempLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.cacheLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.repositories);
+        hash = 37 * hash + Objects.hashCode(this.extensions);
+        hash = 37 * hash + Objects.hashCode(this.commandFactories);
+        hash = 37 * hash + Objects.hashCode(this.env);
+        hash = 37 * hash + Objects.hashCode(this.sdk);
+        hash = 37 * hash + Objects.hashCode(this.imports);
+        hash = 37 * hash + (this.secure ? 1 : 0);
+        hash = 37 * hash + Objects.hashCode(this.authenticationAgent);
+        hash = 37 * hash + Objects.hashCode(this.users);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsWorkspaceConfig other = (NutsWorkspaceConfig) obj;
+        if (this.global != other.global) {
+            return false;
+        }
+        if (this.secure != other.secure) {
+            return false;
+        }
+        if (!Objects.equals(this.uuid, other.uuid)) {
+            return false;
+        }
+        if (!Objects.equals(this.workspace, other.workspace)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootApiVersion, other.bootApiVersion)) {
+            return false;
+        }
+        if (!Objects.equals(this.createApiVersion, other.createApiVersion)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootRuntime, other.bootRuntime)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootRuntimeDependencies, other.bootRuntimeDependencies)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootRepositories, other.bootRepositories)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootJavaCommand, other.bootJavaCommand)) {
+            return false;
+        }
+        if (!Objects.equals(this.bootJavaOptions, other.bootJavaOptions)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsStoreLocation, other.programsStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.configStoreLocation, other.configStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.varStoreLocation, other.varStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.libStoreLocation, other.libStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.logStoreLocation, other.logStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempStoreLocation, other.tempStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheStoreLocation, other.cacheStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsSystemHome, other.programsSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.configSystemHome, other.configSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.varSystemHome, other.varSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.libSystemHome, other.libSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.logSystemHome, other.logSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempSystemHome, other.tempSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheSystemHome, other.cacheSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsWindowsHome, other.programsWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.configWindowsHome, other.configWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.varWindowsHome, other.varWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.libWindowsHome, other.libWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.logWindowsHome, other.logWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempWindowsHome, other.tempWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheWindowsHome, other.cacheWindowsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsMacOsHome, other.programsMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.configMacOsHome, other.configMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.varMacOsHome, other.varMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.libMacOsHome, other.libMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.logMacOsHome, other.logMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempMacOsHome, other.tempMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheMacOsHome, other.cacheMacOsHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsLinuxHome, other.programsLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.configLinuxHome, other.configLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.varLinuxHome, other.varLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.libLinuxHome, other.libLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.logLinuxHome, other.logLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempLinuxHome, other.tempLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheLinuxHome, other.cacheLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.authenticationAgent, other.authenticationAgent)) {
+            return false;
+        }
+        if (this.repositoryStoreLocationStrategy != other.repositoryStoreLocationStrategy) {
+            return false;
+        }
+        if (this.storeLocationStrategy != other.storeLocationStrategy) {
+            return false;
+        }
+        if (this.storeLocationLayout != other.storeLocationLayout) {
+            return false;
+        }
+        if (!Objects.equals(this.repositories, other.repositories)) {
+            return false;
+        }
+        if (!Objects.equals(this.extensions, other.extensions)) {
+            return false;
+        }
+        if (!Objects.equals(this.commandFactories, other.commandFactories)) {
+            return false;
+        }
+        if (!Objects.equals(this.env, other.env)) {
+            return false;
+        }
+        if (!Objects.equals(this.sdk, other.sdk)) {
+            return false;
+        }
+        if (!Objects.equals(this.imports, other.imports)) {
+            return false;
+        }
+        if (!Objects.equals(this.users, other.users)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsWorkspaceConfig{" + "uuid=" + uuid + ", global=" + global + ", workspace=" + workspace + ", bootApiVersion=" + bootApiVersion + ", createApiVersion=" + createApiVersion + ", bootRuntime=" + bootRuntime + ", bootRuntimeDependencies=" + bootRuntimeDependencies + ", bootRepositories=" + bootRepositories + ", bootJavaCommand=" + bootJavaCommand + ", bootJavaOptions=" + bootJavaOptions + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", repositoryStoreLocationStrategy=" + repositoryStoreLocationStrategy + ", storeLocationStrategy=" + storeLocationStrategy + ", storeLocationLayout=" + storeLocationLayout + ", programsSystemHome=" + programsSystemHome + ", configSystemHome=" + configSystemHome + ", varSystemHome=" + varSystemHome + ", libSystemHome=" + libSystemHome + ", logSystemHome=" + logSystemHome + ", tempSystemHome=" + tempSystemHome + ", cacheSystemHome=" + cacheSystemHome + ", programsWindowsHome=" + programsWindowsHome + ", configWindowsHome=" + configWindowsHome + ", varWindowsHome=" + varWindowsHome + ", libWindowsHome=" + libWindowsHome + ", logWindowsHome=" + logWindowsHome + ", tempWindowsHome=" + tempWindowsHome + ", cacheWindowsHome=" + cacheWindowsHome + ", programsMacOsHome=" + programsMacOsHome + ", configMacOsHome=" + configMacOsHome + ", varMacOsHome=" + varMacOsHome + ", libMacOsHome=" + libMacOsHome + ", logMacOsHome=" + logMacOsHome + ", tempMacOsHome=" + tempMacOsHome + ", cacheMacOsHome=" + cacheMacOsHome + ", programsLinuxHome=" + programsLinuxHome + ", configLinuxHome=" + configLinuxHome + ", varLinuxHome=" + varLinuxHome + ", libLinuxHome=" + libLinuxHome + ", logLinuxHome=" + logLinuxHome + ", tempLinuxHome=" + tempLinuxHome + ", cacheLinuxHome=" + cacheLinuxHome + ", repositories=" + repositories + ", extensions=" + extensions + ", commandFactories=" + commandFactories + ", env=" + env + ", sdk=" + sdk + ", imports=" + imports + ", secure=" + secure + ", authenticationAgent=" + authenticationAgent + ", users=" + users + '}';
+    }
+    
 }

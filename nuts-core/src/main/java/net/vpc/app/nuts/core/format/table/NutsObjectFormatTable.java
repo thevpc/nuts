@@ -71,6 +71,12 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
                 }
                 break;
             }
+            case ARRAY: {
+                for (NutsElement value2 : value.array().children()) {
+                    resolveColumns(value2, columns);
+                }
+                break;
+            }
             default: {
                 columns.add("value");
             }
@@ -84,11 +90,15 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             case STRING:
             case NUMBER:
             case NULL:
-            case UNKNWON:
-            case OBJECT: {
+            case UNKNWON: {
                 List<NutsElement> a = new ArrayList<>();
                 a.add(value);
                 print(w, ws.format().element().toElement(a));
+                break;
+            }
+            case OBJECT: {
+                print(w, ws.format().element().toElement(value.object().children()));
+                break;
             }
             case ARRAY: {
                 NutsTableFormat t = ws.format().table();

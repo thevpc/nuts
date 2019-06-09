@@ -39,19 +39,6 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
     private Serializer<K> keySer;
     private Serializer<V> valueSer;
 
-//    public static void main(String[] args) {
-//        DefaultPersistentMap<String, String> t = new DefaultPersistentMap<>(String.class, String.class, new File(System.getProperty("user.home"), "toz"));
-//        long a = System.currentTimeMillis();
-//        for (int i = 0; i < 10000; i++) {
-//            t.put(String.valueOf(i), Integer.toHexString(i));
-//        }
-//        t.flush();
-//        System.out.println(System.currentTimeMillis() - a);
-//        for (Map.Entry<String, String> entry : t.entrySet()) {
-//            System.out.println(entry.getKey() + ":" + entry.getValue());
-//        }
-//        System.out.println(t.size());
-//    }
     public DefaultPersistentMap(Class<K> keyType, Class<V> valueType, File root) {
         this(keyType, valueType, root, 512);
     }

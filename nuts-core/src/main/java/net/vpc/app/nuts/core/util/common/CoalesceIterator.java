@@ -17,15 +17,6 @@ public class CoalesceIterator<T> implements Iterator<T> {
 
     private Queue<Iterator<T>> children = new LinkedList<Iterator<T>>();
     private int size = 0;
-//    public static void main(String[] args) {
-//        CoalesceIterator<String> q=new CoalesceIterator<String>();
-//        q.add(Collections.<String>emptyIterator());
-//        q.add(Arrays.asList("c","d").iterator());
-//        q.add(Arrays.asList("e","f").iterator());
-//        while(q.hasNext()){
-//            System.out.println(q.next());
-//        }
-//    }
 
     public void addNonNull(Iterator<T> child) {
         if (child != null) {

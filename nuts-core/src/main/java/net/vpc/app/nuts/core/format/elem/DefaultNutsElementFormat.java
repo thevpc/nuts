@@ -1,7 +1,5 @@
 package net.vpc.app.nuts.core.format.elem;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.*;

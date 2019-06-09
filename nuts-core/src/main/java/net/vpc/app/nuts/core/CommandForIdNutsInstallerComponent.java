@@ -31,10 +31,8 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutionEntry;
-import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -53,7 +51,7 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=install", "--force")
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=install")
                     .addExecutorOptions("-Dnuts.export.debug").addCommand(executionContext.getArguments())
                     .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
                     .failFast()
