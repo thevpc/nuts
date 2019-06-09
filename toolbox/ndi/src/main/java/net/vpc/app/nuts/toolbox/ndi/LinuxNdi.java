@@ -242,12 +242,13 @@ public class LinuxNdi implements SystemNdi {
                     }
                 }
             }
-            if (context.getSession().isPlainTrace()) {
-                context.session().out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n", ". ~/.bashrc");
-            }
             if (updatedNdirc || updatedBashrc) {
                 String r = context.session().terminal().ask()
-                        .forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
+                        .forString(
+                                "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
+                                +"Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
+                                ". ~/.bashrc"
+                                )
                         .session(context.getSession())
                         .validator(new NutsResponseValidator<String>() {
                             @Override
