@@ -168,7 +168,10 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
                 }
             }
             if(monitorable){
-                if(path.endsWith("/.folders") || path.endsWith("/.files") || path.endsWith(".pom") || path.endsWith(".nuts")){
+                if(path.endsWith("/.folders") || path.endsWith("/.files") 
+                        || path.endsWith(".pom") || path.endsWith(".nuts")
+                        || path.endsWith(".xml")
+                        ){
                     monitorable = false;
                 }
             }
