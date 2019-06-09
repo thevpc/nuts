@@ -1,19 +1,21 @@
 package net.vpc.app.nuts.core.format.elem;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
+import net.vpc.app.nuts.core.format.DefaultFormatBase0;
+import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 
-public class DefaultNutsElementFormat implements NutsElementFormat, NutsElementFactoryContext {
+public class DefaultNutsElementFormat extends DefaultFormatBase0<NutsElementFormat> implements NutsElementFormat, NutsElementFactoryContext {
 
-    private final NutsWorkspace ws;
     private final NutsElementFactoryService nvalueFactory;
     private NutsElementFactory fallback;
     private final Map<String, Object> properties = new HashMap<>();
 
     public DefaultNutsElementFormat(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws,"element-format");
         nvalueFactory = new DefaultNutsElementFactoryService(ws);
     }
 
@@ -43,24 +45,28 @@ public class DefaultNutsElementFormat implements NutsElementFormat, NutsElementF
     }
 
     @Override
-    public final NutsElementFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-element-format");
-    }
-
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
-    }
-
-    @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
-        if (a == null) {
-            return false;
-        }
-        switch (a.getStringKey()) {
-            //
-        }
         return false;
     }
+
+    @Override
+    public <T> T fromElement(NutsElement element, Class<T> cls) {
+        if(NutsElement.class.isAssignableFrom(cls)){
+            return (T)element;
+        }
+        if(NutsElement.class.isAssignableFrom(cls)){
+            return (T)element;
+        }
+        if(org.w3c.dom.Node.class.isAssignableFrom(cls)){
+            if(org.w3c.dom.Document.class.isAssignableFrom(cls)){
+                return (T)ws.format().xml().toXmlDocument(element);
+            }
+            if(org.w3c.dom.Element.class.isAssignableFrom(cls)){
+                return (T)ws.format().xml().toXmlElement(element,null);
+            }
+        }
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat)ws.format().json();
+        return json.convert(element,cls);
+    }
+    
 }

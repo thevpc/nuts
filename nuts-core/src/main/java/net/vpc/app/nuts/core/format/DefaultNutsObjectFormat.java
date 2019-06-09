@@ -39,7 +39,6 @@ import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.json.NutsObjectFormatJson;
 import net.vpc.app.nuts.core.format.plain.NutsObjectFormatPlain;
@@ -59,15 +58,6 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public DefaultNutsObjectFormat(NutsWorkspace ws) {
         super(ws, "object-format");
-    }
-
-    @Override
-    public NutsObjectFormat setTerminalFormat(NutsTerminalFormat terminalFormat) {
-        super.setTerminalFormat(terminalFormat);
-        if (base != null) {
-            base.setTerminalFormat(terminalFormat);
-        }
-        return this;
     }
 
     @Override
@@ -97,7 +87,6 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         if (base == null || outputFormat != getOutputFormat()) {
             base = createObjectFormat();
             base.setValue(getValue());
-            base.setTerminalFormat(getTerminalFormat());
             base.setSession(getValidSession());
         }
         return base;

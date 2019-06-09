@@ -15,28 +15,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.io.SimpleNutsTerminalFormat;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
-import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
-import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
  * @author vpc
  */
-public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFormat {
-
-    protected NutsWorkspace ws;
-    private NutsSession session;
-    private String name;
-    private NutsTerminalFormat terminalFormat;
+public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFormatBase0<T> implements NutsFormat {
 
     public DefaultFormatBase(NutsWorkspace ws,String name) {
-        this.ws = ws;
-        this.name = name;
-        this.terminalFormat = ws.io().getTerminalFormat();
+        super(ws,name);
     }
 
+    @Override
     public PrintWriter getValidPrintWriter(Writer out) {
         if (out == null) {
             out = new PrintWriter(getValidSession().getTerminal().getOut());
@@ -45,10 +36,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
         return ws.io().getTerminalFormat().prepare(pout);
     }
 
+    @Override
     public PrintWriter getValidPrintWriter() {
         return getValidPrintWriter(null);
     }
 
+    @Override
     public PrintStream getValidPrintStream(PrintStream out) {
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
@@ -56,34 +49,10 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
         return ws.io().getTerminalFormat().prepare(out);
     }
 
+    @Override
     public PrintStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
-
-    public NutsSession getValidSession() {
-        if (session == null) {
-            session = ws.createSession();
-        }
-        return session;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public T session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public T setSession(NutsSession session) {
-        //should copy because will chage outputformat
-        this.session = session == null ? null : session.copy();
-        return (T) this;
-    }
-
 
     @Override
     public String format() {
@@ -170,31 +139,6 @@ public abstract class DefaultFormatBase<T extends NutsFormat> implements NutsFor
         return format();
     }
 
-
-    @Override
-    public T terminalFormat(NutsTerminalFormat metrics) {
-        return setTerminalFormat(metrics);
-    }
-
-    @Override
-    public T setTerminalFormat(NutsTerminalFormat metrics) {
-        this.terminalFormat = metrics == null ? SimpleNutsTerminalFormat.INSTANCE : metrics;
-        return (T) this;
-    }
-
-    public NutsTerminalFormat getTerminalFormat() {
-        return terminalFormat;
-    }
-
-    @Override
-    public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args,name);
-    }
-
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
-    }
 
     public abstract void print(Writer out);
 

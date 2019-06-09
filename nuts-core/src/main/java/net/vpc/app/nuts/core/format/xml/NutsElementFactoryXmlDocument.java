@@ -44,7 +44,7 @@ public class NutsElementFactoryXmlDocument implements NutsElementFactory {
     @Override
     public NutsElement create(Object o, NutsElementFactoryContext context) {
         Element e = ((Document) o).getDocumentElement();
-        return DefaultNutsXmlFormat.getOrSet(context).fromXmlElement(e);
+        return DefaultNutsXmlFormat.getOrSet(context).fromXmlElement(e,NutsElement.class);
     }
     
 }

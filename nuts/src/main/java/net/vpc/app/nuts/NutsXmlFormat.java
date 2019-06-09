@@ -43,6 +43,14 @@ public interface NutsXmlFormat extends NutsConfigurable {
 
     Element toXmlElement(Object value, Document document);
 
+    <T> T fromXmlElement(Element element, Class<T> cls);
+
+    NutsSession getSession();
+
+    NutsXmlFormat session(NutsSession session);
+
+    NutsXmlFormat setSession(NutsSession session);
+
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsConfigurable#configure(java.lang.String...)}
@@ -54,7 +62,5 @@ public interface NutsXmlFormat extends NutsConfigurable {
      */
     @Override
     public NutsXmlFormat configure(boolean skipUnsupported, String... args);
-
-    NutsElement fromXmlElement(Element element);
 
 }

@@ -37,12 +37,6 @@ package net.vpc.app.nuts;
 public interface NutsTableFormat extends NutsFormat {
 
     @Override
-    NutsTableFormat terminalFormat(NutsTerminalFormat metric);
-
-    @Override
-    NutsTableFormat setTerminalFormat(NutsTerminalFormat metric);
-
-    @Override
     NutsTableFormat session(NutsSession session);
 
     @Override

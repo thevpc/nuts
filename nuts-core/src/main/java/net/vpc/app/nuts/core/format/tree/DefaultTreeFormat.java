@@ -15,26 +15,6 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public static final NutsTreeLinkFormat LINK_ASCII_FORMATTER = new AsciiTreeLinkFormat();
     public static final NutsTreeLinkFormat LINK_SPACE_FORMATTER = new SpaceTreeLinkFormat();
 
-//    public static void main(String[] args) {
-//        String s = new TreeFormatter(new TreeModel<File>() {
-//            @Override
-//            public File getRoot() {
-////                return new File("/home/vpc/.nuts/default-workspace/");
-//                return new File("/home/vpc/.nuts/default-workspace/programs/net/vpc/app/nuts/");
-//            }
-//
-//            @Override
-//            public List<File> getChildren(File o) {
-//                File f = (File) o;
-//                File[] b = f.listFiles();
-//                if (b == null) {
-//                    return Collections.emptyList();
-//                }
-//                return Arrays.asList(b);
-//            }
-//        }).toString();
-//        System.out.println(s);
-//    }
     public static final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
         public String format(Object o, int depth) {

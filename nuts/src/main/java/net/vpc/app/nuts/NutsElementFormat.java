@@ -38,6 +38,14 @@ public interface NutsElementFormat extends NutsConfigurable {
 
     NutsElement toElement(Object object);
 
+    <T> T fromElement(NutsElement element, Class<T> cls);
+
+    NutsSession getSession();
+
+    NutsElementFormat session(NutsSession session);
+
+    NutsElementFormat setSession(NutsSession session);
+
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsConfigurable#configure(java.lang.String...)}

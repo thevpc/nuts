@@ -43,7 +43,6 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.ClassMap;
 import org.w3c.dom.Node;
 import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsJsonFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.json.NutsElementFactoryJsonElement;
 import net.vpc.app.nuts.core.format.xml.NutsElementFactoryXmlDocument;
@@ -121,8 +120,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             }
         }
         DefaultNutsJsonFormat json = (DefaultNutsJsonFormat)ws.format().json();
-        JsonElement t = json.getGson(true).toJsonTree(o);
-        return create(t, context);
+        return create(json.convert(o,JsonElement.class), context);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }
 

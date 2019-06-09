@@ -40,12 +40,6 @@ public interface NutsObjectFormat extends NutsFormat {
     NutsObjectFormat value(Object obj);
     
     @Override
-    NutsObjectFormat terminalFormat(NutsTerminalFormat metric);
-
-    @Override
-    NutsObjectFormat setTerminalFormat(NutsTerminalFormat metric);
-
-    @Override
     NutsObjectFormat session(NutsSession session);
 
     @Override

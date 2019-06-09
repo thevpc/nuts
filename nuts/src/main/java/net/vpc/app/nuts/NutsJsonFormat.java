@@ -39,7 +39,7 @@ import java.nio.file.Path;
  *
  * @author vpc
  */
-public interface NutsJsonFormat {
+public interface NutsJsonFormat extends NutsConfigurable{
 
     boolean isCompact();
 
@@ -65,4 +65,21 @@ public interface NutsJsonFormat {
 
     <T> void write(Object obj, PrintStream printStream);
 
+    NutsSession getSession();
+
+    NutsJsonFormat session(NutsSession session);
+
+    NutsJsonFormat setSession(NutsSession session);
+
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * to help return a more specific return type;
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsJsonFormat configure(boolean skipUnsupported, String... args);
 }

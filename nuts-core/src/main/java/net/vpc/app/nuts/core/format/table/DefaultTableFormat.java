@@ -180,7 +180,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    out.write(CoreStringUtils.fillString(B, getTerminalFormat().textLength(s)));
+                    out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                 }
                 out.write(getSeparator(Separator.FIRST_ROW_END));
                 out.write("\n");
@@ -200,7 +200,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.INTER_ROW_LINE);
                             String s = cell.rendered.toString();
-                            out.write(CoreStringUtils.fillString(B, getTerminalFormat().textLength(s)));
+                            out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                         }
                         out.write(getSeparator(Separator.INTER_ROW_END));
                         out.write("\n");
@@ -239,7 +239,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    out.write(CoreStringUtils.fillString(B, getTerminalFormat().textLength(s)));
+                    out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                 }
                 out.write(getSeparator(Separator.LAST_ROW_END));
             }
@@ -722,7 +722,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue),
                         formatter.getHorizontalAlign(r0, c0, cvalue),
-                        getTerminalFormat()
+                        ws.io().terminalFormat()
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;

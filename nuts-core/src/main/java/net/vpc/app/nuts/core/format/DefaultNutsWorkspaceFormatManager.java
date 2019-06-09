@@ -1,15 +1,9 @@
 package net.vpc.app.nuts.core.format;
 
-import net.vpc.app.nuts.core.format.plain.DefaultSearchFormatPlain;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFormat;
 import net.vpc.app.nuts.core.format.props.DefaultPropertiesFormat;
-import net.vpc.app.nuts.core.format.props.DefaultSearchFormatProps;
 import net.vpc.app.nuts.core.format.table.DefaultTableFormat;
 import net.vpc.app.nuts.core.format.tree.DefaultTreeFormat;
-import net.vpc.app.nuts.core.format.tree.DefaultSearchFormatTree;
-import net.vpc.app.nuts.core.format.table.DefaultSearchFormatTable;
-import net.vpc.app.nuts.core.format.json.DefaultSearchFormatJson;
-import net.vpc.app.nuts.core.format.xml.DefaultSearchFormatXml;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorFormat;
@@ -66,17 +60,17 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
 
     @Override
     public NutsTableFormat table() {
-        return new DefaultTableFormat(ws).setTerminalFormat(ws.io().getTerminalFormat());
+        return new DefaultTableFormat(ws);
     }
 
     @Override
     public NutsPropertiesFormat props() {
-        return new DefaultPropertiesFormat(ws).setTerminalFormat(ws.io().getTerminalFormat());
+        return new DefaultPropertiesFormat(ws);
     }
 
     @Override
     public NutsTreeFormat tree() {
-        return new DefaultTreeFormat(ws).setTerminalFormat(ws.io().getTerminalFormat());
+        return new DefaultTreeFormat(ws);
     }
 
     @Override

@@ -41,18 +41,11 @@ import java.nio.file.Path;
  */
 public interface NutsFormat extends NutsConfigurable{
 
-    NutsFormat terminalFormat(NutsTerminalFormat metrics);
-
-    NutsFormat setTerminalFormat(NutsTerminalFormat metrics);
-
-//    NutsTerminalFormat getTerminalFormat();
-
     @Override
     String toString();
 
     String format();
 
-//    String formatString();
     void print(PrintStream out);
 
     void print(Writer out);

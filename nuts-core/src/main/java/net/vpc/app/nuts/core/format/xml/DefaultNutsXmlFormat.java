@@ -32,11 +32,8 @@ package net.vpc.app.nuts.core.format.xml;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
-import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
@@ -44,14 +41,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementType;
+import net.vpc.app.nuts.NutsFormatManager;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsXmlFormat;
+import net.vpc.app.nuts.core.format.DefaultFormatBase0;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
-import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
+import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,9 +59,8 @@ import org.w3c.dom.NodeList;
  *
  * @author vpc
  */
-public class DefaultNutsXmlFormat implements NutsXmlFormat {
+public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> implements NutsXmlFormat {
 
-    private final NutsWorkspace ws;
     private static final Pattern NUM_REGEXP = Pattern.compile("-?\\d+(\\.\\d+)?");
     private String defaulName = "value";
     private String attributePrefix = "@";
@@ -73,12 +71,12 @@ public class DefaultNutsXmlFormat implements NutsXmlFormat {
     private final NutsElementFactoryContext xmlContext;
 
     public DefaultNutsXmlFormat(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws, "xml-format");
         xmlContext = new DefaultNutsElementFactoryContext(ws) {
 
             @Override
             public NutsElement toElement(Object o) {
-                return fromXmlElement((org.w3c.dom.Element) o);
+                return fromXmlElement((org.w3c.dom.Element) o,NutsElement.class);
             }
         };
     }
@@ -113,7 +111,20 @@ public class DefaultNutsXmlFormat implements NutsXmlFormat {
         return typeAttribute;
     }
 
-    public NutsElement fromXmlElement(org.w3c.dom.Element element) {
+    @Override
+    public <T> T fromXmlElement(Element element, Class<T> cls) {
+        if (Element.class.isAssignableFrom(cls)) {
+            return (T) element;
+        }
+        if (NutsElement.class.isAssignableFrom(cls)) {
+            return (T) fromXmlElement(element);
+        }
+        NutsFormatManager wsformat = ws.format();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat)wsformat.json();
+        return json.convert(element, cls);
+    }
+
+    protected NutsElement fromXmlElement(org.w3c.dom.Element element) {
         if (element == null) {
             return NutsElementUtils.NULL;
         }
@@ -291,7 +302,7 @@ public class DefaultNutsXmlFormat implements NutsXmlFormat {
             }
         }
 
-        NutsElement elem=ws.format().element().toElement(obj);
+        NutsElement elem = ws.format().element().toElement(obj);
 
         if (doc == null) {
             if (defaulDocument == null) {
@@ -436,24 +447,7 @@ public class DefaultNutsXmlFormat implements NutsXmlFormat {
     }
 
     @Override
-    public final NutsXmlFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-xml-format");
-    }
-
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
-    }
-
-    @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
-        if (a == null) {
-            return false;
-        }
-        switch (a.getStringKey()) {
-            //
-        }
         return false;
     }
 }

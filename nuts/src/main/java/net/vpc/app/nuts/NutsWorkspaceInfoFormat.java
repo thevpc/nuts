@@ -39,12 +39,6 @@ import java.util.Properties;
 public interface NutsWorkspaceInfoFormat extends NutsFormat {
 
     @Override
-    NutsWorkspaceInfoFormat terminalFormat(NutsTerminalFormat metric);
-
-    @Override
-    NutsWorkspaceInfoFormat setTerminalFormat(NutsTerminalFormat metric);
-
-    @Override
     NutsWorkspaceInfoFormat session(NutsSession session);
 
     @Override

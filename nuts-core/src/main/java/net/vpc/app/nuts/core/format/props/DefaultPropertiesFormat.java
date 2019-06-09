@@ -8,7 +8,6 @@ import java.util.*;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsPropertiesFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;

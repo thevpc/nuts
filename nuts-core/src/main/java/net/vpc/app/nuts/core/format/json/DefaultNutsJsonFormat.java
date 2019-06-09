@@ -36,6 +36,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.format.DefaultFormatBase0;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
@@ -48,16 +49,15 @@ import org.w3c.dom.Element;
  *
  * @author vpc
  */
-public class DefaultNutsJsonFormat implements NutsJsonFormat {
+public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> implements NutsJsonFormat {
 
     private Gson GSON_COMPACT;
     private Gson GSON_PRETTY;
     private boolean compact;
-    private NutsWorkspace ws;
     private final NutsElementFactoryContext dummyContext;
 
     public DefaultNutsJsonFormat(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws, "json-format");
         dummyContext = new DefaultNutsElementFactoryContext(ws) {
             @Override
             public NutsElement toElement(Object o) {
@@ -86,6 +86,12 @@ public class DefaultNutsJsonFormat implements NutsJsonFormat {
     public NutsJsonFormat setCompact(boolean compact) {
         this.compact = compact;
         return this;
+    }
+
+    public <T> T convert(Object any, Class<T> to) {
+        Gson gson = getGson(true);
+        JsonElement t = gson.toJsonTree(any);
+        return gson.fromJson(t, to);
     }
 
     @Override
@@ -363,7 +369,7 @@ public class DefaultNutsJsonFormat implements NutsJsonFormat {
 
         @Override
         public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(ws.format().xml().fromXmlElement(src));
+            return toJsonElement(ws.format().xml().fromXmlElement(src,NutsElement.class));
         }
     }
 
@@ -387,9 +393,14 @@ public class DefaultNutsJsonFormat implements NutsJsonFormat {
 
         @Override
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement());
+            NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement(),NutsElement.class);
             return toJsonElement(element);
         }
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine commandLine) {
+        return false;
     }
 
 }
