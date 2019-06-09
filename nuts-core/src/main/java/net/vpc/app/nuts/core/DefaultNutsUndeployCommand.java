@@ -149,7 +149,8 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .failFast()
                     .getResultDefinitions().required();
             NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(),
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
+                    getWorkspace(),getValidSession(),
                     repository1,
                     NutsFetchMode.LOCAL, fetchOptions);
             repository1.undeploy()

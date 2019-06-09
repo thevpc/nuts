@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.core.util;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import net.vpc.app.nuts.*;
 import java.util.*;
 import net.vpc.app.nuts.core.DefaultNutsFetchCommand;
@@ -52,16 +50,17 @@ public class NutsWorkspaceHelper {
 //        }
 //        return workspace;
 //    }
-    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
-        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive())
+    public static NutsRepositorySession createNoRepositorySession(NutsWorkspace ws, NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
+        return new DefaultNutsRepositorySession(ws,session)
+                .setTransitive(options.isTransitive())
                 .setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
-    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
+    public static NutsRepositorySession createRepositorySession(NutsWorkspace ws, NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
         if(options==null){
             options=new DefaultNutsFetchCommand(repo.getWorkspace()).setIndexed(true);
         }
-        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+        return new DefaultNutsRepositorySession(ws,session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
     public static NutsFetchMode[] resolveFetchModes(boolean offline) {

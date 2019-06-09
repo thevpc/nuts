@@ -37,7 +37,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider, NutsConfigurable {
+public interface NutsSession extends NutsConfigurable {
 
     /**
      * When true, operations are invited to print to output stream extra
@@ -53,7 +53,8 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
      * When isTrace() is true and isVerbose() is true, operations are invited to
      * print to output stream even more extra information about processing.
      * Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormatHandler()}
+     * {@link #getOutputFormat()} and
+     * {@link #getIncrementalOutputFormatHandler()}
      *
      * @return true if trace flag is armed
      */
@@ -128,7 +129,8 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
      * When isTrace() is true and verbose is true, operations are invited to
      * print to output stream even more extra information about processing.
      * Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIncrementalOutputFormatHandler()}
+     * {@link #getOutputFormat()} and
+     * {@link #getIncrementalOutputFormatHandler()}
      *
      * @param verbose verbose mode
      * @return true if trace flag is armed
@@ -264,11 +266,13 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
 
     NutsSession setTerminal(NutsSessionTerminal terminal);
 
-    @Override
     NutsSession setProperty(String key, Object value);
 
-    @Override
     NutsSession setProperties(Map<String, Object> properties);
+
+    Map<String, Object> getProperties();
+
+    Object getProperty(String key);
 
     /**
      * return confirmation mode or {@link NutsConfirmationMode#CANCEL}
@@ -345,5 +349,9 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     NutsSession printlnErrObject(Object anyObject);
 
     NutsIncrementalFormat getIncrementalOutput();
+
+    NutsSessionTerminal terminal();
+    
+    NutsSessionTerminal getTerminal();
 
 }

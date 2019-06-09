@@ -122,7 +122,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     protected InputStream openStream(String path, Object source, NutsRepositorySession session) {
-        return getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+        return getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
     }
 
     @Override
@@ -158,7 +158,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
         long startTime = System.currentTimeMillis();
         try {
-            InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+            InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
             if (LOG.isLoggable(Level.FINEST)) {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";

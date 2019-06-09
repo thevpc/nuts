@@ -599,7 +599,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--no":
-                    case "-N": {
+                    case "-n": {
                         cmdLine.skip();
                         if (enabled) {
                             options.setConfirm(NutsConfirmationMode.NO);
@@ -652,7 +652,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--native":
                     case "--syscall":
-                    case "-n": {
+                    case "-s": {
                         cmdLine.skip();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.SYSCALL);

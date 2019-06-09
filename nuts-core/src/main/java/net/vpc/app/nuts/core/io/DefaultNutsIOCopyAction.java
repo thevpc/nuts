@@ -17,8 +17,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsTerminalProvider;
 import net.vpc.app.nuts.NutsPathCopyAction;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 
@@ -36,7 +36,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     private InputSource source;
     private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
-    private NutsTerminalProvider terminalProvider;
+    private NutsSession session;
 
     public DefaultNutsIOCopyAction(DefaultNutsIOManager iom) {
         this.iom = iom;
@@ -227,13 +227,18 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsTerminalProvider getTerminalProvider() {
-        return terminalProvider;
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
-    public NutsPathCopyAction setTerminalProvider(NutsTerminalProvider terminalProvider) {
-        this.terminalProvider = terminalProvider;
+    public NutsPathCopyAction session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
+    public NutsPathCopyAction setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
@@ -252,11 +257,11 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         }
         if (monitorable) {
             if (_source.isPath()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(terminalProvider).create());
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session).create());
             } else if (_source.isURL()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(terminalProvider).create());
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(session).create());
             } else {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(terminalProvider).create());
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(session).create());
             }
         }
         boolean _source_isPath = _source.isPath();

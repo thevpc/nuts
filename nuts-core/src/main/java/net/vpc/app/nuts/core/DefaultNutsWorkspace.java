@@ -634,7 +634,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
      */
     @Override
     public String[] getInstalledVersions(NutsId id, NutsSession session) {
-        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(this));
+        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(this,session, 
+                null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(this));
         return Arrays.stream(getInstalledRepository().findInstalledVersions(id, rsession))
                 .map(x -> x.getVersion().getValue())
                 .sorted((a, b) -> DefaultNutsVersion.compareVersions(a, b))

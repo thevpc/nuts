@@ -1240,7 +1240,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                                             @Override
                                             public Iterator<NutsId> iterator() {
                                                 NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getQueryMap(), idFilter, descriptorFilter));
-                                                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
+                                                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
                                                 return NutsWorkspaceExt.of(ws)
                                                         .getInstalledRepository().findVersions(nutsId1, filter, rsession);
                                             }
@@ -1253,7 +1253,8 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                                                 IteratorBuilder.ofLazy(new Iterable<NutsId>() {
                                                     @Override
                                                     public Iterator<NutsId> iterator() {
-                                                        return repo.searchVersions().id(nutsId1).filter(filter).session(NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions()))
+                                                        return repo.searchVersions().id(nutsId1).filter(filter).session(NutsWorkspaceHelper.createRepositorySession(
+                                                                getWorkspace(),session, repo, mode, search.getOptions()))
                                                                 .run().getResult();
                                                     }
                                                 }).safeIgnore().iterator()
@@ -1289,14 +1290,14 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             List<Iterator<NutsId>> coalesce = new ArrayList<>();
             for (NutsFetchMode mode : fetchMode) {
                 if (mode == NutsFetchMode.INSTALLED) {
-                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, null, mode, search.getOptions());
+                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),session, null, mode, search.getOptions());
                     NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, idFilter, descriptorFilter));
                     coalesce.add(NutsWorkspaceExt.of(ws).getInstalledRepository().findAll(filter, rsession));
                 } else {
                     List<Iterator<NutsId>> all = new ArrayList<>();
                     for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, null, repositoryFilter, mode, search.getOptions())) {
                         if (repositoryFilter == null || repositoryFilter.accept(repo)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions());
+                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),session, repo, mode, search.getOptions());
                             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, idFilter, descriptorFilter));
                             all.add(
                                     IteratorBuilder.ofLazy(new Iterable<NutsId>() {

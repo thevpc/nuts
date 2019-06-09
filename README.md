@@ -24,11 +24,11 @@ view of the the  components dependency and like  **npm**, **pip** or **zypper/ap
 to  install and uninstall components allowing multiple versions of the very same component to  be installed.
 
 ## COMMON VERBS:
-+ deploy,undeploy   : handle components (package installers) on the local repositories
++ deploy,undeploy   : manage components (package installers) on the local repositories
 + install,uninstall : install/uninstall a package (using its fetched/deployed installer)
 + update            : update a package (using its fetched/deployed installer)
 + fetch,push        : download from, upload to remote repositories
-+ find              : searches for existing/installable components
++ find              : searche for existing/installable components
 
 ## Download Latest stable version
 + Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar)
@@ -37,14 +37,23 @@ to  install and uninstall components allowing multiple versions of the very same
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 
 ## Installation
+
+```
 java -jar nuts-0.5.5.jar
+```
+
+You may want to install in more verbose manner:
+```
+java -jar nuts-0.5.5.jar --trace
+```
 
 To check if nuts is installed issue this command:
+
 ```
 nuts version 
 ```
 
-It should show a result like this
+It should show a result like this (nuts-api-version/nuts-impl-version)
 
 ```
 0.5.5/0.5.5.0
@@ -54,7 +63,7 @@ It should show a result like this
 ## Examples of usage
 ### show version and exit
 ```
-    nuts version
+nuts version
 ```
 
 ### show help
@@ -69,13 +78,13 @@ nuts help
 nuts install tomcat
 ```
 
-### start derby
+### start derby (install first if required)
 
 ```
 nuts derby start
 ```
 
-### install and run netbeans-launcher (auto-confirm is force with -y flag)
+### install and run netbeans-launcher (auto-confirm is forced with -y flag)
 
 ```    
 nuts -y netbeans-launcher

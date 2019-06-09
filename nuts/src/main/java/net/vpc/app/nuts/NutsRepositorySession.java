@@ -29,40 +29,32 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Map;
-
 /**
  *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsRepositorySession extends NutsTerminalProvider {
+public interface NutsRepositorySession {
 
     NutsFetchMode getFetchMode();
-
-    NutsSession getSession();
-
-    boolean isCached();
-
-    boolean isTransitive();
-
-    NutsRepositorySession setTransitive(boolean transitive);
-
-    NutsRepositorySession setCached(boolean enabledCache);
 
     NutsRepositorySession setFetchMode(NutsFetchMode fetchMode);
 
     NutsRepositorySession setSession(NutsSession session);
 
+    NutsSession getSession();
+
+    boolean isTransitive();
+
+    NutsRepositorySession setTransitive(boolean transitive);
+
+    boolean isCached();
+
+    NutsRepositorySession setCached(boolean enabledCache);
+
     boolean isIndexed();
 
     NutsRepositorySession setIndexed(boolean enabledCache);
-
-    @Override
-    NutsRepositorySession setProperty(String key, Object value);
-
-    @Override
-    NutsRepositorySession setProperties(Map<String, Object> properties);
 
     public NutsRepositorySession copy();
 }

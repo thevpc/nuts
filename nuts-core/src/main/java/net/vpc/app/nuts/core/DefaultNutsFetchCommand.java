@@ -283,7 +283,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 NutsContent content = repo.fetchContent()
                                         .id(id1).descriptor(foundDefinition.getDescriptor())
                                         .localPath(copyTo)
-                                        .session(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options))
+                                        .session(NutsWorkspaceHelper.createRepositorySession(getWorkspace(),options.getSession(), repo, mode, options))
                                         .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
@@ -457,7 +457,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
             }
             NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
             List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, CoreFilterUtils.idFilterOf(versionFilter), rsession))
                     .convert(x -> x.getVersion()).list();
             if (all.size() > 0) {
@@ -470,7 +470,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         }
         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, options)) {
             try {
-                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
+                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(getWorkspace(),options.getSession(), repo, mode,
                         options
                 )).run().getResult();
                 if (descriptor != null) {

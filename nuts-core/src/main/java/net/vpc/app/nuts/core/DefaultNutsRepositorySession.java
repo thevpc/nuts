@@ -5,24 +5,29 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.util.Map;
+import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsSessionTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsRepositorySession implements NutsRepositorySession {
+public class DefaultNutsRepositorySession implements NutsRepositorySession, Cloneable {
 
     private NutsSession session;
     private NutsFetchMode fetchMode;
     private boolean cached;
     private boolean indexed;
     private boolean transitive;
-//    private final NutsPropertiesHolder properties = new NutsPropertiesHolder();
+    private NutsWorkspace ws;
+
+    public DefaultNutsRepositorySession(NutsWorkspace ws,NutsSession session) {
+        this.session = session;
+        this.ws = ws;
+    }
 
     @Override
     public NutsSession getSession() {
@@ -80,40 +85,14 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession {
     }
 
     @Override
-    public NutsRepositorySession setProperty(String key, Object value) {
-        this.session.setProperty(key, value);
-        return this;
-    }
-
-    @Override
-    public NutsRepositorySession setProperties(Map<String, Object> properties) {
-        this.session.setProperties(properties);
-        return this;
-    }
-
-    @Override
-    public Map<String, Object> getProperties() {
-        return this.session.getProperties();
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return this.session.getProperty(key);
-    }
-
-    @Override
     public NutsRepositorySession copy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public NutsSessionTerminal getTerminal() {
-        return getSession().getTerminal();
-    }
-
-    @Override
-    public NutsSessionTerminal terminal() {
-        return getTerminal();
+        NutsRepositorySession t;
+        try {
+            t = (NutsRepositorySession) clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new NutsException(ws, "Unable to copy " + this);
+        }
+        return t;
     }
 
 }

@@ -274,7 +274,8 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                 boolean ok = false;
                 for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;
-                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
+                            getWorkspace(),session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {
                         descr = repo.fetchDescriptor().session(rsession).setId(file.getId()).run().getResult();
                     } catch (Exception e) {
@@ -305,7 +306,8 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                 }
             } else {
                 NutsRepository repo = ws.config().getRepository(this.getRepository(),true);
-                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
+                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
+                        getWorkspace(),session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
                         fetchOptions
                 );
 

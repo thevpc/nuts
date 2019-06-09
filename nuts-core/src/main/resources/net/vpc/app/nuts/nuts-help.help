@@ -312,11 +312,15 @@ Java         Version: ${java.version} (${java.vm.name})
       uses inherited (from parent workspace process) terminal
 
  [[--term]] {{\<term-type\>}}
- [[-t]] {{\<term-type\>}}
+ [[-m]] {{\<term-type\>}}
       uses specified terminal type. terminal type is one of :
       + {{formatted}}
       + {{filtered}}
       + {{inherited}}
+
+ [[--trace]]
+ [[-t]]
+      apply trace mode which allows a more verbose output
 
  [[--read-only]] or [[-R]] 
       read only mode. All changes to the workspace - if ever - are not persisted.
@@ -324,7 +328,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--verbose]] , [[--log-finest]]  , [[--log-info]] , [[--log-fine]] ,
  [[--log-finer]] , [[--log-severe]] , [[--log-warning]] ,
  [[--log-off]] , [[--log-off]]
-      apply trace level
+      apply logging level
 
  [[--log-size]]       {{\<size\>}}
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
@@ -354,25 +358,25 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--repository]]   {{\<repository-path\>}}
       register a temporary repository at the given path
 
- [[--yes]]
+ [[--yes]] | [[-n]] | [[--force]]
       disables interactive mode and assumes 'yes' for all questions
 
- [[--no]]
+ [[--no]] | [[-n]]
       disables interactive mode and assumes 'no' for all questions
+
+ [[--ask]]
+      enables interactive mode
+
+ [[--error]]
+      exit with error whenever interactive mode is required
 
 @@NUTS OPEN OPTIONS:@@
 
- [[--recover]]  or [[-0]]
+ [[--recover]]  or [[-z]]
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
 
- [[--init=]]reset
-       reset (delete) ==nuts== workspace folder before starting the workspace
- 
-[[--init=]]recover
-       reset boot libraries cache before starting the workspace
-
- [[--init=]]clanup
-       delete cache,log and temp folders before starting the workspace
+ [[--reset]]  or [[-Z]]
+      reset (delete) ==nuts== workspace folder before starting the workspace. All user configuration will not be deleted.
 
  [[--embedded]]  or [[-b]]
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)

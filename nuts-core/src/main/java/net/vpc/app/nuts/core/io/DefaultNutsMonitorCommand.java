@@ -28,25 +28,25 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     private Object sourceOrigin;
     private String sourceName;
     private long length = -1;
-    private NutsTerminalProvider session;
+    private NutsSession session;
 
     public DefaultNutsMonitorCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
-    public NutsMonitorCommand session(NutsTerminalProvider s) {
+    public NutsMonitorCommand session(NutsSession s) {
         return setSession(s);
     }
 
     @Override
-    public NutsMonitorCommand setSession(NutsTerminalProvider s) {
+    public NutsMonitorCommand setSession(NutsSession s) {
         this.session = s;
         return this;
     }
 
     @Override
-    public NutsTerminalProvider getSession() {
+    public NutsSession getSession() {
         return session;
     }
 
@@ -139,7 +139,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
     }
 
-    public InputStream monitorInputStream(String path, Object source, String sourceName, NutsTerminalProvider session) {
+    public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
         if (CoreStringUtils.isBlank(path)) {
             throw new UncheckedIOException(new IOException("Missing Path"));
         }
@@ -241,7 +241,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
 
     }
 
-    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
+    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session) {
         if (length > 0) {
             if (session == null) {
                 session = ws.createSession();

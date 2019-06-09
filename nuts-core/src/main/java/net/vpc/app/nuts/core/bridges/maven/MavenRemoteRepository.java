@@ -67,7 +67,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.IteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException {
-            throw new NutsUnsupportedOperationException(getWorkspace(),"Not supported undeploy.");
+            throw new NutsUnsupportedOperationException(getWorkspace(), "Not supported undeploy.");
         }
 
         @Override
@@ -91,10 +91,10 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
-            throw new NutsNotFoundException(getWorkspace(),id);
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id);
         }
-        return super.fetchDescriptorImpl(id,session);
+        return super.fetchDescriptorImpl(id, session);
     }
 
     @Override
@@ -118,9 +118,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
             return ret.iterator();
         }
-        NutsIdFilter filter2=new NutsIdFilterAnd(idFilter,
-                                new NutsPatternIdFilter(id.getSimpleNameId())
-                        ).simplify();
+        NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
+                new NutsPatternIdFilter(id.getSimpleNameId())
+        ).simplify();
         switch (versionApi) {
             case DEFAULT:
             case MAVEN: {
@@ -136,7 +136,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 return Collections.emptyIterator();
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
+                throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
             }
         }
     }
@@ -163,7 +163,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             List<Map<String, Object>> info = getWorkspace().format().json().read(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
@@ -217,7 +217,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
@@ -290,7 +290,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 foldersFileStream = openStream(id, foldersFileUrl, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
                 foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             if (foldersFileContent != null) {
                 for (String version : foldersFileContent) {
@@ -355,7 +355,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 return Collections.emptyIterator();
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
+                throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
             }
         }
     }
@@ -402,8 +402,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                         .localPath(localPath)
                         .session(session.copy().setFetchMode(NutsFetchMode.LOCAL))
                         .run()
-                        .getResult()
-                        ;
+                        .getResult();
             }
             //should be already downloaded to m2 folder
             Path content = getMavenLocalFolderContent(id);
@@ -432,7 +431,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id, null, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new DefaultNutsContent(tempFile, false, true);
         } else {
@@ -449,7 +448,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 }).run();
             } catch (UncheckedIOException ex) {
                 LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
-                throw new NutsNotFoundException(getWorkspace(),id, null, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new DefaultNutsContent(localPath, false, false);
         }
@@ -467,7 +466,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
         long startTime = System.currentTimeMillis();
         try {
-            InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+            InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
             if (LOG.isLoggable(Level.FINEST)) {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
@@ -492,7 +491,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(),id);
+            throw new NutsNotFoundException(getWorkspace(), id);
         }
     }
 

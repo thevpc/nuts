@@ -342,7 +342,7 @@ public class NutsWorkspaceOptionsFormat {
                 if (value instanceof NutsExecutionType) {
                     switch ((NutsExecutionType) value) {
                         case SYSCALL: {
-                            arguments.add("-n");
+                            arguments.add("-s");
                             return true;
                         }
                         case EMBEDDED: {
@@ -364,12 +364,12 @@ public class NutsWorkspaceOptionsFormat {
                             return true;
                         }
                         case NO: {
-                            arguments.add("-N");
+                            arguments.add("-n");
                             return true;
                         }
                         case ASK: {
                             if (!omitDefaults) {
-                                arguments.add("-N");
+                                arguments.add("--ask");
                                 return true;
                             }
                             break;

@@ -96,9 +96,11 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction setSafeCopy(boolean safeCopy);
 
-    NutsTerminalProvider getTerminalProvider();
+    NutsSession getSession();
 
-    NutsPathCopyAction setTerminalProvider(NutsTerminalProvider terminalProvider);
+    NutsPathCopyAction session(NutsSession session);
+    
+    NutsPathCopyAction setSession(NutsSession session);
 
     void run();
 

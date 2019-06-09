@@ -106,7 +106,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 NutsDescriptor t = null;
                 try {
                     t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().source(file.path).session(session).create()
+                            .monitor().source(file.path).session(session.getSession()).create()
                             , session);
                 } catch (Exception e) {
                     //e.printStackTrace();

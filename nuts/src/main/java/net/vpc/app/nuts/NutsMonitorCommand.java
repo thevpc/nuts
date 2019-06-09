@@ -37,11 +37,11 @@ import java.io.InputStream;
  */
 public interface NutsMonitorCommand {
 
-    NutsMonitorCommand session(NutsTerminalProvider s);
+    NutsMonitorCommand session(NutsSession s);
 
-    NutsMonitorCommand setSession(NutsTerminalProvider s);
+    NutsMonitorCommand setSession(NutsSession s);
 
-    NutsTerminalProvider getSession();
+    NutsSession getSession();
 
     NutsMonitorCommand name(String s);
 
