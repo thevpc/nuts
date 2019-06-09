@@ -101,7 +101,7 @@ public class CoreIOUtils {
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().nutsApi().session(session).getResultPath();
+        Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().trace(false)).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }

@@ -40,6 +40,6 @@ public class NutsRepositoryAmbiguousException extends NutsElementAlreadyDefinedE
     }
 
     public NutsRepositoryAmbiguousException(NutsWorkspace workspace) {
-        super(workspace, "Too many repositories much criteria");
+        super(workspace, "Too many repositories match criteria");
     }
 }

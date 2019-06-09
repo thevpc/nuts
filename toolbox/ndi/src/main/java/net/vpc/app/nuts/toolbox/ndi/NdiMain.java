@@ -144,7 +144,7 @@ public class NdiMain extends NutsApplication {
             }
             List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
             boolean subTrace = trace;
-            if (context.getSession().isPlainOut()) {
+            if (!context.getSession().isPlainOut()) {
                 subTrace = false;
             }
             for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin"}) {

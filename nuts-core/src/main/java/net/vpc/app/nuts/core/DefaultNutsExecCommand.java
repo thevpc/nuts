@@ -790,19 +790,32 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         NutsDefinition def = null;
         NutsId nid = ws.parse().id(commandName);
         NutsSession searchSession=session.copy().trace(false);
-        NutsSearchCommand ff = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().latest().failFast(false)
-                .scope(NutsDependencyScope.PROFILE_RUN)
+        List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
                 .defaultVersions()
-                .installed();
-        def = ff.getResultDefinitions().first();
-        if (def == null) {
-            //retest whhout checking it the version is default or not
+                .installed().getResultIds().list();
+        if(ff.isEmpty()){
+            //retest whithout checking it the version is default or not
             // this help recovering from "invalid default version" issue
-            def = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().latest().failFast(false).scope(NutsDependencyScope.PROFILE_RUN).installed().getResultDefinitions().first();
+            ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+                .installed().getResultIds().list();
         }
-        if (def == null) {
-            def = ws.search().id(nid).session(searchSession).setOptional(false).inlineDependencies().failFast(false).online().latest().scope(NutsDependencyScope.PROFILE_RUN).getResultDefinitions().required();
+        if(ff.isEmpty()){
+            //now search online
+            // this helps recovering from "invalid default version" issue
+            ff =ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
+                .getResultIds().list();
         }
+        if(ff.isEmpty()){
+            throw new NutsNotFoundException(ws, nid);
+        }else if(ff.size()>1){
+            throw new NutsTooManyElementsException(ws, nid.toString());
+        }
+        NutsId goodId = ff.get(0);
+        def = ws.fetch().id(goodId).session(searchSession).setOptional(false).dependencies()
+                .failFast(false)
+                .scope(NutsDependencyScope.PROFILE_RUN)
+                .getResultDefinition()
+                ;
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, ws, session, executionType, this);
     }
 

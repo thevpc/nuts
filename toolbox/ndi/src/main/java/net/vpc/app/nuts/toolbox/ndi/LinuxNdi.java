@@ -32,7 +32,9 @@ public class LinuxNdi implements SystemNdi {
             NutsId nutsId = context.getWorkspace().parse().id(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isBlank()) {
-                fetched = context.getWorkspace().search().id(options.getId()).latest().getResultDefinitions().required();
+                fetched = context.getWorkspace().search()
+                        .session(context.getSession().copy().trace(false))
+                        .id(options.getId()).latest().getResultDefinitions().required();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
@@ -78,7 +80,9 @@ public class LinuxNdi implements SystemNdi {
 
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
         NutsId b = context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getApiId();
-        NutsDefinition f = context.getWorkspace().search().id(b).setOptional(false).latest().getResultDefinitions().required();
+        NutsDefinition f = context.getWorkspace().search()
+                .session(context.getSession().copy().trace(false))
+                .id(b).setOptional(false).latest().getResultDefinitions().required();
         Path ff = getScriptFile("nuts");
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {
@@ -115,9 +119,9 @@ public class LinuxNdi implements SystemNdi {
         } else {
             if (trace && context.getSession().isPlainTrace()) {
                 if (force) {
-                    context.session().out().printf("Force updating ==%s== %n", ff2.toString());
+                    context.session().out().printf("Force update script ==%s== %n", ff2.toString());
                 } else {
-                    context.session().out().printf("Updating ==%s== %n", ff2.toString());
+                    context.session().out().printf("Update script ==%s== %n", ff2.toString());
                 }
             }
             try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
@@ -208,7 +212,9 @@ public class LinuxNdi implements SystemNdi {
         goodNdiRc.append("# workspace installation.\n");
         goodNdiRc.append("#\n");
         goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().getApiId().getVersion().getValue()).append("'\n");
-        goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search().id(context.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
+        goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search()
+                .session(context.getSession().copy().trace(false))
+                .id(context.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("PATH='").append(programsFolder).append("':$PATH\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");

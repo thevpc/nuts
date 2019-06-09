@@ -51,7 +51,7 @@ public class Test03_CreateLayoutLinuxTest {
             "--system-cache-home", new File(base, "system.cache").getPath(),
             "--system-lib-home", new File(base, "system.lib").getPath(),
             //            "--verbose", 
-            "--yes", "info"});
+            "--yes","--trace", "info"});
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),

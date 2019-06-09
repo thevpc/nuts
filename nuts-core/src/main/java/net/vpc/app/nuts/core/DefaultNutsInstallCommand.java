@@ -321,13 +321,15 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                         out.println("Installing Nuts companion tools...");
                                     }
                                 }
-                                r = ws.search().session(searchSession).id(companionTool).latest().getResultDefinitions().required();
+                                NutsId rId=ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
+                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
                                 String d = r.getDescriptor().getDescription();
                                 if (session.isPlainTrace()) {
                                     out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
                                 }
                             } else {
-                                r = ws.search().session(searchSession).id(companionTool).latest().getResultDefinitions().required();
+                                NutsId rId=ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
+                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
                             }
                             if (LOG.isLoggable(Level.CONFIG)) {
                                 LOG.log(Level.FINE, "Installing companion tool : {0}", r.getId().getLongName());
@@ -365,13 +367,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         List<NutsDefinition> defsToIgnore = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             emptyCommand = false;
-            List<NutsDefinition> allDefs = ws.search().id(id).session(session.copy().trace(false)).setOptional(false)
-                    //                    .includeDependencies()
-                    .scope(NutsDependencyScope.PROFILE_RUN).installInformation().latest().getResultDefinitions().list();
-            if (allDefs.isEmpty()) {
+            List<NutsId> allIds = ws.search().id(id).session(searchSession).latest().getResultIds().list();
+            if (allIds.isEmpty()) {
                 throw new NutsNotFoundException(ws, id);
             }
-            for (NutsDefinition def : allDefs) {
+            for (NutsId nid : allIds) {
+                NutsDefinition def = ws.fetch().id(nid).session(searchSession)
+                    .installInformation().getResultDefinition();
                 if (def != null && def.getPath() != null) {
                     boolean installed = def.getInstallation().isInstalled();
                     boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());

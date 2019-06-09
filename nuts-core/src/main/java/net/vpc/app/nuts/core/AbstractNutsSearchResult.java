@@ -80,7 +80,7 @@ public abstract class AbstractNutsSearchResult<T> implements NutsSearchResult<T>
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new NutsTooManyElementsException(ws);
+                throw new NutsTooManyElementsException(ws,nutsBase);
             }
             return t;
         } else {

@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
