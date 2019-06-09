@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
@@ -50,6 +51,7 @@ import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
+import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 
 /**
  * Created by vpc on 1/15/17.
@@ -116,16 +118,19 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
             return ret.iterator();
         }
+        NutsIdFilter filter2=new NutsIdFilterAnd(idFilter,
+                                new NutsPatternIdFilter(id.getSimpleNameId())
+                        ).simplify();
         switch (versionApi) {
             case DEFAULT:
             case MAVEN: {
-                return findVersionsImplMetadataXml(id, idFilter, session);
+                return findVersionsImplMetadataXml(id, filter2, session);
             }
             case GITHUB: {
-                return findVersionsImplGithub(id, idFilter, session);
+                return findVersionsImplGithub(id, filter2, session);
             }
             case FILES_FOLDERS: {
-                return findVersionsImplFilesFolders(id, idFilter, session);
+                return findVersionsImplFilesFolders(id, filter2, session);
             }
             case UNSUPPORTED: {
                 return Collections.emptyIterator();

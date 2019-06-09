@@ -42,7 +42,9 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
+import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
@@ -158,8 +160,11 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             return Collections.emptyIterator();
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        if (idFilter != null) {
-            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(idFilter, getWorkspace(), session.getSession())).iterator();
+        NutsIdFilter filter2=new NutsIdFilterAnd(idFilter,
+                                new NutsPatternIdFilter(id.getSimpleNameId())
+                        ).simplify();
+        if (filter2 != null) {
+            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, getWorkspace(), session.getSession())).iterator();
         }
         return it;
     }

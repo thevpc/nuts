@@ -44,7 +44,9 @@ import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsContentEvent;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
+import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 
 /**
  *
@@ -189,7 +191,10 @@ public class NutsRepositoryFolderHelper {
             }
             return null;
         }
-        return findInFolder(getLocalGroupAndArtifactFile(id), filter,
+        NutsIdFilter filter2=new NutsIdFilterAnd(filter,
+                                new NutsPatternIdFilter(id.getSimpleNameId())
+                        );
+        return findInFolder(getLocalGroupAndArtifactFile(id), filter2,
                 deep ? Integer.MAX_VALUE : 1,
                 session);
     }

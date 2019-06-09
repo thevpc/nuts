@@ -48,6 +48,8 @@ import java.util.*;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
+import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
@@ -159,7 +161,11 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, Integer.MAX_VALUE, session);
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), 
+                        new NutsIdFilterAnd(idFilter,
+                                new NutsPatternIdFilter(id.getSimpleNameId())
+                        )
+                        , Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
