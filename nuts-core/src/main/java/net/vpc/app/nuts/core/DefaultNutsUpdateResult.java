@@ -56,7 +56,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult{
         this.local = local;
         this.available = available;
         this.runtime = runtime;
-        this.dependencies = dependencies;
+        this.dependencies = dependencies==null?new NutsId[0]:dependencies;
     }
 
     public boolean isRuntime() {

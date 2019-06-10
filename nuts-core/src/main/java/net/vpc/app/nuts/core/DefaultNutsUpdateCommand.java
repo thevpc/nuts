@@ -547,10 +547,11 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 .latest();
     }
 
-    private NutsFetchCommand latestDependencies(NutsFetchCommand se) {
+    private NutsFetchCommand latestOnlineDependencies(NutsFetchCommand se) {
         return se
                 .scopes(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
                 .optional(includeOptional ? null : false)
+                .online()
                 .dependencies();
     }
 
@@ -577,11 +578,11 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsId d1Id = ws.search().id(id).setSession(searchSession)
                 .failFast(false)
                 .anyWhere()
+                .latest()
                 .getResultIds().first();
         //then fetch its definition!
-        NutsDefinition d1 = d1Id == null ? null : latestDependencies(ws.fetch().id(d1Id).setSession(searchSession))
+        NutsDefinition d1 = d1Id == null ? null : latestOnlineDependencies(ws.fetch().id(d1Id).setSession(searchSession))
                 .failFast(false)
-                .online()
                 .getResultDefinition();
         r.setLocal(d0);
         r.setAvailable(d1);
@@ -780,13 +781,13 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 v = NutsConstants.Versions.LATEST;
             }
             try {
-                oldFile = ws.fetch().id(oldId).session(session).online().getResultDefinition();
+                oldFile = ws.fetch().id(oldId).session(searchSession).online().getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
             try {
                 newId = ws.search().session(searchSession).id(NutsConstants.Ids.NUTS_API + "#" + v).anyWhere().latest().getResultIds().first();
-                newFile = newId == null ? null : ws.fetch().session(searchSession).id(newId).online().getResultDefinition();
+                newFile = newId == null ? null : latestOnlineDependencies(ws.fetch()).session(searchSession).id(newId).getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
@@ -807,11 +808,10 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                         .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
                         .latest()
                         .anyWhere()
-                        .session(session)
+                        .session(searchSession)
                         .getResultIds().first();
-                newFile = newId == null ? null : latestDependencies(ws.fetch().id(newId))
-                        .online()
-                        .session(session)
+                newFile = newId == null ? null : latestOnlineDependencies(ws.fetch().id(newId))
+                        .session(searchSession)
                         .getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 //ignore
@@ -829,7 +829,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                         .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
                         .anyWhere()
                         .getResultIds().first();
-                newFile = newId == null ? null : latestDependencies(ws.fetch().session(searchSession).id(newId))
+                newFile = newId == null ? null : latestOnlineDependencies(ws.fetch().session(searchSession).id(newId))
                         .online()
                         .getResultDefinition();
             } catch (Exception ex) {
@@ -841,7 +841,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile, 
-                Arrays.stream(newFile.getDependencies()).map(x->x.getId()).toArray(NutsId[]::new)
+                newFile==null?null:Arrays.stream(newFile.getDependencies()).map(x->x.getId()).toArray(NutsId[]::new)
                 , false);
         if (cnewId != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateAvailable(true);
