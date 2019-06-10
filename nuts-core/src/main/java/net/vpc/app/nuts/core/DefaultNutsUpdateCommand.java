@@ -1142,12 +1142,14 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         switch (a.getStringKey()) {
             case "-a":
             case "--all": {
+                cmdLine.skip();
                 this.all();
                 return true;
             }
             case "-w":
             case "--ws":
             case "--workspace": {
+                cmdLine.skip();
                 this.workspace();
                 return true;
             }
