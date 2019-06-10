@@ -1,6 +1,6 @@
 ##tomcat## toolbox to start, monitor and deploy both local and remote tomcat instances
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##tomcat## \<TARGET\> \<OPTIONS\> ...
 
 tomcat toolbox to start, monitor and remote deploy applications
@@ -16,13 +16,13 @@ tomcat toolbox to start, monitor and remote deploy applications
     --no-colors     : disable color formatting
     --verbose       : activate verbose mode (more output text)
     list            :
-        list <OPTIONS>
+        list \[**options**\]
     list            :
     add  | set      :
     show | describe :
     remove          :
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##commit## /my/checkeout/folder
    commits and @@DELETES@@ the checked out folder

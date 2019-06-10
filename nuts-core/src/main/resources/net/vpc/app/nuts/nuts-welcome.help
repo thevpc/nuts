@@ -5,7 +5,7 @@
 ==/_/ |_/\\_\_,_/\\_\_/_\_\_\_/ ==    __http://github.com/thevpc/nuts__
     version [[${nuts.workspace-runtime.version}]]
 
-@@SYNOPSIS:@@
-==nuts== [[\[Nuts Options\]]]... {{\<command\>}} {{\<args\>}} ...
+##SYNOPSIS:##
+==nuts== \[**options**\]... {{\<command\>}} \<args\> ...
 
-For Help, type ==nuts== [[help]]
+For Help, type ==nuts== {{help}}

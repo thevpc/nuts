@@ -1,46 +1,46 @@
-==nuts==  [[exec]] \[-options\]... \[command\] {{\<args\>}}...
- [[--exec]] \[-options\]... \[command\] {{\<args\>}}...
- [[-e]] \[-options\]... \[command\] {{\<arguments\>}}...
+==nuts==  [[exec]] \[**options**\]... <command> <arguments>...
+ **--exec** \[**options**\]... <command> <arguments>...
+ **-e** \[**options**\]... <command> <arguments>...
       runs command with the given executor options \( it will be considered an option if it 
       starts with '-' \). This is helpful to issue JVM Options to executor for instance
 
-@@OPTIONS:@@
- [[--embedded]]  or [[-b]]
+##OPTIONS##:
+ **--embedded**  or **-b**
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
 
- [[--external]]  or [[--spawn]] or [[-x]]
+ **--external**  or **--spawn** or **-x**
       when invoking a nuts component, it will alway be executed in a newly created process (this is the default)
 
- [[--native]]  or [[--syscall]] or [[-n]]
+ **--native**  or **--syscall** or **-n**
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
 
-@@STANDARD OPTIONS@@ :
+##STANDARD OPTIONS##:
     This command supports standard options :
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
-       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
-       [[--xml]]: trace operation xml. equivalent to [[--output-format]]=[[xml]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
-       [[--table]]: trace operation as table. equivalent to [[--output-format]]=[[table]]
-       [[--tree]]: trace operation as tree. equivalent to [[--output-format]]=[[tree]]
+       **-t** or **--trace** : enable trace operation/result with a meaning message (default true)
+       **--output-format**=[[props|plain|json]] : define the format to trace operation
+       **--plain**: trace operation as plain text. equivalent to **--output-format**=[[plain]]
+       **--json**: trace operation as json. equivalent to **--output-format**=[[json]]
+       **--xml**: trace operation xml. equivalent to **--output-format**=[[xml]]
+       **--props**: trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
+       **--table**: trace operation as table. equivalent to **--output-format**=[[table]]
+       **--tree**: trace operation as tree. equivalent to **--output-format**=[[tree]]
 
-@@EXAMPLES:@@
-        ==nuts== exec [[--help]]
+##EXAMPLES##:
+        ==nuts== {{exec}} **--help**
             shows this help and exit
        
-        ==nuts== exec [[--yes]] [[-e]] {{-Xmx1G}} netbeans-launcher
+        ==nuts== {{exec}} **--yes** **-e** **-Xmx1G** netbeans-launcher
             runs netbeans-launcher with JVM option  {{-Xmx1G}}. If the component is not installed
-            it will be automatically installed ( [[--yes]] modifier helps bypassing interactive mode)
+            it will be automatically installed ( **--yes** modifier helps bypassing interactive mode)
 
-        ==nuts== ##exec## my-nuts-group:my-nuts#12.3
+        ==nuts== {{exec}} my-nuts-group:my-nuts#12.3
            executes the version 12.3 of my-nuts-group:my-nuts
 
-        ==nuts== ##exec## my-nuts-group:my-nuts
+        ==nuts== {{exec}} my-nuts-group:my-nuts
            executes the latest version of my-nuts-group:my-nuts
 
 
-        ==nuts== ##exec## my-nuts
+        ==nuts== {{exec}} my-nuts
            executes the latest version of my-nuts-group:my-nuts
                 supposing that my-nuts-group is added as imported group using
                 config import my-nuts-group

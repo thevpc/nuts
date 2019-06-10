@@ -1,36 +1,36 @@
 
-==nuts== [[uninstall]] {{\<nuts-component\>}}... [[--args]] ...        
+==nuts== {{uninstall}} \<nuts-component\>... <args> ...        
       uninstall one or more ==nuts== from repositories if installed
       If no [nuts-id] is defined an error will occur
 
-@@OPTIONS:@@
-       [[-f]] or [[--force]] : ignore non existing components
-       [[-e]] or [[--erase]] : enable erase mode to delete all of component\'s config data as well
-       [[--args]] ...        : provide arguments to pass to uninstaller
+##OPTIONS##:
+       **-**] or **--force** : ignore non existing components
+       **-e** or **--erase** : enable erase mode to delete all of component\'s config data as well
+       <args> ...        : provide arguments to pass to uninstaller
 
-@@STANDARD OPTIONS@@ :
+##STANDARD OPTIONS## :
     This command supports standard options :
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
-       [[--output-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--output-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--output-format]]=[[json]]
-       [[--xml]]: trace operation xml. equivalent to [[--output-format]]=[[xml]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--output-format]]=[[props]]
-       [[--table]]: trace operation as table. equivalent to [[--output-format]]=[[table]]
-       [[--tree]]: trace operation as tree. equivalent to [[--output-format]]=[[tree]]
+       **-t** or **--trace** : enable trace operation/result with a meaning message (default true)
+       **--output-format**=[[props|plain|json]] : define the format to trace operation
+       **--plain**: trace operation as plain text. equivalent to **--output-format**=[[plain]]
+       **--json**: trace operation as json. equivalent to **--output-format**=[[json]]
+       **--xml**: trace operation xml. equivalent to **--output-format**=[[xml]]
+       **--props**: trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
+       **--table**: trace operation as table. equivalent to **--output-format**=[[table]]
+       **--tree**: trace operation as tree. equivalent to **--output-format**=[[tree]]
 
-@@EXAMPLES:@@
-        ==nuts== uninstall [[--help]]
+##EXAMPLES##:
+        ==nuts== {{uninstall}} **--help**
             shows this help and exit
        
-        ==nuts== uninstall netbeans-launcher
+        ==nuts== {{uninstall}} netbeans-launcher
             uninstall netbeans-launcher
 
-        ==nuts== ##uninstall## my-group:my-thing#2.3
+        ==nuts== {{uninstall}} my-group:my-thing#2.3
            uninstalls - if able to resolve it - exactly the ==nuts== "my-group:my-thing#2.3"
 
-        ==nuts== ##uninstall## my-group:my-thing
+        ==nuts== {{uninstall}} my-group:my-thing
            uninstalls - if able to resolve it - the latest version  of "my-group:my-thing"
 
-        ==nuts== ##uninstall## my-thing
+        ==nuts== {{uninstall}} my-thing
           uninstalls - if able to resolve it - the latest version  of "my-group:my-thing" as long as "my-group" is defined as a default import group
