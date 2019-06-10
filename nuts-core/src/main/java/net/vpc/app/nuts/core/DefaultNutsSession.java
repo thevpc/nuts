@@ -313,7 +313,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--no":
-                case "-N": {
+                case "-n": {
                     this.setConfirm(NutsConfirmationMode.NO);
                     cmdLine.skip();
                     return true;
