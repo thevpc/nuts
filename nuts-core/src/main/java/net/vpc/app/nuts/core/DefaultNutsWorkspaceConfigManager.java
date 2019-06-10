@@ -836,7 +836,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean addCommandAlias(NutsCommandAliasConfig command, NutsAddOptions options) {
         if (command == null
                 || CoreStringUtils.isBlank(command.getName())
-                || command.getName().contains(" ") || command.getName().contains("/") || command.getName().contains("\\")
+                || command.getName().contains(" ") || command.getName().contains(".") 
+                || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getOwner() == null
                 || command.getOwner().getName().isEmpty()
                 || command.getOwner().getGroup().isEmpty()
