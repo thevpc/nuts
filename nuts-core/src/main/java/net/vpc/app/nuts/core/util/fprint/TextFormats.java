@@ -44,6 +44,7 @@ public class TextFormats {
     public static final TextFormat ITALIC = new TextCursor("ITALIC");
     public static final TextFormat STRIKED = new TextCursor("STRIKED");
     public static final TextFormat REVERSED = new TextCursor("REVERSED");
+    public static final TextFormat BOLD = new TextCursor("BOLD");
 
     public static final TextFormat FG_BLUE = new TextForeground("FG_BLUE", Color.BLUE);
     public static final TextFormat FG_GREEN = new TextForeground("FG_GREEN", Color.GREEN);
@@ -56,15 +57,6 @@ public class TextFormats {
     public static final TextFormat FG_GREY = new TextForeground("FG_GREY", Color.GRAY);
     public static final TextFormat BG_GREY = new TextBackground("BG_GREY", Color.GRAY);
 
-//    public static final TextFormat FG_LIGHT_RED = new TextForeground("FG_LIGHT_RED", new Color(250, 128, 114));
-//    public static final TextFormat FG_BROWN = new TextForeground("FG_BROWN", new Color(165, 42, 42));
-//    public static final TextFormat FG_DARK_GRAY = new TextForeground("FG_DARK_GRAY", Color.DARK_GRAY);
-//    public static final TextFormat FG_LIGHT_BLUE = new TextForeground("FG_LIGHT_BLUE", new Color(173, 216, 230));
-//    public static final TextFormat FG_LIGHT_GRAY = new TextForeground("FG_LIGHT_GRAY", Color.LIGHT_GRAY);
-//    public static final TextFormat FG_LIGHT_PURPLE = new TextForeground("FG_LIGHT_PURPLE", new Color(216, 191, 216));
-//    public static final TextFormat FG_LIGHT_CYAN = new TextForeground("FG_LIGHT_CYAN", new Color(224, 255, 255));
-//    public static final TextFormat FG_LIGHT_GREEN = new TextForeground("FG_LIGHT_GREEN", new Color(144, 238, 144));
-
     public static final TextFormat BG_CYAN = new TextBackground("BG_CYAN", Color.CYAN);
     public static final TextFormat BG_MAGENTA = new TextBackground("BG_PURPLE", new Color(128, 0, 128));
     public static final TextFormat BG_BLACK = new TextBackground("BG_BLACK", Color.BLACK);
@@ -73,15 +65,6 @@ public class TextFormats {
     public static final TextFormat BG_RED = new TextBackground("BG_RED", Color.RED);
     public static final TextFormat BG_BLUE = new TextBackground("BG_BLUE", Color.BLUE);
     public static final TextFormat BG_WHITE = new TextBackground("BG_WHITE", Color.WHITE);
-
-//    public static final TextFormat BG_BROWN = new TextBackground("BG_BROWN", new Color(165, 42, 42));
-//    public static final TextFormat BG_DARK_GRAY = new TextBackground("BG_DARK_GRAY", Color.DARK_GRAY);
-//    public static final TextFormat BG_LIGHT_RED = new TextBackground("BG_LIGHT_RED", new Color(250, 128, 114));
-//    public static final TextFormat BG_LIGHT_CYAN = new TextBackground("BG_LIGHT_CYAN", new Color(224, 255, 255));
-//    public static final TextFormat BG_LIGHT_GREEN = new TextBackground("BG_LIGHT_GREEN", new Color(144, 238, 144));
-//    public static final TextFormat BG_LIGHT_BLUE = new TextBackground("BG_LIGHT_BLUE", new Color(173, 216, 230));
-//    public static final TextFormat BG_LIGHT_GRAY = new TextBackground("BG_LIGHT_GRAY", Color.LIGHT_GRAY);
-//    public static final TextFormat BG_LIGHT_PURPLE = new TextBackground("BG_LIGHT_PURPLE", new Color(216, 191, 216));
 
     public static final TextFormat list(TextFormat... all) {
         if(all==null){

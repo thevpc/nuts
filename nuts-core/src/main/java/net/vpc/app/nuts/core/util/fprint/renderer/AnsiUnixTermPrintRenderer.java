@@ -29,7 +29,7 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
         defineEscape(TextFormats.FG_BLUE, new ForegroundStyleApplier("34", 0));
         defineEscape(TextFormats.FG_CYAN, new ForegroundStyleApplier("36", 0));
         defineEscape(TextFormats.FG_WHITE, new ForegroundStyleApplier("37", 0));
-        defineEscape(TextFormats.FG_GREY, new BackgroundStyleApplier("37"));
+        defineEscape(TextFormats.FG_GREY, new ForegroundStyleApplier("37",1));
 
         defineEscape(TextFormats.BG_BLACK, new BackgroundStyleApplier("40"));
         defineEscape(TextFormats.BG_RED, new BackgroundStyleApplier("41"));
@@ -40,6 +40,12 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
         defineEscape(TextFormats.BG_CYAN, new BackgroundStyleApplier("46"));
         defineEscape(TextFormats.BG_GREY, new BackgroundStyleApplier("100"));
         defineEscape(TextFormats.BG_WHITE, new BackgroundStyleApplier("37"));
+        defineEscape(TextFormats.BOLD, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                return old.setBold(true);
+            }
+        });
         defineEscape(TextFormats.UNDERLINED, new AnsiStyleStyleApplier() {
             @Override
             public AnsiStyle apply(AnsiStyle old) {

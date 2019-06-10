@@ -26,14 +26,16 @@ public class AnsiStyle {
     private boolean striked;
     private boolean reversed;
     private boolean blink;
-    private List<String> commands = new ArrayList<>();
+    private boolean bold;
+    private final List<String> commands = new ArrayList<>();
     public AnsiStyle() {
     }
 
-    public AnsiStyle(String foreground, String background, boolean underlined, boolean italic, boolean striked, boolean reversed, boolean blink, int intensity, List<String> commands) {
+    public AnsiStyle(String foreground, String background, boolean bold,boolean underlined, boolean italic, boolean striked, boolean reversed, boolean blink, int intensity, List<String> commands) {
         this.foreground = foreground;
         this.background = background;
         this.underlined = underlined;
+        this.bold = bold;
         this.italic = italic;
         this.intensity = intensity;
         this.striked = striked;
@@ -45,45 +47,66 @@ public class AnsiStyle {
     }
 
     public String resolveEscapeString() {
-        if (!blink && !underlined && !italic && !striked && !reversed && !blink && FormattedPrintStreamUtils.isEmpty(foreground) && FormattedPrintStreamUtils.isEmpty(background)) {
+        if (!bold && !blink && !underlined && !italic && !striked && !reversed && !blink && FormattedPrintStreamUtils.isEmpty(foreground) && FormattedPrintStreamUtils.isEmpty(background)) {
             return "\u001B[0m";
         }
         StringBuilder sb = new StringBuilder("\u001B[");
+        boolean first=true;
         if (foreground != null) {
             sb.append(foreground);
         }
         if (!FormattedPrintStreamUtils.isEmpty(background)) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append(background);
         }
+        if (bold) {
+            if(first){
+                first=false;
+            }else{
+                sb.append(';');
+            }
+            sb.append("1");
+        }
         if (blink) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append("5");
         }
         if (underlined) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append("4");
         }
         if (striked) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append("9");
         }
         if (italic) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append("3");
         }
         if (reversed) {
-            if (sb.charAt(sb.length() - 1) != '[') {
+            if(first){
+                first=false;
+            }else{
                 sb.append(';');
             }
             sb.append("7");
@@ -93,41 +116,45 @@ public class AnsiStyle {
     }
 
     public AnsiStyle setForeground(String foreground) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setIntensity(int intensity) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setBackground(String background) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setUnderlined(boolean underlined) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setItalic(boolean italic) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setStriked(boolean striked) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle setReversed(boolean reversed) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public AnsiStyle addCommand(String command) {
-        AnsiStyle ansiStyle = new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        AnsiStyle ansiStyle = new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
         ansiStyle.commands.add(command);
         return ansiStyle;
     }
 
     public AnsiStyle setBlink(boolean blink) {
-        return new AnsiStyle(foreground, background, underlined, italic, striked, reversed, blink, intensity,commands);
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
+    }
+
+    public AnsiStyle setBold(boolean bold) {
+        return new AnsiStyle(foreground, background, bold,underlined, italic, striked, reversed, blink, intensity,commands);
     }
 
     public String[] getCommands(){
@@ -145,6 +172,7 @@ public class AnsiStyle {
         hash = 23 * hash + (this.striked ? 1 : 0);
         hash = 23 * hash + (this.reversed ? 1 : 0);
         hash = 23 * hash + (this.blink ? 1 : 0);
+        hash = 23 * hash + (this.bold ? 1 : 0);
         hash = 23 * hash + Objects.hashCode(this.commands);
         return hash;
     }
@@ -162,6 +190,9 @@ public class AnsiStyle {
         }
         final AnsiStyle other = (AnsiStyle) obj;
         if (this.intensity != other.intensity) {
+            return false;
+        }
+        if (this.bold != other.bold) {
             return false;
         }
         if (this.underlined != other.underlined) {
