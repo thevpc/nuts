@@ -1,10 +1,10 @@
 return 1 (false/error value)
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##false##
 return 1 (false/error value)
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##false##
     return 1 (false/error value)

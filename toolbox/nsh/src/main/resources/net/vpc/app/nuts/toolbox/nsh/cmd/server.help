@@ -1,13 +1,13 @@
 manage nuts repository servers
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##server## {{arguments}} ...
 
 ##server## (start | ss) serverId ...
 ##server## (stop | xs) serverId ...
 ##server## (list | ls) ...
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##server## start --http ~~/remote
    creates a new http server on workspace location ~/.nuts/remote

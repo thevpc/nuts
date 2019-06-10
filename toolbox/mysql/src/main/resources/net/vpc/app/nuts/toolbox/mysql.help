@@ -1,102 +1,101 @@
-@@SYNOPSIS:@@
-**mysql** [[\[--local \|--remote\]]] {{\<command\>}} {{\<global-options\>}} {{\<command-options\>}}
+##SYNOPSIS:##
+==mysql== \[ **--local** \| **--remote** \] {{<command>}} **\<global-options\>** **\<command-options\>**
 manage local mysql database access configurations to help backup/restore data simply
 
-@@mysql --local@@
-
-==mysql== [[\[--local\]]] list
+##MYSQL LOCAL:##
+==mysql== \[**--local**\] {{list}}
     list all databases
 
-==mysql== [[\[--local\]]] list [--name] {{\<config-name\>}}
+==mysql== \[**--local**\] {{list}} **--name** \<config-name\>
     list all databases for the given config-name
 
 
-==mysql== [[\[--local\]]] add [--name] {{\<db\@config-name\>}} <command-options>
+==mysql== \[**--local**\] {{add}} **--name** \<db\@config-name\> <command-options>
 
     add database config
 
     config options are :
-        --startup-wait-time   <VALUE>  : startup  wait time
-        --shutdown-wait-time  <VALUE>  : shutdown wait time
-        --archive-folder      <VALUE>  : archive folder
-        --running-folder      <VALUE>  : running folder
-        --log-file            <VALUE>  : log file path
-        --mysql-command       <VALUE>  : mysql command path
-        --mysqldump-command   <VALUE>  : mysqldump command path
+        **--startup-wait-time**   <VALUE>  : startup  wait time
+        **--shutdown-wait-time**  <VALUE>  : shutdown wait time
+        **--archive-folder**      <VALUE>  : archive folder
+        **--running-folder**      <VALUE>  : running folder
+        **--log-file**            <VALUE>  : log file path
+        **--mysql-command**       <VALUE>  : mysql command path
+        **--mysqldump-command**   <VALUE>  : mysqldump command path
 
     command options are :
-        --db            <VALUE>  : db name
-        --user          <VALUE>  : db user
-        --password      <VALUE>  : db password
-        --ask-password           : if present password is read from standard input
+        **--db**            <VALUE>  : db name
+        **--user**          <VALUE>  : db user
+        **--password**      <VALUE>  : db password
+        **--ask-password**           : if present password is read from standard input
 
-==mysql== [[\[--local\]]] set [--name] {{\<db\@config-name\>}} <command-options>
+==mysql== \[**--local**\] {{set}} **--name** \<db\@config-name\> <command-options>
 
     update database config
 
     config options are :
-        --startup-wait-time   <VALUE>  : startup  wait time
-        --shutdown-wait-time  <VALUE>  : shutdown wait time
-        --archive-folder      <VALUE>  : archive folder
-        --running-folder      <VALUE>  : running folder
-        --log-file            <VALUE>  : log file path
-        --mysql-command       <VALUE>  : mysql command path
-        --mysqldump-command   <VALUE>  : mysqldump command path
+        **--startup-wait-time**   <VALUE>  : startup  wait time
+        **--shutdown-wait-time**  <VALUE>  : shutdown wait time
+        **--archive-folder**      <VALUE>  : archive folder
+        **--running-folder**      <VALUE>  : running folder
+        **--log-file**            <VALUE>  : log file path
+        **--mysql-command**       <VALUE>  : mysql command path
+        **--mysqldump-command**   <VALUE>  : mysqldump command path
 
     command options are :
-        --db            <VALUE>  : database name
-        --user          <VALUE>  : app user
-        --password      <VALUE>  : app password
-        --ask-password           : if true password is read from standard input
+        **--db**            <VALUE>  : database name
+        **--user**          <VALUE>  : app user
+        **--password**      <VALUE>  : app password
+        **--ask-password**           : if true password is read from standard input
 
 
-==mysql== [[\[--local\]]] remove [--name] {{\<db\@config-name\>}}
+==mysql== \[**--local**\] {{remove}} [**--name**] \<db\@config-name\>
 
     remove database config
 
-==mysql== [[\[--local\]]] archive [[--name] {{\<db\@config-name\>}}] [[--path] {{\<path\>}}]
+==mysql== \[**--local**\] {{archive}} [ [**--name**] \<db\@config-name\>] [ **--path** \<path\>]
 
     archive to db data file <path>
 
-==mysql== [[\[--local\]]] archive [[--name] {{\<db\@config-name\>}}] [[--path] {{\<path\>}}]
+==mysql== \[**--local**\] {{archive}} [ [**--name**] \<db\@config-name\>] [ **--path** \<path\>]
 
     restore db data file from <path>
 
-@@mysql --remote@@
+##MYSQL REMOTE:##
 
-==mysql== [[\[--remote\]]] list
+==mysql== **--remote** {{list}}
     list all databases
 
-==mysql== [[\[--remote\]]] list [--name] {{\<config-name\>}}
+==mysql== **--remote** {{list}} **--name** \<config-name\>
     list all databases for the given config-name
 
 
-==mysql== [[\[--remote\]]] add [--name] {{\<db\@config-name\>}} <command-options>
+==mysql== **--remote** {{add}} **--name** \<db\@config-name\> <command-options>
 
     add database config
 
     command options are :
-        --local-name   <VALUE>  : local config name
-        --remote-name  <VALUE>  : remote config name
-        --server       <VALUE>  : server ssh address
+        **--local-name**   <VALUE>  : local config name
+        **--remote-name**  <VALUE>  : remote config name
+        **--server**       <VALUE>  : server ssh address
 
-==mysql== [[\[--remote\]]] set [--name] {{\<db\@config-name\>}} <command-options>
+==mysql== **--remote** {{set}} **--name** \<db\@config-name\> <command-options>
 
     update database config
 
     command options are :
-        --local-name   <VALUE>  : local config name
-        --remote-name  <VALUE>  : remote config name
-        --server       <VALUE>  : server ssh address
+        **--local-name**   <VALUE>  : local config name
+        **--remote-name**  <VALUE>  : remote config name
+        **--server**       <VALUE>  : server ssh address
 
-==mysql== [[\[--remote\]]] remove [--name] {{\<db\@config-name\>}}
+==mysql== **--remote** {{remove}} **--name** \<db\@config-name\>
 
     remove database config
 
-==mysql== [[\[--remote\]]] pull [[--name] {{\<db\@config-name\>}}]
+==mysql== **--remote** {{pull}} [**--name** \<db\@config-name\>]
 
     restore local config database with remote database data
 
-==mysql== [[\[--remote\]]] push [[--name] {{\<db\@config-name\>}}]
+==mysql== **--remote** {{push}} [**--name** \<db\@config-name\>]
 
     restore remote config database with local database data

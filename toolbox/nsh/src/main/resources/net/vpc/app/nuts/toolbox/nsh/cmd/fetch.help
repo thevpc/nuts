@@ -1,12 +1,12 @@
 fetch a ==nuts==
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##fetch## {{nuts-id}}  ...
 
 fetches (without installing) a ==nuts== package
 
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##fetch## ab*
    fetches all ==nuts== that starts with 'ab'

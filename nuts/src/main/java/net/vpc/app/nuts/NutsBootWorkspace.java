@@ -1329,15 +1329,10 @@ public class NutsBootWorkspace {
                 workspace = w;
             }
             String workspaceName = new File(workspace).getName();
-            if (!workspace.contains("/") && !workspace.contains("\\")) {
+            if (!workspace.equals(".") && !workspace.equals("..") && !workspace.contains("/") && !workspace.contains("\\")) {
                 workspace = homes[NutsStoreLocation.CONFIG.ordinal()] + File.separator + workspace;
             }
             config.setWorkspace(workspace);
-//            if (NutsUtilsLimited.isEmpty(config.getConfigStoreLocation())) {
-//                config.setConfigStoreLocation(workspace + File.separator + NutsStoreFolder.CONFIG.name().toLowerCase());
-//            } else if (!NutsUtilsLimited.isAbsolutePath(config.getConfigStoreLocation())) {
-//                config.setConfigStoreLocation(workspace + File.separator + NutsUtilsLimited.syspath(config.getConfigStoreLocation()));
-//            }
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
                 switch (type) {
                     default: {

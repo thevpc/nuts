@@ -1,10 +1,10 @@
 display a description of command type
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##type## <command-name> ...
 display a description of command type
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##type## ls
     show command type

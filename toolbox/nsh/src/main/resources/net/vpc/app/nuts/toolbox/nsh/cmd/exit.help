@@ -1,11 +1,11 @@
 End the application
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##exit## [<code>] ...
 
 End the application returning code
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##exit##
     exit with code 0

@@ -1,53 +1,55 @@
 Nuts format types are :
 
-Text             | Text
-\_\_Text\_\_         | __Text__
-\@Text\@           | @Text@
-\@\@Text\@\@         | @@Text@@
-\@\@\@Text\@\@\@       | @@@Text@@@
-\@\@\@\@Text\@\@\@\@     | @@@@Text@@@@
-\[Text\]           | [Text]
-\[\[Text\]\]         | [[Text]]
-\[\[\[Text\]\]\]       | [[[Text]]]
-\[\[\[\[Text\]\]\]\]     | [[[[Text]]]]
-\[\[\[\[\[Text\]\]\]\]\]   | [[[[[Text]]]]]
-\*Text\*           | *Text*
-\*\*Text\*\*         | **Text**
-\*\*\*Text\*\*\*       | ***Text***
-\*\*\*\*Text\*\*\*\*     | ****Text****
-\=Text\=           | =Text=
-\=\=Text\=\=         | ==Text==
-\=\=\=Text\=\=\=       | ===Text===
-\=\=\=\=Text\=\=\=\=     | ====Text====
-\^Text\^           | ^Text^
-\^\^Text\^\^         | ^^Text^^
-\^\^\^Text\^\^\^       | ^^^Text^^^
-\^\^\^\^Text\^\^\^\^     | ^^^^Text^^^^
-\(Text\)           | (Text)
-\(\(Text\)\)         | ((Text))
-\(\(\(Text\)\)\)       | (((Text)))
-\(\(\(\(Text\)\)\)\)     | ((((Text))))
-\(\(\(\(\(Text\)\)\)\)\)   | (((((Text)))))
-\#Text\#           | #Text#
-\#\#Text\#\#         | ##Text##
-\#\#\#Text\#\#\#       | ###Text###
-\#\#\#\#Text\#\#\#\#     | ####Text####
-\{Text\}           | {Text}
-\{\{Text\}\}         | {{Text}}
-\{\{\{Text\}\}\}       | {{{Text}}}
-\{\{\{\{Text\}\}\}\}     | {{{{Text}}}}
-\<Text\>           | <Text>
-\<\<Text\>\>         | <<Text>>
-\<\<\<Text\>\>\>       | <<<Text>>>
-\<\<\<\<Text\>\>\>\>     | <<<<Text>>>>
-\"Text\"           | "Text"
-\"\"Text\"\"         | ""Text""
-\"\"\"Text\"\"\"       | """Text"""
-\"\"\"\"Text\"\"\"\"     | """"Text""""
-\'Text\'           | 'Text'
-\'\'Text\'\'         | ''Text''
-\'\'\'Text\'\'\'       | '''Text'''
-\'\'\'\'Text\'\'\'\'     | ''''Text''''
+==Format==           | ==Display==                 | ==Recommended==
+----------------------------------------------------------------
+Text             | Text                    | plain text
+\_\_Text\_\_         | __Text__                    | 
+\@Text\@           | @Text@                  |
+\@\@Text\@\@         | @@Text@@                    | error
+\@\@\@Text\@\@\@       | @@@Text@@@                    |
+\@\@\@\@Text\@\@\@\@     | @@@@Text@@@@                    |
+\[Text\]           | [Text]                  |
+\[\[Text\]\]         | [[Text]]                    | command verb 2
+\[\[\[Text\]\]\]       | [[[Text]]]                    |
+\[\[\[\[Text\]\]\]\]     | [[[[Text]]]]                    |
+\[\[\[\[\[Text\]\]\]\]\]   | [[[[[Text]]]]]                  |
+\*Text\*           | *Text*                  |
+\*\*Text\*\*         | **Text**                    | command options
+\*\*\*Text\*\*\*       | ***Text***                    |
+\*\*\*\*Text\*\*\*\*     | ****Text****                    |
+\=Text\=           | =Text=                  |
+\=\=Text\=\=         | ==Text==                    | command
+\=\=\=Text\=\=\=       | ===Text===                    |
+\=\=\=\=Text\=\=\=\=     | ====Text====                    |
+\^Text\^           | ^Text^                  |
+\^\^Text\^\^         | ^^Text^^                    |
+\^\^\^Text\^\^\^       | ^^^Text^^^                    |
+\^\^\^\^Text\^\^\^\^     | ^^^^Text^^^^                    |
+\(Text\)           | (Text)                  |
+\(\(Text\)\)         | ((Text))                    |
+\(\(\(Text\)\)\)       | (((Text)))                    |
+\(\(\(\(Text\)\)\)\)     | ((((Text))))                    |
+\(\(\(\(\(Text\)\)\)\)\)   | (((((Text)))))                  |
+\#Text\#           | #Text#                  | 
+\#\#Text\#\#         | ##Text##                    | title 1
+\#\#\#Text\#\#\#       | ###Text###                    |
+\#\#\#\#Text\#\#\#\#     | ####Text####                    |
+\{Text\}           | {Text}                  |
+\{\{Text\}\}         | {{Text}}                    | command verb 1
+\{\{\{Text\}\}\}       | {{{Text}}}                    |
+\{\{\{\{Text\}\}\}\}     | {{{{Text}}}}                    |
+\<Text\>           | <Text>                  | user input
+\<\<Text\>\>         | <<Text>>                    | user value
+\<\<\<Text\>\>\>       | <<<Text>>>                    |
+\<\<\<\<Text\>\>\>\>     | <<<<Text>>>>                    |
+\"Text\"           | "Text"                  |
+\"\"Text\"\"         | ""Text""                |
+\"\"\"Text\"\"\"       | """Text"""              |
+\"\"\"\"Text\"\"\"\"     | """"Text""""            |
+\'Text\'           | 'Text'                  |
+\'\'Text\'\'         | ''Text''                |
+\'\'\'Text\'\'\'       | '''Text'''              |
+\'\'\'\'Text\'\'\'\'     | ''''Text''''            |
 
 
 You can escape special characters using ##\\## character

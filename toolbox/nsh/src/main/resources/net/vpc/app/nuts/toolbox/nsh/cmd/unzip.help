@@ -1,11 +1,11 @@
 list, test and extract compressed files in a ZIP archive
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##unzip## [<OPTION>...] <SOURCE>
 
 list, test and extract compressed files in a ZIP archive
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##cp## -r a b c d
    copy a b and c to folder d

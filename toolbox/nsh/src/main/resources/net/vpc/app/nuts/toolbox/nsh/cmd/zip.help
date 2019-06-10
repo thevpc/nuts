@@ -1,11 +1,11 @@
 package and compress (archive) files
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##zip## [-r] <ZIP_FILE> <FILE> ...
 
 package and compress (archive) filesy
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##zip## -r out.zip /another/path
    changes to another path

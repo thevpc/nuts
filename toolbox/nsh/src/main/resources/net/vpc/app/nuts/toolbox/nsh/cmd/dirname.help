@@ -1,10 +1,10 @@
 strip last component from file name
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##dirname## path
 strip last component from file name
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##dirname## /usr/bin/
     "/usr"

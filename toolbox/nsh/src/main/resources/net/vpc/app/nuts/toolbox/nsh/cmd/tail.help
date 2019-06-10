@@ -1,11 +1,11 @@
 output the last part of files
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##tail## [<OPTION>...] <SOURCE>... <DEST>
 
 output the last part of files
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 
 

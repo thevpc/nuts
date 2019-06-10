@@ -1,40 +1,40 @@
-**worky** is a developer companion
+==worky== is a developer companion
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 
-**worky** {{scan}} [[\[-i|--interactive\]]]  <path>
+==worky== {{scan}} \[{{-i}}|{{--interactive}}\]]]  <path>
     scan for maven projetcs
 
-**worky** {{check}} <id>
+==worky== {{check}} <id>
     check id status
     Options
-        [[-c]] | [[--commitable]] | [[--changed]] 
+        **-c** | **--commitable** | **--changed** 
             consider changed projects
-        [[-n]] | [[--new]] 
+        **-n** | **--new** 
             consider new projects
-        [[-o]] | [[--old]] 
+        **-o** | **--old** 
             consider old projects
-        [[-0]] | [[--ok]]  | [[--uptodate]]
+        **-0** | **--ok**  | **--uptodate**
             consider uptodate projects
-        [[-e]] | [[--invalid]]  | [[--error]]
+        **-e** | **--invalid**  | **--error**
             consider invalid projects
-        [[-p]] | [[--progress]]
+        **-p** | **--progress**
             show progress
 
-**worky** {{enable scan}} <path>
+==worky== {{enable scan}} <path>
     enable scan path for maven projetcs
 
-**worky** {{disable scan}} <path>
+==worky== {{disable scan}} <path>
     enable scan path for maven projetcs
 
-**worky** {{list}}
+==worky== {{list}}
     list configurations
 
-**worky** {{set}} ...
+==worky== {{set}} ...
     set project configurations
     Options
-        [[\[-r | --repo\]]] <repo-path>
+        \[{{-r}} | {{--repo}}\] <repo-path>
             set repository path
-        [[\[-w | --workspace\]]] <workspace-path>
+        \[{{-w}} | {{--workspace}}\] <workspace-path>
             set workspace path
 

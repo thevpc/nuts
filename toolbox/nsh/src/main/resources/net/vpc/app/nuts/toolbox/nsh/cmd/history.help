@@ -1,6 +1,6 @@
 display or the command history list
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##history## [<OPTION>...]
 
     ##history## -c | --clear
@@ -24,7 +24,7 @@ display or the command history list
         read from file and append to file. If no path defined, will reload from default path (no append)s
 
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##history## 20
    list last 200 commands from history

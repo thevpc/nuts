@@ -190,7 +190,7 @@ public class CoreIOUtils {
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, workspace).getPath();
-        if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
+        if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
             Path file = workspace.config().getWorkspaceLocation().resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
                 bestJavaPath = file.resolve("bin" + File.separatorChar + "java").toString();

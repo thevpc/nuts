@@ -1,14 +1,14 @@
 list directory (or file)
 
-@@SYNOPSIS:@@
-##ls## [options] <directory>
+##SYNOPSIS:##
+##ls## \[**options**\] <directory>
 
 -l : long format
 -d : list directory names
 
 lists directory content
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ls /another/path
    lists folder content

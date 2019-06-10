@@ -1,10 +1,10 @@
 run builtin nsh command
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##builtin## <command> {{args...}}
 run builtin nsh command
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##builtin## ls
     runs nsh builtin ls command

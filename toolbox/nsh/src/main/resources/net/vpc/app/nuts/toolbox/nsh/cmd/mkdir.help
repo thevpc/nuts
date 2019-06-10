@@ -1,11 +1,11 @@
 make directories
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##mkdir## [<OPTION>...] <PARAMS> ...
 
 Create the DIRECTORY(ies), if they do not already exist.
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 
 

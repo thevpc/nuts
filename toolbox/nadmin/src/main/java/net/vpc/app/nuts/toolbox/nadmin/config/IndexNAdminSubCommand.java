@@ -53,7 +53,7 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
             }
         } else {
             for (String repo : repos) {
-                if (repo.contains("/") || repo.contains("\\")) {
+                if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
                     context.getWorkspace().updateStatistics().addPath(Paths.get(repo)).run();
                 } else {
                     cfg.getRepository(repo).updateStatistics();

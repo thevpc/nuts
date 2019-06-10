@@ -1,11 +1,11 @@
 print lines matching a pattern
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##grep## [<OPTION>...] <PATTERN> <FILE>...
 
 print lines matching a pattern
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##grep## -r toto log.txt
    print all lines containing toto

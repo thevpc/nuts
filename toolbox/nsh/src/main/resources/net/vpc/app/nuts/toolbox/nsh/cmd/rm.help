@@ -1,11 +1,11 @@
 remove files or directories
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##rm## [<OPTION>...] <SOURCE>... <DEST>
 
 remove files or directories
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 
 

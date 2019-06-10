@@ -1,11 +1,11 @@
 undeclare command
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##undeclare-command## [<OPTION>...] <SOURCE>... <DEST>
 
 undeclare command
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 
 

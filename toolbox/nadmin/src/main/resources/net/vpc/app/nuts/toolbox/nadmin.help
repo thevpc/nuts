@@ -1,7 +1,7 @@
 manage nuts workspace
 
-@@SYNOPSIS:@@
-**nadmin** {{\<command\>}} [[\<options\>]]
+##SYNOPSIS:##
+**nadmin** {{\<command\>}} [**\<options\>**]
 manage nuts workspace
 
 {{show location}}

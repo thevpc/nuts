@@ -1,11 +1,11 @@
 copy files and directories
 
-@@SYNOPSIS:@@
+##SYNOPSIS:##
 ##cp## [<OPTION>...] <SOURCE>... <DEST>
 
 copy files and directories
 
-@@EXAMPLES:@@
+##EXAMPLES##:
 
 ##cp## -r a b c d
    copy a b and c to folder d
