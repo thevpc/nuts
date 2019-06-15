@@ -41,8 +41,6 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     NutsMonitorCommand monitor();
 
-    NutsJsonFormat json();
-
     String expandPath(Path path);
 
     String expandPath(String path);

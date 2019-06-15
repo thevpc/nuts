@@ -39,8 +39,16 @@ import java.util.Map;
 @NutsPrototype
 public interface NutsWorkspace extends NutsComponent<Object> {
 
+    /**
+     * Workspace identifier, guaranteed to be unique cross machines
+     * @return uuid
+     */
     String getUuid();
 
+    /**
+     * equivalent to {@link #getUuid()}
+     * @return 
+     */
     String uuid();
 
     /**

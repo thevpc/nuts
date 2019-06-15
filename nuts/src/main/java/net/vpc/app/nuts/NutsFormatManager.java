@@ -36,10 +36,15 @@ package net.vpc.app.nuts;
  */
 public interface NutsFormatManager {
 
+    /**
+     *
+     * @since 0.5.5
+     * @return
+     */
     NutsJsonFormat json();
 
     NutsXmlFormat xml();
-    
+
     NutsElementFormat element();
 
     NutsIdFormat id();
@@ -59,6 +64,5 @@ public interface NutsFormatManager {
     NutsObjectFormat object();
 
     NutsIncrementalFormat iter();
-
 
 }

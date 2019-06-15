@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.5.5</version>
+    <version>0.5.6</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -191,7 +191,7 @@
                         <configuration>
                             <headerType>console</headerType>
                             <outfile>target/nuts.exe</outfile>
-                            <jar>target/nuts-0.5.5.jar</jar>
+                            <jar>target/nuts-0.5.6.jar</jar>
                             <errTitle>encc</errTitle>
                             <classPath>
                                 <mainClass>net.vpc.app.nuts.Nuts</mainClass>
@@ -205,7 +205,7 @@
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.5.5.0</fileVersion>
+                                <fileVersion>0.5.6.0</fileVersion>
                                 <txtFileVersion>txt file version?</txtFileVersion>
                                 <fileDescription>a description</fileDescription>
                                 <copyright>my copyright</copyright>
