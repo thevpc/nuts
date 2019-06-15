@@ -109,7 +109,7 @@ public final class NutsConstants {
 
         public static final String REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
         public static final String LOCAL_NUTS_FOLDER = "${home.config}/.vpc-public-nuts";
-        public static final String REMOTE_MAVEN_CENTRAL = "http://repo.maven.apache.org/maven2/";
+        public static final String REMOTE_MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/";
         public static final String REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
         public static final String LOCAL_MAVEN_CENTRAL = "~/.m2/repository";
 
