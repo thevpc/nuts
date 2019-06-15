@@ -208,7 +208,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--standalone": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
@@ -217,14 +217,15 @@ public final class NutsArgumentsParser {
 
                     }
                     case "--standalone-workspace": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
                     }
+                    case "-E":
                     case "--exploded": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
@@ -232,7 +233,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--exploded-workspace": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
@@ -248,12 +249,14 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--exploded-repositories": {
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
@@ -268,28 +271,28 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--system-layout": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
                         }
                         break;
                     }
                     case "--windows-layout": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationLayout(NutsStoreLocationLayout.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
                         }
@@ -384,6 +387,7 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--gui": {
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setGui(a.getBooleanValue());
                         }
@@ -429,7 +433,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--no-color": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                         }
@@ -437,7 +441,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--term-system":
                     case "-S": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setTerminalMode(null);
                         }
@@ -445,7 +449,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--term-filtered":
                     case "-L": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                         }
@@ -453,7 +457,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--term-formatted":
                     case "-F": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setTerminalMode(NutsTerminalMode.FORMATTED);
                         }
@@ -461,7 +465,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--term-inherited":
                     case "-H": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setTerminalMode(NutsTerminalMode.INHERITED);
                         }
@@ -554,37 +558,37 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     case "--json":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.JSON);
                         }
                         break;
                     case "--plain":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.PLAIN);
                         }
                         break;
                     case "--xml":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.XML);
                         }
                         break;
                     case "--table":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.TABLE);
                         }
                         break;
                     case "--tree":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.TREE);
                         }
                         break;
                     case "--props":
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.PROPS);
                         }
@@ -592,7 +596,7 @@ public final class NutsArgumentsParser {
                     case "--force":
                     case "--yes":
                     case "-y": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
@@ -600,7 +604,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--no":
                     case "-n": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
@@ -614,7 +618,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--ask": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
@@ -634,7 +638,7 @@ public final class NutsArgumentsParser {
                     // as well but still they are not persistent.
                     case "--embedded":
                     case "-b": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.EMBEDDED);
                         }
@@ -644,7 +648,7 @@ public final class NutsArgumentsParser {
                     case "--external":
                     case "--spawn":
                     case "-x": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.SPAWN);
                         }
@@ -653,7 +657,7 @@ public final class NutsArgumentsParser {
                     case "--native":
                     case "--syscall":
                     case "-s": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.SYSCALL);
                         }
@@ -669,14 +673,14 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--open": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
                         }
                         break;
                     }
                     case "--create": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
                         }
@@ -724,7 +728,7 @@ public final class NutsArgumentsParser {
                     }
                     case "-Z":
                     case "--reset": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBootCommand(NutsBootCommand.RESET);
                         } else {
@@ -734,7 +738,7 @@ public final class NutsArgumentsParser {
                     }
                     case "-z":
                     case "--recover": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBootCommand(NutsBootCommand.RECOVER);
                         }
@@ -742,7 +746,7 @@ public final class NutsArgumentsParser {
                     }
                     case "-e":
                     case "--exec": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBootCommand(NutsBootCommand.EXEC);
                             while ((a = cmdLine.next()) != null) {
@@ -762,7 +766,7 @@ public final class NutsArgumentsParser {
                     case "-?":
                     case "--help":
                     case "-h": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBootCommand(NutsBootCommand.EXEC);
                             applicationArguments.add("help");
@@ -777,12 +781,10 @@ public final class NutsArgumentsParser {
                     //ERRORS
                     default: {
                         cmdLine.skip();
-                        showError.add("nuts: invalid option [[" + a.getString() + "]]");
+                        showError.add("nuts: invalid option " + a.getString());
                     }
                 }
             } else {
-                cmdLine.skip();
-                applicationArguments.add(a.getString());
                 applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                 cmdLine.skipAll();
             }
@@ -1026,12 +1028,4 @@ public final class NutsArgumentsParser {
         }
         throw new IllegalArgumentException("Unable to parse value for NutsWorkspaceOpenMode : " + s0);
     }
-
-//    private static <T extends Enum> T parseEnum(Class<T> c, String s) {
-//        if (s == null || s.isEmpty()) {
-//            return null;
-//        }
-//        s = s.toUpperCase().replace('-', '_');
-//        return (T) Enum.valueOf(c, s);
-//    }
 }
