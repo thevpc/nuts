@@ -49,7 +49,7 @@ public interface NutsJsonFormat extends NutsConfigurable{
 
     NutsJsonFormat setCompact(boolean compact);
 
-    String toJsonString(Object obj);
+    String toString(Object obj);
     
     <T> T read(Reader reader, Class<T> cls);
 
@@ -57,13 +57,21 @@ public interface NutsJsonFormat extends NutsConfigurable{
 
     <T> T read(File file, Class<T> cls);
 
-    void write(Object obj, Writer out);
+    void print(Object obj, Writer out);
 
-    <T> void write(Object obj, Path file);
+    void print(Object obj, Path file);
 
-    <T> void write(Object obj, File file);
+    void print(Object obj, File file);
 
-    <T> void write(Object obj, PrintStream printStream);
+    void print(Object obj, PrintStream printStream);
+
+    void println(Object obj, Writer out);
+
+    void println(Object obj, Path file);
+
+    void println(Object obj, File file);
+
+    void println(Object obj, PrintStream printStream);
 
     NutsSession getSession();
 

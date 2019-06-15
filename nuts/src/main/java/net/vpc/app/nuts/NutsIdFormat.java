@@ -29,17 +29,12 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.nio.file.Path;
-
 /**
  *
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsIdFormat extends NutsConfigurable {
+public interface NutsIdFormat extends NutsFormat {
 
     boolean isOmitNamespace();
 
@@ -73,25 +68,17 @@ public interface NutsIdFormat extends NutsConfigurable {
 
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
-//    String formatString(NutsId id);
-    String toString(NutsId id);
+    NutsId getId();
 
-    void format(NutsId id, PrintStream out);
+    NutsIdFormat setId(NutsId id);
 
-    void format(NutsId id, Writer out);
-
-    void format(NutsId id, Path out);
-
-    void format(NutsId id, File out);
-
-    void format(NutsId id);
-
-    void format(NutsId id, NutsTerminal terminal);
+    NutsIdFormat id(NutsId id);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance

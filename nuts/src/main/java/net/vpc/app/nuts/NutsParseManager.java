@@ -42,6 +42,8 @@ import java.util.Collection;
  */
 public interface NutsParseManager {
 
+    NutsId requiredId(String nutFormat);
+
     NutsId id(String id);
 
     NutsCommandLine commandLine(String line);
@@ -70,8 +72,6 @@ public interface NutsParseManager {
 
     NutsVersionFilter versionFilter(String versionFilter);
 
-    NutsId requiredId(String nutFormat);
-
     /**
      * executionEntries
      *
@@ -84,6 +84,4 @@ public interface NutsParseManager {
 
     NutsExecutionEntry[] executionEntries(InputStream inputStream, String type, String sourceName);
 
-    @Deprecated
-    Object parseExpression(Object object, String expression);
 }

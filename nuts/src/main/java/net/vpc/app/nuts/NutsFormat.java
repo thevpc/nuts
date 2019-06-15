@@ -41,6 +41,10 @@ import java.nio.file.Path;
  */
 public interface NutsFormat extends NutsConfigurable{
 
+    /**
+     * equivalent to {@link #format() }
+     * @return 
+     */
     @Override
     String toString();
 
