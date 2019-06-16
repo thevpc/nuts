@@ -313,7 +313,7 @@ public class NutsPlatformUtils {
                 case RUN: {
                     switch (storeLocationLayout) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Roaming/nuts/" + folderTypeName + "/" + id);
+                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Local/nuts/" + folderTypeName + "/" + id);
                         }
                         case MACOS:
                         case LINUX: {
@@ -347,7 +347,7 @@ public class NutsPlatformUtils {
                 case CACHE: {
                     switch (storeLocationLayout) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Local/nuts/cache" + "/" + id);
+                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Local/nuts/cache/" + id);
                         }
                         case MACOS:
                         case LINUX: {
@@ -363,7 +363,7 @@ public class NutsPlatformUtils {
                 case TEMP: {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Local/nuts" + "/" + id);
+                            return System.getProperty("user.home") + NutsUtilsLimited.syspath("/AppData/Local/nuts/log/" + id);
                         case MACOS:
                         case LINUX:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator

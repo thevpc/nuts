@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/14/17.
+ *
  * @since 0.1.0
  */
 public final class NutsConstants {
@@ -116,6 +117,7 @@ public final class NutsConstants {
     }
 
     public static final class Users {
+
         public static final String ADMIN = "admin";
         public static final String ANONYMOUS = "anonymous";
     }
@@ -162,6 +164,7 @@ public final class NutsConstants {
          * component (nuts) descriptor file name
          */
         public static final String DESCRIPTOR_FILE_NAME = "nuts.json";
+        public static final String DESCRIPTOR_FILE_EXTENSION = ".nuts";
 
     }
 
