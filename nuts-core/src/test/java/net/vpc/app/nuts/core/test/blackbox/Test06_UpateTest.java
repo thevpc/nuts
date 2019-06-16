@@ -128,7 +128,7 @@ public class Test06_UpateTest {
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
         Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
-                .resolve("nuts-" + newApiVersion + ".nuts")
+                .resolve("nuts-" + newApiVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
         ));
         Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts.properties")
@@ -138,7 +138,7 @@ public class Test06_UpateTest {
                 .resolve("nuts-core-" + newRuntimeVersion + ".jar")
         ));
         Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
-                .resolve("nuts-core-" + newRuntimeVersion + ".nuts")
+                .resolve("nuts-core-" + newRuntimeVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
         ));
         Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
                 .resolve("nuts.properties")
