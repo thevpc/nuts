@@ -74,6 +74,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  */
 public class CoreIOUtils {
 
+    public static String newLineString = null;
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
     public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
@@ -257,9 +258,7 @@ public class CoreIOUtils {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
-        if (showCommand || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)
-                 || CoreCommonUtils.getSystemBoolean("nuts.show-command", false)
-                ) {
+        if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
                 terminal.out().print("==[exec]== ");
                 terminal.out().println(pb.getFormattedCommandString(ws));
@@ -1924,5 +1923,14 @@ public class CoreIOUtils {
             tempPaths.add(temp);
             return createInputSource(temp).multi();
         }
+    }
+
+    public static String getNewLine() {
+        if (newLineString == null) {
+            synchronized (CoreIOUtils.class) {
+                newLineString = System.getProperty("line.separator");
+            }
+        }
+        return newLineString;
     }
 }

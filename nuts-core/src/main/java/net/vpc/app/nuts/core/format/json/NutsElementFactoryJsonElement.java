@@ -32,7 +32,6 @@ package net.vpc.app.nuts.core.format.json;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.core.format.elem.DefaultNutsArrayElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactory;
@@ -60,7 +59,7 @@ public class NutsElementFactoryJsonElement implements NutsElementFactory {
                 throw new IllegalArgumentException("Unsupported");
             }
         } else if (je.isJsonArray()) {
-            return new DefaultNutsArrayElement(o, context);
+            return new NutsArrayElementJson(je.getAsJsonArray(), context);
         } else if (je.isJsonObject()) {
             return new NutsObjectElementJson(je.getAsJsonObject(), context);
         }

@@ -48,7 +48,7 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
 
     @Override
     public void print(Writer w) {
-                ws.format().json().write(getValue(), w);
+                ws.format().json().print(getValue(), w);
     }
 
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {

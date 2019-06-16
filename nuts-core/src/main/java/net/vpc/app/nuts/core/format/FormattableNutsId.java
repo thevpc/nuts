@@ -165,7 +165,7 @@ public class FormattableNutsId {
         }
         switch (dp) {
             case ID: {
-                return oo.getIdFormat().toString(id);
+                return oo.getIdFormat().id(id).format();
             }
             case STATUS: {
                 return getFormattedStatusString();

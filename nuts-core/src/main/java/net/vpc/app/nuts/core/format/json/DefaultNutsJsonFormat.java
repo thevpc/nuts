@@ -43,6 +43,7 @@ import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -96,14 +97,14 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
     }
 
     @Override
-    public String toJsonString(Object obj) {
+    public String toString(Object obj) {
         StringWriter w = new StringWriter();
-        write(obj, w);
+        print(obj, w);
         return w.toString();
     }
 
     @Override
-    public void write(Object obj, Writer out) {
+    public void print(Object obj, Writer out) {
         getGson(compact).toJson(obj, out);
         try {
             out.flush();
@@ -137,19 +138,19 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
     }
 
     @Override
-    public <T> void write(Object obj, File file) {
+    public void print(Object obj, File file) {
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
         }
         try (FileWriter w = new FileWriter(file)) {
-            write(obj, w);
+            print(obj, w);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public <T> void write(Object obj, Path path) {
+    public void print(Object obj, Path path) {
         if (path.getParent() != null) {
             try {
                 Files.createDirectories(path.getParent());
@@ -158,21 +159,69 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
             }
         }
         try (Writer w = Files.newBufferedWriter(path)) {
-            write(obj, w);
+            print(obj, w);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public <T> void write(Object obj, PrintStream printStream) {
+    public void println(Object obj, File file) {
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+        try (FileWriter w = new FileWriter(file)) {
+            println(obj, w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void println(Object obj, Path path) {
+        if (path.getParent() != null) {
+            try {
+                Files.createDirectories(path.getParent());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        try (Writer w = Files.newBufferedWriter(path)) {
+            println(obj, w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void print(Object obj, PrintStream printStream) {
         Writer w = new PrintWriter(printStream);
-        write(obj, w);
+        print(obj, w);
         try {
             w.flush();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    @Override
+    public void println(Object obj, Writer out) {
+        print(obj, out);
+        if (out instanceof PrintWriter) {
+            ((PrintWriter) out).println();
+        } else {
+            try {
+                out.write(CoreIOUtils.getNewLine());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+    }
+
+    @Override
+    public void println(Object obj, PrintStream printStream) {
+        print(obj, printStream);
+        printStream.println();
     }
 
     public NutsElement fromJsonElement(JsonElement o) {
@@ -268,8 +317,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter())
                 .registerTypeHierarchyAdapter(Path.class, new PathJsonAdapter())
-                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter())
-                ;
+                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter());
     }
 
     private static class NutsIdJsonAdapter implements
@@ -374,7 +422,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
 
         @Override
         public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(ws.format().xml().fromXmlElement(src,NutsElement.class));
+            return toJsonElement(ws.format().xml().fromXmlElement(src, NutsElement.class));
         }
     }
 
@@ -398,7 +446,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
 
         @Override
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement(),NutsElement.class);
+            NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
             return toJsonElement(element);
         }
     }

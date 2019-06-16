@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsArrayElement;
+import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
 /**
  *
@@ -46,20 +47,19 @@ import net.vpc.app.nuts.NutsArrayElement;
 public class NutsArrayElementJson extends AbstractNutsElement implements NutsArrayElement {
 
     private NutsElementFactoryContext context;
-    private List<Object> values = new ArrayList<>();
+    private JsonArray array;
 
-    public NutsArrayElementJson(JsonArray nl, NutsElementFactoryContext context) {
+    public NutsArrayElementJson(JsonArray array, NutsElementFactoryContext context) {
         super(NutsElementType.ARRAY);
         this.context = context;
-        int count = nl.size();
-        for (int i = 0; i < count; i++) {
-            values.add(nl.get(i));
-        }
+        this.array = array;
     }
 
     @Override
     public Collection<NutsElement> children() {
-        return values.stream().map(x -> context.toElement(x)).collect(Collectors.toList());
+        return IteratorBuilder.of(array.iterator())
+                .map(x -> context.toElement(x))
+                .list();
     }
 
     @Override

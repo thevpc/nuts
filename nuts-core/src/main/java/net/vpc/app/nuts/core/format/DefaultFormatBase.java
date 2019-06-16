@@ -139,7 +139,6 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         return format();
     }
 
-
     public abstract void print(Writer out);
 
 }

@@ -60,6 +60,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.PROGRAMS);
                 case "cache":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CACHE);
+                case "run":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.RUN);
                 case "temp":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.TEMP);
                 case "log":
@@ -103,11 +105,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsMonitorCommand monitor() {
         return new DefaultNutsMonitorCommand(ws);
-    }
-
-    @Override
-    public NutsJsonFormat json() {
-        return new DefaultNutsJsonFormat(ws);
     }
 
     @Override

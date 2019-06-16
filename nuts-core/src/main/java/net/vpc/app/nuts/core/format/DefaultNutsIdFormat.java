@@ -1,23 +1,16 @@
 package net.vpc.app.nuts.core.format;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.util.Map;
-import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
-public class DefaultNutsIdFormat implements NutsIdFormat {
+public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> implements NutsIdFormat {
 
-    private NutsWorkspace ws;
     private boolean omitNamespace;
     private boolean omitGroup;
     private boolean omitImportedGroup;
@@ -26,9 +19,10 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;
+    private NutsId id;
 
     public DefaultNutsIdFormat(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws, "id-format");
     }
 
     @Override
@@ -120,7 +114,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
     }
 
     @Override
-    public String toString(NutsId id) {
+    public String format() {
         Map<String, String> m = id.getQueryMap();
         String scope = m.get("scope");
         String optional = m.get("optional");
@@ -139,7 +133,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         if (!omitNamespace) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
                 sb.append("<<");
-                sb.append(tf.escapeText(id.getNamespace()+"://"));
+                sb.append(tf.escapeText(id.getNamespace() + "://"));
                 sb.append(">>");
             }
         }
@@ -249,54 +243,26 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         return sb.toString();
     }
 
+    public NutsId getId() {
+        return id;
+    }
+
+    public NutsIdFormat setId(NutsId id) {
+        this.id = id;
+        return this;
+    }
+
+    public NutsIdFormat id(NutsId id) {
+        return setId(id);
+    }
+
     @Override
-    public void format(NutsId id, Writer out) {
+    public void print(Writer out) {
         try {
-            out.write(toString(id));
+            out.write(format());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-    }
-
-    @Override
-    public void format(NutsId id) {
-        format(id, ws.io().getTerminal());
-    }
-
-    @Override
-    public void format(NutsId id, NutsTerminal terminal) {
-        format(id, terminal.out());
-    }
-
-    @Override
-    public void format(NutsId id, File file) {
-        format(id, file.toPath());
-    }
-
-    @Override
-    public void format(NutsId id, Path path) {
-        try (Writer w = Files.newBufferedWriter(path)) {
-            format(id, w);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void format(NutsId id, PrintStream out) {
-        PrintWriter p = new PrintWriter(out);
-        format(id, p);
-        p.flush();
-    }
-
-    @Override
-    public final NutsIdFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-id-format");
-    }
-
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
     @Override
