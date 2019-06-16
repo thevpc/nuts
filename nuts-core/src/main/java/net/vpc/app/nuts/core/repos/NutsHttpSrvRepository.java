@@ -49,7 +49,7 @@ import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 
-public class NutsHttpSrvRepository extends AbstractNutsRepository {
+public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     private static final Logger LOG = Logger.getLogger(NutsHttpSrvRepository.class.getName());
     private NutsId remoteId;
@@ -61,11 +61,6 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         } catch (Exception ex) {
             LOG.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
-    }
-
-    @Override
-    public void pushImpl(NutsPushRepositoryCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     public String getUrl(String path) {
@@ -84,34 +79,36 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void deployImpl(NutsDeployRepositoryCommand deployment) {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), deployment.getSession());
-        if (deployment.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
+    public void pushImpl(NutsPushRepositoryCommand command) {
+        NutsContent content = lib.fetchContentImpl(command.getId(), null, command.getSession());
+        NutsDescriptor desc = lib.fetchDescriptorImpl(command.getId(), command.getSession());
+        if(content==null || desc==null){
+            throw new NutsNotFoundException(getWorkspace(), command.getId());
+        }
+        NutsWorkspaceUtils.checkSession(getWorkspace(), command.getSession());
+        if (command.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().format().descriptor().print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
+        getWorkspace().format().descriptor().print(desc, new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
-                new NutsTransportParamBinaryFilePart("content", deployment.getContent().getFileName().toString(), deployment.getContent()),
-                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString()),
-                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(deployment.getContent())),
-                new NutsTransportParamParamPart("force", String.valueOf(deployment.getSession().getSession().isForce()))
+                new NutsTransportParamBinaryFilePart("content", content.getPath().getFileName().toString(), content.getPath()),
+                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(desc).computeString()),
+                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
+                new NutsTransportParamParamPart("force", String.valueOf(command.getSession().getSession().isForce()))
         );
         //TODO should read the id
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id);
+            return null;
         }
         boolean transitive = session.isTransitive();
-        InputStream stream = null;
-        try {
-            try {
-                stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
+        try(InputStream stream=CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
                 NutsDescriptor descriptor = getWorkspace().parse().descriptor(stream, true);
                 if (descriptor != null) {
                     String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
@@ -119,39 +116,14 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                         return descriptor;
                     }
                 }
-            } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(), id);
-            }
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-        }
-        throw new NutsNotFoundException(getWorkspace(), id);
-    }
-
-    protected void copyToImpl(NutsId id, Path localPath, NutsRepositorySession session) {
-        boolean transitive = session.isTransitive();
-
-        try {
-            helperHttpDownloadToFile(getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
-            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-            String lhash = CoreIOUtils.evalSHA1Hex(localPath);
-            if (rhash.equalsIgnoreCase(lhash)) {
-                return;
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        throw new NutsNotFoundException(getWorkspace(), id);
+            } catch (IOException ex) {
+                return null;
+        } 
+        return null;
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
@@ -170,7 +142,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
 
         boolean transitive = session.isTransitive();
         InputStream ret = null;
@@ -203,7 +175,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         boolean transitive = session.isTransitive();
         boolean temp = false;
         if (localPath == null) {
@@ -223,8 +195,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(getWorkspace(), id, ex);
             //
         }
-        throw new NutsNotFoundException(getWorkspace(), id);
-
+        return null;
     }
 
     private String httpGetString(String url) {
@@ -284,18 +255,18 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         return "ul=" + CoreIOUtils.urlEncodeString(auth[0]) + "&up=" + CoreIOUtils.urlEncodeString(auth[0]);
     }
 
-    @Override
-    public void undeployImpl(NutsRepositoryUndeployCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
+//    @Override
+//    public void undeployImpl(NutsRepositoryUndeployCommand options) {
+//        throw new NutsUnsupportedOperationException(getWorkspace());
+//    }
 
-    @Override
-    public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
-        super.checkAllowedFetch(id, session);
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id);
-        }
-    }
+//    @Override
+//    public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
+//        super.checkAllowedFetch(id, session);
+//        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+//            throw new NutsNotFoundException(getWorkspace(), id);
+//        }
+//    }
 
     private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
 
@@ -313,15 +284,25 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
                 try {
                     line = br.readLine();
                 } catch (IOException e) {
+                    close();
                     return false;
                 }
                 if (line == null) {
+                    close();
                     return false;
                 }
                 line = line.trim();
                 if (line.length() > 0) {
                     return true;
                 }
+            }
+        }
+
+        private void close() {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                //
             }
         }
 

@@ -310,7 +310,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         //return getWorkspace().config().getDefaultIdFilename(id);
         String classifier = "";
         String ext = getIdExtension(id);
-        if (!ext.equals(".nuts") && !ext.equals(".pom")) {
+        if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!CoreStringUtils.isBlank(c)) {
                 classifier = "-" + c;
@@ -328,18 +328,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected void checkSession(NutsRepositorySession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException(workspace, "Missing Session");
-        }
-    }
-
-    protected void checkNutsId(NutsId id) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException(workspace, "Missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsIllegalArgumentException(workspace, "Missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsIllegalArgumentException(workspace, "Missing name for " + id);
         }
     }
 

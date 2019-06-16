@@ -37,7 +37,6 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +47,7 @@ import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -57,7 +57,7 @@ import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.InputSource;
 
-public class NutsHttpFolderRepository extends AbstractNutsRepository {
+public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     private static final Logger LOG = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
@@ -67,34 +67,29 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     private FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.IteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException {
-            throw new NutsUnsupportedOperationException(getWorkspace(),"Not supported undeploy.");
+            throw new NutsUnsupportedOperationException(getWorkspace(), "Not supported undeploy.");
         }
 
         @Override
         public boolean isDescFile(String pathname) {
-            return pathname.equals("nuts.json")
-                    || pathname.endsWith("/nuts.json")
-                    || pathname.endsWith(".nuts");
+            return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                    || pathname.endsWith("/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                    || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
         }
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
+//            NutsHttpFolderRepository r = NutsHttpFolderRepository.this;
+//            String location = r.config().getLocation(true);
+//            if(pathname.startsWith(location)){
+//                pathname=pathname.substring(SPEED_FASTER)
+//            }
             return getWorkspace().parse().descriptor(in, true);
         }
     };
 
     public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
-    }
-
-    @Override
-    public void pushImpl(NutsPushRepositoryCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
-
-    @Override
-    public void deployImpl(NutsDeployRepositoryCommand deployment) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
     }
 
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
@@ -117,7 +112,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
         return (CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
-                + "nuts.json"
+                + NutsConstants.Files.DESCRIPTOR_FILE_NAME
         ));
     }
 
@@ -126,33 +121,12 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
-            throw new NutsNotFoundException(getWorkspace(),id);
+    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+        try (InputStream stream = getDescStream(id, session)){
+                return  getWorkspace().parse().descriptor(stream, true);
+        } catch(IOException ex) {
+            return null;
         }
-        InputStream stream = null;
-        try {
-            try {
-                NutsDescriptor descriptor = getWorkspace().parse().descriptor(stream = getDescStream(id, session), true);
-                if (descriptor != null) {
-                    //String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-                    //if (hash.equals(descriptor.toString())) {
-                    return descriptor;
-                    //}
-                }
-            } catch (Exception ex) {
-                throw new NutsNotFoundException(getWorkspace(),id);
-            }
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-        }
-        throw new NutsNotFoundException(getWorkspace(),id);
     }
 
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
@@ -195,7 +169,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(),id, ex);
+                throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             List<Map<String, Object>> info = getWorkspace().format().json().read(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
@@ -259,9 +233,9 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return Collections.emptyIterator();
+            return null;
         }
         if (id.getVersion().isSingleValue()) {
             String groupId = id.getGroup();
@@ -278,32 +252,33 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
                 //ko not found
             }
             return ret.iterator();
-        }
-        NutsIdFilter filter2=new NutsIdFilterAnd(idFilter,
-                                new NutsPatternIdFilter(id.getSimpleNameId())
-                        ).simplify();
-        switch (versionApi) {
-            case DEFAULT:
-            case MAVEN:
-            case FILES_FOLDERS: {
-                return findVersionsImplFilesFolders(id, filter2, session);
-            }
-            case GITHUB: {
-                return findVersionsImplGithub(id, filter2, session);
-            }
-            case UNSUPPORTED: {
-                return Collections.emptyIterator();
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
+        } else {
+            NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
+                    new NutsPatternIdFilter(id.getSimpleNameId())
+            ).simplify();
+            switch (versionApi) {
+                case DEFAULT:
+                case MAVEN:
+                case FILES_FOLDERS: {
+                    return findVersionsImplFilesFolders(id, filter2, session);
+                }
+                case GITHUB: {
+                    return findVersionsImplGithub(id, filter2, session);
+                }
+                case UNSUPPORTED: {
+                    return null;
+                }
+                default: {
+                    throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
+                }
             }
         }
     }
 
     @Override
-    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return Collections.emptyIterator();
+            return null;
         }
         switch (findApi) {
             case DEFAULT:
@@ -314,80 +289,53 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (CommonRootsHelper.PathBase root : roots) {
                     int depth = root.isDeep() ? Integer.MAX_VALUE : 2;
-                    li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root.getName(), filter, session, depth, findModel)
-                    );
+                    li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root.getName(), filter, session, depth, findModel));
                 }
                 return IteratorUtils.concat(li);
             }
             case UNSUPPORTED: {
-                return Collections.emptyIterator();
+                return null;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(),String.valueOf(versionApi));
+                throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
             }
         }
     }
 
     @Override
-    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localFile, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localFile, NutsRepositorySession session) {
         try {
             if (descriptor.getLocations().length == 0) {
                 String path = getPath(id);
-                if (localFile == null) {
-                    Path tempFile = getWorkspace().io().createTempFile(CoreIOUtils.getURLName(path), this);
-                    helperHttpDownloadToFile(path, tempFile, true);
-                    return new DefaultNutsContent(tempFile, false, true);
-                } else {
-                    helperHttpDownloadToFile(path, localFile, true);
-                    return new DefaultNutsContent(localFile, false, false);
-                }
+                helperHttpDownloadToFile(path, localFile, true);
+                return new DefaultNutsContent(localFile, false, false);
             } else {
                 for (String location : descriptor.getLocations()) {
                     try {
-                        if (localFile == null) {
-                            Path tempFile = getWorkspace().io().createTempFile(CoreIOUtils.getURLName(location), this);
-                            helperHttpDownloadToFile(location, tempFile, true);
-                            return new DefaultNutsContent(tempFile, false, true);
-                        } else {
-                            helperHttpDownloadToFile(location, localFile, true);
-                            return new DefaultNutsContent(localFile, false, false);
-                        }
+                        helperHttpDownloadToFile(location, localFile, true);
+                        return new DefaultNutsContent(localFile, false, false);
                     } catch (Exception ex) {
                         //ignore!!
                     }
                 }
-                throw new NutsNotFoundException(getWorkspace(),id);
+                return null;
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-//    private String httpGetString(String url) {
-//        try {
-//            String s = CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
-//            LOG.log(Level.FINEST, "[SUCCESS] Get URL {0}", url);
-//            return s;
-//        } catch (UncheckedIOException e) {
-//            LOG.log(Level.FINEST, "[ERROR  ] Get URL {0}", url);
-//            throw e;
-//        }
-//    }
     @Override
-    public void undeployImpl(NutsRepositoryUndeployCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
-
-    @Override
-    public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
-        super.checkAllowedFetch(id, session);
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(),id);
+    public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+        Iterator<NutsId> allVersions = searchVersionsImpl2(id, filter, session);
+        NutsId a = null;
+        while (allVersions != null && allVersions.hasNext()) {
+            NutsId next = allVersions.next();
+            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+                a = next;
+            }
         }
+        return a;
     }
 
-//    @Override
-//    public Path getComponentsLocation() {
-//        return null;
-//    }
 }
