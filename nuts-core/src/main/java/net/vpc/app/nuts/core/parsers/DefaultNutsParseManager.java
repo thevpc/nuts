@@ -172,31 +172,4 @@ public class DefaultNutsParseManager implements NutsParseManager {
         }
         return new NutsExecutionEntry[0];
     }
-
-    @Override
-    public Object parseExpression(Object object, String expression) {
-        int x = expression.indexOf('.');
-        if (x < 0) {
-            if (object instanceof Map) {
-                for (Object o : ((Map) object).keySet()) {
-                    String k = String.valueOf(o);
-                    if (k.equals(expression)) {
-                        return ((Map) object).get(o);
-                    }
-                }
-                return null;
-            }
-            expression = Character.toUpperCase(expression.charAt(0)) + expression.substring(1);
-            Method m = null;
-            try {
-                m = object.getClass().getDeclaredMethod("get" + expression);
-                return m.invoke(object);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(e);
-            }
-        } else {
-            Object o = parseExpression(object, expression.substring(0, x));
-            return parseExpression(o, expression.substring(x + 1));
-        }
-    }
 }
