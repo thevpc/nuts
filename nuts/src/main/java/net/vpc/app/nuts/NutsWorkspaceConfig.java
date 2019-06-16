@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -51,16 +51,19 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String createApiVersion = null;
 
     /**
-     * boot component Id in long format (as defined in {@link NutsId#getLongName()})
+     * boot component Id in long format (as defined in
+     * {@link NutsId#getLongName()})
+     *
      * @see NutsId#getLongNameId()
      */
     private String bootRuntime = null;
 
     /**
-     * ';' separated list of component Ids in long format (as defined in {@link NutsId#getLongName()})
-     * that defines ALL dependencies  needed (no further dependency computation should be performed)
-     * to load and execute a valid implementation of nuts-api.
-     * These components should be accessible from {@link NutsWorkspaceConfig#getBootRepositories()}
+     * ';' separated list of component Ids in long format (as defined in
+     * {@link NutsId#getLongName()}) that defines ALL dependencies needed (no
+     * further dependency computation should be performed) to load and execute a
+     * valid implementation of nuts-api. These components should be accessible
+     * from {@link NutsWorkspaceConfig#getBootRepositories()}
      *
      * @see NutsId#getLongNameId()
      */
@@ -79,6 +82,11 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
+    /**
+     * @since 0.5.6
+     */
+    private String runStoreLocation = null;
+
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
@@ -90,6 +98,10 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logSystemHome = null;
     private String tempSystemHome = null;
     private String cacheSystemHome = null;
+    /**
+     * @since 0.5.6
+     */
+    private String runSystemHome = null;
 
     private String programsWindowsHome = null;
     private String configWindowsHome = null;
@@ -98,6 +110,10 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logWindowsHome = null;
     private String tempWindowsHome = null;
     private String cacheWindowsHome = null;
+    /**
+     * @since 0.5.6
+     */
+    private String runWindowsHome = null;
 
     private String programsMacOsHome = null;
     private String configMacOsHome = null;
@@ -106,6 +122,10 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logMacOsHome = null;
     private String tempMacOsHome = null;
     private String cacheMacOsHome = null;
+    /**
+     * @since 0.5.6
+     */
+    private String runMacOsHome = null;
 
     private String programsLinuxHome = null;
     private String configLinuxHome = null;
@@ -114,6 +134,10 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logLinuxHome = null;
     private String tempLinuxHome = null;
     private String cacheLinuxHome = null;
+    /**
+     * @since 0.5.6
+     */
+    private String runLinuxHome = null;
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
@@ -146,6 +170,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logStoreLocation = other.getLogStoreLocation();
         this.tempStoreLocation = other.getTempStoreLocation();
         this.cacheStoreLocation = other.getCacheStoreLocation();
+        this.runStoreLocation = other.getRunStoreLocation();
 
         this.programsWindowsHome = other.getProgramsWindowsHome();
         this.configWindowsHome = other.getConfigWindowsHome();
@@ -154,6 +179,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logWindowsHome = other.getLogWindowsHome();
         this.tempWindowsHome = other.getTempWindowsHome();
         this.cacheWindowsHome = other.getCacheWindowsHome();
+        this.runWindowsHome = other.getRunWindowsHome();
 
         this.programsMacOsHome = other.getProgramsMacOsHome();
         this.configMacOsHome = other.getConfigMacOsHome();
@@ -162,6 +188,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logMacOsHome = other.getLogMacOsHome();
         this.tempMacOsHome = other.getTempMacOsHome();
         this.cacheMacOsHome = other.getCacheMacOsHome();
+        this.runMacOsHome = other.getRunMacOsHome();
 
         this.programsLinuxHome = other.getProgramsLinuxHome();
         this.configLinuxHome = other.getConfigLinuxHome();
@@ -170,6 +197,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logLinuxHome = other.getLogLinuxHome();
         this.tempLinuxHome = other.getTempLinuxHome();
         this.cacheLinuxHome = other.getCacheLinuxHome();
+        this.runLinuxHome = other.getRunLinuxHome();
 
         this.authenticationAgent = other.getAuthenticationAgent();
 
@@ -387,6 +415,15 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
+    public String getRunStoreLocation() {
+        return runStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setRunStoreLocation(String runStoreLocation) {
+        this.runStoreLocation = runStoreLocation;
+        return this;
+    }
+
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
@@ -495,6 +532,15 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
+    public String getRunSystemHome() {
+        return runSystemHome;
+    }
+
+    public NutsWorkspaceConfig setRunSystemHome(String runSystemHome) {
+        this.runSystemHome = runSystemHome;
+        return this;
+    }
+
     public String getProgramsWindowsHome() {
         return programsWindowsHome;
     }
@@ -555,6 +601,15 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setCacheWindowsHome(String cacheWindowsHome) {
         this.cacheWindowsHome = cacheWindowsHome;
+        return this;
+    }
+
+    public String getRunWindowsHome() {
+        return runWindowsHome;
+    }
+
+    public NutsWorkspaceConfig setRunWindowsHome(String runWindowsHome) {
+        this.runWindowsHome = runWindowsHome;
         return this;
     }
 
@@ -621,6 +676,15 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
+    public String getRunMacOsHome() {
+        return runMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setRunMacOsHome(String runMacOsHome) {
+        this.runMacOsHome = runMacOsHome;
+        return this;
+    }
+
     public String getProgramsLinuxHome() {
         return programsLinuxHome;
     }
@@ -684,6 +748,15 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
+    public String getRunLinuxHome() {
+        return runLinuxHome;
+    }
+
+    public NutsWorkspaceConfig setRunLinuxHome(String runLinuxHome) {
+        this.runLinuxHome = runLinuxHome;
+        return this;
+    }
+
     public boolean isGlobal() {
         return global;
     }
@@ -722,6 +795,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.logStoreLocation);
         hash = 37 * hash + Objects.hashCode(this.tempStoreLocation);
         hash = 37 * hash + Objects.hashCode(this.cacheStoreLocation);
+        hash = 37 * hash + Objects.hashCode(this.runStoreLocation);
         hash = 37 * hash + Objects.hashCode(this.repositoryStoreLocationStrategy);
         hash = 37 * hash + Objects.hashCode(this.storeLocationStrategy);
         hash = 37 * hash + Objects.hashCode(this.storeLocationLayout);
@@ -732,6 +806,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.logSystemHome);
         hash = 37 * hash + Objects.hashCode(this.tempSystemHome);
         hash = 37 * hash + Objects.hashCode(this.cacheSystemHome);
+        hash = 37 * hash + Objects.hashCode(this.runSystemHome);
         hash = 37 * hash + Objects.hashCode(this.programsWindowsHome);
         hash = 37 * hash + Objects.hashCode(this.configWindowsHome);
         hash = 37 * hash + Objects.hashCode(this.varWindowsHome);
@@ -739,6 +814,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.logWindowsHome);
         hash = 37 * hash + Objects.hashCode(this.tempWindowsHome);
         hash = 37 * hash + Objects.hashCode(this.cacheWindowsHome);
+        hash = 37 * hash + Objects.hashCode(this.runWindowsHome);
         hash = 37 * hash + Objects.hashCode(this.programsMacOsHome);
         hash = 37 * hash + Objects.hashCode(this.configMacOsHome);
         hash = 37 * hash + Objects.hashCode(this.varMacOsHome);
@@ -746,6 +822,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.logMacOsHome);
         hash = 37 * hash + Objects.hashCode(this.tempMacOsHome);
         hash = 37 * hash + Objects.hashCode(this.cacheMacOsHome);
+        hash = 37 * hash + Objects.hashCode(this.runMacOsHome);
         hash = 37 * hash + Objects.hashCode(this.programsLinuxHome);
         hash = 37 * hash + Objects.hashCode(this.configLinuxHome);
         hash = 37 * hash + Objects.hashCode(this.varLinuxHome);
@@ -753,6 +830,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.logLinuxHome);
         hash = 37 * hash + Objects.hashCode(this.tempLinuxHome);
         hash = 37 * hash + Objects.hashCode(this.cacheLinuxHome);
+        hash = 37 * hash + Objects.hashCode(this.runLinuxHome);
         hash = 37 * hash + Objects.hashCode(this.repositories);
         hash = 37 * hash + Objects.hashCode(this.extensions);
         hash = 37 * hash + Objects.hashCode(this.commandFactories);
@@ -831,6 +909,9 @@ public final class NutsWorkspaceConfig implements Serializable {
         if (!Objects.equals(this.cacheStoreLocation, other.cacheStoreLocation)) {
             return false;
         }
+        if (!Objects.equals(this.runStoreLocation, other.runStoreLocation)) {
+            return false;
+        }
         if (!Objects.equals(this.programsSystemHome, other.programsSystemHome)) {
             return false;
         }
@@ -850,6 +931,9 @@ public final class NutsWorkspaceConfig implements Serializable {
             return false;
         }
         if (!Objects.equals(this.cacheSystemHome, other.cacheSystemHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.runSystemHome, other.runSystemHome)) {
             return false;
         }
         if (!Objects.equals(this.programsWindowsHome, other.programsWindowsHome)) {
@@ -873,6 +957,9 @@ public final class NutsWorkspaceConfig implements Serializable {
         if (!Objects.equals(this.cacheWindowsHome, other.cacheWindowsHome)) {
             return false;
         }
+        if (!Objects.equals(this.runWindowsHome, other.runWindowsHome)) {
+            return false;
+        }
         if (!Objects.equals(this.programsMacOsHome, other.programsMacOsHome)) {
             return false;
         }
@@ -894,6 +981,9 @@ public final class NutsWorkspaceConfig implements Serializable {
         if (!Objects.equals(this.cacheMacOsHome, other.cacheMacOsHome)) {
             return false;
         }
+        if (!Objects.equals(this.runMacOsHome, other.runMacOsHome)) {
+            return false;
+        }
         if (!Objects.equals(this.programsLinuxHome, other.programsLinuxHome)) {
             return false;
         }
@@ -913,6 +1003,9 @@ public final class NutsWorkspaceConfig implements Serializable {
             return false;
         }
         if (!Objects.equals(this.cacheLinuxHome, other.cacheLinuxHome)) {
+            return false;
+        }
+        if (!Objects.equals(this.runLinuxHome, other.runLinuxHome)) {
             return false;
         }
         if (!Objects.equals(this.authenticationAgent, other.authenticationAgent)) {
@@ -953,7 +1046,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsWorkspaceConfig{" + "uuid=" + uuid + ", global=" + global + ", workspace=" + workspace + ", bootApiVersion=" + bootApiVersion + ", createApiVersion=" + createApiVersion + ", bootRuntime=" + bootRuntime + ", bootRuntimeDependencies=" + bootRuntimeDependencies + ", bootRepositories=" + bootRepositories + ", bootJavaCommand=" + bootJavaCommand + ", bootJavaOptions=" + bootJavaOptions + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", repositoryStoreLocationStrategy=" + repositoryStoreLocationStrategy + ", storeLocationStrategy=" + storeLocationStrategy + ", storeLocationLayout=" + storeLocationLayout + ", programsSystemHome=" + programsSystemHome + ", configSystemHome=" + configSystemHome + ", varSystemHome=" + varSystemHome + ", libSystemHome=" + libSystemHome + ", logSystemHome=" + logSystemHome + ", tempSystemHome=" + tempSystemHome + ", cacheSystemHome=" + cacheSystemHome + ", programsWindowsHome=" + programsWindowsHome + ", configWindowsHome=" + configWindowsHome + ", varWindowsHome=" + varWindowsHome + ", libWindowsHome=" + libWindowsHome + ", logWindowsHome=" + logWindowsHome + ", tempWindowsHome=" + tempWindowsHome + ", cacheWindowsHome=" + cacheWindowsHome + ", programsMacOsHome=" + programsMacOsHome + ", configMacOsHome=" + configMacOsHome + ", varMacOsHome=" + varMacOsHome + ", libMacOsHome=" + libMacOsHome + ", logMacOsHome=" + logMacOsHome + ", tempMacOsHome=" + tempMacOsHome + ", cacheMacOsHome=" + cacheMacOsHome + ", programsLinuxHome=" + programsLinuxHome + ", configLinuxHome=" + configLinuxHome + ", varLinuxHome=" + varLinuxHome + ", libLinuxHome=" + libLinuxHome + ", logLinuxHome=" + logLinuxHome + ", tempLinuxHome=" + tempLinuxHome + ", cacheLinuxHome=" + cacheLinuxHome + ", repositories=" + repositories + ", extensions=" + extensions + ", commandFactories=" + commandFactories + ", env=" + env + ", sdk=" + sdk + ", imports=" + imports + ", secure=" + secure + ", authenticationAgent=" + authenticationAgent + ", users=" + users + '}';
+        return "NutsWorkspaceConfig{" + "uuid=" + uuid + ", global=" + global + ", workspace=" + workspace + ", bootApiVersion=" + bootApiVersion + ", createApiVersion=" + createApiVersion + ", bootRuntime=" + bootRuntime + ", bootRuntimeDependencies=" + bootRuntimeDependencies + ", bootRepositories=" + bootRepositories + ", bootJavaCommand=" + bootJavaCommand + ", bootJavaOptions=" + bootJavaOptions + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", runStoreLocation=" + runStoreLocation + ", repositoryStoreLocationStrategy=" + repositoryStoreLocationStrategy + ", storeLocationStrategy=" + storeLocationStrategy + ", storeLocationLayout=" + storeLocationLayout + ", programsSystemHome=" + programsSystemHome + ", configSystemHome=" + configSystemHome + ", varSystemHome=" + varSystemHome + ", libSystemHome=" + libSystemHome + ", logSystemHome=" + logSystemHome + ", tempSystemHome=" + tempSystemHome + ", cacheSystemHome=" + cacheSystemHome + ", runSystemHome=" + runSystemHome + ", programsWindowsHome=" + programsWindowsHome + ", configWindowsHome=" + configWindowsHome + ", varWindowsHome=" + varWindowsHome + ", libWindowsHome=" + libWindowsHome + ", logWindowsHome=" + logWindowsHome + ", tempWindowsHome=" + tempWindowsHome + ", cacheWindowsHome=" + cacheWindowsHome + ", runWindowsHome=" + runWindowsHome + ", programsMacOsHome=" + programsMacOsHome + ", configMacOsHome=" + configMacOsHome + ", varMacOsHome=" + varMacOsHome + ", libMacOsHome=" + libMacOsHome + ", logMacOsHome=" + logMacOsHome + ", tempMacOsHome=" + tempMacOsHome + ", cacheMacOsHome=" + cacheMacOsHome + ", runMacOsHome=" + runMacOsHome + ", programsLinuxHome=" + programsLinuxHome + ", configLinuxHome=" + configLinuxHome + ", varLinuxHome=" + varLinuxHome + ", libLinuxHome=" + libLinuxHome + ", logLinuxHome=" + logLinuxHome + ", tempLinuxHome=" + tempLinuxHome + ", cacheLinuxHome=" + cacheLinuxHome + ", runLinuxHome=" + runLinuxHome + ", repositories=" + repositories + ", extensions=" + extensions + ", commandFactories=" + commandFactories + ", env=" + env + ", sdk=" + sdk + ", imports=" + imports + ", secure=" + secure + ", authenticationAgent=" + authenticationAgent + ", users=" + users + '}';
     }
-    
+
 }

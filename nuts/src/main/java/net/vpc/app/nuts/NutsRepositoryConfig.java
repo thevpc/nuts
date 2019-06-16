@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -51,6 +51,7 @@ public class NutsRepositoryConfig implements Serializable {
     private String logStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
+    private String runStoreLocation = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
     private Properties env;
@@ -193,6 +194,15 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
+    public String getRunStoreLocation() {
+        return runStoreLocation;
+    }
+
+    public NutsRepositoryConfig setRunStoreLocation(String runStoreLocation) {
+        this.runStoreLocation = runStoreLocation;
+        return this;
+    }
+
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
@@ -270,6 +280,7 @@ public class NutsRepositoryConfig implements Serializable {
         hash = 59 * hash + Objects.hashCode(this.logStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.tempStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.cacheStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.runStoreLocation);
         hash = 59 * hash + Objects.hashCode(this.storeLocationStrategy);
         hash = 59 * hash + Objects.hashCode(this.groups);
         hash = 59 * hash + Objects.hashCode(this.env);
@@ -328,6 +339,9 @@ public class NutsRepositoryConfig implements Serializable {
         if (!Objects.equals(this.cacheStoreLocation, other.cacheStoreLocation)) {
             return false;
         }
+        if (!Objects.equals(this.runStoreLocation, other.runStoreLocation)) {
+            return false;
+        }
         if (!Objects.equals(this.groups, other.groups)) {
             return false;
         }
@@ -351,9 +365,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", runStoreLocation=" + runStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
-
-    
 
 }

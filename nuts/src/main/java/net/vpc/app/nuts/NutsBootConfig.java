@@ -34,11 +34,14 @@ import java.util.Arrays;
 
 /**
  * Nuts Boot editable configuration object
+ *
  * @author vpc
  * @since 0.5.4
  */
 public final class NutsBootConfig implements Cloneable {
 
+    private String uuid = null;
+    private String name = null;
     private String apiVersion = null;
     private String runtimeId = null;
     private String runtimeDependencies = null;
@@ -70,6 +73,7 @@ public final class NutsBootConfig implements Cloneable {
 //            this.setRepositories(options.getRepositories());
             this.global = options.isGlobal();
             this.gui = options.isGui();
+            this.runtimeId = options.getBootRuntime();
         }
     }
 
@@ -88,6 +92,8 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationLayout = context.getStoreLocationLayout();
             this.global = context.isGlobal();
             this.gui = context.isGui();
+//            this.name = context.getName();
+//            this.uuid = context.getUuid();
         }
     }
 
@@ -105,7 +111,26 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationLayout = other.getStoreLocationLayout();
             this.global = other.isGlobal();
             this.gui = other.isGui();
+            this.uuid = other.getUuid();
+            this.name = other.getName();
+            this.runtimeId = other.getRuntimeId();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getApiVersion() {
@@ -184,9 +209,9 @@ public final class NutsBootConfig implements Cloneable {
     }
 
     public String getBootsrap() {
-        return getWorkspace()+File.separator+NutsConstants.Folders.BOOT;
+        return getWorkspace() + File.separator + NutsConstants.Folders.BOOT;
     }
-    
+
     public String getWorkspace() {
         return workspace;
     }

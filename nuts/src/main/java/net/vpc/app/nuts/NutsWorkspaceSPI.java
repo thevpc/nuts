@@ -41,7 +41,7 @@ public interface NutsWorkspaceSPI extends NutsWorkspace{
 
     boolean initializeWorkspace(NutsWorkspaceFactory factory,
                                 NutsBootConfig runningBootConfig,
-                                NutsBootConfig wsBootConfig,
+                                NutsBootConfig userBootConfig,
                                 URL[] bootClassWorldURLs,
                                 ClassLoader workspaceClassLoader,
                                 NutsWorkspaceOptions options

@@ -64,11 +64,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String bootRuntimeSourceURL;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
     private String workspace = null;
 
     /**
@@ -373,15 +368,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setBootRuntime(String bootRuntime) {
         this.bootRuntime = bootRuntime;
-        return this;
-    }
-
-    public String getBootRuntimeSourceURL() {
-        return bootRuntimeSourceURL;
-    }
-
-    public NutsWorkspaceOptions setBootRuntimeSourceURL(String bootRuntimeSourceURL) {
-        this.bootRuntimeSourceURL = bootRuntimeSourceURL;
         return this;
     }
 

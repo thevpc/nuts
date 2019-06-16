@@ -39,6 +39,8 @@ import java.nio.file.Path;
  */
 public interface NutsBootContext {
 
+    String getName();
+    
     String getWorkspace();
 
     NutsStoreLocationStrategy getStoreLocationStrategy();

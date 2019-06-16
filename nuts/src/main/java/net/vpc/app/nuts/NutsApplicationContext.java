@@ -54,6 +54,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getMode()}
+     *
      * @return application execution mode
      */
     NutsApplicationMode mode();
@@ -67,6 +68,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getModeArguments()}
+     *
      * @return application execution mode extra arguments
      */
     String[] modeArguments();
@@ -82,6 +84,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getAutoComplete()}
+     *
      * @return Auto complete instance
      */
     NutsCommandAutoComplete autoComplete();
@@ -112,6 +115,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getAppClass()}
+     *
      * @return application class reference
      */
     Class appClass();
@@ -125,6 +129,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getWorkspace()}
+     *
      * @return current workspace
      */
     NutsWorkspace workspace();
@@ -160,6 +165,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getProgramsFolder()}
+     *
      * @return path to the programs folder of this application
      */
     Path programsFolder();
@@ -173,6 +179,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getConfigFolder()}
+     *
      * @return path to the configuration folder of this application
      */
     Path configFolder();
@@ -186,6 +193,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getLogFolder()}
+     *
      * @return path to the log folder of this application
      */
     Path logFolder();
@@ -199,6 +207,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getTempFolder()}
+     *
      * @return path to the temporary files folder of this application
      */
     Path tempFolder();
@@ -214,6 +223,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getVarFolder()}
+     *
      * @return path to the variable files (aka /var in POSIX systems) folder of
      * this application
      */
@@ -228,7 +238,17 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
     Path getLibFolder();
 
     /**
+     * path to the temporary run files (non essential sockets etc...) folder of
+     * this application
+     *
+     * @return path to the temporary run files (non essential sockets etc...)
+     * folder of this application
+     */
+    Path getRunFolder();
+
+    /**
      * equivalent to {@code getLibFolder()}
+     *
      * @return path to the libraries files (non applications) folder of this
      * application
      */
@@ -243,6 +263,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getCacheFolder()}
+     *
      * @return path to the cache files folder of this application
      */
     Path cacheFolder();
@@ -256,6 +277,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getStoreId()}
+     *
      * @return application store id (typically the long nuts id)
      */
     String storeId();
@@ -269,6 +291,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getAppId()}
+     *
      * @return application nuts id
      */
     NutsId appId();
@@ -282,6 +305,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getAppVersion()}
+     *
      * @return application version
      */
     NutsVersion appVersion();
@@ -296,6 +320,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getArguments()}
+     *
      * @return application arguments
      */
     String[] arguments();
@@ -309,6 +334,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getStartTimeMillis()}
+     *
      * @return application start time in milli-seconds
      */
     long startTimeMillis();
@@ -322,6 +348,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getAppPreviousVersion()}
+     *
      * @return previous version
      */
     NutsVersion appPreviousVersion();
@@ -335,6 +362,7 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
 
     /**
      * equivalent to {@code getCommandLine()}
+     *
      * @return a new instance of command line arguments to process
      */
     NutsCommandLine commandLine();

@@ -142,14 +142,6 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--runtime-source-url": {
-                        a = cmdLine.nextString();
-                        String v = a.getStringValue();
-                        if (enabled) {
-                            options.setBootRuntimeSourceURL(v);
-                        }
-                        break;
-                    }
                     case "--java":
                     case "--boot-java":
                     case "-j": {

@@ -32,7 +32,8 @@ package net.vpc.app.nuts;
 import java.io.PrintStream;
 
 /**
- * HElper class for Nuts Applications
+ * Helper class for Nuts Applications
+ *
  * @author vpc
  * @since 0.5.5
  */
@@ -43,9 +44,10 @@ public class NutsApplications {
 
     /**
      * process throwables and return exit code
+     *
      * @param ex exception
-     * @param args application arguments to check from if a '--verbose' or '--debug'
-     * option is armed
+     * @param args application arguments to check from if a '--verbose' or
+     * '--debug' option is armed
      * @param out out stream
      * @return exit code
      */
@@ -54,12 +56,7 @@ public class NutsApplications {
             return 0;
         }
         int errorCode = 204;
-        boolean showTrace =
-                //exported/inherited
-                  NutsUtilsLimited.getSystemBoolean("nuts.export.debug", false)
-                //non exported
-                ||NutsUtilsLimited.getSystemBoolean("nuts.debug", false)
-                ;
+        boolean showTrace = NutsUtilsLimited.getSysBoolNutsProperty("debug", false);
 
         if (!showTrace && args != null) {
             for (String arg : args) {
@@ -85,25 +82,25 @@ public class NutsApplications {
         if (m == null || m.length() < 5) {
             m = ex.toString();
         }
-        NutsWorkspace ws=null;
-        if(ex instanceof NutsException){
-            ws=((NutsException) ex).getWorkspace();
+        NutsWorkspace ws = null;
+        if (ex instanceof NutsException) {
+            ws = ((NutsException) ex).getWorkspace();
         }
-        if(ws==null) {
+        if (ws == null) {
             if (ex instanceof NutsSecurityException) {
                 ws = ((NutsSecurityException) ex).getWorkspace();
             }
         }
-        if(out==null && ws!=null){
+        if (out == null && ws != null) {
             try {
                 out = ws.io().getSystemTerminal().getOut();
-                m="@@"+m+"@@";
-            }catch (Exception ex2){
+                m = "@@" + m + "@@";
+            } catch (Exception ex2) {
                 //
             }
         }
-        if(out==null){
-            out=System.err;
+        if (out == null) {
+            out = System.err;
         }
         out.println(m);
         if (showTrace) {
@@ -115,13 +112,14 @@ public class NutsApplications {
 
     /**
      * run application life cycle
+     *
      * @param args application arguments
      * @param ws workspace
      * @param lifeCycle application life cycle
      */
     public static void runApplication(String[] args, NutsWorkspace ws, NutsApplicationLifeCycle lifeCycle) {
         long startTimeMillis = System.currentTimeMillis();
-        if(lifeCycle==null){
+        if (lifeCycle == null) {
             throw new NullPointerException("Null Application");
         }
         if (ws == null) {
@@ -129,8 +127,8 @@ public class NutsApplications {
         }
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
-        if(applicationContext==null){
-            applicationContext=ws.io().createApplicationContext(args, lifeCycle.getClass(), null,startTimeMillis);
+        if (applicationContext == null) {
+            applicationContext = ws.io().createApplicationContext(args, lifeCycle.getClass(), null, startTimeMillis);
         }
         switch (applicationContext.getMode()) {
             case RUN:
@@ -151,6 +149,6 @@ public class NutsApplications {
                 return;
             }
         }
-        throw new NutsExecutionException(ws,"Unsupported execution mode " + applicationContext.getMode(), 204);
+        throw new NutsExecutionException(ws, "Unsupported execution mode " + applicationContext.getMode(), 204);
     }
 }

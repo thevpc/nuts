@@ -129,7 +129,6 @@ public class NutsWorkspaceOptionsFormat {
                 }
             }
             fillOption("--boot-runtime", null, options.getBootRuntime(), arguments);
-            fillOption("--runtime-source-url", null, options.getBootRuntimeSourceURL(), arguments);
             fillOption("--java", "-j", options.getBootJavaCommand(), arguments);
             fillOption("--java-options", "-O", options.getBootJavaOptions(), arguments);
             fillOption("--workspace", "-w", NutsUtilsLimited.isBlank(options.getWorkspace()) ? "" : NutsUtilsLimited.getAbsolutePath(options.getWorkspace()), arguments);

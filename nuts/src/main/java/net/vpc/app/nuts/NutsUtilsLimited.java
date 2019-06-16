@@ -59,8 +59,44 @@ import java.util.regex.Pattern;
 final class NutsUtilsLimited {
 
     private static final Logger LOG = Logger.getLogger(NutsUtilsLimited.class.getName());
-    private static final Pattern JSON_BOOT_KEY_VAL = Pattern.compile("\"(?<key>(.+))\"\\s*:\\s*\"(?<val>[^\"]*)\"");
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
+
+    public static boolean isValidWorkspaceName(String workspace) {
+        if (isBlank(workspace)) {
+            return true;
+        }
+        String workspaceName = workspace.trim();
+        if (workspaceName.matches("[^/\\\\]+")
+                && !workspaceName.equals(".")
+                && !workspaceName.equals("..")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String resolveValidWorkspaceName(String workspace) {
+        if (isBlank(workspace)) {
+            return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+        }
+        String workspaceName = workspace.trim();
+        if (workspaceName.matches("[^/\\\\]+")
+                && !workspaceName.equals(".")
+                && !workspaceName.equals("..")) {
+            return workspaceName;
+        } else {
+            String p = null;
+            try {
+                p = new File(workspaceName).getCanonicalFile().getName();
+            } catch (IOException ex) {
+                p = new File(workspaceName).getAbsoluteFile().getName();
+            }
+            if (p.isEmpty() || p.equals(".") || p.equals("..")) {
+                return "unknown";
+            }
+            return p;
+        }
+    }
 
     public static boolean isBlank(String str) {
         return str == null || str.trim().length() == 0;
@@ -405,189 +441,6 @@ final class NutsUtilsLimited {
         return sb.toString();
     }
 
-    public static NutsBootConfig loadNutsBootConfig(String workspace) {
-        File versionFile = new File(workspace, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        try {
-            if (versionFile.isFile()) {
-                String str = readStringFromFile(versionFile).trim();
-                if (str.length() > 0) {
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.log(Level.FINEST, "Loading Workspace Config {0}", versionFile.getPath());
-                    }
-                    Pattern bootRuntime = JSON_BOOT_KEY_VAL;
-                    Matcher matcher = bootRuntime.matcher(str);
-                    NutsBootConfig c = new NutsBootConfig();
-                    while (matcher.find()) {
-                        String k = matcher.group("key");
-                        String val = matcher.group("val");
-                        if (k != null) {
-                            switch (k) {
-                                case "bootApiVersion": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setApiVersion(val);
-                                    break;
-                                }
-                                case "bootRuntime": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setRuntimeId(val);
-                                    break;
-                                }
-                                case "bootRepositories": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setRepositories(val);
-                                    break;
-                                }
-                                case "bootRuntimeDependencies": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setRuntimeDependencies(val);
-                                    break;
-                                }
-                                case "bootJavaCommand": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setJavaCommand(val);
-                                    break;
-                                }
-                                case "bootJavaOptions": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setJavaOptions(val);
-                                    break;
-                                }
-                                case "workspace": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setWorkspace(val);
-                                    break;
-                                }
-                                case "programsStoreLocation":
-                                case "configStoreLocation":
-                                case "varStoreLocation":
-                                case "logStoreLocation":
-                                case "tempStoreLocation":
-                                case "cacheStoreLocation":
-                                case "libStoreLocation": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    String t = k.substring(k.length() - "StoreLocation".length()).toUpperCase();
-                                    c.setStoreLocation(NutsStoreLocation.valueOf(t), val);
-                                    break;
-                                }
-                                case "programsSystemHome":
-                                case "configSystemHome":
-                                case "varSystemHome":
-                                case "logSystemHome":
-                                case "tempSystemHome":
-                                case "cacheSystemHome":
-                                case "libSystemHome": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    String t = k.substring(0, k.length() - "SystemHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.valueOf(t), val);
-                                    break;
-                                }
-                                case "programsWindowsHome":
-                                case "configWindowsHome":
-                                case "varWindowsHome":
-                                case "logWindowsHome":
-                                case "tempWindowsHome":
-                                case "cacheWindowsHome":
-                                case "libWindowsHome": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    String t = k.substring(0, k.length() - "WindowsHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.valueOf(t), val);
-                                    break;
-                                }
-                                case "programsMacOsHome":
-                                case "configMacOsHome":
-                                case "varMacOsHome":
-                                case "logMacOsHome":
-                                case "tempMacOsHome":
-                                case "cacheMacOsHome":
-                                case "libMacOsHome": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    String t = k.substring(0, k.length() - "MacOsHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.valueOf(t), val);
-                                    break;
-                                }
-                                case "programsLinuxHome":
-                                case "configLinuxHome":
-                                case "varLinuxHome":
-                                case "logLinuxHome":
-                                case "tempLinuxHome":
-                                case "cacheLinuxHome":
-                                case "libLinuxHome": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    String t = k.substring(0, k.length() - "LinuxHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.valueOf(t), val);
-                                    break;
-                                }
-                                case "storeLocationStrategy": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    NutsStoreLocationStrategy strategy = NutsStoreLocationStrategy.values()[0];
-                                    if (!val.isEmpty()) {
-                                        try {
-                                            strategy = NutsStoreLocationStrategy.valueOf(val.toUpperCase());
-                                        } catch (Exception ex) {
-                                            //
-                                        }
-                                    }
-                                    c.setStoreLocationStrategy(strategy);
-                                    break;
-                                }
-                                case "storeLocationLayout": {
-                                    if (LOG.isLoggable(Level.FINEST)) {
-                                        LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[0];
-                                    if (!val.isEmpty()) {
-                                        try {
-                                            layout = NutsStoreLocationLayout.valueOf(val.toUpperCase());
-                                        } catch (Exception ex) {
-                                            //
-                                        }
-                                    }
-                                    c.setStoreLocationLayout(layout);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    return c;
-                    //return parseJson(str);
-
-                }
-            }
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "Previous Workspace Config not found at {0}", versionFile.getPath());
-            }
-        } catch (Exception ex) {
-            LOG.log(Level.CONFIG, "Unable to load nuts version file " + versionFile + ".\n", ex);
-        }
-        return null;
-    }
-
     public static List<String> splitUrlStrings(String repositories) {
         return split(repositories, "\n;", true);
     }
@@ -831,7 +684,7 @@ final class NutsUtilsLimited {
     }
 
     public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
-        return deleteAndConfirmAll(folders, force, new boolean[1], header, term,session);
+        return deleteAndConfirmAll(folders, force, new boolean[1], header, term, session);
     }
 
     private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll, String header, NutsTerminal term, NutsSession session) {
@@ -946,7 +799,9 @@ final class NutsUtilsLimited {
         if (s == null) {
             return "<EMPTY>";
         }
-        String ss = s.toString().trim();
+        String ss = 
+                (s instanceof Enum)?((Enum)s).name().toLowerCase().replace('_', '-'):
+                s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -1046,8 +901,17 @@ final class NutsUtilsLimited {
         return v;
     }
 
+    public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
+        return (getSystemBoolean("nuts." + property, defaultValue)
+                || getSystemBoolean("nuts.export." + property, defaultValue));
+    }
+
     public static Boolean getSystemBoolean(String property, Boolean defaultValue) {
-        return parseBoolean(System.getProperty(property), defaultValue);
+        String o = System.getProperty(property);
+        if (o == null) {
+            return defaultValue;
+        }
+        return parseBoolean(o, defaultValue);
     }
 
     public static Boolean parseBoolean(String value, Boolean defaultValue) {
