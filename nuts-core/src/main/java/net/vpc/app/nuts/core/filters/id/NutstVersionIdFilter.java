@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.filters.id;
 import net.vpc.app.nuts.*;
 
 import java.util.Objects;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
@@ -63,10 +64,14 @@ public class NutstVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFi
 
     @Override
     public NutsIdFilter simplify() {
-        if (filter == null) {
+        NutsVersionFilter f2 = CoreNutsUtils.simplify(filter);
+        if (f2 == null) {
             return null;
         }
-        return this;
+        if(f2==filter){
+            return this;
+        }
+        return new NutstVersionIdFilter(f2);
     }
 
     @Override

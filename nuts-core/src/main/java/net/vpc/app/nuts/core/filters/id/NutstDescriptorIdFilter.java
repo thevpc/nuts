@@ -91,10 +91,14 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
 
     @Override
     public NutsIdFilter simplify() {
-        if (filter == null) {
+        NutsDescriptorFilter f2 = CoreNutsUtils.simplify(filter);
+        if (f2 == null) {
             return null;
         }
-        return this;
+        if(f2==filter){
+            return this;
+        }
+        return new NutstDescriptorIdFilter(f2);
     }
 
     @Override
