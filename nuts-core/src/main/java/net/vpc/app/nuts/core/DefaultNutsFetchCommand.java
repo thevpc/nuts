@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core;
 
+import java.io.UncheckedIOException;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -198,7 +199,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
         if (LOG.isLoggable(Level.FINEST)) {
-            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.START, "Fetch component", 0);
+            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.START, "Fetch component", 0);
         }
         DefaultNutsDefinition foundDefinition = null;
         try {
@@ -233,6 +234,13 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     }
                 } catch (NutsNotFoundException ex) {
                     //ignore
+                } catch (UncheckedIOException ex) {
+                    //ignore
+                } catch (Exception ex) {
+                    //ignore
+                    if (LOG.isLoggable(Level.FINEST)) {
+                        CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
+                    }
                 }
             }
             if (foundDefinition != null) {
@@ -241,7 +249,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), options.getSession()));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        LOG.log(Level.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.toString(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
+                        LOG.log(Level.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
                         foundDefinition = null;
                     }
                 }
@@ -283,7 +291,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 NutsContent content = repo.fetchContent()
                                         .id(id1).descriptor(foundDefinition.getDescriptor())
                                         .localPath(copyTo)
-                                        .session(NutsWorkspaceHelper.createRepositorySession(getWorkspace(),options.getSession(), repo, mode, options))
+                                        .session(NutsWorkspaceHelper.createRepositorySession(getWorkspace(), options.getSession(), repo, mode, options))
                                         .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
@@ -299,10 +307,10 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                             }
                         }
                         if (foundDefinition.getContent() == null || foundDefinition.getPath() == null) {
-                            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
+                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
                             foundDefinition = null;
                         } else if (escalateMode) {
-                            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
+                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
                         }
                     }
                     if (foundDefinition != null && options.isInstallInformation()) {
@@ -325,18 +333,18 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
         } catch (NutsNotFoundException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         }
         if (foundDefinition != null) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.SUCCESS, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
             }
             if (isInlineDependencies()) {
                 NutsDependencyScope[] s = (getScope() == null || getScope().isEmpty())
@@ -428,7 +436,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.format().json().write(map, f);
+                        ws.format().json().print(map, f);
                     } catch (Exception ex) {
                         //
                     }
@@ -457,7 +465,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
             }
             NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
             List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, CoreFilterUtils.idFilterOf(versionFilter), rsession))
                     .convert(x -> x.getVersion()).list();
             if (all.size() > 0) {
@@ -470,7 +478,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         }
         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, options)) {
             try {
-                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(getWorkspace(),options.getSession(), repo, mode,
+                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(getWorkspace(), options.getSession(), repo, mode,
                         options
                 )).run().getResult();
                 if (descriptor != null) {
