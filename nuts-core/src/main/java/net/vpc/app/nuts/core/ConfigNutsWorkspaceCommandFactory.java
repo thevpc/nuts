@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
@@ -53,7 +54,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public void installCommand(NutsCommandAliasConfig command) {
         Path file = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        configManagerExt.getWorkspace().format().json().write(command, file);
+        configManagerExt.getWorkspace().format().json().print(command, file);
     }
 
     @Override
@@ -78,11 +79,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
         return findCommands(new Predicate<NutsCommandAliasConfig>() {
             @Override
             public boolean test(NutsCommandAliasConfig value) {
-                if (id.getVersion().isBlank()) {
-                    return value.getOwner().getSimpleName().equals(id.getSimpleName());
-                } else {
-                    return value.getOwner().getLongName().equals(id.getLongName());
-                }
+                return CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id);
             }
         });
     }
