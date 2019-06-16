@@ -27,7 +27,7 @@ architectures.
 
 ==nuts== works either as __standalone application__ or as __java library__ to enable dynamic and dependency
 aware class loading and brings a rich toolset to provide a versatile portable command line tools such
-as {{nsh}} (a {{bash}} like shell), {{tomcat}}, {{derby}} ... wrapper tools to make it easier providing
+as ==nsh== (a bash like shell), ==tomcat==, ==derby== ... wrapper tools to make it easier providing
 __development__ , __test__ and __deployment__ reproducible environments.
 
 With container concepts in mind, ==nuts== is the perfect java application tool for {{Docker}}, {{CoreOs}}
@@ -41,12 +41,12 @@ search                   : search for existing/installable components
 exec                     : execute a component (tool)
 
 ##SYNOPSIS:##
-==nuts== **\[Nuts Options\]**... ==\<command\>== \<args\> ...
+==nuts== **\[Nuts Options\]**... [[\<command\>]] \<args\> ...
 
 ##VERSIONS:##
-Boot API     Version: ${nuts.workspace-boot.version}
-Boot Runtime Version: ${nuts.workspace-runtime.version}
-Java         Version: ${java.version} (${java.vm.name})
+Boot API     Version: **${nuts.workspace-boot.version}**
+Boot Runtime Version: **${nuts.workspace-runtime.version}**
+Java         Version: **${java.version} (${java.vm.name})**
 
 ##NUTS OPTIONS:##
  There are four (4) types of options : 
@@ -194,22 +194,25 @@ Java         Version: ${java.version} (${java.vm.name})
         cache    : cache folder
       
      In the Windows layout, default (home) locations resolve to ($HOME is the user\'s home folder)
-        programs : "$HOME/AppData/Roaming/nuts"
-        lib      : "$HOME/AppData/Roaming/nuts"
-        config   : "$HOME/AppData/Roaming/nuts"
-        var      : "$HOME/AppData/Roaming/nuts"
-        log      : "$HOME/AppData/Roaming/nuts"
-        temp     : "$java.io.tmpdir/nuts"
-        cache    : "$HOME/AppData/Local/nuts"
+        programs : "$HOME/AppData/Roaming/nuts/programs"
+        lib      : "$HOME/AppData/Roaming/nuts/lib"
+        config   : "$HOME/AppData/Roaming/nuts/config"
+        var      : "$HOME/AppData/Roaming/nuts/var"
+        log      : "$HOME/AppData/Roaming/nuts/log"
+        temp     : "$HOME/AppData/Local/nuts/temp"
+        cache    : "$HOME/AppData/Local/nuts/cache"
+        run      : "$HOME/AppData/Local/nuts/run"
 
-     In the Linux layout, default locations resolve to ($HOME is the user\'s home folder)
-        programs : "$HOME/.nuts"
-        lib      : "$HOME/.nuts"
-        config   : "$HOME/.nuts"
-        var      : "$HOME/.nuts"
-        log      : "$HOME/.nuts"
-        temp     : "$java.io.tmpdir/$username/nuts"
+     In the Linux (and MacOS) layout, default locations resolve (according to XDG Base Directory Specification) 
+     to ($HOME is the user\'s home folder)
+        config   : "$HOME/.config/nuts"
+        programs : "$HOME/.local/share/nuts/programs"
+        lib      : "$HOME/.local/share/nuts/lib"
+        var      : "$HOME/.local/share/nuts/var"
+        log      : "$HOME/.local/log/nuts"
         cache    : "$HOME/.cache/nuts"
+        temp     : "$java.io.tmpdir/$username/nuts"
+        run      : "/run/user/$USER_ID/nuts"
      
     These home locations are tuned individually using the following options
             **--system-programs-home** <path>
@@ -266,25 +269,25 @@ Java         Version: ${java.version} (${java.vm.name})
       use root/system wide workspace instead of user\'s own workspace. 
       requires admin privileges.
       Use shared workspace located at :
-      Windows    : $ProgramFiles/nuts/system-workspace/repositories/local
-      Linux/Unix : /usr/share/nuts/system-workspace/repositories/local
+      Windows    : "$ProgramFiles/nuts/system-workspace/repositories/local"
+      Linux/Unix : "/usr/share/nuts/system-workspace/repositories/local"
       More generally folder homes are defines as follows :
       Windows Layout   :
-        programs : $ProgramFiles/nuts
-        lib      : $ProgramFiles/nuts
-        config   : $ProgramFiles/nuts
-        var      : $ProgramFiles/nuts
-        log      : $ProgramFiles/nuts
-        temp     : $TMP/nuts
-        cache    : $ProgramFiles/nuts
+        programs : "$ProgramFiles/nuts"
+        lib      : "$ProgramFiles/nuts"
+        config   : "$ProgramFiles/nuts"
+        var      : "$ProgramFiles/nuts"
+        log      : "$ProgramFiles/nuts"
+        temp     : "$TMP/nuts"
+        cache    : "$ProgramFiles/nuts"
       Linux Layout    :
-        programs : /opt/nuts/programs
-        lib      : /opt/nuts/lib
-        config   : /etc/opt/nuts
-        var      : /var/opt/nuts
-        log      : /var/log/nuts
-        temp     : /tmp/nuts/global
-        cache    : /var/cache/nuts
+        programs : "/opt/nuts/programs"
+        lib      : "/opt/nuts/lib"
+        config   : "/etc/opt/nuts"
+        var      : "/var/opt/nuts"
+        log      : "/var/log/nuts"
+        temp     : "/tmp/nuts/global"
+        cache    : "/var/cache/nuts"
 
  **--color** or **-C**
       enables formatted (colorful) terminal ([[formatted]] terminal)
