@@ -39,7 +39,6 @@ import net.vpc.common.strings.StringUtils;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.NutsCommandLine;
 
@@ -121,7 +120,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
                     if (StringUtils.isBlank(workspace)) {
-                        workspace = userHome + "/.nuts/default-workspace";
+                        workspace = userHome + "/.config/nuts/"+NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;
                     try (SShConnection sShConnection = sshSession.setFailFast(false).

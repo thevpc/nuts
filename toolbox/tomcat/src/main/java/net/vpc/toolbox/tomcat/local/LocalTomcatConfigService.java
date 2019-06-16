@@ -80,9 +80,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 }
             }
         }
-        NutsIOManager io = context.getWorkspace().io();
         Path f = getConfigPath();
-        io.json().write(config, f);
+        context.workspace().format().json().print(config, f);
         return this;
     }
 
@@ -291,18 +290,18 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsDefinition r = context.getWorkspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
                     .installInformation().session(context.getSession())
                     .getResultDefinitions().first();
-            if(r!=null && r.getInstallation().isInstalled()){
-             return r;
-            }else{
-            catalinaNutsDefinition = context.getWorkspace()
-                    .install()
-                    .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .setSession(context.getSession().copy().trace().addListeners(new NutsInstallListener() {
-                @Override
-                public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
-                    context.session().out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
-                }
-            })).run().getResult()[0];
+            if (r != null && r.getInstallation().isInstalled()) {
+                return r;
+            } else {
+                catalinaNutsDefinition = context.getWorkspace()
+                        .install()
+                        .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                        .setSession(context.getSession().copy().trace().addListeners(new NutsInstallListener() {
+                            @Override
+                            public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
+                                context.session().out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
+                            }
+                        })).run().getResult()[0];
             }
         }
         return catalinaNutsDefinition;
@@ -380,7 +379,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLog) {
         stop();
         if (getJpsResult() != null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Server " + getName() + " is running. It cannot be stopped!", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Server " + getName() + " is running. It cannot be stopped!", 2);
         }
         start(deployApps, deleteLog);
         return true;
@@ -399,7 +398,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.session().out().printf("==[%s]== Tomcat started.\n", getName());
                 return AppStatus.RUNNING;
             }
-            throw new NutsExecutionException(context.getWorkspace(),"Unable to start tomcat", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Unable to start tomcat", 2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -417,7 +416,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.session().out().printf("==[%s]== Tomcat out of memory.\n", getName());
             return y;
         }
-        throw new NutsExecutionException(context.getWorkspace(),"Unable to start tomcat", 2);
+        throw new NutsExecutionException(context.getWorkspace(), "Unable to start tomcat", 2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -535,8 +534,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
-            NutsIOManager jsonSerializer = context.getWorkspace().io();
-            config = jsonSerializer.json().read(f, LocalTomcatConfig.class);
+            config = context.workspace().format().json().read(f, LocalTomcatConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -547,6 +545,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         throw new NoSuchElementException("Config not found : " + name);
     }
 
+    @Override
     public LocalTomcatConfigService remove() {
         try {
             Files.delete(context.getConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT));
@@ -556,8 +555,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
     }
 
+    @Override
     public LocalTomcatConfigService write(PrintStream out) {
-        TomcatUtils.writeJson(out, getConfig(), context.getWorkspace());
+        Map<String, Object> result = new HashMap<>();
+        result.put("config", getConfig());
+        result.put("status", getStatus());
+        result.put("base", getCatalinaBase());
+        result.put("out", getOutLogFile());
+        context.workspace().format().json().print(result, out);
         return this;
     }
 
@@ -582,7 +587,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService getAppOrError(String appName) {
         LocalTomcatAppConfigService a = getAppOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "App not found :" + appName, 2);
         }
         return a;
     }
@@ -606,7 +611,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         domainName = TomcatUtils.toValidFileName(domainName, "default");
         LocalTomcatDomainConfigService d = getDomainOrNull(domainName);
         if (d == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Domain not found :" + domainName, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Domain not found :" + domainName, 2);
         }
         return d;
     }

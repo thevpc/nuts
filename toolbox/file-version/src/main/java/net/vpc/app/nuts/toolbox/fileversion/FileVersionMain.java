@@ -314,7 +314,7 @@ public class FileVersionMain extends NutsApplication {
                     if ("META-INF/MANIFEST.MF".equals(path)) {
                         return true;
                     }
-                    if ("META-INF/nuts.json".equals(path)) {
+                    if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         return true;
                     }
                     if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
@@ -361,7 +361,7 @@ public class FileVersionMain extends NutsApplication {
                             ));
                         }
 
-                    } else if ("META-INF/nuts.json".equals(path)) {
+                    } else if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         try {
                             NutsDescriptor d = ws.parse().descriptor(inputStream);
                             inputStream.close();
@@ -385,7 +385,7 @@ public class FileVersionMain extends NutsApplication {
                             properties.setProperty("os", StringUtils.join(";", d.getOs()));
                             properties.setProperty("arch", StringUtils.join(";", d.getArch()));
                             properties.setProperty("osdist", StringUtils.join(";", d.getOsdist()));
-                            properties.setProperty("nuts.version-provider", "nuts.json");
+                            properties.setProperty("nuts.version-provider", NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                             if (d.getProperties() != null) {
                                 for (Map.Entry<String, String> e : d.getProperties().entrySet()) {
                                     properties.put("property." + e.getKey(), e.getValue());

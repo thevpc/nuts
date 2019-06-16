@@ -32,12 +32,12 @@ public class TomcatUtils {
         return appName == null ? "" : appName.trim();
     }
 
-    public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
-        NutsIOManager jsonSerializer = ws.io();
-        PrintWriter w = new PrintWriter(out);
-        jsonSerializer.json().write(config, new PrintWriter(out));
-        w.flush();
-    }
+//    public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
+//        NutsIOManager jsonSerializer = ws.io();
+//        PrintWriter w = new PrintWriter(out);
+//        jsonSerializer.json().write(config, new PrintWriter(out));
+//        w.flush();
+//    }
 
     public static boolean isPositiveInt(String s) {
         if (s == null) {

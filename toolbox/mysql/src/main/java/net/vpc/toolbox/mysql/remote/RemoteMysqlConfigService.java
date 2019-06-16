@@ -45,10 +45,8 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService saveConfig() {
-        NutsIOManager io = context.getWorkspace().io();
-
         Path f = getConfigPath();
-        io.json().write(config, f);
+        context.getWorkspace().format().json().print(config, f);
         return this;
     }
 
@@ -67,8 +65,7 @@ public class RemoteMysqlConfigService {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            NutsIOManager r = context.getWorkspace().io();
-            config = r.json().read(f, RemoteMysqlConfig.class);
+            config = context.getWorkspace().format().json().read(f, RemoteMysqlConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -85,9 +82,8 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        NutsIOManager jsonSerializer = context.getWorkspace().io();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.json().write(getConfig(), new PrintWriter(out));
+        context.getWorkspace().format().json().print(getConfig(), new PrintWriter(out));
         w.flush();
         return this;
     }

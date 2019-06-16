@@ -130,7 +130,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
     }
 
     public RemoteTomcatAppConfigService write(PrintStream out) {
-        TomcatUtils.writeJson(out, getConfig(), context.getWorkspace());
+        context.getWorkspace().format().json().print(getConfig(), out);
         return this;
     }
 

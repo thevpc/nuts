@@ -145,8 +145,8 @@ public class DataService {
                     .content(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.io().
-                    json().toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList())));
+            row.put("allDependencies", ws.format().
+                    json().toString(allDependencies.stream().map(Object::toString).collect(Collectors.toList())));
             updateData(dirPath, oldRow, row);
         }
         String[] array = ws.format().json().read(new StringReader(row.get("allDependencies")), String[].class);

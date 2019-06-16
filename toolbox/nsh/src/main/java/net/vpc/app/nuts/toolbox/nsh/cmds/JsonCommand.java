@@ -41,20 +41,18 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsJsonFormat;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
-import net.vpc.common.javashell.JShellContext;
+import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Created by vpc on 1/7/17.
@@ -100,7 +98,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (options.xpaths.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                context.setPrintOutObject(context.getWorkspace().format().json().toJsonString(inputDocument));
+                context.setPrintOutObject(context.getWorkspace().format().json().toString(inputDocument));
             } else {
                 context.setPrintOutObject(inputDocument);
             }
@@ -129,7 +127,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                 }
             }
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
-                context.setPrintOutObject(context.getWorkspace().format().json().toJsonString(resultDocument));
+                context.setPrintOutObject(context.getWorkspace().format().json().toString(resultDocument));
             } else {
                 context.setPrintOutObject(resultDocument);
             }

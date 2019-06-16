@@ -42,9 +42,6 @@ public class RemoteTomcat {
                 } else if ((a = cmdLine.next("show")) != null) {
                     show(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("show-property")) != null) {
-                    showProperty(cmdLine);
-                    return;
                 } else if ((a = cmdLine.next("add", "set")) != null) {
                     add(cmdLine);
                     return;
@@ -388,58 +385,6 @@ public class RemoteTomcat {
                 args.setCommandName("tomcat --remote show").unexpectedArgument();
             }
         }
-    }
-
-    public void showProperty(NutsCommandLine args) {
-        NutsArgument a;
-        class Item {
-
-            String name;
-
-            public Item(String name) {
-                this.name = name;
-            }
-        }
-        class PropsHelper {
-
-            RemoteTomcatServiceBase s = null;
-            List<String> props = new ArrayList<>();
-            LinkedHashMap<Item, Object> m = new LinkedHashMap<>();
-
-            void addProp(String p) {
-                props.add(p);
-                build();
-            }
-
-            void build() {
-                if (s != null) {
-                    for (String prop : props) {
-                        Object o = context.getWorkspace().parse().parseExpression(s.getConfig(), prop);
-                        m.put(new Item(prop), o);
-                    }
-                    props.clear();
-                }
-            }
-        }
-        PropsHelper x = new PropsHelper();
-        while (args.hasNext()) {
-            if (context.configureFirst(args)) {
-                //
-            } else if (x.s == null && (x.s = readBaseServiceArg(args)) != null) {
-                //ok
-            } else if ((a = args.nextString("--property")) != null) {
-                x.addProp(a.getStringValue());
-            } else if (args.peek().isOption()) {
-                args.setCommandName("tomcat --remote show-property").unexpectedArgument();
-            } else {
-                x.addProp(args.next().getString());
-            }
-        }
-        x.build();
-        if (x.m.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "No properties to show", 2);
-        }
-        getContext().session().oout().println(x.m);
     }
 
     public RemoteTomcatConfigService loadTomcatConfig(String name) {

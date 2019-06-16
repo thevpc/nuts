@@ -59,7 +59,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        context.getWorkspace().format().json().write(getConfig(), out);
+        context.getWorkspace().format().json().print(getConfig(), out);
         return this;
     }
 

@@ -10,6 +10,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 import net.vpc.app.nuts.NutsApplicationContext;
 
 public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
@@ -191,7 +193,15 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 
     @Override
     public LocalTomcatAppConfigService write(PrintStream out) {
-        TomcatUtils.writeJson(out, getConfig(), context.getWorkspace());
+        Map<String,Object> result=new HashMap<>();
+        result.put("name", getFullName());
+        result.put("config", getConfig());
+        result.put("version", getCurrentVersion());
+        result.put("deployFile", getDeployFile());
+        result.put("deployfolder", getDeployFolder());
+        result.put("runningfolder", getRunningFile());
+        result.put("versionFolder", getVersionFile());
+        context.getWorkspace().format().json().print(result, out);
         return this;
     }
 

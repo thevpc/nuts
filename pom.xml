@@ -6,13 +6,14 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
     <name>net.vpc.app.nuts.nuts-builder</name>
-    <version>0.5.5.0</version>
+    <version>0.5.6.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
 
         <!--<module>toolbox/nuts-clown</module>-->
+        <module>lib/nuts-lib-template</module>
         <module>lib/nuts-servlet</module>
         <module>lib/nuts-tomcat-classloader</module>
 

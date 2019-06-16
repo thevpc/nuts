@@ -6,7 +6,7 @@
   <groupId>net.vpc.app.nuts</groupId>
   <artifactId>nuts-clown</artifactId>
   <name>net.vpc.app.nuts.nuts-clown</name>
-  <version>0.5.5.0</version>
+  <version>0.5.6.0</version>
   <packaging>war</packaging>
 
   <parent>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>net.vpc.app.nuts</groupId>
       <artifactId>nuts</artifactId>
-      <version>0.5.5</version>
+      <version>0.5.6</version>
     </dependency>
   </dependencies>
 
