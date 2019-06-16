@@ -120,12 +120,12 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
                 throw new NutsNotFoundException(getRepo().getWorkspace(),id);
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id, TraceResult.SUCCESS, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
             }
             result= f;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id, TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         }

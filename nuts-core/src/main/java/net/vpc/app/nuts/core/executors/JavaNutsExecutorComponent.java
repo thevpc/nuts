@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.NutsURLClassLoader;
 
@@ -75,7 +76,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition def = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         final NutsWorkspace ws = executionContext.getWorkspace();
         Path contentFile = def.getPath();
-        JavaExecutorOptions joptions = new JavaExecutorOptions(
+        final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
@@ -93,42 +94,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                             ws.config().getBootClassLoader()
                     );
                     Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                    boolean isNutsApp = false;
-                    Method mainMethod = null;
-                    Object nutsApp = null;
-                    try {
-                        mainMethod = cls.getMethod("run", NutsWorkspace.class, String[].class);
-                        mainMethod.setAccessible(true);
-                        Class p = cls.getSuperclass();
-                        while (p != null) {
-                            if (p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
-                                isNutsApp = true;
-                                break;
-                            }
-                            p = p.getSuperclass();
-                        }
-                        if (isNutsApp) {
-                            isNutsApp = false;
-                            nutsApp = cls.getConstructor().newInstance();
-                            isNutsApp = true;
-                        }
-                    } catch (Exception rr) {
-                        //ignore
-
-                    }
-                    if (isNutsApp) {
-                        //NutsWorkspace
-                        mainMethod.invoke(nutsApp, new Object[]{ws, joptions.getApp().toArray(new String[0])});
-                    } else {
-                        //NutsWorkspace
-                        System.setProperty("nuts.boot.args", ws.config().options()
-                                .format().exported().compact().getBootCommandLine()
-                        );
-                        mainMethod = cls.getMethod("main", String[].class);
-                        List<String> nargs = new ArrayList<>();
-                        nargs.addAll(joptions.getApp());
-                        mainMethod.invoke(null, new Object[]{joptions.getApp().toArray(new String[0])});
-                    }
+                    new ClassloaderAwareRunnableImpl2(classLoader, cls, ws, joptions).runAndWaitFor();
                     return;
                 } catch (InvocationTargetException e) {
                     th = e.getTargetException();
@@ -136,15 +102,16 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         | IllegalAccessException | IllegalArgumentException
                         | ClassNotFoundException e) {
                     th = e;
+                } catch (Throwable ex) {
+                     th = ex;
                 }
                 if (th != null) {
                     throw new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
                 }
                 break;
             }
-            case SPAWN: 
-            default:
-            {
+            case SPAWN:
+            default: {
                 StringKeyValueList runnerProps = new StringKeyValueList();
                 if (executionContext.getExecutorDescriptor() != null) {
                     runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
@@ -201,7 +168,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 if (joptions.isJar()) {
                     xargs.add("-jar");
-                    xargs.add(ws.format().id().toString(def.getId()));
+                    xargs.add(ws.format().id().id(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
@@ -216,7 +183,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 xargs.addAll(joptions.getApp());
                 args.addAll(joptions.getApp());
-                if (joptions.isShowCommand() || CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)) {
+                if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                     PrintStream out = executionContext.getTerminal().fout();
                     out.println("==[nuts-exec]== ");
                     for (int i = 0; i < xargs.size(); i++) {
@@ -239,6 +206,62 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 );
             }
         }
+    }
+
+    static class ClassloaderAwareRunnableImpl2 extends ClassloaderAwareRunnable {
+
+        private final Class<?> cls;
+        private final NutsWorkspace ws;
+        private final JavaExecutorOptions joptions;
+
+        public ClassloaderAwareRunnableImpl2(ClassLoader classLoader, Class<?> cls, NutsWorkspace ws, JavaExecutorOptions joptions) {
+            super(classLoader);
+            this.cls = cls;
+            this.ws = ws;
+            this.joptions = joptions;
+        }
+
+        @Override
+        public Object runWithContext() throws Throwable {
+            boolean isNutsApp = false;
+            Method mainMethod = null;
+            Object nutsApp = null;
+            try {
+                mainMethod = cls.getMethod("run", NutsWorkspace.class, String[].class);
+                mainMethod.setAccessible(true);
+                Class p = cls.getSuperclass();
+                while (p != null) {
+                    if (p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
+                        isNutsApp = true;
+                        break;
+                    }
+                    p = p.getSuperclass();
+                }
+                if (isNutsApp) {
+                    isNutsApp = false;
+                    nutsApp = cls.getConstructor().newInstance();
+                    isNutsApp = true;
+                }
+            } catch (Exception rr) {
+                //ignore
+
+            }
+            if (isNutsApp) {
+                //NutsWorkspace
+                mainMethod.invoke(nutsApp, new Object[]{ws, joptions.getApp().toArray(new String[0])});
+            } else {
+                //NutsWorkspace
+                System.setProperty("nuts.boot.args", ws.config().options()
+                        .format().exported().compact().getBootCommandLine()
+                );
+                mainMethod = cls.getMethod("main", String[].class);
+                List<String> nargs = new ArrayList<>();
+                nargs.addAll(joptions.getApp());
+                mainMethod.invoke(null, new Object[]{joptions.getApp().toArray(new String[0])});
+            }
+            return null;
+        }
+
     }
 
 }

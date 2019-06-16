@@ -225,7 +225,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             if (!reloadWorkspace(session, options.getExcludedExtensions(), options.getExcludedRepositories())) {
                 //workspace wasn't loaded. Create new configuration...
                 NutsWorkspaceUtils.checkReadOnly(this);
-                LOG.log(Level.CONFIG, "Unable to load existing workspace. Creating new one at {0}", config().getContext(NutsBootContextType.RUNTIME).getWorkspace());
+                LOG.log(Level.CONFIG, "Workspace not found. Creating new one at {0}", config().getContext(NutsBootContextType.RUNTIME).getWorkspace());
                 exists = false;
                 NutsWorkspaceConfig config = new NutsWorkspaceConfig();
                 //load from config with resolution applied
@@ -264,6 +264,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 }
             }
             if (configManager.getRepositoryRefs().length == 0) {
+                LOG.log(Level.CONFIG, "Workspace has no repositrories. Will re-create defaults");
                 initializeWorkspace(options.getArchetype(), session);
             }
             List<String> transientRepositoriesSet = options.getTransientRepositories() == null ? null : new ArrayList<>(Arrays.asList(options.getTransientRepositories()));
@@ -292,7 +293,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //                config().save(false);
 //            }
             LOG.log(Level.FINE, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
-            if (CoreCommonUtils.getSystemBoolean("nuts.perf", false) || CoreCommonUtils.getSystemBoolean("nuts.export.perf", false)) {
+            if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
                 io().getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
@@ -634,7 +635,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
      */
     @Override
     public String[] getInstalledVersions(NutsId id, NutsSession session) {
-        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(this,session, 
+        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(this, session,
                 null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(this));
         return Arrays.stream(getInstalledRepository().findInstalledVersions(id, rsession))
                 .map(x -> x.getVersion().getValue())
@@ -682,19 +683,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to update : %s.%n", format().id().toString(def.getId()), ex.toString());
+                            out.printf("%N @@Failed@@ to update : %s.%n", format().id().id(def.getId()).format(), ex.toString());
                         }
                         throw new NutsExecutionException(this, "Unable to update " + def.getId().toString(), ex);
                     }
                 } else {
                     try {
                         installerComponent.install(executionContext);
-//                    out.print(getFormatManager().id().format(def.getId()) + " installed ##successfully##.\n");
+//                    out.print(getFormatManager().id().print(def.getId()) + " installed ##successfully##.\n");
                     } catch (NutsReadOnlyException ex) {
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to install : %s.%n", format().id().toString(def.getId()), ex.toString());
+                            out.printf("%N @@Failed@@ to install : %s.%n", format().id().id(def.getId()).format(), ex.toString());
                         }
                         getInstalledRepository().uninstall(executionContext.getDefinition().getId());
                         throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);
@@ -723,27 +724,27 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from temporarily file %s.%N%n", format().id().toString(def.getId()), def.getPath(), setAsDefaultString);
+                            out.printf("%N installed ##successfully## from temporarily file %s.%N%n", format().id().id(def.getId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from remote repository.%N%n", format().id().toString(def.getId()), setAsDefaultString);
+                            out.printf("%N installed ##successfully## from remote repository.%N%n", format().id().id(def.getId()).format(), setAsDefaultString);
                         }
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local temporarily file %s.%N%n", format().id().toString(def.getId()), def.getPath(), setAsDefaultString);
+                            out.printf("%N installed from local temporarily file %s.%N%n", format().id().id(def.getId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local repository.%N%n", format().id().toString(def.getId()), setAsDefaultString);
+                            out.printf("%N installed from local repository.%N%n", format().id().id(def.getId()).format(), setAsDefaultString);
                         }
                     }
                 }
             } else {
                 if (session.isPlainTrace()) {
-                    out.printf("%N installed ##successfully##.%N%n", format().id().toString(def.getId()), setAsDefaultString);
+                    out.printf("%N installed ##successfully##.%N%n", format().id().id(def.getId()).format(), setAsDefaultString);
                 }
             }
         }
@@ -789,7 +790,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         String nn = id.getName();
         NutsWorkspaceCommandAlias c = config().findCommandAlias(nn);
         if (c != null) {
-            if (c.getOwner().getLongName().equals(id.getLongName())) {
+            if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
             }
         } else {
@@ -798,7 +799,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         nn = id.getName() + "-" + id.getVersion();
         c = config().findCommandAlias(nn);
         if (c != null) {
-            if (c.getOwner().getLongName().equals(id.getLongName())) {
+            if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
             }
         } else {
@@ -807,7 +808,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         nn = id.getGroup() + "." + id.getName() + "-" + id.getVersion();
         c = config().findCommandAlias(nn);
         if (c != null) {
-            if (c.getOwner().getLongName().equals(id.getLongName())) {
+            if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
             }
         } else {
@@ -823,7 +824,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         try {
             configManager.setExcludedRepositories(excludedRepositories);
             loadedConfig = configManager.load();
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
             if (!config().isReadOnly()) {
                 Path newfile = config().getWorkspaceLocation().resolve("nuts-workspace-"
@@ -840,7 +841,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             }
         }
         if (loadedConfig) {
-            configExt().removeAllRepositories();
+            //configExt().removeAllRepositories();
 
             //extensions already wired... this is needless!
             for (NutsId extensionId : extensions().getExtensions()) {

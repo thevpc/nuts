@@ -150,7 +150,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .getResultDefinitions().required();
             NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
-                    getWorkspace(),getValidSession(),
+                    getWorkspace(), getValidSession(),
                     repository1,
                     NutsFetchMode.LOCAL, fetchOptions);
             repository1.undeploy()
@@ -172,7 +172,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (getValidSession().isTrace()) {
             if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().toString(id));
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().id(id).format());
                 }
             }
         }

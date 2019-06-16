@@ -81,7 +81,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
             if (DefaultNutsVersion.isBlank(versionString)) {
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), null, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(),id);
+                    throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
@@ -92,21 +92,21 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getQueryMap(), new NutsPatternIdFilter(id), null);
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), filter, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(),id);
+                    throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
             }
             if (d == null) {
-                throw new NutsNotFoundException(getRepo().getWorkspace(),id);
+                throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id, TraceResult.SUCCESS, "Fetch descriptor", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime);
             }
             result = d;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id, TraceResult.ERROR, "Fetch descriptor", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.ERROR, "Fetch descriptor", startTime);
             }
             throw ex;
         }

@@ -21,10 +21,7 @@ public class JavaExecutorOptions {
     private String dir = null;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
-    private boolean showCommand = 
-            CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)
-            ||CoreCommonUtils.getSystemBoolean("nuts.show-command", false)
-            ;
+    private boolean showCommand = CoreCommonUtils.getSysBoolNutsProperty("show-command", false);
     private boolean jar = false;
     private List<String> classPath = new ArrayList<>();
     private List<String> nutsPath = new ArrayList<>();
@@ -193,11 +190,11 @@ public class JavaExecutorOptions {
                         baseDetected = true;
                         if (!isExcludeBase()) {
                             classPath.add(nutsDefinition.getPath().toString());
-                            nutsPath.add(nutsIdFormat.toString(nutsDefinition.getId()));
+                            nutsPath.add(nutsIdFormat.id(nutsDefinition.getId()).format());
                         }
                     } else {
                         classPath.add(nutsDefinition.getPath().toString());
-                        nutsPath.add(nutsIdFormat.toString(nutsDefinition.getId()));
+                        nutsPath.add(nutsIdFormat.id(nutsDefinition.getId()).format());
                     }
                 }
             }
@@ -205,7 +202,7 @@ public class JavaExecutorOptions {
                 if (path == null) {
                     throw new NutsIllegalArgumentException(ws, "Missing Path for " + id);
                 }
-                nutsPath.add(0,nutsIdFormat.toString(id));
+                nutsPath.add(0,nutsIdFormat.id(id).format());
                 classPath.add(0,path.toString());
             }
             for (String cp : classPath0) {

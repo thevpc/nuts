@@ -68,16 +68,16 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         break;
                     }
                     case ALIAS: {
-                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.format().id().toString(p.getId()),
+                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.format().id().id(p.getId()).format(),
                                 ws.parse().command(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
                         );
                         break;
                     }
                     case COMPONENT: {
                         if (p.getId() == null) {
-                            throw new NutsNotFoundException(ws,arg);
+                            throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.format().id().toString(p.getId()), p.getDescription());
+                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.format().id().id(p.getId()).format(), p.getDescription());
                         break;
                     }
                     case INTERNAL: {

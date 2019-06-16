@@ -352,7 +352,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void addJson(NutsId id, String name, InstallInfoConfig value) {
-        ws.format().json().write(value, getPath(id, name));
+        ws.format().json().print(value, getPath(id, name));
     }
 
     public void remove(NutsId id, String name) {

@@ -504,7 +504,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     || CoreStringUtils.isBlank(config.getCreateApiVersion())) {
                 config.setCreateApiVersion(getApiId().getVersion().getValue());
             }
-            ws.format().json().write(config, file);
+            ws.format().json().print(config, file);
             configurationChanged = false;
             ok = true;
         }
@@ -802,7 +802,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (c == null) {
             for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
                 c = commandFactory.findCommand(name, ws);
-                if (c != null && c.getOwner() != null) {
+                if (c != null) {
                     break;
                 }
             }
@@ -818,10 +818,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
             return null;
         }
-        if (c.getOwner() == null) {
-            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
-            return null;
-        }
+//        if (c.getOwner() == null) {
+//            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
+//            return null;
+//        }
         return new DefaultNutsWorkspaceCommandAlias(ws)
                 .setCommand(c.getCommand())
                 .setFactoryId(c.getFactoryId())
@@ -838,10 +838,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 || CoreStringUtils.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains(".") 
                 || command.getName().contains("/") || command.getName().contains("\\")
-                || command.getOwner() == null
-                || command.getOwner().getName().isEmpty()
-                || command.getOwner().getGroup().isEmpty()
-                || command.getCommand() == null) {
+                || command.getCommand() == null
+                || command.getCommand().length == 0
+                ) {
             throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (command == null ? "<NULL>" : command.getName()));
         }
         boolean forced = false;
@@ -995,7 +994,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getHomeLocation(NutsStoreLocation folderType) {
-        return ws.io().path(NutsPlatformUtils.resolveHomeFolder(runningBootConfig.getStoreLocationLayout(), folderType, runningBootConfig.getHomeLocations(), runningBootConfig.isGlobal()));
+        return ws.io().path(NutsPlatformUtils.resolveHomeFolder(
+                runningBootConfig.getStoreLocationLayout(), 
+                folderType, runningBootConfig.getHomeLocations(), 
+                runningBootConfig.isGlobal(),
+                runningBootConfig.getName()
+        ));
     }
 
     @Override
@@ -1046,7 +1050,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         int ordinal = location.ordinal();
         String s = platformOsPath[ordinal];
         if (s == null) {
-            platformOsPath[ordinal] = s = NutsPlatformUtils.getPlatformOsHome(location);
+            platformOsPath[ordinal] = s = NutsPlatformUtils.getPlatformOsGlobalHome(location,runningBootConfig.getName());
         }
         return s;
     }
@@ -1385,7 +1389,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public String getDefaultIdFilename(NutsId id) {
         String classifier = "";
         String ext = getDefaultIdExtension(id);
-        if (!ext.equals(".nuts") && !ext.equals(".pom")) {
+        if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!CoreStringUtils.isBlank(c)) {
                 classifier = "-" + c;
@@ -1419,7 +1423,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             case "pom":
                 return ".pom";
             case "nuts":
-                return ".nuts";
+                return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;
             case "rar":
                 return ".rar";
             case "zip":
@@ -1441,7 +1445,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return ".cache-info";
             }
             case NutsConstants.QueryFaces.DESCRIPTOR: {
-                return ".nuts";
+                return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;
             }
             case NutsConstants.QueryFaces.DESC_HASH: {
                 return ".nuts.sha1";

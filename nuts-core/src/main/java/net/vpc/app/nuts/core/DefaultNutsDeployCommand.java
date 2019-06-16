@@ -501,7 +501,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         result.add(nid);
         if (getValidSession().isPlainTrace()) {
-            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.format().id().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
+            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.format().id().id(nid).format(), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 

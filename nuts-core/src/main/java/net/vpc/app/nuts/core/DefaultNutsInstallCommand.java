@@ -40,17 +40,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConfirmationMode;
@@ -301,13 +298,12 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         if (this.isIncludeCompanions()) {
             emptyCommand = false;
             if (ws.io().getTerminal().ask()
-                    .forBoolean("The following ==nuts== companion tools are going to be installed : " + 
-                        Arrays.stream(dws.getCompanionTools())
-                                .map(x->ws.format().id().setOmitImportedGroup(true).toString(ws.parse().id(x)))
-                                .collect(Collectors.joining(", "))
-                        +"%nAccept"
-                        
-                )
+                    .forBoolean("The following ==nuts== companion tools are going to be installed : "
+                            + Arrays.stream(dws.getCompanionTools())
+                                    .map(x -> ws.format().id().setOmitImportedGroup(true).id(ws.parse().id(x)).format())
+                                    .collect(Collectors.joining(", "))
+                            + "%nAccept"
+                    )
                     .defaultValue(true)
                     .session(session).getValue()) {
                 String[] companionTools = dws.getCompanionTools();
@@ -398,16 +394,15 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         }
         for (NutsDefinition def : defsToIgnore) {
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already installed%n", ws.format().id().toString(def.getId()));
+                out.printf("%N already installed%n", ws.format().id().id(def.getId()).format());
             }
         }
         if (!defsToInstall.isEmpty() && ws.io().getTerminal().ask()
-                .forBoolean("The following ==nuts== components are going to be installed : " + 
-                        defsToInstall.stream()
-                                .map(x->ws.format().id().setOmitImportedGroup(true).toString(x.getId().getLongNameId()))
+                .forBoolean("The following ==nuts== components are going to be installed : "
+                        + defsToInstall.stream()
+                                .map(x -> ws.format().id().setOmitImportedGroup(true).id(x.getId().getLongNameId()).format())
                                 .collect(Collectors.joining(", "))
-                        +"%nAccept"
-                        
+                        + "%nAccept"
                 )
                 .defaultValue(true)
                 .session(session).getBooleanValue()) {
@@ -418,7 +413,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().toString(def.getId()));
+                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().id(def.getId()).format());
             }
         }
         if (emptyCommand) {

@@ -381,7 +381,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            repository.getWorkspace().format().json().write(config, file);
+            repository.getWorkspace().format().json().print(config, file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {

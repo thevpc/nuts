@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core.spi;
 
-import java.util.logging.Level;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionContext;
@@ -16,12 +15,7 @@ import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceEvent;
-import net.vpc.app.nuts.NutsWorkspaceListener;
 import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
-import static net.vpc.app.nuts.core.DefaultNutsWorkspace.LOG;
-import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
