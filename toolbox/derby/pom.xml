@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>derby</artifactId>
-    <version>0.5.5.0</version>
+    <version>0.5.6.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.derby</name>
     <description>Nuts Derby Toolbox</description>
@@ -63,7 +63,12 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.5</version>
+            <version>0.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-io</artifactId>
+            <version>1.3.12</version>
         </dependency>
         <!--        <dependency>
                     <groupId>net.vpc.app</groupId>
