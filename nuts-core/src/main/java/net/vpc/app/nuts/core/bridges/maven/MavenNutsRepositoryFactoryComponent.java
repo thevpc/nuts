@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
+import java.util.Arrays;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -40,14 +41,15 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {
-        new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN).setProxy(CoreCommonUtils.getSystemBoolean("nuts.cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
-        new NutsRepositoryDefinition().setName("maven-central").setLocation("http://repo.maven.apache.org/maven2/").setType(NutsConstants.RepoTypes.MAVEN).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master").setType(NutsConstants.RepoTypes.MAVEN).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master").setType(NutsConstants.RepoTypes.NUTS).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),};
+        new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN).setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
+        new NutsRepositoryDefinition().setName("maven-central").setLocation("http://repo.maven.apache.org/maven2/").setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master").setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master").setType(NutsConstants.RepoTypes.NUTS).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE)
+    };
 
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
-        return DEFAULTS;
+        return Arrays.copyOf(DEFAULTS, DEFAULTS.length);
     }
 
     @Override

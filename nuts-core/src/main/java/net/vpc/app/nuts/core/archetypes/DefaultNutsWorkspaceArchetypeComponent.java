@@ -57,11 +57,8 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 .setType(NutsConstants.RepoTypes.NUTS)
         );
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
-        NutsStoreLocationStrategy s = workspace.config().getStoreLocationStrategy();
-        for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
-            if (s == NutsStoreLocationStrategy.STANDALONE) {
-                d = d.copy().setProxy(true);
-            }
+
+for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
             rm.addRepository(d);
         }
 

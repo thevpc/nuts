@@ -47,48 +47,53 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
-import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
+import net.vpc.app.nuts.core.repos.NutsCachedRepository;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public class MavenFolderRepository extends AbstractMavenRepository {
+public class MavenFolderRepository extends NutsCachedRepository {
 
-    public static final Logger LOG = Logger.getLogger(MavenFolderRepository.class.getName());
+    protected static final Logger LOG = Logger.getLogger(MavenFolderRepository.class.getName());
+    private final AbstractMavenRepositoryHelper helper = new AbstractMavenRepositoryHelper(this) {
+        @Override
+        protected String getIdPath(NutsId id) {
+            return getLocationAsPath().resolve(CoreIOUtils.syspath(getIdRelativePath(id))).toString();
+        }
+
+        @Override
+        protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
+            return CoreIOUtils.createInputSource(getWorkspace().io().path(path));
+        }
+
+        @Override
+        protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
+            return CoreIOUtils.evalSHA1Hex(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session).open(), true);
+        }
+
+        @Override
+        protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+    };
 
     public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FAST, NutsConstants.RepoTypes.MAVEN);
-    }
-
-    @Override
-    protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-        return CoreIOUtils.createInputSource(getWorkspace().io().path(path));
-    }
-
-    @Override
-    protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
-        return CoreIOUtils.evalSHA1Hex(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session).open(), true);
-    }
-
-    @Override
-    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) {
-        try {
-            stream.close();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        super(options, workspace, parentRepository, SPEED_FAST, false, NutsConstants.RepoTypes.MAVEN);
+        if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
+            cache.setWriteEnabled(false);
+            cache.setReadEnabled(false);
         }
     }
 
     private Path getLocationAsPath() {
         return getWorkspace().io().path(config().getLocation(true));
-    }
-
-    @Override
-    protected String getIdPath(NutsId id) {
-        return getLocationAsPath().resolve(CoreIOUtils.syspath(getIdRelativePath(id))).toString();
     }
 
 //    @Override
@@ -104,15 +109,15 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        if(session.getFetchMode()==NutsFetchMode.REMOTE){
-            throw new NutsNotFoundException(getWorkspace(),id);
+    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id);
         }
-        return super.fetchDescriptorImpl(id,session);
+        return helper.fetchDescriptorImpl(id, session);
     }
 
-        @Override
-    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    @Override
+    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             Path f = getIdFile(id);
             if (f != null && Files.exists(f)) {
@@ -124,7 +129,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 }
             }
         }
-        throw new NutsNotFoundException(getWorkspace(),id);
+        throw new NutsNotFoundException(getWorkspace(), id);
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
@@ -139,7 +144,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
         Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
@@ -161,11 +166,11 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), 
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id),
                         new NutsIdFilterAnd(idFilter,
                                 new NutsPatternIdFilter(id.getSimpleNameId())
-                        )
-                        , Integer.MAX_VALUE, session);
+                        ),
+                        Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
@@ -178,7 +183,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isBlank() && filter == null) {
             Path file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
@@ -225,7 +230,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
 
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
@@ -256,39 +261,39 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        return super.getStoreLocation(folderType);
 //    }
     @Override
-    public NutsUpdateRepositoryStatisticsCommand updateStatistics() {
-        return new DefaultNutsUpdateRepositoryStatisticsCommand(this) {
-            @Override
-            public NutsUpdateRepositoryStatisticsCommand run() {
-                try {
-                    Files.walkFileTree(Paths.get(config().getLocation(true)), new FileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    public void updateStatistics2() {
+        try {
+            Files.walkFileTree(Paths.get(config().getLocation(true)), new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        }
-
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        }
-
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        }
-                    }
-                    );
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    return FileVisitResult.CONTINUE;
                 }
-                return this;
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
             }
-        };
+            );
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
+
+    @Override
+    protected String getIdExtension(NutsId id) {
+        return helper.getIdExtension(id);
+    }
+
 }

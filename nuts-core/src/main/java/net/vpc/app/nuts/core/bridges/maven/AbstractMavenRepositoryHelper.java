@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
 
 import java.io.*;
 import java.util.Map;
@@ -43,14 +42,12 @@ import net.vpc.app.nuts.core.util.io.InputSource;
 /**
  * Created by vpc on 2/20/17.
  */
-public abstract class AbstractMavenRepository extends AbstractNutsRepository {
+public abstract class AbstractMavenRepositoryHelper {
 
-    private static final Logger LOG = Logger.getLogger(AbstractMavenRepository.class.getName());
-
-    public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed, String repositoryType) {
-        super(options, workspace, parentRepository, speed, false, repositoryType);
-        extensions.put("src", "-src.zip");
-        extensions.put("pom", ".pom");
+    private static final Logger LOG = Logger.getLogger(AbstractMavenRepositoryHelper.class.getName());
+    private NutsRepository repository;
+    public AbstractMavenRepositoryHelper(NutsRepository repository) {
+        this.repository=repository;
     }
 
     protected abstract String getIdPath(NutsId id);
@@ -99,22 +96,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected abstract InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session);
 
-    @Override
-    public void pushImpl(NutsPushRepositoryCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
-
-    @Override
-    public void deployImpl(NutsDeployRepositoryCommand deployment) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
-
-    @Override
-    public void undeployImpl(NutsRepositoryUndeployCommand options) {
-        throw new NutsUnsupportedOperationException(getWorkspace());
-    }
-
-    @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         InputSource stream = null;
         try {
@@ -124,7 +105,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             try {
                 stream = getStream(idDesc, session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
-                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getIdPath(id));
+                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), repository.getWorkspace(), session, getIdPath(id));
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -133,13 +114,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESC_HASH), new ByteArrayInputStream(bytes), session);
             return nutsDescriptor;
         } catch (IOException ex) {
-            throw new NutsNotFoundException(getWorkspace(),id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(),id, null, ex);
         } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(getWorkspace(),id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(),id, null, ex);
         }
     }
 
-    @Override
     protected String getIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();
         String f = CoreStringUtils.trim(q.get(NutsConstants.QueryKeys.FACE));
@@ -158,10 +138,10 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             }
             case NutsConstants.QueryFaces.COMPONENT: {
                 String packaging = q.get(NutsConstants.QueryKeys.PACKAGING);
-                return getIdComponentExtension(packaging);
+                return repository.getWorkspace().config().getDefaultIdComponentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(),"Unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(repository.getWorkspace(),"Unsupported fact " + f);
             }
         }
     }
