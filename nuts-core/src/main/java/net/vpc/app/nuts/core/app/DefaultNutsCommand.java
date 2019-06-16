@@ -279,6 +279,16 @@ public class DefaultNutsCommand implements NutsCommandLine {
         return next(NutsArgumentType.ANY, names);
     }
 
+    private boolean isPrefixed(String[] nameSeqArray) {
+        for (int i = 0; i < nameSeqArray.length - 1; i++) {
+            NutsArgument x = get(i);
+            if (x == null || !x.getString().equals(nameSeqArray[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public NutsArgument next(NutsArgumentType expectValue, String... names) {
         if (expectValue == null) {
@@ -301,11 +311,8 @@ public class DefaultNutsCommand implements NutsCommandLine {
                     }
                 }
             }
-            for (int i = 0; i < nameSeqArray.length - 1; i++) {
-                NutsArgument x = get(i);
-                if (x == null || !x.getString().equals(nameSeqArray[i])) {
-                    return null;
-                }
+            if(!isPrefixed(nameSeqArray)){
+                continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];
             NutsArgument p = get(nameSeqArray.length - 1);

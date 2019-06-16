@@ -71,8 +71,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         String[] appArgs = executionContext.getArguments();
 
         String dir = null;
-        boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.show-command", false)
-            ||CoreCommonUtils.getSystemBoolean("nuts.show-command", false);
+        boolean showCommand = CoreCommonUtils.getSysBoolNutsProperty("show-command", false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

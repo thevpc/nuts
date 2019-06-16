@@ -169,14 +169,14 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             }
             if(monitorable){
                 if(path.endsWith("/.folders") || path.endsWith("/.files") 
-                        || path.endsWith(".pom") || path.endsWith(".nuts")
-                        || path.endsWith(".xml")
+                        || path.endsWith(".pom") || path.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
+                        || path.endsWith(".xml") || path.endsWith(".json")
                         ){
                     monitorable = false;
                 }
             }
         }
-        if (!CoreCommonUtils.getSystemBoolean("nuts.monitor.enabled", true)) {
+        if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
             monitorable = false;
         }
         DefaultNutsInputStreamMonitor monitor = null;
@@ -184,7 +184,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out());
         }
         boolean verboseMode
-                = CoreCommonUtils.getSystemBoolean("nuts.monitor.start", false)
+                = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false)
                 || ws.config().options().getLogConfig() != null && ws.config().options().getLogConfig().getLogLevel() == Level.FINEST;
         InputSource stream = null;
         long size = -1;

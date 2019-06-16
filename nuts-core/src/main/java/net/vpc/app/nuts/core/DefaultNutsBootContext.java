@@ -7,6 +7,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 public final class DefaultNutsBootContext implements NutsBootContext {
 
+    private final String name;
     private final String workspace;
     private final NutsId bootAPI;
     private final NutsId bootRuntime;
@@ -23,13 +24,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final boolean gui;
     private final NutsWorkspace ws;
 
-    public DefaultNutsBootContext(NutsWorkspace ws,String workspace, NutsId bootAPI, NutsId bootRuntime,
+    public DefaultNutsBootContext(NutsWorkspace ws,String name,String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
             NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
             boolean global,boolean gui
     ) {
         this.ws = ws;
+        this.name = name;
         this.workspace = workspace;
         this.bootAPI = bootAPI;
         this.bootRuntime = bootRuntime;
@@ -61,6 +63,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public DefaultNutsBootContext(NutsWorkspace ws,NutsBootConfig c) {
         this.ws = ws;
         this.workspace = c.getWorkspace();
+        this.name = c.getName();
         this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
                 ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
@@ -78,6 +81,12 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.gui = c.isGui();
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    
     @Override
     public boolean isGlobal() {
         return this.global;

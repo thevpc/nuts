@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
@@ -47,7 +48,12 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  */
 public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList("nuts.json", "/META-INF/nuts.json", "/WEB-INF/nuts.json", "/APP-INF/nuts.json"));
+    public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
+            NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+             "/META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+            "/WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+            "/APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
+    ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
 
     @Override

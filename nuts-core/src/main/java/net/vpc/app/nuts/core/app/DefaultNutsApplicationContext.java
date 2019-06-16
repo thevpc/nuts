@@ -286,6 +286,15 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
+    public Path getRunFolder() {
+        return getFolder(NutsStoreLocation.RUN);
+    }
+
+    public NutsApplicationContext setRunFolder(Path folder) {
+        return setFolder(NutsStoreLocation.RUN, folder);
+    }
+
+    @Override
     public Path getCacheFolder() {
         return getFolder(NutsStoreLocation.CACHE);
     }
