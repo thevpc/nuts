@@ -329,4 +329,23 @@ public class NutsWorkspaceUtils {
         }
         return d;
     }
+    
+    public static void checkNutsIdBase(NutsWorkspace ws,NutsId id) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException(ws, "Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsIllegalArgumentException(ws, "Missing group for " + id);
+        }
+        if (CoreStringUtils.isBlank(id.getName())) {
+            throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
+        }
+    }
+    public static void checkNutsId(NutsWorkspace ws,NutsId id) {
+        checkNutsIdBase(ws, id);
+        if (id.getVersion().isBlank()) {
+            throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
+        }
+    }
+
 }

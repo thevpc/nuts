@@ -728,17 +728,17 @@ public class CoreNutsUtils {
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
         NutsIdFormat idFormat = ws.format().id();
-        return idFormat.toString(id);
+        return idFormat.id(id).format();
     }
 
     public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.format().id();
-        return idFormat.toString(id.getId());
+        return idFormat.id(id.getId()).format();
     }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.format().id();
-        return idFormat.toString(id.getId());
+        return idFormat.id(id.getId()).toString();
     }
 
     public static Map<String, Object> traceJsonNutsDefinition(NutsWorkspace ws, NutsDefinition def) {
@@ -854,5 +854,18 @@ public class CoreNutsUtils {
         }
         s = s.trim();
         return (s.isEmpty() || NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
+    }
+
+    public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
+        if (pattern == null) {
+            return id == null;
+        }
+        if (id == null) {
+            return false;
+        }
+        if (pattern.getVersion().isBlank()) {
+            return pattern.getSimpleName().equals(id.getSimpleName());
+        }
+        return pattern.getLongName().equals(id.getLongName());
     }
 }

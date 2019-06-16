@@ -22,6 +22,22 @@ public class IteratorBuilder<T> {
 
     private final Iterator<T> it;
 
+    private IteratorBuilder(Iterator<T> it) {
+        this.it = it;
+    }
+
+    public static <T> IteratorBuilder<T> ofCoalesce(List<Iterator<T>> t) {
+        return new IteratorBuilder<>(
+                IteratorUtils.coalesce(t)
+        );
+    }
+    
+    public static <T> IteratorBuilder<T> ofList(List<Iterator<T>> t) {
+        return new IteratorBuilder<>(
+                IteratorUtils.concat(t)
+        );
+    }
+    
     public static <T> IteratorBuilder<T> of(Iterator<T> t) {
         return new IteratorBuilder<>(t);
     }
@@ -113,9 +129,6 @@ public class IteratorBuilder<T> {
         return filter(IteratorUtils.NON_NULL);
     }
 
-    private IteratorBuilder(Iterator<T> it) {
-        this.it = it;
-    }
 
     public Iterator<T> iterator() {
         return it;

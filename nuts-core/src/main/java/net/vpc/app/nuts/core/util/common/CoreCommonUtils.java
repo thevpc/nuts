@@ -156,8 +156,22 @@ public class CoreCommonUtils {
         return new String(chars);
     }
 
+    public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
+        return (getSystemBoolean("nuts." + property, defaultValue)
+                || getSystemBoolean("nuts.export." + property, defaultValue));
+    }
+
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return new DefaultNutsArgument(System.getProperty(property), '=').getBoolean(defaultValue);
+        String o = System.getProperty(property);
+        if (o == null) {
+            return defaultValue;
+        }
+        DefaultNutsArgument u = new DefaultNutsArgument(o, '=');
+        if (u.isKeyValue()) {
+            return u.getBoolean(defaultValue);
+        } else {
+            return true;
+        }
     }
 
     public static String[] concatArrays(String[]... arrays) {
@@ -326,7 +340,7 @@ public class CoreCommonUtils {
             m.put("value", ne.getValue());
             o = m;
         } else if (o instanceof Map) {
-            o=((Map)o).entrySet();
+            o = ((Map) o).entrySet();
         }
         if (o instanceof Boolean) {
             return ws.io().getTerminalFormat().escapeText(String.valueOf(o));
@@ -338,7 +352,7 @@ public class CoreCommonUtils {
             return ws.io().getTerminalFormat().escapeText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o));
         }
         if (o instanceof NutsId) {
-            return ws.format().id().toString((NutsId) o);
+            return ws.format().id().id((NutsId) o).format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

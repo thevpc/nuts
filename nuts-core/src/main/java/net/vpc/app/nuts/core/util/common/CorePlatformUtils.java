@@ -519,16 +519,12 @@ public class CorePlatformUtils {
                             classes.add(mainClass);
                         }
                     } else {
-                        try (BufferedReader b = new BufferedReader(new InputStreamReader(inputStream))) {
-                            String line = null;
-                            while ((line = b.readLine()) != null) {
-                                if (line.startsWith("Main-Class:")) {
-                                    String c = line.substring("Main-Class:".length()).trim();
-                                    if (c.length() > 0) {
-                                        manifiestClass.add(c);
-                                        break;
-                                    }
-                                }
+                        Manifest manifest = new Manifest(inputStream);
+                        Attributes a = manifest.getMainAttributes();
+                        if (a != null && a.containsKey("Main-Class")) {
+                            String v = a.getValue("Main-Class");
+                            if (!CoreStringUtils.isBlank(v)) {
+                                manifiestClass.add(v);
                             }
                         }
                     }
