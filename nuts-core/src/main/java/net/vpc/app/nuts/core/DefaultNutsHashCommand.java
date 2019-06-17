@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -167,7 +168,7 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.format().descriptor().compact().print((NutsDescriptor) value, o);
+                ws.format().descriptor().compact().set((NutsDescriptor) value).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

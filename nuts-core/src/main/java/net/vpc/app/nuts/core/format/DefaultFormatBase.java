@@ -23,8 +23,8 @@ import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
  */
 public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFormatBase0<T> implements NutsFormat {
 
-    public DefaultFormatBase(NutsWorkspace ws,String name) {
-        super(ws,name);
+    public DefaultFormatBase(NutsWorkspace ws, String name) {
+        super(ws, name);
     }
 
     @Override
@@ -93,6 +93,13 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(Path path) {
+        try {
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         try (Writer w = Files.newBufferedWriter(path)) {
             print(w);
         } catch (IOException ex) {

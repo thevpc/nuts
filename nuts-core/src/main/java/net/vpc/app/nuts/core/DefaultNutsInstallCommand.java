@@ -300,7 +300,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             if (ws.io().getTerminal().ask()
                     .forBoolean("The following ==nuts== companion tools are going to be installed : "
                             + Arrays.stream(dws.getCompanionTools())
-                                    .map(x -> ws.format().id().setOmitImportedGroup(true).id(ws.parse().id(x)).format())
+                                    .map(x -> ws.format().id().setOmitImportedGroup(true).set(ws.parse().id(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -394,13 +394,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         }
         for (NutsDefinition def : defsToIgnore) {
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already installed%n", ws.format().id().id(def.getId()).format());
+                out.printf("%N already installed%n", ws.format().id().set(def.getId()).format());
             }
         }
         if (!defsToInstall.isEmpty() && ws.io().getTerminal().ask()
-                .forBoolean("The following ==nuts== components are going to be installed : "
+                .forBoolean("The following ==nuts== "+(defsToInstall.size()>1?"components are":"component is")+" going to be installed : "
                         + defsToInstall.stream()
-                                .map(x -> ws.format().id().setOmitImportedGroup(true).id(x.getId().getLongNameId()).format())
+                                .map(x -> ws.format().id().setOmitImportedGroup(true).set(x.getId().getLongNameId()).format())
                                 .collect(Collectors.joining(", "))
                         + "%nAccept"
                 )
@@ -413,7 +413,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().id(def.getId()).format());
+                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().set(def.getId()).format());
             }
         }
         if (emptyCommand) {

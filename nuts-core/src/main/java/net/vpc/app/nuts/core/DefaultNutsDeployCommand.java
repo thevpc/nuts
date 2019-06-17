@@ -384,7 +384,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                         NutsDescriptor descriptor2;
                         if (Files.exists(descFile)) {
-                            descriptor2 = ws.parse().descriptor(descFile);
+                            descriptor2 = ws.format().descriptor().read(descFile);
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
                                     CoreIOUtils.createInputSource(contentFile).multi(),
@@ -394,7 +394,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             descriptor = descriptor2;
                         } else {
                             if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                                ws.format().descriptor().print(descriptor, descFile);
+                                ws.format().descriptor().set(descriptor).print(descFile);
                             }
                         }
                         if (descriptor != null) {
@@ -501,7 +501,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         result.add(nid);
         if (getValidSession().isPlainTrace()) {
-            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.format().id().id(nid).format(), toRepository == null ? "<default-repo>" : toRepository);
+            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.format().id().set(nid).format(), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 
@@ -529,7 +529,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 }
             }
             try (InputStream is = inputStreamSource.open()) {
-                return ws.parse().descriptor(is, true);
+                return ws.format().descriptor().read(is);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -711,7 +711,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             }
             if (c.descriptor == null && c.baseFile.isURL()) {
                 try {
-                    c.descriptor = ws.parse().descriptor(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    c.descriptor = ws.format().descriptor().read(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -720,7 +720,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.descriptor = ws.parse().descriptor(ext);
+                        c.descriptor = ws.format().descriptor().read(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }
@@ -739,7 +739,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
                     if (ext.exists()) {
-                        c.descriptor = ws.parse().descriptor(ext);
+                        c.descriptor = ws.format().descriptor().read(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }

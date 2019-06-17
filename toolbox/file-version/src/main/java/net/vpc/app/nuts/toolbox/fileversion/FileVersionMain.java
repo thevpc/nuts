@@ -363,7 +363,7 @@ public class FileVersionMain extends NutsApplication {
 
                     } else if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         try {
-                            NutsDescriptor d = ws.parse().descriptor(inputStream);
+                            NutsDescriptor d = ws.format().descriptor().read(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));

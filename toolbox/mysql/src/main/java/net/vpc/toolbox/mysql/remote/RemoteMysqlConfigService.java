@@ -1,7 +1,6 @@
 package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.io.FileUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlConfig;
@@ -46,7 +45,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         Path f = getConfigPath();
-        context.getWorkspace().format().json().print(config, f);
+        context.getWorkspace().format().json().set(config).print(f);
         return this;
     }
 
@@ -83,7 +82,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService write(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().format().json().print(getConfig(), new PrintWriter(out));
+        context.getWorkspace().format().json().set(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

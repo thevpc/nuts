@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsXmlFormat extends NutsConfigurable {
+public interface NutsXmlFormat extends NutsFormat {
 
     Document toXmlDocument(Object value);
 
@@ -50,6 +50,12 @@ public interface NutsXmlFormat extends NutsConfigurable {
     NutsXmlFormat session(NutsSession session);
 
     NutsXmlFormat setSession(NutsSession session);
+
+    Object getValue();
+
+    NutsXmlFormat set(Object value);
+
+    NutsXmlFormat setValue(Object value);
 
     /**
      * configure the current command with the given arguments. This is an

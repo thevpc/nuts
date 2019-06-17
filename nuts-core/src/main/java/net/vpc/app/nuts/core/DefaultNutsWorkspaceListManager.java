@@ -102,14 +102,16 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         );
     }
 
+    @Override
     public void save() {
         this.config.setWorkspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.format().json().print(this.config, file);
+        this.defaultWorkspace.format().json().set(this.config).print(file);
     }
 
+    @Override
     public boolean removeWorkspace(String uuid) {
         boolean b = this.workspaces.remove(uuid) != null;
         if (b) {

@@ -73,18 +73,17 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         @Override
         public boolean isDescFile(String pathname) {
             return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
-                    || pathname.endsWith("/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                    || pathname.endsWith("/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)
                     || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
         }
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
-//            NutsHttpFolderRepository r = NutsHttpFolderRepository.this;
-//            String location = r.config().getLocation(true);
-//            if(pathname.startsWith(location)){
-//                pathname=pathname.substring(SPEED_FASTER)
-//            }
-            return getWorkspace().parse().descriptor(in, true);
+            try {
+                return getWorkspace().format().descriptor().read(in);
+            } finally {
+                in.close();
+            }
         }
     };
 
@@ -122,9 +121,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
-        try (InputStream stream = getDescStream(id, session)){
-                return  getWorkspace().parse().descriptor(stream, true);
-        } catch(IOException ex) {
+        try (InputStream stream = getDescStream(id, session)) {
+            return getWorkspace().format().descriptor().read(stream);
+        } catch (IOException ex) {
             return null;
         }
     }

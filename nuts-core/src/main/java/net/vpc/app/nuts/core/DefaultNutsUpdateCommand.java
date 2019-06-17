@@ -569,7 +569,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsId d0Id = ws.search().id(id).setSession(searchSession).installed().setOptional(false).failFast(false).defaultVersions()
                 .getResultIds().first();
 
-        NutsDefinition d0 = d0Id == null ? null: ws.fetch().id(d0Id).setSession(searchSession).installed().setOptional(false).failFast(false)
+        NutsDefinition d0 = d0Id == null ? null : ws.fetch().id(d0Id).setSession(searchSession).installed().setOptional(false).failFast(false)
                 .getResultDefinition();
         if (d0 == null) {
             throw new NutsIllegalArgumentException(ws, id + " is not yet installed to be updated.");
@@ -638,10 +638,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             ws.io().copy().from(apiUpdate.getAvailable().getPath()).to(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
                     .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
             ).run();
-            ws.format().descriptor().print(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor(),
-                    ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
-                            .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceDescriptor()))
-            );
+            ws.format().descriptor().set(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor()
+            ).print(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
+                    .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceDescriptor())));
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
@@ -656,7 +655,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                             .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
                     ).run();
             NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailable().getId()).getResultDescriptor();
-            ws.format().descriptor().print(runtimeDesc,
+            ws.format().descriptor().set(runtimeDesc).print(
                     ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
                             .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceDescriptor()))
             );
@@ -840,9 +839,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         //compare canonical forms
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
-        DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile, 
-                newFile==null?null:Arrays.stream(newFile.getDependencies()).map(x->x.getId()).toArray(NutsId[]::new)
-                , false);
+        DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
+                newFile == null ? null : Arrays.stream(newFile.getDependencies()).map(x -> x.getId()).toArray(NutsId[]::new),
+                 false);
         if (cnewId != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateAvailable(true);
         } else {

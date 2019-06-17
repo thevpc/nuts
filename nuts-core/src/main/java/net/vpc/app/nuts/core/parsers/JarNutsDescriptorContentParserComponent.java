@@ -81,7 +81,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     if ("META-INF/MANIFEST.MF".equals(path)) {
                         return true;
                     }
-                    if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
+                    if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         return true;
                     }
                     return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
@@ -108,8 +108,12 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
 
                             metainf.set(d);
                             break;
-                        case ("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME):
-                            nutsjson.set(parserContext.getWorkspace().parse().descriptor(inputStream, true));
+                        case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME):
+                            try {
+                                nutsjson.set(parserContext.getWorkspace().format().descriptor().read(inputStream));
+                            } finally {
+                                inputStream.close();
+                            }
                             break;
                         default:
                             try {

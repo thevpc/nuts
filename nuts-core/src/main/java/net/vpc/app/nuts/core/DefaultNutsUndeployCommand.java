@@ -172,7 +172,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (getValidSession().isTrace()) {
             if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().id(id).format());
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().set(id).format());
                 }
             }
         }

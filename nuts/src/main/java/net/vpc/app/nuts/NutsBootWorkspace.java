@@ -82,7 +82,7 @@ public class NutsBootWorkspace {
     private String requiredBootVersion;
     private String requiredJavaOptions;
     private NutsIdLimited bootId;
-//    private String workspaceId;
+    private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -113,7 +113,6 @@ public class NutsBootWorkspace {
             return "${" + from + "}";
         }
     };
-    private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete workspace files.";
 
     public NutsBootWorkspace(String... args) {
         this(NutsArgumentsParser.parseNutsArguments(args));
@@ -355,12 +354,6 @@ public class NutsBootWorkspace {
             startNewProcess();
             return;
         }
-        //if recover or reset mode with -K option (SkipWelcome)
-        //as long as there are no applications to run, wil exit before creating workspace
-        if (options.getApplicationArguments().length == 0 && options.isSkipWelcome()
-                && (options.getBootCommand() == NutsBootCommand.RECOVER || options.getBootCommand() == NutsBootCommand.RESET)) {
-            return;
-        }
 
         NutsWorkspace workspace = null;
         try {
@@ -399,6 +392,12 @@ public class NutsBootWorkspace {
                 deleteStoreLocations(null, true, true, NutsStoreLocation.values());
                 break;
             }
+        }
+        //if recover or reset mode with -K option (SkipWelcome)
+        //as long as there are no applications to run, wil exit before creating workspace
+        if (options.getApplicationArguments().length == 0 && options.isSkipWelcome()
+                && (options.getBootCommand() == NutsBootCommand.RECOVER || options.getBootCommand() == NutsBootCommand.RESET)) {
+            throw new NutsExecutionException(null, 0);
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.format().getBootCommandLine());

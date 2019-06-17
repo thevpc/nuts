@@ -30,10 +30,8 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -41,7 +39,7 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsDescriptorFormat extends NutsConfigurable {
+public interface NutsDescriptorFormat extends NutsFormat {
 
     boolean isCompact();
 
@@ -51,38 +49,49 @@ public interface NutsDescriptorFormat extends NutsConfigurable {
 
     NutsDescriptorFormat setCompact(boolean compact);
 
-    void print(NutsDescriptor descriptor);
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptorFormat set(NutsDescriptor descriptor);
+    
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(URL url);
 
-    void println(NutsDescriptor descriptor);
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(byte[] bytes);
 
-    void print(NutsDescriptor descriptor, NutsTerminal terminal);
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(Path file);
 
-    void println(NutsDescriptor descriptor, NutsTerminal terminal);
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(File file);
 
-    void print(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(InputStream stream);
 
-    void println(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
+    /***
+     * 
+     * @since 0.5.6
+     */
+    NutsDescriptor read(String descriptorString);
 
-    void print(NutsDescriptor descriptor, File file) throws UncheckedIOException;
-
-    void println(NutsDescriptor descriptor, File file) throws UncheckedIOException;
-
-    void print(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
-
-    void println(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
-
-    void print(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
-
-    void println(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
-
-    void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
-
-    void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
-
-    String toString(NutsDescriptor descriptor);
-
-    String format(NutsDescriptor descriptor);
-
+    
     /**
      * configure the current command with the given arguments.
      * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}

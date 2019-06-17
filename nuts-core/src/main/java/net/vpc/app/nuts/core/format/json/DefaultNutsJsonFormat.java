@@ -17,16 +17,11 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -37,13 +32,12 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.format.DefaultFormatBase0;
+import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,11 +45,12 @@ import org.w3c.dom.Element;
  *
  * @author vpc
  */
-public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> implements NutsJsonFormat {
+public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> implements NutsJsonFormat {
 
     private Gson GSON_COMPACT;
     private Gson GSON_PRETTY;
     private boolean compact;
+    private Object value;
     private final NutsElementFactoryContext dummyContext;
 
     public DefaultNutsJsonFormat(NutsWorkspace ws) {
@@ -90,6 +85,20 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
         return this;
     }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public NutsJsonFormat set(Object value) {
+        return setValue(value);
+    }
+    
+    public NutsJsonFormat setValue(Object value) {
+        this.value = value;
+        return this;
+    }
+    
+
     public <T> T convert(Object any, Class<T> to) {
         Gson gson = getGson(true);
         JsonElement t = gson.toJsonTree(any);
@@ -97,15 +106,8 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
     }
 
     @Override
-    public String toString(Object obj) {
-        StringWriter w = new StringWriter();
-        print(obj, w);
-        return w.toString();
-    }
-
-    @Override
-    public void print(Object obj, Writer out) {
-        getGson(compact).toJson(obj, out);
+    public void print(Writer out) {
+        getGson(compact).toJson(value, out);
         try {
             out.flush();
         } catch (IOException e) {
@@ -135,93 +137,6 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase0<NutsJsonFormat> im
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-    }
-
-    @Override
-    public void print(Object obj, File file) {
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        try (FileWriter w = new FileWriter(file)) {
-            print(obj, w);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void print(Object obj, Path path) {
-        if (path.getParent() != null) {
-            try {
-                Files.createDirectories(path.getParent());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        try (Writer w = Files.newBufferedWriter(path)) {
-            print(obj, w);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void println(Object obj, File file) {
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        try (FileWriter w = new FileWriter(file)) {
-            println(obj, w);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void println(Object obj, Path path) {
-        if (path.getParent() != null) {
-            try {
-                Files.createDirectories(path.getParent());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        try (Writer w = Files.newBufferedWriter(path)) {
-            println(obj, w);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void print(Object obj, PrintStream printStream) {
-        Writer w = new PrintWriter(printStream);
-        print(obj, w);
-        try {
-            w.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void println(Object obj, Writer out) {
-        print(obj, out);
-        if (out instanceof PrintWriter) {
-            ((PrintWriter) out).println();
-        } else {
-            try {
-                out.write(CoreIOUtils.getNewLine());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-    }
-
-    @Override
-    public void println(Object obj, PrintStream printStream) {
-        print(obj, printStream);
-        printStream.println();
     }
 
     public NutsElement fromJsonElement(JsonElement o) {

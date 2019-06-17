@@ -60,7 +60,7 @@ public class DefaultSearchFormatJson implements NutsIncrementalFormatHandler {
         if (index > 0) {
             context.getWriter().print(", ");
         }
-        context.getWriter().printf("%N%n", context.getWorkspace().format().json().compact(isCompact()).toString(object));
+        context.getWriter().printf("%N%n", context.getWorkspace().format().json().compact(isCompact()).set(object).format());
         context.getWriter().flush();
     }
 

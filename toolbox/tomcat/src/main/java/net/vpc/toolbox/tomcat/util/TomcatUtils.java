@@ -64,6 +64,9 @@ public class TomcatUtils {
     }
 
     public static String[] splitInstanceApp(String value, boolean preferInstance) {
+        if(value==null){
+            value="";
+        }
         int dot = value.indexOf('.');
         if (dot >= 0) {
             return new String[]{value.substring(0, dot), value.substring(0, dot + 1)};

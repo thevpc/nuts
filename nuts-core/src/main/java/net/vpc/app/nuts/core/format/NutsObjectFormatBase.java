@@ -16,7 +16,7 @@ import net.vpc.app.nuts.NutsCommandLine;
  *
  * @author vpc
  */
-public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectFormat> 
+public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectFormat>
         implements NutsObjectFormat {
 
     private Object value;
@@ -36,6 +36,12 @@ public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectF
         return this;
     }
 
+    @Override
+    public NutsObjectFormat set(Object obj) {
+        return setValue(obj);
+    }
+
+    @Override
     public Object getValue() {
         return value;
     }

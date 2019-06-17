@@ -54,7 +54,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public void installCommand(NutsCommandAliasConfig command) {
         Path file = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        configManagerExt.getWorkspace().format().json().print(command, file);
+        configManagerExt.getWorkspace().format().json().set(command).print(file);
     }
 
     @Override

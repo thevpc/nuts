@@ -60,7 +60,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().format().json().print(c, configFile);
+        appContext.getWorkspace().format().json().set(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {

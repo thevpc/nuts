@@ -30,16 +30,14 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Path;
 
 /**
  *
  * @author vpc
  */
-public interface NutsJsonFormat extends NutsConfigurable{
+public interface NutsJsonFormat extends NutsFormat {
 
     boolean isCompact();
 
@@ -49,34 +47,31 @@ public interface NutsJsonFormat extends NutsConfigurable{
 
     NutsJsonFormat setCompact(boolean compact);
 
-    String toString(Object obj);
-    
+    /**
+     * @since 0.5.6
+     */
+    Object getValue();
+
+    /**
+     * @since 0.5.6
+     */
+    NutsJsonFormat set(Object value);
+
+    /**
+     * @since 0.5.6
+     */
+    NutsJsonFormat setValue(Object value);
+
     <T> T read(Reader reader, Class<T> cls);
 
     <T> T read(Path file, Class<T> cls);
 
     <T> T read(File file, Class<T> cls);
 
-    void print(Object obj, Writer out);
-
-    void print(Object obj, Path file);
-
-    void print(Object obj, File file);
-
-    void print(Object obj, PrintStream printStream);
-
-    void println(Object obj, Writer out);
-
-    void println(Object obj, Path file);
-
-    void println(Object obj, File file);
-
-    void println(Object obj, PrintStream printStream);
-
-    NutsSession getSession();
-
+    @Override
     NutsJsonFormat session(NutsSession session);
 
+    @Override
     NutsJsonFormat setSession(NutsSession session);
 
     /**

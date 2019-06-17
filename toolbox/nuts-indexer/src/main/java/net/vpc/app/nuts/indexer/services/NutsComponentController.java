@@ -228,7 +228,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.format().json().toString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())));
+                        data.put("dependencies", ws.format().json().set(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
 
                         this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                     } else {

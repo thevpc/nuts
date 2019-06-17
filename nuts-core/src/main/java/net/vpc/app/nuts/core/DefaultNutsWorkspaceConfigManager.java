@@ -504,7 +504,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     || CoreStringUtils.isBlank(config.getCreateApiVersion())) {
                 config.setCreateApiVersion(getApiId().getVersion().getValue());
             }
-            ws.format().json().print(config, file);
+            ws.format().json().set(config).print(file);
             configurationChanged = false;
             ok = true;
         }

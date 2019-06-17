@@ -68,11 +68,20 @@ public interface NutsIdFormat extends NutsFormat {
 
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
-    NutsId getId();
+    /**
+     * @since 0.5.6
+     */
+    NutsId getValue();
 
-    NutsIdFormat setId(NutsId id);
+    /**
+     * @since 0.5.6
+     */
+    NutsIdFormat set(NutsId id);
 
-    NutsIdFormat id(NutsId id);
+    /**
+     * @since 0.5.6
+     */
+    NutsIdFormat setValue(NutsId id);
 
     /**
      * configure the current command with the given arguments. This is an

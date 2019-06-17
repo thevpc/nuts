@@ -7,7 +7,6 @@ import net.vpc.common.ssh.SshPath;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
-import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -130,7 +129,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
     }
 
     public RemoteTomcatAppConfigService write(PrintStream out) {
-        context.getWorkspace().format().json().print(getConfig(), out);
+        context.getWorkspace().format().json().set(getConfig()).print(out);
         return this;
     }
 

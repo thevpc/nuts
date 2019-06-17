@@ -1,23 +1,29 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsNotFoundException;
+import net.vpc.app.nuts.NutsParseException;
+import net.vpc.app.nuts.core.format.DefaultFormatBase;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
-public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
+public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescriptorFormat> implements NutsDescriptorFormat {
 
-    private NutsWorkspace ws;
     private boolean compact;
+    private NutsDescriptor desc;
 
     public DefaultNutsDescriptorFormat(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws, "descriptor-format");
     }
 
     @Override
@@ -35,151 +41,97 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
         return compact;
     }
 
-
     @Override
     public NutsDescriptorFormat setCompact(boolean compact) {
         this.compact = compact;
         return this;
     }
 
-    @Override
-    public String toString(NutsDescriptor descriptor) {
-        return format(descriptor);
+    public NutsDescriptor getDescriptor() {
+        return desc;
     }
 
-    @Override
-    public String format(NutsDescriptor descriptor) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        OutputStreamWriter w = new OutputStreamWriter(b);
-        print(descriptor, w);
-        try {
-            w.flush();
-        } catch (IOException e) {
-            //
-        }
-        return new String(b.toByteArray());
+    public NutsDescriptorFormat setDescriptor(NutsDescriptor desc) {
+        this.desc = desc;
+        return this;
     }
 
-    @Override
-    public void print(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
-        OutputStreamWriter o = new OutputStreamWriter(os);
-        print(descriptor, o);
-        try {
-            o.flush();
-        } catch (IOException e) {
-            //
-        }
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
-        OutputStreamWriter o = new OutputStreamWriter(os);
-        println(descriptor, o);
-        try {
-            o.flush();
-        } catch (IOException e) {
-            //
-        }
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.format().json().compact(isCompact()).print(descriptor, out);
-
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.format().json().compact(isCompact()).print(descriptor, out);
-        try {
-            out.write("\n");
-            out.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
-        PrintWriter out1 = new PrintWriter(out);
-        print(descriptor, out1);
-        out1.flush();
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
-        PrintWriter out1 = new PrintWriter(out);
-        println(descriptor, out1);
-        out1.flush();
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor, File file) throws UncheckedIOException {
-        print(descriptor, file.toPath());
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, File file) throws UncheckedIOException {
-        println(descriptor, file.toPath());
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor) {
-        print(descriptor, ws.io().getTerminal());
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor) {
-        println(descriptor, ws.io().getTerminal());
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor, NutsTerminal terminal) {
-        print(descriptor, terminal.out());
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, NutsTerminal terminal) {
-        println(descriptor, terminal.out());
-    }
-
-    @Override
-    public void print(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
-        try {
-            Files.createDirectories(file.getParent());
-            try (Writer os = Files.newBufferedWriter(file)) {
-                print(descriptor, os);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    @Override
-    public void println(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
-        try {
-            Files.createDirectories(file.getParent());
-            try (Writer os = Files.newBufferedWriter(file)) {
-                println(descriptor, os);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    @Override
-    public final NutsDescriptorFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args,"descriptor-format");
-    }
-
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
+    public NutsDescriptorFormat set(NutsDescriptor desc) {
+        return setDescriptor(desc);
     }
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
         return false;
+    }
+
+    @Override
+    public void print(Writer out) {
+        ws.format().json().compact(isCompact()).set(desc).print(out);
+    }
+
+    @Override
+    public NutsDescriptor read(URL url) {
+        try {
+            try {
+                return read(url.openStream(), true);
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+            }
+        } catch (IOException ex) {
+            throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+        }
+    }
+
+    @Override
+    public NutsDescriptor read(byte[] bytes) {
+        return read(new ByteArrayInputStream(bytes), true);
+    }
+
+    @Override
+    public NutsDescriptor read(Path path) {
+        if (!Files.exists(path)) {
+            throw new NutsNotFoundException(ws, "at file " + path);
+        }
+        try {
+            return read(Files.newInputStream(path), true);
+        } catch (NutsException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new NutsParseException(ws, "Unable to parse file " + path, ex);
+        }
+    }
+
+    @Override
+    public NutsDescriptor read(File file) {
+        return read(file.toPath());
+    }
+
+    @Override
+    public NutsDescriptor read(String str) {
+        if (CoreStringUtils.isBlank(str)) {
+            return null;
+        }
+        return read(new ByteArrayInputStream(str.getBytes()), true);
+    }
+
+    private NutsDescriptor read(InputStream in, boolean closeStream) {
+        try (Reader rr = new InputStreamReader(in)) {
+            return ws.format().json().read(rr, NutsDescriptor.class);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+//    @Override
+//    public NutsDescriptor descriptor(File file) {
+//        return CoreNutsUtils.parseNutsDescriptor(file);
+//    }
+    @Override
+    public NutsDescriptor read(InputStream stream) {
+        return read(stream, false);
     }
 
 }

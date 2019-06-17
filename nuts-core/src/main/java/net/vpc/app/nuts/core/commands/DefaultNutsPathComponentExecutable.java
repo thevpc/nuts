@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.core.commands;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -73,14 +74,14 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 c.descriptor = DefaultNutsExecCommand.TEMP_DESC;
             }
             NutsDefinition nutToRun = new DefaultNutsDefinition(
-                    null, 
-                    null, 
-                    c.descriptor.getId(), 
-                    c.descriptor, 
-                    new DefaultNutsContent(c.getContentPath(), false, c.temps.size() > 0), 
+                    null,
+                    null,
+                    c.descriptor.getId(),
+                    c.descriptor,
+                    new DefaultNutsContent(c.getContentPath(), false, c.temps.size() > 0),
                     null
             );
-            execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(),true, session, executionType);
+            execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType);
         }
     }
 
@@ -97,7 +98,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = ws.parse().descriptor(ext);
+                    c.descriptor = ws.format().descriptor().read(ext);
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                 }
@@ -113,7 +114,9 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 }
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getName().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                    c.descriptor = ws.parse().descriptor(c.contentFile.open());
+                    try (InputStream in = c.contentFile.open()) {
+                        c.descriptor = ws.format().descriptor().read(in);
+                    }
                     c.contentFile = null;
                     if (c.baseFile.isURL()) {
                         URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
@@ -155,8 +158,8 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                     }
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
-                    if(c.descriptor==null){
-                        c.descriptor=ws.descriptorBuilder()
+                    if (c.descriptor == null) {
+                        c.descriptor = ws.descriptorBuilder()
                                 .setId("temp")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();

@@ -202,7 +202,7 @@ public class LinuxNdi implements SystemNdi {
             updatedBashrc = true;
         }
         if (force || updatedBashrc) {
-            IOUtils.saveString(lines.stream().collect(Collectors.joining("\n")), bashrc);
+            IOUtils.saveString(lines.stream().collect(Collectors.joining("\n"))+"\n", bashrc);
         }
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
         StringBuilder goodNdiRc = new StringBuilder();

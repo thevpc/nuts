@@ -123,13 +123,13 @@ public class NutsRepositoryFolderHelper {
         if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
             goodFile = versionFolder.resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().parse().descriptor(goodFile);
+                return getWorkspace().format().descriptor().read(goodFile);
             }
         } else if (!CoreStringUtils.isBlank(alt)) {
             goodAlt = alt.trim();
             goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().parse().descriptor(goodFile).setAlternative(goodAlt);
+                return getWorkspace().format().descriptor().read(goodFile).setAlternative(goodAlt);
             }
         } else {
             //should test all files
@@ -159,7 +159,7 @@ public class NutsRepositoryFolderHelper {
             if (Files.exists(goodFile)) {
                 NutsDescriptor c = null;
                 try {
-                    c = getWorkspace().parse().descriptor(goodFile).setAlternative("");
+                    c = getWorkspace().format().descriptor().read(goodFile).setAlternative("");
                 } catch (Exception ex) {
                     //
                 }
@@ -178,7 +178,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (Files.exists(file)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().parse().descriptor(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().format().descriptor().read(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getQueryMap();
                 String os = query.get("os");
@@ -260,7 +260,7 @@ public class NutsRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return getWorkspace().parse().descriptor(pathname);
+                return getWorkspace().format().descriptor().read(pathname);
             }
         }, maxDepth);
     }
@@ -319,7 +319,7 @@ public class NutsRepositoryFolderHelper {
         if (Files.exists(descFile)) {
             LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
         }
-        getWorkspace().format().descriptor().print(desc, descFile);
+        getWorkspace().format().descriptor().set(desc).print(descFile);
         getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         return descFile;
     }

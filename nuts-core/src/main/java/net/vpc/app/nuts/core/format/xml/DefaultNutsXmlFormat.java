@@ -29,11 +29,16 @@
  */
 package net.vpc.app.nuts.core.format.xml;
 
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
@@ -48,7 +53,7 @@ import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsXmlFormat;
-import net.vpc.app.nuts.core.format.DefaultFormatBase0;
+import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -59,7 +64,7 @@ import org.w3c.dom.NodeList;
  *
  * @author vpc
  */
-public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> implements NutsXmlFormat {
+public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> implements NutsXmlFormat {
 
     private static final Pattern NUM_REGEXP = Pattern.compile("-?\\d+(\\.\\d+)?");
     private String defaulName = "value";
@@ -67,8 +72,10 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> impl
     private String typeAttribute = "_";
     private boolean ignoreNullValue = true;
     private boolean autoResolveType = true;
+    private boolean compact = false;
     private org.w3c.dom.Document defaulDocument;
     private final NutsElementFactoryContext xmlContext;
+    private Object value;
 
     public DefaultNutsXmlFormat(NutsWorkspace ws) {
         super(ws, "xml-format");
@@ -76,7 +83,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> impl
 
             @Override
             public NutsElement toElement(Object o) {
-                return fromXmlElement((org.w3c.dom.Element) o,NutsElement.class);
+                return fromXmlElement((org.w3c.dom.Element) o, NutsElement.class);
             }
         };
     }
@@ -120,7 +127,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> impl
             return (T) fromXmlElement(element);
         }
         NutsFormatManager wsformat = ws.format();
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat)wsformat.json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) wsformat.json();
         return json.convert(element, cls);
     }
 
@@ -450,4 +457,31 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase0<NutsXmlFormat> impl
     public boolean configureFirst(NutsCommandLine cmdLine) {
         return false;
     }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
+    @Override
+    public NutsXmlFormat set(Object value) {
+        return setValue(value);
+    }
+
+    @Override
+    public NutsXmlFormat setValue(Object value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public void print(Writer out) {
+        Document doc = toXmlDocument(value);
+        try {
+            NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact);
+        } catch (TransformerException ex) {
+            throw new NutsException(getWorkspace(), ex.getMessage(), ex);
+        }
+    }
+
 }

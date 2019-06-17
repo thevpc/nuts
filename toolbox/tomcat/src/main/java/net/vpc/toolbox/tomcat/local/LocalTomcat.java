@@ -10,7 +10,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
@@ -166,15 +165,24 @@ public class LocalTomcat {
     public void show(NutsCommandLine args) {
         NutsArgument a;
         LocalTomcatServiceBase s;
+        List<LocalTomcatServiceBase> toShow = new ArrayList<>();
         while (args.hasNext()) {
             if (context.configureFirst(args)) {
                 //
             } else if ((s = readBaseServiceArg(args)) != null) {
-                getContext().session().out().printf("[[%s]] :\n", s.getName());
-                s.write(getContext().session().out());
-                getContext().session().out().println();
+                toShow.add(s);
             } else {
                 args.setCommandName("tomcat --local show").unexpectedArgument();
+            }
+        }
+        if (args.isExecMode()) {
+            if (toShow.isEmpty()) {
+                toShow.add(loadServiceBase(""));
+            }
+            for (LocalTomcatServiceBase s2 : toShow) {
+                getContext().session().out().printf("[[%s]] :\n", s2.getName());
+                s2.write(getContext().session().out());
+                getContext().session().out().println();
             }
         }
     }

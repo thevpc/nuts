@@ -248,7 +248,7 @@ public class NutsHttpServletFacade {
                     switch (name) {
                         case "descriptor":
                             try {
-                                descriptor = context.getWorkspace().parse().descriptor(info.getContent());
+                                descriptor = context.getWorkspace().format().descriptor().read(info.getContent());
                             } finally {
                                 info.getContent().close();
                             }

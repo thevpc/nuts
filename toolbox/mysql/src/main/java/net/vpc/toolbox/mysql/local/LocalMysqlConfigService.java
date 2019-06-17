@@ -53,7 +53,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         Path f = getServerConfigPath();
-        context.getWorkspace().format().json().print(config, f);
+        context.getWorkspace().format().json().set(config).print(f);
         return this;
     }
 
@@ -107,7 +107,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().format().json().print(getConfig(), out);
+        context.getWorkspace().format().json().set(getConfig()).print(out);
         return this;
     }
 

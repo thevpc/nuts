@@ -243,17 +243,17 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return sb.toString();
     }
 
-    public NutsId getId() {
+    public NutsId getValue() {
         return id;
     }
 
-    public NutsIdFormat setId(NutsId id) {
-        this.id = id;
-        return this;
+    public NutsIdFormat set(NutsId id) {
+        return setValue(id);
     }
 
-    public NutsIdFormat id(NutsId id) {
-        return setId(id);
+    public NutsIdFormat setValue(NutsId id) {
+        this.id = id;
+        return this;
     }
 
     @Override

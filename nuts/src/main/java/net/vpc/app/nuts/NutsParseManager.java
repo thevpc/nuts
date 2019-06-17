@@ -52,19 +52,19 @@ public interface NutsParseManager {
 
     NutsCommandLine command(Collection<String> arguments);
 
-    NutsDescriptor descriptor(URL url);
-
-    NutsDescriptor descriptor(byte[] bytes);
-
-    NutsDescriptor descriptor(Path file);
-
-    NutsDescriptor descriptor(File file);
-
-    NutsDescriptor descriptor(InputStream stream);
-
-    NutsDescriptor descriptor(InputStream stream, boolean close);
-
-    NutsDescriptor descriptor(String descriptorString);
+//    NutsDescriptor descriptor(URL url);
+//
+//    NutsDescriptor descriptor(byte[] bytes);
+//
+//    NutsDescriptor descriptor(Path file);
+//
+//    NutsDescriptor descriptor(File file);
+//
+//    NutsDescriptor descriptor(InputStream stream);
+//
+//    NutsDescriptor descriptor(InputStream stream, boolean close);
+//
+//    NutsDescriptor descriptor(String descriptorString);
 
     NutsDependency dependency(String dependency);
 

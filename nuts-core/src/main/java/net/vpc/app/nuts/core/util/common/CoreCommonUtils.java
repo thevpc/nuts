@@ -352,7 +352,7 @@ public class CoreCommonUtils {
             return ws.io().getTerminalFormat().escapeText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o));
         }
         if (o instanceof NutsId) {
-            return ws.format().id().id((NutsId) o).format();
+            return ws.format().id().set((NutsId) o).format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

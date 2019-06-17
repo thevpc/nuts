@@ -34,16 +34,31 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsElementFormat extends NutsConfigurable {
+public interface NutsElementFormat extends NutsFormat {
 
     NutsElement toElement(Object object);
 
     <T> T fromElement(NutsElement element, Class<T> cls);
 
-    NutsSession getSession();
+    /**
+     * @since 0.5.6
+     */
+    Object getValue();
 
+    /**
+     * @since 0.5.6
+     */
+    NutsElementFormat set(Object value);
+
+    /**
+     * @since 0.5.6
+     */
+    NutsElementFormat setValue(Object value);
+
+    @Override
     NutsElementFormat session(NutsSession session);
 
+    @Override
     NutsElementFormat setSession(NutsSession session);
 
     /**

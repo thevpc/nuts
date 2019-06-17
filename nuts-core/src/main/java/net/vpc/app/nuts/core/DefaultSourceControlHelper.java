@@ -45,7 +45,7 @@ public class DefaultSourceControlHelper {
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = ws.parse().descriptor(file);
+        NutsDescriptor d = ws.format().descriptor().read(file);
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
@@ -62,7 +62,7 @@ public class DefaultSourceControlHelper {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            ws.format().descriptor().print(d, file);
+            ws.format().descriptor().set(d).print(file);
             try {
                 CoreIOUtils.delete(folder);
             } catch (IOException ex) {
@@ -93,12 +93,12 @@ public class DefaultSourceControlHelper {
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = ws.parse().descriptor(file);
+            NutsDescriptor d = ws.format().descriptor().read(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
 
-            ws.format().descriptor().print(d, file);
+            ws.format().descriptor().set(d).print(file);
 
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),
