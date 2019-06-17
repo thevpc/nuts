@@ -39,7 +39,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public interface NutsAuthenticationAgent extends NutsComponent<String> {
-    
+
     String getId();
 
     /**
@@ -51,35 +51,35 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      * @param envProvider environment provider, nullable
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password,NutsEnvProvider envProvider) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) throws NutsSecurityException;
 
     /**
-     * get the credentials for the given id. 
-     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
-     * AuthenticationAgent'd id and ':' character
+     * get the credentials for the given id. The {@code credentialsId}
+     * <strong>MUST</strong> be prefixed with AuthenticationAgent'd id and ':'
+     * character
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId,NutsEnvProvider envProvider);
+    char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider);
 
     /**
-     * remove existing credentials with the given id
-     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
-     * AuthenticationAgent'd id and ':' character
+     * remove existing credentials with the given id The {@code credentialsId}
+     * <strong>MUST</strong> be prefixed with AuthenticationAgent'd id and ':'
+     * character
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId,NutsEnvProvider envProvider);
+    boolean removeCredentials(char[] credentialsId, NutsEnvProvider envProvider);
 
     /**
-     * store credentials in the agent's and return the credential id to store into
-     * the config. if credentialId is not null, the given credentialId will be
-     * updated and the credentialId is returned.
-     * The {@code credentialsId},if present or returned, <strong>MUST</strong> be prefixed with 
+     * store credentials in the agent's and return the credential id to store
+     * into the config. if credentialId is not null, the given credentialId will
+     * be updated and the credentialId is returned. The {@code credentialsId},if
+     * present or returned, <strong>MUST</strong> be prefixed with
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
@@ -88,5 +88,5 @@ public interface NutsAuthenticationAgent extends NutsComponent<String> {
      * @param envProvider environment provider, nullable
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId,NutsEnvProvider envProvider);
+    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsEnvProvider envProvider);
 }

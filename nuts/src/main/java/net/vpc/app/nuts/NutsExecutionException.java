@@ -31,43 +31,44 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 2/19/17.
+ *
  * @since 0.5.4
  */
 public class NutsExecutionException extends NutsException {
 
-    public static  final int DEFAULT_ERROR_EXIT_CODE=244;
+    public static final int DEFAULT_ERROR_EXIT_CODE = 244;
     private final int exitCode;
 
     public NutsExecutionException(NutsWorkspace workspace) {
-        this(workspace,DEFAULT_ERROR_EXIT_CODE);
+        this(workspace, DEFAULT_ERROR_EXIT_CODE);
     }
-    
-    public NutsExecutionException(NutsWorkspace workspace,int exitCode) {
-        super(workspace,"Execution Failed with error code " + exitCode);
+
+    public NutsExecutionException(NutsWorkspace workspace, int exitCode) {
+        super(workspace, "Execution Failed with error code " + exitCode);
         this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(NutsWorkspace workspace,String message, int exitCode) {
-        super(workspace,message);
+    public NutsExecutionException(NutsWorkspace workspace, String message, int exitCode) {
+        super(workspace, message);
         this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(NutsWorkspace workspace,String message, Throwable cause) {
-        this(workspace,message,cause,DEFAULT_ERROR_EXIT_CODE);
+    public NutsExecutionException(NutsWorkspace workspace, String message, Throwable cause) {
+        this(workspace, message, cause, DEFAULT_ERROR_EXIT_CODE);
     }
-    
-    public NutsExecutionException(NutsWorkspace workspace,String message, Throwable cause, int exitCode) {
-        super(workspace,message, cause);
+
+    public NutsExecutionException(NutsWorkspace workspace, String message, Throwable cause, int exitCode) {
+        super(workspace, message, cause);
         this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(NutsWorkspace workspace,Throwable cause, int exitCode) {
-        super(workspace,cause==null?"":cause.getMessage(),cause);
+    public NutsExecutionException(NutsWorkspace workspace, Throwable cause, int exitCode) {
+        super(workspace, cause == null ? "" : cause.getMessage(), cause);
         this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsExecutionException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
         this.exitCode = exitCode;
     }
 

@@ -35,9 +35,14 @@ package net.vpc.app.nuts;
  * @since 0.5.5
  */
 public interface NutsTokenFilter {
+
     boolean isNull();
+
     boolean isBlank();
+
     boolean like(String pattern);
+
     boolean matches(String pattern);
+
     boolean contains(String substring);
 }

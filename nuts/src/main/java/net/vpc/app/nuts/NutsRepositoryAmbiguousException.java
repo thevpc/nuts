@@ -31,11 +31,12 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsRepositoryAmbiguousException extends NutsElementAlreadyDefinedException {
 
-    public NutsRepositoryAmbiguousException(NutsWorkspace workspace,String s) {
+    public NutsRepositoryAmbiguousException(NutsWorkspace workspace, String s) {
         super(workspace, s);
     }
 

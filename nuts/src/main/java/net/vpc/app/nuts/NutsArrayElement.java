@@ -35,6 +35,7 @@ import java.util.Collection;
  *
  * @author vpc
  */
-public interface NutsArrayElement extends NutsElement{
-        Collection<NutsElement> children();
+public interface NutsArrayElement extends NutsElement {
+
+    Collection<NutsElement> children();
 }

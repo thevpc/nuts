@@ -30,8 +30,9 @@
 package net.vpc.app.nuts;
 
 /**
- * An Executor Component is responsible of "executing" a nuts component (package)
- * Created by vpc on 1/7/17.
+ * An Executor Component is responsible of "executing" a nuts component
+ * (package) Created by vpc on 1/7/17.
+ *
  * @since 0.5.4
  */
 @NutsSingleton

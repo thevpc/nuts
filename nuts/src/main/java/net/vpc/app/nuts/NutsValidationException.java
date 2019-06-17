@@ -36,10 +36,10 @@ import java.io.IOException;
  * @author vpc
  * @since 0.5.5
  */
-public class NutsValidationException extends NutsException{
+public class NutsValidationException extends NutsException {
 
     public NutsValidationException(NutsWorkspace workspace) {
-        super(workspace,"Invalid value");
+        super(workspace, "Invalid value");
     }
 
     public NutsValidationException(NutsWorkspace workspace, String message) {
@@ -61,6 +61,5 @@ public class NutsValidationException extends NutsException{
     public NutsValidationException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
-    
-    
+
 }

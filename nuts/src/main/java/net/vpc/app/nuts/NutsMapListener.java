@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Map Listener to catch updates
+ *
  * @param <K> key type
  * @param <V> value type
  * @since 0.2.0
@@ -39,6 +40,7 @@ public interface NutsMapListener<K, V> {
 
     /**
      * Invoked when item added
+     *
      * @param key
      * @param value
      */
@@ -46,6 +48,7 @@ public interface NutsMapListener<K, V> {
 
     /**
      * Invoked when item removed
+     *
      * @param key
      * @param value
      */
@@ -53,6 +56,7 @@ public interface NutsMapListener<K, V> {
 
     /**
      * Invoked when item updated
+     *
      * @param key
      * @param newValue
      * @param oldValue

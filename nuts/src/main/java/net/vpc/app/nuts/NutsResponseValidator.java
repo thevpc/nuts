@@ -36,5 +36,5 @@ package net.vpc.app.nuts;
  */
 public interface NutsResponseValidator<T> {
 
-    T validate(T value,NutsQuestion<T> question) throws NutsValidationException;
+    T validate(T value, NutsQuestion<T> question) throws NutsValidationException;
 }

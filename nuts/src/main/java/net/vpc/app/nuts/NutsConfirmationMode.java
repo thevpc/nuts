@@ -33,9 +33,9 @@ package net.vpc.app.nuts;
  * user interaction mode. Some operations may require user confirmation before
  * performing critical operations such as overriding existing values, deleting
  * sensitive informations ; in such cases several modes are available : either
- * to require user interaction (ASK mode, the default value) or force the 
- * processing (YES mode), or ignoring the processing and continuing the 
- * next (NO) or cancel the processing and exit with an error message (ERROR)
+ * to require user interaction (ASK mode, the default value) or force the
+ * processing (YES mode), or ignoring the processing and continuing the next
+ * (NO) or cancel the processing and exit with an error message (ERROR)
  *
  * @author vpc
  * @since 0.5.5

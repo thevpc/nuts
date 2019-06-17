@@ -33,11 +33,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsRepositoryRef implements Serializable{
+public class NutsRepositoryRef implements Serializable {
 
     private static final long serialVersionUID = 1;
 
@@ -58,7 +58,7 @@ public class NutsRepositoryRef implements Serializable{
         this.deployOrder = other.getDeployOrder();
     }
 
-    public NutsRepositoryRef(String name,String location,int deployPriority, boolean enabled) {
+    public NutsRepositoryRef(String name, String location, int deployPriority, boolean enabled) {
         this.name = name;
         this.location = location;
         this.deployOrder = deployPriority;
@@ -82,7 +82,6 @@ public class NutsRepositoryRef implements Serializable{
         this.location = location;
         return this;
     }
-
 
     public String getName() {
         return name;
@@ -115,7 +114,6 @@ public class NutsRepositoryRef implements Serializable{
         return this;
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -162,8 +160,4 @@ public class NutsRepositoryRef implements Serializable{
         return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + ", deployPriority=" + deployOrder + '}';
     }
 
-   
-
-   
-    
 }

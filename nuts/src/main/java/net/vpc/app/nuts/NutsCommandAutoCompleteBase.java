@@ -29,13 +29,12 @@
  */
 package net.vpc.app.nuts;
 
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.5
  */
@@ -50,14 +49,14 @@ public abstract class NutsCommandAutoCompleteBase implements net.vpc.app.nuts.Nu
 
     @Override
     public void addCandidate(String value, String display) {
-        if (value!=null && !value.trim().isEmpty()) {
+        if (value != null && !value.trim().isEmpty()) {
             addCandidatesImpl(new NutsDefaultArgumentCandidate(value));
         }
     }
 
     @Override
     public void addCandidate(NutsArgumentCandidate value) {
-        if (value!=null && !value.getValue().trim().isEmpty()) {
+        if (value != null && !value.getValue().trim().isEmpty()) {
             addCandidatesImpl(value);
         }
     }

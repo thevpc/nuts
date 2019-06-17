@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -41,18 +41,18 @@ public class NutsIllegalArgumentException extends NutsException {
     }
 
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message) {
-        super(workspace,message);
+        super(workspace, message);
     }
 
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace,message, cause);
+        super(workspace, message, cause);
     }
 
     public NutsIllegalArgumentException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace,cause);
+        super(workspace, cause);
     }
 
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
 }

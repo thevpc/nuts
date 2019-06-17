@@ -36,30 +36,30 @@ import java.io.IOException;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsMissingElementsException extends NutsException{
+public class NutsMissingElementsException extends NutsException {
 
     public NutsMissingElementsException(NutsWorkspace workspace) {
-        this(workspace,"Missing Element");
+        this(workspace, "Missing Element");
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsMissingElementsException(NutsWorkspace workspace, String message) {
+        super(workspace, message);
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsMissingElementsException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace, message, cause);
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsMissingElementsException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace,IOException cause) {
-        super(workspace,cause);
+    public NutsMissingElementsException(NutsWorkspace workspace, IOException cause) {
+        super(workspace, cause);
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsMissingElementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

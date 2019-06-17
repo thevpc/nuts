@@ -29,19 +29,19 @@
  */
 package net.vpc.app.nuts;
 
-
 import java.util.Map;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public class NutsCommandAliasFactoryConfig {
+
     private String factoryId;
     private String factoryType;
     private int priority;
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
 
     public String getFactoryId() {
         return factoryId;

@@ -37,13 +37,13 @@ import java.net.URL;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsWorkspaceSPI extends NutsWorkspace{
+public interface NutsWorkspaceSPI extends NutsWorkspace {
 
     boolean initializeWorkspace(NutsWorkspaceFactory factory,
-                                NutsBootConfig runningBootConfig,
-                                NutsBootConfig userBootConfig,
-                                URL[] bootClassWorldURLs,
-                                ClassLoader workspaceClassLoader,
-                                NutsWorkspaceOptions options
+            NutsBootConfig runningBootConfig,
+            NutsBootConfig userBootConfig,
+            URL[] bootClassWorldURLs,
+            ClassLoader workspaceClassLoader,
+            NutsWorkspaceOptions options
     );
 }

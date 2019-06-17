@@ -29,11 +29,11 @@
  */
 package net.vpc.app.nuts;
 
-
 import java.util.List;
 
 /**
  * Non Option Argument specification
+ *
  * @author vpc
  * @since 0.5.5
  */
@@ -41,13 +41,15 @@ public interface NutsArgumentName {
 
     /**
      * argument name
+     *
      * @return argument name
      */
     String getName();
 
     /**
      * argument candidate values
-     * @return 
+     *
+     * @return
      */
     List<NutsArgumentCandidate> getCandidates();
 }

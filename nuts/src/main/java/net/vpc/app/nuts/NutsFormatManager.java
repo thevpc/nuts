@@ -65,6 +65,6 @@ public interface NutsFormatManager {
 
     NutsObjectFormat object();
 
-    NutsIncrementalFormat iter();
+    NutsIterableOutput iter();
 
 }

@@ -31,18 +31,19 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsNotExecutableException extends NutsExecutionException {
 
     private final String id;
 
-    public NutsNotExecutableException(NutsWorkspace workspace,NutsId nuts) {
-        this(workspace,nuts == null ? null : nuts.toString());
+    public NutsNotExecutableException(NutsWorkspace workspace, NutsId nuts) {
+        this(workspace, nuts == null ? null : nuts.toString());
     }
 
-    public NutsNotExecutableException(NutsWorkspace workspace,String nuts) {
-        super(workspace,"Not executable " + (nuts == null ? "<null>" : nuts), -1);
+    public NutsNotExecutableException(NutsWorkspace workspace, String nuts) {
+        super(workspace, "Not executable " + (nuts == null ? "<null>" : nuts), -1);
         this.id = nuts;
     }
 

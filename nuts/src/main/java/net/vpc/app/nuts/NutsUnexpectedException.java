@@ -39,27 +39,27 @@ import java.io.IOException;
 public class NutsUnexpectedException extends NutsException {
 
     public NutsUnexpectedException(NutsWorkspace workspace) {
-        this(workspace,"Unexpected Behaviour");
+        this(workspace, "Unexpected Behaviour");
     }
 
-    public NutsUnexpectedException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsUnexpectedException(NutsWorkspace workspace, String message) {
+        super(workspace, message);
     }
 
-    public NutsUnexpectedException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsUnexpectedException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace, message, cause);
     }
 
-    public NutsUnexpectedException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsUnexpectedException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsUnexpectedException(NutsWorkspace workspace,IOException cause) {
-        super(workspace,cause);
+    public NutsUnexpectedException(NutsWorkspace workspace, IOException cause) {
+        super(workspace, cause);
     }
 
-    public NutsUnexpectedException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsUnexpectedException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
 
 }

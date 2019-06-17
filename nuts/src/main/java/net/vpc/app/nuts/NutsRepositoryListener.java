@@ -31,32 +31,33 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/20/17.
+ *
  * @since 0.5.4
  */
 public interface NutsRepositoryListener {
 
-    default void onUndeploy(NutsContentEvent event){
-        
+    default void onUndeploy(NutsContentEvent event) {
+
     }
 
-    default void onDeploy(NutsContentEvent event){
-        
+    default void onDeploy(NutsContentEvent event) {
+
     }
 
-    default void onInstall(NutsContentEvent event){
-        
+    default void onInstall(NutsContentEvent event) {
+
     }
 
-    default void onPush(NutsContentEvent event){
-        
+    default void onPush(NutsContentEvent event) {
+
     }
 
-    default void onAddRepository(NutsRepositoryEvent event){
-        
+    default void onAddRepository(NutsRepositoryEvent event) {
+
     }
 
-    default void onRemoveRepository(NutsRepositoryEvent event){
-        
+    default void onRemoveRepository(NutsRepositoryEvent event) {
+
     }
 
 }

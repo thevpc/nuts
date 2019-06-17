@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsInvalidWorkspaceException extends NutsIllegalArgumentException {
@@ -38,7 +39,7 @@ public class NutsInvalidWorkspaceException extends NutsIllegalArgumentException 
     private final String workspaceLocation;
 
     public NutsInvalidWorkspaceException(NutsWorkspace workspace, String workspaceLocation, String errorMessage) {
-        super(workspace,"Invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage);
+        super(workspace, "Invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage);
         this.workspaceLocation = workspaceLocation;
     }
 

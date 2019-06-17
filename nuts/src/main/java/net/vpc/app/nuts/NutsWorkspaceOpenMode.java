@@ -30,14 +30,14 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsWorkspaceOpenMode {
     /**
-     * Open or Create. Default Mode.
-     * If the workspace is found, it will be created otherwise it will be opened
+     * Open or Create. Default Mode. If the workspace is found, it will be
+     * created otherwise it will be opened
      */
     OPEN_OR_CREATE,
     /**

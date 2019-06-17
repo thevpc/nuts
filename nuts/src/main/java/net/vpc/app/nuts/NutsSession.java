@@ -42,8 +42,7 @@ public interface NutsSession extends NutsConfigurable {
     /**
      * When true, operations are invited to print to output stream extra
      * information about processing. Output may be in different formats
-     * according to {@link #getOutputFormat()} and
-     * {@link #getIncrementalOutputFormatHandler()}
+     * according to {@link #getOutputFormat()} and {@link #getIterableFormat()}
      *
      * @return true if trace flag is armed
      */
@@ -53,63 +52,62 @@ public interface NutsSession extends NutsConfigurable {
      * When isTrace() is true and isVerbose() is true, operations are invited to
      * print to output stream even more extra information about processing.
      * Output may be in different formats according to
-     * {@link #getOutputFormat()} and
-     * {@link #getIncrementalOutputFormatHandler()}
+     * {@link #getOutputFormat()} and {@link #getIterableFormat()}
      *
      * @return true if trace flag is armed
      */
     boolean isVerbose();
 
     /**
-     * true if non incremental and plain formats along with trace flag are
-     * armed. equivalent to {@code isTrace()
-     * && !isIncrementalOut()
+     * true if non iterable and plain formats along with trace flag are armed.
+     * equivalent to {@code isTrace()
+     * && !isIterableOut()
      * && getOutputFormat() == NutsOutputFormat.PLAIN}
      *
-     * @return true plain non incremental format AND trace are armed
+     * @return true plain non iterable format AND trace are armed
      */
     boolean isPlainTrace();
 
     /**
-     * true if incremental format and trace flag are armed. equivalent to {@code isTrace()
-     * && isIncrementalOut()}
+     * true if iterable format and trace flag are armed. equivalent to {@code isTrace()
+     * && isIterableOut()}
      *
-     * @return true plain non incremental format AND trace are armed
+     * @return true plain non iterable format AND trace are armed
      */
-    boolean isIncrementalTrace();
+    boolean isIterableTrace();
 
     /**
-     * true if NON incremental and NON plain formats along with trace flag are
+     * true if NON iterable and NON plain formats along with trace flag are
      * armed. equivalent to {@code isTrace()
-     * && !isIncrementalOut()
+     * && !isIterableOut()
      * && getOutputFormat() == NutsOutputFormat.PLAIN}
      *
-     * @return true if NON incremental and NON plain formats along with trace
-     * flag are armed.
+     * @return true if NON iterable and NON plain formats along with trace flag
+     * are armed.
      */
     boolean isStructuredTrace();
 
     /**
-     * true if incremental format is armed. equivalent to
-     * {@code  getIncrementalOutputFormat()!=null}
+     * true if iterable format is armed. equivalent to
+     * {@code  getIterableFormat()!=null}
      *
-     * @return true if incremental format is armed.
+     * @return true if iterable format is armed.
      */
-    boolean isIncrementalOut();
+    boolean isIterableOut();
 
     /**
-     * true if NON incremental and NON plain formats are armed. equivalent to {@code !isIncrementalOut()
+     * true if NON iterable and NON plain formats are armed. equivalent to {@code !isIterableOut()
      * && getOutputFormat() != NutsOutputFormat.PLAIN}
      *
-     * @return true if non incremental format AND structured outpt format are
+     * @return true if non iterable format AND structured outpt format are
      * armed.
      */
     boolean isStructuredOut();
 
     /**
-     * true if NON incremental and plain format are armed.
+     * true if NON iterable and plain format are armed.
      *
-     * @return true if non incremental format AND structured outpt format are
+     * @return true if non iterable format AND structured outpt format are
      * armed.
      */
     boolean isPlainOut();
@@ -118,7 +116,7 @@ public interface NutsSession extends NutsConfigurable {
      * change trace flag value. When true, operations are invited to print to
      * output stream information about processing. Output may be in different
      * formats according to {@link #getOutputFormat()} and
-     * {@link #getIncrementalOutputFormatHandler()}
+     * {@link #getIterableFormat()}
      *
      * @param trace new value
      * @return {@code this} instance
@@ -129,8 +127,7 @@ public interface NutsSession extends NutsConfigurable {
      * When isTrace() is true and verbose is true, operations are invited to
      * print to output stream even more extra information about processing.
      * Output may be in different formats according to
-     * {@link #getOutputFormat()} and
-     * {@link #getIncrementalOutputFormatHandler()}
+     * {@link #getOutputFormat()} and {@link #getIterableFormat()}
      *
      * @param verbose verbose mode
      * @return true if trace flag is armed
@@ -220,10 +217,9 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * return effective trace output format. The effective trace output format
-     * is the value of {@code getIncrementalOutputFormat().getOutputFormat()}
-     * whenever {@code getIncrementalOutputFormat()!=null } otherwise it returns
-     * simply the value defined by calling
-     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of {@link #setIncrementalOutputFormat(net.vpc.app.nuts.NutsIncrementalOutputFormat)
+     * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
+     * } otherwise it returns simply the value defined by calling
+     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of {@link #setIterableFormatHandler(net.vpc.app.nuts.NutsIterableFormatHandler)
      * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat) } has
      * been called (or called with null values) {@link NutsOutputFormat#PLAIN}
      * should be returned.
@@ -235,12 +231,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
     NutsSession setOutputFormat(NutsOutputFormat outputFormat);
-
-    NutsIncrementalFormatHandler getIncrementalOutputFormatHandler();
-
-    NutsSession incrementalOutputFormat(NutsIncrementalFormatHandler customFormat);
-
-    NutsSession setIncrementalOutputFormat(NutsIncrementalFormatHandler customFormat);
 
     NutsSession json();
 
@@ -354,7 +344,13 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsObjectPrintStream oerr();
 
-    NutsIncrementalFormat getIncrementalOutput();
+    NutsIterableOutput getIterableOutput();
+
+    NutsIterableFormat getIterableFormat();
+
+    NutsSession iterableFormat(NutsIterableFormat value);
+
+    NutsSession setIterableFormat(NutsIterableFormat value);
 
     NutsSessionTerminal terminal();
 

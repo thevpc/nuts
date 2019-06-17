@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Text align constants
+ *
  * @author vpc
  * @since 0.5.5
  */

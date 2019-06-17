@@ -34,6 +34,8 @@ package net.vpc.app.nuts;
  * @author vpc
  */
 public interface NutsNamedElement {
+
     String getName();
+
     NutsElement getValue();
 }

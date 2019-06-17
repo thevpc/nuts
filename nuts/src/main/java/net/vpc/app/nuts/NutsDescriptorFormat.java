@@ -49,55 +49,64 @@ public interface NutsDescriptorFormat extends NutsFormat {
 
     NutsDescriptorFormat setCompact(boolean compact);
 
-    /***
-     * 
+    /**
+     * set the descriptor instance to print
+     *
+     * @param descriptor value to print
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsDescriptorFormat set(NutsDescriptor descriptor);
-    
-    /***
-     * 
+
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(URL url);
+    NutsDescriptor parse(URL url);
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(byte[] bytes);
+    NutsDescriptor parse(byte[] bytes);
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(Path file);
+    NutsDescriptor parse(Path path);
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(File file);
+    NutsDescriptor parse(File file);
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(InputStream stream);
+    NutsDescriptor parse(InputStream stream);
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @since 0.5.6
      */
-    NutsDescriptor read(String descriptorString);
+    NutsDescriptor parse(String descriptorString);
 
-    
     NutsDescriptorBuilder descriptorBuilder();
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance

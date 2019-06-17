@@ -64,8 +64,8 @@ public class Nuts {
 
     /**
      * main method. This Main will call
-     * {@link Nuts#runWorkspace(java.lang.String...)} then {@link System#exit(int)}
-     * at completion
+     * {@link Nuts#runWorkspace(java.lang.String...)} then
+     * {@link System#exit(int)} at completion
      *
      * @param args main arguments
      */
@@ -75,15 +75,15 @@ public class Nuts {
             runWorkspace(args);
             System.exit(0);
         } catch (Exception ex) {
-            System.exit(NutsApplications.processThrowable(ex,args,null));
+            System.exit(NutsApplications.processThrowable(ex, args, null));
         }
     }
 
     /**
-     * opens a workspace using "nuts.boot.args" and "nut.args" system properties.
-     * "nuts.boot.args" is to be passed by nuts parent process.
-     * "nuts.args" is an optional property that can be 'exec' method.
-     * This method is to be called by child processes of nuts in order to inherit
+     * opens a workspace using "nuts.boot.args" and "nut.args" system
+     * properties. "nuts.boot.args" is to be passed by nuts parent process.
+     * "nuts.args" is an optional property that can be 'exec' method. This
+     * method is to be called by child processes of nuts in order to inherit
      * workspace configuration.
      *
      * @param args arguments
@@ -94,7 +94,7 @@ public class Nuts {
         NutsBootWorkspace boot;
         String d = NutsUtilsLimited.trim(
                 NutsUtilsLimited.trim(System.getProperty("nuts.boot.args"))
-                +" "+ NutsUtilsLimited.trim(System.getProperty("nuts.args"))
+                + " " + NutsUtilsLimited.trim(System.getProperty("nuts.args"))
         );
         if (!NutsUtilsLimited.isBlank(d)) {
             boot = new NutsBootWorkspace(NutsUtilsLimited.parseCommandLine(d));
@@ -155,7 +155,8 @@ public class Nuts {
     }
 
     /**
-     * open then run Nuts application with the provided arguments. This Main will 
+     * open then run Nuts application with the provided arguments. This Main
+     * will
      * <strong>NEVER</strong>
      * call {@link System#exit(int)}.
      *

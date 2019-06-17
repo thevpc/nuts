@@ -33,6 +33,7 @@ import java.util.Objects;
 
 /**
  * simple and dummy implementation of NutsId base functions
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -49,19 +50,19 @@ final class NutsIdLimited {
     }
 
     static NutsIdLimited parse(String id) {
-        int dots=id.indexOf(':');
-        if(dots>0) {
+        int dots = id.indexOf(':');
+        if (dots > 0) {
             int dash = id.indexOf('#', dots + 1);
             if (dash < 0) {
                 //maven will use a double ':' instead of #
                 dash = id.indexOf(':', dots + 1);
             }
             if (dash >= 0) {
-                return new NutsIdLimited(id.substring(0, dots), id.substring(dots+1,dash), id.substring(dash+1));
+                return new NutsIdLimited(id.substring(0, dots), id.substring(dots + 1, dash), id.substring(dash + 1));
             }
-            return new NutsIdLimited(id.substring(0, dots), id.substring(dots+1), NutsConstants.Versions.LATEST);
+            return new NutsIdLimited(id.substring(0, dots), id.substring(dots + 1), NutsConstants.Versions.LATEST);
         }
-        throw new NutsParseException(null,"Unable to parse " + id);
+        throw new NutsParseException(null, "Unable to parse " + id);
     }
 
     @Override

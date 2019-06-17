@@ -99,7 +99,7 @@ public interface NutsPathCopyAction {
     NutsSession getSession();
 
     NutsPathCopyAction session(NutsSession session);
-    
+
     NutsPathCopyAction setSession(NutsSession session);
 
     void run();

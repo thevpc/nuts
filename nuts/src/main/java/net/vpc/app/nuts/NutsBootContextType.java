@@ -39,14 +39,13 @@ public enum NutsBootContextType {
      * Boot-Time requested configuration
      */
     BOOT,
-
     /**
      * Run-time used configuration
      */
     RUNTIME,
-    
     /**
-     * Run-time configuration (may be different from Boot time as configuration changes)
+     * Run-time configuration (may be different from Boot time as configuration
+     * changes)
      */
     CONFIG,
 }

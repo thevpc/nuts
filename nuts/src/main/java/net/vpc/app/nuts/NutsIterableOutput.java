@@ -37,19 +37,19 @@ import java.io.PrintWriter;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsIncrementalFormat extends NutsConfigurable {
+public interface NutsIterableOutput extends NutsConfigurable {
 
-    NutsIncrementalFormat out(PrintStream out);
+    NutsIterableOutput out(PrintStream out);
 
-    NutsIncrementalFormat setOut(PrintStream out);
+    NutsIterableOutput setOut(PrintStream out);
 
-    NutsIncrementalFormat out(PrintWriter out);
+    NutsIterableOutput out(PrintWriter out);
 
-    NutsIncrementalFormat setOut(PrintWriter out);
+    NutsIterableOutput setOut(PrintWriter out);
 
-    NutsIncrementalFormat session(NutsSession session);
+    NutsIterableOutput session(NutsSession session);
 
-    NutsIncrementalFormat setSession(NutsSession session);
+    NutsIterableOutput setSession(NutsSession session);
 
     void start();
 
@@ -67,6 +67,6 @@ public interface NutsIncrementalFormat extends NutsConfigurable {
      * @return {@code this} instance
      */
     @Override
-    NutsIncrementalFormat configure(boolean skipUnsupported, String... args);
+    NutsIterableOutput configure(boolean skipUnsupported, String... args);
 
 }

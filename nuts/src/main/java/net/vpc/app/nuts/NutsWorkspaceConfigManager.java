@@ -43,9 +43,9 @@ import java.util.logging.Level;
 public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String name();
-    
+
     String getName();
-    
+
     String getUuid();
 
     /**
@@ -139,7 +139,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsSdkLocation resolveSdkLocation(String sdkType, Path path);
 
     NutsWorkspaceOptions options();
-    
+
     NutsWorkspaceOptions getOptions();
 
     char[] decryptString(char[] input);
@@ -205,7 +205,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 
     String getDefaultIdFilename(NutsId id);
-    
+
     String getDefaultIdBasedir(NutsId id);
 
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
@@ -234,11 +234,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
      * @param transitive if true find into repositories mirrors
      * @return null if not found
      */
-    NutsRepository findRepository(String repositoryIdOrName,boolean transitive);
+    NutsRepository findRepository(String repositoryIdOrName, boolean transitive);
 
     NutsRepository getRepository(String repositoryIdOrName) throws NutsRepositoryNotFoundException;
-    
-    NutsRepository getRepository(String repositoryIdOrName,boolean transitive) throws NutsRepositoryNotFoundException;
+
+    NutsRepository getRepository(String repositoryIdOrName, boolean transitive) throws NutsRepositoryNotFoundException;
 
     NutsWorkspaceConfigManager removeRepository(String locationOrRepositoryId);
 

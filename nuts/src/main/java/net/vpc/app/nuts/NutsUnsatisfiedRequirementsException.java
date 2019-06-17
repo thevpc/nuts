@@ -36,30 +36,30 @@ import java.io.IOException;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsUnsatisfiedRequirementsException extends NutsException{
+public class NutsUnsatisfiedRequirementsException extends NutsException {
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace) {
         super(workspace);
     }
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message) {
-        super(workspace,message);
+        super(workspace, message);
     }
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace,message, cause);
+        super(workspace, message, cause);
     }
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace,cause);
+        super(workspace, cause);
     }
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, IOException cause) {
-        super(workspace,cause);
+        super(workspace, cause);
     }
 
     public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

@@ -32,12 +32,15 @@ package net.vpc.app.nuts;
 import java.io.OutputStream;
 
 /**
- * Interface to enable marking system streams.
- * When creating new processes nuts will dereference NutsOutputStreamTransparentAdapter
- * to check if the OutputStream i a system io. In that cas nuts will "inherit" output/error stream
+ * Interface to enable marking system streams. When creating new processes nuts
+ * will dereference NutsOutputStreamTransparentAdapter to check if the
+ * OutputStream i a system io. In that cas nuts will "inherit" output/error
+ * stream
+ *
  * @since 0.5.4
  */
 public interface NutsOutputStreamTransparentAdapter {
+
     /**
      * de-referenced stream
      *

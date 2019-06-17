@@ -34,7 +34,8 @@ import java.util.stream.Stream;
 
 /**
  * Find Result items from find command
- * @see NutsSearchCommand#getResultIds() 
+ *
+ * @see NutsSearchCommand#getResultIds()
  * @author vpc
  * @param <T> Result Type
  * @since 0.5.4
@@ -69,7 +70,7 @@ public interface NutsSearchResult<T> extends Iterable<T> {
      * @return the first value or NutsNotFoundException if not found
      */
     T required() throws NutsNotFoundException;
-    
+
     /**
      *
      * Calling this method twice will result in unexpected behavior (may return

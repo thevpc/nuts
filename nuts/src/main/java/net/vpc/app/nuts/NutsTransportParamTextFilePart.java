@@ -33,6 +33,7 @@ import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/8/17.
+ *
  * @since 0.5.4
  */
 public class NutsTransportParamTextFilePart extends NutsTransportParamPart {

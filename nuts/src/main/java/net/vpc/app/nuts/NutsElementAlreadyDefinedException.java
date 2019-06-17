@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -40,20 +40,19 @@ public class NutsElementAlreadyDefinedException extends NutsException {
         super(workspace);
     }
 
-
     public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message) {
-        super(workspace,message);
+        super(workspace, message);
     }
 
     public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace,message, cause);
+        super(workspace, message, cause);
     }
 
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
 }

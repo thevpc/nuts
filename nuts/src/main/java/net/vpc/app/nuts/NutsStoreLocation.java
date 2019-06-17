@@ -30,40 +30,35 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsStoreLocation {
-    
+
     PROGRAMS,
-    
     /**
-     * defines the base directory relative to which user specific configuration files should be stored.
-     * equivalent to $XDG_CONFIG_HOME on LINUX systems
+     * defines the base directory relative to which user specific configuration
+     * files should be stored. equivalent to $XDG_CONFIG_HOME on LINUX systems
      */
     CONFIG,
-    
     /**
-     * defines the base directory relative to which user specific data files should be stored.
-     * equivalent to $XDG_DATA_HOME on LINUX systems
+     * defines the base directory relative to which user specific data files
+     * should be stored. equivalent to $XDG_DATA_HOME on LINUX systems
      */
     VAR,
-    
     LOG,
-    
     TEMP,
-    
     /**
-     * defines the base directory relative to which user specific non-essential data files should be stored.
-     * equivalent to $XDG_CACHE_HOME on LINUX systems
+     * defines the base directory relative to which user specific non-essential
+     * data files should be stored. equivalent to $XDG_CACHE_HOME on LINUX
+     * systems
      */
     CACHE,
-    
     LIB,
-    
     /**
-     * defines the base directory relative to which user-specific non-essential runtime files and other file objects (such as sockets, named pipes, ...) 
+     * defines the base directory relative to which user-specific non-essential
+     * runtime files and other file objects (such as sockets, named pipes, ...)
      * equivalent to $XDG_RUNTIME_DIR on LINUX systems
      */
     RUN,

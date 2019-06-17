@@ -38,16 +38,16 @@ import java.util.Date;
  */
 public interface NutsURLHeader {
 
-    String getUrl() ;
+    String getUrl();
 
-    long getContentLength() ;
+    long getContentLength();
 
-    String getContentType() ;
+    String getContentType();
 
-    String getContentEncoding() ;
+    String getContentEncoding();
 
-    void setContentEncoding(String contentEncoding) ;
+    void setContentEncoding(String contentEncoding);
 
-    Date getLastModified() ;
+    Date getLastModified();
 
 }

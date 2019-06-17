@@ -31,22 +31,23 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsNotInstallableException extends NutsElementNotFoundException {
 
     private final String id;
 
-    public NutsNotInstallableException(NutsWorkspace workspace,NutsId nuts) {
-        this(workspace,nuts == null ? null : nuts.toString());
+    public NutsNotInstallableException(NutsWorkspace workspace, NutsId nuts) {
+        this(workspace, nuts == null ? null : nuts.toString());
     }
 
-    public NutsNotInstallableException(NutsWorkspace workspace,String nuts) {
+    public NutsNotInstallableException(NutsWorkspace workspace, String nuts) {
         super(workspace, "No such nuts " + (nuts == null ? "<null>" : nuts));
         this.id = nuts;
     }
 
-    public NutsNotInstallableException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
+    public NutsNotInstallableException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
         super(
                 workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);

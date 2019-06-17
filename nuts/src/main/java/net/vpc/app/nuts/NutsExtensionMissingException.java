@@ -31,13 +31,14 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsExtensionMissingException extends NutsElementNotFoundException {
 
     private final Class missingType;
 
-    public NutsExtensionMissingException(NutsWorkspace workspace,Class missingType, String extensionName) {
+    public NutsExtensionMissingException(NutsWorkspace workspace, Class missingType, String extensionName) {
         super(workspace, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.");
         this.missingType = missingType;
     }

@@ -39,7 +39,7 @@ import java.util.Collection;
  */
 public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
 
- NutsUpdateStatisticsCommand clearRepos();
+    NutsUpdateStatisticsCommand clearRepos();
 
     NutsUpdateStatisticsCommand repo(String s);
 
@@ -70,9 +70,10 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     NutsUpdateStatisticsCommand setSession(NutsSession session);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance
@@ -82,6 +83,7 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
 
     /**
      * execute the command and return this instance
+     *
      * @return {@code this} instance
      */
     @Override

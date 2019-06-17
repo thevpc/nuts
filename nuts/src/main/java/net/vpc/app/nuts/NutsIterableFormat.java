@@ -29,18 +29,24 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.PrintWriter;
-
 /**
  *
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsIncrementalFormatContext {
+public interface NutsIterableFormat extends NutsConfigurable {
 
-    NutsSession getSession();
+    NutsOutputFormat getOutputFormat();
 
-    PrintWriter getWriter();
+    @Override
+    public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine);
 
-    NutsWorkspace getWorkspace();
+    @Override
+    public NutsIterableFormat configure(boolean skipUnsupported, String... args);
+
+    void start();
+
+    void next(Object object, long index);
+
+    void complete(long count);
 }

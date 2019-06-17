@@ -31,37 +31,38 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsExecutorNotFoundException extends NutsElementNotFoundException {
 
     private final String id;
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace,NutsId nuts) {
-        this(workspace,nuts == null ? null : nuts.toString());
+    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts) {
+        this(workspace, nuts == null ? null : nuts.toString());
     }
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace,NutsId nuts, Exception ex) {
-        this(workspace,nuts == null ? null : nuts.toString(),null,ex);
+    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts, Exception ex) {
+        this(workspace, nuts == null ? null : nuts.toString(), null, ex);
     }
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace,String nuts) {
+    public NutsExecutorNotFoundException(NutsWorkspace workspace, String nuts) {
         super(workspace, "No such nuts executor " + (nuts == null ? "<null>" : nuts));
         this.id = nuts;
     }
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace,String nuts, String msg, Exception ex) {
+    public NutsExecutorNotFoundException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
         super(
                 workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace,NutsId nuts, String msg, Exception ex) {
+    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
         super(
                 workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
-        this.id = nuts==null?null:nuts.toString();
+        this.id = nuts == null ? null : nuts.toString();
     }
 
     public String getId() {

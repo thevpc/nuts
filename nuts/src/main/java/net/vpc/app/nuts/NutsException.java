@@ -32,39 +32,41 @@ package net.vpc.app.nuts;
 import java.io.IOException;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public class NutsException extends RuntimeException {
+
     private NutsWorkspace workspace;
+
     public NutsException(NutsWorkspace workspace) {
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
-    public NutsException(NutsWorkspace workspace,String message) {
+    public NutsException(NutsWorkspace workspace, String message) {
         super(message);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
-    public NutsException(NutsWorkspace workspace,String message, Throwable cause) {
+    public NutsException(NutsWorkspace workspace, String message, Throwable cause) {
         super(message, cause);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
-    public NutsException(NutsWorkspace workspace,Throwable cause) {
+    public NutsException(NutsWorkspace workspace, Throwable cause) {
         super(cause);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
-    public NutsException(NutsWorkspace workspace,IOException cause) {
+    public NutsException(NutsWorkspace workspace, IOException cause) {
         super(cause);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
-    public NutsException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
     public NutsWorkspace getWorkspace() {

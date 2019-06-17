@@ -43,6 +43,7 @@ public enum NutsElementType {
     OBJECT(false),
     UNKNWON(false);
     private final boolean primitive;
+
     private NutsElementType(boolean primitive) {
         this.primitive = primitive;
     }
@@ -50,5 +51,5 @@ public enum NutsElementType {
     public boolean isPrimitive() {
         return primitive;
     }
-    
+
 }

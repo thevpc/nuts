@@ -58,7 +58,7 @@ public interface NutsRepository {
 
     NutsDeployRepositoryCommand deploy();
 
-    NutsRepositoryUndeployCommand  undeploy();
+    NutsRepositoryUndeployCommand undeploy();
 
     NutsPushRepositoryCommand push();
 

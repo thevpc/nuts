@@ -799,9 +799,9 @@ final class NutsUtilsLimited {
         if (s == null) {
             return "<EMPTY>";
         }
-        String ss = 
-                (s instanceof Enum)?((Enum)s).name().toLowerCase().replace('_', '-'):
-                s.toString().trim();
+        String ss
+                = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
+                        : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 

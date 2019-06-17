@@ -31,11 +31,12 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsBootException extends NutsException {
 
-    public NutsBootException(NutsWorkspace workspace,String message) {
-        super(workspace,message == null ? "Nuts Boot Exception" : message);
+    public NutsBootException(NutsWorkspace workspace, String message) {
+        super(workspace, message == null ? "Nuts Boot Exception" : message);
     }
 }

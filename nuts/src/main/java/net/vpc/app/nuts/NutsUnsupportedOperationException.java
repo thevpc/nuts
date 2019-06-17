@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -40,19 +40,19 @@ public class NutsUnsupportedOperationException extends NutsException {
         super(workspace);
     }
 
-    public NutsUnsupportedOperationException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsUnsupportedOperationException(NutsWorkspace workspace, String message) {
+        super(workspace, message);
     }
 
-    public NutsUnsupportedOperationException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsUnsupportedOperationException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace, message, cause);
     }
 
-    public NutsUnsupportedOperationException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsUnsupportedOperationException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsUnsupportedOperationException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsUnsupportedOperationException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
 }

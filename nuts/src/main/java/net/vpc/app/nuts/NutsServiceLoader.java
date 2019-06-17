@@ -32,13 +32,13 @@ package net.vpc.app.nuts;
 import java.util.List;
 
 /**
- * 
+ *
  * @author vpc
  * @param <T>
- * @param <B> 
+ * @param <B>
  * @since 0.5.4
  */
-public interface NutsServiceLoader<T extends NutsComponent<B>,B> {
+public interface NutsServiceLoader<T extends NutsComponent<B>, B> {
 
     List<T> loadAll(B criteria);
 

@@ -485,9 +485,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setSession(NutsSession session);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance
@@ -497,6 +498,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * execute the command and return this instance
+     *
      * @return {@code this} instance
      */
     @Override

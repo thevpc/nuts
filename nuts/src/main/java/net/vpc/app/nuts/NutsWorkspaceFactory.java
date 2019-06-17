@@ -34,6 +34,7 @@ import java.util.Set;
 
 /**
  * Created by vpc on 1/5/17.
+ *
  * @since 0.5.4
  */
 public interface NutsWorkspaceFactory extends NutsComponent<NutsWorkspaceFactory> {

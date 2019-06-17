@@ -70,11 +70,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private boolean skipInstallCompanions;
-    
+
     /**
      * if true, do not run welcome when no application arguments were resolved.
-     * defaults to false
-     * option-type : exported (inherited in child workspaces)
+     * defaults to false option-type : exported (inherited in child workspaces)
+     *
      * @since 0.5.5
      */
     private boolean skipWelcome;

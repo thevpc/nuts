@@ -42,11 +42,12 @@ package net.vpc.app.nuts;
  * repos</li>
  * <li>enables uninstall mode to be executed when the jar is uninstaleld from
  * nuts repos</li>
- * <li>enables update mode to be executed when the a new version of the same
- * jar has been installed</li>
- * <li>have many default options enabled (such as --help, --version, --json, --table, etc.) and thus support natively multi output channels</li>
+ * <li>enables update mode to be executed when the a new version of the same jar
+ * has been installed</li>
+ * <li>have many default options enabled (such as --help, --version, --json,
+ * --table, etc.) and thus support natively multi output channels</li>
  * </ul>
- *  Typically a Nuts Application has follows this code pattern : 
+ * Typically a Nuts Application has follows this code pattern :
  * <pre>
  *   public class MyApplication extends NutsApplication{
  *     public static void main(String[] args) {
@@ -95,6 +96,7 @@ public abstract class NutsApplication {
 
     /**
      * run the application and <strong>EXIT</strong> process
+     *
      * @param args arguments
      */
     public void runAndExit(String[] args) {
@@ -108,9 +110,10 @@ public abstract class NutsApplication {
     }
 
     /**
-     * run the application with the given arguments.
-     * If the first arguments is in the form of --nuts-exec-mode=...
-     * the argument will be removed and the corresponding mode is activated.
+     * run the application with the given arguments. If the first arguments is
+     * in the form of --nuts-exec-mode=... the argument will be removed and the
+     * corresponding mode is activated.
+     *
      * @param args application arguments. should not be null or contain nulls
      */
     public void run(String[] args) {
@@ -119,8 +122,9 @@ public abstract class NutsApplication {
 
     /**
      * run the application with the given arguments against the given workspace
-     * If the first arguments is in the form of --nuts-exec-mode=...
-     * the argument will be removed and the corresponding mode is activated.
+     * If the first arguments is in the form of --nuts-exec-mode=... the
+     * argument will be removed and the corresponding mode is activated.
+     *
      * @param ws workspace (can be null)
      * @param args application arguments. should not be null or contain nulls
      */
@@ -148,31 +152,33 @@ public abstract class NutsApplication {
 
             @Override
             public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
-                NutsApplicationContext c = NutsApplication.this.createApplicationContext(ws, args, startTimeMillis);
-                if (c == null) {
-                    c = ws.io().createApplicationContext(args, NutsApplication.this.getClass(), null, startTimeMillis);
-                }
-                return c;
+                return NutsApplication.this.createApplicationContext(ws, args, startTimeMillis);
             }
         });
     }
 
     /**
-     * this method should be overridden to perform specific business when application is installed
+     * this method should be overridden to perform specific business when
+     * application is installed
+     *
      * @param applicationContext context
      */
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
     }
 
     /**
-     * this method should be overridden to perform specific business when application is updated
+     * this method should be overridden to perform specific business when
+     * application is updated
+     *
      * @param applicationContext context
      */
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
     }
 
     /**
-     * this method should be overridden to perform specific business when application is uninstalled
+     * this method should be overridden to perform specific business when
+     * application is uninstalled
+     *
      * @param applicationContext context
      */
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {

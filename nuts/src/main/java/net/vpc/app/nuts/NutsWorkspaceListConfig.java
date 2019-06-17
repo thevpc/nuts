@@ -35,6 +35,7 @@ import java.util.List;
 
 /**
  * Class for managing a Workspace list
+ *
  * @author Nasreddine Bac Ali
  * @date 2019-03-02
  * @since 0.5.4

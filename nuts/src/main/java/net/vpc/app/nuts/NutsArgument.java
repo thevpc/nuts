@@ -239,8 +239,8 @@ public interface NutsArgument extends NutsTokenFilter {
     String getStringValue(String defaultValue);
 
     /**
-     * parse argument's value as boolean
-     * equivalent to {@code getArgumentValue().getBoolean()}
+     * parse argument's value as boolean equivalent to
+     * {@code getArgumentValue().getBoolean()}
      *
      * @return boolean value
      */

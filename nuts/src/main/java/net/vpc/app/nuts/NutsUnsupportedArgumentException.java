@@ -40,19 +40,19 @@ public class NutsUnsupportedArgumentException extends NutsException {
         super(workspace);
     }
 
-    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace, String message) {
+        super(workspace, message);
     }
 
-    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace, message, cause);
     }
 
-    public NutsUnsupportedArgumentException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsUnsupportedArgumentException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsUnsupportedArgumentException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
 }

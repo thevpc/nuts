@@ -31,13 +31,14 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsWorkspaceNotFoundException extends NutsElementNotFoundException {
 
     private final String workspaceLocation;
 
-    public NutsWorkspaceNotFoundException(NutsWorkspace workspace,String workspaceLocation) {
+    public NutsWorkspaceNotFoundException(NutsWorkspace workspace, String workspaceLocation) {
         super(workspace, "No such workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation));
         this.workspaceLocation = workspaceLocation;
     }

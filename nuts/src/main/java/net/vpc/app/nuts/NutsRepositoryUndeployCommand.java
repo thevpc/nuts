@@ -34,14 +34,14 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand{
+public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 
     @Override
     NutsRepositoryUndeployCommand setSession(NutsRepositorySession session);
 
     @Override
     NutsRepositoryUndeployCommand session(NutsRepositorySession session);
-    
+
     @Override
     NutsRepositoryUndeployCommand run();
 
@@ -56,9 +56,8 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand{
     NutsRepositoryUndeployCommand setRepository(String repository);
 
     NutsRepositoryUndeployCommand setTransitive(boolean transitive);
-    
-//    NutsRepositoryUndeploymentOptions copy();
 
+//    NutsRepositoryUndeploymentOptions copy();
     boolean isOffline();
 
     NutsRepositoryUndeployCommand setOffline(boolean offline);
@@ -74,5 +73,5 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand{
     NutsRepositoryUndeployCommand transitive();
 
     NutsRepositoryUndeployCommand transitive(boolean transitive);
-    
+
 }

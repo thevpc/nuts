@@ -31,7 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Formatted used to format command line by {@link NutsExecCommand}
- * 
+ *
  * @see NutsExecCommand#setCommandStringFormat(NutsCommandStringFormat)
  * @see NutsExecCommand#getCommandString()
  * @author vpc
@@ -39,35 +39,35 @@ package net.vpc.app.nuts;
  */
 public interface NutsCommandLineFormat {
 
-    default boolean acceptArgument(int argIndex, String arg){
+    default boolean acceptArgument(int argIndex, String arg) {
         return true;
     }
 
-    default boolean acceptEnvName(String envName, String envValue){
+    default boolean acceptEnvName(String envName, String envValue) {
         return true;
     }
 
-    default boolean acceptRedirectInput(){
+    default boolean acceptRedirectInput() {
         return true;
     }
 
-    default boolean acceptRedirectOutput(){
+    default boolean acceptRedirectOutput() {
         return true;
     }
 
-    default boolean acceptRedirectError(){
+    default boolean acceptRedirectError() {
         return true;
     }
 
-    default String replaceArgument(int argIndex, String arg){
+    default String replaceArgument(int argIndex, String arg) {
         return null;
     }
 
-    default String replaceEnvName(String envName, String envValue){
+    default String replaceEnvName(String envName, String envValue) {
         return null;
     }
 
-    default String replaceEnvValue(String envName, String envValue){
+    default String replaceEnvValue(String envName, String envValue) {
         return null;
     }
 }

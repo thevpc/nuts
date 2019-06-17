@@ -40,22 +40,20 @@ public enum NutsArgumentType {
      */
     ANY,
     /**
-     * option that accepts a string as argument.
-     * Either the string is included in the argument itself (--option=value)
-     * or succeeds it (--option value).
+     * option that accepts a string as argument. Either the string is included
+     * in the argument itself (--option=value) or succeeds it (--option value).
      */
     STRING,
     /**
-     * option that accepts a string as argument as an immediate
-     * (included in the argument) value : in the form of (--option=value)
+     * option that accepts a string as argument as an immediate (included in the
+     * argument) value : in the form of (--option=value)
      */
     IMMEDIATE,
     /**
-     * option that accepts a boolean as argument.
-     * Either the boolean is not defined (--option), is included in the argument
-     * itself (--option=true) or succeeds it (--option true).
-     * Parsing boolean is also aware of negated options (--!option) that will be
-     * interpreted as (--!option=false).
+     * option that accepts a boolean as argument. Either the boolean is not
+     * defined (--option), is included in the argument itself (--option=true) or
+     * succeeds it (--option true). Parsing boolean is also aware of negated
+     * options (--!option) that will be interpreted as (--!option=false).
      */
     BOOLEAN,
 }

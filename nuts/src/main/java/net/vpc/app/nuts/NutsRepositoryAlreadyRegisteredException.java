@@ -31,18 +31,19 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsRepositoryAlreadyRegisteredException extends NutsElementAlreadyDefinedException {
 
     private final String repository;
 
-    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace,String repository) {
+    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository) {
         super(workspace, "Repository Already registered " + (repository == null ? "<null>" : repository));
         this.repository = repository;
     }
 
-    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace,String repository, Throwable err) {
+    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository, Throwable err) {
         super(workspace, "Repository Already registered " + (repository == null ? "<null>" : repository), err);
         this.repository = repository;
     }

@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 6/23/17.
+ *
  * @since 0.5.5
  */
 public interface NutsWorkspaceUpdateResult {
@@ -43,15 +44,15 @@ public interface NutsWorkspaceUpdateResult {
 
     NutsUpdateResult[] getComponents();
 
-    boolean isUpdatableApi() ;
+    boolean isUpdatableApi();
 
-    boolean isUpdatableRuntime() ;
+    boolean isUpdatableRuntime();
 
-    boolean isUpdatableExtensions() ;
+    boolean isUpdatableExtensions();
 
-    boolean isUpdateAvailable() ;
-    
-    int getUpdatesCount() ;
+    boolean isUpdateAvailable();
+
+    int getUpdatesCount();
 
     NutsUpdateResult[] getAllUpdates();
 

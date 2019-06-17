@@ -38,15 +38,15 @@ import java.util.Objects;
  */
 public interface NutsExtensionInfo {
 
-    NutsId getId() ;
+    NutsId getId();
 
-    String getName() ;
+    String getName();
 
-    String getDescription() ;
+    String getDescription();
 
-    String getAuthor() ;
+    String getAuthor();
 
-    String getCategory() ;
+    String getCategory();
 
-    String getSource() ;
+    String getSource();
 }

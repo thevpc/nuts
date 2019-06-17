@@ -41,13 +41,15 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     /**
      * Workspace identifier, guaranteed to be unique cross machines
+     *
      * @return uuid
      */
     String getUuid();
 
     /**
      * equivalent to {@link #getUuid()}
-     * @return 
+     *
+     * @return
      */
     String uuid();
 
@@ -82,7 +84,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsUpdateStatisticsCommand updateStatistics();
 
     ///////////////////// Environment
-    Map<String, Object> getUserProperties();
+    Map<String, Object> userProperties();
 
     ///////////////////// sub system
     NutsWorkspaceExtensionManager extensions();
@@ -94,11 +96,13 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsIOManager io();
 
     NutsFormatManager format();
-    
-    NutsCommandLine commandLine();
 
-    ///////////////////// utilities
-    String resolveDefaultHelp(Class clazz);
+    /**
+     * new instance of an empty command line
+     *
+     * @return new instance of an empty command line
+     */
+    NutsCommandLine commandLine();
 
     ///////////////////// factory
     NutsSession createSession();

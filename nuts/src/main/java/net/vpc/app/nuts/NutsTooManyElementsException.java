@@ -36,30 +36,30 @@ import java.io.IOException;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsTooManyElementsException extends NutsException{
+public class NutsTooManyElementsException extends NutsException {
 
     public NutsTooManyElementsException(NutsWorkspace workspace) {
-        this(workspace,"Too many Elements");
+        this(workspace, "Too many Elements");
     }
 
-    public NutsTooManyElementsException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsTooManyElementsException(NutsWorkspace workspace, String message) {
+        super(workspace, message);
     }
 
-    public NutsTooManyElementsException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause) {
+        super(workspace, message, cause);
     }
 
-    public NutsTooManyElementsException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsTooManyElementsException(NutsWorkspace workspace, Throwable cause) {
+        super(workspace, cause);
     }
 
-    public NutsTooManyElementsException(NutsWorkspace workspace,IOException cause) {
-        super(workspace,cause);
+    public NutsTooManyElementsException(NutsWorkspace workspace, IOException cause) {
+        super(workspace, cause);
     }
 
-    public NutsTooManyElementsException(NutsWorkspace workspace,String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace,message, cause, enableSuppression, writableStackTrace);
+    public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(workspace, message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

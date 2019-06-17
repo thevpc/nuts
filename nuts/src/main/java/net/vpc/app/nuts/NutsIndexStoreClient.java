@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */

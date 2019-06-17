@@ -69,14 +69,13 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
     /**
-     * @return 
-     * @since 0.5.6
+     * @return @since 0.5.6
      */
     NutsId getValue();
 
     /**
      * @param id
-     * @return 
+     * @return
      * @since 0.5.6
      */
     NutsIdFormat set(NutsId id);
@@ -89,7 +88,7 @@ public interface NutsIdFormat extends NutsFormat {
 
     /**
      * @param id
-     * @return 
+     * @return
      * @since 0.5.6
      */
     NutsIdFormat setValue(NutsId id);

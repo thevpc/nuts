@@ -123,12 +123,12 @@ public class NutsWorkspaceLocation implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsWorkspaceLocation{" +
-                "uuid='" + uuid + '\'' +
-                ", name='" + name + '\'' +
-                ", location='" + location + '\'' +
-                ", enabled=" + enabled +
-                '}';
+        return "NutsWorkspaceLocation{"
+                + "uuid='" + uuid + '\''
+                + ", name='" + name + '\''
+                + ", location='" + location + '\''
+                + ", enabled=" + enabled
+                + '}';
     }
 
     public NutsWorkspaceLocation copy() {

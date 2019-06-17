@@ -32,11 +32,12 @@ package net.vpc.app.nuts;
 import java.util.Collection;
 
 /**
- * Command class for adding users to workspaces and repositories.
- * All Command classes have a 'run' method to perform the operation.
- * @see NutsWorkspaceSecurityManager#addUser(java.lang.String) 
- * @see NutsRepositorySecurityManager#addUser(java.lang.String) 
- * 
+ * Command class for adding users to workspaces and repositories. All Command
+ * classes have a 'run' method to perform the operation.
+ *
+ * @see NutsWorkspaceSecurityManager#addUser(java.lang.String)
+ * @see NutsRepositorySecurityManager#addUser(java.lang.String)
+ *
  * @author vpc
  * @since 0.5.5
  */
@@ -99,7 +100,6 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     //
     // NutsWorkspaceCommand overridden methods
     //    
-
     @Override
     NutsAddUserCommand session(NutsSession session);
 
@@ -107,9 +107,10 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     NutsAddUserCommand setSession(NutsSession session);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance
@@ -119,6 +120,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * execute the command and return this instance
+     *
      * @return {@code this} instance
      */
     @Override

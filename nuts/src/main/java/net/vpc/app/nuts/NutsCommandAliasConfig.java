@@ -30,11 +30,12 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public class NutsCommandAliasConfig {
+
     private NutsId owner;
     private String name;
     private String factoryId;
@@ -92,7 +93,7 @@ public class NutsCommandAliasConfig {
         return helpCommand;
     }
 
-    public NutsCommandAliasConfig setHelpCommand(String ... helpCommand) {
+    public NutsCommandAliasConfig setHelpCommand(String... helpCommand) {
         this.helpCommand = helpCommand;
         return this;
     }
@@ -105,5 +106,5 @@ public class NutsCommandAliasConfig {
         this.helpText = helpText;
         return this;
     }
-    
+
 }

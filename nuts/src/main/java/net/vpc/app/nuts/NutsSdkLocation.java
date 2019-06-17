@@ -44,7 +44,7 @@ public class NutsSdkLocation implements Serializable {
     private String path;
     private String version;
 
-    public NutsSdkLocation(String type,String name, String path, String version) {
+    public NutsSdkLocation(String type, String name, String path, String version) {
         this.type = type;
         this.name = name;
         this.path = path;
@@ -89,7 +89,5 @@ public class NutsSdkLocation implements Serializable {
     public String getPath() {
         return path;
     }
-
-
 
 }

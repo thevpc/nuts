@@ -62,11 +62,11 @@ public interface NutsJsonFormat extends NutsFormat {
      */
     NutsJsonFormat setValue(Object value);
 
-    <T> T read(Reader reader, Class<T> cls);
+    <T> T parse(Reader reader, Class<T> cls);
 
-    <T> T read(Path file, Class<T> cls);
+    <T> T parse(Path file, Class<T> cls);
 
-    <T> T read(File file, Class<T> cls);
+    <T> T parse(File file, Class<T> cls);
 
     @Override
     NutsJsonFormat session(NutsSession session);

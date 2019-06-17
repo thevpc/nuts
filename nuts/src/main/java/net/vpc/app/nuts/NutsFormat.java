@@ -39,11 +39,12 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsFormat extends NutsConfigurable{
+public interface NutsFormat extends NutsConfigurable {
 
     /**
      * equivalent to {@link #format() }
-     * @return 
+     *
+     * @return
      */
     @Override
     String toString();
@@ -81,9 +82,10 @@ public interface NutsFormat extends NutsConfigurable{
     NutsFormat setSession(NutsSession session);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance

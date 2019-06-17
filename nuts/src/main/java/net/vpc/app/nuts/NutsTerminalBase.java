@@ -34,6 +34,7 @@ import java.io.PrintStream;
 
 /**
  * Created by vpc on 2/20/17.
+ *
  * @since 0.5.4
  */
 public interface NutsTerminalBase extends NutsComponent<Object> {

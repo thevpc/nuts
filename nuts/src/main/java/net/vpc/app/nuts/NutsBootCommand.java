@@ -27,27 +27,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-
 package net.vpc.app.nuts;
 
 /**
  * defining command that could bootstrap Nuts using 
- * {@link Nuts#runWorkspace(java.lang.String...) } method.
- * version, help and reset command are available before bootstrapping a valid 
- * workspace ; whereas exec command requires a valid, booted workspace to be executed.
+ * {@link Nuts#runWorkspace(java.lang.String...) } method. version, help and
+ * reset command are available before bootstrapping a valid workspace ; whereas
+ * exec command requires a valid, booted workspace to be executed.
  * {@link NutsWorkspaceOptions#setBootCommand(net.vpc.app.nuts.NutsBootCommand) }
+ *
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsBootCommand {
     /**
-     * deletes workspace files and continue with EXEC command.
-     * If there is no arguments exit and the workspace will not boot up.
+     * deletes workspace files and continue with EXEC command. If there is no
+     * arguments exit and the workspace will not boot up.
      */
     RESET,
     /**
-     * deletes workspace cache files and continue with EXEC command.
-     * If there is no arguments exit and the workspace will not boot up.
+     * deletes workspace cache files and continue with EXEC command. If there is
+     * no arguments exit and the workspace will not boot up.
      */
     RECOVER,
     /**

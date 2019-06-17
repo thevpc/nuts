@@ -32,11 +32,12 @@ package net.vpc.app.nuts;
 import java.util.logging.Level;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public class NutsLogConfig {
+
     private Level logLevel = null;
     private int logSize = 0;
     private int logCount = 0;
@@ -107,5 +108,5 @@ public class NutsLogConfig {
         this.debug = debug;
         return this;
     }
-    
+
 }

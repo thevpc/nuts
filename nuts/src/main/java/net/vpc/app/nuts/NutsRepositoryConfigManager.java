@@ -111,11 +111,11 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     public int getDeployOrder();
 
     NutsRepositoryConfigManager setEnabled(boolean enabled);
-    
+
     NutsRepositoryConfigManager setTemporary(boolean enabled);
 
     boolean isEnabled();
-    
+
     boolean subscribeIndex();
 
     NutsRepositoryConfigManager unsubscribeIndex();
@@ -130,7 +130,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
      * @return
      */
     NutsRepository getMirror(String repositoryIdOrName, boolean transitive);
-    
+
     NutsRepository getMirror(String repositoryIdOrName);
 
     NutsRepository findMirror(String repositoryIdOrName, boolean transitive);

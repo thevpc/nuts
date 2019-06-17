@@ -35,8 +35,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes that are marked with this annotation will be created at each call by the factory
- * Created by vpc on 1/24/17.
+ * classes that are marked with this annotation will be created at each call by
+ * the factory Created by vpc on 1/24/17.
+ *
  * @since 0.5.4
  */
 @Retention(RetentionPolicy.RUNTIME)

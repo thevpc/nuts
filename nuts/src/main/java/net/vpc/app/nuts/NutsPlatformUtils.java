@@ -223,10 +223,10 @@ public class NutsPlatformUtils {
      * @return home folder path
      */
     public static String resolveHomeFolder(
-            NutsStoreLocationLayout storeLocationLayout, 
-            NutsStoreLocation folderType, 
-            String[] homeLocations, 
-            boolean global, 
+            NutsStoreLocationLayout storeLocationLayout,
+            NutsStoreLocation folderType,
+            String[] homeLocations,
+            boolean global,
             String id) {
         NutsStoreLocation folderType0 = folderType;
         if (folderType == null) {
@@ -264,11 +264,11 @@ public class NutsPlatformUtils {
         if (!s.isEmpty()) {
             return s.trim() + "/" + id;
         }
-        s = homeLocations==null?"":NutsUtilsLimited.trim(homeLocations[storeLocationLayout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()]);
+        s = homeLocations == null ? "" : NutsUtilsLimited.trim(homeLocations[storeLocationLayout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()]);
         if (!s.isEmpty()) {
             return s.trim();
         }
-        s = homeLocations==null?"":NutsUtilsLimited.trim(homeLocations[NutsStoreLocationLayout.SYSTEM.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()]);
+        s = homeLocations == null ? "" : NutsUtilsLimited.trim(homeLocations[NutsStoreLocationLayout.SYSTEM.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()]);
         if (!s.isEmpty()) {
             return s.trim();
         }

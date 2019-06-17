@@ -34,7 +34,8 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.5
  */
-class NutsTokenFilterLimited implements NutsTokenFilter{
+class NutsTokenFilterLimited implements NutsTokenFilter {
+
     protected String expression;
 
     public NutsTokenFilterLimited(String expression) {
@@ -43,12 +44,12 @@ class NutsTokenFilterLimited implements NutsTokenFilter{
 
     @Override
     public boolean isNull() {
-        return expression==null;
+        return expression == null;
     }
 
     @Override
     public boolean isBlank() {
-        return expression==null|| expression.trim().isEmpty();
+        return expression == null || expression.trim().isEmpty();
     }
 
     @Override

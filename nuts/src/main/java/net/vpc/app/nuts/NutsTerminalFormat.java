@@ -38,8 +38,9 @@ import java.util.Locale;
 
 /**
  * Filtered Terminal Format Helper
- * @see NutsIOManager#getTerminalFormat() 
- * @see NutsWorkspace#io() 
+ *
+ * @see NutsIOManager#getTerminalFormat()
+ * @see NutsWorkspace#io()
  * @author vpc
  * @since 0.5.5
  */
@@ -70,8 +71,10 @@ public interface NutsTerminalFormat {
     String escapeText(String value);
 
     /**
-     * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...) }
+     * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)
+     * }
      * pattern format and adds %N special format to print unfiltered strings.
+     *
      * @param locale locale
      * @param format %N aware format
      * @param args arguments
@@ -80,8 +83,10 @@ public interface NutsTerminalFormat {
     String formatText(Locale locale, String format, Object... args);
 
     /**
-     * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...) }
+     * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...)
+     * }
      * pattern format and adds %N special format to print unfiltered strings.
+     *
      * @param format %N aware format
      * @param args arguments
      * @return formatted string
@@ -89,36 +94,38 @@ public interface NutsTerminalFormat {
     String formatText(String format, Object... args);
 
     /**
-     * prepare PrintStream to handle %N (escape) format pattern.
-     * If the instance already supports Nuts specific pattern
-     * it will be returned unmodified.
+     * prepare PrintStream to handle %N (escape) format pattern. If the instance
+     * already supports Nuts specific pattern it will be returned unmodified.
+     *
      * @param out PrintStream to check
      * @return %N pattern format capable PrintStream
      */
     PrintStream prepare(PrintStream out);
 
     /**
-     * prepare PrintWriter to handle %N (escape) format pattern.
-     * If the instance already supports Nuts specific pattern
-     * it will be returned unmodified.
+     * prepare PrintWriter to handle %N (escape) format pattern. If the instance
+     * already supports Nuts specific pattern it will be returned unmodified.
+     *
      * @param out PrintWriter to check
      * @return %N pattern format capable PrintWriter
      */
     PrintWriter prepare(PrintWriter out);
-    
+
     /**
-     * true if the stream is not null and could be resolved as Formatted Output Stream.
-     * If False is returned this does no mean necessarily that the stream is 
-     * not formatted. 
+     * true if the stream is not null and could be resolved as Formatted Output
+     * Stream. If False is returned this does no mean necessarily that the
+     * stream is not formatted.
+     *
      * @param out stream to check
      * @return true if formatted
      */
     boolean isFormatted(OutputStream out);
-    
+
     /**
-     * true if the stream is not null and could be resolved as Formatted Output Stream.
-     * If False is returned this does no mean necessarily that the stream is 
-     * not formatted. 
+     * true if the stream is not null and could be resolved as Formatted Output
+     * Stream. If False is returned this does no mean necessarily that the
+     * stream is not formatted.
+     *
      * @param out stream to check
      * @return true if formatted
      */

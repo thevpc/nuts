@@ -30,8 +30,9 @@
 package net.vpc.app.nuts;
 
 /**
- * Thrown to indicate that the component is already installed and should not be reinstalled
- * Created by vpc on 1/15/17.
+ * Thrown to indicate that the component is already installed and should not be
+ * reinstalled Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 public class NutsAlreadyInstalledException extends NutsElementNotFoundException {
@@ -40,37 +41,40 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
 
     /**
      * Custom Constructor
+     *
      * @param workspace workspace
      * @param id nuts id
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace,NutsId id) {
-        this(workspace,id == null ? null : id.toString());
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
     }
 
     /**
-     * 
+     *
      * @param workspace
-     * @param id 
+     * @param id
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace,String id) {
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id) {
         super(workspace, "Already Installed nuts " + (id == null ? "<null>" : id));
         this.id = id;
     }
 
     /**
      * Custom Constructor
+     *
      * @param workspace workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace,String id, String msg, Exception ex) {
-        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (id == null ? "<null>" : id) : msg,ex);
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (id == null ? "<null>" : id) : msg, ex);
         this.id = id;
     }
 
     /**
      * nuts id
+     *
      * @return nuts id
      */
     public String getId() {

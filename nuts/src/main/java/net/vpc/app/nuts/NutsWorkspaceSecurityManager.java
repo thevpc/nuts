@@ -40,6 +40,7 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * equivalent to {@link #getCurrentLogin()}.
+     *
      * @return current login
      */
     String currentLogin();
@@ -48,6 +49,7 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * equivalent to {@link #getCurrentLoginStack()}.
+     *
      * @return current login
      */
     String[] currentLoginStack();
@@ -85,7 +87,7 @@ public interface NutsWorkspaceSecurityManager {
     NutsAuthenticationAgent getAuthenticationAgent(String id);
 
     boolean isSecure();
-    
+
     /**
      * check if the given <code>password</code> is valid against the one stored
      * by the Authentication Agent for  <code>credentialsId</code>
@@ -97,9 +99,9 @@ public interface NutsWorkspaceSecurityManager {
     void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
 
     /**
-     * get the credentials for the given id. 
-     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
-     * AuthenticationAgent'd id and ':' character
+     * get the credentials for the given id. The {@code credentialsId}
+     * <strong>MUST</strong> be prefixed with AuthenticationAgent'd id and ':'
+     * character
      *
      * @param credentialsId credentials-id
      * @return credentials
@@ -107,9 +109,9 @@ public interface NutsWorkspaceSecurityManager {
     char[] getCredentials(char[] credentialsId);
 
     /**
-     * remove existing credentials with the given id
-     * The {@code credentialsId} <strong>MUST</strong> be prefixed with 
-     * AuthenticationAgent'd id and ':' character
+     * remove existing credentials with the given id The {@code credentialsId}
+     * <strong>MUST</strong> be prefixed with AuthenticationAgent'd id and ':'
+     * character
      *
      * @param credentialsId credentials-id
      * @return credentials
@@ -117,10 +119,10 @@ public interface NutsWorkspaceSecurityManager {
     boolean removeCredentials(char[] credentialsId);
 
     /**
-     * store credentials in the agent's and return the credential id to store into
-     * the config. if credentialId is not null, the given credentialId will be
-     * updated and the credentialId is returned.
-     * The {@code credentialsId},if present or returned, <strong>MUST</strong> be prefixed with 
+     * store credentials in the agent's and return the credential id to store
+     * into the config. if credentialId is not null, the given credentialId will
+     * be updated and the credentialId is returned. The {@code credentialsId},if
+     * present or returned, <strong>MUST</strong> be prefixed with
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
