@@ -234,7 +234,7 @@ public class DefaultNutsInstalledRepository {
         return new FolderNutIdIterator(ws, "installed", folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
-                //MavenFolderRepository.this.undeploy(id, session);
+                //MavenFolderRepository.this.undeploy(parseId, session);
             }
 
             @Override
@@ -278,7 +278,7 @@ public class DefaultNutsInstalledRepository {
                                 public NutsId apply(File folder) {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                                        NutsVersion vv = ws.parse().version(folder.getName());
+                                        NutsVersion vv = ws.format().version().parseVersion(folder.getName());
                                         if (filter0.accept(vv, ws, session.getSession()) && (filter == null || filter.accept(id.setVersion(vv), ws, session.getSession()))) {
                                             return id.setVersion(folder.getName());
                                         }
@@ -303,7 +303,7 @@ public class DefaultNutsInstalledRepository {
             try (DirectoryStream<Path> ds = Files.newDirectoryStream(installFolder)) {
                 for (Path folder : ds) {
                     if (Files.isDirectory(folder) && Files.isRegularFile(folder.resolve(NUTS_INSTALL_FILE))) {
-                        if (filter.accept(ws.parse().version(folder.getFileName().toString()), ws, session.getSession())) {
+                        if (filter.accept(ws.format().version().parseVersion(folder.getFileName().toString()), ws, session.getSession())) {
                             ok.add(id.setVersion(folder.getFileName().toString()));
                         }
                     }

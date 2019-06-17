@@ -66,10 +66,14 @@ public class DefaultNutsCommand implements NutsCommandLine {
     private char eq = '=';
 
     //Constructors
+    public DefaultNutsCommand(NutsWorkspace ws) {
+        this.ws = ws;
+    }
+
     public DefaultNutsCommand(NutsWorkspace ws, NutsCommandLineContext context) {
         this.ws = ws;
-        setArgs(context.getArguments());
-        setAutoComplete(context.getAutoComplete());
+        setArgs(context == null ? null : context.getArguments());
+        setAutoComplete(context == null ? null : context.getAutoComplete());
     }
 
     public DefaultNutsCommand(NutsWorkspace ws, String[] args, NutsCommandAutoComplete autoComplete) {
@@ -91,6 +95,11 @@ public class DefaultNutsCommand implements NutsCommandLine {
 
     public DefaultNutsCommand(List<String> args) {
         setArgs(args);
+    }
+
+    public NutsCommandLine parseLine(String commandLine) {
+        setArgs(NutsCommandLineUtils.parseCommandLine(ws, commandLine));
+        return this;
     }
 
     //End Constructors
@@ -224,14 +233,17 @@ public class DefaultNutsCommand implements NutsCommandLine {
         return all.toArray(new String[0]);
     }
 
-    public void setArgs(List<String> args) {
-        setArgs(args.toArray(new String[0]));
+    public NutsCommandLine setArgs(List<String> args) {
+        return setArgs(args.toArray(new String[0]));
     }
 
-    public void setArgs(String[] args) {
+    public NutsCommandLine setArgs(String[] args) {
         this.lookahead.clear();
         this.args.clear();
-        Collections.addAll(this.args, args);
+        if (args != null) {
+            Collections.addAll(this.args, args);
+        }
+        return this;
     }
 
     @Override
@@ -311,7 +323,7 @@ public class DefaultNutsCommand implements NutsCommandLine {
                     }
                 }
             }
-            if(!isPrefixed(nameSeqArray)){
+            if (!isPrefixed(nameSeqArray)) {
                 continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];

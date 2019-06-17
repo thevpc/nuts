@@ -94,4 +94,16 @@ public interface NutsIOManager extends NutsComponent<Object> {
     NutsIOManager setSystemTerminal(NutsSystemTerminalBase term);
 
     NutsIOManager setTerminal(NutsSessionTerminal terminal);
+
+    /**
+     * parseExecutionEntries
+     *
+     * @param file jar file
+     * @return execution entries (class names with main method)
+     */
+    NutsExecutionEntry[] parseExecutionEntries(File file);
+
+    NutsExecutionEntry[] parseExecutionEntries(Path file);
+
+    NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
 }

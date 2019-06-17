@@ -24,6 +24,7 @@ import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.terminals.UnmodifiableTerminal;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -48,6 +49,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getHomeLocation(NutsStoreLocation.CACHE).toString();
                 case "home.log":
                     return ws.config().getHomeLocation(NutsStoreLocation.LOG).toString();
+                case "home.run":
+                    return ws.config().getHomeLocation(NutsStoreLocation.RUN).toString();
                 case "workspace":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
                 case "user.home":
@@ -496,4 +499,42 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return getTerminal();
     }
 
+    @Override
+    public NutsExecutionEntry[] parseExecutionEntries(File file) {
+        return parseExecutionEntries(file.toPath());
+    }
+
+    @Override
+    public NutsExecutionEntry[] parseExecutionEntries(Path file) {
+        if (file.getFileName().toString().toLowerCase().endsWith(".jar")) {
+            try {
+                try (InputStream in = Files.newInputStream(file)) {
+                    return parseExecutionEntries(in, "java", file.toAbsolutePath().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        } else if (file.getFileName().toString().toLowerCase().endsWith(".class")) {
+            try {
+                try (InputStream in = Files.newInputStream(file)) {
+                    return parseExecutionEntries(in, "class", file.toAbsolutePath().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        } else {
+            return new NutsExecutionEntry[0];
+        }
+    }
+
+    @Override
+    public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
+        if ("java".equals(type)) {
+            return CorePlatformUtils.parseJarExecutionEntries(inputStream, sourceName);
+        } else if ("class".equals(type)) {
+            NutsExecutionEntry u = CorePlatformUtils.parseClassExecutionEntry(inputStream, sourceName);
+            return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
+        }
+        return new NutsExecutionEntry[0];
+    }
 }

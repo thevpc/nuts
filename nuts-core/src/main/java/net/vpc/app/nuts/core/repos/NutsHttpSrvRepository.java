@@ -99,7 +99,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
                 new NutsTransportParamParamPart("force", String.valueOf(command.getSession().getSession().isForce()))
         );
-        //TODO should read the id
+        //TODO should read the parse
     }
 
     @Override
@@ -261,10 +261,10 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //    }
 
 //    @Override
-//    public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
-//        super.checkAllowedFetch(id, session);
+//    public void checkAllowedFetch(NutsId parse, NutsRepositorySession session) {
+//        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-//            throw new NutsNotFoundException(getWorkspace(), id);
+//            throw new NutsNotFoundException(getWorkspace(), parse);
 //        }
 //    }
 
@@ -308,7 +308,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().parse().requiredId(line);
+            NutsId nutsId = getWorkspace().format().id().parseRequired(line);
             return nutsId.setNamespace(config().getName());
         }
     }

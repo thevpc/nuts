@@ -49,7 +49,7 @@ public class DefaultSourceControlHelper {
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = ws.parse().version(oldVersion).inc().getValue();
+            String newVersion = ws.format().version().parseVersion(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
                 newVersionFound = ws.fetch().id(d.getId().setVersion(newVersion)).setSession(session).getResultDefinition();
@@ -76,7 +76,7 @@ public class DefaultSourceControlHelper {
 
 //    @Override
     public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(ws.parse().requiredId(id), folder, session);
+        return checkout(ws.format().id().parseRequired(id), folder, session);
     }
 
 //    @Override

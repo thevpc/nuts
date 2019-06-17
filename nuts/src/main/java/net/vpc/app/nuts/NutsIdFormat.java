@@ -69,19 +69,40 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
     /**
+     * @return 
      * @since 0.5.6
      */
     NutsId getValue();
 
     /**
+     * @param id
+     * @return 
      * @since 0.5.6
      */
     NutsIdFormat set(NutsId id);
 
+    NutsIdBuilder builder();
+
+    NutsId resolveId(Class clazz);
+
+    NutsId[] resolveIds(Class clazz);
+
     /**
+     * @param id
+     * @return 
      * @since 0.5.6
      */
     NutsIdFormat setValue(NutsId id);
+
+    NutsId parseRequired(String nutFormat);
+
+    NutsId parse(String id);
+
+    @Override
+    NutsIdFormat session(NutsSession session);
+
+    @Override
+    NutsIdFormat setSession(NutsSession session);
 
     /**
      * configure the current command with the given arguments. This is an

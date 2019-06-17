@@ -27,7 +27,7 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
     public NutsElementFormat element() {
         return new DefaultNutsElementFormat(ws);
     }
-    
+
     @Override
     public NutsXmlFormat xml() {
         return new DefaultNutsXmlFormat(ws);
@@ -39,7 +39,7 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
     }
 
     @Override
-    public NutsWorkspaceVersionFormat version() {
+    public NutsVersionFormat version() {
         return new DefaultVersionFormat(ws);
     }
 
@@ -76,6 +76,11 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
     @Override
     public NutsObjectFormat object() {
         return new DefaultNutsObjectFormat(ws);
+    }
+
+    @Override
+    public NutsDependencyFormat dependency() {
+        return new DefaultNutsDependencyFormat(ws);
     }
 
 }

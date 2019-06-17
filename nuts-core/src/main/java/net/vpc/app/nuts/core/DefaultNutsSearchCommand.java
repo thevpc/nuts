@@ -196,7 +196,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.parse().requiredId(s));
+                    ids.add(ws.format().id().parseRequired(s));
                 }
             }
         }
@@ -507,14 +507,14 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
 
     @Override
     public NutsSearchCommand removeId(String id) {
-        ids.remove(ws.parse().id(id));
+        ids.remove(ws.format().id().parse(id));
         return this;
     }
 
     @Override
     public NutsSearchCommand addId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.parse().requiredId(id));
+            ids.add(ws.format().id().parseRequired(id));
         }
         return this;
     }
@@ -741,7 +741,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         }
         if (!wildcardIds.isEmpty()) {
             for (String wildcardId : wildcardIds) {
-                _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.parse().id(wildcardId))));
+                _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.format().id().parse(wildcardId))));
             }
         }
         NutsFetchCommand k = toFetch();
@@ -1052,7 +1052,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         IteratorBuilder<NutsExecutionEntry> a = IteratorBuilder.of(getResultDefinitions(false).iterator())
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                : Arrays.asList(ws.parse().executionEntries(x.getContent().getPath())));
+                : Arrays.asList(ws.io().parseExecutionEntries(x.getContent().getPath())));
         if (isSort()) {
             a = a.sort(null, !isDuplicates());
         }
@@ -1222,7 +1222,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         NutsFetchStrategy fetchMode = NutsWorkspaceHelper.validate(search.getOptions().getFetchStrategy());
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = ws.parse().id(id);
+                NutsId nutsId = ws.format().id().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (nutsId.getGroup() == null) {

@@ -304,7 +304,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(getContext().getWorkspace().parse().command(
+                install(getContext().getWorkspace().commandLine().setArgs(
                         new String[]{
                             "--name",
                             instance,

@@ -151,7 +151,7 @@ public class DataService {
         }
         String[] array = ws.format().json().read(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -164,7 +164,7 @@ public class DataService {
         Map<String, String> row = rows.get(0);
         String[] array = ws.format().json().read(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)))
                 .collect(Collectors.toList());
         return dependencies;
     }

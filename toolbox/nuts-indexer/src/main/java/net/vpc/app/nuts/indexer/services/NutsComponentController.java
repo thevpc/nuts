@@ -80,7 +80,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.idBuilder()
+                NutsId id = ws.format().id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -123,7 +123,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.idBuilder()
+                NutsId id = ws.format().id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -163,7 +163,7 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        ws.idBuilder()
+                        ws.format().id().builder()
                                 .setName(name)
                                 .setNamespace(namespace)
                                 .setGroup(group)
@@ -202,7 +202,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.idBuilder()
+                NutsId id = ws.format().id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -250,7 +250,7 @@ public class NutsComponentController {
                 String[] array = ws.format().json().read(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));
                 }
                 d.put("dependencies", dependencies);
             }
@@ -258,7 +258,7 @@ public class NutsComponentController {
                 String[] array = ws.format().json().read(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parse().id(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));
                 }
                 d.put("allDependencies", allDependencies);
             }

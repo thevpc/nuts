@@ -29,80 +29,84 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
-
 /**
  *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.6
  */
-public interface NutsDescriptorFormat extends NutsFormat {
+public interface NutsDependencyFormat extends NutsFormat {
 
-    boolean isCompact();
+    boolean isOmitNamespace();
 
-    NutsDescriptorFormat compact(boolean compact);
+    NutsDependencyFormat setOmitNamespace(boolean omitNamespace);
 
-    NutsDescriptorFormat compact();
+    boolean isOmitGroup();
 
-    NutsDescriptorFormat setCompact(boolean compact);
+    NutsDependencyFormat setOmitGroup(boolean omitGroup);
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptorFormat set(NutsDescriptor descriptor);
-    
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(URL url);
+    boolean isOmitImportedGroup();
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(byte[] bytes);
+    NutsDependencyFormat setOmitImportedGroup(boolean omitImportedGroup);
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(Path file);
+    boolean isOmitEnv();
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(File file);
+    NutsDependencyFormat setOmitEnv(boolean omitEnv);
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(InputStream stream);
+    boolean isOmitFace();
 
-    /***
-     * 
-     * @since 0.5.6
-     */
-    NutsDescriptor read(String descriptorString);
+    NutsDependencyFormat setOmitFace(boolean omitFace);
 
-    
-    NutsDescriptorBuilder descriptorBuilder();
+    boolean isHighlightImportedGroup();
+
+    NutsDependencyFormat setHighlightImportedGroup(boolean highlightImportedGroup);
+
+    boolean isHighlightScope();
+
+    NutsDependencyFormat setHighlightScope(boolean highlightScope);
+
+    boolean isHighlightOptional();
+
+    NutsDependencyFormat setHighlightOptional(boolean highlightOptional);
 
     /**
-     * configure the current command with the given arguments.
-     * This is an override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * @return @since 0.5.6
+     */
+    NutsDependency getValue();
+
+    /**
+     * @param id
+     * @return
+     * @since 0.5.6
+     */
+    NutsDependencyFormat set(NutsDependency id);
+
+    NutsDependencyBuilder builder();
+
+    NutsDependency parse(String dependency);
+
+    /**
+     * @param id
+     * @return
+     * @since 0.5.6
+     */
+    NutsDependencyFormat setValue(NutsDependency id);
+
+    @Override
+    NutsDependencyFormat session(NutsSession session);
+
+    @Override
+    NutsDependencyFormat setSession(NutsSession session);
+
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
      * to help return a more specific return type;
+     *
      * @param skipUnsupported when true, all unsupported options are skipped
      * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
-    public NutsDescriptorFormat configure(boolean skipUnsupported, String... args);
+    public NutsDependencyFormat configure(boolean skipUnsupported, String... args);
 
 }

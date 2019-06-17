@@ -78,7 +78,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(ws.parse().requiredId(id), extensionType, session);
+        return findExtensions(ws.format().id().parseRequired(id), extensionType, session);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 }
             }
         }
-        //versionProperties = IOUtils.loadProperties(DefaultNutsWorkspace.class.getResource("/META-INF/nuts-core-version.properties"));
+        //versionProperties = IOUtils.loadProperties(DefaultNutsWorkspace.class.getResource("/META-INF/nuts-core-parseVersion.properties"));
         this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], bootClassLoader);
     }
 
@@ -216,11 +216,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsSimpleName(ws.parse().requiredId(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsSimpleName(ws.format().id().parseRequired(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {
-            //            NutsDefinition file = fetch(id.toString(), session);
+            //            NutsDefinition file = fetch(parse.toString(), session);
             if (file.getPath() != null) {
                 ZipFile zipFile = null;
                 try {

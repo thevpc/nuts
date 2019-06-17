@@ -49,11 +49,13 @@ public interface NutsFormatManager {
 
     NutsIdFormat id();
 
-    NutsWorkspaceVersionFormat version();
+    NutsVersionFormat version();
 
     NutsWorkspaceInfoFormat info();
 
     NutsDescriptorFormat descriptor();
+
+    NutsDependencyFormat dependency();
 
     NutsTreeFormat tree();
 

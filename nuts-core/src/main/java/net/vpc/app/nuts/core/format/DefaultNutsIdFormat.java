@@ -7,6 +7,9 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.util.Map;
+import net.vpc.app.nuts.core.DefaultNutsIdBuilder;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
+import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> implements NutsIdFormat {
@@ -257,12 +260,50 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
+    public NutsId parse(String id) {
+        return CoreNutsUtils.parseNutsId(id);
+    }
+
+    @Override
+    public NutsId parseRequired(String nutFormat) {
+        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+        if (id == null) {
+            throw new NutsParseException(ws, "Invalid Id format : " + nutFormat);
+        }
+        return id;
+    }
+
+    @Override
     public void print(Writer out) {
         try {
             out.write(format());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    @Override
+    public NutsIdBuilder builder() {
+        return new DefaultNutsIdBuilder();
+    }
+
+    @Override
+    public NutsId resolveId(Class clazz) {
+        PomId u = PomIdResolver.resolvePomId(clazz, null);
+        if (u == null) {
+            return null;
+        }
+        return parse(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
+    }
+
+    @Override
+    public NutsId[] resolveIds(Class clazz) {
+        PomId[] u = PomIdResolver.resolvePomIds(clazz);
+        NutsId[] all = new NutsId[u.length];
+        for (int i = 0; i < all.length; i++) {
+            all[i] = parse(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());
+        }
+        return all;
     }
 
     @Override

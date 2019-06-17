@@ -15,8 +15,8 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public class JavaExecutorOptions {
 
-    private String javaVersion = null;//runnerProps.getProperty("java.version");
-    private String javaHome = null;//runnerProps.getProperty("java.version");
+    private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
+    private String javaHome = null;//runnerProps.getProperty("java.parseVersion");
     private String mainClass = null;
     private String dir = null;
     private boolean mainClassApp = false;
@@ -57,7 +57,7 @@ public class JavaExecutorOptions {
         List<String> classPath0 = new ArrayList<>();
         NutsIdFormat nutsIdFormat = ws.format().id().setOmitNamespace(true);
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = ws.parse().command(getExecArgs());
+        NutsCommandLine cmdLine = ws.commandLine().setArgs(getExecArgs());
         NutsArgument a;
         while (cmdLine.hasNext()) {
             a = cmdLine.peek();
@@ -171,7 +171,7 @@ public class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = ws.parse().executionEntries(path);
+                    NutsExecutionEntry[] classes = ws.io().parseExecutionEntries(path);
                     if (classes.length > 0) {
                         mainClass = CoreStringUtils.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)

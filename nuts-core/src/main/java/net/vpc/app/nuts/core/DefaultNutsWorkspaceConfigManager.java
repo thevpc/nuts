@@ -447,7 +447,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
-        NutsVersionFilter javaVersionFilter = ws.parse().versionFilter(requestedVersion);
+        NutsVersionFilter javaVersionFilter = ws.format().version().parseVersionFilter(requestedVersion);
         NutsSdkLocation best = null;
         final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks("java")) {
@@ -567,7 +567,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    @Override
 //    public Path getBootNutsJar() {
 //        try {
-//            NutsId baseId = ws.parse().requiredId(NutsConstants.Ids.NUTS_API);
+//            NutsId baseId = ws.format().id().parseRequired(NutsConstants.Ids.NUTS_API);
 //            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {
@@ -584,7 +584,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        if (m != null) {
 //            Path f = ws.io().path(System.getProperty("user.home"), ".m2", "repository", m.getGroupId().replace('.', '/'), m.getArtifactId(), m.getVersion(),
 //                    ws.config().getDefaultIdFilename(
-//                            ws.idBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
+//                            ws.builder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
 //                                    .setFaceComponent()
 //                                    .setPackaging("jar")
 //                                    .build()
@@ -1012,7 +1012,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getStoreLocation(String id, NutsStoreLocation folderType) {
-        return getStoreLocation(ws.parse().id(id), folderType);
+        return getStoreLocation(ws.format().id().parse(id), folderType);
     }
 
     @Override
@@ -1032,7 +1032,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformOs() {
         if (platformOs == null) {
-            platformOs = ws.parse().id(CorePlatformUtils.getPlatformOs());
+            platformOs = ws.format().id().parse(CorePlatformUtils.getPlatformOs());
         }
         return platformOs;
     }
@@ -1040,7 +1040,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformOsDist() {
         if (platformOsdist == null) {
-            platformOsdist = ws.parse().id(CorePlatformUtils.getPlatformOsDist());
+            platformOsdist = ws.format().id().parse(CorePlatformUtils.getPlatformOsDist());
         }
         return platformOsdist;
     }
@@ -1058,7 +1058,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformArch() {
         if (platformArch == null) {
-            platformArch = ws.parse().id(CorePlatformUtils.getPlatformArch());
+            platformArch = ws.format().id().parse(CorePlatformUtils.getPlatformArch());
         }
         return platformArch;
     }
@@ -1557,12 +1557,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsId getApiId() {
-        return ws.parse().id(getBootConfig().getApiId());
+        return ws.format().id().parse(getBootConfig().getApiId());
     }
 
     @Override
     public NutsId getRuntimeId() {
-        return ws.parse().id(getBootConfig().getRuntimeId());
+        return ws.format().id().parse(getBootConfig().getRuntimeId());
     }
 
     @Override

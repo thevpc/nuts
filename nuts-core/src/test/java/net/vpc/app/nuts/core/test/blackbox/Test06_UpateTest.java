@@ -158,7 +158,7 @@ public class Test06_UpateTest {
                 "--min",
                 "--json"
         );
-        System.out.println(uws.parse().command(b.createProcessCommandLine()).toString());
+        System.out.println(uws.commandLine().setArgs(b.createProcessCommandLine()).toString());
         ProcessBuilder2 cb = new ProcessBuilder2(uws).setCommand(b.createProcessCommandLine());
         String ss = cb.setRedirectErrorStream().grabOutputString().start().waitFor().getOutputString();
         System.out.println("================");

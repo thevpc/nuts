@@ -93,25 +93,15 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsIOManager io();
 
-    NutsParseManager parse();
-
     NutsFormatManager format();
+    
+    NutsCommandLine commandLine();
 
     ///////////////////// utilities
     String resolveDefaultHelp(Class clazz);
 
-    NutsId resolveId(Class clazz);
-
-    NutsId[] resolveIds(Class clazz);
-
     ///////////////////// factory
     NutsSession createSession();
-
-    NutsDescriptorBuilder descriptorBuilder();
-
-    NutsDependencyBuilder dependencyBuilder();
-
-    NutsIdBuilder idBuilder();
 
     ///////////////////// Listeners
     void removeRepositoryListener(NutsRepositoryListener listener);

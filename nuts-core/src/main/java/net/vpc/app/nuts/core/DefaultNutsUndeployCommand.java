@@ -47,7 +47,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
 
     @Override
     public NutsUndeployCommand addId(String id) {
-        return addId(CoreStringUtils.isBlank(id) ? null : ws.parse().requiredId(id));
+        return addId(CoreStringUtils.isBlank(id) ? null : ws.format().id().parseRequired(id));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.parse().requiredId(s));
+                    ids.add(ws.format().id().parseRequired(s));
                 }
             }
         }

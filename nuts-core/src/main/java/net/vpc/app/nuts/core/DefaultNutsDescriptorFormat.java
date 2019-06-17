@@ -9,12 +9,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsDescriptorBuilder;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsParseException;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescriptorFormat> implements NutsDescriptorFormat {
@@ -132,6 +131,11 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     @Override
     public NutsDescriptor read(InputStream stream) {
         return read(stream, false);
+    }
+
+    @Override
+    public NutsDescriptorBuilder descriptorBuilder() {
+        return new DefaultNutsDescriptorBuilder();
     }
 
 }

@@ -169,7 +169,7 @@ public class CoreIOUtils {
         for (String arg : args) {
             String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.parse().commandLine(s).toArray());
+                Collections.addAll(args2, workspace.commandLine().parseLine(s).toArray());
             } else {
                 args2.add(s);
             }
@@ -210,7 +210,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.parse().versionFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.format().version().parseVersionFilter(requestedJavaVersion);
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace, workspace.createSession())) {
                 bestJava = current;
             }

@@ -171,7 +171,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public Path getNutsJar() {
         return ws.fetch().id(bootAPI).getResultPath();
 //        try {
-//            NutsId baseId = ws.parse().parseRequiredId(NutsConstants.Ids.NUTS_API);
+//            NutsId baseId = ws.format().id().parseRequiredId(NutsConstants.Ids.NUTS_API);
 //            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {

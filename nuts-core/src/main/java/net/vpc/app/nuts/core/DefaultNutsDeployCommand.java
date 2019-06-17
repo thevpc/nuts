@@ -427,10 +427,10 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
                     NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(getValidSession()));
                     for (String os : descriptor.getOs()) {
-                        CorePlatformUtils.checkSupportedOs(ws.parse().requiredId(os).getSimpleName());
+                        CorePlatformUtils.checkSupportedOs(ws.format().id().parseRequired(os).getSimpleName());
                     }
                     for (String arch : descriptor.getArch()) {
-                        CorePlatformUtils.checkSupportedArch(ws.parse().requiredId(arch).getSimpleName());
+                        CorePlatformUtils.checkSupportedArch(ws.format().id().parseRequired(arch).getSimpleName());
                     }
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
@@ -549,7 +549,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.parse().requiredId(s));
+                    ids.add(ws.format().id().parseRequired(s));
                 }
             }
         }
@@ -607,14 +607,14 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
     @Override
     public NutsDeployCommand removeId(String id) {
-        ids.remove(ws.parse().id(id));
+        ids.remove(ws.format().id().parse(id));
         return this;
     }
 
     @Override
     public NutsDeployCommand addId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.parse().requiredId(id));
+            ids.add(ws.format().id().parseRequired(id));
         }
         return this;
     }

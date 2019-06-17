@@ -77,7 +77,7 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parse().executionEntries(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().io().parseExecutionEntries(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
@@ -86,11 +86,11 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
                 }
             }
         }
-        //            NutsId id = executionContext.getPrivateStoreNutsDefinition().getId();
+        //            NutsId parseId = executionContext.getPrivateStoreNutsDefinition().getId();
         //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
-        //            for (NutsWorkspaceCommand command : cc.findCommands(id)) {
-        //                //install if installed with the very same version !!
-        //                if (id.getLongName().equals(command.getId().getLongName())) {
+        //            for (NutsWorkspaceCommand command : cc.findCommands(parseId)) {
+        //                //install if installed with the very same parseVersion !!
+        //                if (parseId.getLongName().equals(command.getId().getLongName())) {
         //                    cc.uninstallCommand(command.getName());
         //                }
         //            }

@@ -28,14 +28,14 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
         super(cmd[0], 
-                ws.parse().command(cmd).toString(),
+                ws.commandLine().setArgs(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.ws = ws;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
-        NutsCommandLine cmdLine = ws.parse().command(this.executorOptions);
+        NutsCommandLine cmdLine = ws.commandLine().setArgs(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getStringKey()) {
@@ -87,7 +87,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "SYSEXEC " + ws.parse().command(cmd).toString();
+        return "SYSEXEC " + ws.commandLine().setArgs(cmd).toString();
     }
     
 }

@@ -132,7 +132,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .grabOutputString()
                         .run()
                         .getOutputString();
-                return ss;//ws.parse().escapeText(ss);
+                return ss;
             } catch (Exception ex) {
                 //ignore
                 return "Failed to retrieve help for " + getName();

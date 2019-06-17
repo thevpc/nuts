@@ -62,7 +62,7 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 context.sendResponseText(200,
                         context.getWorkspace()
-                                .idBuilder()
+                                .format().id().builder()
                                 .setNamespace(context.getServerId())
                                 .setGroup("net.vpc.app.nuts")
                                 .setName("nuts-server")

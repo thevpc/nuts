@@ -251,7 +251,7 @@ public class WorkspaceService {
                 d.rem = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().parse().version(d.loc).compareTo(d.rem);
+                int t = appContext.getWorkspace().format().version().parseVersion(d.loc).compareTo(d.rem);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {

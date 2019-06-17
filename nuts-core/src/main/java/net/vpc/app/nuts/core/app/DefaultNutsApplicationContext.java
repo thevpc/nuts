@@ -28,7 +28,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
 
     /**
-     * previous version for "update" mode
+     * previous parseVersion for "update" mode
      */
     private NutsVersion appPreviousVersion;
 
@@ -52,7 +52,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = workspace.parse().commandLine(args[0].substring(args[0].indexOf('=') + 1));
+            NutsCommandLine execModeCommand = workspace.commandLine().parseLine(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getStringKey()) {
@@ -80,7 +80,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update":{
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = workspace.parse().version(execModeCommand.next().getString());
+                            appPreviousVersion = workspace.format().version().parseVersion(execModeCommand.next().getString());
                         }
                         modeArgs = execModeCommand.toArray();
                         execModeCommand.skipAll();
@@ -93,7 +93,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId appId = workspace.resolveId(appClass);
+        NutsId appId = workspace.format().id().resolveId(appClass);
         if (appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
@@ -173,7 +173,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    getSession().out().printf("%s%n", getWorkspace().resolveId(getClass()).getVersion().toString());
+                    getSession().out().printf("%s%n", getWorkspace().format().id().resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(workspace, "Help", 0);
@@ -358,7 +358,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.parse().command(getArguments()).setAutoComplete(getAutoComplete());
+        return workspace.commandLine().setArgs(getArguments()).setAutoComplete(getAutoComplete());
     }
 
     @Override

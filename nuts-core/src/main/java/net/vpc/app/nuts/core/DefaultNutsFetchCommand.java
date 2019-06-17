@@ -42,7 +42,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     @Override
     public NutsFetchCommand setId(String id) {
-        this.id = ws.parse().requiredId(id);
+        this.id = ws.format().id().parseRequired(id);
         return this;
     }
 
@@ -425,7 +425,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 nutsApp = "true".equals(map.get("nutsApplication"));
             } else {
                 try {
-                    NutsExecutionEntry[] t = ws.parse().executionEntries(jar);
+                    NutsExecutionEntry[] t = ws.io().parseExecutionEntries(jar);
                     if (t.length > 0) {
                         executable = true;
                         if (t[0].isApp()) {
@@ -488,7 +488,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     if (CoreStringUtils.isBlank(newIdBuilder.getNamespace())) {
                         newIdBuilder.setNamespace(repo.config().getName());
                     }
-                    //inherit classifier from requested id
+                    //inherit classifier from requested parse
                     String classifier = id.getClassifier();
                     if (!CoreStringUtils.isBlank(classifier)) {
                         newIdBuilder.setClassifier(classifier);

@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.List;
+
 /**
  * Simple Command line parser implementation. The command line supports
  * arguments in the following forms :
@@ -128,71 +130,79 @@ public interface NutsCommandLine {
     NutsCommandLine requireNonOption();
 
     NutsCommandLine unexpectedArgument(String errorMessage);
-    
+
     NutsCommandLine unexpectedArgument();
 
     NutsCommandLine required();
-    
+
     NutsCommandLine required(String errorMessage);
 
     NutsCommandLine pushBack(NutsArgument a);
 
     /**
-     * consume (remove) the first argument and return it
-     * return null if not argument is left
+     * consume (remove) the first argument and return it return null if not
+     * argument is left
+     *
      * @return next argument
      */
     NutsArgument next();
 
     /**
-     * consume (remove) the first argument and return it while
-     * adding a hint to Auto Complete about expected argument candidates
-     * return null if not argument is left
+     * consume (remove) the first argument and return it while adding a hint to
+     * Auto Complete about expected argument candidates return null if not
+     * argument is left
+     *
      * @param name expected argument name
      * @return next argument
      */
     NutsArgument next(NutsArgumentName name);
 
     /**
-     * the first argument to consume without removing/consuming it
-     * or null if not argument is left
+     * the first argument to consume without removing/consuming it or null if
+     * not argument is left
+     *
      * @return the first argument to consume without removing/consuming it
      */
     NutsArgument peek();
 
     /**
      * true if there still at least one argument to consume
+     *
      * @return true if there still at least one argument to consume
      */
     boolean hasNext();
 
     /**
-     * next argument with boolean value
-     * equivalent to next(NutsArgumentType.STRING,names)
+     * next argument with boolean value equivalent to
+     * next(NutsArgumentType.STRING,names)
+     *
      * @param names names
      * @return next argument
      */
     NutsArgument nextBoolean(String... names);
 
     /**
-     * next argument with string value.
-     * equivalent to next(NutsArgumentType.STRING,names)
+     * next argument with string value. equivalent to
+     * next(NutsArgumentType.STRING,names)
+     *
      * @param names names
      * @return next argument
      */
     NutsArgument nextString(String... names);
 
     /**
-     * next argument with immediate string value.
-     * equivalent to next(NutsArgumentType.IMMEDIATE,names)
+     * next argument with immediate string value. equivalent to
+     * next(NutsArgumentType.IMMEDIATE,names)
+     *
      * @param names names
      * @return next argument
      */
     NutsArgument nextImmediate(String... names);
 
     /**
-     * next argument with any value type (may having not a value).
-     * equivalent to next(NutsArgumentType.VOID,names)
+     * next argument with any value type (may having not a value). equivalent to
+     * next(NutsArgumentType.VOID,names)
+     *
      * @param names names
      * @return next argument
      */
@@ -201,21 +211,26 @@ public interface NutsCommandLine {
     NutsArgument next(NutsArgumentType expectValue, String... names);
 
     /**
-     * next argument if it exists and it is a non option. 
-     * Throw an error in all other cases.
+     * next argument if it exists and it is a non option. Throw an error in all
+     * other cases.
+     *
      * @param name argument specification (may be null)
      * @return next argument if it exists and it is a non option
      */
     NutsArgument nextRequiredNonOption(NutsArgumentName name);
 
     /**
-     * next argument if it exists and it is a non option. Return null in all other cases.
+     * next argument if it exists and it is a non option. Return null in all
+     * other cases.
+     *
      * @return next argument if it exists and it is a non option
      */
     NutsArgument nextNonOption();
 
     /**
-     * next argument if it exists and it is a non option. Return null in all other cases.
+     * next argument if it exists and it is a non option. Return null in all
+     * other cases.
+     *
      * @param name argument specification (may be null)
      * @return next argument if it exists and it is a non option
      */
@@ -264,6 +279,10 @@ public interface NutsCommandLine {
 
     NutsCommandAutoComplete getAutoComplete();
 
-//    String getCommandLine();
+    NutsCommandLine parseLine(String commandLine);
+
+    NutsCommandLine setArgs(List<String> args);
+
+    NutsCommandLine setArgs(String[] args);
 
 }

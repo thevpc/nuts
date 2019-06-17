@@ -46,7 +46,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand addId(String id) {
-        return addId(id == null ? null : ws.parse().id(id));
+        return addId(id == null ? null : ws.format().id().parse(id));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand removeId(String id) {
-        return removeId(ws.parse().id(id));
+        return removeId(ws.format().id().parse(id));
     }
 
     @Override

@@ -84,7 +84,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         } else {
             final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
             r = new LinkedHashMap<>();
-            NutsCommandLine requestCmd = ws.parse().command(requests);
+            NutsCommandLine requestCmd = ws.commandLine().setArgs(requests);
             while (!requestCmd.isEmpty()) {
                 NutsArgument a = requestCmd.next();
                 if (t.containsKey(a.toString())) {

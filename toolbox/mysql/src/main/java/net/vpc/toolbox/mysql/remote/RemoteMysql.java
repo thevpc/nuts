@@ -28,7 +28,7 @@ public class RemoteMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().parse().command(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().setArgs(args)
                 .setCommandName("mysql --remote");
         NutsArgument a;
         while (cmd.hasNext()) {

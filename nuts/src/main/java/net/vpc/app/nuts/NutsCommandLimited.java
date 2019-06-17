@@ -230,14 +230,22 @@ class NutsCommandLimited implements NutsCommandLine {
         return all.toArray(new String[0]);
     }
 
-    public void setArgs(List<String> args) {
-        setArgs(args.toArray(new String[0]));
+    public NutsCommandLine setArgs(List<String> args) {
+        return setArgs(args.toArray(new String[0]));
     }
 
-    public void setArgs(String[] args) {
+    public NutsCommandLine setArgs(String... args) {
         this.lookahead.clear();
         this.args.clear();
-        Collections.addAll(this.args, args);
+        if (args != null) {
+            Collections.addAll(this.args, args);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsCommandLine parseLine(String commandLine) {
+        throw new NutsException(null, "Unsupported");
     }
 
     @Override
@@ -317,7 +325,7 @@ class NutsCommandLimited implements NutsCommandLine {
                     }
                 }
             }
-            if(!isPrefixed(nameSeqArray)){
+            if (!isPrefixed(nameSeqArray)) {
                 continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];
@@ -698,8 +706,8 @@ class NutsCommandLimited implements NutsCommandLine {
         m.append(message);
         throw new NutsIllegalArgumentException(null, m.toString());
     }
-    
-    private String highlightText(String text){
+
+    private String highlightText(String text) {
         return text;
     }
 }

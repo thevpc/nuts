@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.security.DefaultNutsWorkspaceSecurityManager;
 import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
-import net.vpc.app.nuts.core.parsers.DefaultNutsParseManager;
 import net.vpc.app.nuts.core.format.DefaultNutsWorkspaceFormatManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
@@ -54,6 +53,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
 import net.vpc.app.nuts.NutsSearchCommand;
+import net.vpc.app.nuts.core.app.DefaultNutsCommand;
 
 /**
  * Created by vpc on 1/6/17.
@@ -70,7 +70,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     private final ObservableMap<String, Object> userProperties = new ObservableMap<>();
 
     private NutsIOManager ioManager;
-    private NutsParseManager parseManager;
     private NutsFormatManager formatManager;
     private DefaultNutsInstalledRepository installedRepository;
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
@@ -99,11 +98,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         NutsSession nutsSession = new DefaultNutsSession(this);
         nutsSession.setTerminal(io().getTerminal());
         return nutsSession;
-    }
-
-    @Override
-    public NutsDescriptorBuilder descriptorBuilder() {
-        return new DefaultNutsDescriptorBuilder();
     }
 
     public NutsWorkspaceConfigManagerExt configExt() {
@@ -184,7 +178,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         installedRepository = new DefaultNutsInstalledRepository(this);
         ioManager = new DefaultNutsIOManager(this);
-        parseManager = new DefaultNutsParseManager(this);
         formatManager = new DefaultNutsWorkspaceFormatManager(this);
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
         configManager = new DefaultNutsWorkspaceConfigManager(this);
@@ -636,7 +629,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     /**
-     * return installed version
+     * return installed parseVersion
      *
      * @param id
      * @return
@@ -698,7 +691,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 } else {
                     try {
                         installerComponent.install(executionContext);
-//                    out.print(getFormatManager().id().print(def.getId()) + " installed ##successfully##.\n");
+//                    out.print(getFormatManager().parse().print(def.getId()) + " installed ##successfully##.\n");
                     } catch (NutsReadOnlyException ex) {
                         throw ex;
                     } catch (Exception ex) {
@@ -922,18 +915,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 + '}';
     }
 
-    @Override
-    public NutsId resolveId(Class clazz) {
-        PomId u = PomIdResolver.resolvePomId(clazz, null);
-        if (u == null) {
-            return null;
-        }
-        return parse().id(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
-    }
 
     @Override
     public String resolveDefaultHelp(Class clazz) {
-        NutsId nutsId = resolveId(clazz);
+        NutsId nutsId = format().id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
             URL resource = getClass().getResource(urlPath);
@@ -953,25 +938,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         return null;
     }
 
-    @Override
-    public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = PomIdResolver.resolvePomIds(clazz);
-        NutsId[] all = new NutsId[u.length];
-        for (int i = 0; i < all.length; i++) {
-            all[i] = parse().id(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());
-        }
-        return all;
-    }
-
-    @Override
-    public NutsIdBuilder idBuilder() {
-        return new DefaultNutsIdBuilder();
-    }
-
-    @Override
-    public NutsDependencyBuilder dependencyBuilder() {
-        return new DefaultNutsDependencyBuilder();
-    }
 
     @Override
     public NutsSearchCommand search() {
@@ -986,6 +952,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public String getWelcomeText() {
         return this.io().getResourceString("/net/vpc/app/nuts/nuts-welcome.help", getClass(), "no welcome found");
+    }
+
+    @Override
+    public NutsCommandLine commandLine() {
+        return new DefaultNutsCommand(this);
     }
 
     @Override
@@ -1006,11 +977,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public NutsIOManager io() {
         return ioManager;
-    }
-
-    @Override
-    public NutsParseManager parse() {
-        return parseManager;
     }
 
     @Override
@@ -1126,11 +1092,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //        }
 //    }
 //    @Override
-//    public boolean isFetched(NutsId id, NutsSession session) {
+//    public boolean isFetched(NutsId parse, NutsSession session) {
 //        session = CoreNutsUtils.validateSession(session, this);
 //        NutsSession offlineSession = session.copy();
 //        try {
-//            NutsDefinition found = fetch().id(id).offline().setSession(offlineSession).setIncludeInstallInformation(false).setIncludeFile(true).getResultDefinition();
+//            NutsDefinition found = fetch().parse(parse).offline().setSession(offlineSession).setIncludeInstallInformation(false).setIncludeFile(true).getResultDefinition();
 //            return found != null;
 //        } catch (Exception e) {
 //            return false;

@@ -151,7 +151,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     .setPackaging("jar")
                     .build();
         }
-        NutsExecutionEntry[] classes = parserContext.getWorkspace().parse().executionEntries(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
+        NutsExecutionEntry[] classes = parserContext.getWorkspace().io().parseExecutionEntries(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
         if (classes.length == 0) {
             return baseNutsDescriptor;
         } else {

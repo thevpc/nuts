@@ -29,7 +29,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
 
         public AliasInfo(NutsWorkspaceCommandAlias a, NutsWorkspace ws) {
             name = a.getName();
-            command = ws.parse().command(a.getCommand()).toString();
+            command = ws.commandLine().setArgs(a.getCommand()).toString();
         }
     }
 
@@ -52,7 +52,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                             .model(
                                     r.stream().collect(Collectors.toMap(
                                             NutsCommandAliasConfig::getName,
-                                            x -> context.getWorkspace().parse().command(x.getCommand()).toString()
+                                            x -> context.getWorkspace().commandLine().setArgs(x.getCommand()).toString()
                                     ))
                             ).println();
                 } else {
@@ -87,7 +87,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 context.getWorkspace().config().addCommandAlias(
                         new NutsCommandAliasConfig()
-                                .setCommand(context.getWorkspace().parse().commandLine(c).toArray())
+                                .setCommand(context.getWorkspace().commandLine().parseLine(c).toArray())
                                 .setName(n),
                         new NutsAddOptions().session(context.getSession()));
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);

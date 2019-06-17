@@ -275,7 +275,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLine args = workspace.parse().command(s);
+                                    NutsCommandLine args = workspace.commandLine().parseLine(s);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {

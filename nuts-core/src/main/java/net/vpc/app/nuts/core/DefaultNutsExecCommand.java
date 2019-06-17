@@ -788,20 +788,20 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 //    }
     protected NutsExecutableInfoExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
         NutsDefinition def = null;
-        NutsId nid = ws.parse().id(commandName);
+        NutsId nid = ws.format().id().parse(commandName);
         NutsSession searchSession=session.copy().trace(false);
         List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
                 .defaultVersions()
                 .installed().getResultIds().list();
         if(ff.isEmpty()){
-            //retest whithout checking it the version is default or not
-            // this help recovering from "invalid default version" issue
+            //retest whithout checking it the parseVersion is default or not
+            // this help recovering from "invalid default parseVersion" issue
             ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
                 .installed().getResultIds().list();
         }
         if(ff.isEmpty()){
             //now search online
-            // this helps recovering from "invalid default version" issue
+            // this helps recovering from "invalid default parseVersion" issue
             ff =ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
                 .getResultIds().list();
         }

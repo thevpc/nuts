@@ -84,7 +84,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 
     @Override
     public NutsInstallCommand addId(String id) {
-        return addId(id == null ? null : ws.parse().id(id));
+        return addId(id == null ? null : ws.format().id().parse(id));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     @Override
     public NutsInstallCommand removeId(String id) {
         if (id != null) {
-            this.ids.remove(ws.parse().id(id));
+            this.ids.remove(ws.format().id().parse(id));
         }
         return this;
     }
@@ -300,7 +300,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             if (ws.io().getTerminal().ask()
                     .forBoolean("The following ==nuts== companion tools are going to be installed : "
                             + Arrays.stream(dws.getCompanionTools())
-                                    .map(x -> ws.format().id().setOmitImportedGroup(true).set(ws.parse().id(x)).format())
+                                    .map(x -> ws.format().id().setOmitImportedGroup(true).set(ws.format().id().parse(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -316,7 +316,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        NutsCommandExecBuilder e = createExecBuilder();
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
-                        if (session.isForce() || !dws.isInstalled(ws.parse().requiredId(companionTool), false, session)) {
+                        if (session.isForce() || !dws.isInstalled(ws.format().id().parseRequired(companionTool), false, session)) {
                             NutsDefinition r = null;
                             if (session.isTrace()) {
                                 if (companionCount == 0) {

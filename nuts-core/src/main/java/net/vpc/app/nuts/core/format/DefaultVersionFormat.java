@@ -8,6 +8,8 @@ import net.vpc.app.nuts.*;
 import java.util.*;
 
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 
 /**
  *
@@ -15,13 +17,61 @@ import net.vpc.app.nuts.NutsCommandLine;
  *
  * @author vpc
  */
-public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersionFormat> implements NutsWorkspaceVersionFormat {
+public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> implements NutsVersionFormat {
 
     private final Properties extraProperties = new Properties();
     private boolean all;
+    private NutsVersion version;
+    private NutsVersionInterval versionIntervall;
 
     public DefaultVersionFormat(NutsWorkspace ws) {
         super(ws, "version");
+    }
+
+    @Override
+    public NutsVersionFilter parseVersionFilter(String versionFilter) {
+        return DefaultNutsVersionFilter.parse(versionFilter);
+    }
+
+    @Override
+    public NutsVersion parseVersion(String version) {
+        return DefaultNutsVersion.valueOf(version);
+    }
+
+    @Override
+    public NutsVersion getVersion() {
+        return version;
+    }
+
+    @Override
+    public NutsFormat setVersion(NutsVersion version) {
+        this.versionIntervall = null;
+        this.version = version;
+        return this;
+    }
+
+    @Override
+    public NutsVersionInterval getVersionInterval() {
+        return versionIntervall;
+    }
+
+    @Override
+    public NutsFormat setVersionInterval(NutsVersionInterval version) {
+        this.versionIntervall = version;
+        this.version = null;
+        return this;
+    }
+
+    @Override
+    public NutsFormat setWorkspaceVersion() {
+        version = null;
+        versionIntervall = null;
+        return this;
+    }
+
+    @Override
+    public boolean isWorkspaceVersion() {
+        return version == null && versionIntervall == null;
     }
 
     @Override
@@ -51,13 +101,13 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
     }
 
     @Override
-    public NutsWorkspaceVersionFormat addProperty(String key, String value) {
+    public NutsVersionFormat addProperty(String key, String value) {
         extraProperties.setProperty(key, value);
         return this;
     }
 
     @Override
-    public NutsWorkspaceVersionFormat addProperties(Properties p) {
+    public NutsVersionFormat addProperties(Properties p) {
         if (p != null) {
             extraProperties.putAll(p);
         }
@@ -67,11 +117,25 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsWorkspaceVersion
     @Override
     public void print(Writer out) {
         if (getValidSession().isPlainOut() && !all) {
-            PrintWriter pout = getValidPrintWriter(out);
-            NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
-            pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
+            if (isWorkspaceVersion()) {
+                PrintWriter pout = getValidPrintWriter(out);
+                NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
+                pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
+            } else if (getVersion() != null) {
+                PrintWriter pout = getValidPrintWriter(out);
+                pout.printf("%s", getVersion());
+            } else if (getVersionInterval() != null) {
+                PrintWriter pout = getValidPrintWriter(out);
+                pout.printf("%s", getVersionInterval());
+            }
         } else {
-            ws.format().object().session(getValidSession()).value(buildProps()).print(out);
+            if (isWorkspaceVersion()) {
+                ws.format().object().session(getValidSession()).value(buildProps()).print(out);
+            } else if (getVersion() != null) {
+                ws.format().object().session(getValidSession()).value(getVersion()).print(out);
+            } else if (getVersionInterval() != null) {
+                ws.format().object().session(getValidSession()).value(getVersionInterval()).print(out);
+            }
         }
     }
 

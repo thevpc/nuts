@@ -33,7 +33,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommandLine cmdLine = ws.parse().command(args);
+        NutsCommandLine cmdLine = ws.commandLine().setArgs(args);
         NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
         while (cmdLine.hasNext()) {
             NutsOutputFormat of = CoreNutsUtils.readOptionOutputFormat(cmdLine);

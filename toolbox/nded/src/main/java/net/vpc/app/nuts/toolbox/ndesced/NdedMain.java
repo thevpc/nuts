@@ -198,7 +198,7 @@ public class NdedMain extends NutsApplication {
         this.context = context;
         String[] args = context.getArguments();
 //        f = this.appContext.getWorkspace().getExtensionManager();
-        NutsDescriptorBuilder b = this.context.getWorkspace().descriptorBuilder();
+        NutsDescriptorBuilder b = this.context.getWorkspace().format().descriptor().descriptorBuilder();
         fillArgs(b);
         final PrintStream out = this.context.session().out();
         out.print("[[Creating new Nuts descriptor...]]\n");

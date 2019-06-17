@@ -100,7 +100,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     @Override
     public NutsUpdateCommand addId(String id) {
-        return addId(id == null ? null : ws.parse().id(id));
+        return addId(id == null ? null : ws.format().id().parse(id));
     }
 
     @Override
@@ -149,7 +149,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     @Override
     public NutsUpdateCommand removeId(String id) {
-        return removeId(ws.parse().id(id));
+        return removeId(ws.format().id().parse(id));
     }
 
     @Override
@@ -407,7 +407,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
         for (String extension : NutsWorkspaceExt.of(ws).getCompanionTools()) {
-            ext.add(ws.parse().id(extension).getSimpleNameId());
+            ext.add(ws.format().id().parse(extension).getSimpleNameId());
         }
         return ext;
     }
@@ -458,7 +458,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             bootVersion = this.getApiVersion();
         }
         if (this.isUpdateApi() || !CoreStringUtils.isBlank(this.getApiVersion())) {
-            apiUpdate = checkCoreUpdate(ws.parse().id(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session);
+            apiUpdate = checkCoreUpdate(ws.format().id().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session);
             if (apiUpdate.isUpdateAvailable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion().getValue();
                 allUpdates.put(NutsConstants.Ids.NUTS_API, apiUpdate);
@@ -470,7 +470,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsUpdateResult runtimeUpdate = null;
         if (this.isUpdateRuntime()) {
             if (dws.requiresCoreExtension()) {
-                runtimeUpdate = checkCoreUpdate(ws.parse().id(actualBootConfig.getRuntimeId().getSimpleName()),
+                runtimeUpdate = checkCoreUpdate(ws.format().id().parse(actualBootConfig.getRuntimeId().getSimpleName()),
                         apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().toString()
                         : bootVersion, session);
                 if (runtimeUpdate.isUpdateAvailable()) {
@@ -574,7 +574,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (d0 == null) {
             throw new NutsIllegalArgumentException(ws, id + " is not yet installed to be updated.");
         }
-        //search latest id
+        //search latest parse
         NutsId d1Id = ws.search().id(id).setSession(searchSession)
                 .failFast(false)
                 .anyWhere()
@@ -1030,7 +1030,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     @Override
     public NutsUpdateCommand addFrozenId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            frozenIds.add(ws.parse().requiredId(id));
+            frozenIds.add(ws.format().id().parseRequired(id));
         }
         return this;
     }

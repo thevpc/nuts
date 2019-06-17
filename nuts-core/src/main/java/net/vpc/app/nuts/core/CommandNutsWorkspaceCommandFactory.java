@@ -32,7 +32,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : ws.parse().commandLine(slistCommand).toArray();
+            listCommand = slistCommand == null ? new String[0] : ws.commandLine().parseLine(slistCommand).toArray();
             if(listCommand.length>0 && !listCommand[0].contains(":")){
                 listCommand=new String[0];
             }
@@ -52,7 +52,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
         if(command==null){
             return new String[0];
         }
-        String[] commandArr= ws.parse().commandLine(command).toArray();
+        String[] commandArr= ws.commandLine().parseLine(command).toArray();
         if(commandArr.length==0){
             return commandArr;
         }

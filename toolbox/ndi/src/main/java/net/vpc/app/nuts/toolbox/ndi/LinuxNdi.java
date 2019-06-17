@@ -29,7 +29,7 @@ public class LinuxNdi implements SystemNdi {
         } else {
             List<NdiScriptnfo> r = new ArrayList<>();
             r.addAll(Arrays.asList(createBootScript(false, false)));
-            NutsId nutsId = context.getWorkspace().parse().id(options.getId());
+            NutsId nutsId = context.getWorkspace().format().id().parse(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
@@ -40,9 +40,9 @@ public class LinuxNdi implements SystemNdi {
             }
 //            if (options.isFetch()) {
 //                if (fetched == null) {
-//                    fetched = appContext.getWorkspace().fetch().id(options.getId()).getResultDefinition();
+//                    fetched = appContext.getWorkspace().fetch().parse(options.getId()).getResultDefinition();
 //                }
-//                //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
+//                //appContext.out().printf("==%s== resolved as ==%s==\n", parse,fetched.getId());
 //            }
             String n = nutsId.getName();
             Path ff = getScriptFile(n);

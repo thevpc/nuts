@@ -44,7 +44,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsWorkspace ws, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
-                ws.parse().command(args).toString(),
+                ws.commandLine().setArgs(args).toString(),
                 NutsExecutableType.COMPONENT);
         this.cmdName = cmdName;
         this.args = args;
@@ -159,7 +159,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     if (c.descriptor == null) {
-                        c.descriptor = ws.descriptorBuilder()
+                        c.descriptor = ws.format().descriptor().descriptorBuilder()
                                 .setId("temp")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();
@@ -176,7 +176,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + ws.parse().command(args).toString();
+        return "NUTS " + cmdName + " " + ws.commandLine().setArgs(args).toString();
     }
 
     private static class CharacterizedExecFile implements AutoCloseable {

@@ -32,7 +32,7 @@ public class LocalMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().parse().command(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().setArgs(args)
                 .commandName("mysql --local");
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {

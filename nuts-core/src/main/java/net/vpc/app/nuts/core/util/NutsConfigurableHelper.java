@@ -41,7 +41,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 public class NutsConfigurableHelper {
 
     public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] cmdLine, String commandName) {
-        c.configure(skipUnsupported, ws.parse().command(cmdLine).setCommandName(commandName));
+        c.configure(skipUnsupported, ws.commandLine().setArgs(cmdLine).setCommandName(commandName));
         return (T) c;
     }
 

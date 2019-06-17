@@ -27,7 +27,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
         String file = null;
         boolean save = false;
         NutsWorkspace ws = context.getWorkspace();
-        final NutsDescriptorBuilder desc = ws.descriptorBuilder();
+        final NutsDescriptorBuilder desc = ws.format().descriptor().descriptorBuilder();
         if (cmdLine.next("new descriptor", "nd")!=null) {
             newDesc = true;
         } else if (cmdLine.next("update descriptor", "ud")!=null) {
@@ -83,7 +83,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.setId(context.getWorkspace().parse().id(value));
+                        desc.setId(context.getWorkspace().format().id().parse(value));
                     }
                 });
 
@@ -179,7 +179,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.addDependency(ws.parse().dependency(value));
+                        desc.addDependency(ws.format().dependency().parse(value));
                     }
                 });
             } else if (cmdLine.next("-remove-dependency")!=null) {
@@ -187,7 +187,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.removeDependency(ws.parse().dependency(value));
+                        desc.removeDependency(ws.format().dependency().parse(value));
                     }
                 });
             } else if (cmdLine.next("-file")!=null) {
@@ -202,7 +202,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
         }
         if (cmdLine.isExecMode()) {
             if (newDesc) {
-                desc.set(ws.descriptorBuilder().build());
+                desc.set(ws.format().descriptor().descriptorBuilder().build());
             } else {
                 if (file != null) {
                     desc.set(ws.format().descriptor().read(new File(file)));

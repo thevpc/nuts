@@ -111,7 +111,7 @@ public class NutsJavaShell extends JShell {
         context.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         context.getUserProperties().put(JShellContext.class.getName(), context);
         try {
-            histFile = this.workspace.config().getStoreLocation(this.workspace.resolveId(NutsJavaShell.class),
+            histFile = this.workspace.config().getStoreLocation(this.workspace.format().id().resolveId(NutsJavaShell.class),
                     NutsStoreLocation.VAR).resolve("nsh.history").toFile();
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
@@ -180,7 +180,7 @@ public class NutsJavaShell extends JShell {
 //        String command = null;
         long startMillis = appContext.getStartTimeMillis();
         NutsCommandLine cmd = null;
-        cmd = appContext.getWorkspace().parse().command(args).setAutoComplete(appContext.getAutoComplete());
+        cmd = appContext.getWorkspace().commandLine().setArgs(args).setAutoComplete(appContext.getAutoComplete());
         NutsArgument a;
         while (cmd.hasNext()) {
             if (nonOptions.isEmpty()) {

@@ -27,33 +27,41 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh.cmds;
+package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.common.mvn.PomIdResolver;
-import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsVersionFormat;
+import java.util.Properties;
 
 /**
- * Created by vpc on 1/7/17.
+ *
+ * @author vpc
+ * @since 0.5.4
  */
-public class VersionCommand extends AbstractNshBuiltin {
-
-    public VersionCommand() {
-        super("version", DEFAULT_SUPPORT);
-    }
+public interface NutsVersionFormat extends NutsFormat {
 
     @Override
-    public void exec(String[] args, NshExecutionContext context) {
-        NutsWorkspace ws = context.getWorkspace();
-        NutsCommandLine cmdLine = context.getWorkspace().commandLine().setArgs(args);
-        NutsVersionFormat version = ws.format().version();
-        version.configure(true, cmdLine);
-        version
-                .session(context.getSession())
-                .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
-                .println(context.out());
-    }
+    NutsVersionFormat session(NutsSession session);
+
+    @Override
+    NutsVersionFormat setSession(NutsSession session);
+
+    NutsVersionFormat addProperty(String key, String value);
+
+    NutsVersionFormat addProperties(Properties p);
+
+    NutsVersion getVersion();
+
+    NutsFormat setVersion(NutsVersion version);
+
+    NutsVersionInterval getVersionInterval();
+
+    NutsFormat setVersionInterval(NutsVersionInterval version);
+
+    NutsFormat setWorkspaceVersion();
+
+    boolean isWorkspaceVersion();
+
+    NutsVersion parseVersion(String version);
+
+    NutsVersionFilter parseVersionFilter(String versionFilter);
+
 }

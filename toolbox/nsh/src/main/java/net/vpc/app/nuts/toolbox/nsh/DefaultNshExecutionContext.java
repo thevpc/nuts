@@ -51,7 +51,7 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    out().printf("%s%n", getWorkspace().resolveId(getClass()).getVersion().toString());
+                    out().printf("%s%n", getWorkspace().format().id().resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(shellContext.getWorkspace(), "Help", 0);

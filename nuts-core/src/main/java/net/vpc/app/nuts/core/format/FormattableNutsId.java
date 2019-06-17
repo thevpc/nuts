@@ -275,7 +275,7 @@ public class FormattableNutsId {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<String> results = new ArrayList<String>();
-                    for (NutsExecutionEntry entry : ws.parse().executionEntries(def.getContent().getPath())) {
+                    for (NutsExecutionEntry entry : ws.io().parseExecutionEntries(def.getContent().getPath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(entry.getName());
@@ -404,11 +404,11 @@ public class FormattableNutsId {
 //                NutsId nut2 = null;
 //                updatable = false;
 //                try {
-//                    nut2 = ws.fetch().id(id.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().setTrace(false).getResultId();
+//                    nut2 = ws.fetch().parse(parse.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().setTrace(false).getResultId();
 //                } catch (Exception ex) {
 //                    //ignore
 //                }
-//                if (nut2 != null && nut2.getVersion().compareTo(id.getVersion()) > 0) {
+//                if (nut2 != null && nut2.getVersion().compareTo(parse.getVersion()) > 0) {
 //                    updatable = true;
 //                }
 //            }   
