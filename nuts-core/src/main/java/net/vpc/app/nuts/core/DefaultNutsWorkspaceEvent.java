@@ -34,18 +34,19 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceEvent;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsWorkspaceEvent implements NutsWorkspaceEvent{
+public class DefaultNutsWorkspaceEvent implements NutsWorkspaceEvent {
+
     private final NutsWorkspace workspace;
     private final NutsRepository repository;
     private final String propertyName;
     private final Object propertyOldValue;
     private final Object propertyValue;
 
-    public DefaultNutsWorkspaceEvent(NutsWorkspace workspace, NutsRepository repository,String propertyName, Object propertyOldValue, Object propertyValue) {
+    public DefaultNutsWorkspaceEvent(NutsWorkspace workspace, NutsRepository repository, String propertyName, Object propertyOldValue, Object propertyValue) {
         this.workspace = workspace;
         this.repository = repository;
         this.propertyName = propertyName;

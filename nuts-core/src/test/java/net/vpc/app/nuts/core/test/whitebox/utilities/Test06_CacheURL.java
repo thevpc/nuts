@@ -42,7 +42,7 @@ public class Test06_CacheURL {
             "--workspace", wsPath,
             "--standalone",
             "--archetype", "minimal",
-//            "--verbose",
+            //            "--verbose",
             "--yes",
             "--skip-install-companions"
         });
@@ -57,11 +57,9 @@ public class Test06_CacheURL {
         System.out.println(j2);
     }
 
-   
-
     @BeforeClass
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/"+TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(new File(baseFolder));
     }
 

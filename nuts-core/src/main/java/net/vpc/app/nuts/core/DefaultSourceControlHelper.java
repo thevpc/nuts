@@ -30,12 +30,13 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  * @author vpc
  */
 public class DefaultSourceControlHelper {
+
     private NutsWorkspace ws;
 
     public DefaultSourceControlHelper(NutsWorkspace ws) {
         this.ws = ws;
     }
-    
+
 //    @Override
     public NutsId commit(Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
@@ -45,7 +46,7 @@ public class DefaultSourceControlHelper {
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = ws.format().descriptor().read(file);
+        NutsDescriptor d = ws.format().descriptor().parse(file);
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
@@ -70,7 +71,7 @@ public class DefaultSourceControlHelper {
             }
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException(ws,"commit not supported");
+            throw new NutsUnsupportedOperationException(ws, "commit not supported");
         }
     }
 
@@ -93,7 +94,7 @@ public class DefaultSourceControlHelper {
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = ws.format().descriptor().read(file);
+            NutsDescriptor d = ws.format().descriptor().parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
@@ -111,7 +112,7 @@ public class DefaultSourceControlHelper {
                     null
             );
         } else {
-            throw new NutsUnsupportedOperationException(ws,"Checkout not supported");
+            throw new NutsUnsupportedOperationException(ws, "Checkout not supported");
         }
     }
 }

@@ -34,7 +34,8 @@ package net.vpc.app.nuts.core.util.io;
  * @author taha.bensalah@gmail.com
  */
 public class UnzipOptions {
-    private boolean skipRoot =false;
+
+    private boolean skipRoot = false;
 
     public UnzipOptions() {
     }

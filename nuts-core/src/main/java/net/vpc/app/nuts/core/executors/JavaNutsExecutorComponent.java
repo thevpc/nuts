@@ -103,7 +103,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         | ClassNotFoundException e) {
                     th = e;
                 } catch (Throwable ex) {
-                     th = ex;
+                    th = ex;
                 }
                 if (th != null) {
                     throw new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);

@@ -197,7 +197,6 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return m;
 //    }
-
 //    private String[] getMultilineArray(String key, Object value) {
 //        String sep = getMultilineSeparator(key);
 //        if (sep == null) {
@@ -209,7 +208,6 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return vv;
 //    }
-
     private String getMultilineSeparator(String key) {
         String sep = multilineProperties.get(key);
         if (sep != null && sep.length() == 0) {

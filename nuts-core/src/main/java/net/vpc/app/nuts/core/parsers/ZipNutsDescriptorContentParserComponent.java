@@ -50,7 +50,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
             NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-             "/META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+            "/META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
             "/WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
             "/APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
     ));
@@ -69,7 +69,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-                return parserContext.getWorkspace().format().descriptor().read(buffer.toByteArray());
+                return parserContext.getWorkspace().format().descriptor().parse(buffer.toByteArray());
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

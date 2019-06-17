@@ -57,9 +57,8 @@ public class AtName {
 
     @Override
     public String toString() {
-        return StringUtils.coalesce(name,"default")+"@"+StringUtils.coalesce(config,"default");
+        return StringUtils.coalesce(name, "default") + "@" + StringUtils.coalesce(config, "default");
     }
-    
 
     public static AtName nextAppOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();

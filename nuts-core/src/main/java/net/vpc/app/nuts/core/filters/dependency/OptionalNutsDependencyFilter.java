@@ -50,6 +50,5 @@ public class OptionalNutsDependencyFilter implements NutsDependencyFilter, Simpl
         }
         return true;
     }
-    
-    
+
 }

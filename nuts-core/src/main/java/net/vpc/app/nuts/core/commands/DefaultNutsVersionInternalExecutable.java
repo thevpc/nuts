@@ -16,7 +16,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     private final DefaultNutsExecCommand outer;
 
     public DefaultNutsVersionInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session, final DefaultNutsExecCommand outer) {
@@ -33,5 +33,5 @@ public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExe
         PrintStream out = getSession(true).getTerminal().fout();
         ws.format().version().configure(false, args).println(out);
     }
-    
+
 }

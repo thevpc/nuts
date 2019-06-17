@@ -22,7 +22,7 @@ public interface InputSource extends AutoCloseable {
 
     boolean isPath();
 
-    boolean isURL() ;
+    boolean isURL();
 
     Path getPath() throws NutsUnsupportedOperationException;
 

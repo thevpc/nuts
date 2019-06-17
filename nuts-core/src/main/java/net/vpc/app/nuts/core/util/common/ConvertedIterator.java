@@ -34,6 +34,7 @@ import java.util.function.Function;
 
 /**
  * Created by vpc on 1/9/17.
+ *
  * @param <F>
  * @param <T>
  */

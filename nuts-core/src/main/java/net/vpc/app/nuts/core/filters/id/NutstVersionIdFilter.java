@@ -68,7 +68,7 @@ public class NutstVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFi
         if (f2 == null) {
             return null;
         }
-        if(f2==filter){
+        if (f2 == filter) {
             return this;
         }
         return new NutstVersionIdFilter(f2);

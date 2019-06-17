@@ -31,7 +31,7 @@ public class NutsExecStatusIdFilter implements NutsDescriptorFilter, Simplifiabl
             return other.isExecutable() == executable.booleanValue();
         }
         if (nutsApplication != null) {
-            return other.isNutsApplication()== nutsApplication.booleanValue();
+            return other.isNutsApplication() == nutsApplication.booleanValue();
         }
         return true;
     }

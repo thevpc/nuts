@@ -122,7 +122,6 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
 //        }
 //        return session.getTerminal();
 //    }
-
     @Override
     public InputStream in() {
         return getSession().getTerminal().in();

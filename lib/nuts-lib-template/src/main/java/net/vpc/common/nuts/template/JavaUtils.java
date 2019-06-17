@@ -140,6 +140,7 @@ public class JavaUtils {
         }
         throw new IllegalArgumentException("Unable to resolve class name");
     }
+
     public static ClassInfo detectedScalaClassInfo(String javaCode) {
         String pack = null;
         String cls = null;
@@ -149,13 +150,12 @@ public class JavaUtils {
             if (!StringUtils.isBlank(line)) {
                 if (pack == null && _StringUtils.isStartsWithWord(line, "package")) {
                     pack = line.substring("package".length(), line.length()).trim();
-                    if(pack.indexOf(';')>=0){
+                    if (pack.indexOf(';') >= 0) {
                         pack = line.substring(line.indexOf(';')).trim();
                     }
                 } else {
                     for (String prefix : new String[]{
-                        "object",
-                    }) {
+                        "object",}) {
                         String rest = null;
                         if ((rest = _StringUtils.consumeWords(line, prefix)) != null && cls == null) {
                             String name = _StringUtils.consumeWord(rest);
@@ -193,8 +193,6 @@ public class JavaUtils {
         }
         return sb.toString();
     }
-
-   
 
     public static String varName(String s) {
         StringBuilder sb = new StringBuilder();

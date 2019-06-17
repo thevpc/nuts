@@ -17,7 +17,7 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
  * @author vpc
  */
 public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
-    
+
     String[] cmd;
     String[] executorOptions;
     NutsSession session;
@@ -27,7 +27,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     NutsWorkspace ws;
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
-        super(cmd[0], 
+        super(cmd[0],
                 ws.commandLine().setArgs(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
@@ -39,19 +39,17 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getStringKey()) {
-                case "--show-command":
-                    {
-                        showCommand = cmdLine.nextBoolean().getBooleanValue();
-                        break;
-                    }
-                case "--fail-fast":
-                    {
-                        failFast = cmdLine.nextBoolean().getBooleanValue();
-                        break;
-                    }
-                    default:{
-                        cmdLine.skip();
-                    }
+                case "--show-command": {
+                    showCommand = cmdLine.nextBoolean().getBooleanValue();
+                    break;
+                }
+                case "--fail-fast": {
+                    failFast = cmdLine.nextBoolean().getBooleanValue();
+                    break;
+                }
+                default: {
+                    cmdLine.skip();
+                }
             }
         }
     }
@@ -74,14 +72,12 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String getHelpText() {
         switch (NutsPlatformUtils.getPlatformOsFamily()) {
-            case WINDOWS:
-                {
-                    return "No help available. Try " + getName() + " /help";
-                }
-            default:
-                {
-                    return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
-                }
+            case WINDOWS: {
+                return "No help available. Try " + getName() + " /help";
+            }
+            default: {
+                return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
+            }
         }
     }
 
@@ -89,5 +85,5 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     public String toString() {
         return "SYSEXEC " + ws.commandLine().setArgs(cmd).toString();
     }
-    
+
 }

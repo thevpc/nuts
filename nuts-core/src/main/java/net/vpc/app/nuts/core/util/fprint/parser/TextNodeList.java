@@ -37,6 +37,7 @@ import java.util.List;
  * Created by vpc on 5/23/17.
  */
 public class TextNodeList implements TextNode, Iterable<TextNode> {
+
     private List<TextNode> children = new ArrayList<TextNode>();
 
     public TextNodeList(TextNode... children) {

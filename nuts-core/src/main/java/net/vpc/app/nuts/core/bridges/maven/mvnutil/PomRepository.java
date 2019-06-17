@@ -3,22 +3,23 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 import java.util.Objects;
 
 /**
- *  <repository>
- *             <url>http://repository.primefaces.org/</url>
- *             <id>PrimeFaces-maven-lib</id>
- *             <layout>default</layout>
- *             <name>Repository for library PrimeFaces-maven-lib</name>
- *         </repository>
- *         <repository>
- *             <id>vpc-public-maven</id>
- *             <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
- *             <snapshots>
- *                 <enabled>true</enabled>
- *                 <updatePolicy>always</updatePolicy>
- *             </snapshots>
- *         </repository>
+ * <repository>
+ * <url>http://repository.primefaces.org/</url>
+ * <id>PrimeFaces-maven-lib</id>
+ * <layout>default</layout>
+ * <name>Repository for library PrimeFaces-maven-lib</name>
+ * </repository>
+ * <repository>
+ * <id>vpc-public-maven</id>
+ * <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
+ * <snapshots>
+ * <enabled>true</enabled>
+ * <updatePolicy>always</updatePolicy>
+ * </snapshots>
+ * </repository>
  */
 public class PomRepository {
+
     private String id;
     private String layout;
     private String url;
@@ -94,15 +95,19 @@ public class PomRepository {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PomRepository that = (PomRepository) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(layout, that.layout) &&
-                Objects.equals(url, that.url) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(releases, that.releases) &&
-                Objects.equals(snapshots, that.snapshots);
+        return Objects.equals(id, that.id)
+                && Objects.equals(layout, that.layout)
+                && Objects.equals(url, that.url)
+                && Objects.equals(name, that.name)
+                && Objects.equals(releases, that.releases)
+                && Objects.equals(snapshots, that.snapshots);
     }
 
     @Override

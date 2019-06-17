@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NutsCommandLineUtils {
+
     public static String escapeArgument(String arg) {
         StringBuilder sb = new StringBuilder();
         if (arg != null) {
@@ -41,7 +42,7 @@ public class NutsCommandLineUtils {
         return sb.toString();
     }
 
-    public static String[] parseCommandLine(NutsWorkspace ws,String commandLineString) {
+    public static String[] parseCommandLine(NutsWorkspace ws, String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -95,10 +96,10 @@ public class NutsCommandLineUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(ws,"Illegal char " + c);
+                            throw new NutsParseException(ws, "Illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(ws,"Illegal char " + c);
+                            throw new NutsParseException(ws, "Illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -167,7 +168,7 @@ public class NutsCommandLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(ws,"Expected '");
+                throw new NutsParseException(ws, "Expected '");
             }
         }
         return args.toArray(new String[0]);

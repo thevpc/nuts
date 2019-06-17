@@ -9,7 +9,7 @@ package net.vpc.common.nuts.template;
  * @author vpc
  */
 public class StringRegexpValidator implements StringValidator {
-    
+
     private String regexp;
 
     public StringRegexpValidator(String regexp) {
@@ -36,5 +36,5 @@ public class StringRegexpValidator implements StringValidator {
     public String getHints() {
         return "use format ==x.y.z==";
     }
-    
+
 }

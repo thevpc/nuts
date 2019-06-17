@@ -41,7 +41,6 @@ public class TrueCommand extends SimpleNshBuiltin {
         super("true", DEFAULT_SUPPORT);
     }
 
-
     @Override
     protected Object createOptions() {
         return null;

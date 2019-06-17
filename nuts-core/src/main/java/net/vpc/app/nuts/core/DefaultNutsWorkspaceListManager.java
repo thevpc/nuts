@@ -28,7 +28,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.format().json().read(file, NutsWorkspaceListConfig.class);
+            this.config = this.defaultWorkspace.format().json().parse(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }

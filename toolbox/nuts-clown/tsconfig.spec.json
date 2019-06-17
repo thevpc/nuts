@@ -1,18 +1,18 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "target/webapp/spec",
-    "types": [
-      "jasmine",
-      "node"
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "target/webapp/spec",
+        "types": [
+            "jasmine",
+            "node"
+        ]
+    },
+    "files": [
+        "src/client/test.ts",
+        "src/client/polyfills.ts"
+    ],
+    "include": [
+        "src/main/webapp/**/*.spec.ts",
+        "src/main/webapp/**/*.d.ts"
     ]
-  },
-  "files": [
-    "src/client/test.ts",
-    "src/client/polyfills.ts"
-  ],
-  "include": [
-    "src/main/webapp/**/*.spec.ts",
-    "src/main/webapp/**/*.d.ts"
-  ]
 }

@@ -5,33 +5,25 @@
  */
 package net.vpc.app.nuts.core.format.table;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
-import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatTable implements NutsIncrementalFormatHandler {
+public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     private NutsTableFormat table;
 
-    private NutsFetchDisplayOptions displayOptions;
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return NutsOutputFormat.TABLE;
-    }
-
-    @Override
-    public void init(NutsIncrementalFormatContext context) {
-        displayOptions = new NutsFetchDisplayOptions(context.getWorkspace());
+    public DefaultSearchFormatTable(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
+        super(ws, session, writer, NutsOutputFormat.TABLE);
     }
 
     public NutsTableFormat getTable(NutsWorkspace ws) {
@@ -47,36 +39,36 @@ public class DefaultSearchFormatTable implements NutsIncrementalFormatHandler {
         if (a == null) {
             return false;
         }
-        if(displayOptions.configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
         return false;
     }
 
     @Override
-    public void start(NutsIncrementalFormatContext context) {
-        getTable(context.getWorkspace()).addHeaderCells(Arrays.stream(displayOptions.getDisplayProperties())
+    public void start() {
+        getTable(getWorkspace()).addHeaderCells(Arrays.stream(getDisplayOptions().getDisplayProperties())
                 .map(x -> CoreCommonUtils.getEnumString(x)).toArray());
     }
 
     @Override
-    public void next(NutsIncrementalFormatContext context, Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, context.getWorkspace(), context.getSession());
+    public void next(Object object, long index) {
+        FormattableNutsId fid = FormattableNutsId.of(object, getWorkspace(), getSession());
         if (fid != null) {
-            formatElement(context, fid, index);
+            formatElement(fid, index);
         } else {
-            getTable(context.getWorkspace()).newRow().addCell(object);
+            getTable(getWorkspace()).newRow().addCell(object);
         }
-        context.getWriter().flush();
+        getWriter().flush();
     }
 
-    public void formatElement(NutsIncrementalFormatContext context, FormattableNutsId id, long index) {
-        getTable(context.getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(displayOptions));
+    public void formatElement(FormattableNutsId id, long index) {
+        getTable(getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 
     @Override
-    public void complete(NutsIncrementalFormatContext context, long count) {
-        getTable(context.getWorkspace()).println(context.getWriter());
+    public void complete(long count) {
+        getTable(getWorkspace()).println(getWriter());
     }
 
 }

@@ -38,5 +38,5 @@ import net.vpc.app.nuts.NutsElement;
 public interface NutsElementFactory {
 
     NutsElement create(Object o, NutsElementFactoryContext context);
-    
+
 }

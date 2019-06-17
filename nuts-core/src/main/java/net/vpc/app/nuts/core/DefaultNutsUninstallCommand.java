@@ -31,7 +31,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsUninstallCommand(NutsWorkspace ws) {
-        super(ws,"uninstall");
+        super(ws, "uninstall");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
     @Override
     public NutsUninstallCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws,id);
+            throw new NutsNotFoundException(ws, id);
         } else {
             ids.add(id);
         }
@@ -187,8 +187,8 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
             PrintStream out = CoreIOUtils.resolveOut(ws, session);
             if (ii != null) {
 //        NutsDescriptor descriptor = nutToInstall.getDescriptor();
-                NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session, 
-                        true, 
+                NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session,
+                        true,
                         false,
                         ws.config().options().getExecutionType(),
                         null);

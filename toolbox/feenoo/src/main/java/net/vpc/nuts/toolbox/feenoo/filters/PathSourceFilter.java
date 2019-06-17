@@ -5,6 +5,7 @@ import net.vpc.nuts.toolbox.feenoo.Source;
 import net.vpc.nuts.toolbox.feenoo.SourceFilter;
 
 public class PathSourceFilter implements SourceFilter {
+
     private final StringComparator comparator;
 
     public PathSourceFilter(StringComparator comparator) {

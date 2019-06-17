@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.util.common;
 
 public class StringKeyValue {
+
     private final String key;
     private final String value;
 
@@ -21,5 +22,5 @@ public class StringKeyValue {
     public String toString() {
         return "StringKeyValue{" + "key=" + key + ", value=" + value + '}';
     }
-    
+
 }

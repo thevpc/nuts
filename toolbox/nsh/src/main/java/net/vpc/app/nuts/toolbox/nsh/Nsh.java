@@ -12,8 +12,8 @@ public class Nsh extends NutsApplication {
 
     private static final HashSet<String> CONTEXTUAL_BUILTINS = new HashSet<>(Arrays.asList(
             "showerr", "cd", "set", "unset", "enable",
-            "login", "logout", "help", "version","alias",
-            "unalias","exit"
+            "login", "logout", "help", "version", "alias",
+            "unalias", "exit"
     ));
 
     public static void main(String[] args) {

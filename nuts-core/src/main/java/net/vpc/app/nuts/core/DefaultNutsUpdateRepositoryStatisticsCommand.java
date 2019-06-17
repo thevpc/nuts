@@ -18,7 +18,7 @@ public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsR
     protected NutsRepository repo;
 
     public DefaultNutsUpdateRepositoryStatisticsCommand(NutsRepository repo) {
-        super(repo,"update-repo-statistics");
+        super(repo, "update-repo-statistics");
         this.repo = repo;
     }
 
@@ -37,5 +37,5 @@ public abstract class DefaultNutsUpdateRepositoryStatisticsCommand extends NutsR
         }
         return false;
     }
-    
+
 }

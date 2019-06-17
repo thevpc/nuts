@@ -73,7 +73,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
     @Override
     public Collection<NutsNamedElement> children() {
         List<NutsNamedElement> all = new ArrayList<>();
-        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat)getNutsElementXmlConverter();
+        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
         NamedNodeMap aa = value.getAttributes();
         NutsElementType type = null;
         for (int i = 0; i < aa.getLength(); i++) {

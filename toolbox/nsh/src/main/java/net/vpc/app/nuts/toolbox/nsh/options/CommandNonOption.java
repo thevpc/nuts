@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
@@ -48,7 +47,7 @@ public class CommandNonOption implements NutsArgumentName {
     private String name;
 
     public CommandNonOption(String name, NutsShellContext context) {
-        this.name=name;
+        this.name = name;
         this.context = context;
     }
 
@@ -56,7 +55,6 @@ public class CommandNonOption implements NutsArgumentName {
     public String getName() {
         return name;
     }
-    
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {

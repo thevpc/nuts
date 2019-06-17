@@ -5,65 +5,57 @@
  */
 package net.vpc.app.nuts.core.format.plain;
 
+import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIncrementalFormatContext;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
-import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatPlain implements NutsIncrementalFormatHandler {
+public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-private NutsFetchDisplayOptions displayOptions;
-
-    @Override
-    public void init(NutsIncrementalFormatContext context) {
-        displayOptions = new NutsFetchDisplayOptions(context.getWorkspace());
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return NutsOutputFormat.PLAIN;
+    public DefaultSearchFormatPlain(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
+        super(ws, session, writer, NutsOutputFormat.PLAIN);
     }
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        if(displayOptions.configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
         return false;
     }
 
-    
     @Override
-    public void start(NutsIncrementalFormatContext context) {
-    }
-    
-    @Override
-    public void complete(NutsIncrementalFormatContext context, long count) {
-        
+    public void start() {
     }
 
     @Override
-    public void next(NutsIncrementalFormatContext context, Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, context.getWorkspace(), context.getSession());
+    public void complete(long count) {
+
+    }
+
+    @Override
+    public void next(Object object, long index) {
+        FormattableNutsId fid = FormattableNutsId.of(object, getWorkspace(), getSession());
         if (fid != null) {
-            formatElement(context,fid, index);
+            formatElement(fid, index);
         } else {
-            context.getWriter().print(object);
-            context.getWriter().println();
-            context.getWriter().flush();
+            getWriter().print(object);
+            getWriter().println();
+            getWriter().flush();
         }
     }
 
-    private void formatElement(NutsIncrementalFormatContext context,FormattableNutsId id, long index) {
-        context.getWriter().printf(id.getSingleColumnRow(displayOptions));
-        context.getWriter().println();
-        context.getWriter().flush();
+    private void formatElement(FormattableNutsId id, long index) {
+        getWriter().printf(id.getSingleColumnRow(getDisplayOptions()));
+        getWriter().println();
+        getWriter().flush();
     }
 
 }

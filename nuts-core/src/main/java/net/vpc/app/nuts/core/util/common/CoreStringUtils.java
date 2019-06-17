@@ -504,7 +504,7 @@ public class CoreStringUtils {
     }
 
     public static void fillString(char x, int width, StringBuilder sb) {
-        if(width<=0){
+        if (width <= 0) {
             return;
         }
         sb.ensureCapacity(sb.length() + width);
@@ -514,7 +514,7 @@ public class CoreStringUtils {
     }
 
     public static void fillString(String x, int width, StringBuilder sb) {
-        if(width<=0){
+        if (width <= 0) {
             return;
         }
         sb.ensureCapacity(sb.length() + (width * x.length()));

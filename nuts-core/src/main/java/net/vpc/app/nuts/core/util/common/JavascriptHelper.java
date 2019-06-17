@@ -60,16 +60,16 @@ public class JavascriptHelper {
             )
     );
 
-
     public static class NutScriptUtil {
+
         NutsWorkspace ws;
         NutsSession session;
 
-        public NutScriptUtil(NutsWorkspace ws,NutsSession session) {
+        public NutScriptUtil(NutsWorkspace ws, NutsSession session) {
             this.ws = ws;
             this.session = session;
         }
-        
+
         public boolean matches(Object value, String pattern) {
             if (value == null) {
                 value = "";
@@ -85,17 +85,17 @@ public class JavascriptHelper {
             }
             if (value instanceof NutsId) {
                 NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
-                return f==null || f.accept((NutsId) value, ws, session);
+                return f == null || f.accept((NutsId) value, ws, session);
             }
             if (value instanceof NutsDependency) {
                 NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern);
                 //TODO, how to pass parent Id for dependency?
-                NutsId from=null;
-                return f==null || f.accept(from, (NutsDependency) value, ws, session);
+                NutsId from = null;
+                return f == null || f.accept(from, (NutsDependency) value, ws, session);
             }
             if (value instanceof NutsVersion) {
-                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern,ws);
-                return f==null || f.accept((NutsVersion) value, ws, session);
+                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern, ws);
+                return f == null || f.accept((NutsVersion) value, ws, session);
             }
             return true;
         }
@@ -110,8 +110,8 @@ public class JavascriptHelper {
 
     }
 
-    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util,NutsWorkspace ws,NutsSession session) {
-        this.ws=ws;
+    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util, NutsWorkspace ws, NutsSession session) {
+        this.ws = ws;
         if (blacklist == null) {
             blacklistClassNames.addAll(Arrays.asList(
                     "java.io.File",
@@ -145,11 +145,11 @@ public class JavascriptHelper {
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");
             if (util == null) {
-                util = new NutScriptUtil(ws,session);
+                util = new NutScriptUtil(ws, session);
             }
             engine.put("util", util);
         } catch (ScriptException e) {
-            throw new NutsParseException(ws,e);
+            throw new NutsParseException(ws, e);
         }
     }
 
@@ -186,7 +186,7 @@ public class JavascriptHelper {
         try {
             return Boolean.TRUE.equals(engine.eval("accept(x);"));
         } catch (ScriptException e) {
-            throw new NutsParseException(ws,e);
+            throw new NutsParseException(ws, e);
         }
     }
 }

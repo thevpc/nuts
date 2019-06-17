@@ -80,7 +80,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
         }
         return validSession;
     }
-    
+
     protected NutsRepository getRepo() {
         return repo;
     }

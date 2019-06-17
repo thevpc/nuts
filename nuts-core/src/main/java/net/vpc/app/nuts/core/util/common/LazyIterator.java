@@ -19,6 +19,7 @@ public class LazyIterator<T> implements Iterator<T> {
 
     public LazyIterator() {
     }
+
     public LazyIterator(Iterable<T> iterable) {
         this.iterable = iterable;
     }
@@ -44,7 +45,7 @@ public class LazyIterator<T> implements Iterator<T> {
     }
 
     protected Iterator<T> iterator() {
-        throw new NutsUnsupportedOperationException(null,"No implemented");
+        throw new NutsUnsupportedOperationException(null, "No implemented");
     }
 
     @Override

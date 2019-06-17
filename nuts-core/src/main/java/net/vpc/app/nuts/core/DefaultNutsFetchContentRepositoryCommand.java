@@ -57,9 +57,9 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
     private NutsContent result;
     private NutsDescriptor descriptor;
     private Path localPath;
-    
+
     public DefaultNutsFetchContentRepositoryCommand(NutsRepository repo) {
-        super(repo,"fetch");
+        super(repo, "fetch");
     }
 
     @Override
@@ -80,12 +80,12 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
         this.descriptor = descriptor;
         return this;
     }
+
     @Override
     public NutsFetchContentRepositoryCommand descriptor(NutsDescriptor descriptor) {
         return setDescriptor(descriptor);
     }
 
-    
     @Override
     public Path getLocalPath() {
         return localPath;
@@ -95,7 +95,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
     public NutsFetchContentRepositoryCommand localPath(Path localPath) {
         return setLocalPath(localPath);
     }
-    
+
     @Override
     public NutsFetchContentRepositoryCommand setLocalPath(Path localPath) {
         this.localPath = localPath;
@@ -105,7 +105,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
     @Override
     public NutsFetchContentRepositoryCommand run() {
         NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
-        NutsDescriptor descriptor0=descriptor;
+        NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             descriptor0 = getRepo().fetchDescriptor().id(id).session(getSession()).getResult();
         }
@@ -117,15 +117,15 @@ public class DefaultNutsFetchContentRepositoryCommand extends NutsRepositoryComm
         try {
             NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getSession());
             if (f == null) {
-                throw new NutsNotFoundException(getRepo().getWorkspace(),id);
+                throw new NutsNotFoundException(getRepo().getWorkspace(), id);
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
             }
-            result= f;
+            result = f;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(),getSession(), id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         }

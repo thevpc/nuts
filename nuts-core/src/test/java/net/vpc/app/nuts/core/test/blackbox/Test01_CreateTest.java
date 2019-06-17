@@ -47,7 +47,7 @@ public class Test01_CreateTest {
             "--skip-install-companions"
         });
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(wsPath + "/"+NutsConstants.Folders.REPOSITORIES+"/local/cache", ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        org.junit.Assert.assertEquals(wsPath + "/" + NutsConstants.Folders.REPOSITORIES + "/local/cache", ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
     }
 
     @Test
@@ -100,11 +100,11 @@ public class Test01_CreateTest {
         org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/cache",
                 ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(
-                System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/cache/"+
-                        NutsConstants.Folders.REPOSITORIES+"/"
+                System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/cache/"
+                + NutsConstants.Folders.REPOSITORIES + "/"
                 + ws.config().getRepositories()[0].config().name()
                 + "/" + ws.config().getRepositories()[0].config().uuid(),
-                 ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+                ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class Test01_CreateTest {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/"+TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(new File(baseFolder));
     }
 

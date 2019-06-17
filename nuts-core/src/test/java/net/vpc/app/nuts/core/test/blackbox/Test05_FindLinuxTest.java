@@ -84,12 +84,11 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions", 
-        });
+            "--skip-install-companions",});
 
         int count = 0;
         NutsSearchResult<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
-        Assert.assertTrue(result.count()>0);
+        Assert.assertTrue(result.count() > 0);
     }
 
     @Test()
@@ -104,14 +103,13 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions",
-        });
+            "--skip-install-companions",});
 
         List<NutsId> result1 = ws.search().latest().id("nuts-core").getResultIds().list();
         List<NutsId> result2 = ws.search().latest(false).id("nuts-core").getResultIds().list();
         System.out.println(result1);
         System.out.println(result2);
-        Assert.assertTrue(result1.size()>0);
+        Assert.assertTrue(result1.size() > 0);
     }
 
     @Test()
@@ -126,17 +124,16 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions",
-        });
+            "--skip-install-companions",});
 
         List<NutsId> result1 = ws.search().configure(false, "nuts-core").getResultIds().list();
-        List<NutsId> result2 = ws.search().configure(false, "--latest","nuts-core").getResultIds().list();
+        List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-core").getResultIds().list();
         System.out.println("=====================");
         System.out.println(result1);
         System.out.println("=====================");
         System.out.println(result2);
         System.out.println("=====================");
-        Assert.assertTrue(result1.size()>0);
+        Assert.assertTrue(result1.size() > 0);
     }
 
     @BeforeClass

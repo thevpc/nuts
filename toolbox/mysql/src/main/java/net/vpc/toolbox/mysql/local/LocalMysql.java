@@ -100,7 +100,7 @@ public class LocalMysql {
             }
         }
         NutsSession session = context.getSession();
-        if (session.isIncrementalOut()) {
+        if (session.isIterableOut()) {
             try {
                 session.getIncrementalOutput().start();
                 for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {

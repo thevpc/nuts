@@ -6,6 +6,7 @@ import net.vpc.nuts.toolbox.feenoo.SourceFilter;
 import net.vpc.nuts.toolbox.feenoo.sources.JavaTypeSource;
 
 public class JavaSourceFilter implements SourceFilter {
+
     private final StringComparator type;
     private final StringComparator file;
 

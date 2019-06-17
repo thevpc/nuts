@@ -23,17 +23,19 @@ import net.vpc.app.nuts.NutsCommandLine;
  * @author vpc
  */
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
+
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
+
     @Override
     public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.next("connect")!=null) {
+        if (cmdLine.next("connect") != null) {
             char[] password = null;
             String server = null;
             NutsArgument a;
             while (cmdLine.hasNext()) {
                 if (context.configureFirst(cmdLine)) {
                     //
-                } else if ((a=cmdLine.nextString("--password"))!=null) {
+                } else if ((a = cmdLine.nextString("--password")) != null) {
                     password = a.getStringValue("").toCharArray();
                 } else {
                     server = cmdLine.nextRequiredNonOption(cmdLine.createName("ServerAddress")).getString();
@@ -87,7 +89,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
             } catch (Exception ex) {
-                throw new NutsExecutionException(context.getWorkspace(),ex, 2);
+                throw new NutsExecutionException(context.getWorkspace(), ex, 2);
             }
             return true;
         }
@@ -100,11 +102,11 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     public static boolean isBlank(char[] string) {
-        if(string == null || string.length==0){
+        if (string == null || string.length == 0) {
             return true;
         }
-        for (char c:string) {
-            if(c > ' '){
+        for (char c : string) {
+            if (c > ' ') {
                 return false;
             }
         }

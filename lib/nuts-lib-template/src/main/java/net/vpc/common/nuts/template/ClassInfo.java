@@ -10,7 +10,7 @@ package net.vpc.common.nuts.template;
  * @author vpc
  */
 public class ClassInfo {
-    
+
     String className;
     String packageName;
 
@@ -20,11 +20,12 @@ public class ClassInfo {
     }
 
     public String getFullClassName() {
-        if(packageName==null){
+        if (packageName == null) {
             return packageName;
         }
-        return packageName+"."+className;
+        return packageName + "." + className;
     }
+
     public String getClassName() {
         return className;
     }
@@ -40,5 +41,5 @@ public class ClassInfo {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
-    
+
 }

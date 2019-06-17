@@ -33,12 +33,12 @@ public class Test02_LoadTest {
     public void load1() throws Exception {
 
         NutsWorkspace w1 = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder+"/"+TestUtils.getCallerMethodName(),
+            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--yes",
             "--skip-install-companions"
         });
         NutsWorkspace w2 = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder+"/"+TestUtils.getCallerMethodName(),
+            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--yes",
             "--skip-install-companions"
         });
@@ -46,7 +46,7 @@ public class Test02_LoadTest {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/"+TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(new File(baseFolder));
     }
 

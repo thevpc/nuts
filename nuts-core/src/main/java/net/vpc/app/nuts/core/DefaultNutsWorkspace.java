@@ -89,7 +89,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public Map<String, Object> getUserProperties() {
+    public Map<String, Object> userProperties() {
         return userProperties;
     }
 
@@ -476,7 +476,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             Path eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
                 try {
-                    NutsDescriptor d = format().descriptor().read(eff);
+                    NutsDescriptor d = format().descriptor().parse(eff);
                     if (d != null) {
                         return d;
                     }
@@ -915,7 +915,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 + '}';
     }
 
-
     @Override
     public String resolveDefaultHelp(Class clazz) {
         NutsId nutsId = format().id().resolveId(clazz);
@@ -937,7 +936,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         return null;
     }
-
 
     @Override
     public NutsSearchCommand search() {

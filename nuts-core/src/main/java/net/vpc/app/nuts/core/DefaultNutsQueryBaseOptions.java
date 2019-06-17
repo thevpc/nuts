@@ -47,10 +47,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
 
-
-    public DefaultNutsQueryBaseOptions(NutsWorkspace ws,String name) {
-        super(ws,name);
-        displayOptions=new NutsFetchDisplayOptions(ws);
+    public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
+        super(ws, name);
+        displayOptions = new NutsFetchDisplayOptions(ws);
     }
 
     //@Override
@@ -144,7 +143,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public T online() {
         return setFetchStratery(NutsFetchStrategy.ONLINE);
     }
-
 
     //@Override
     public T installed() {

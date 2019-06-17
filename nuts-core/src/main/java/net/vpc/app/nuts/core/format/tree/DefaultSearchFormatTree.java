@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.format.tree;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,63 +13,57 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyTreeNode;
-import net.vpc.app.nuts.NutsIncrementalFormatContext;
 import net.vpc.app.nuts.NutsTreeFormat;
 import net.vpc.app.nuts.NutsTreeModel;
 import net.vpc.app.nuts.NutsTreeNodeFormat;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
-import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatTree implements NutsIncrementalFormatHandler {
+public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 
     private Object lastObject;
-    private NutsFetchDisplayOptions displayOptions;
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return NutsOutputFormat.TREE;
-    }
 
-    @Override
-    public void init(NutsIncrementalFormatContext context) {
-        displayOptions = new NutsFetchDisplayOptions(context.getWorkspace());
+    public DefaultSearchFormatTree(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
+        super(ws, session, writer, NutsOutputFormat.TREE);
     }
 
     @Override
     public boolean configureFirst(NutsCommandLine commandLine) {
-        if(displayOptions.configureFirst(commandLine)){
+        if (getDisplayOptions().configureFirst(commandLine)) {
             return true;
         }
         return false;
     }
 
     @Override
-    public void start(NutsIncrementalFormatContext context) {
+    public void start() {
 
     }
 
     @Override
-    public void next(NutsIncrementalFormatContext context, Object object, long index) {
+    public void next(Object object, long index) {
         if (index > 0) {
-            formatElement(context, lastObject, index - 1, false);
+            formatElement(lastObject, index - 1, false);
         }
         lastObject = object;
     }
 
     @Override
-    public void complete(NutsIncrementalFormatContext context, long count) {
+    public void complete(long count) {
         if (count > 0) {
-            formatElement(context, lastObject, count - 1, true);
+            formatElement(lastObject, count - 1, true);
         }
     }
 
-    public void formatElement(NutsIncrementalFormatContext context, Object object, long index, boolean last) {
-        NutsTreeFormat tree = context.getWorkspace().format().tree();
+    public void formatElement(Object object, long index, boolean last) {
+        NutsTreeFormat tree = getWorkspace().format().tree();
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {
@@ -78,7 +73,7 @@ public class DefaultSearchFormatTree implements NutsIncrementalFormatHandler {
         tree.setNodeFormat(new NutsTreeNodeFormat() {
             @Override
             public String format(Object o, int depth) {
-                FormattableNutsId fid = FormattableNutsId.of(o, context.getWorkspace(), context.getSession());
+                FormattableNutsId fid = FormattableNutsId.of(o, getWorkspace(), getSession());
                 if (fid != null) {
                     return format(fid);
                 } else {
@@ -87,7 +82,7 @@ public class DefaultSearchFormatTree implements NutsIncrementalFormatHandler {
             }
 
             public String format(FormattableNutsId id) {
-                return id.getSingleColumnRow(displayOptions);
+                return id.getSingleColumnRow(getDisplayOptions());
             }
         });
         tree.setModel(new NutsTreeModel() {
@@ -121,7 +116,7 @@ public class DefaultSearchFormatTree implements NutsIncrementalFormatHandler {
                 return null;
             }
         });
-        tree.println(context.getWriter());
-        context.getWriter().flush();
+        tree.println(getWriter());
+        getWriter().flush();
     }
 }

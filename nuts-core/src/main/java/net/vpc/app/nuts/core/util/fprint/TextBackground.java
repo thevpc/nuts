@@ -79,8 +79,5 @@ public class TextBackground extends TextFormat {
         }
         return true;
     }
-    
-    
-
 
 }

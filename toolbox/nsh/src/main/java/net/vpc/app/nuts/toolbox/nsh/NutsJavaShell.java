@@ -94,7 +94,7 @@ public class NutsJavaShell extends JShell {
         }
         context = createContext();
         context.setWorkspace(this.workspace);
-        this.workspace.getUserProperties().put(NutsShellContext.class.getName(), context);
+        this.workspace.userProperties().put(NutsShellContext.class.getName(), context);
         context.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
@@ -121,7 +121,7 @@ public class NutsJavaShell extends JShell {
             //ignore
             LOG.log(Level.SEVERE, "Error resolving history file", ex);
         }
-        this.workspace.getUserProperties().put(JShellHistory.class.getName(), getHistory());
+        this.workspace.userProperties().put(JShellHistory.class.getName(), getHistory());
     }
 
     public void execCommand(String[] command, StringBuilder in, StringBuilder out, StringBuilder err) {

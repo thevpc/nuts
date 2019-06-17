@@ -14,6 +14,7 @@ import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 import net.vpc.common.javashell.JShellBuiltin;
 
 class NutsJLineCompleter implements Completer {
+
     private final NutsWorkspace workspace;
 
     public NutsJLineCompleter(NutsWorkspace workspace) {
@@ -22,7 +23,7 @@ class NutsJLineCompleter implements Completer {
 
     @Override
     public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.getUserProperties().get(NutsShellContext.class.getName());
+        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
         if (nutsConsoleContext != null) {
             if (line.wordIndex() == 0) {
                 for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
@@ -34,8 +35,8 @@ class NutsJLineCompleter implements Completer {
                 List<String> autoCompleteWords = new ArrayList<>(line.words().subList(1, line.words().size()));
                 int x = commandName.length();
                 String autoCompleteLine = line.line().substring(x);
-                List<AutoCompleteCandidate> autoCompleteCandidates =
-                        nutsConsoleContext.resolveAutoCompleteCandidates(commandName, autoCompleteWords, wordIndex, autoCompleteLine);
+                List<AutoCompleteCandidate> autoCompleteCandidates
+                        = nutsConsoleContext.resolveAutoCompleteCandidates(commandName, autoCompleteWords, wordIndex, autoCompleteLine);
                 for (Object cmdCandidate0 : autoCompleteCandidates) {
                     AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {

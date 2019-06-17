@@ -1,6 +1,7 @@
 package net.vpc.toolbox.worky.config;
 
 public class WorkspaceConfig {
+
     private RepositoryAddress defaultRepositoryAddress;
 
     public RepositoryAddress getDefaultRepositoryAddress() {

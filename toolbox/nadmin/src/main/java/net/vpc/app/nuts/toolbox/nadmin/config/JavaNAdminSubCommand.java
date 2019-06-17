@@ -29,20 +29,20 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
         NutsWorkspace ws = context.getWorkspace();
         PrintStream out = context.session().getTerminal().fout();
         NutsWorkspaceConfigManager conf = ws.config();
-        if (cmdLine.next("add java")!=null) {
-            if (cmdLine.next("--search")!=null) {
+        if (cmdLine.next("add java") != null) {
+            if (cmdLine.next("--search") != null) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
                     extraLocations.add(cmdLine.next().getString());
                 }
                 if (extraLocations.isEmpty()) {
                     for (NutsSdkLocation loc : conf.searchSdkLocations("java", out)) {
-                        conf.addSdk(loc,null);
+                        conf.addSdk(loc, null);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
                         for (NutsSdkLocation loc : conf.searchSdkLocations("java", ws.io().path(extraLocation), out)) {
-                            conf.addSdk(loc,null);
+                            conf.addSdk(loc, null);
                         }
                     }
                 }
@@ -54,7 +54,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 while (cmdLine.hasNext()) {
                     NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.next().getString()));
                     if (loc != null) {
-                        conf.addSdk(loc,null);
+                        conf.addSdk(loc, null);
                     }
                 }
                 if (autoSave) {
@@ -62,7 +62,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("remove java")!=null) {
+        } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().getString();
                 NutsSdkLocation loc = conf.findSdkByName("java", name);
@@ -73,16 +73,16 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (loc != null) {
-                    conf.removeSdk(loc,null);
+                    conf.removeSdk(loc, null);
                 }
             }
             if (autoSave) {
                 conf.save(false);
             }
             return true;
-        } else if (cmdLine.next("list java")!=null) {
+        } else if (cmdLine.next("list java") != null) {
             NutsTableFormat t = context.getWorkspace().format().table()
-//                    .setBorder(TableFormatter.SPACE_BORDER)
+                    //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")
                     .addHeaderCells("Name", "Version", "Path");

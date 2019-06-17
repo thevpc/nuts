@@ -651,7 +651,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
-        Function<String,String> map = new CoreStringUtils.MapToFunction<>(properties);
+        Function<String, String> map = new CoreStringUtils.MapToFunction<>(properties);
 
         NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
@@ -699,7 +699,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, Function<String,String> properties) {
+    private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -709,7 +709,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String,String> properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String, String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);

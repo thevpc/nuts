@@ -10,7 +10,7 @@ import java.util.Iterator;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormat;
+import net.vpc.app.nuts.NutsIterableOutput;
 
 /**
  *
@@ -20,7 +20,7 @@ public class NutsTraceIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
-    NutsIncrementalFormat listFormat;
+    NutsIterableOutput listFormat;
     PrintStream out;
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
@@ -29,7 +29,7 @@ public class NutsTraceIterator<T> implements Iterator<T> {
         this.curr = curr;
         this.ws = ws;
         this.out = out;
-        this.listFormat = session.getIncrementalOutput();
+        this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
             this.listFormat = ws.format().iter();

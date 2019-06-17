@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -52,14 +52,14 @@ public class DefaultNutsDependency implements NutsDependency {
     private final NutsId[] exclusions;
 
     public DefaultNutsDependency(NutsId id) {
-        this(id.getNamespace(),id.getGroup(),id.getName(),id.getClassifier(),id.getVersion(),id.getScope(),id.getOptional(),null);
+        this(id.getNamespace(), id.getGroup(), id.getName(), id.getClassifier(), id.getVersion(), id.getScope(), id.getOptional(), null);
     }
-    
-    public DefaultNutsDependency(String namespace, String group, String name, String classifier,NutsVersion version, String scope, String optional, NutsId[] exclusions) {
+
+    public DefaultNutsDependency(String namespace, String group, String name, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.group = CoreStringUtils.trimToNull(group);
         this.name = CoreStringUtils.trimToNull(name);
-        this.version = version==null? DefaultNutsVersion.EMPTY:version;
+        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
         String s = CoreStringUtils.trimToNull(scope);
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = CoreStringUtils.isBlank(s) ? "compile" : s;
@@ -99,12 +99,12 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!CoreStringUtils.isBlank(classifier)) {
             m.put("classifier", classifier);
         }
-        if(exclusions.length>0){
-            TreeSet<String> ex=new TreeSet<>();
+        if (exclusions.length > 0) {
+            TreeSet<String> ex = new TreeSet<>();
             for (NutsId exclusion : exclusions) {
                 ex.add(exclusion.getSimpleName());
             }
-            m.put("exclusions", CoreStringUtils.join(",",ex));
+            m.put("exclusions", CoreStringUtils.join(",", ex));
         }
         return new DefaultNutsId(
                 getNamespace(),
@@ -172,7 +172,6 @@ public class DefaultNutsDependency implements NutsDependency {
 //    public void setVersion(String version) {
 //        this.version = version;
 //    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

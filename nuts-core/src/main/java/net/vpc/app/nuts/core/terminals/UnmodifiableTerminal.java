@@ -71,7 +71,6 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     public InputStream in() {
         return base.in();
     }
-    
 
     @Override
     public void setIn(InputStream in) {

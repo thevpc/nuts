@@ -134,7 +134,6 @@ public class DefaultNutsInstalledRepository {
             }
             return true;
         }
-        
 
     }
 
@@ -244,7 +243,7 @@ public class DefaultNutsInstalledRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                Map<String, Object> m = ws.format().json().read(pathname, Map.class);
+                Map<String, Object> m = ws.format().json().parse(pathname, Map.class);
                 if (m != null) {
                     String id = (String) m.get("id");
                     if (id != null) {
@@ -348,7 +347,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz) {
-        return ws.format().json().read(getPath(id, name), clazz);
+        return ws.format().json().parse(getPath(id, name), clazz);
     }
 
     public void addJson(NutsId id, String name, InstallInfoConfig value) {

@@ -105,7 +105,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 //failFast
                 true,
                 //temporary
-                true, 
+                true,
                 executionContext.getExecutionType(),
                 executionContext.getCommandName()
         );

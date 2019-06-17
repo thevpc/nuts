@@ -10,5 +10,5 @@ package net.vpc.nuts.toolbox.feenoo;
  * @author vpc
  */
 public class FindClass {
-    
+
 }

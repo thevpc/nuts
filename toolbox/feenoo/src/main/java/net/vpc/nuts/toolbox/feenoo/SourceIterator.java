@@ -9,6 +9,6 @@ package net.vpc.nuts.toolbox.feenoo;
  *
  * @author vpc
  */
-public interface SourceIterator extends Iterable<Source>{
-    
+public interface SourceIterator extends Iterable<Source> {
+
 }

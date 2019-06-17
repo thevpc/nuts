@@ -40,5 +40,5 @@ public interface InputStreamMonitor {
     void onComplete(InputStreamEvent event);
 
     boolean onProgress(InputStreamEvent event);
-    
+
 }

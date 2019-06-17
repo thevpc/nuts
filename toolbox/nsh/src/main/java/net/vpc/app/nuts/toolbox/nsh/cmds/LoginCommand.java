@@ -78,7 +78,7 @@ public class LoginCommand extends SimpleNshBuiltin {
             options.password = context.getSession().getTerminal().ask().forPassword("Password").getValue();
         }
     }
-    
+
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();

@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class StringKeyValueList implements Iterable<StringKeyValue>{
+public class StringKeyValueList implements Iterable<StringKeyValue> {
+
     private List<StringKeyValue> values = new ArrayList<>();
 
     public void add(String key, String value) {

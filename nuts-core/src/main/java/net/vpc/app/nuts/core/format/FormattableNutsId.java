@@ -219,13 +219,13 @@ public class FormattableNutsId {
                 return "@@missing-platform@@";
             }
             case INSTALL_DATE: {
-                if (def != null && def.getInstallation()!=null) {
+                if (def != null && def.getInstallation() != null) {
                     return stringValue(def.getInstallation().getInstallDate());
                 }
                 return "    -  -     :  :  .   ";
             }
             case INSTALL_USER: {
-                if (def != null && def.getInstallation()!=null) {
+                if (def != null && def.getInstallation() != null) {
                     return stringValue(def.getInstallation().getInstallUser());
                 }
                 return "@@nobody@@";
@@ -291,7 +291,7 @@ public class FormattableNutsId {
                 return "@@missing-class@@";
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws,String.valueOf(dp));
+                throw new NutsUnsupportedArgumentException(ws, String.valueOf(dp));
             }
         }
     }
@@ -303,8 +303,8 @@ public class FormattableNutsId {
             this.i = rr.isInstalled(id);
             this.d = rr.isDefaultVersion(id);
             NutsInstallInfo iif = rr.getInstallInfo(id);
-            this.dte = iif==null?null:iif.getInstallDate();
-            this.usr = iif==null?null:iif.getInstallUser();
+            this.dte = iif == null ? null : iif.getInstallDate();
+            this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;
             this.executable = null;
             this.executableApp = null;
@@ -422,8 +422,8 @@ public class FormattableNutsId {
         }
         return "<<\\[" + status_f + status_i + "\\]>>";
     }
-    
-    private String stringValue(Object any){
-        return CoreCommonUtils.stringValueFormatted(any,ws,session);
+
+    private String stringValue(Object any) {
+        return CoreCommonUtils.stringValueFormatted(any, ws, session);
     }
 }

@@ -46,5 +46,4 @@ public class JavaSourceFormatter implements SourceProcessor {
         return sb.toString();
     }
 
-
 }

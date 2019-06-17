@@ -37,7 +37,7 @@ import net.vpc.app.nuts.NutsURLHeader;
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsURLHeader implements NutsURLHeader{
+public class DefaultNutsURLHeader implements NutsURLHeader {
 
     public static final long serialVersionUID = 1;
     private String url;

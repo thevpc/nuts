@@ -37,10 +37,12 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 2/1/17.
+ *
  * @since 0.5.4
  */
-public class DefaultNutsVersionInterval implements NutsVersionInterval,Serializable{
-    private static final long serialVersionUID= 1L;
+public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final boolean inclusiveLowerBoundary;
     private final boolean inclusiveUpperBoundary;
@@ -77,11 +79,11 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval,Serializa
 
     @Override
     public String toString() {
-        return (inclusiveLowerBoundary ? "[" : "]") +
-                (min == null ? "" : min) +
-                "," +
-                (max == null ? "" : max) +
-                (inclusiveUpperBoundary ? "]" : "[");
+        return (inclusiveLowerBoundary ? "[" : "]")
+                + (min == null ? "" : min)
+                + ","
+                + (max == null ? "" : max)
+                + (inclusiveUpperBoundary ? "]" : "[");
     }
 
 }

@@ -107,7 +107,7 @@ public class CommonRootsHelper {
             g = "";
         }
         g = g.trim();
-        if(g.isEmpty()){
+        if (g.isEmpty()) {
             return new HashSet<PathBase>(Arrays.asList(new PathBase(g, true)));
         }
         int i = g.indexOf("*");

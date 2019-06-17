@@ -32,7 +32,7 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
 
     @Override
     public NutsDependencyFilter simplify() {
-        if(all.length==0){
+        if (all.length == 0) {
             return null;
         }
         NutsDependencyFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsDependencyFilter.class, all);
@@ -54,7 +54,7 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
         return this;
     }
 
-        @Override
+    @Override
     public String toString() {
         return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
@@ -83,6 +83,5 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
         }
         return true;
     }
-    
 
 }

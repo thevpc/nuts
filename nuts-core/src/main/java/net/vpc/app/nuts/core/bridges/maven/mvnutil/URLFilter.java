@@ -38,5 +38,5 @@ import java.net.URL;
 interface URLFilter {
 
     public boolean accept(URL path);
-    
+
 }

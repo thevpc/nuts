@@ -47,7 +47,7 @@ import net.vpc.app.nuts.NutsUnsupportedArgumentException;
  * @author vpc
  */
 class URLParts {
-    
+
     URLPart[] values;
 
     public URLParts(URL r) {
@@ -71,7 +71,7 @@ class URLParts {
         } else if (r.startsWith("/")) {
             values = new URLPart[]{new URLPart("/", r.substring(1))};
         } else {
-            throw new NutsUnsupportedArgumentException(null,"Unsupported protocol " + r);
+            throw new NutsUnsupportedArgumentException(null, "Unsupported protocol " + r);
         }
     }
 
@@ -124,138 +124,132 @@ class URLParts {
         for (int i = 0; i < values.length; i++) {
             URLPart value = values[i];
             switch (value.getType()) {
-                case "/":
-                    {
-                        if (parent == null) {
-                            parent = new File("/" + value.getPath());
-                        } else if (parent instanceof File) {
-                            File f2 = new File((File) parent, value.getPath());
-                            if (i == values.length - 1) {
-                                final File[] listFiles = f2.listFiles();
-                                if (listFiles == null) {
-                                    return new URL[0];
-                                }
-                                URL[] found = new URL[listFiles.length];
-                                for (int j = 0; j < found.length; j++) {
-                                    found[j] = (listFiles[i]).toURI().toURL();
-                                }
-                                return found;
-                            } else {
-                                throw new NutsUnsupportedArgumentException(null,"Unsupported");
+                case "/": {
+                    if (parent == null) {
+                        parent = new File("/" + value.getPath());
+                    } else if (parent instanceof File) {
+                        File f2 = new File((File) parent, value.getPath());
+                        if (i == values.length - 1) {
+                            final File[] listFiles = f2.listFiles();
+                            if (listFiles == null) {
+                                return new URL[0];
                             }
-                        } else if (parent instanceof URL) {
-                            final URL uu = (URL) parent;
-                            JarURLConnection urlcon = (JarURLConnection) (uu.openConnection());
-                            List<URL> ff = new ArrayList<>();
-                            try (final JarFile jar = urlcon.getJarFile()) {
-                                Enumeration<JarEntry> entries = jar.entries();
-                                String pv = value.getPath();
-                                if (!pv.endsWith("/")) {
-                                    pv += "/";
-                                }
-                                while (entries.hasMoreElements()) {
-                                    String entry = entries.nextElement().getName();
-                                    //                                    System.out.println(entry);
-                                    if (entry.startsWith(pv)) {
-                                        String y = entry.substring(pv.length());
-                                        if (y.endsWith("/")) {
-                                            y = y.substring(0, y.length() - 1);
-                                        }
-                                        if (deep || y.indexOf('/') < 0) {
-                                            if (y.length() > 0) {
-                                                if (includeFolders || !entry.endsWith("/")) {
-                                                    StringBuilder s = new StringBuilder();
-                                                    s.append(uu.toString());
-                                                    s.append(entry);
-                                                    final URL uuu = new URL(s.toString());
-                                                    if (filter == null || filter.accept(uuu)) {
-                                                        ff.add(uuu);
-                                                    }
+                            URL[] found = new URL[listFiles.length];
+                            for (int j = 0; j < found.length; j++) {
+                                found[j] = (listFiles[i]).toURI().toURL();
+                            }
+                            return found;
+                        } else {
+                            throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        }
+                    } else if (parent instanceof URL) {
+                        final URL uu = (URL) parent;
+                        JarURLConnection urlcon = (JarURLConnection) (uu.openConnection());
+                        List<URL> ff = new ArrayList<>();
+                        try (final JarFile jar = urlcon.getJarFile()) {
+                            Enumeration<JarEntry> entries = jar.entries();
+                            String pv = value.getPath();
+                            if (!pv.endsWith("/")) {
+                                pv += "/";
+                            }
+                            while (entries.hasMoreElements()) {
+                                String entry = entries.nextElement().getName();
+                                //                                    System.out.println(entry);
+                                if (entry.startsWith(pv)) {
+                                    String y = entry.substring(pv.length());
+                                    if (y.endsWith("/")) {
+                                        y = y.substring(0, y.length() - 1);
+                                    }
+                                    if (deep || y.indexOf('/') < 0) {
+                                        if (y.length() > 0) {
+                                            if (includeFolders || !entry.endsWith("/")) {
+                                                StringBuilder s = new StringBuilder();
+                                                s.append(uu.toString());
+                                                s.append(entry);
+                                                final URL uuu = new URL(s.toString());
+                                                if (filter == null || filter.accept(uuu)) {
+                                                    ff.add(uuu);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                            if (i == values.length - 1) {
-                                return ff.toArray(new URL[ff.size()]);
-                            }
-                            parent = ff.get(0);
-                        } else {
-                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
                         }
+                        if (i == values.length - 1) {
+                            return ff.toArray(new URL[ff.size()]);
+                        }
+                        parent = ff.get(0);
+                    } else {
+                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
                     }
-                case "file":
-                    {
-                        if (parent == null) {
-                            File f2 = new File((File) parent, value.getPath());
-                            if (i == values.length - 1) {
-                                final File[] listFiles = f2.listFiles(new FileFilter() {
-                                    @Override
-                                    public boolean accept(File pathname) {
-                                        try {
-                                            return filter == null || filter.accept(pathname.toURI().toURL());
-                                        } catch (MalformedURLException ex) {
-                                            return false;
-                                        }
+                }
+                case "file": {
+                    if (parent == null) {
+                        File f2 = new File((File) parent, value.getPath());
+                        if (i == values.length - 1) {
+                            final File[] listFiles = f2.listFiles(new FileFilter() {
+                                @Override
+                                public boolean accept(File pathname) {
+                                    try {
+                                        return filter == null || filter.accept(pathname.toURI().toURL());
+                                    } catch (MalformedURLException ex) {
+                                        return false;
                                     }
-                                });
-                                if (listFiles == null) {
-                                    return new URL[0];
                                 }
-                                URL[] found = new URL[listFiles.length];
-                                for (int j = 0; j < found.length; j++) {
-                                    found[j] = (listFiles[i]).toURI().toURL();
-                                }
-                                return found;
-                            } else {
-                                throw new NutsUnsupportedArgumentException(null,"Unsupported");
+                            });
+                            if (listFiles == null) {
+                                return new URL[0];
                             }
+                            URL[] found = new URL[listFiles.length];
+                            for (int j = 0; j < found.length; j++) {
+                                found[j] = (listFiles[i]).toURI().toURL();
+                            }
+                            return found;
                         } else {
-                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
+                            throw new NutsUnsupportedArgumentException(null, "Unsupported");
                         }
+                    } else {
+                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
                     }
-                case "jar":
-                    {
-                        if (parent == null) {
-                            parent = new URL("jar:" + value.getPath() + "!/");
-                        } else {
-                            throw new IllegalArgumentException("Unsupported");
-                        }
+                }
+                case "jar": {
+                    if (parent == null) {
+                        parent = new URL("jar:" + value.getPath() + "!/");
+                    } else {
+                        throw new IllegalArgumentException("Unsupported");
                     }
+                }
             }
         }
-        throw new NutsUnsupportedArgumentException(null,"Unsupported");
+        throw new NutsUnsupportedArgumentException(null, "Unsupported");
     }
 
     public InputStream getInputStream() throws IOException {
         Object parent = null;
         for (URLPart value : values) {
             switch (value.getType()) {
-                case "/":
-                    {
-                        if (parent == null) {
-                            parent = new File(value.getPath());
-                        } else {
-                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
-                        }
+                case "/": {
+                    if (parent == null) {
+                        parent = new File(value.getPath());
+                    } else {
+                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
                     }
-                case "file":
-                    {
-                        if (parent == null) {
-                            parent = new URL(value.getPath());
-                        } else {
-                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
-                        }
+                }
+                case "file": {
+                    if (parent == null) {
+                        parent = new URL(value.getPath());
+                    } else {
+                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
                     }
-                case "jar":
-                    {
-                        if (parent == null) {
-                            parent = new URL(value.getPath()).openStream();
-                        } else {
-                            throw new NutsUnsupportedArgumentException(null,"Unsupported");
-                        }
+                }
+                case "jar": {
+                    if (parent == null) {
+                        parent = new URL(value.getPath()).openStream();
+                    } else {
+                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
                     }
+                }
             }
         }
         if (parent instanceof File) {
@@ -264,7 +258,7 @@ class URLParts {
         if (parent instanceof URL) {
             return ((URL) parent).openStream();
         }
-        throw new NutsUnsupportedArgumentException(null,"Unsupported");
+        throw new NutsUnsupportedArgumentException(null, "Unsupported");
     }
-    
+
 }

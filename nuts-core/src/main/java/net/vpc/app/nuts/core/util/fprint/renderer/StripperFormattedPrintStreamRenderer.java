@@ -5,10 +5,12 @@ import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStreamRenderer;
 
 public class StripperFormattedPrintStreamRenderer implements FormattedPrintStreamRenderer {
-    public static final FormattedPrintStreamRenderer STRIPPER=new StripperFormattedPrintStreamRenderer();
+
+    public static final FormattedPrintStreamRenderer STRIPPER = new StripperFormattedPrintStreamRenderer();
+
     @Override
     public void startFormat(FormattedPrintStream out, TextFormat format) {
-       //do nothing
+        //do nothing
     }
 
     @Override

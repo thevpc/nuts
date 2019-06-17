@@ -22,7 +22,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().format().json().read(file, ProjectConfig.class);
+        config = context.getWorkspace().format().json().parse(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -58,7 +58,7 @@ public class ProjectService {
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = context.getWorkspace().format().json().read(configFile, ProjectConfig.class);
+            ProjectConfig u = context.getWorkspace().format().json().parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -152,7 +152,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isBlank(nutsRepository)) {
-                        throw new NutsExecutionException(context.getWorkspace(),"Missing Repository", 2);
+                        throw new NutsExecutionException(context.getWorkspace(), "Missing Repository", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));

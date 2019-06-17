@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsId;
 import java.util.Comparator;
 
 public class DefaultNutsIdComparator implements Comparator<NutsId> {
+
     public static final DefaultNutsIdComparator INSTANCE = new DefaultNutsIdComparator();
 
     @Override

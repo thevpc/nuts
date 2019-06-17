@@ -109,8 +109,7 @@ public class DerbyService {
         if (!Files.exists(policy)) {
             try {
                 String permissions = net.vpc.common.io.IOUtils.loadString(DerbyMain.class.getResourceAsStream("policy-file.policy"))
-                        .replace("${{DB_PATH}}", derbyDataHomeRoot.toString())
-                        ;
+                        .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
                 throw new NutsExecutionException(ws, 1);

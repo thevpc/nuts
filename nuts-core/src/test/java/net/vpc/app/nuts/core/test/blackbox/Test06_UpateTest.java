@@ -50,7 +50,7 @@ public class Test06_UpateTest {
                 "--yes",
                 "--skip-install-companions"
         );
-        NutsRepository updateRepo1 = uws.config().getRepository("local",false);
+        NutsRepository updateRepo1 = uws.config().getRepository("local", false);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         System.out.println(updateRepo1.config().getStoreLocationStrategy());
         uws.format().info().println();
@@ -67,7 +67,7 @@ public class Test06_UpateTest {
         nws.format().info().println();
         System.out.println("\n------------------------------------------");
 
-        NutsRepository r = nws.config().getRepository("temp",false);
+        NutsRepository r = nws.config().getRepository("temp", false);
         NutsDefinition api = nws.fetch().nutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().nutsRuntime().getResultDefinition();
 
@@ -94,21 +94,21 @@ public class Test06_UpateTest {
                 .run();
 
         System.out.println("[LOCAL]");
-        System.out.println(uws.config().getRepository("local",false).config().getStoreLocationStrategy());
-        System.out.println(uws.config().getRepository("local",false).config().getStoreLocation());
-        System.out.println(uws.config().getRepository("local",false).config().getStoreLocation(NutsStoreLocation.LIB));
+        System.out.println(uws.config().getRepository("local", false).config().getStoreLocationStrategy());
+        System.out.println(uws.config().getRepository("local", false).config().getStoreLocation());
+        System.out.println(uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB));
 
         System.out.println("[TEMP]");
-        System.out.println(nws.config().getRepository("temp",false).config().getStoreLocationStrategy());
-        System.out.println(nws.config().getRepository("temp",false).config().getStoreLocation());
-        System.out.println(nws.config().getRepository("temp",false).config().getStoreLocation(NutsStoreLocation.LIB));
+        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocationStrategy());
+        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocation());
+        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
         Assert.assertEquals(
-                uws.config().getRepository("local",false).config().getStoreLocation(NutsStoreLocation.LIB),
-                nws.config().getRepository("temp",false).config().getStoreLocation(NutsStoreLocation.LIB));
+                uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB),
+                nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
 
         System.out.println(uws.search().id(api.getId().getSimpleNameId()).getResultIds().list());
         System.out.println(uws.search().id(rt.getId().getSimpleNameId()).getResultIds().list());
-       Assert.assertEquals(1, uws.search().id(api.getId().getSimpleNameId()).getResultIds().list().size());
+        Assert.assertEquals(1, uws.search().id(api.getId().getSimpleNameId()).getResultIds().list().size());
         Assert.assertEquals(1, uws.search().id(rt.getId().getSimpleNameId()).getResultIds().list().size());
         System.out.println("========================");
         System.out.println(nws.search().id(api.getId().getSimpleNameId()).setRepository("temp").getResultIds().list());
@@ -188,21 +188,21 @@ public class Test06_UpateTest {
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts/pom.xml");
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(">" + api.from + "<", ">" + api.to + "<");
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 fileInsideZipPath = fs.getPath("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties");
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
             } catch (IOException ex) {
@@ -229,7 +229,7 @@ public class Test06_UpateTest {
                             .replace("project.version=" + impl.from, "project.version=" + impl.to)
                             .replace("net.vpc.app.nuts:nuts:" + api.from, "net.vpc.app.nuts:nuts:" + api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts-core/pom.xml");
@@ -238,14 +238,14 @@ public class Test06_UpateTest {
                             .replace(">" + api.from + "<", ">" + api.to + "<")
                             .replace(">" + impl.from + "<", ">" + impl.to + "<");
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 fileInsideZipPath = fs.getPath("/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties");
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy( new ByteArrayInputStream(ss.getBytes()),fileInsideZipPath,StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
             } catch (IOException ex) {

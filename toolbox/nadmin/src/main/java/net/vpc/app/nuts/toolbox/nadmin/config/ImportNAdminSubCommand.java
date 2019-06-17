@@ -17,7 +17,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.next("list imports", "li")!=null) {
+        if (cmdLine.next("list imports", "li") != null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
@@ -25,14 +25,14 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("clear imports", "ci")!=null) {
+        } else if (cmdLine.next("clear imports", "ci") != null) {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().config().removeAllImports();
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
-        } else if (cmdLine.next("import", "ia")!=null) {
+        } else if (cmdLine.next("import", "ia") != null) {
             do {
                 String a = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
@@ -43,7 +43,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
-        } else if (cmdLine.next("unimport", "ir")!=null) {
+        } else if (cmdLine.next("unimport", "ir") != null) {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
                 if (cmdLine.isExecMode()) {

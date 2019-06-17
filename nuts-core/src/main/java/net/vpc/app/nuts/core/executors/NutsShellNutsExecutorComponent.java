@@ -87,7 +87,6 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 //        List<String> env = new ArrayList<>();
 //        env.addAll(Arrays.asList(envAndApp0[0]));
 //        env.addAll(Arrays.asList(envAndApp[0]));
-
         List<String> app = new ArrayList<>();
         app.add(NutsConstants.Ids.NUTS_SHELL);
         app.add(nutMainFile.getPath().toString());
@@ -99,9 +98,9 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
                 .command(app)
                 .session(executionContext.getSession())
                 .env(executionContext.getEnv())
-                .directory(directory==null?null:directory.getPath())
+                .directory(directory == null ? null : directory.getPath())
                 .failFast()
-//                .showCommand(showCommand)
+                //                .showCommand(showCommand)
                 .executionType(executionContext.getExecutionType())
                 .run();
     }

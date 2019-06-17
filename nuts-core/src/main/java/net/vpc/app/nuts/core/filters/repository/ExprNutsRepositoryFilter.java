@@ -67,5 +67,5 @@ public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifia
         }
         return true;
     }
-    
+
 }

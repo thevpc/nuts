@@ -10,6 +10,7 @@ import net.vpc.app.nuts.NutsUnsupportedOperationException;
  * Created by vpc on 8/15/14.
  */
 public class ImmutableConvertedList<A, B> extends AbstractList<B> {
+
     private List<A> base;
     private Function<A, B> converter;
 
@@ -23,7 +24,6 @@ public class ImmutableConvertedList<A, B> extends AbstractList<B> {
         return base.size();
     }
 
-
     @Override
     public B get(int index) {
         return converter.apply(base.get(index));
@@ -31,6 +31,6 @@ public class ImmutableConvertedList<A, B> extends AbstractList<B> {
 
     @Override
     public B set(int index, B element) {
-        throw new NutsUnsupportedOperationException(null,"Immutable List");
+        throw new NutsUnsupportedOperationException(null, "Immutable List");
     }
 }

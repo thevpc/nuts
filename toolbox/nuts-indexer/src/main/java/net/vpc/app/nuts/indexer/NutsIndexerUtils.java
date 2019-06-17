@@ -15,13 +15,13 @@ public class NutsIndexerUtils {
 
     public static Path getCacheDir(NutsWorkspace ws, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = (String) ws.getUserProperties().get(k);
+        String m = (String) ws.userProperties().get(k);
         if (m == null) {
             m = ws.config()
                     .getStoreLocation(ws.format().id().resolveId(NutsIndexerUtils.class)
                             .getSimpleNameId(),
                             NutsStoreLocation.CACHE) + File.separator + entity;
-            ws.getUserProperties().put(k, m);
+            ws.userProperties().put(k, m);
         }
         return new File(m).toPath();
     }

@@ -3,7 +3,8 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 import java.util.Objects;
 
 public class PomRepositoryPolicy {
-    private boolean enabled=true;
+
+    private boolean enabled = true;
     private String updatePolicy;
     private String checksumPolicy;
 
@@ -45,12 +46,16 @@ public class PomRepositoryPolicy {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PomRepositoryPolicy that = (PomRepositoryPolicy) o;
-        return enabled == that.enabled &&
-                Objects.equals(updatePolicy, that.updatePolicy) &&
-                Objects.equals(checksumPolicy, that.checksumPolicy);
+        return enabled == that.enabled
+                && Objects.equals(updatePolicy, that.updatePolicy)
+                && Objects.equals(checksumPolicy, that.checksumPolicy);
     }
 
     @Override

@@ -34,8 +34,9 @@ package net.vpc.app.nuts.core.util.io;
  * @author taha.bensalah@gmail.com
  */
 public class ZipOptions {
-    private boolean skipRoot =false;
-    private boolean tempFile=false;
+
+    private boolean skipRoot = false;
+    private boolean tempFile = false;
 
     public ZipOptions() {
     }
@@ -57,6 +58,5 @@ public class ZipOptions {
         this.tempFile = tempFile;
         return this;
     }
-    
-    
+
 }

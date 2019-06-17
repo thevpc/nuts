@@ -23,11 +23,11 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
     private String login;
 
     public DefaultNutsRemoveUserCommand(NutsWorkspace ws) {
-        super(ws,"remove-user");
+        super(ws, "remove-user");
     }
 
     public DefaultNutsRemoveUserCommand(NutsRepository repo) {
-        super(repo.getWorkspace(),"remove-user");
+        super(repo.getWorkspace(), "remove-user");
         this.repo = repo;
     }
 
@@ -72,5 +72,5 @@ public class DefaultNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsR
         }
         return false;
     }
-   
+
 }

@@ -461,7 +461,7 @@ public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsU
         }
         if (!ws.security().isAllowed(NutsConstants.Rights.ADMIN)) {
             ws.security().checkCredentials(u.getCredentials().toCharArray(),
-                            getOldCredentials());
+                    getOldCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");

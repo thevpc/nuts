@@ -48,7 +48,7 @@ public class NAdminMain extends NutsApplication {
                     PrintStream out = context.session().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : config -h%n");
-                    throw new NutsExecutionException(context.getWorkspace(),"Unexpected " + cmdLine.peek(),1);
+                    throw new NutsExecutionException(context.getWorkspace(), "Unexpected " + cmdLine.peek(), 1);
                 }
                 break;
             }
@@ -57,7 +57,7 @@ public class NAdminMain extends NutsApplication {
             PrintStream out = context.session().err();
             out.printf("Missing config command%n");
             out.printf("type for more help : config -h%n");
-            throw new NutsExecutionException(context.getWorkspace(),"Missing config command", 1);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing config command", 1);
         }
     }
 

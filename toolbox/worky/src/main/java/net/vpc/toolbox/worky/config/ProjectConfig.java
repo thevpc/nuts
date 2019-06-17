@@ -5,8 +5,9 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ProjectConfig {
+
     private String id;
-    private Set<String> technologies=new HashSet<>();
+    private Set<String> technologies = new HashSet<>();
     private String path;
     private boolean zombie;
     private RepositoryAddress address;
@@ -58,14 +59,18 @@ public class ProjectConfig {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ProjectConfig that = (ProjectConfig) o;
-        return zombie == that.zombie &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(technologies, that.technologies) &&
-                Objects.equals(path, that.path) &&
-                Objects.equals(address, that.address);
+        return zombie == that.zombie
+                && Objects.equals(id, that.id)
+                && Objects.equals(technologies, that.technologies)
+                && Objects.equals(path, that.path)
+                && Objects.equals(address, that.address);
     }
 
     @Override

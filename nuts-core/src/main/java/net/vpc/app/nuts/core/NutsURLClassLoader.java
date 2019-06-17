@@ -42,50 +42,52 @@ import java.nio.file.Path;
 import net.vpc.app.nuts.NutsWorkspace;
 
 public class NutsURLClassLoader extends URLClassLoader {
+
     private NutsWorkspace ws;
-    public NutsURLClassLoader(NutsWorkspace ws,URL[] urls, ClassLoader parent) {
+
+    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls, ClassLoader parent) {
         super(urls, parent);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,URL[] urls) {
+    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls) {
         super(urls);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
+    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
         super(urls, parent, factory);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,String[] urls, ClassLoader parent) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, String[] urls, ClassLoader parent) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,String[] urls) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, String[] urls) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls));
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,String[] urls, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, String[] urls, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent, factory);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,File[] urls, ClassLoader parent) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, File[] urls, ClassLoader parent) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent);
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,File[] urls) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, File[] urls) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls));
-        this.ws=ws;
+        this.ws = ws;
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws,File[] urls, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
+    public NutsURLClassLoader(NutsWorkspace ws, File[] urls, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent, factory);
-        this.ws=ws;
+        this.ws = ws;
     }
 
     @Override

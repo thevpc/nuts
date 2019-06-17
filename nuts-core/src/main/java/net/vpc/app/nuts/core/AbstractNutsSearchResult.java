@@ -51,7 +51,7 @@ public abstract class AbstractNutsSearchResult<T> implements NutsSearchResult<T>
     private String nutsBase;
     protected NutsWorkspace ws;
 
-    public AbstractNutsSearchResult(NutsWorkspace ws,String nutsBase) {
+    public AbstractNutsSearchResult(NutsWorkspace ws, String nutsBase) {
         this.ws = ws;
         this.nutsBase = nutsBase;
     }
@@ -62,7 +62,7 @@ public abstract class AbstractNutsSearchResult<T> implements NutsSearchResult<T>
         if (it.hasNext()) {
             return it.next();
         }
-        throw new NutsNotFoundException(ws,nutsBase);
+        throw new NutsNotFoundException(ws, nutsBase);
     }
 
     @Override
@@ -80,11 +80,11 @@ public abstract class AbstractNutsSearchResult<T> implements NutsSearchResult<T>
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new NutsTooManyElementsException(ws,nutsBase);
+                throw new NutsTooManyElementsException(ws, nutsBase);
             }
             return t;
         } else {
-            throw new NutsNotFoundException(ws,nutsBase);
+            throw new NutsNotFoundException(ws, nutsBase);
         }
     }
 

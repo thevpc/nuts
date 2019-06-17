@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LocalTomcatConfig {
+
     private String catalinaVersion;
     private String catalinaBase;
     private String catalinaHome;
@@ -159,22 +160,22 @@ public class LocalTomcatConfig {
 
     @Override
     public String toString() {
-        return "LocalTomcatConfig{" +
-                "catalinaVersion=" + TomcatUtils.toJsonString(catalinaVersion) +
-                ", catalinaBase=" + TomcatUtils.toJsonString(catalinaBase) +
-                ", catalinaHome=" + TomcatUtils.toJsonString(catalinaHome) +
-                ", archiveFolder=" + TomcatUtils.toJsonString(archiveFolder) +
-                ", runningFolder=" + TomcatUtils.toJsonString(runningFolder) +
-                ", startupMessage=" + TomcatUtils.toJsonString(startupMessage) +
-                ", shutdownMessage=" + TomcatUtils.toJsonString(shutdownMessage) +
-                ", logFile=" + TomcatUtils.toJsonString(logFile) +
-                ", javaHome=" + TomcatUtils.toJsonString(javaHome) +
-                ", javaOptions=" + TomcatUtils.toJsonString(javaOptions) +
-                ", startupWaitTime=" + TomcatUtils.toJsonString(startupWaitTime) +
-                ", shutdownWaitTime=" + TomcatUtils.toJsonString(shutdownWaitTime) +
-                ", kill=" + TomcatUtils.toJsonString(kill) +
-                ", apps=" + TomcatUtils.toJsonString(apps) +
-                ", domains=" + TomcatUtils.toJsonString(domains) +
-                '}';
+        return "LocalTomcatConfig{"
+                + "catalinaVersion=" + TomcatUtils.toJsonString(catalinaVersion)
+                + ", catalinaBase=" + TomcatUtils.toJsonString(catalinaBase)
+                + ", catalinaHome=" + TomcatUtils.toJsonString(catalinaHome)
+                + ", archiveFolder=" + TomcatUtils.toJsonString(archiveFolder)
+                + ", runningFolder=" + TomcatUtils.toJsonString(runningFolder)
+                + ", startupMessage=" + TomcatUtils.toJsonString(startupMessage)
+                + ", shutdownMessage=" + TomcatUtils.toJsonString(shutdownMessage)
+                + ", logFile=" + TomcatUtils.toJsonString(logFile)
+                + ", javaHome=" + TomcatUtils.toJsonString(javaHome)
+                + ", javaOptions=" + TomcatUtils.toJsonString(javaOptions)
+                + ", startupWaitTime=" + TomcatUtils.toJsonString(startupWaitTime)
+                + ", shutdownWaitTime=" + TomcatUtils.toJsonString(shutdownWaitTime)
+                + ", kill=" + TomcatUtils.toJsonString(kill)
+                + ", apps=" + TomcatUtils.toJsonString(apps)
+                + ", domains=" + TomcatUtils.toJsonString(domains)
+                + '}';
     }
 }

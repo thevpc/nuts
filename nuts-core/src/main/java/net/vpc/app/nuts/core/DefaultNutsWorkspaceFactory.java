@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -50,6 +50,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<ClassLoader, List<Class>> discoveredCache = new HashMap<>();
     private NutsWorkspace workspace;
+
     public DefaultNutsWorkspaceFactory() {
         initialize(null);
     }
@@ -59,9 +60,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     public final void initialize(NutsWorkspace ws) {
-        this.workspace=ws;
+        this.workspace = ws;
     }
-
 
     @Override
     public List<Class> discoverTypes(Class type, ClassLoader bootClassLoader) {
@@ -154,7 +154,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public void unregisterType(Class extensionPoint, Class implementation) {
         Class registered = findRegisteredType(extensionPoint, implementation.getName());
         if (registered != null) {
-            if(LOG.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             }
             classes.remove(extensionPoint, registered);
@@ -164,7 +164,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public void unregisterType(Class extensionPoint, String implementation) {
         Class registered = findRegisteredType(extensionPoint, implementation);
         if (registered != null) {
-            if(LOG.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             }
             classes.remove(extensionPoint, registered);
@@ -186,9 +186,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(workspace,cause);
+            throw new NutsFactoryException(workspace, cause);
         } catch (IllegalAccessException e) {
-            throw new NutsFactoryException(workspace,e);
+            throw new NutsFactoryException(workspace, e);
         }
         //initialize?
         return theInstance;
@@ -209,7 +209,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(workspace,cause);
+            throw new NutsFactoryException(workspace, cause);
         } catch (Exception e) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Unable to instantiate " + t, e);
@@ -217,7 +217,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsFactoryException(workspace,e);
+            throw new NutsFactoryException(workspace, e);
         }
         //initialize?
         return t1;
@@ -286,14 +286,14 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                if(LOG.isLoggable(Level.FINEST)) {
+                if (LOG.isLoggable(Level.FINEST)) {
                     LOG.log(Level.FINEST, "Resolve   {0} to  singleton {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
                 }
             }
             return (T) o;
         } else {
             T o = instantiate0(type, argTypes, args);
-            if(LOG.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Resolve  {0} to  prototype {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
             }
             return o;
@@ -305,7 +305,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         Object one = instances.getOne(type);
         if (one != null) {
             //if static instance found, always return it!
-            if(LOG.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "Resolve   {0} to singleton {1}", new Object[]{CoreStringUtils.alignLeft(type.getSimpleName(), 40), one.getClass().getName()});
             }
             return (T) one;
@@ -410,7 +410,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria) {
         List<T> list = createAll(type);
-        for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
+        for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(supportCriteria);
             if (supportLevel <= 0) {
@@ -424,6 +424,5 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public int getSupportLevel(NutsWorkspaceFactory criteria) {
         return DEFAULT_SUPPORT;
     }
-
 
 }

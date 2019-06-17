@@ -28,7 +28,7 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
     public void clearHeader() {
         header.cells.clear();
     }
-    
+
     @Override
     public void addHeaderCells(Object... values) {
         for (Object value : values) {
@@ -90,7 +90,6 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
         return rows.get(row).cells.get(column).rowspan;
     }
 
-
     @Override
     public Object getHeaderValue(int column) {
         return header.cells.get(column).value;
@@ -132,6 +131,7 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
     }
 
     public static class Row {
+
         List<DefaultCell> cells = new ArrayList<>();
     }
 

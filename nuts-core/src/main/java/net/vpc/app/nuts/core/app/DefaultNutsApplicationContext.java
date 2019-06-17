@@ -11,6 +11,7 @@ import java.util.Objects;
 import net.vpc.app.nuts.NutsCommandAutoCompleteBase;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
@@ -65,7 +66,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         execModeCommand.skipAll();
                         break;
                     }
-                    case "install":{
+                    case "install": {
                         mode = NutsApplicationMode.INSTALL;
                         modeArgs = execModeCommand.toArray();
                         execModeCommand.skipAll();
@@ -77,7 +78,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         execModeCommand.skipAll();
                         break;
                     }
-                    case "update":{
+                    case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
                             appPreviousVersion = workspace.format().version().parseVersion(execModeCommand.next().getString());
@@ -189,7 +190,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public void printHelp() {
-        String h = getWorkspace().resolveDefaultHelp(getAppClass());
+        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass());
         if (h == null) {
             h = "Help is @@missing@@.";
         }

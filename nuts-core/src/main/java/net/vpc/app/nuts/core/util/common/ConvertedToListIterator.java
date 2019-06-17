@@ -36,6 +36,7 @@ import java.util.function.Function;
 
 /**
  * Created by vpc on 1/9/17.
+ *
  * @param <F>
  * @param <T>
  */
@@ -43,7 +44,7 @@ public class ConvertedToListIterator<F, T> implements Iterator<T> {
 
     private final Iterator<F> base;
     private final Function<F, List<T>> converter;
-    private final LinkedList<T> current=new LinkedList<>();
+    private final LinkedList<T> current = new LinkedList<>();
 
     public ConvertedToListIterator(Iterator<F> base, Function<F, List<T>> converter) {
         this.base = base;
@@ -52,14 +53,14 @@ public class ConvertedToListIterator<F, T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-        if(!current.isEmpty()){
+        if (!current.isEmpty()) {
             return true;
         }
-        while(base.hasNext()){
+        while (base.hasNext()) {
             F f = base.next();
             List<T> c = converter.apply(f);
             current.addAll(c);
-            if(!current.isEmpty()){
+            if (!current.isEmpty()) {
                 return true;
             }
         }

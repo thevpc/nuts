@@ -34,5 +34,5 @@ package net.vpc.app.nuts.core.util.fprint;
  * @author vpc
  */
 public abstract class TextFormat {
-    
+
 }

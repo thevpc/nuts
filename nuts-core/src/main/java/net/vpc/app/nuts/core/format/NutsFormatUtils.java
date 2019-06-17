@@ -40,6 +40,7 @@ import net.vpc.app.nuts.NutsNamedElement;
  * @author vpc
  */
 public class NutsFormatUtils {
+
     public static void putAllInProps(String prefix, Map<String, String> dest, NutsElement value) {
         switch (value.type()) {
             case BOOLEAN:

@@ -39,7 +39,7 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
             return true;
         }
         for (NutsIdFilter filter : children) {
-            if (filter.accept(id,ws, session)) {
+            if (filter.accept(id, ws, session)) {
                 return true;
             }
         }
@@ -48,7 +48,7 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
 
     @Override
     public NutsIdFilter simplify() {
-        if(children.length==0){
+        if (children.length == 0) {
             return null;
         }
         NutsIdFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsIdFilter.class, children);

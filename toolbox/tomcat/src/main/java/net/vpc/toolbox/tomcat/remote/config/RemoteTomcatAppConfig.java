@@ -3,9 +3,9 @@ package net.vpc.toolbox.tomcat.remote.config;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 public class RemoteTomcatAppConfig {
+
     private String path;
     private String versionCommand;
-
 
     public String getPath() {
         return path;
@@ -14,7 +14,6 @@ public class RemoteTomcatAppConfig {
     public void setPath(String appPath) {
         this.path = appPath;
     }
-
 
     public String getVersionCommand() {
         return versionCommand;
@@ -26,9 +25,9 @@ public class RemoteTomcatAppConfig {
 
     @Override
     public String toString() {
-        return "{" +
-                "path=" + TomcatUtils.toJsonString(path)  +
-                ", versionCommand=" + TomcatUtils.toJsonString(versionCommand) +
-                '}';
+        return "{"
+                + "path=" + TomcatUtils.toJsonString(path)
+                + ", versionCommand=" + TomcatUtils.toJsonString(versionCommand)
+                + '}';
     }
 }

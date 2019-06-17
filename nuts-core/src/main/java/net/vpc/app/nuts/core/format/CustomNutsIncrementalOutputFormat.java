@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.format;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsIterableFormat;
 
 /**
  *
@@ -38,7 +38,7 @@ import net.vpc.app.nuts.NutsIncrementalFormatHandler;
  */
 public class CustomNutsIncrementalOutputFormat extends NutsIncrementalOutputFormatBase {
 
-    public CustomNutsIncrementalOutputFormat(NutsWorkspace ws,NutsIncrementalFormatHandler handler) {
+    public CustomNutsIncrementalOutputFormat(NutsWorkspace ws, NutsIterableFormat handler) {
         super(ws);
         prepare(handler);
     }

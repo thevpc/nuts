@@ -841,7 +841,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
                 newFile == null ? null : Arrays.stream(newFile.getDependencies()).map(x -> x.getId()).toArray(NutsId[]::new),
-                 false);
+                false);
         if (cnewId != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateAvailable(true);
         } else {

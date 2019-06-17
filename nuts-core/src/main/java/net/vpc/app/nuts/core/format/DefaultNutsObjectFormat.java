@@ -72,7 +72,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     @Override
     public NutsObjectFormat setValue(Object value) {
         super.setValue(value);
-        if(base!=null){
+        if (base != null) {
             base.setValue(value);
         }
         return this;

@@ -33,7 +33,7 @@ public class DefaultNutsPushRepositoryCommand extends NutsRepositoryCommandBase<
     private String repository;
 
     public DefaultNutsPushRepositoryCommand(NutsRepository repo) {
-        super(repo,"push");
+        super(repo, "push");
     }
 
     @Override

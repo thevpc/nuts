@@ -65,6 +65,5 @@ public class SimpleNutsTerminalFormat implements NutsTerminalFormat {
     public boolean isFormatted(Writer out) {
         return false;
     }
-    
 
 }

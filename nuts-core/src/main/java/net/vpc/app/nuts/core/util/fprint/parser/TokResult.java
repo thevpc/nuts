@@ -10,7 +10,7 @@ package net.vpc.app.nuts.core.util.fprint.parser;
  * @author vpc
  */
 class TokResult {
-    
+
     FDocNode node;
     int consumedCount;
 
@@ -23,5 +23,5 @@ class TokResult {
     public String toString() {
         return "TokResult{" + "toks=" + node + ", consumedCount=" + consumedCount + '}';
     }
-    
+
 }

@@ -32,7 +32,7 @@ public interface NutsRepositoryExt {
     }
 
     String getIdBasedir(NutsId id);
-    
+
     String getIdFilename(NutsId id);
 
     int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode);

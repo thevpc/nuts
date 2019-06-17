@@ -28,7 +28,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     private boolean infinite = false;
 
     public DefaultTreeFormat(NutsWorkspace ws) {
-        super(ws,"tree-format");
+        super(ws, "tree-format");
         formatter = TO_STRING_FORMATTER;
         linkFormatter = LINK_ASCII_FORMATTER;
     }
@@ -38,7 +38,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     }
 
     public DefaultTreeFormat(NutsWorkspace ws, NutsTreeModel tree, NutsTreeNodeFormat formatter, NutsTreeLinkFormat linkFormatter) {
-        super(ws,"tree");
+        super(ws, "tree");
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }

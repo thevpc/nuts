@@ -80,14 +80,14 @@ public class RemoteMysql {
             }
         }
         NutsSession session = context.getSession();
-        if (session.isIncrementalOut()) {
-            session.getIncrementalOutput().start();
+        if (session.isIterableOut()) {
+            session.getIterableOutput().start();
             for (Map.Entry<String, RemoteMysqlConfig> cnf : result.entrySet()) {
                 for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                    session.getIncrementalOutput().next(new Object[]{db.getKey(), cnf.getKey()});
+                    session.getIterableOutput().next(new Object[]{db.getKey(), cnf.getKey()});
                 }
             }
-            session.getIncrementalOutput().complete();
+            session.getIterableOutput().complete();
         } else {
             switch (session.getOutputFormat()) {
                 case PLAIN: {

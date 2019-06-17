@@ -8,10 +8,12 @@ import java.util.*;
 import net.vpc.app.nuts.NutsSession;
 
 class MyNutsTreeModel implements NutsTreeModel {
+
     private final XNode root;
     private final NutsWorkspace ws;
     private final NutsSession session;
-    public MyNutsTreeModel(NutsWorkspace ws,String rootName,Object data,NutsSession session) {
+
+    public MyNutsTreeModel(NutsWorkspace ws, String rootName, Object data, NutsSession session) {
         this.ws = ws;
         this.session = session;
         this.root = new XNode(rootName, data);

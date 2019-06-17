@@ -148,7 +148,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (path != null) {
             File file = new File(context.getAbsolutePath(path));
             if (file.isFile()) {
-                inputDocument = njson.read(file, cls);
+                inputDocument = njson.parse(file, cls);
             } else {
                 throw new NutsExecutionException(context.getWorkspace(), "Invalid path " + path, 1);
             }
@@ -163,12 +163,12 @@ public class JsonCommand extends SimpleNshBuiltin {
                     throw new NutsExecutionException(context.getWorkspace(), "Broken Input", 2);
                 }
                 if (line == null) {
-                    inputDocument = njson.read(new StringReader(sb.toString()), cls);
+                    inputDocument = njson.parse(new StringReader(sb.toString()), cls);
                     break;
                 } else {
                     sb.append(line);
                     try {
-                        inputDocument = njson.read(new StringReader(sb.toString()), cls);
+                        inputDocument = njson.parse(new StringReader(sb.toString()), cls);
                         break;
                     } catch (Exception ex) {
                         //

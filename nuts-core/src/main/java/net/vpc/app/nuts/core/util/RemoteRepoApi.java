@@ -12,7 +12,6 @@ package net.vpc.app.nuts.core.util;
 public enum RemoteRepoApi {
 
     DEFAULT,
-    
     MAVEN,
     GITHUB,
     FILES_FOLDERS,

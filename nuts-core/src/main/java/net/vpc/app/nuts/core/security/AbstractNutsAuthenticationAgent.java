@@ -13,7 +13,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     private NutsWorkspace ws;
     private int supportLevel;
 
-    public AbstractNutsAuthenticationAgent(String name,int supportLevel) {
+    public AbstractNutsAuthenticationAgent(String name, int supportLevel) {
         this.name = name;
         this.supportLevel = supportLevel;
     }

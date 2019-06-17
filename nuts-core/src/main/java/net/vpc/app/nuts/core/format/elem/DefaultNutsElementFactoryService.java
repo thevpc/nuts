@@ -168,8 +168,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement create(Object o, NutsElementFactoryContext context) {
             Map.Entry je = (Map.Entry) o;
             Map m = new HashMap();
-            m.put("key",je.getKey());
-            m.put("value",je.getValue());
+            m.put("key", je.getKey());
+            m.put("value", je.getValue());
             return context.toElement(m);
         }
     }

@@ -18,7 +18,7 @@ public class MysqlMain extends NutsApplication {
     public void run(NutsApplicationContext context) {
         String[] args = context.getArguments();
         if (args.length == 0) {
-            throw new NutsExecutionException(context.getWorkspace(),"Expected --remote or --local", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Expected --remote or --local", 2);
         }
         if (args[0].equals("--remote") || args[0].equals("-c")) {
             RemoteMysql m = new RemoteMysql(context);

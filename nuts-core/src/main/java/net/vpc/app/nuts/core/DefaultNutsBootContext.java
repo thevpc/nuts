@@ -24,11 +24,11 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final boolean gui;
     private final NutsWorkspace ws;
 
-    public DefaultNutsBootContext(NutsWorkspace ws,String name,String workspace, NutsId bootAPI, NutsId bootRuntime,
+    public DefaultNutsBootContext(NutsWorkspace ws, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
             NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
-            boolean global,boolean gui
+            boolean global, boolean gui
     ) {
         this.ws = ws;
         this.name = name;
@@ -60,7 +60,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.gui = gui;
     }
 
-    public DefaultNutsBootContext(NutsWorkspace ws,NutsBootConfig c) {
+    public DefaultNutsBootContext(NutsWorkspace ws, NutsBootConfig c) {
         this.ws = ws;
         this.workspace = c.getWorkspace();
         this.name = c.getName();
@@ -86,12 +86,11 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         return name;
     }
 
-    
     @Override
     public boolean isGlobal() {
         return this.global;
     }
-    
+
     @Override
     public boolean isGui() {
         return this.gui;
@@ -166,8 +165,8 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public NutsStoreLocationLayout getStoreLocationLayout() {
         return storeLocationLayout;
     }
-    
-     @Override
+
+    @Override
     public Path getNutsJar() {
         return ws.fetch().id(bootAPI).getResultPath();
 //        try {

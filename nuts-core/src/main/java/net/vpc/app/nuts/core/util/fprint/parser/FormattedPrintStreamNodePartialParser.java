@@ -18,6 +18,7 @@ import net.vpc.app.nuts.core.util.fprint.FormattedPrintStreamParser;
  * @author vpc
  */
 public class FormattedPrintStreamNodePartialParser implements FormattedPrintStreamParser {
+
     private static final Logger LOG = Logger.getLogger(FormattedPrintStreamNodePartialParser.class.getName());
 
     List<FDocNode> all = new ArrayList<>();

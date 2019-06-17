@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements NutsServiceLoader<T, B> {
+
     private ClassLoader classLoader;
     private Class<T> serviceType;
     private Class<B> criteriaType;
     private ServiceLoader<T> loader;
 
-    public DefaultNutsServiceLoader(Class<T> serviceType, Class<B> criteriaType,ClassLoader classLoader) {
+    public DefaultNutsServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
         this.classLoader = classLoader;
         this.serviceType = serviceType;
         this.criteriaType = criteriaType;

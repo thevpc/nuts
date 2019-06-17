@@ -65,21 +65,21 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         @Override
-        public InputStream open()  {
+        public InputStream open() {
             try {
                 return url.openStream();
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
         }
-        
+
         @Override
-        public NutsURLHeader getURLHeader(){
+        public NutsURLHeader getURLHeader() {
             return CoreIOUtils.getURLHeader(url);
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {
-            throw new NutsUnsupportedOperationException(null,"Upload unsupported");
+            throw new NutsUnsupportedOperationException(null, "Upload unsupported");
         }
     }
 }

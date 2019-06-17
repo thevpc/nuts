@@ -231,7 +231,7 @@ public class LsCommand extends SimpleNshBuiltin {
         String name = new File(item.path).getName();
         if (item.hidden) {
             out.printf("<<%s>>\n", name);
-        } else if (item.type=='d') {
+        } else if (item.type == 'd') {
             out.printf("==%s==\n", name);
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
             out.printf("[[%s]]\n", name);
@@ -354,7 +354,7 @@ public class LsCommand extends SimpleNshBuiltin {
                 r.hidden = true;
             }
         }
-        r.type = dir ? 'd' : regular ? '-' : link ? 'l' : other?'o':'?';
+        r.type = dir ? 'd' : regular ? '-' : link ? 'l' : other ? 'o' : '?';
         return r;
     }
 

@@ -10,7 +10,7 @@ package net.vpc.app.nuts.core.util.fprint.renderer.ansi;
  * @author vpc
  */
 public class BackgroundStyleApplier implements AnsiStyleStyleApplier {
-    
+
     private String id;
 
     public BackgroundStyleApplier(String id) {
@@ -21,5 +21,5 @@ public class BackgroundStyleApplier implements AnsiStyleStyleApplier {
     public AnsiStyle apply(AnsiStyle old) {
         return old.setBackground(id);
     }
-    
+
 }

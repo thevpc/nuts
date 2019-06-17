@@ -184,7 +184,7 @@ class StopServerBuiltin implements NutsServer, Runnable {
 
         @Override
         protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-            if(context.getSession().isPlainTrace()){
+            if (context.getSession().isPlainTrace()) {
                 PrintStream out2 = context.getSession().terminal().fout();
                 out2.println("Stopping Server ...");
             }

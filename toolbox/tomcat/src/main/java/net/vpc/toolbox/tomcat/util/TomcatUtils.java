@@ -38,7 +38,6 @@ public class TomcatUtils {
 //        jsonSerializer.json().write(config, new PrintWriter(out));
 //        w.flush();
 //    }
-
     public static boolean isPositiveInt(String s) {
         if (s == null) {
             return false;
@@ -64,8 +63,8 @@ public class TomcatUtils {
     }
 
     public static String[] splitInstanceApp(String value, boolean preferInstance) {
-        if(value==null){
-            value="";
+        if (value == null) {
+            value = "";
         }
         int dot = value.indexOf('.');
         if (dot >= 0) {

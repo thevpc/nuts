@@ -12,5 +12,5 @@ package net.vpc.app.nuts.core.util.fprint.renderer.ansi;
 public interface AnsiStyleStyleApplier {
 
     AnsiStyle apply(AnsiStyle old);
-    
+
 }

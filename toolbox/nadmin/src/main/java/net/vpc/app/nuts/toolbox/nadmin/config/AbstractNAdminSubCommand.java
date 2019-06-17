@@ -18,6 +18,7 @@ import net.vpc.app.nuts.NutsCommandLine;
  * @author vpc
  */
 public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
+
     public static boolean trySave(NutsApplicationContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, NutsCommandLine cmdLine) {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
@@ -34,7 +35,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
         }
         if (cmdLine != null) {
             while (cmdLine.hasNext()) {
-                if (cmdLine.next("--save")!=null) {
+                if (cmdLine.next("--save") != null) {
                     save = true;
                 } else {
                     cmdLine.setCommandName("config").unexpectedArgument();
@@ -42,7 +43,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
             }
         }
         //always save  in admin command!
-        save=true;
+        save = true;
         if (save) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 PrintStream out = context.session().out();

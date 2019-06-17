@@ -3,6 +3,7 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 import java.util.Objects;
 
 public class PomId {
+
     private String groupId;
     private String artifactId;
     private String version;
@@ -47,12 +48,16 @@ public class PomId {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PomId pomId = (PomId) o;
-        return Objects.equals(groupId, pomId.groupId) &&
-                Objects.equals(artifactId, pomId.artifactId) &&
-                Objects.equals(version, pomId.version);
+        return Objects.equals(groupId, pomId.groupId)
+                && Objects.equals(artifactId, pomId.artifactId)
+                && Objects.equals(version, pomId.version);
     }
 
     @Override

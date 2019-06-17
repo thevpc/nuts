@@ -29,7 +29,7 @@ public interface ProjectTemplate {
     File getProjectRootFolder();
 
     void setNewlyCreated(String p);
-    
+
     boolean isNewlyCreated(String p);
 
 }

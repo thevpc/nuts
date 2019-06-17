@@ -398,7 +398,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             }
         }
         if (!defsToInstall.isEmpty() && ws.io().getTerminal().ask()
-                .forBoolean("The following ==nuts== "+(defsToInstall.size()>1?"components are":"component is")+" going to be installed : "
+                .forBoolean("The following ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be installed : "
                         + defsToInstall.stream()
                                 .map(x -> ws.format().id().setOmitImportedGroup(true).set(x.getId().getLongNameId()).format())
                                 .collect(Collectors.joining(", "))

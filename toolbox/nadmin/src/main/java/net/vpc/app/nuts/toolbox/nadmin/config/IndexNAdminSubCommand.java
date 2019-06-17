@@ -25,7 +25,7 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin update stats";
         NutsArgument a;
-        if (cmdLine.next("update stats")!=null) {
+        if (cmdLine.next("update stats") != null) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
                 repos.add(cmdLine.next().getString());

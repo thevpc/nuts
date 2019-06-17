@@ -140,7 +140,7 @@ public class MavenUtils {
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
                 executable = true;
             } else {
-                if(pom.getArtifactId().contains("netbeans-launcher")){
+                if (pom.getArtifactId().contains("netbeans-launcher")) {
                     System.out.print("");
                 }
                 final Element ee = pom.getXml().getDocumentElement();

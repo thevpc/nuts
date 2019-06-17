@@ -14,7 +14,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsInstallInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("install", args, ws, session);
     }
@@ -27,5 +27,5 @@ public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExe
         }
         ws.install().session(getSession(true).trace()).configure(false, args).run();
     }
-    
+
 }

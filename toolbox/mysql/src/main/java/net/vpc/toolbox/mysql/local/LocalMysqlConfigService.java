@@ -86,7 +86,7 @@ public class LocalMysqlConfigService {
         String name = getName();
         Path f = getServerConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().format().json().read(f, LocalMysqlConfig.class);
+            config = context.getWorkspace().format().json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -132,7 +132,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         LocalMysqlDatabaseConfigService a = getDatabaseOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Database not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Database not found :" + appName, 2);
         }
         return a;
     }

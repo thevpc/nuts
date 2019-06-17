@@ -118,7 +118,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteTempPath = null;
         final SshAddress sshAddress = new SshAddress(prepareSshServer(cconfig.getServer()));
         final String searchResultString = execRemoteNuts("search --no-color --json net.vpc.app.nuts.toolbox:mysql --display temp-folder --installed --first");
-        List<Map> result = this.context.getWorkspace().format().json().read(new StringReader(searchResultString), List.class);
+        List<Map> result = this.context.getWorkspace().format().json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new IllegalArgumentException("Mysql is not installed on the remote machine");
         }

@@ -61,7 +61,7 @@ public class SshCommand extends AbstractNshBuiltin {
         List<String> cmd = new ArrayList<>();
     }
 
-    public void exec(String[] args, NshExecutionContext context){
+    public void exec(String[] args, NshExecutionContext context) {
         NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -120,7 +120,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
                     if (StringUtils.isBlank(workspace)) {
-                        workspace = userHome + "/.config/nuts/"+NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+                        workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;
                     try (SShConnection sShConnection = sshSession.setFailFast(false).
@@ -142,9 +142,9 @@ public class SshCommand extends AbstractNshBuiltin {
                             sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {
-                                javaCmd=(o.nutsJre + FileUtils.getNativePath("/bin/java"));
+                                javaCmd = (o.nutsJre + FileUtils.getNativePath("/bin/java"));
                             } else {
-                                javaCmd=("java");
+                                javaCmd = ("java");
                             }
                             if (sshSession.exec(javaCmd, "-jar", workspace + "/" + bootApiFileName, "-y", "install", "ndi", "--force") != 0) {
                                 throw new NutsExecutionException(context.getWorkspace(), "Install remote nuts failed", 2);

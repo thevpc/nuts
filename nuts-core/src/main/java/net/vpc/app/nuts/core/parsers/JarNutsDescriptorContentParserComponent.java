@@ -110,7 +110,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                             break;
                         case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME):
                             try {
-                                nutsjson.set(parserContext.getWorkspace().format().descriptor().read(inputStream));
+                                nutsjson.set(parserContext.getWorkspace().format().descriptor().parse(inputStream));
                             } finally {
                                 inputStream.close();
                             }

@@ -10,7 +10,7 @@ package net.vpc.app.nuts.core.util.fprint.renderer.ansi;
  * @author vpc
  */
 public class ForegroundStyleApplier implements AnsiStyleStyleApplier {
-    
+
     String id;
     int intensity;
 
@@ -23,5 +23,5 @@ public class ForegroundStyleApplier implements AnsiStyleStyleApplier {
     public AnsiStyle apply(AnsiStyle old) {
         return old.setForeground(id).setIntensity(intensity);
     }
-    
+
 }

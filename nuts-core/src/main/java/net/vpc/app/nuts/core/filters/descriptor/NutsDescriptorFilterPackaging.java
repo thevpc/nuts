@@ -56,7 +56,7 @@ public class NutsDescriptorFilterPackaging implements NutsDescriptorFilter, Simp
 
     @Override
     public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesPackaging(packaging,descriptor,ws,session);
+        return CoreFilterUtils.matchesPackaging(packaging, descriptor, ws, session);
     }
 
     /**

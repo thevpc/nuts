@@ -18,8 +18,10 @@ import net.vpc.app.nuts.core.util.fprint.renderer.ansi.ForegroundStyleApplier;
 import net.vpc.app.nuts.core.util.fprint.renderer.ansi.ListAnsiStyleStyleApplier;
 
 public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
-    public static final FormattedPrintStreamRenderer ANSI_RENDERER=new  AnsiUnixTermPrintRenderer();
+
+    public static final FormattedPrintStreamRenderer ANSI_RENDERER = new AnsiUnixTermPrintRenderer();
     private final Map<TextFormat, AnsiStyleStyleApplier> stylesAppliers = new HashMap<>();
+
     {
         defineEscape(TextFormats.FG_BLACK, new ForegroundStyleApplier("30", 0));
         defineEscape(TextFormats.FG_RED, new ForegroundStyleApplier("31", 0));
@@ -29,7 +31,7 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
         defineEscape(TextFormats.FG_BLUE, new ForegroundStyleApplier("34", 0));
         defineEscape(TextFormats.FG_CYAN, new ForegroundStyleApplier("36", 0));
         defineEscape(TextFormats.FG_WHITE, new ForegroundStyleApplier("37", 0));
-        defineEscape(TextFormats.FG_GREY, new ForegroundStyleApplier("37",1));
+        defineEscape(TextFormats.FG_GREY, new ForegroundStyleApplier("37", 1));
 
         defineEscape(TextFormats.BG_BLACK, new BackgroundStyleApplier("40"));
         defineEscape(TextFormats.BG_RED, new BackgroundStyleApplier("41"));
@@ -76,8 +78,6 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 //        defineEscape(TextFormats.UNDERLINED, "\u001b[4m", "\u001B[0m");
 //        defineEscape(TextFormats.REVERSED, "\u001b[7m", "\u001B[0m");
     }
-
-
 
     @Override
     public void startFormat(FormattedPrintStream out, TextFormat format) {

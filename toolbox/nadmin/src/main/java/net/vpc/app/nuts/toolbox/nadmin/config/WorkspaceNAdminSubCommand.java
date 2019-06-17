@@ -19,7 +19,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.next("show location")!=null) {
+        if (cmdLine.next("show location") != null) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
                 PrintStream out = session.getTerminal().fout();
@@ -27,7 +27,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         }
-        if (cmdLine.next("create workspace", "cw")!=null) {
+        if (cmdLine.next("create workspace", "cw") != null) {
             boolean ignoreIdFound = false;
             boolean save = false;
             String archetype = null;
@@ -35,15 +35,15 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             char[] password = null;
             boolean processed = false;
             while (cmdLine.hasNext()) {
-                if (cmdLine.next("-i", "--ignore")!=null) {
+                if (cmdLine.next("-i", "--ignore") != null) {
                     ignoreIdFound = true;
-                } else if (cmdLine.next("-s", "--save")!=null) {
+                } else if (cmdLine.next("-s", "--save") != null) {
                     save = true;
-                } else if (cmdLine.next("-h", "--archetype")!=null) {
+                } else if (cmdLine.next("-h", "--archetype") != null) {
                     archetype = cmdLine.required().nextNonOption(cmdLine.createName("Archetype")).required().getString();
-                } else if (cmdLine.next("-u", "--login")!=null) {
+                } else if (cmdLine.next("-u", "--login") != null) {
                     login = cmdLine.required().nextNonOption(cmdLine.createName("Login")).required().getString();
-                } else if (cmdLine.next("-x", "--password")!=null) {
+                } else if (cmdLine.next("-x", "--password") != null) {
                     password = cmdLine.required().nextNonOption(cmdLine.createName("Password")).required().getString().toCharArray();
                 } else {
                     String ws = cmdLine.required().nextNonOption(cmdLine.createName("NewWorkspaceName")).getString();
@@ -66,18 +66,18 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 if (!processed) {
-                    throw new NutsExecutionException(context.getWorkspace(),"config: incorrect command : create workspace", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "config: incorrect command : create workspace", 2);
                 }
             }
             return true;
-        } else if (cmdLine.next("set workspace api-version")!=null) {
+        } else if (cmdLine.next("set workspace api-version") != null) {
             String version = cmdLine.required().nextNonOption(cmdLine.createName("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
-        } else if (cmdLine.next("set workspace runtime-version", "set workspace runtime-id")!=null) {
+        } else if (cmdLine.next("set workspace runtime-version", "set workspace runtime-id") != null) {
             String version = cmdLine.required().nextNonOption(cmdLine.createName("version")).getString();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             if (version.contains("#")) {
@@ -88,7 +88,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.setCommandName("config set workspace version").unexpectedArgument();
 
-        } else if (cmdLine.next("set workspace", "sw")!=null) {
+        } else if (cmdLine.next("set workspace", "sw") != null) {
             boolean createIfNotFound = false;
             boolean save = true;
             String login = null;
@@ -97,17 +97,17 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             int wsCount = 0;
             boolean processed = false;
             while (wsCount == 0 || cmdLine.hasNext()) {
-                if (cmdLine.next("-c", "--create")!=null) {
+                if (cmdLine.next("-c", "--create") != null) {
                     createIfNotFound = true;
-                } else if (cmdLine.next("-s", "--save")!=null) {
+                } else if (cmdLine.next("-s", "--save") != null) {
                     save = true;
-                } else if (cmdLine.next("-s", "--nosave")!=null) {
+                } else if (cmdLine.next("-s", "--nosave") != null) {
                     save = false;
-                } else if (cmdLine.next("-h", "--archetype")!=null) {
+                } else if (cmdLine.next("-h", "--archetype") != null) {
                     archetype = cmdLine.required().nextNonOption(cmdLine.createName("Archetype")).required().getString();
-                } else if (cmdLine.next("-u", "--login")!=null) {
+                } else if (cmdLine.next("-u", "--login") != null) {
                     login = cmdLine.required().nextNonOption(cmdLine.createName("Username")).required().getString();
-                } else if (cmdLine.next("-x", "--password")!=null) {
+                } else if (cmdLine.next("-x", "--password") != null) {
                     password = cmdLine.required().nextNonOption(cmdLine.createName("Password")).required().getString().toCharArray();
                 } else {
                     String ws = cmdLine.required().nextNonOption(cmdLine.createName("WorkspacePath")).getString();
@@ -135,11 +135,11 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             cmdLine.setCommandName("config set workspace").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 if (!processed) {
-                    throw new NutsExecutionException(context.getWorkspace(),"incorrect command : create workspace", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "incorrect command : create workspace", 2);
                 }
             }
             return true;
-        } else if (cmdLine.next("save workspace", "save", "sw")!=null) {
+        } else if (cmdLine.next("save workspace", "save", "sw") != null) {
             cmdLine.setCommandName("config save workspace").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);

@@ -10,5 +10,5 @@ package net.vpc.nuts.toolbox.feenoo.sources;
  * @author vpc
  */
 public class FolderZipEntrySource {
-    
+
 }

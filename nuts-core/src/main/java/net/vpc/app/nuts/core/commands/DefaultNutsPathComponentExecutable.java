@@ -98,7 +98,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = ws.format().descriptor().read(ext);
+                    c.descriptor = ws.format().descriptor().parse(ext);
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                 }
@@ -115,7 +115,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getName().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
                     try (InputStream in = c.contentFile.open()) {
-                        c.descriptor = ws.format().descriptor().read(in);
+                        c.descriptor = ws.format().descriptor().parse(in);
                     }
                     c.contentFile = null;
                     if (c.baseFile.isURL()) {

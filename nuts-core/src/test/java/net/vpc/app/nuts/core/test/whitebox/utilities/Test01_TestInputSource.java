@@ -19,26 +19,25 @@ public class Test01_TestInputSource {
     @Test
     public void test1() throws Exception {
         InputSource s = CoreIOUtils.createInputSource("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
-        
+
         Assert.assertFalse(s.isPath());
         Assert.assertTrue(s.isURL());
-        
+
         s = CoreIOUtils.createInputSource("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
-        
+
         s = CoreIOUtils.createInputSource("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
-        
+
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assert.assertFalse(s.isPath());
 //        Assert.assertTrue(s.isURL());
-
         s = CoreIOUtils.createInputSource("/maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
-        
+
     }
 
 }

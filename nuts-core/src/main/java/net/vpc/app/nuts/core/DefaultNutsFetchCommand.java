@@ -357,7 +357,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
             }
             if (getValidSession().isTrace()) {
-                NutsIncrementalFormat ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
+                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
                         .session(getValidSession());
                 ff.start();
                 ff.next(foundDefinition);
@@ -415,7 +415,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             Map<String, String> map = null;
             try {
                 if (Files.isRegularFile(f)) {
-                    map = ws.format().json().read(f, Map.class);
+                    map = ws.format().json().parse(f, Map.class);
                 }
             } catch (Exception ex) {
                 //

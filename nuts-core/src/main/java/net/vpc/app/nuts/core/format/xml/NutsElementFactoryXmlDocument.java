@@ -40,11 +40,11 @@ import net.vpc.app.nuts.core.format.elem.NutsElementFactory;
  * @author vpc
  */
 public class NutsElementFactoryXmlDocument implements NutsElementFactory {
-    
+
     @Override
     public NutsElement create(Object o, NutsElementFactoryContext context) {
         Element e = ((Document) o).getDocumentElement();
-        return DefaultNutsXmlFormat.getOrSet(context).fromXmlElement(e,NutsElement.class);
+        return DefaultNutsXmlFormat.getOrSet(context).fromXmlElement(e, NutsElement.class);
     }
-    
+
 }

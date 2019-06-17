@@ -4,7 +4,8 @@ import java.io.*;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-public class FileCommandHistory implements CommandHistory{
+public class FileCommandHistory implements CommandHistory {
+
     private int maxEntries = 100;
     private LinkedHashSet<String> historySet = new LinkedHashSet<String>() {
         protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
@@ -22,7 +23,7 @@ public class FileCommandHistory implements CommandHistory{
     }
 
     public void load() throws IOException {
-        if(file.exists()) {
+        if (file.exists()) {
             BufferedReader r = new BufferedReader(new FileReader(file));
             String line = null;
             while ((line = r.readLine()) != null) {

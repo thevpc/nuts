@@ -35,14 +35,15 @@ import java.util.*;
 
 public class MultiPipeThread extends Thread implements StopMonitor {
 
-    private static class PipeInfo{
+    private static class PipeInfo {
+
         private final String id;
         private final String name;
         private final NonBlockingInputStream in;
         private final OutputStream out;
         private long pipedBytesCount = 0;
 
-        public PipeInfo(String id, String name,NonBlockingInputStream in, OutputStream out) {
+        public PipeInfo(String id, String name, NonBlockingInputStream in, OutputStream out) {
             this.id = id;
             this.name = name;
             this.in = in;
@@ -52,17 +53,16 @@ public class MultiPipeThread extends Thread implements StopMonitor {
     private final Object lock = new Object();
     private boolean requestStop = false;
     private boolean stopped = false;
-    private Map<String,PipeInfo> list = new HashMap<>();
-    private String[] ids= null;
+    private Map<String, PipeInfo> list = new HashMap<>();
+    private String[] ids = null;
 
     public MultiPipeThread(String name) {
         super(name);
     }
 
-
-    public String add(String name,NonBlockingInputStream in, OutputStream out){
+    public String add(String name, NonBlockingInputStream in, OutputStream out) {
         String id = UUID.randomUUID().toString();
-        list.put(id,new PipeInfo(id,name,in,out));
+        list.put(id, new PipeInfo(id, name, in, out));
         return id;
     }
 
@@ -85,8 +85,8 @@ public class MultiPipeThread extends Thread implements StopMonitor {
     }
 
     private String[] getIds() {
-        if(ids==null){
-            ids=list.keySet().toArray(new String[list.size()]);
+        if (ids == null) {
+            ids = list.keySet().toArray(new String[list.size()]);
         }
         return ids;
     }
@@ -112,7 +112,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
                     } else {
                         p.out.close();
                         list.remove(s);
-                        ids=null;
+                        ids = null;
                     }
                 }
                 try {
@@ -130,11 +130,11 @@ public class MultiPipeThread extends Thread implements StopMonitor {
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    public int size(){
+    public int size() {
         return list.size();
     }
 

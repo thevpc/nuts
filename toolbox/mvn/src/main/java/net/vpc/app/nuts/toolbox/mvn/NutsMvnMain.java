@@ -78,7 +78,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(appContext.getWorkspace(),"Maven Call exited with code " + r, r);
+                        throw new NutsExecutionException(appContext.getWorkspace(), "Maven Call exited with code " + r, r);
                     }
                 }
                 case "get": {
@@ -106,7 +106,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(appContext.getWorkspace(),"Maven Call exited with code " + r, r);
+                        throw new NutsExecutionException(appContext.getWorkspace(), "Maven Call exited with code " + r, r);
                     }
                 }
             }

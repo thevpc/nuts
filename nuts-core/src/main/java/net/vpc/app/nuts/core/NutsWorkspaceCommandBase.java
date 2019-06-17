@@ -23,7 +23,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     private boolean sessionCopy = false;
     private final String commandName;
 
-    public NutsWorkspaceCommandBase(NutsWorkspace ws,String commandName) {
+    public NutsWorkspaceCommandBase(NutsWorkspace ws, String commandName) {
         this.ws = ws;
         this.commandName = commandName;
     }
@@ -125,12 +125,12 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported,args,getCommandName());
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, getCommandName());
     }
 
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws,skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
 }

@@ -85,19 +85,21 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         return this;
     }
 
+    @Override
     public Object getValue() {
         return value;
     }
 
+    @Override
     public NutsJsonFormat set(Object value) {
         return setValue(value);
     }
-    
+
+    @Override
     public NutsJsonFormat setValue(Object value) {
         this.value = value;
         return this;
     }
-    
 
     public <T> T convert(Object any, Class<T> to) {
         Gson gson = getGson(true);
@@ -116,24 +118,24 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
-    public <T> T read(Reader reader, Class<T> cls) {
+    public <T> T parse(Reader reader, Class<T> cls) {
         return getGson(true).fromJson(reader, cls);
     }
 
     @Override
-    public <T> T read(Path path, Class<T> cls) {
+    public <T> T parse(Path path, Class<T> cls) {
         File file = path.toFile();
         try (FileReader r = new FileReader(file)) {
-            return read(r, cls);
+            return parse(r, cls);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public <T> T read(File file, Class<T> cls) {
+    public <T> T parse(File file, Class<T> cls) {
         try (FileReader r = new FileReader(file)) {
-            return read(r, cls);
+            return parse(r, cls);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

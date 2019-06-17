@@ -44,7 +44,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
 
     @Override
     public NutsDescriptorFilter simplify() {
-        if(all.length==0){
+        if (all.length == 0) {
             return null;
         }
         NutsDescriptorFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsDescriptorFilter.class, all);

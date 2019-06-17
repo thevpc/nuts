@@ -67,7 +67,7 @@ public class NutsRepositoryRegistryHelper {
         }
         String uuid = repository != null ? repository.getUuid() : null;
         String name = repository != null ? repository.config().name() : repositoryRef != null ? repositoryRef.getName() : null;
-        if(name==null){
+        if (name == null) {
             return;
         }
         RepoAndRef ii = null;

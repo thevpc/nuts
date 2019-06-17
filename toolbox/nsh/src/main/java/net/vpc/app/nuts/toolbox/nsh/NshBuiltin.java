@@ -41,14 +41,10 @@ import net.vpc.common.javashell.JShellBuiltin;
 public interface NshBuiltin extends NutsComponent<NutsJavaShell>, JShellBuiltin<NshExecutionContext> {
 
 //    String getName();
-
 //    int exec(String[] args, NshExecutionContext context) throws Exception;
-
 //    String getHelp();
-
 //    String getHelpHeader();
+    default void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete) {
 
-    default void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete){
-        
     }
 }

@@ -32,7 +32,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
     private LinkedHashSet<String> repositrories = new LinkedHashSet<>();
 
     public DefaultNutsUpdateStatisticsCommand(NutsWorkspace ws) {
-        super(ws,"update-statistics");
+        super(ws, "update-statistics");
     }
 
     @Override
@@ -137,7 +137,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
         return repositrories.toArray(new String[0]);
     }
 
-@Override
+    @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
@@ -152,18 +152,17 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
         }
         return false;
     }
-    
-    
+
     @Override
     public NutsUpdateStatisticsCommand run() {
         for (String repository : getRepositrories()) {
-            NutsRepository repo = ws.config().getRepository(repository,true);
+            NutsRepository repo = ws.config().getRepository(repository, true);
             repo.updateStatistics()
                     .session(
                             NutsWorkspaceHelper.createRepositorySession(
                                     getWorkspace(),
                                     getValidSession(), repo, NutsFetchMode.LOCAL, null)
-                            )
+                    )
                     .run();
         }
         for (String repositoryPath : getPaths()) {

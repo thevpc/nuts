@@ -4,7 +4,8 @@ import net.vpc.app.nuts.NutsId;
 
 import java.util.Objects;
 
-public class NutsIdExt implements Comparable<NutsIdExt>{
+public class NutsIdExt implements Comparable<NutsIdExt> {
+
     public NutsId id;
     public String extra;
 
@@ -15,8 +16,12 @@ public class NutsIdExt implements Comparable<NutsIdExt>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NutsIdExt nutsIdExt = (NutsIdExt) o;
         return Objects.equals(id, nutsIdExt.id);
     }
@@ -30,10 +35,10 @@ public class NutsIdExt implements Comparable<NutsIdExt>{
     @Override
     public int compareTo(NutsIdExt o) {
         int x = this.id.getSimpleName().compareTo(o.id.getSimpleName());
-        if(x!=0){
+        if (x != 0) {
             return x;
         }
-        x = - this.id.getVersion().compareTo(o.id.getVersion());
+        x = -this.id.getVersion().compareTo(o.id.getVersion());
         return x;
     }
 }

@@ -33,44 +33,26 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.NutsIncrementalFormat;
-import net.vpc.app.nuts.NutsIncrementalFormatContext;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsIterableOutput;
+import net.vpc.app.nuts.NutsIterableFormat;
 
 /**
  *
  * @author vpc
  */
-public abstract class NutsIncrementalOutputFormatBase implements NutsIncrementalFormat {
+public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOutput {
 
     private NutsWorkspace ws;
     private NutsSession session;
     private PrintWriter out;
     private NutsFetchDisplayOptions displayOptions;
     private long index;
-    private NutsIncrementalFormatHandler handler;
-    private NutsIncrementalFormatContext context = new NutsIncrementalFormatContext() {
-        public PrintWriter getWriter() {
-            return NutsIncrementalOutputFormatBase.this.getValidOut();
-        }
-
-        @Override
-        public NutsSession getSession() {
-            return NutsIncrementalOutputFormatBase.this.getValidSession();
-        }
-
-        @Override
-        public NutsWorkspace getWorkspace() {
-            return NutsIncrementalOutputFormatBase.this.getWorkspace();
-        }
-
-    };
+    private NutsIterableFormat format;
 
     public NutsIncrementalOutputFormatBase(NutsWorkspace ws) {
         this.ws = ws;
@@ -81,31 +63,30 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
         return displayOptions;
     }
 
-    protected NutsIncrementalFormatHandler prepare(NutsIncrementalFormatHandler helper) {
-        this.handler = helper;
-        this.handler.init(context);
-        return helper;
+    protected NutsIterableFormat prepare(NutsIterableFormat format) {
+        this.format = format;
+        return format;
     }
 
-    public NutsIncrementalFormatHandler getHandler() {
-        return handler;
+    public NutsIterableFormat getFormat() {
+        return format;
     }
 
     @Override
     public void start() {
         index = 0;
-        getHandler().start(context);
+        getFormat().start();
     }
 
     @Override
     public void next(Object object) {
-        getHandler().next(context, object, index);
+        getFormat().next(object, index);
         index++;
     }
 
     @Override
     public void complete() {
-        getHandler().complete(context, index);
+        getFormat().complete(index);
     }
 
     public PrintWriter getValidOut() {
@@ -118,7 +99,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
     }
 
     @Override
-    public final NutsIncrementalFormat configure(boolean skipUnsupported, String... args) {
+    public final NutsIterableOutput configure(boolean skipUnsupported, String... args) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "search");
     }
 
@@ -136,7 +117,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
         if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
-        return getHandler().configureFirst(cmd);
+        return getFormat().configureFirst(cmd);
     }
 
     public NutsWorkspace getWorkspace() {
@@ -144,12 +125,12 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
     }
 
     @Override
-    public NutsIncrementalFormat out(PrintStream out) {
+    public NutsIterableOutput out(PrintStream out) {
         return setOut(out);
     }
 
     @Override
-    public NutsIncrementalFormat setOut(PrintStream out) {
+    public NutsIterableOutput setOut(PrintStream out) {
         if (out == null) {
             if (this.out != null) {
                 this.out.flush();
@@ -161,11 +142,13 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
         return this;
     }
 
-    public NutsIncrementalFormat out(PrintWriter out) {
+    @Override
+    public NutsIterableOutput out(PrintWriter out) {
         return setOut(out);
     }
 
-    public NutsIncrementalFormat setOut(PrintWriter out) {
+    @Override
+    public NutsIterableOutput setOut(PrintWriter out) {
         if (out == null) {
             if (this.out != null) {
                 this.out.flush();
@@ -208,12 +191,12 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIncremental
     }
 
     @Override
-    public NutsIncrementalFormat session(NutsSession session) {
+    public NutsIterableOutput session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsIncrementalFormat setSession(NutsSession session) {
+    public NutsIterableOutput setSession(NutsSession session) {
         //should copy because will chage outputformat
         this.session = session == null ? null : session.copy();
         return this;

@@ -73,12 +73,12 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
     public String getAlgorithm() {
         return algorithm;
     }
-    
+
     @Override
     public NutsHashCommand algorithm(String algo) {
         return setAlgorithm(algo);
     }
-    
+
     @Override
     public NutsHashCommand setAlgorithm(String algo) {
         if (CoreStringUtils.isBlank(algo)) {
@@ -86,7 +86,7 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
         }
         try {
             MessageDigest.getInstance(algo);
-            this.algorithm=algo;
+            this.algorithm = algo;
         } catch (NoSuchAlgorithmException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -176,7 +176,7 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws,"Unsupported type " + type);
+                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type);
             }
         }
     }

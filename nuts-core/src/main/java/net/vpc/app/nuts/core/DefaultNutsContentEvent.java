@@ -36,11 +36,11 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.3
  */
-public class DefaultNutsContentEvent implements NutsContentEvent{
+public class DefaultNutsContentEvent implements NutsContentEvent {
 
     private final NutsDeployRepositoryCommand deployment;
     /**

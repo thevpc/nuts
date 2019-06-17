@@ -1,10 +1,10 @@
 package net.vpc.toolbox.mysql.local.config;
 
 public class LocalMysqlDatabaseConfig {
+
     private String user;
     private String password;
     private String databaseName;
-
 
     public String getUser() {
         return user;

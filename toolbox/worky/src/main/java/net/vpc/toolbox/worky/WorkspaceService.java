@@ -28,7 +28,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().format().json().read(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().format().json().parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -122,7 +122,7 @@ public class WorkspaceService {
             }
         }
         if (cmd.isExecMode()) {
-            List<ProjectConfig> result=new ArrayList<>();
+            List<ProjectConfig> result = new ArrayList<>();
             for (ProjectService projectService : findProjectServices()) {
                 if (matches(projectService.getConfig().getId(), filters)) {
                     ProjectConfig config = projectService.getConfig();

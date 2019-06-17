@@ -30,14 +30,14 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
     private final Object o;
     private final char type;
 
-    public NutsCollectionSearchResult(NutsWorkspace ws,String nutsBase) {
-        super(ws,nutsBase);
-            this.o = null;
-            this.type = 'n';
+    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase) {
+        super(ws, nutsBase);
+        this.o = null;
+        this.type = 'n';
     }
-    
-    public NutsCollectionSearchResult(NutsWorkspace ws,String nutsBase,Iterator<T> o) {
-        super(ws,nutsBase);
+
+    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, Iterator<T> o) {
+        super(ws, nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';
@@ -47,8 +47,8 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         }
     }
 
-    public NutsCollectionSearchResult(NutsWorkspace ws,String nutsBase,Collection<T> o) {
-        super(ws,nutsBase);
+    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, Collection<T> o) {
+        super(ws, nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';
@@ -58,8 +58,8 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         }
     }
 
-    public NutsCollectionSearchResult(NutsWorkspace ws,String nutsBase,List<T> o) {
-        super(ws,nutsBase);
+    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, List<T> o) {
+        super(ws, nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';
@@ -81,7 +81,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
             case 'c':
                 return new ArrayList<>((Collection<T>) o);
         }
-        throw new NutsUnsupportedArgumentException(ws,"Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
             case 'c':
                 return ((Collection<T>) o).iterator();
         }
-        throw new NutsUnsupportedArgumentException(ws,"Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
             case 'c':
                 return ((Collection<T>) o).stream();
         }
-        throw new NutsUnsupportedArgumentException(ws,"Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
     }
 
     @Override
@@ -157,6 +157,5 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         }
         return true;
     }
-
 
 }

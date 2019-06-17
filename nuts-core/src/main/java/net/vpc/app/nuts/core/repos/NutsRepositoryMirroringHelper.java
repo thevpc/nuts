@@ -158,10 +158,10 @@ public class NutsRepositoryMirroringHelper {
         NutsDescriptor desc = repo.fetchDescriptor().setId(id).session(nonTransitiveSession).run().getResult();
         NutsContent local = repo.fetchContent().id(id).session(nonTransitiveSession).run().getResult();
         if (local == null) {
-            throw new NutsNotFoundException(repo.getWorkspace(),id);
+            throw new NutsNotFoundException(repo.getWorkspace(), id);
         }
         if (!repo.config().isSupportedMirroring()) {
-            throw new NutsRepositoryNotFoundException(repo.getWorkspace(),"Not Repo for pushing " + id);
+            throw new NutsRepositoryNotFoundException(repo.getWorkspace(), "Not Repo for pushing " + id);
         }
         NutsRepository repo = null;
         if (CoreStringUtils.isBlank(repository)) {
@@ -173,13 +173,13 @@ public class NutsRepositoryMirroringHelper {
                 }
             }
             if (all.isEmpty()) {
-                throw new NutsRepositoryNotFoundException(repo.getWorkspace(),"Not Repo for pushing " + id);
+                throw new NutsRepositoryNotFoundException(repo.getWorkspace(), "Not Repo for pushing " + id);
             } else if (all.size() > 1) {
-                throw new NutsRepositoryAmbiguousException(repo.getWorkspace(),"Unable to perform push. Two Repositories provides the same nuts " + id);
+                throw new NutsRepositoryAmbiguousException(repo.getWorkspace(), "Unable to perform push. Two Repositories provides the same nuts " + id);
             }
             repo = all.get(0);
         } else {
-            repo = this.repo.config().getMirror(repository,false);
+            repo = this.repo.config().getMirror(repository, false);
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createComponentFaceId(id.unsetQuery(), desc).setAlternative(CoreStringUtils.trim(desc.getAlternative()));
@@ -194,7 +194,7 @@ public class NutsRepositoryMirroringHelper {
                     .run();
             NutsRepositoryExt.of(repo).fireOnPush(new DefaultNutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
         } else {
-            throw new NutsRepositoryNotFoundException(repo.getWorkspace(),repository);
+            throw new NutsRepositoryNotFoundException(repo.getWorkspace(), repository);
         }
     }
 

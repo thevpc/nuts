@@ -209,7 +209,7 @@ public class SimpleClassStream {
             tag = stream.readUnsignedByte();
             switch (tag) {
                 case FLAG_UTF: {
-                    
+
                     int length = stream.readUnsignedShort();
                     byte[] bytes = new byte[length];
                     stream.readFully(bytes);

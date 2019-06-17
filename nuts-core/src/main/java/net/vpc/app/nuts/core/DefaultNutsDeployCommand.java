@@ -384,7 +384,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                         NutsDescriptor descriptor2;
                         if (Files.exists(descFile)) {
-                            descriptor2 = ws.format().descriptor().read(descFile);
+                            descriptor2 = ws.format().descriptor().parse(descFile);
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
                                     CoreIOUtils.createInputSource(contentFile).multi(),
@@ -436,7 +436,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
                         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                             repo.deploy()
@@ -449,14 +449,14 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             return this;
                         }
                     } else {
-                        NutsRepository repo = ws.config().getRepository(repository,true);
+                        NutsRepository repo = ws.config().getRepository(repository, true);
                         if (repo == null) {
                             throw new NutsRepositoryNotFoundException(ws, repository);
                         }
                         if (!repo.config().isEnabled()) {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
-                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(),getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                         effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                         repo.deploy()
                                 .setOffline(this.isOffline())
@@ -529,7 +529,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 }
             }
             try (InputStream is = inputStreamSource.open()) {
-                return ws.format().descriptor().read(is);
+                return ws.format().descriptor().parse(is);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -697,8 +697,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         return false;
     }
-    
-    
+
     private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
         CharacterizedDeployFile c = new CharacterizedDeployFile();
@@ -711,7 +710,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             }
             if (c.descriptor == null && c.baseFile.isURL()) {
                 try {
-                    c.descriptor = ws.format().descriptor().read(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    c.descriptor = ws.format().descriptor().parse(CoreIOUtils.createInputSource(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -720,7 +719,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.descriptor = ws.format().descriptor().read(ext);
+                        c.descriptor = ws.format().descriptor().parse(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }
@@ -739,7 +738,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (c.descriptor == null) {
                     File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
                     if (ext.exists()) {
-                        c.descriptor = ws.format().descriptor().read(ext);
+                        c.descriptor = ws.format().descriptor().parse(ext);
                     } else {
                         c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
                     }
@@ -752,34 +751,35 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         return c;
     }
-    
+
     private static class CharacterizedDeployFile implements AutoCloseable {
 
-    public InputSource baseFile;
-    public InputSource contentFile;
-    public List<Path> temps = new ArrayList<>();
-    public NutsDescriptor descriptor;
+        public InputSource baseFile;
+        public InputSource contentFile;
+        public List<Path> temps = new ArrayList<>();
+        public NutsDescriptor descriptor;
 
-    public Path getContentPath(){
-        return (Path)contentFile.getSource();
-    }
-    public void addTemp(Path f) {
-        temps.add(f);
-    }
-
-    @Override
-    public void close() {
-        for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
-            Path temp = it.next();
-            try {
-                Files.delete(temp);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            it.remove();
+        public Path getContentPath() {
+            return (Path) contentFile.getSource();
         }
-    }
 
-}
+        public void addTemp(Path f) {
+            temps.add(f);
+        }
+
+        @Override
+        public void close() {
+            for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
+                Path temp = it.next();
+                try {
+                    Files.delete(temp);
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+                it.remove();
+            }
+        }
+
+    }
 
 }

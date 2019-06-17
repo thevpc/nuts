@@ -198,7 +198,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().format().json().read(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = getWorkspace().format().json().parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {

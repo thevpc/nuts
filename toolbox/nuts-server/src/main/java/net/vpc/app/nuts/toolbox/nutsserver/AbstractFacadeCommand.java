@@ -56,9 +56,9 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         ListMap<String, String> parameters = context.getParameters();
         String userLogin = parameters.getOne("ul");
         String userPasswordS = parameters.getOne("up");
-        char[] userPassword = userPasswordS==null?null:userPasswordS.toCharArray();
+        char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
         NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-        userLogin = new String(configManager.decryptString(userLogin==null?null:userLogin.getBytes()));
+        userLogin = new String(configManager.decryptString(userLogin == null ? null : userLogin.getBytes()));
         userPassword = configManager.decryptString(userPassword);
         if (!StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;

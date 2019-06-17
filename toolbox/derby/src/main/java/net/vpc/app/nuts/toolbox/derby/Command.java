@@ -35,5 +35,5 @@ package net.vpc.app.nuts.toolbox.derby;
  */
 public enum Command {
     start, shutdown, sysinfo, help, ping, trace, runtimeinfo, maxthreads, timeslice, logconnections
-    
+
 }

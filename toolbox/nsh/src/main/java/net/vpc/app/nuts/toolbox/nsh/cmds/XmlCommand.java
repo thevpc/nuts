@@ -77,7 +77,7 @@ public class XmlCommand extends SimpleNshBuiltin {
         if ((a = commandLine.nextString("-f", "--file")) != null) {
             options.input = a.getStringValue();
             return true;
-        }else if ((a = commandLine.nextString("-q", "--xpath")) != null) {
+        } else if ((a = commandLine.nextString("-q", "--xpath")) != null) {
             options.xpaths.add(a.getStringValue());
             return true;
         }

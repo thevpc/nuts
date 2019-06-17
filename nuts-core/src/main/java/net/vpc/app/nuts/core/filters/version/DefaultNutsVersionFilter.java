@@ -44,8 +44,7 @@ import net.vpc.app.nuts.core.DefaultNutsVersionInterval;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
- * examples [2.6,], ]2.6,] 
- * Created by vpc on 1/20/17.
+ * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
  */
 public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
 

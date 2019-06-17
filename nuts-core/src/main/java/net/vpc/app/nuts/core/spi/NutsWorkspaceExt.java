@@ -33,11 +33,8 @@ public interface NutsWorkspaceExt {
 
     String getLicenseText();
 
-    //    @Override
-    //    public boolean isFetched(String id, NutsSession session) {
-    //        return isFetched(parse().parseRequiredId(id), session);
-    //    }
-    //    @Override
+    String resolveDefaultHelp(Class clazz);
+
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsFetchCommand options);
 
     /**
@@ -76,11 +73,11 @@ public interface NutsWorkspaceExt {
     boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session);
 
     NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
-    
+
     public void fireOnAddRepository(NutsRepository repository);
-    
+
     public void fireOnRemoveRepository(NutsRepository repository);
-    
+
     /**
      * creates a zip file based on the folder. The folder should contain a
      * descriptor file at its root
@@ -139,5 +136,4 @@ public interface NutsWorkspaceExt {
     //            return false;
     //        }
     //    }
-
 }

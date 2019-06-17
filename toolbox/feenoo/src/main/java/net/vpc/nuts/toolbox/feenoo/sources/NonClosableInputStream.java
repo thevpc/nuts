@@ -13,10 +13,11 @@ import java.io.InputStream;
  * @author vpc
  */
 public class NonClosableInputStream extends InputStream {
+
     private InputStream in;
 
     public NonClosableInputStream(InputStream in) {
-        this.in=in;
+        this.in = in;
     }
 
     @Override
@@ -58,6 +59,5 @@ public class NonClosableInputStream extends InputStream {
     public int available() throws IOException {
         return in.available(); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
 }

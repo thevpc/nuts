@@ -90,7 +90,7 @@ public class FileVersionMain extends NutsApplication {
         }
         if (commandLine.isExecMode()) {
             if (unsupportedFileTypes.size() > 0) {
-                throw new NutsExecutionException(context.getWorkspace(),"file-version: unsupported files : " + unsupportedFileTypes, 2);
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: unsupported files : " + unsupportedFileTypes, 2);
             }
             for (String arg : jarFiles) {
                 Set<VersionDescriptor> value = null;
@@ -98,7 +98,7 @@ public class FileVersionMain extends NutsApplication {
                     processed++;
                     value = detectJarWarEarVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(context.getWorkspace(),e, 2);
+                    throw new NutsExecutionException(context.getWorkspace(), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
@@ -111,7 +111,7 @@ public class FileVersionMain extends NutsApplication {
                         processed++;
                         value = detectExeVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                     } catch (IOException e) {
-                        throw new NutsExecutionException(context.getWorkspace(),e, 2);
+                        throw new NutsExecutionException(context.getWorkspace(), e, 2);
                     }
                     if (!value.isEmpty()) {
                         results.put(arg, value);
@@ -119,13 +119,13 @@ public class FileVersionMain extends NutsApplication {
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(context.getWorkspace(),"file-version: Missing file", 2);
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: Missing file", 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(context.getWorkspace(),"file-version: Options conflict --table --all", 1);
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: Options conflict --table --all", 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(context.getWorkspace(),"file-version: Options conflict --table --long", 1);
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: Options conflict --table --long", 1);
             }
 
             PrintStream out = context.session().out();
@@ -204,7 +204,7 @@ public class FileVersionMain extends NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(context.getWorkspace(),"file-version: Unsupported File types " + unsupportedFileTypes, 3);
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: Unsupported File types " + unsupportedFileTypes, 3);
             }
         }
     }
@@ -314,7 +314,7 @@ public class FileVersionMain extends NutsApplication {
                     if ("META-INF/MANIFEST.MF".equals(path)) {
                         return true;
                     }
-                    if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
+                    if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         return true;
                     }
                     if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
@@ -361,9 +361,9 @@ public class FileVersionMain extends NutsApplication {
                             ));
                         }
 
-                    } else if (("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
+                    } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         try {
-                            NutsDescriptor d = ws.format().descriptor().read(inputStream);
+                            NutsDescriptor d = ws.format().descriptor().parse(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));

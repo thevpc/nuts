@@ -73,7 +73,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition nutsDefinition,
-            String[] args, String[] executorArgs, Properties env, Properties executorProperties, 
+            String[] args, String[] executorArgs, Properties env, Properties executorProperties,
             String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast,
             boolean temporary,
             NutsExecutionType executionType,

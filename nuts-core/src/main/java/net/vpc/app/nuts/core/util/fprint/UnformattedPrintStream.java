@@ -5,7 +5,8 @@ import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 import java.io.*;
 import java.util.Locale;
 
-public class UnformattedPrintStream extends PrintStream{
+public class UnformattedPrintStream extends PrintStream {
+
     private FormattedPrintStream fout;
 
     public UnformattedPrintStream(FormattedPrintStream out) {

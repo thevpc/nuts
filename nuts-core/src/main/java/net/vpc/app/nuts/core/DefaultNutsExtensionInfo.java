@@ -38,7 +38,7 @@ import net.vpc.app.nuts.NutsId;
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsExtensionInfo implements NutsExtensionInfo{
+public class DefaultNutsExtensionInfo implements NutsExtensionInfo {
 
     private final NutsId id;
     private final String name;
@@ -134,5 +134,4 @@ public class DefaultNutsExtensionInfo implements NutsExtensionInfo{
         return true;
     }
 
-    
 }

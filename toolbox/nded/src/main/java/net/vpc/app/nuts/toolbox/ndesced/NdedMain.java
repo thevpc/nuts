@@ -213,7 +213,7 @@ public class NdedMain extends NutsApplication {
                 //
             }
             if (confirm("Abort?")) {
-                throw new NutsExecutionException(context.getWorkspace(),"Cancelled", 1);
+                throw new NutsExecutionException(context.getWorkspace(), "Cancelled", 1);
             }
         }
         String path = b.getId().getGroup().replace('.', '/')

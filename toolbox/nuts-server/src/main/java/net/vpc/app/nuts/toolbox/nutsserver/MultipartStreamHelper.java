@@ -63,7 +63,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(null,"Invalid boundary");
+        throw new NutsIllegalArgumentException(null, "Invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -84,7 +84,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 } catch (RuntimeException e) {
                     throw e;
                 } catch (Exception e) {
-                    throw new NutsException(null,e);
+                    throw new NutsException(null, e);
                 }
             }
 
@@ -99,7 +99,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
             @Override
             public void remove() {
-                throw new NutsUnsupportedOperationException(null,"remove not supported");
+                throw new NutsUnsupportedOperationException(null, "remove not supported");
             }
         };
     }

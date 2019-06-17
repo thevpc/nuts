@@ -67,7 +67,7 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
 
     @Override
     public boolean accept(NutsId from, NutsDependency d, NutsWorkspace ws, NutsSession session) {
-    JavascriptHelper engineHelper= new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws,session);
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
         return engineHelper.accept(d);
     }
 

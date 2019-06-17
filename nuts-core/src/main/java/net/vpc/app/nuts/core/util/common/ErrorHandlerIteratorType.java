@@ -11,13 +11,14 @@ package net.vpc.app.nuts.core.util.common;
  */
 public enum ErrorHandlerIteratorType {
     /**
-     * error detected in hasNext will be re-thrown in next (hasNext will return true)
+     * error detected in hasNext will be re-thrown in next (hasNext will return
+     * true)
      */
-    POSPONE, 
+    POSPONE,
     /**
      * error detected in hasNext will be simply thrown
      */
-    THROW, 
+    THROW,
     /**
      * error detected in hasNext will ignored
      */

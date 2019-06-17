@@ -5,6 +5,7 @@ import org.w3c.dom.*;
 import java.util.Map;
 
 public interface PomDomVisitor {
+
     void visitStartDocument(Document document);
 
     void visitEndDocument(Document document, Pom pom);
@@ -16,7 +17,6 @@ public interface PomDomVisitor {
     void visitStartDependencies(Element dependenciesElement);
 
     void visitEndDependencies(Element dependenciesElement, PomDependency[] dependencies);
-
 
     void visitStartDependencyManagement(Element dependencyElement);
 

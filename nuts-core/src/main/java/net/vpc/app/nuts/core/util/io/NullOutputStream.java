@@ -49,6 +49,7 @@ public final class NullOutputStream extends OutputStream {
 
     /**
      * empty method
+     *
      * @param b byte
      */
     @Override
@@ -57,6 +58,7 @@ public final class NullOutputStream extends OutputStream {
 
     /**
      * empty method
+     *
      * @param b byte
      */
     @Override
@@ -65,6 +67,7 @@ public final class NullOutputStream extends OutputStream {
 
     /**
      * empty method
+     *
      * @param b byte
      * @param off offcet
      * @param len length

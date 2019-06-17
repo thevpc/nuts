@@ -31,8 +31,10 @@ import org.junit.Test;
  * @author vpc
  */
 public class Test03_CreateLayoutLinuxTest {
-    private static final int NSH_BUILTINS=34;
-    private static final int NDI_COMPANIONS=4;
+
+    private static final int NSH_BUILTINS = 34;
+    private static final int NDI_COMPANIONS = 4;
+
     @Test
     public void customLayout_use_export() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
@@ -51,7 +53,7 @@ public class Test03_CreateLayoutLinuxTest {
             "--system-cache-home", new File(base, "system.cache").getPath(),
             "--system-lib-home", new File(base, "system.lib").getPath(),
             //            "--verbose", 
-            "--yes","--trace", "info"});
+            "--yes", "--trace", "info"});
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
@@ -83,7 +85,7 @@ public class Test03_CreateLayoutLinuxTest {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
-        System.out.println("Deleting "+base);
+        System.out.println("Deleting " + base);
         CoreIOUtils.delete(base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
         NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--workspace", base.getPath(), "--standalone", "--yes", "info"});
@@ -103,11 +105,11 @@ public class Test03_CreateLayoutLinuxTest {
                 listNamesSet(new File(base, "programs/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
-                createNamesSet("com", "net","org"),
+                createNamesSet("com", "net", "org"),
                 listNamesSet(new File(base, "cache"), x -> x.isDirectory())
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            Assert.assertFalse(f+" should not exist", new File(f).exists());
+            Assert.assertFalse(f + " should not exist", new File(f).exists());
         }
 //        Assert.assertEquals(
 //                false,

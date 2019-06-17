@@ -23,7 +23,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        if (cmdLine.next("add extension", "ax")!=null) {
+        if (cmdLine.next("add extension", "ax") != null) {
             String extensionId = cmdLine.required().nextNonOption(cmdLine.createName("extension")).getString();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().format().id().parse(extensionId), context.getSession());
@@ -40,7 +40,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else {
             PrintStream out = context.session().getTerminal().fout();
-            if (cmdLine.next("list extensions", "lx")!=null) {
+            if (cmdLine.next("list extensions", "lx") != null) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {
                         NutsDescriptor desc = context.getWorkspace().search().id(extension.getWiredId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
@@ -57,7 +57,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.next("find extensions", "fx")!=null) {
+            } else if (cmdLine.next("find extensions", "fx") != null) {
                 if (cmdLine.isExecMode()) {
                     for (NutsExtensionInfo extension : context.getWorkspace().extensions().findWorkspaceExtensions(context.getSession())) {
                         NutsDescriptor desc = context.getWorkspace().search().id(extension.getId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
@@ -70,7 +70,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.next("list extension points", "lxp")!=null) {
+            } else if (cmdLine.next("list extension points", "lxp") != null) {
                 if (cmdLine.isExecMode()) {
                     for (Class extension : context.getWorkspace().extensions().getExtensionPoints()) {
                         out.printf("[[%s]]:%n", extension.getName());

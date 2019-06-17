@@ -21,6 +21,7 @@ import static org.jline.reader.impl.ReaderUtils.*;
 import net.vpc.common.javashell.JShellHistory;
 
 class NutsJLineHistory implements History {
+
     private NutsWorkspace ws;
     private JShellHistory shellHistory;
     public static final int DEFAULT_HISTORY_SIZE = 500;
@@ -61,7 +62,7 @@ class NutsJLineHistory implements History {
                 }
             }
         });
-        setShellHistory((JShellHistory) workspace.getUserProperties().get(JShellHistory.class.getName()));
+        setShellHistory((JShellHistory) workspace.userProperties().get(JShellHistory.class.getName()));
     }
 
     private void setShellHistory(JShellHistory shellHistory) {
@@ -114,9 +115,9 @@ class NutsJLineHistory implements History {
                                 public void accept(String l) {
                                     int idx = l.indexOf(':');
                                     if (idx < 0) {
-                                        throw new NutsExecutionException(ws,"Bad history file syntax! " +
-                                                "The history file `" + path + "` may be an older history: " +
-                                                "please remove it or use a different history file.", 2);
+                                        throw new NutsExecutionException(ws, "Bad history file syntax! "
+                                                + "The history file `" + path + "` may be an older history: "
+                                                + "please remove it or use a different history file.", 2);
                                     }
                                     Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
                                     String line = unescape(l.substring(idx + 1));
@@ -414,7 +415,6 @@ class NutsJLineHistory implements History {
     //
     // Navigation
     //
-
     /**
      * This moves the history to the last entry. This entry is one position
      * before the moveToEnd() position.

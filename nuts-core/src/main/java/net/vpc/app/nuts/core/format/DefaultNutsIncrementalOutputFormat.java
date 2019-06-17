@@ -38,7 +38,7 @@ import net.vpc.app.nuts.core.format.props.DefaultSearchFormatProps;
 import net.vpc.app.nuts.core.format.table.DefaultSearchFormatTable;
 import net.vpc.app.nuts.core.format.tree.DefaultSearchFormatTree;
 import net.vpc.app.nuts.core.format.xml.DefaultSearchFormatXml;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsIterableFormat;
 
 /**
  *
@@ -47,33 +47,34 @@ import net.vpc.app.nuts.NutsIncrementalFormatHandler;
 public class DefaultNutsIncrementalOutputFormat extends NutsIncrementalOutputFormatBase {
 
     private NutsOutputFormat lastNutsOutputFormat;
+
     public DefaultNutsIncrementalOutputFormat(NutsWorkspace ws) {
         super(ws);
     }
 
     @Override
-    public NutsIncrementalFormatHandler getHandler() {
+    public NutsIterableFormat getFormat() {
         NutsOutputFormat outputFormat = getOutputFormat();
-        NutsIncrementalFormatHandler old = super.getHandler();
+        NutsIterableFormat old = super.getFormat();
         if (old == null || old.getOutputFormat() != outputFormat) {
             switch (outputFormat) {
                 case JSON: {
-                    return prepare(new DefaultSearchFormatJson());
+                    return prepare(new DefaultSearchFormatJson(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 case XML: {
-                    return prepare(new DefaultSearchFormatXml());
+                    return prepare(new DefaultSearchFormatXml(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 case PLAIN: {
-                    return prepare(new DefaultSearchFormatPlain());
+                    return prepare(new DefaultSearchFormatPlain(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 case PROPS: {
-                    return prepare(new DefaultSearchFormatProps());
+                    return prepare(new DefaultSearchFormatProps(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 case TABLE: {
-                    return prepare(new DefaultSearchFormatTable());
+                    return prepare(new DefaultSearchFormatTable(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 case TREE: {
-                    return prepare(new DefaultSearchFormatTree());
+                    return prepare(new DefaultSearchFormatTree(getWorkspace(), getValidSession(), getValidOut()));
                 }
                 default: {
                     throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupproted " + outputFormat);

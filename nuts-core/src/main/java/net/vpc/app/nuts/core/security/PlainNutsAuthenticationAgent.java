@@ -73,7 +73,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
             char[] credentials,
             boolean allowRetreive,
             char[] credentialId,
-             NutsEnvProvider envProvider
+            NutsEnvProvider envProvider
     ) {
         if (CoreStringUtils.isBlank(credentials)) {
             return null;

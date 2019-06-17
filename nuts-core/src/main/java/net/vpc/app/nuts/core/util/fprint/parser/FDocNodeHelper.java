@@ -50,14 +50,14 @@ public class FDocNodeHelper {
                     case "`": {
                         //this might be a command !!
                         String v = p.getValue().trim();
-                        switch(v){
-                            case FPrintCommands.MOVE_LINE_START:{
+                        switch (v) {
+                            case FPrintCommands.MOVE_LINE_START: {
                                 return new TextNodeCommand(TextFormats.MOVE_LINE_START);
                             }
-                            case FPrintCommands.MOVE_UP:{
+                            case FPrintCommands.MOVE_UP: {
                                 return new TextNodeCommand(TextFormats.MOVE_UP);
                             }
-                            default:{
+                            default: {
                                 return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                             }
                         }

@@ -37,9 +37,9 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
         while (cmdLine.hasNext()) {
             NutsOutputFormat of = CoreNutsUtils.readOptionOutputFormat(cmdLine);
-            if(of!=null) {
-                outputFormat=of;
-            }else{
+            if (of != null) {
+                outputFormat = of;
+            } else {
                 NutsArgument a = cmdLine.peek();
                 if (a.isOption()) {
                     switch (a.getStringKey()) {
@@ -76,7 +76,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         }
                         if (w != null) {
                             fout.println(arg + " :");
-                            FormattedPrintStream t=(FormattedPrintStream)fout;
+                            FormattedPrintStream t = (FormattedPrintStream) fout;
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {
@@ -87,7 +87,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 break;
             }
             default: {
-                throw new NutsUnsupportedOperationException(ws,"Unsupported format " + outputFormat);
+                throw new NutsUnsupportedOperationException(ws, "Unsupported format " + outputFormat);
             }
         }
 

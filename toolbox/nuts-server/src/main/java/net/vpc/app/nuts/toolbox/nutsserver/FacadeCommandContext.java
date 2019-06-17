@@ -112,7 +112,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
     public void sendResponseFile(int code, File file) throws IOException {
         base.sendResponseFile(code, file);
     }
-    
+
     @Override
     public void sendResponseFile(int code, Path file) throws IOException {
         base.sendResponseFile(code, file);

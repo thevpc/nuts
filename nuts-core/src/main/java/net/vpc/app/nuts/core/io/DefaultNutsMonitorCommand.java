@@ -135,7 +135,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
                 return monitorInputStream((InputStream) source, length, sourceName, session);
             }
             default:
-                throw new NutsUnsupportedArgumentException(ws,sourceType);
+                throw new NutsUnsupportedArgumentException(ws, sourceType);
         }
     }
 
@@ -157,7 +157,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if(monitorable) {
+        if (monitorable) {
             if (source instanceof NutsId) {
                 NutsId d = (NutsId) source;
                 if (NutsConstants.QueryFaces.COMPONENT_HASH.equals(d.getFace())) {
@@ -167,11 +167,10 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
                     monitorable = false;
                 }
             }
-            if(monitorable){
-                if(path.endsWith("/.folders") || path.endsWith("/.files") 
+            if (monitorable) {
+                if (path.endsWith("/.folders") || path.endsWith("/.files")
                         || path.endsWith(".pom") || path.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
-                        || path.endsWith(".xml") || path.endsWith(".json")
-                        ){
+                        || path.endsWith(".xml") || path.endsWith(".json")) {
                     monitorable = false;
                 }
             }

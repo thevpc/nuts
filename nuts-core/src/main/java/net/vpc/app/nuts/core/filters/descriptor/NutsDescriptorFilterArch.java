@@ -56,7 +56,7 @@ public class NutsDescriptorFilterArch implements NutsDescriptorFilter, Simplifia
 
     @Override
     public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesArch(arch,descriptor,ws,session);
+        return CoreFilterUtils.matchesArch(arch, descriptor, ws, session);
     }
 
     /**
@@ -105,5 +105,4 @@ public class NutsDescriptorFilterArch implements NutsDescriptorFilter, Simplifia
         return "Arch{" + arch + '}';
     }
 
-    
 }

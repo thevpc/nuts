@@ -13,7 +13,6 @@ public class WorkyMain extends NutsApplication {
         new WorkyMain().runAndExit(args);
     }
 
-
     @Override
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArguments();
@@ -25,28 +24,27 @@ public class WorkyMain extends NutsApplication {
                 //
             } else if ((a = cmdLine.next("scan")) != null) {
                 service.scan(cmdLine, appContext);
-                return ;
+                return;
             } else if ((a = cmdLine.next("check")) != null) {
                 service.check(cmdLine, appContext);
-                return ;
-            } else if (cmdLine.next("enable scan")!=null) {
+                return;
+            } else if (cmdLine.next("enable scan") != null) {
                 service.enableScan(cmdLine, appContext, true);
-                return ;
-            } else if (cmdLine.next("disable scan")!=null) {
+                return;
+            } else if (cmdLine.next("disable scan") != null) {
                 service.enableScan(cmdLine, appContext, false);
-                return ;
+                return;
             } else if ((a = cmdLine.next("list")) != null) {
                 service.list(cmdLine, appContext);
-                return ;
+                return;
             } else if ((a = cmdLine.next("set")) != null) {
                 service.setWorkspaceConfigParam(cmdLine, appContext);
-                return ;
+                return;
             } else {
                 cmdLine.setCommandName("worky").unexpectedArgument();
             }
         } while (cmdLine.hasNext());
         cmdLine.required();
     }
-
 
 }

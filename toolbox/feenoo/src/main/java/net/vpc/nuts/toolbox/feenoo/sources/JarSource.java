@@ -5,7 +5,6 @@
  */
 package net.vpc.nuts.toolbox.feenoo.sources;
 
-
 import net.vpc.nuts.toolbox.feenoo.Source;
 
 /**

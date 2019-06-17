@@ -62,7 +62,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
     }
 
     public boolean accept(NutsDescriptor d, NutsWorkspace ws, NutsSession session) {
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", null, null, ws,session);
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
         return engineHelper.accept(d);
     }
 

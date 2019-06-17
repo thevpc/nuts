@@ -583,7 +583,7 @@ public class CoreIOUtils {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file)) {
             try {
-                conf = ws.format().json().read(file, NutsRepositoryConfig.class);
+                conf = ws.format().json().parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!ws.config().isReadOnly()) {
@@ -1646,13 +1646,13 @@ public class CoreIOUtils {
 
     public static PersistentMap<String, String> getCachedUrls(NutsWorkspace ws) {
         final String k = PersistentMap.class.getName() + ":getCachedUrls";
-        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.getUserProperties().get(k);
+        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
         if (m == null) {
             m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.config().getStoreLocation(
                     ws.config().getRuntimeId(),
                     NutsStoreLocation.CACHE
             ).resolve("urls-db").toFile());
-            ws.getUserProperties().put(k, m);
+            ws.userProperties().put(k, m);
         }
         return m;
     }

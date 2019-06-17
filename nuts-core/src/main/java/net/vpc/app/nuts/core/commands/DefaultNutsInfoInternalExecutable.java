@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsInfoInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("info", args, ws, session);
     }
@@ -29,5 +29,5 @@ public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecut
         PrintStream out = getSession(true).getTerminal().fout();
         ws.format().info().configure(false, args).println(out);
     }
-    
+
 }

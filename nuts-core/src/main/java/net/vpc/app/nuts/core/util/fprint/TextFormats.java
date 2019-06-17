@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.util.fprint;
 
-
 import java.awt.*;
 
 /**
@@ -67,10 +66,10 @@ public class TextFormats {
     public static final TextFormat BG_WHITE = new TextBackground("BG_WHITE", Color.WHITE);
 
     public static final TextFormat list(TextFormat... all) {
-        if(all==null){
+        if (all == null) {
             return null;
         }
-        if(all.length==1){
+        if (all.length == 1) {
             return all[0];
         }
         return new TextFormatList(all);

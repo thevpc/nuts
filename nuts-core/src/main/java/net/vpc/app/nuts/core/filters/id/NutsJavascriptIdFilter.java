@@ -68,7 +68,7 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
     @Override
     public boolean accept(NutsId id, NutsWorkspace ws, NutsSession session) {
         Set<String> blacklist = null;
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null, ws,session);
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null, ws, session);
         return engineHelper.accept(id);
     }
 

@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.app;
 
-
 import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
 import java.util.ArrayList;
 import java.util.List;

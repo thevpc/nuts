@@ -271,7 +271,7 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
         if (repo != null) {
             NutsUserConfig security = new NutsUserConfig(getLogin(),
                     CoreStringUtils.chrToStr(repo.security().createCredentials(getCredentials(), false, null)),
-                     getGroups(), getRights());
+                    getGroups(), getRights());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null)));
             NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security);

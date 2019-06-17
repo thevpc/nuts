@@ -46,8 +46,9 @@ public abstract class AbstractMavenRepositoryHelper {
 
     private static final Logger LOG = Logger.getLogger(AbstractMavenRepositoryHelper.class.getName());
     private NutsRepository repository;
+
     public AbstractMavenRepositoryHelper(NutsRepository repository) {
-        this.repository=repository;
+        this.repository = repository;
     }
 
     protected abstract String getIdPath(NutsId id);
@@ -114,9 +115,9 @@ public abstract class AbstractMavenRepositoryHelper {
             checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESC_HASH), new ByteArrayInputStream(bytes), session);
             return nutsDescriptor;
         } catch (IOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(),id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
         } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(),id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
         }
     }
 
@@ -141,7 +142,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 return repository.getWorkspace().config().getDefaultIdComponentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(repository.getWorkspace(),"Unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "Unsupported fact " + f);
             }
         }
     }

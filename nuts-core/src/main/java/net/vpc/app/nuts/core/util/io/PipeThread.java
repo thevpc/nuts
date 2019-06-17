@@ -80,7 +80,7 @@ public class PipeThread extends Thread implements StopMonitor {
                         pipedBytesCount += count;
                         out.write(bytes, 0, count);
                         out.flush();
-                        }
+                    }
                 } else {
                     break;
                 }

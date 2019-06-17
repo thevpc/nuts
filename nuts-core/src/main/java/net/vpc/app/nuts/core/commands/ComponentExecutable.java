@@ -53,15 +53,15 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
         if (!def.getInstallation().isInstalled()) {
             ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
             if (session.getTerminal().ask()
-                    .forBoolean("%N is not yet installed. Continue", 
+                    .forBoolean("%N is not yet installed. Continue",
                             ws.format().id().set(def.getId().getLongNameId()).format()
-                            ).defaultValue(true).session(session).getBooleanValue()) {
+                    ).defaultValue(true).session(session).getBooleanValue()) {
                 ws.install().id(def.getId()).setSession(session.force()).run();
             } else {
                 throw new NutsUserCancelException(ws);
             }
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false,session, executionType);
+        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, executionType);
     }
 
     @Override

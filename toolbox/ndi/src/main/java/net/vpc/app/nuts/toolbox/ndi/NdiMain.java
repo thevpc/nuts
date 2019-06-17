@@ -113,7 +113,7 @@ public class NdiMain extends NutsApplication {
             } catch (IOException e) {
                 throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
             }
-            if(trace){
+            if (trace) {
                 context.session().oout().println(context.session().out());
             }
         }

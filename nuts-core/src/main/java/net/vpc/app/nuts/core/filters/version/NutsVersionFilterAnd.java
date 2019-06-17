@@ -45,7 +45,7 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
 
     @Override
     public NutsVersionFilter simplify() {
-        if(all.length==0){
+        if (all.length == 0) {
             return null;
         }
         NutsVersionFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsVersionFilter.class, all);
@@ -121,10 +121,10 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
-    
+
 }

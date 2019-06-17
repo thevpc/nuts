@@ -14,7 +14,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsFetchInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("fetch", args, ws, session);
     }
@@ -27,5 +27,5 @@ public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecu
         }
         ws.fetch().session(getSession(true).trace()).configure(false, args).run();
     }
-    
+
 }

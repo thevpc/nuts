@@ -14,5 +14,5 @@ import net.vpc.app.nuts.NutsExecutableInfo;
 public interface NutsExecutableInfoExt extends NutsExecutableInfo {
 
     void execute();
-    
+
 }

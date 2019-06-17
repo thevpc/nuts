@@ -1,17 +1,16 @@
 package net.vpc.toolbox.tomcat.remote.config;
 
-
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteTomcatConfig {
+
     private String server;
     private String remoteTempPath;
     private String remoteName;
-    private Map<String, RemoteTomcatAppConfig> apps=new HashMap<>();
-
+    private Map<String, RemoteTomcatAppConfig> apps = new HashMap<>();
 
     public String getServer() {
         return server;
@@ -48,11 +47,11 @@ public class RemoteTomcatConfig {
 
     @Override
     public String toString() {
-        return "{" +
-                "server=" + TomcatUtils.toJsonString(server) +
-                ", remoteTempPath=" + TomcatUtils.toJsonString(remoteTempPath) +
-                ", remoteName=" + TomcatUtils.toJsonString(remoteName) +
-                ", apps=" + TomcatUtils.toJsonString(apps) +
-                '}';
+        return "{"
+                + "server=" + TomcatUtils.toJsonString(server)
+                + ", remoteTempPath=" + TomcatUtils.toJsonString(remoteTempPath)
+                + ", remoteName=" + TomcatUtils.toJsonString(remoteName)
+                + ", apps=" + TomcatUtils.toJsonString(apps)
+                + '}';
     }
 }

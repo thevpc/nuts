@@ -13,6 +13,7 @@ import net.vpc.app.nuts.NutsExecutableType;
  * @author vpc
  */
 public abstract class AbstractNutsExecutableCommand implements NutsExecutableInfoExt {
+
     protected NutsExecutableType type;
     protected String name;
     protected String value;
@@ -21,7 +22,8 @@ public abstract class AbstractNutsExecutableCommand implements NutsExecutableInf
         this.type = type;
         this.name = name;
     }
-    public AbstractNutsExecutableCommand(String name, String value,NutsExecutableType type) {
+
+    public AbstractNutsExecutableCommand(String name, String value, NutsExecutableType type) {
         this.type = type;
         this.name = name;
         this.value = value;
@@ -51,5 +53,5 @@ public abstract class AbstractNutsExecutableCommand implements NutsExecutableInf
     public String getHelpText() {
         return "No help available. Try '" + getName() + " --help'";
     }
-    
+
 }

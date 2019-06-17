@@ -41,15 +41,16 @@ public class Test07_ColorfulStream {
 
         NutsAnsiUnixTermPrintStream out = new NutsAnsiUnixTermPrintStream(System.out);
         for (String msg : new String[]{
-            "[]", "<>", 
-            "\"\""
-                , "''", "{}"
+            "[]", "<>",
+            "\"\"",
+            "''", "{}"
         }) {
             out.println(msg);
             System.out.println(FormattedPrintStreamUtils.filterText(msg));
         }
         out.print(out);
     }
+
     @Test
     public void test3() {
 //        String msg="x{{\\?}}x";

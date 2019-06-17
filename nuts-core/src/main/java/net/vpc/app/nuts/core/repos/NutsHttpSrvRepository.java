@@ -82,7 +82,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public void pushImpl(NutsPushRepositoryCommand command) {
         NutsContent content = lib.fetchContentImpl(command.getId(), null, command.getSession());
         NutsDescriptor desc = lib.fetchDescriptorImpl(command.getId(), command.getSession());
-        if(content==null || desc==null){
+        if (content == null || desc == null) {
             throw new NutsNotFoundException(getWorkspace(), command.getId());
         }
         NutsWorkspaceUtils.checkSession(getWorkspace(), command.getSession());
@@ -99,7 +99,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
                 new NutsTransportParamParamPart("force", String.valueOf(command.getSession().getSession().isForce()))
         );
-        //TODO should read the parse
+        //TODO should parse the parse
     }
 
     @Override
@@ -108,17 +108,17 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             return null;
         }
         boolean transitive = session.isTransitive();
-        try(InputStream stream=CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
-                NutsDescriptor descriptor = getWorkspace().format().descriptor().read(stream);
-                if (descriptor != null) {
-                    String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-                    if (hash.equals(descriptor.toString())) {
-                        return descriptor;
-                    }
+        try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
+            NutsDescriptor descriptor = getWorkspace().format().descriptor().parse(stream);
+            if (descriptor != null) {
+                String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
+                if (hash.equals(descriptor.toString())) {
+                    return descriptor;
                 }
-            } catch (IOException ex) {
-                return null;
-        } 
+            }
+        } catch (IOException ex) {
+            return null;
+        }
         return null;
     }
 
@@ -132,9 +132,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             return Collections.emptyIterator();
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        NutsIdFilter filter2=new NutsIdFilterAnd(idFilter,
-                                new NutsPatternIdFilter(id.getSimpleNameId())
-                        ).simplify();
+        NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
+                new NutsPatternIdFilter(id.getSimpleNameId())
+        ).simplify();
         if (filter2 != null) {
             it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, getWorkspace(), session.getSession())).iterator();
         }
@@ -259,7 +259,6 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //    public void undeployImpl(NutsRepositoryUndeployCommand options) {
 //        throw new NutsUnsupportedOperationException(getWorkspace());
 //    }
-
 //    @Override
 //    public void checkAllowedFetch(NutsId parse, NutsRepositorySession session) {
 //        super.checkAllowedFetch(parse, session);
@@ -267,7 +266,6 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //            throw new NutsNotFoundException(getWorkspace(), parse);
 //        }
 //    }
-
     private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
 
         private final BufferedReader br;

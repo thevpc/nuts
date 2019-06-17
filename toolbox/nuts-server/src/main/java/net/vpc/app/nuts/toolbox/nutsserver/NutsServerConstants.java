@@ -34,6 +34,7 @@ package net.vpc.app.nuts.toolbox.nutsserver;
  * @author vpc
  */
 public class NutsServerConstants {
+
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
     public static final String DEFAULT_ADMIN_SERVER = "nuts-admin-server";
@@ -41,5 +42,5 @@ public class NutsServerConstants {
 
     private NutsServerConstants() {
     }
-    
+
 }

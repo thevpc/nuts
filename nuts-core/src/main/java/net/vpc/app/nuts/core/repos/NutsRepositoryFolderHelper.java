@@ -123,13 +123,13 @@ public class NutsRepositoryFolderHelper {
         if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
             goodFile = versionFolder.resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().format().descriptor().read(goodFile);
+                return getWorkspace().format().descriptor().parse(goodFile);
             }
         } else if (!CoreStringUtils.isBlank(alt)) {
             goodAlt = alt.trim();
             goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
             if (Files.exists(goodFile)) {
-                return getWorkspace().format().descriptor().read(goodFile).setAlternative(goodAlt);
+                return getWorkspace().format().descriptor().parse(goodFile).setAlternative(goodAlt);
             }
         } else {
             //should test all files
@@ -159,7 +159,7 @@ public class NutsRepositoryFolderHelper {
             if (Files.exists(goodFile)) {
                 NutsDescriptor c = null;
                 try {
-                    c = getWorkspace().format().descriptor().read(goodFile).setAlternative("");
+                    c = getWorkspace().format().descriptor().parse(goodFile).setAlternative("");
                 } catch (Exception ex) {
                     //
                 }
@@ -178,7 +178,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (Files.exists(file)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().format().descriptor().read(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().format().descriptor().parse(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getQueryMap();
                 String os = query.get("os");
@@ -260,7 +260,7 @@ public class NutsRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return getWorkspace().format().descriptor().read(pathname);
+                return getWorkspace().format().descriptor().parse(pathname);
             }
         }, maxDepth);
     }

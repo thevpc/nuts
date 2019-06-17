@@ -80,7 +80,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
             try {
-                return getWorkspace().format().descriptor().read(in);
+                return getWorkspace().format().descriptor().parse(in);
             } finally {
                 in.close();
             }
@@ -122,7 +122,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         try (InputStream stream = getDescStream(id, session)) {
-            return getWorkspace().format().descriptor().read(stream);
+            return getWorkspace().format().descriptor().parse(stream);
         } catch (IOException ex) {
             return null;
         }
@@ -170,7 +170,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().format().json().read(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = getWorkspace().format().json().parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {

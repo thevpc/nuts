@@ -60,7 +60,7 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
             NutsTerminalFormat terminalFormat = ws.io().getTerminalFormat();
-            out.print("`"+FPrintCommands.MOVE_LINE_START+"`");
+            out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             double globalSeconds = event.getGlobalMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
@@ -76,10 +76,10 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             formattedLine.append("\\[");
             if (x > 0) {
                 formattedLine.append("##");
-                CoreStringUtils.fillString("\\*" ,x,formattedLine);
+                CoreStringUtils.fillString("\\*", x, formattedLine);
                 formattedLine.append("##");
             }
-            CoreStringUtils.fillString(' ',20-x,formattedLine);
+            CoreStringUtils.fillString(' ', 20 - x, formattedLine);
             formattedLine.append("\\]");
             formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
             formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
@@ -98,10 +98,10 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             formattedLine.append(" ").append(terminalFormat.escapeText(event.getSourceName())).append(" ");
             String ff = formattedLine.toString();
             int length = terminalFormat.filterText(ff).length();
-            if(length<minLength){
-                CoreStringUtils.fillString(' ' ,minLength-length,formattedLine);
-            }else{
-                minLength=length;
+            if (length < minLength) {
+                CoreStringUtils.fillString(' ', minLength - length, formattedLine);
+            } else {
+                minLength = length;
             }
             out.print(ff);
             out.flush();

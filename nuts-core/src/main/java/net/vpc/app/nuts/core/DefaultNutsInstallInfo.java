@@ -47,7 +47,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInfo {
     private String installUser;
     private final Path installFolder;
 
-    public DefaultNutsInstallInfo(boolean installed, boolean defaultVersion, Path installFolder,Date installDate,String installUser) {
+    public DefaultNutsInstallInfo(boolean installed, boolean defaultVersion, Path installFolder, Date installDate, String installUser) {
         this.installed = installed;
         this.installFolder = installFolder;
         this.defaultVersion = defaultVersion;

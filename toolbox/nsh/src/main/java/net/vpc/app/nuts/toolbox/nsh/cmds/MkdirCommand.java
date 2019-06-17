@@ -58,6 +58,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
     }
 
     public static class Options {
+
         List<String> files = new ArrayList<>();
         List<XFile> xfiles = new ArrayList<>();
 
@@ -73,10 +74,10 @@ public class MkdirCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean( "--parent","-p")) != null) {
+        if ((a = commandLine.nextBoolean("--parent", "-p")) != null) {
             options.p = a.getBooleanValue();
             return true;
-        }else if(commandLine.peek().isNonOption()){
+        } else if (commandLine.peek().isNonOption()) {
             options.files.addAll(Arrays.asList(commandLine.toArray()));
             commandLine.skipAll();
             return true;
@@ -87,7 +88,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        options.xfiles=ShellHelper.xfilesOf(options.files, context.getCwd());
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd());
         if (options.xfiles.size() < 1) {
             commandLine.required();
         }

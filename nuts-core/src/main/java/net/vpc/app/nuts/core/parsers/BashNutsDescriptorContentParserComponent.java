@@ -54,7 +54,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
             return null;
         }
         try {
-            return readNutDescriptorFromBashScriptFile(parserContext.getWorkspace(),parserContext.getFullStream());
+            return readNutDescriptorFromBashScriptFile(parserContext.getWorkspace(), parserContext.getFullStream());
         } catch (IOException e) {
             return null;
         }
@@ -80,7 +80,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
         return "";
     }
 
-    private static NutsDescriptor readNutDescriptorFromBashScriptFile(NutsWorkspace ws,InputStream file) throws IOException {
+    private static NutsDescriptor readNutDescriptorFromBashScriptFile(NutsWorkspace ws, InputStream file) throws IOException {
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(file));
@@ -128,12 +128,12 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                 return new DefaultNutsDescriptorBuilder()
                         .setId(CoreNutsUtils.parseNutsId("temp:sh#1.0"))
                         .setExecutable(true)
-//                        .setExt("sh")
+                        //                        .setExt("sh")
                         .setPackaging("sh")
                         .setExecutor(new NutsExecutorDescriptor(BASH))
                         .build();
             }
-            return ws.format().descriptor().read(comment.getValidString());
+            return ws.format().descriptor().parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

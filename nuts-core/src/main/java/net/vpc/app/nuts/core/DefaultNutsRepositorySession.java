@@ -24,7 +24,7 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
     private boolean transitive;
     private NutsWorkspace ws;
 
-    public DefaultNutsRepositorySession(NutsWorkspace ws,NutsSession session) {
+    public DefaultNutsRepositorySession(NutsWorkspace ws, NutsSession session) {
         this.session = session;
         this.ws = ws;
     }

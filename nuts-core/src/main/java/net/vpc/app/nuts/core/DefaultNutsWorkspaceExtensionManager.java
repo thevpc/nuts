@@ -95,13 +95,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             if (u != null) {
                 NutsExtensionInfo[] s = new NutsExtensionInfo[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.format().json().read(rr, DefaultNutsExtensionInfo[].class);
+                    s = ws.format().json().parse(rr, DefaultNutsExtensionInfo[].class);
                 } catch (IOException e) {
                     //ignore!
                 }
                 if (s != null) {
                     for (NutsExtensionInfo nutsExtensionInfo : s) {
-                        ((DefaultNutsExtensionInfo)nutsExtensionInfo).setSource(u.toString());
+                        ((DefaultNutsExtensionInfo) nutsExtensionInfo).setSource(u.toString());
                         ret.add(nutsExtensionInfo);
                     }
                 }
@@ -164,11 +164,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         session = NutsWorkspaceUtils.validateSession(ws, session);
         NutsSession searchSession = session.trace(false);
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws,"Extension Id could not be null");
+            throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");
         }
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
-            throw new NutsWorkspaceExtensionAlreadyRegisteredException(ws,id.toString(), wired.toString());
+            throw new NutsWorkspaceExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
         LOG.log(Level.FINE, "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
@@ -298,7 +298,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public NutsSessionTerminal createTerminal(Class ignoredClass) {
         NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, ws);
         if (termb == null) {
-            throw new NutsExtensionMissingException(ws,NutsSessionTerminalBase.class, "TerminalBase");
+            throw new NutsExtensionMissingException(ws, NutsSessionTerminalBase.class, "TerminalBase");
         } else {
             if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
                 return null;
@@ -324,8 +324,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public String[] getExtensionRepositoryLocations(NutsId appId) {
-        //should read this form config?
-        //or should be read from and extension component?
+        //should parse this form config?
+        //or should be parse from and extension component?
         String repos = ws.config().getEnv("bootstrapRepositoryLocations", "") + ";"
                 + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT;
@@ -434,7 +434,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean addExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
+            throw new NutsIllegalArgumentException(ws, "Invalid Extension");
         }
         if (!containsExtension(extensionId)) {
             if (getStoredConfig().getExtensions() == null) {
@@ -450,7 +450,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean removeExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
+            throw new NutsIllegalArgumentException(ws, "Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
             if (extension.equalsSimpleName(extensionId)) {
@@ -468,7 +468,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean updateExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
+            throw new NutsIllegalArgumentException(ws, "Invalid Extension");
         }
         NutsId[] extensions = getExtensions();
         for (int i = 0; i < extensions.length; i++) {
@@ -486,7 +486,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public boolean containsExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentException(ws,"Invalid Extension");
+            throw new NutsIllegalArgumentException(ws, "Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
             if (extension.equalsSimpleName(extension)) {

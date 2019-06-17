@@ -42,6 +42,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 public class NutsSearchIdById implements NutsSearchId {
 
     private NutsId id;
+
     public NutsSearchIdById(NutsId id) {
         this.id = id;
     }

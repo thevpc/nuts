@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+
     public static final NutsDependencyFilter OPTIONAL = new NutsDependencyOptionFilter(true);
     public static final NutsDependencyFilter NON_OPTIONAL = new NutsDependencyOptionFilter(false);
 

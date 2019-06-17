@@ -91,5 +91,5 @@ public class QueueIterator<T> implements Iterator<T> {
     public Iterator<T>[] getChildren() {
         return children.toArray(new Iterator[0]);
     }
-    
+
 }

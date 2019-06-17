@@ -7,7 +7,7 @@ import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 public class DefaultNutsAuthenticationAgent extends AbstractNutsAuthenticationAgent {
 
     public DefaultNutsAuthenticationAgent() {
-        super("default#1",DEFAULT_SUPPORT);
+        super("default#1", DEFAULT_SUPPORT);
     }
 
     @Override
@@ -24,5 +24,5 @@ public class DefaultNutsAuthenticationAgent extends AbstractNutsAuthenticationAg
     protected char[] hashChars(char[] data, String passphrase) {
         return CoreSecurityUtils.defaultHashChars(data, passphrase);
     }
-    
+
 }

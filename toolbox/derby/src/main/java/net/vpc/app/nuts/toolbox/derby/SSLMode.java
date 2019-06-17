@@ -35,5 +35,5 @@ package net.vpc.app.nuts.toolbox.derby;
  */
 public enum SSLMode {
     off, basic, peerAuthentication
-    
+
 }

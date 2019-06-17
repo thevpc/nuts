@@ -49,14 +49,13 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     void fireConfigurationChanged();
 
     NutsWorkspaceConfig getStoredConfig();
-    
-    NutsWorkspace getWorkspace();
-    
-    void removeAllRepositories();
-    
-    Path getRepositoriesRoot();
-    
-//    NutsRepository wireRepository(NutsRepository repository);
 
+    NutsWorkspace getWorkspace();
+
+    void removeAllRepositories();
+
+    Path getRepositoriesRoot();
+
+//    NutsRepository wireRepository(NutsRepository repository);
     void setExcludedRepositories(String[] excludedRepositories);
 }

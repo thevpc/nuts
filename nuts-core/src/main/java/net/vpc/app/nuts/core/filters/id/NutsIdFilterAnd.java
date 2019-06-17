@@ -39,7 +39,7 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
             return true;
         }
         for (NutsIdFilter filter : children) {
-            if (!filter.accept(id,ws, session)) {
+            if (!filter.accept(id, ws, session)) {
                 return false;
             }
         }
@@ -48,7 +48,7 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
 
     @Override
     public NutsIdFilter simplify() {
-        if(children.length==0){
+        if (children.length == 0) {
             return null;
         }
         NutsIdFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsIdFilter.class, children);
@@ -60,7 +60,7 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
                 return newValues[0];
             }
             return new NutsIdFilterAnd(newValues);
-        }else{
+        } else {
             if (children.length == 0) {
                 return null;
             }
@@ -101,7 +101,7 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
         return sb.toString();
     }
 
-        @Override
+    @Override
     public String toString() {
         return CoreStringUtils.join(" And ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
@@ -131,5 +131,4 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
         return true;
     }
 
-    
 }

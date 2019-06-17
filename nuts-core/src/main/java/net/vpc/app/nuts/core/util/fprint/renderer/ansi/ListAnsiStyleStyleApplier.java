@@ -13,18 +13,19 @@ import java.util.List;
  * @author vpc
  */
 public class ListAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
-    public List<AnsiStyleStyleApplier> suppliers=new ArrayList<AnsiStyleStyleApplier>();
+
+    public List<AnsiStyleStyleApplier> suppliers = new ArrayList<AnsiStyleStyleApplier>();
+
     public ListAnsiStyleStyleApplier(List<AnsiStyleStyleApplier> suppliers) {
-        this.suppliers=suppliers;
+        this.suppliers = suppliers;
     }
 
     @Override
     public AnsiStyle apply(AnsiStyle old) {
         for (AnsiStyleStyleApplier supplier : suppliers) {
-            old=supplier.apply(old);
+            old = supplier.apply(old);
         }
         return old;
     }
-    
-    
+
 }

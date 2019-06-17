@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsLicenseInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("license", args, ws, session);
     }
@@ -28,5 +28,5 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
         }
         getSession(true).getTerminal().fout().println(NutsWorkspaceExt.of(ws).getLicenseText());
     }
-    
+
 }

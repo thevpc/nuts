@@ -50,7 +50,6 @@ public class ZipSource extends SourceAdapter {
         return new ZipInputStream(getSource().openStream());
     }
 
-
     private class ZipIterable implements Iterable<Source> {
 
         @Override

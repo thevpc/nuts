@@ -202,8 +202,8 @@ public class JavaExecutorOptions {
                 if (path == null) {
                     throw new NutsIllegalArgumentException(ws, "Missing Path for " + id);
                 }
-                nutsPath.add(0,nutsIdFormat.set(id).format());
-                classPath.add(0,path.toString());
+                nutsPath.add(0, nutsIdFormat.set(id).format());
+                classPath.add(0, path.toString());
             }
             for (String cp : classPath0) {
                 classPath.add(cp);

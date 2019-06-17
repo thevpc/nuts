@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsWelcomeInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("welcome", args, ws, session);
     }
@@ -28,5 +28,5 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         }
         getSession().getTerminal().fout().println(NutsWorkspaceExt.of(ws).getWelcomeText());
     }
-    
+
 }

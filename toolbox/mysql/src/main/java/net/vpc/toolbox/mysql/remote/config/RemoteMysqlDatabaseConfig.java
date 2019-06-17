@@ -30,5 +30,5 @@ public class RemoteMysqlDatabaseConfig {
     public void setRemoteName(String remoteName) {
         this.remoteName = remoteName;
     }
-    
+
 }

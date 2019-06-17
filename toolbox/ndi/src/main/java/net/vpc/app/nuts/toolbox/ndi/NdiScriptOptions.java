@@ -5,10 +5,11 @@ import net.vpc.app.nuts.NutsExecutionType;
 import java.util.List;
 
 public class NdiScriptOptions {
+
     private String id;
     private boolean force;
     private boolean forceBoot;
-    private boolean trace=true;
+    private boolean trace = true;
     private boolean fetch;
     private NutsExecutionType execType;
     private List<String> executorOptions;
@@ -48,8 +49,6 @@ public class NdiScriptOptions {
         this.trace = trace;
         return this;
     }
-
-    
 
     public boolean isFetch() {
         return fetch;

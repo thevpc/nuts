@@ -56,7 +56,7 @@ public class NutsDescriptorFilterOsdist implements NutsDescriptorFilter, Simplif
 
     @Override
     public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesOsdist(osdist,descriptor,ws,session);
+        return CoreFilterUtils.matchesOsdist(osdist, descriptor, ws, session);
     }
 
     /**

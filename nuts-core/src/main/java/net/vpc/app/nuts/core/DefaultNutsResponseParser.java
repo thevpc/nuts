@@ -7,8 +7,9 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
 
 //    public static final NutsResponseParser INSTANCE = new DefaultNutsResponseParser();
     private NutsWorkspace ws;
+
     public DefaultNutsResponseParser(NutsWorkspace ws) {
-        this.ws=ws;
+        this.ws = ws;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsArgument a = new DefaultNutsArgument(sReponse,'=');
+                NutsArgument a = new DefaultNutsArgument(sReponse, '=');
                 if (!a.isBoolean()) {
                     throw new NutsIllegalArgumentException(ws, "Invalid response " + sReponse);
                 }
@@ -69,7 +70,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(ws,"Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type.getName());
             }
         }
     }
@@ -104,7 +105,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 return new Object[]{true, false};
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws,"Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type.getName());
             }
         }
     }

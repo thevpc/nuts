@@ -5,36 +5,29 @@
  */
 package net.vpc.app.nuts.core.format.json;
 
+import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIncrementalFormatContext;
-import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatJson implements NutsIncrementalFormatHandler {
+public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    private NutsFetchDisplayOptions displayOptions;
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return NutsOutputFormat.JSON;
+    public DefaultSearchFormatJson(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
+        super(ws, session, writer, NutsOutputFormat.JSON);
     }
 
     @Override
-    public void init(NutsIncrementalFormatContext context) {
-        displayOptions = new NutsFetchDisplayOptions(context.getWorkspace());
-    }
-
-    @Override
-    public void start(NutsIncrementalFormatContext context) {
-        context.getWriter().println("[");
+    public void start() {
+        getWriter().println("[");
     }
 
     @Override
@@ -43,7 +36,7 @@ public class DefaultSearchFormatJson implements NutsIncrementalFormatHandler {
         if (a == null) {
             return false;
         }
-        if (displayOptions.configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
         switch (a.getStringKey()) {
@@ -56,12 +49,12 @@ public class DefaultSearchFormatJson implements NutsIncrementalFormatHandler {
     }
 
     @Override
-    public void next(NutsIncrementalFormatContext context, Object object, long index) {
+    public void next(Object object, long index) {
         if (index > 0) {
-            context.getWriter().print(", ");
+            getWriter().print(", ");
         }
-        context.getWriter().printf("%N%n", context.getWorkspace().format().json().compact(isCompact()).set(object).format());
-        context.getWriter().flush();
+        getWriter().printf("%N%n", getWorkspace().format().json().compact(isCompact()).set(object).format());
+        getWriter().flush();
     }
 
     public boolean isCompact() {
@@ -69,8 +62,8 @@ public class DefaultSearchFormatJson implements NutsIncrementalFormatHandler {
     }
 
     @Override
-    public void complete(NutsIncrementalFormatContext context, long count) {
-        context.getWriter().println("]");
+    public void complete(long count) {
+        getWriter().println("]");
     }
 
 }

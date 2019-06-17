@@ -9,4 +9,5 @@ package net.vpc.app.nuts.core.util.io;
  *
  * @author vpc
  */
-public interface MultiInputSource extends InputSource {}
+public interface MultiInputSource extends InputSource {
+}

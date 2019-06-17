@@ -63,18 +63,18 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         if (rootUrl == null) {
             throw new NullPointerException("Could not iterate over null folder");
         }
-        if(rootUrl.endsWith("/") && !rootUrl.endsWith("//")){
-            rootUrl=rootUrl.substring(0,rootUrl.length()-1);
+        if (rootUrl.endsWith("/") && !rootUrl.endsWith("//")) {
+            rootUrl = rootUrl.substring(0, rootUrl.length() - 1);
         }
-        this.rootUrl=rootUrl;
-        String startUrl=rootUrl;
-        if(basePath!=null && basePath.length()>0 && !basePath.equals("/")){
-            if(!startUrl.endsWith("/") && !basePath.startsWith("/")){
-                startUrl+="/";
+        this.rootUrl = rootUrl;
+        String startUrl = rootUrl;
+        if (basePath != null && basePath.length() > 0 && !basePath.equals("/")) {
+            if (!startUrl.endsWith("/") && !basePath.startsWith("/")) {
+                startUrl += "/";
             }
-            startUrl+=basePath;
+            startUrl += basePath;
         }
-        stack.push(new PathAndDepth(startUrl, true,0));
+        stack.push(new PathAndDepth(startUrl, true, 0));
     }
 
     @Override
@@ -87,14 +87,14 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 String[] childrenFiles = FilesFoldersApi.getFiles(file.path, workspace, session.getSession());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
-                if (deep && childrenFolders!=null) {
+                if (deep && childrenFolders != null) {
                     for (String child : childrenFolders) {
                         if (file.depth < maxDepth) {
                             stack.push(new PathAndDepth(file.path + "/" + child, true, file.depth + 1));
                         }
                     }
                 }
-                if(childrenFiles!=null) {
+                if (childrenFiles != null) {
                     for (String child : childrenFiles) {
                         if (model.isDescFile(child)) {
                             stack.push(new PathAndDepth(file.path + "/" + child, false, file.depth));
@@ -106,8 +106,8 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 NutsDescriptor t = null;
                 try {
                     t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().source(file.path).session(session.getSession()).create()
-                            , session);
+                            .monitor().source(file.path).session(session.getSession()).create(),
+                            session);
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -145,7 +145,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(workspace,"Unsupported Remove");
+        throw new NutsUnsupportedOperationException(workspace, "Unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {
@@ -156,14 +156,13 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         return visitedFilesCount;
     }
 
-    
     private static class PathAndDepth {
 
         private String path;
         private int depth;
         private boolean folder;
 
-        public PathAndDepth(String path, boolean folder,int depth) {
+        public PathAndDepth(String path, boolean folder, int depth) {
             this.path = path;
             this.folder = folder;
             this.depth = depth;

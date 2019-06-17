@@ -52,7 +52,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
     private NutsDescriptor result;
 
     public DefaultNutsFetchDescriptorRepositoryCommand(NutsRepository repo) {
-        super(repo,"fetch-descriptor");
+        super(repo, "fetch-descriptor");
     }
 
     @Override
@@ -81,7 +81,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
             if (DefaultNutsVersion.isBlank(versionString)) {
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), null, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
+                    throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
@@ -92,13 +92,13 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getQueryMap(), new NutsPatternIdFilter(id), null);
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), filter, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
+                    throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
             }
             if (d == null) {
-                throw new NutsNotFoundException(getRepo().getWorkspace(),id.getLongNameId());
+                throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
             }
             if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime);
@@ -112,7 +112,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
         }
         return this;
     }
-    
+
     @Override
     public NutsDescriptor getResult() {
         if (result == null) {

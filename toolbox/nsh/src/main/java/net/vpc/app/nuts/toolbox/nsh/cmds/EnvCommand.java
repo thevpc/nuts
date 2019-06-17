@@ -124,7 +124,7 @@ public class EnvCommand extends SimpleNshBuiltin {
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
-                        }else if (a.isOption()) {
+                        } else if (a.isOption()) {
                             return false;
                         } else {
                             options.command.add(a.getString());

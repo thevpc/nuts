@@ -60,11 +60,11 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing config name", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing config name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().format().json().read(f, RemoteMysqlConfig.class);
+            config = context.getWorkspace().format().json().parse(f, RemoteMysqlConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -107,7 +107,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(),"App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "App not found :" + appName, 2);
         }
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }

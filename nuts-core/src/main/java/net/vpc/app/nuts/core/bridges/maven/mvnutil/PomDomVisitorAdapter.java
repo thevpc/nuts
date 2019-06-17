@@ -1,12 +1,12 @@
 package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Map;
 
-public class PomDomVisitorAdapter implements PomDomVisitor{
+public class PomDomVisitorAdapter implements PomDomVisitor {
+
     @Override
     public void visitStartDocument(Document document) {
 

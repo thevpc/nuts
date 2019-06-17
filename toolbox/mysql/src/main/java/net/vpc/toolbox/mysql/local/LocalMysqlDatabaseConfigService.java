@@ -51,7 +51,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public String getFullName() {
-        return getName()+"@"+mysql.getName();
+        return getName() + "@" + mysql.getName();
     }
 
     public String getName() {

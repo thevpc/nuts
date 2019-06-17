@@ -426,7 +426,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             other = new NutsBootConfig();
         }
         if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
-            NutsSession searchSession=ws.createSession().trace(false);
+            NutsSession searchSession = ws.createSession().trace(false);
             other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
                     .scope(NutsDependencyScope.PROFILE_RUN)
                     .inlineDependencies()
@@ -836,11 +836,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean addCommandAlias(NutsCommandAliasConfig command, NutsAddOptions options) {
         if (command == null
                 || CoreStringUtils.isBlank(command.getName())
-                || command.getName().contains(" ") || command.getName().contains(".") 
+                || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
-                || command.getCommand().length == 0
-                ) {
+                || command.getCommand().length == 0) {
             throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (command == null ? "<NULL>" : command.getName()));
         }
         boolean forced = false;
@@ -995,8 +994,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public Path getHomeLocation(NutsStoreLocation folderType) {
         return ws.io().path(NutsPlatformUtils.resolveHomeFolder(
-                runningBootConfig.getStoreLocationLayout(), 
-                folderType, runningBootConfig.getHomeLocations(), 
+                runningBootConfig.getStoreLocationLayout(),
+                folderType, runningBootConfig.getHomeLocations(),
                 runningBootConfig.isGlobal(),
                 runningBootConfig.getName()
         ));
@@ -1050,7 +1049,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         int ordinal = location.ordinal();
         String s = platformOsPath[ordinal];
         if (s == null) {
-            platformOsPath[ordinal] = s = NutsPlatformUtils.getPlatformOsGlobalHome(location,runningBootConfig.getName());
+            platformOsPath[ordinal] = s = NutsPlatformUtils.getPlatformOsGlobalHome(location, runningBootConfig.getName());
         }
         return s;
     }
@@ -1495,7 +1494,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean load() {
         Path file = getConfigFile();
-        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.format().json().read(file, NutsWorkspaceConfig.class) : null;
+        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.format().json().parse(file, NutsWorkspaceConfig.class) : null;
         if (_config != null) {
             setConfig(_config, false);
             configurationChanged = false;
@@ -1663,7 +1662,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsRepository addRepository(NutsCreateRepositoryOptions options) {
-        if (excludedRepositoriesSet!=null && excludedRepositoriesSet.contains(options.getName())) {
+        if (excludedRepositoriesSet != null && excludedRepositoriesSet.contains(options.getName())) {
             return null;
         }
         if (options.isProxy()) {

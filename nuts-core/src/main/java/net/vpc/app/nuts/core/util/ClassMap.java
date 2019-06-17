@@ -69,15 +69,15 @@ public class ClassMap<V> {
     private static final long serialVersionUID = 1L;
     private Class keyType;
     private Class<V> valueType;
-    private HashMap<Class, V> values ;
+    private HashMap<Class, V> values;
     private HashMap<Class, V[]> cachedValues;
     private HashMap<Class, Class[]> cachedHierarchy;
 
-    public ClassMap(Class keyType,Class<V> valueType) {
-        this(keyType,valueType,0);
+    public ClassMap(Class keyType, Class<V> valueType) {
+        this(keyType, valueType, 0);
     }
 
-    public ClassMap(Class keyType,Class<V> valueType,int initialCapacity) {
+    public ClassMap(Class keyType, Class<V> valueType, int initialCapacity) {
         this.keyType = keyType;
         this.valueType = valueType;
         values = new HashMap<Class, V>(initialCapacity);
@@ -98,7 +98,7 @@ public class ClassMap<V> {
     public Class[] getKeis(Class classKey) {
         Class[] keis = cachedHierarchy.get(classKey);
         if (keis == null) {
-            keis = findClassHierarchy(classKey,keyType);
+            keis = findClassHierarchy(classKey, keyType);
             cachedHierarchy.put(classKey, keis);
         }
         return keis;
@@ -112,7 +112,7 @@ public class ClassMap<V> {
     public V getExact(Class key) {
         return values.get(key);
     }
-    
+
     public V get(Class key) {
         V[] found = getAll(key);
         if (found.length > 0) {
@@ -146,7 +146,6 @@ public class ClassMap<V> {
         return found;
     }
 
-
     public static Class[] findClassHierarchy(Class clazz, Class baseType) {
         HashSet<Class> seen = new HashSet<Class>();
         Queue<Class> queue = new LinkedList<Class>();
@@ -154,7 +153,7 @@ public class ClassMap<V> {
         queue.add(clazz);
         while (!queue.isEmpty()) {
             Class i = queue.remove();
-            if(baseType==null || baseType.isAssignableFrom(i)) {
+            if (baseType == null || baseType.isAssignableFrom(i)) {
                 if (!seen.contains(i)) {
                     seen.add(i);
                     result.add(i);
@@ -173,14 +172,24 @@ public class ClassMap<V> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClassMap)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ClassMap)) {
+            return false;
+        }
 
         ClassMap classMap = (ClassMap) o;
 
-        if (keyType != null ? !keyType.equals(classMap.keyType) : classMap.keyType != null) return false;
-        if (valueType != null ? !valueType.equals(classMap.valueType) : classMap.valueType != null) return false;
-        if (values != null ? !values.equals(classMap.values) : classMap.values != null) return false;
+        if (keyType != null ? !keyType.equals(classMap.keyType) : classMap.keyType != null) {
+            return false;
+        }
+        if (valueType != null ? !valueType.equals(classMap.valueType) : classMap.valueType != null) {
+            return false;
+        }
+        if (values != null ? !values.equals(classMap.values) : classMap.values != null) {
+            return false;
+        }
 
         return true;
     }
@@ -189,18 +198,17 @@ public class ClassMap<V> {
     public int hashCode() {
         int result = 0;
         //transform map hashcode according to names and not class references
-        if(values != null){
+        if (values != null) {
             int h = 0;
-            Iterator<Map.Entry<Class,V>> i = values.entrySet().iterator();
+            Iterator<Map.Entry<Class, V>> i = values.entrySet().iterator();
             while (i.hasNext()) {
                 Map.Entry<Class, V> next = i.next();
-                h += (next.getKey().getName().hashCode() ^ (next.getValue()==null ? 0 : next.getValue().hashCode()));
+                h += (next.getKey().getName().hashCode() ^ (next.getValue() == null ? 0 : next.getValue().hashCode()));
             }
-            result=h;
+            result = h;
         }
         result = 31 * result + (keyType != null ? keyType.getName().hashCode() : 0);
         result = 31 * result + (valueType != null ? valueType.getName().hashCode() : 0);
         return result;
     }
 }
-

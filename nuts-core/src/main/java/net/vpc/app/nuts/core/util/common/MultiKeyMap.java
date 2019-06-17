@@ -4,9 +4,10 @@ import java.util.*;
 import net.vpc.app.nuts.NutsUnexpectedException;
 
 public class MultiKeyMap<K, V> {
+
     private Map<K, Base<K, V>> keyMap = new LinkedHashMap<>();
 
-    public void clear(){
+    public void clear() {
         keyMap.clear();
     }
 
@@ -44,7 +45,7 @@ public class MultiKeyMap<K, V> {
     public V putMulti(K[] k, V v) {
         V o = put(k[0], v);
         for (int i = 1; i < k.length; i++) {
-            mergeKeys(k[0],k[1]);
+            mergeKeys(k[0], k[1]);
         }
         return o;
     }
@@ -88,6 +89,7 @@ public class MultiKeyMap<K, V> {
     }
 
     private static class Base<K, V> {
+
         K main;
         V value;
         Set<K> all = new HashSet<>();

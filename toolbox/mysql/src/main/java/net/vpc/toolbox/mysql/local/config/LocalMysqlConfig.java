@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LocalMysqlConfig {
+
     private String archiveFolder;
     private String runningFolder;
     private String logFile;
@@ -13,7 +14,6 @@ public class LocalMysqlConfig {
     private int shutdownWaitTime = 20;
     private boolean kill = true;
     private Map<String, LocalMysqlDatabaseConfig> databases = new HashMap<>();
-
 
     public int getShutdownWaitTime() {
         return shutdownWaitTime;

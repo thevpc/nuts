@@ -52,36 +52,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NutsParseException(ws,"not an object");
+                throw new NutsParseException(ws, "not an object");
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced brackets");
+                throw new NutsParseException(ws, "Unbalanced brackets");
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced braces");
+                throw new NutsParseException(ws, "Unbalanced braces");
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced anti-slash");
+                throw new NutsParseException(ws, "Unbalanced anti-slash");
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced simple quotes");
+                throw new NutsParseException(ws, "Unbalanced simple quotes");
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced double quotes");
+                throw new NutsParseException(ws, "Unbalanced double quotes");
             }
             return false;
         }
@@ -91,13 +91,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced brackets");
+                throw new NutsParseException(ws, "Unbalanced brackets");
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NutsParseException(ws,"Unbalanced braces");
+                throw new NutsParseException(ws, "Unbalanced braces");
             }
             return false;
         }

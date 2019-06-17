@@ -90,10 +90,10 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
                 .setDeployOrder(100)
                 .setName("system")
                 .setLocation(
-                        CoreIOUtils.getNativePath(workspace.config().getPlatformOsHome(NutsStoreLocation.CONFIG) 
-                        + "/"+NutsConstants.Names.DEFAULT_WORKSPACE_NAME
-                        +"/"+NutsConstants.Folders.REPOSITORIES
-                        +"/"+NutsConstants.Names.DEFAULT_REPOSITORY_NAME
+                CoreIOUtils.getNativePath(workspace.config().getPlatformOsHome(NutsStoreLocation.CONFIG)
+                + "/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME
+                + "/" + NutsConstants.Folders.REPOSITORIES
+                + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
                 )).setType(NutsConstants.RepoTypes.NUTS).setProxy(false).setReference(true).setFailSafe(true).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL),};
         }
         return new NutsRepositoryDefinition[0];

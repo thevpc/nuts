@@ -41,7 +41,7 @@ public class NutsIdNonOption extends DefaultNonOption {
 
     public NutsIdNonOption(String name, NutsWorkspace workspace) {
         super(name);
-        this.workspace=workspace;
+        this.workspace = workspace;
     }
 
 }

@@ -247,7 +247,7 @@ public class NutsComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = ws.format().json().read(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = ws.format().json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
                     dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));
@@ -255,7 +255,7 @@ public class NutsComponentController {
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = ws.format().json().read(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = ws.format().json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
                     allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));

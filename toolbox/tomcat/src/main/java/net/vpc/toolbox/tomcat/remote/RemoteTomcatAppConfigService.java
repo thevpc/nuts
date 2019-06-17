@@ -15,7 +15,8 @@ import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
 
-public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
+public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
+
     private RemoteTomcatAppConfig config;
     private NutsApplicationContext context;
     private RemoteTomcatConfigService client;
@@ -32,7 +33,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
         if (!new File(localWarPath).exists()) {
-            throw new NutsExecutionException(context.getWorkspace(),"Missing source war file " + localWarPath,2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing source war file " + localWarPath, 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (StringUtils.isBlank(remoteTempPath)) {
@@ -96,7 +97,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                     remoteFilePath
             );
         } else {
-            throw new NutsExecutionException(context.getWorkspace(),"Unable to detect file version of " + localWarPath + ".\n" + s.getOutputString(),2);
+            throw new NutsExecutionException(context.getWorkspace(), "Unable to detect file version of " + localWarPath + ".\n" + s.getOutputString(), 2);
         }
     }
 

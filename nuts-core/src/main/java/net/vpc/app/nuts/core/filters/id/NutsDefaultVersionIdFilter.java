@@ -30,7 +30,7 @@ public class NutsDefaultVersionIdFilter implements NutsIdFilter, Simplifiable<Nu
         if (defaultVersion == null) {
             return true;
         }
-        return NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(other)==defaultVersion;
+        return NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(other) == defaultVersion;
     }
 
     @Override

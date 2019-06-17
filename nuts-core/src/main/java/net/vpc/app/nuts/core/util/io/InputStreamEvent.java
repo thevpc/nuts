@@ -34,7 +34,7 @@ package net.vpc.app.nuts.core.util.io;
  * @author vpc
  */
 public class InputStreamEvent {
-    
+
     private final Object source;
     private final String sourceName;
     private final long globalCount;
@@ -44,7 +44,7 @@ public class InputStreamEvent {
     private final long length;
     private final Throwable exception;
 
-    public InputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis,long length,Throwable exception) {
+    public InputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception) {
         this.source = source;
         this.length = length;
         this.sourceName = sourceName;
@@ -63,7 +63,6 @@ public class InputStreamEvent {
         return length;
     }
 
-    
     public Object getSource() {
         return source;
     }
@@ -87,5 +86,5 @@ public class InputStreamEvent {
     public long getPartialMillis() {
         return partialMillis;
     }
-    
+
 }

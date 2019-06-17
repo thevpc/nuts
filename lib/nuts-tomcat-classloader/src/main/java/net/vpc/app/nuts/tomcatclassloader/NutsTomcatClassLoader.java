@@ -139,16 +139,16 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 
     public synchronized NutsWorkspace resolveNutsWorkspace() {
         if (nutsWorkspace == null) {
-            nutsWorkspace =
-                    Nuts.openWorkspace(
-                    new NutsWorkspaceOptions()
-                            .setBootRuntime(getWorkspaceBootRuntime())
-                            .setClassLoaderProvider(new NutsSingletonClassLoaderProvider(getParent()))
-                            .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
-                            .setWorkspace(getWorkspaceLocation())
-                            .setArchetype(getWorkspaceArchetype())
-                            .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
-                            .setExcludedExtensions(splitString(getWorkspaceExcludedExtensions(), " ;"))
+            nutsWorkspace
+                    = Nuts.openWorkspace(
+                            new NutsWorkspaceOptions()
+                                    .setBootRuntime(getWorkspaceBootRuntime())
+                                    .setClassLoaderProvider(new NutsSingletonClassLoaderProvider(getParent()))
+                                    .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                                    .setWorkspace(getWorkspaceLocation())
+                                    .setArchetype(getWorkspaceArchetype())
+                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
+                                    .setExcludedExtensions(splitString(getWorkspaceExcludedExtensions(), " ;"))
                     );
         }
         return nutsWorkspace;

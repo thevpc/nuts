@@ -39,7 +39,6 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         super(file, csn);
     }
 
-    
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         print(FormattedPrintStreamUtils.format(l, format, args));
@@ -56,7 +55,5 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     public void flush() {
         super.flush(); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
 
 }

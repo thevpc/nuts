@@ -36,7 +36,7 @@ import net.vpc.app.nuts.NutsUpdateResult;
 /**
  * Created by vpc on 6/23/17.
  */
-public final class DefaultNutsUpdateResult implements NutsUpdateResult{
+public final class DefaultNutsUpdateResult implements NutsUpdateResult {
 
     private NutsId id;
     private NutsDefinition local;
@@ -50,13 +50,12 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult{
     public DefaultNutsUpdateResult() {
     }
 
-    
-    public DefaultNutsUpdateResult(NutsId id, NutsDefinition local, NutsDefinition available, NutsId[] dependencies,boolean runtime) {
+    public DefaultNutsUpdateResult(NutsId id, NutsDefinition local, NutsDefinition available, NutsId[] dependencies, boolean runtime) {
         this.id = id;
         this.local = local;
         this.available = available;
         this.runtime = runtime;
-        this.dependencies = dependencies==null?new NutsId[0]:dependencies;
+        this.dependencies = dependencies == null ? new NutsId[0] : dependencies;
     }
 
     public boolean isRuntime() {
@@ -114,7 +113,5 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult{
     public void setId(NutsId id) {
         this.id = id;
     }
-    
-    
-    
+
 }

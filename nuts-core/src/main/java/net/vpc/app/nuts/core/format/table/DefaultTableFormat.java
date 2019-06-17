@@ -91,7 +91,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     private boolean visibleHeader = true;
 
     public DefaultTableFormat(NutsWorkspace ws) {
-        super(ws,"table-format");
+        super(ws, "table-format");
     }
 
     @Override
@@ -292,7 +292,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(null,String.valueOf(a));
+                throw new NutsUnsupportedArgumentException(null, String.valueOf(a));
             }
         }
     }
@@ -1167,10 +1167,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return true;
         } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if (cmdLine.next("--" + e.getKey())!=null) {
+                if (cmdLine.next("--" + e.getKey()) != null) {
                     setVisibleColumn(e.getValue(), true);
                     return true;
-                } else if (cmdLine.next("--no-" + e.getKey())!=null) {
+                } else if (cmdLine.next("--no-" + e.getKey()) != null) {
                     setVisibleColumn(e.getValue(), false);
                     return true;
                 }

@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 /**
  * Simple reference implementation of Null (do nothing) Inputstream
+ *
  * @author vpc
  */
 public final class NullInputStream extends InputStream {
@@ -26,6 +27,7 @@ public final class NullInputStream extends InputStream {
 
     /**
      * return -1
+     *
      * @return -1
      */
     @Override
@@ -35,6 +37,7 @@ public final class NullInputStream extends InputStream {
 
     /**
      * return 0
+     *
      * @return 0
      */
     @Override

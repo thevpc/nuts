@@ -238,7 +238,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
     protected void printObject(SimpleNshCommandContext context) {
         NutsSession session = context.getExecutionContext().getSession();
-        if (session.isIncrementalTrace()) {
+        if (session.isIterableTrace()) {
             //already processed
         } else {
             switch (session.getOutputFormat()) {

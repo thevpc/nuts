@@ -6,6 +6,7 @@ import java.util.*;
  * @author taha.bensalah@gmail.com on 7/22/16.
  */
 public class ListMap<K, V> {
+
     private Map<K, List<V>> map = new HashMap<K, List<V>>();
 
     public ListMap(Map<K, List<V>> map) {

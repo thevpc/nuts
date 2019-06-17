@@ -575,7 +575,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
-            config = context.workspace().format().json().read(f, LocalTomcatConfig.class);
+            config = context.workspace().format().json().parse(f, LocalTomcatConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config

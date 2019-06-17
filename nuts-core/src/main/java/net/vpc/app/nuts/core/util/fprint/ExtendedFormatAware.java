@@ -10,5 +10,5 @@ package net.vpc.app.nuts.core.util.fprint;
  * @author vpc
  */
 public interface ExtendedFormatAware {
-    
+
 }

@@ -177,8 +177,8 @@
                     </execution>
                 </executions>
             </plugin>
-<!-- REMOVE ME -->            
-<!--            <plugin>
+            <!-- REMOVE ME -->            
+            <!--            <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <executions>

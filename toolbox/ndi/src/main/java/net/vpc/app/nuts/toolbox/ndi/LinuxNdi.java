@@ -202,7 +202,7 @@ public class LinuxNdi implements SystemNdi {
             updatedBashrc = true;
         }
         if (force || updatedBashrc) {
-            IOUtils.saveString(lines.stream().collect(Collectors.joining("\n"))+"\n", bashrc);
+            IOUtils.saveString(lines.stream().collect(Collectors.joining("\n")) + "\n", bashrc);
         }
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
         StringBuilder goodNdiRc = new StringBuilder();
@@ -246,9 +246,9 @@ public class LinuxNdi implements SystemNdi {
                 String r = context.session().terminal().ask()
                         .forString(
                                 "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
-                                +"Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
+                                + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                                 ". ~/.bashrc"
-                                )
+                        )
                         .session(context.getSession())
                         .validator(new NutsResponseValidator<String>() {
                             @Override

@@ -2,13 +2,13 @@ package net.vpc.app.nuts.core.util.common;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 
-
 /**
  * Created by vpc on 3/20/17.
  */
 public class BytesSizeFormat {
+
     public static final long BYTE = 1;
- /**
+    /**
      * kibibyte
      */
     public static final int KiBYTE = 1024;
@@ -32,7 +32,7 @@ public class BytesSizeFormat {
      * exbibyte
      */
     public static final long EiBYTE = 1024L * PiBYTE;
-    
+
     /**
      * DECA
      */
@@ -75,7 +75,7 @@ public class BytesSizeFormat {
      */
     public static final long YOTTA = 1000 * ZETTA;
 
-    public static final BytesSizeFormat INSTANCE=new BytesSizeFormat();
+    public static final BytesSizeFormat INSTANCE = new BytesSizeFormat();
     boolean leadingZeros = false;
     boolean intermediateZeros = true;
     boolean trailingZeros = false;
@@ -92,7 +92,7 @@ public class BytesSizeFormat {
         this.binaryPrefix = binaryPrefix;
         this.high = high;
         this.low = low;
-        this.depth = depth<=0?Integer.MAX_VALUE:depth;
+        this.depth = depth <= 0 ? Integer.MAX_VALUE : depth;
     }
 
     public BytesSizeFormat() {
@@ -103,14 +103,21 @@ public class BytesSizeFormat {
     public String formatDouble(double value) {
         return format((long) value);
     }
+
     /**
      * Size format is a sequence of commands :
      * <ul>
-     * <li>B,K,M,G,T : Show Bytes/Kilo/Mega/Giga/Tera, if this is the first multiplier it will be considered as the minimum multiplier otherwise it will be considered as the maximum multiplier</li>
+     * <li>B,K,M,G,T : Show Bytes/Kilo/Mega/Giga/Tera, if this is the first
+     * multiplier it will be considered as the minimum multiplier otherwise it
+     * will be considered as the maximum multiplier</li>
      * <li>I : binary prefix (use 1024 multipliers)</li>
-     * <li>D : multiplier maximum depth, should be suffixed with an integer (i.e BTD2 means that if number is in giga will not show further than kilo)</li>
+     * <li>D : multiplier maximum depth, should be suffixed with an integer (i.e
+     * BTD2 means that if number is in giga will not show further than
+     * kilo)</li>
      * <li>F : fixed length</li>
-     * <li>Z : if used in the very first position (0) consider leadingZeros, if at the last position consider trailing zeros if anywhere else consider intermediateZeros</li>
+     * <li>Z : if used in the very first position (0) consider leadingZeros, if
+     * at the last position consider trailing zeros if anywhere else consider
+     * intermediateZeros</li>
      * </ul>
      * examples
      * <pre>
@@ -175,8 +182,7 @@ public class BytesSizeFormat {
                     case 'P':
                     case 'E':
                     case 'Z':
-                    case 'Y':
-                        {
+                    case 'Y': {
                         if (startInterval) {
                             startInterval = false;
                             low = c;
@@ -191,13 +197,13 @@ public class BytesSizeFormat {
                     }
                     case 'D': {
                         i++;
-                        if(Character.isDigit(charArray[i])) {
+                        if (Character.isDigit(charArray[i])) {
                             depth = charArray[i] - '0';
-                        }else{
-                            depth=-1;
+                        } else {
+                            depth = -1;
                         }
-                        if(depth<=0 || depth>9){
-                            throw new NutsIllegalArgumentException(null, "Invalid depth "+depth);
+                        if (depth <= 0 || depth > 9) {
+                            throw new NutsIllegalArgumentException(null, "Invalid depth " + depth);
                         }
                     }
                     case 'F': {
@@ -207,7 +213,7 @@ public class BytesSizeFormat {
                     case '0': {
                         if (i == 0) {
                             leadingZeros = true;
-                        } else if(i==charArray.length-1){
+                        } else if (i == charArray.length - 1) {
                             trailingZeros = true;
                         } else {
                             intermediateZeros = true;
@@ -234,7 +240,6 @@ public class BytesSizeFormat {
             this.high = t;
         }
     }
-
 
     private long eval(char c) {
         switch (c) {
@@ -271,7 +276,7 @@ public class BytesSizeFormat {
 
     private String formatLeft(Object number, int size) {
         if (fixedLength) {
-            return CoreStringUtils.alignLeft(String.valueOf(number==null?"":number), size);
+            return CoreStringUtils.alignLeft(String.valueOf(number == null ? "" : number), size);
         } else {
             return String.valueOf(number);
         }
@@ -338,7 +343,7 @@ public class BytesSizeFormat {
 //            }
             if (high >= E) {
                 r = v / T;
-                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % E)>0)) || (v==0 && trailingZeros)) {
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % E) > 0)) || (v == 0 && trailingZeros)) {
                     if (currDepth < 0) {
                         currDepth = 1;
                     } else {
@@ -348,9 +353,9 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("E").append(binaryPrefix?"i":"");
-                        if(r!=0){
-                            leading=false;
+                        sb.append(formatLeft(r, 3)).append("E").append(binaryPrefix ? "i" : "");
+                        if (r != 0) {
+                            leading = false;
                         }
                         v = v % E;
                         empty = false;
@@ -359,7 +364,7 @@ public class BytesSizeFormat {
             }
             if (high >= P) {
                 r = v / T;
-                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % P)>0)) || (v==0 && trailingZeros)) {
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % P) > 0)) || (v == 0 && trailingZeros)) {
                     if (currDepth < 0) {
                         currDepth = 1;
                     } else {
@@ -369,9 +374,9 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("P").append(binaryPrefix?"i":"");
-                        if(r!=0){
-                            leading=false;
+                        sb.append(formatLeft(r, 3)).append("P").append(binaryPrefix ? "i" : "");
+                        if (r != 0) {
+                            leading = false;
                         }
                         v = v % P;
                         empty = false;
@@ -380,7 +385,7 @@ public class BytesSizeFormat {
             }
             if (high >= T) {
                 r = v / T;
-                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % T)>0)) || (v==0 && trailingZeros)) {
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % T) > 0)) || (v == 0 && trailingZeros)) {
                     if (currDepth < 0) {
                         currDepth = 1;
                     } else {
@@ -390,9 +395,9 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("T").append(binaryPrefix?"i":"");
-                        if(r!=0){
-                            leading=false;
+                        sb.append(formatLeft(r, 3)).append("T").append(binaryPrefix ? "i" : "");
+                        if (r != 0) {
+                            leading = false;
                         }
                         v = v % T;
                         empty = false;
@@ -403,7 +408,7 @@ public class BytesSizeFormat {
                 if (high >= G) {
                     r = v / G;
                 }
-                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % G)>0)) || (v==0 && trailingZeros)) {
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % G) > 0)) || (v == 0 && trailingZeros)) {
                     if (currDepth < 0) {
                         currDepth = 1;
                     } else {
@@ -413,10 +418,10 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        if(r!=0){
-                            leading=false;
+                        if (r != 0) {
+                            leading = false;
                         }
-                        sb.append(formatLeft(r, 3)).append("G").append(binaryPrefix?"i":"");
+                        sb.append(formatLeft(r, 3)).append("G").append(binaryPrefix ? "i" : "");
                         v = v % G;
                         empty = false;
                     }
@@ -424,20 +429,20 @@ public class BytesSizeFormat {
                 if (low <= M) {
                     if (high >= M) {
                         r = v / M;
-                        if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % M)>0)) || (v==0 && trailingZeros)) {
-                            if(currDepth<0){
-                                currDepth=1;
-                            }else{
+                        if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % M) > 0)) || (v == 0 && trailingZeros)) {
+                            if (currDepth < 0) {
+                                currDepth = 1;
+                            } else {
                                 currDepth++;
                             }
-                            if(currDepth<=depth) {
+                            if (currDepth <= depth) {
                                 if (sb.length() > 0) {
                                     sb.append(" ");
                                 }
-                                if(r!=0){
-                                    leading=false;
+                                if (r != 0) {
+                                    leading = false;
                                 }
-                                sb.append(formatLeft(r, 3)).append("M").append(binaryPrefix?"i":"");
+                                sb.append(formatLeft(r, 3)).append("M").append(binaryPrefix ? "i" : "");
                                 v = v % M;
                                 empty = false;
                             }
@@ -446,20 +451,20 @@ public class BytesSizeFormat {
                     if (low <= K) {
                         if (high >= K) {
                             r = v / K;
-                            if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % K)>0)) || (v==0 && trailingZeros)) {
-                                if(currDepth<0){
-                                    currDepth=1;
-                                }else{
+                            if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % K) > 0)) || (v == 0 && trailingZeros)) {
+                                if (currDepth < 0) {
+                                    currDepth = 1;
+                                } else {
                                     currDepth++;
                                 }
-                                if(currDepth<=depth) {
+                                if (currDepth <= depth) {
                                     if (sb.length() > 0) {
                                         sb.append(" ");
                                     }
-                                    if(r!=0){
-                                        leading=false;
+                                    if (r != 0) {
+                                        leading = false;
                                     }
-                                    sb.append(formatLeft(r, 3)).append("K").append(binaryPrefix?"i":"");
+                                    sb.append(formatLeft(r, 3)).append("K").append(binaryPrefix ? "i" : "");
                                     v = v % K;
                                     empty = false;
                                 }
@@ -467,17 +472,17 @@ public class BytesSizeFormat {
                         }
                         if (low <= 1) {
                             if ((leadingZeros && leading) || v > 0 || sb.length() == 0 /*|| (!empty && intermediateZeros)*/) {
-                                if(currDepth<0){
-                                    currDepth=1;
-                                }else{
+                                if (currDepth < 0) {
+                                    currDepth = 1;
+                                } else {
                                     currDepth++;
                                 }
-                                if(currDepth<=depth) {
+                                if (currDepth <= depth) {
                                     if (sb.length() > 0) {
                                         sb.append(" ");
                                     }
-                                    if(r!=0){
-                                        leading=false;
+                                    if (r != 0) {
+                                        leading = false;
                                     }
                                     sb.append(formatLeft(v, 3)).append("B");
                                     empty = false;
@@ -509,6 +514,5 @@ public class BytesSizeFormat {
         }
         return sb.toString();
     }
-
 
 }

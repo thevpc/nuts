@@ -29,14 +29,13 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
-
 import java.util.Map;
 import java.util.function.Function;
 
 /**
  * Created by vpc on 1/17/17.
  */
-public class MapStringMapper implements Function<String,String> {
+public class MapStringMapper implements Function<String, String> {
 
     private final Map<String, String> map;
 

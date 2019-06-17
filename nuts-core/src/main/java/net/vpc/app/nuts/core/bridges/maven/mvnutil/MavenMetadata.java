@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MavenMetadata {
+
     private String groupId;
     private String artifactId;
     private String latest;
@@ -62,5 +63,5 @@ public class MavenMetadata {
     public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
     }
-    
+
 }

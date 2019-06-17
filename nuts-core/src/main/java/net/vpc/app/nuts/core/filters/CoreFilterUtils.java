@@ -73,19 +73,21 @@ public class CoreFilterUtils {
     public static NutsIdFilter idFilterOf(NutsDescriptorFilter other) {
         return new NutstDescriptorIdFilter(other);
     }
+
     public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
         return new NutstVersionIdFilter(other);
     }
-    public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter){
+
+    public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter) {
         return CoreNutsUtils.simplify(
                 CoreFilterUtils.And(
                         idFilter,
                         CoreFilterUtils.idFilterOf(
-                            CoreFilterUtils.And(CoreFilterUtils.createNutsDescriptorFilter(map), descriptorFilter)
+                                CoreFilterUtils.And(CoreFilterUtils.createNutsDescriptorFilter(map), descriptorFilter)
                         )
                 ));
     }
-    
+
     public static NutsDescriptorFilter Or(NutsDescriptorFilter... all) {
         return new NutsDescriptorFilterOr(all);
     }
@@ -110,7 +112,7 @@ public class CoreFilterUtils {
         return createNutsDescriptorFilter(faceMap == null ? null : faceMap.get("arch"), faceMap == null ? null : faceMap.get("os"), faceMap == null ? null : faceMap.get("osdist"), faceMap == null ? null : faceMap.get("platform"));
     }
 
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsWorkspace ws,NutsSession session) {
+    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsWorkspace ws, NutsSession session) {
         if (t == null) {
             return null;
         }
@@ -164,7 +166,7 @@ public class CoreFilterUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static boolean matchesPackaging(String packaging,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
+    public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
         if (CoreStringUtils.isBlank(packaging)) {
             return true;
         }
@@ -184,7 +186,7 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesArch(String arch,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
+    public static boolean matchesArch(String arch, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
         if (CoreStringUtils.isBlank(arch)) {
             return true;
         }
@@ -208,7 +210,7 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
+    public static boolean matchesOs(String os, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
         if (CoreStringUtils.isBlank(os)) {
             return true;
         }
@@ -232,7 +234,7 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsdist(String osdist,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
+    public static boolean matchesOsdist(String osdist, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
         if (CoreStringUtils.isBlank(osdist)) {
             return true;
         }
@@ -257,7 +259,7 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(String platform,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
+    public static boolean matchesPlatform(String platform, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
         if (CoreStringUtils.isBlank(platform)) {
             return true;
         }
@@ -284,24 +286,24 @@ public class CoreFilterUtils {
             return true;
         }
     }
-    
-    public static boolean matchesEnv(String arch, String os, String dist, String platform,NutsDescriptor desc,NutsWorkspace ws,NutsSession session) {
-        if (!matchesArch(arch,desc,ws,session)) {
+
+    public static boolean matchesEnv(String arch, String os, String dist, String platform, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+        if (!matchesArch(arch, desc, ws, session)) {
             return false;
         }
-        if (!matchesOs(os,desc,ws,session)) {
+        if (!matchesOs(os, desc, ws, session)) {
             return false;
         }
-        if (!matchesOsdist(dist,desc,ws,session)) {
+        if (!matchesOsdist(dist, desc, ws, session)) {
             return false;
         }
-        if (!matchesPlatform(platform,desc,ws,session)) {
+        if (!matchesPlatform(platform, desc, ws, session)) {
             return false;
         }
         return true;
     }
-    
-    public static NutsDependency[] filterDependencies(NutsId from,NutsDependency[] d0,NutsDependencyFilter dependencyFilter,NutsWorkspace ws,NutsSession session) {
+
+    public static NutsDependency[] filterDependencies(NutsId from, NutsDependency[] d0, NutsDependencyFilter dependencyFilter, NutsWorkspace ws, NutsSession session) {
         if (dependencyFilter == null) {
             return d0;
         }

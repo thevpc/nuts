@@ -33,11 +33,12 @@ import java.nio.file.Path;
 import net.vpc.app.nuts.NutsContent;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsContent implements NutsContent{
+public class DefaultNutsContent implements NutsContent {
+
     private final Path file;
     private final boolean cached;
     private final boolean temporary;
@@ -67,5 +68,5 @@ public class DefaultNutsContent implements NutsContent{
     public String toString() {
         return "Content{" + "file=" + file + ", cached=" + cached + ", temporary=" + temporary + '}';
     }
-    
+
 }

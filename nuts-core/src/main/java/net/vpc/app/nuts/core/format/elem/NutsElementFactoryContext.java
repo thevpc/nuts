@@ -40,7 +40,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 public interface NutsElementFactoryContext {
 
     NutsWorkspace getWorkspace();
-    
+
     NutsElementFactory getFallback();
 
     Map<String, Object> getProperties();

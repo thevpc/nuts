@@ -31,13 +31,13 @@ public class IteratorBuilder<T> {
                 IteratorUtils.coalesce(t)
         );
     }
-    
+
     public static <T> IteratorBuilder<T> ofList(List<Iterator<T>> t) {
         return new IteratorBuilder<>(
                 IteratorUtils.concat(t)
         );
     }
-    
+
     public static <T> IteratorBuilder<T> of(Iterator<T> t) {
         return new IteratorBuilder<>(t);
     }
@@ -128,7 +128,6 @@ public class IteratorBuilder<T> {
     public IteratorBuilder<T> nonNull() {
         return filter(IteratorUtils.NON_NULL);
     }
-
 
     public Iterator<T> iterator() {
         return it;

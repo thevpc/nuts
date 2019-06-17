@@ -10,7 +10,7 @@ package net.vpc.app.nuts.core.util.fprint.parser;
  * @author vpc
  */
 public class TokInfo {
-    
+
     int min;
     int max;
     char end;
@@ -20,5 +20,5 @@ public class TokInfo {
         this.max = max;
         this.end = end;
     }
-    
+
 }

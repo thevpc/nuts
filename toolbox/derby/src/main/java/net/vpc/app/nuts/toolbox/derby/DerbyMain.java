@@ -8,7 +8,6 @@ package net.vpc.app.nuts.toolbox.derby;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
 
-
 /**
  * @author vpc
  */

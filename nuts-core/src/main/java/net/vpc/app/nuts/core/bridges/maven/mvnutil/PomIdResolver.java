@@ -60,8 +60,8 @@ public class PomIdResolver {
     }
 
     /**
-     * resolve all Maven/Nuts artifact definitions in the classloader
-     * that has loaded <code>clazz</code>
+     * resolve all Maven/Nuts artifact definitions in the classloader that has
+     * loaded <code>clazz</code>
      *
      * @param clazz
      * @return artifacts array in the form groupId:artfcatId#version
@@ -150,8 +150,8 @@ public class PomIdResolver {
         return null;
     }
 
-
     private static class MyURLFilter implements URLFilter {
+
         @Override
         public boolean accept(URL path) {
             return new URLParts(path).getName().equals("pom.properties");
@@ -163,7 +163,7 @@ public class PomIdResolver {
         visitZipStream(jarStream, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) {
-                if(path.startsWith("META-INF/")
+                if (path.startsWith("META-INF/")
                         && path.endsWith("/pom.properties")) {
 
                     PomId id = resolvePropertiesPomId(inputStream);

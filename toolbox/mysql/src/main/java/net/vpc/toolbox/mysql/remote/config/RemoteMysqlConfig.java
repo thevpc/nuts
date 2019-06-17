@@ -1,11 +1,11 @@
 package net.vpc.toolbox.mysql.remote.config;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteMysqlConfig {
-    private Map<String, RemoteMysqlDatabaseConfig> databases =new HashMap<>();
+
+    private Map<String, RemoteMysqlDatabaseConfig> databases = new HashMap<>();
 
     public Map<String, RemoteMysqlDatabaseConfig> getDatabases() {
         return databases;

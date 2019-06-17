@@ -84,7 +84,7 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
         }
         return false;
     }
-    
+
     @Override
     public boolean isFormatted(Writer out) {
         if (out instanceof ExtendedFormatAware) {
@@ -92,5 +92,5 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
         }
         return false;
     }
-    
+
 }

@@ -56,6 +56,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     protected Object createOptions() {
         return new Options();
     }
+
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();

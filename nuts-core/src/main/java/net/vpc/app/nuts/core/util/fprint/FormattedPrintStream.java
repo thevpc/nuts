@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.fprint.parser.TextNodeList;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodePlain;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodeStyled;
 
-public class FormattedPrintStream extends PrintStream implements ExtendedFormatAware{
+public class FormattedPrintStream extends PrintStream implements ExtendedFormatAware {
 
     private boolean formatEnabled = true;
     private FormattedPrintStreamParser parser;

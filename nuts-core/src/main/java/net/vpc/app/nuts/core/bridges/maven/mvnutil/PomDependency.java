@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class PomDependency {
+
     private String groupId;
     private String artifactId;
     private String version;
@@ -91,15 +92,19 @@ public class PomDependency {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PomDependency that = (PomDependency) o;
-        return Objects.equals(toUniformGroupId(groupId), toUniformGroupId(that.groupId)) &&
-                Objects.equals(toUniformGroupId(artifactId), toUniformGroupId(that.artifactId)) &&
-                Objects.equals(toUniformGroupId(version), toUniformGroupId(that.version)) &&
-                Objects.equals(toUniformScope(scope), toUniformScope(that.scope)) &&
-                Objects.equals(toUniformOptional(optional), toUniformOptional(that.optional)) &&
-                Arrays.equals(exclusions, that.exclusions);
+        return Objects.equals(toUniformGroupId(groupId), toUniformGroupId(that.groupId))
+                && Objects.equals(toUniformGroupId(artifactId), toUniformGroupId(that.artifactId))
+                && Objects.equals(toUniformGroupId(version), toUniformGroupId(that.version))
+                && Objects.equals(toUniformScope(scope), toUniformScope(that.scope))
+                && Objects.equals(toUniformOptional(optional), toUniformOptional(that.optional))
+                && Arrays.equals(exclusions, that.exclusions);
     }
 
     private static String toUniformGroupId(String s) {
@@ -128,13 +133,13 @@ public class PomDependency {
 
     @Override
     public String toString() {
-        return "PomDependency{" +
-                "groupId='" + groupId + '\'' +
-                ", artifactId='" + artifactId + '\'' +
-                ", version='" + version + '\'' +
-                ", scope='" + scope + '\'' +
-                ", optional='" + optional + '\'' +
-                ", exclusions=" + Arrays.toString(exclusions) +
-                '}';
+        return "PomDependency{"
+                + "groupId='" + groupId + '\''
+                + ", artifactId='" + artifactId + '\''
+                + ", version='" + version + '\''
+                + ", scope='" + scope + '\''
+                + ", optional='" + optional + '\''
+                + ", exclusions=" + Arrays.toString(exclusions)
+                + '}';
     }
 }

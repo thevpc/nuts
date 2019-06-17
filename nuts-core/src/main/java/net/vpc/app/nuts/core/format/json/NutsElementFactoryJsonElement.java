@@ -41,7 +41,7 @@ import net.vpc.app.nuts.core.format.elem.NutsElementFactory;
  * @author vpc
  */
 public class NutsElementFactoryJsonElement implements NutsElementFactory {
-    
+
     @Override
     public NutsElement create(Object o, NutsElementFactoryContext context) {
         JsonElement je = (JsonElement) o;
@@ -65,5 +65,5 @@ public class NutsElementFactoryJsonElement implements NutsElementFactory {
         }
         throw new IllegalArgumentException("Unsupported");
     }
-    
+
 }

@@ -3,11 +3,11 @@ package net.vpc.toolbox.tomcat.local.config;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 public class LocalTomcatDomainConfig {
+
     private String logFile;
     private String startupMessage;
     private String shutdownMessage;
     private String deployPath;
-
 
     public String getLogFile() {
         return logFile;
@@ -43,11 +43,11 @@ public class LocalTomcatDomainConfig {
 
     @Override
     public String toString() {
-        return "{" +
-                "logFile=" + TomcatUtils.toJsonString(logFile)   +
-                ", startupMessage=" + TomcatUtils.toJsonString(startupMessage) +
-                ", shutdownMessage=" + TomcatUtils.toJsonString(shutdownMessage) +
-                ", deployPath=" + TomcatUtils.toJsonString(deployPath )+
-                '}';
+        return "{"
+                + "logFile=" + TomcatUtils.toJsonString(logFile)
+                + ", startupMessage=" + TomcatUtils.toJsonString(startupMessage)
+                + ", shutdownMessage=" + TomcatUtils.toJsonString(shutdownMessage)
+                + ", deployPath=" + TomcatUtils.toJsonString(deployPath)
+                + '}';
     }
 }

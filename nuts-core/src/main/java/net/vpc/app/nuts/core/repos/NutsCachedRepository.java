@@ -173,7 +173,7 @@ public class NutsCachedRepository extends AbstractNutsRepository {
     @Override
     public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
-                List<Iterator<NutsId>> all = new ArrayList<>();
+        List<Iterator<NutsId>> all = new ArrayList<>();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             try {
                 all.add(lib.searchVersions(id, idFilter, true, session));

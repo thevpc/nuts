@@ -122,8 +122,8 @@ public class IteratorUtils {
         }
         return a;
     }
-    
-    public static <T> Set<T> toTreeSet(Iterator<T> it,Comparator<T> c) {
+
+    public static <T> Set<T> toTreeSet(Iterator<T> it, Comparator<T> c) {
         TreeSet<T> a = new TreeSet<T>(c);
         while (it.hasNext()) {
             a.add(it.next());

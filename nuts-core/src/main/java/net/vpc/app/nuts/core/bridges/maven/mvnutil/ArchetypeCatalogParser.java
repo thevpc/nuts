@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 public class ArchetypeCatalogParser {
+
     public static Iterator<PomId> createArchetypeCatalogIterator(final InputStream stream, final PomIdFilter filter, final boolean autoCloseStream) {
         return new Iterator<PomId>() {
             PomId last;
@@ -36,7 +37,7 @@ public class ArchetypeCatalogParser {
 
             @Override
             public boolean hasNext() {
-                if (eventReader == null || stream2==null) {
+                if (eventReader == null || stream2 == null) {
                     autoCloseStream();
                     return false;
                 }
@@ -102,8 +103,9 @@ public class ArchetypeCatalogParser {
                 super.finalize();
                 autoCloseStream();
             }
-            private void autoCloseStream(){
-                if(autoCloseStream) {
+
+            private void autoCloseStream() {
+                if (autoCloseStream) {
                     if (stream2 != null) {
                         try {
                             stream2.close();

@@ -37,11 +37,12 @@ import net.vpc.app.nuts.NutsId;
  * @author vpc
  */
 public class NdiScriptnfo {
+
     private NutsId id;
     private final String name;
     private final Path path;
 
-    public NdiScriptnfo(String name, NutsId id,Path path) {
+    public NdiScriptnfo(String name, NutsId id, Path path) {
         this.path = path;
         this.name = name;
         this.id = id;
@@ -63,6 +64,5 @@ public class NdiScriptnfo {
     public String toString() {
         return "{ id=" + id + ", name=" + name + ", path=" + path + '}';
     }
-    
 
 }

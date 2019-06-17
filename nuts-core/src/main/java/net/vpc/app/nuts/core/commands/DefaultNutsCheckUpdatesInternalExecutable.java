@@ -14,7 +14,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsCheckUpdatesInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("check-updates", args, ws, session);
     }
@@ -27,5 +27,5 @@ public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNu
         }
         ws.update().session(getSession(true).trace()).configure(false, args).checkUpdates();
     }
-    
+
 }

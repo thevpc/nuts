@@ -32,7 +32,7 @@
         </developer>
     </developers>
 
- <licenses>
+    <licenses>
         <license>
             <name>GNU General Public License Version 3.0</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
@@ -86,7 +86,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-   <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

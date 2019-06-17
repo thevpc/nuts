@@ -10,6 +10,7 @@ package net.vpc.app.nuts.core.util.fprint;
  * @author vpc
  */
 public class FPrintCommands {
-    public static final String MOVE_LINE_START="move-line-start";
-    public static final String MOVE_UP="move-up";
+
+    public static final String MOVE_LINE_START = "move-line-start";
+    public static final String MOVE_UP = "move-up";
 }

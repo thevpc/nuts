@@ -45,8 +45,6 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils.MapToFunction;
  */
 public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
-
-    
     @Override
     public NutsDescriptor applyProperties() {
         return applyProperties(getProperties());
@@ -147,7 +145,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor applyProperties(Map<String, String> properties) {
-        Function<String, String> map = new MapToFunction<String,String>(properties);
+        Function<String, String> map = new MapToFunction<String, String>(properties);
 
         NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
@@ -197,7 +195,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .build();
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, Function<String,String> properties) {
+    private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -207,7 +205,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String,String> properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String, String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);

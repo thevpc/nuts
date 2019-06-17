@@ -44,7 +44,6 @@ public class XmlUtils {
 //            Logger.getLogger(XmlUtils.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-
     public static Iterable<Node> toItertable(NodeList list) {
         return new Iterable<Node>() {
             @Override

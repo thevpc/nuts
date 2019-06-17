@@ -40,7 +40,7 @@ public class JsonStringBuffer {
 
     public JsonStringBuffer(NutsWorkspace ws) {
         this.ws = ws;
-        status= new JsonStatus(ws);
+        status = new JsonStatus(ws);
     }
 
     public boolean append(String line) {

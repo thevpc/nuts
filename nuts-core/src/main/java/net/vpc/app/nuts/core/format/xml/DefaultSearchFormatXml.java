@@ -5,52 +5,44 @@
  */
 package net.vpc.app.nuts.core.format.xml;
 
+import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIncrementalFormatContext;
-import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsIncrementalFormatHandler;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
  *
  * @author vpc
  */
-public class DefaultSearchFormatXml implements NutsIncrementalFormatHandler {
+public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     private boolean compact;
     private String rootName = "root";
 
-    private NutsFetchDisplayOptions displayOptions;
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return NutsOutputFormat.XML;
+    public DefaultSearchFormatXml(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
+        super(ws, session, writer, NutsOutputFormat.XML);
     }
 
     public String getRootName() {
         return rootName;
     }
 
-
     @Override
-    public void init(NutsIncrementalFormatContext context) {
-        displayOptions = new NutsFetchDisplayOptions(context.getWorkspace());
+    public void start() {
+        getWriter().println("<" + rootName + ">");
     }
 
     @Override
-    public void start(NutsIncrementalFormatContext context) {
-        context.getWriter().println("<" + rootName + ">");
+    public void next(Object object, long index) {
+        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, getWorkspace());
     }
 
     @Override
-    public void next(NutsIncrementalFormatContext context, Object object, long index) {
-        NutsXmlUtils.print(String.valueOf(index), object, context.getWriter(), compact, context.getWorkspace());
-    }
-
-    @Override
-    public void complete(NutsIncrementalFormatContext context, long count) {
-        context.getWriter().println("</" + rootName + ">");
+    public void complete(long count) {
+        getWriter().println("</" + rootName + ">");
     }
 
     @Override
@@ -59,7 +51,7 @@ public class DefaultSearchFormatXml implements NutsIncrementalFormatHandler {
         if (a == null) {
             return false;
         }
-        if(displayOptions.configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
         switch (a.getStringKey()) {

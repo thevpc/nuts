@@ -132,7 +132,7 @@ public class NutsWorkspaceUtils {
 
     public static void checkReadOnly(NutsWorkspace ws) {
         if (ws.config().isReadOnly()) {
-            throw new NutsReadOnlyException(ws,ws.config().getWorkspaceLocation().toString());
+            throw new NutsReadOnlyException(ws, ws.config().getWorkspaceLocation().toString());
         }
     }
 
@@ -227,8 +227,9 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(workspace, "Missing name for " + id);
         }
     }
+
     public static void checkLongNameNutsId(NutsWorkspace workspace, NutsId id) {
-        checkSimpleNameNutsId(workspace,id);
+        checkSimpleNameNutsId(workspace, id);
         if (CoreStringUtils.isBlank(id.getVersion().toString())) {
             throw new NutsIllegalArgumentException(workspace, "Missing version for " + id);
         }
@@ -239,14 +240,14 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(ws, "Invalid repository id " + repositoryName);
         }
         if (registered.contains(repositoryName)) {
-            throw new NutsRepositoryAlreadyRegisteredException(ws,repositoryName);
+            throw new NutsRepositoryAlreadyRegisteredException(ws, repositoryName);
         }
     }
 
     public static NutsId parseRequiredNutsId(NutsWorkspace ws, String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
-            throw new NutsParseException(ws,"Invalid Id format : " + nutFormat);
+            throw new NutsParseException(ws, "Invalid Id format : " + nutFormat);
         }
         return id;
     }
@@ -299,20 +300,20 @@ public class NutsWorkspaceUtils {
 
     public static NutsIdFormat getIdFormat(NutsWorkspace ws) {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
-        NutsIdFormat f = (NutsIdFormat) ws.getUserProperties().get(k);
+        NutsIdFormat f = (NutsIdFormat) ws.userProperties().get(k);
         if (f == null) {
             f = ws.format().id();
-            ws.getUserProperties().put(k, f);
+            ws.userProperties().put(k, f);
         }
         return f;
     }
 
     public static NutsDescriptorFormat getDescriptorFormat(NutsWorkspace ws) {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
-        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.getUserProperties().get(k);
+        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.userProperties().get(k);
         if (f == null) {
             f = ws.format().descriptor();
-            ws.getUserProperties().put(k, f);
+            ws.userProperties().put(k, f);
         }
         return f;
     }
@@ -321,16 +322,16 @@ public class NutsWorkspaceUtils {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
         return new NutsTraceIterator<>(it, ws, out, displayOptions, session);
     }
-    
+
     public static NutsDescriptor getEffectiveDescriptor(NutsWorkspace ws, NutsDefinition def) {
         final NutsDescriptor d = def.getEffectiveDescriptor();
-        if(d==null){
+        if (d == null) {
             return NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(def.getDescriptor(), null);
         }
         return d;
     }
-    
-    public static void checkNutsIdBase(NutsWorkspace ws,NutsId id) {
+
+    public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Missing id");
         }
@@ -341,7 +342,8 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
         }
     }
-    public static void checkNutsId(NutsWorkspace ws,NutsId id) {
+
+    public static void checkNutsId(NutsWorkspace ws, NutsId id) {
         checkNutsIdBase(ws, id);
         if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException(ws, "Missing name for " + id);

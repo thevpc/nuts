@@ -10,8 +10,9 @@ package net.vpc.nuts.toolbox.feenoo;
  * @author vpc
  */
 public interface SourceProcessor {
+
     /**
-     * 
+     *
      * @param source
      * @return false if stop processing
      */

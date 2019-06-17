@@ -22,7 +22,7 @@ public class NutsIndexSubscriberListManager {
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.format().json().read(file, NutsIndexSubscriberListConfig.class);
+            this.config = this.defaultWorkspace.format().json().parse(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);

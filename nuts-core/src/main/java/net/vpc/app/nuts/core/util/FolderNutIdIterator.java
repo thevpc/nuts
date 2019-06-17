@@ -93,8 +93,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     @Override
                     public boolean accept(Path pathname) throws IOException {
                         try {
-                            return 
-                                    (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
+                            return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                         } catch (Exception e) {
                             //ignore
                             return false;
@@ -156,7 +155,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(workspace,"Unsupported Remove");
+        throw new NutsUnsupportedOperationException(workspace, "Unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {

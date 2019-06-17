@@ -46,7 +46,6 @@ public class NutsIdFilterVarBuilder {
 //    public NutsIdFilterBuilder id(String id) {
 //        return id(null,id);
 //    }
-
     public NutsIdFilterVarBuilder id(String n, String id) {
         return store(n, new NutsPatternIdFilter(CoreNutsUtils.parseNutsId(id)));
     }

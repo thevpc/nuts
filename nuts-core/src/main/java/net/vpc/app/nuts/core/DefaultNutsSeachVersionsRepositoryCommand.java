@@ -35,7 +35,7 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
     private NutsIdFilter filter;
 
     public DefaultNutsSeachVersionsRepositoryCommand(NutsRepository repo) {
-        super(repo,"search-versions");
+        super(repo, "search-versions");
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
         id = id.setFaceComponent();
         getRepo().security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        NutsWorkspaceUtils.checkSimpleNameNutsId(repo.getWorkspace(),id);
+        NutsWorkspaceUtils.checkSimpleNameNutsId(repo.getWorkspace(), id);
         xrepo.checkAllowedFetch(id, getSession());
         try {
             if (getSession().isIndexed() && xrepo.getIndexStoreClient() != null && xrepo.getIndexStoreClient().isEnabled()) {
@@ -84,8 +84,8 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
                 }
             }
             Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getSession());
-            if(rr==null){
-                rr=Collections.emptyIterator();
+            if (rr == null) {
+                rr = Collections.emptyIterator();
             }
             result = rr;
             return this;

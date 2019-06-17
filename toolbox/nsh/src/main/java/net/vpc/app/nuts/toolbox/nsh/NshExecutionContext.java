@@ -10,9 +10,9 @@ public interface NshExecutionContext extends JShellExecutionContext {
     NutsShellContext getGlobalContext();
 
     NutsWorkspace getWorkspace();
-    
+
     NutsSession session();
-    
+
     NutsSession getSession();
 
     boolean configureFirst(NutsCommandLine cmd);

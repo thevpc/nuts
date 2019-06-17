@@ -73,7 +73,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     private String repository;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
-        super(ws,"push");
+        super(ws, "push");
     }
 
     @Override
@@ -99,7 +99,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws,id);
+            throw new NutsNotFoundException(ws, id);
         } else {
             ids.add(id);
         }
@@ -145,7 +145,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand addFrozenId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws,id);
+            throw new NutsNotFoundException(ws, id);
         } else {
             if (frozenIds == null) {
                 frozenIds = new ArrayList<>();
@@ -252,7 +252,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NutsIllegalArgumentException(ws,"Invalid Version " + id.getVersion());
+                throw new NutsIllegalArgumentException(ws, "Invalid Version " + id.getVersion());
             }
             NutsDefinition file = ws.fetch().id(id).setSession(session).setTransitive(false).getResultDefinition();
             if (file == null) {
@@ -275,7 +275,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                 for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
-                            getWorkspace(),session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                            getWorkspace(), session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {
                         descr = repo.fetchDescriptor().session(rsession).setId(file.getId()).run().getResult();
                     } catch (Exception e) {
@@ -302,12 +302,12 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
                     }
                 }
                 if (!ok) {
-                    throw new NutsRepositoryNotFoundException(ws,this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
+                    throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.config().getRepository(this.getRepository(),true);
+                NutsRepository repo = ws.config().getRepository(this.getRepository(), true);
                 NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(
-                        getWorkspace(),session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
+                        getWorkspace(), session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
                         fetchOptions
                 );
 

@@ -34,11 +34,12 @@ import net.vpc.app.nuts.NutsRepositoryEvent;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsRepositoryEvent implements NutsRepositoryEvent{
+public class DefaultNutsRepositoryEvent implements NutsRepositoryEvent {
+
     private final NutsWorkspace workspace;
     private final NutsRepository parent;
     private final NutsRepository repository;
@@ -46,7 +47,7 @@ public class DefaultNutsRepositoryEvent implements NutsRepositoryEvent{
     private final Object propertyOldValue;
     private final Object propertyValue;
 
-    public DefaultNutsRepositoryEvent(NutsWorkspace workspace, NutsRepository parent, NutsRepository repository,String propertyName, Object propertyOldValue, Object propertyValue) {
+    public DefaultNutsRepositoryEvent(NutsWorkspace workspace, NutsRepository parent, NutsRepository repository, String propertyName, Object propertyOldValue, Object propertyValue) {
         this.workspace = workspace;
         this.parent = parent;
         this.repository = repository;

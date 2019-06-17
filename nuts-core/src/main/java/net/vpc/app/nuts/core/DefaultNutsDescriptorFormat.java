@@ -70,7 +70,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     }
 
     @Override
-    public NutsDescriptor read(URL url) {
+    public NutsDescriptor parse(URL url) {
         try {
             try {
                 return read(url.openStream(), true);
@@ -85,12 +85,12 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     }
 
     @Override
-    public NutsDescriptor read(byte[] bytes) {
+    public NutsDescriptor parse(byte[] bytes) {
         return read(new ByteArrayInputStream(bytes), true);
     }
 
     @Override
-    public NutsDescriptor read(Path path) {
+    public NutsDescriptor parse(Path path) {
         if (!Files.exists(path)) {
             throw new NutsNotFoundException(ws, "at file " + path);
         }
@@ -104,12 +104,12 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     }
 
     @Override
-    public NutsDescriptor read(File file) {
-        return read(file.toPath());
+    public NutsDescriptor parse(File file) {
+        return parse(file.toPath());
     }
 
     @Override
-    public NutsDescriptor read(String str) {
+    public NutsDescriptor parse(String str) {
         if (CoreStringUtils.isBlank(str)) {
             return null;
         }
@@ -118,7 +118,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     private NutsDescriptor read(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return ws.format().json().read(rr, NutsDescriptor.class);
+            return ws.format().json().parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -129,7 +129,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 //        return CoreNutsUtils.parseNutsDescriptor(file);
 //    }
     @Override
-    public NutsDescriptor read(InputStream stream) {
+    public NutsDescriptor parse(InputStream stream) {
         return read(stream, false);
     }
 

@@ -787,8 +787,8 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static NutsIncrementalFormat getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
-        NutsIncrementalFormat f = session.getIncrementalOutput();
+    public static NutsIterableOutput getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
+        NutsIterableOutput f = session.getIterableOutput();
         if (f == null) {
             return ws.format().iter().session(session);
         }

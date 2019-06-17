@@ -60,7 +60,6 @@ public class ZipEntrySource implements Source {
         return internalPath;
     }
 
-
     @Override
     public boolean isFolder() {
         return directory;
@@ -78,6 +77,5 @@ public class ZipEntrySource implements Source {
     public Iterable<Source> getChildren() {
         return Collections.EMPTY_LIST;
     }
-
 
 }

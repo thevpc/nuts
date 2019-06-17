@@ -22,41 +22,41 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.next("set loglevel", "sll")!=null) {
+        if (cmdLine.next("set loglevel", "sll") != null) {
             NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-            if (cmdLine.next("verbose", "finest")!=null) {
+            if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINEST);
                 }
-            } else if (cmdLine.next("fine")!=null) {
+            } else if (cmdLine.next("fine") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINE);
                 }
-            } else if (cmdLine.next("finer")!=null) {
+            } else if (cmdLine.next("finer") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINER);
                 }
-            } else if (cmdLine.next("info")!=null) {
+            } else if (cmdLine.next("info") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.INFO);
                 }
-            } else if (cmdLine.next("warning")!=null) {
+            } else if (cmdLine.next("warning") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.WARNING);
                 }
-            } else if (cmdLine.next("severe", "error")!=null) {
+            } else if (cmdLine.next("severe", "error") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.SEVERE);
                 }
-            } else if (cmdLine.next("config")!=null) {
+            } else if (cmdLine.next("config") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.CONFIG);
                 }
-            } else if (cmdLine.next("off")!=null) {
+            } else if (cmdLine.next("off") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.OFF);
                 }
-            } else if (cmdLine.next("all")!=null) {
+            } else if (cmdLine.next("all") != null) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.ALL);
                 }
@@ -67,7 +67,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             cmdLine.setCommandName("config log").unexpectedArgument();
             return true;
-        } else if (cmdLine.next("get loglevel")!=null) {
+        } else if (cmdLine.next("get loglevel") != null) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
                 context.session().getTerminal().fout().printf("%s%n", rootLogger.getLevel().toString());

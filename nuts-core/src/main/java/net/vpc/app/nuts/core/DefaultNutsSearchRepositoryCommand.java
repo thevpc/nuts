@@ -32,7 +32,7 @@ public class DefaultNutsSearchRepositoryCommand extends NutsRepositoryCommandBas
     private Iterator<NutsId> result;
 
     public DefaultNutsSearchRepositoryCommand(NutsRepository repo) {
-        super(repo,"search");
+        super(repo, "search");
     }
 
     @Override
@@ -62,12 +62,12 @@ public class DefaultNutsSearchRepositoryCommand extends NutsRepositoryCommandBas
                 }
 
                 if (o != null) {
-                    result=o;
+                    result = o;
                     return this;
                 }
             }
 
-            result=xrepo.searchImpl(filter, getSession());
+            result = xrepo.searchImpl(filter, getSession());
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));

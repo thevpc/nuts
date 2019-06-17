@@ -64,7 +64,6 @@ public interface PersistentMap<K, V> {
         public ExtendedInputStream() throws IOException, SecurityException {
         }
 
-        
         abstract InputStream readLob(String name) throws IOException;
     }
 }

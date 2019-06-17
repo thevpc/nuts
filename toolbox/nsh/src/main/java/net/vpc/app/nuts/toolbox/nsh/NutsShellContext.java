@@ -49,7 +49,6 @@ public interface NutsShellContext extends JShellContext {
     NutsShellContext setSession(NutsSession session);
 
 //    NutsSessionTerminal getTerminal();
-
     NutsWorkspace getWorkspace();
 
     void setWorkspace(NutsWorkspace workspace);

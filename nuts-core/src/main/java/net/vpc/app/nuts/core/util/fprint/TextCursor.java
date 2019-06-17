@@ -49,9 +49,8 @@ public class TextCursor extends TextFormat {
 
     @Override
     public String toString() {
-        return "Cursor(" +name + ')';
+        return "Cursor(" + name + ')';
     }
-    
 
     @Override
     public int hashCode() {

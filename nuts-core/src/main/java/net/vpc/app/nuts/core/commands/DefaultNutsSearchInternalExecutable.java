@@ -14,7 +14,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * @author vpc
  */
 public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    
+
     public DefaultNutsSearchInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
         super("search", args, ws, session);
     }
@@ -27,5 +27,5 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
         }
         ws.search().session(getSession(true).copy().trace()).configure(false, args).run();
     }
-    
+
 }

@@ -41,7 +41,7 @@ public class TextFormatList extends TextFormat implements Iterable<TextFormat> {
     private final TextFormat[] children;
 
     public TextFormatList(TextFormat[] others) {
-        if(others ==null){
+        if (others == null) {
             throw new NullPointerException();
         }
         this.children = others;

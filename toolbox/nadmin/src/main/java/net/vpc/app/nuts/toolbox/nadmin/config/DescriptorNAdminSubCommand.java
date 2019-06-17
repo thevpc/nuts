@@ -28,9 +28,9 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
         boolean save = false;
         NutsWorkspace ws = context.getWorkspace();
         final NutsDescriptorBuilder desc = ws.format().descriptor().descriptorBuilder();
-        if (cmdLine.next("new descriptor", "nd")!=null) {
+        if (cmdLine.next("new descriptor", "nd") != null) {
             newDesc = true;
-        } else if (cmdLine.next("update descriptor", "ud")!=null) {
+        } else if (cmdLine.next("update descriptor", "ud") != null) {
             newDesc = false;
         } else {
             return false;
@@ -38,15 +38,15 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
 
         List<Runnable> all = new ArrayList<>();
         while (cmdLine.hasNext()) {
-            if (cmdLine.next("-executable")!=null) {
-                final boolean value = cmdLine.required().nextNonOption(cmdLine.createName("boolean","executable")).getBoolean();
+            if (cmdLine.next("-executable") != null) {
+                final boolean value = cmdLine.required().nextNonOption(cmdLine.createName("boolean", "executable")).getBoolean();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
                         desc.setExecutable(value);
                     }
                 });
-            } else if (cmdLine.next("-packaging")!=null) {
+            } else if (cmdLine.next("-packaging") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("packaging")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -54,7 +54,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.setPackaging(value);
                     }
                 });
-            } else if (cmdLine.next("-alternative")!=null) {
+            } else if (cmdLine.next("-alternative") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("alternative")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -62,7 +62,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.setAlternative(value);
                     }
                 });
-            } else if (cmdLine.next("-name")!=null) {
+            } else if (cmdLine.next("-name") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("name", "my-name")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -70,7 +70,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.setId(desc.getId().setName(value));
                     }
                 });
-            } else if (cmdLine.next("-group")!=null) {
+            } else if (cmdLine.next("-group") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("group", "my-group")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -78,7 +78,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.setId(desc.getId().setGroup(value));
                     }
                 });
-            } else if (cmdLine.next("-id")!=null) {
+            } else if (cmdLine.next("-id") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("id")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -87,7 +87,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
 
-            } else if (cmdLine.next("-add-os")!=null) {
+            } else if (cmdLine.next("-add-os") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("os")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -95,7 +95,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.addOs(value);
                     }
                 });
-            } else if (cmdLine.next("-remove-os")!=null) {
+            } else if (cmdLine.next("-remove-os") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("os")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -104,7 +104,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
 
-            } else if (cmdLine.next("-add-osdist")!=null) {
+            } else if (cmdLine.next("-add-osdist") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("osdist")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -112,7 +112,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.addOsdist(value);
                     }
                 });
-            } else if (cmdLine.next("-remove-osdist")!=null) {
+            } else if (cmdLine.next("-remove-osdist") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("osdist")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -121,7 +121,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
 
-            } else if (cmdLine.next("-add-platform")!=null) {
+            } else if (cmdLine.next("-add-platform") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("platform")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -129,7 +129,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.addPlatform(value);
                     }
                 });
-            } else if (cmdLine.next("-remove-platform")!=null) {
+            } else if (cmdLine.next("-remove-platform") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("paltform")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -138,7 +138,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
 
-            } else if (cmdLine.next("-add-arch")!=null) {
+            } else if (cmdLine.next("-add-arch") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("arch")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -146,7 +146,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.addArch(value);
                     }
                 });
-            } else if (cmdLine.next("-remove-arch")!=null) {
+            } else if (cmdLine.next("-remove-arch") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("arch")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -154,7 +154,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.removeArch(value);
                     }
                 });
-            } else if (cmdLine.next("-add-property")!=null) {
+            } else if (cmdLine.next("-add-property") != null) {
                 String value = cmdLine.required().nextNonOption(cmdLine.createName("property")).getString();
                 final String[] nv = splitNameAndValue(value);
                 if (nv != null) {
@@ -165,7 +165,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         }
                     });
                 }
-            } else if (cmdLine.next("-remove-property")!=null) {
+            } else if (cmdLine.next("-remove-property") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("property")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -174,7 +174,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
 
-            } else if (cmdLine.next("-add-dependency")!=null) {
+            } else if (cmdLine.next("-add-dependency") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("dependency")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -182,7 +182,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.addDependency(ws.format().dependency().parse(value));
                     }
                 });
-            } else if (cmdLine.next("-remove-dependency")!=null) {
+            } else if (cmdLine.next("-remove-dependency") != null) {
                 final String value = cmdLine.required().nextNonOption(cmdLine.createName("dependency")).getString();
                 all.add(new Runnable() {
                     @Override
@@ -190,10 +190,10 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.removeDependency(ws.format().dependency().parse(value));
                     }
                 });
-            } else if (cmdLine.next("-file")!=null) {
+            } else if (cmdLine.next("-file") != null) {
                 file = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
-            } else if (cmdLine.next("-save")!=null) {
-                save = cmdLine.required().nextNonOption(cmdLine.createName("boolean","save")).getBoolean();
+            } else if (cmdLine.next("-save") != null) {
+                save = cmdLine.required().nextNonOption(cmdLine.createName("boolean", "save")).getBoolean();
             } else {
                 if (!cmdLine.isExecMode()) {
                     throw new NutsIllegalArgumentException(context.getWorkspace(), "config new|update descriptor: Unsupported option " + cmdLine.peek());
@@ -205,7 +205,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 desc.set(ws.format().descriptor().descriptorBuilder().build());
             } else {
                 if (file != null) {
-                    desc.set(ws.format().descriptor().read(new File(file)));
+                    desc.set(ws.format().descriptor().parse(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException(context.getWorkspace(), "config new|update descriptor: -file missing");
@@ -240,8 +240,8 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
         int i = arg.indexOf('=');
         if (i >= 0) {
             return new String[]{
-                    i == 0 ? "" : arg.substring(0, i),
-                    i == arg.length() - 1 ? "" : arg.substring(i + 1),};
+                i == 0 ? "" : arg.substring(0, i),
+                i == arg.length() - 1 ? "" : arg.substring(i + 1),};
         }
         return null;
     }

@@ -90,7 +90,7 @@ public class ZipUtils {
         if (options.isTempFile()) {
             targetFile.getParentFile().mkdirs();
             if (!f.renameTo(targetFile)) {
-                Files.copy(f.toPath(), targetFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(f.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }

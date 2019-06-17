@@ -17,7 +17,7 @@ public class ShellToNshCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NshExecutionContext context){
+    public void exec(String[] args, NshExecutionContext context) {
         command.exec(args, context);
     }
 

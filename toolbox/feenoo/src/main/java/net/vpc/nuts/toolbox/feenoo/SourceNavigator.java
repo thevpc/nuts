@@ -5,7 +5,6 @@
  */
 package net.vpc.nuts.toolbox.feenoo;
 
-
 /**
  * @author vpc
  */
@@ -24,7 +23,6 @@ public class SourceNavigator {
 //            }
 //        });
 //    }
-
     private static class ExitException extends RuntimeException {
 
     }

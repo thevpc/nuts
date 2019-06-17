@@ -8,6 +8,7 @@ import java.util.Map;
  * Created by vpc on 6/1/14.
  */
 public class LRUMap<A, B> extends LinkedHashMap<A, B> {
+
     private int maxEntries;
 
     public LRUMap(final int maxEntries) {
@@ -16,17 +17,19 @@ public class LRUMap<A, B> extends LinkedHashMap<A, B> {
     }
 
     /**
-     * Returns <tt>true</tt> if this <code>LruCache</code> has more entries than the maximum specified when it was
-     * created.
+     * Returns <tt>true</tt> if this <code>LruCache</code> has more entries than
+     * the maximum specified when it was created.
      * <p>
      * <p>
-     * This method <em>does not</em> modify the underlying <code>Map</code>; it relies on the implementation of
-     * <code>LinkedHashMap</code> to do that, but that behavior is documented in the JavaDoc for
+     * This method <em>does not</em> modify the underlying <code>Map</code>; it
+     * relies on the implementation of <code>LinkedHashMap</code> to do that,
+     * but that behavior is documented in the JavaDoc for
      * <code>LinkedHashMap</code>.
      * </p>
      *
-     * @param eldest the <code>Entry</code> in question; this implementation doesn't care what it is, since the
-     *               implementation is only dependent on the size of the cache
+     * @param eldest the <code>Entry</code> in question; this implementation
+     * doesn't care what it is, since the implementation is only dependent on
+     * the size of the cache
      * @return <tt>true</tt> if the oldest
      * @see java.util.LinkedHashMap#removeEldestEntry(Map.Entry)
      */
@@ -42,7 +45,7 @@ public class LRUMap<A, B> extends LinkedHashMap<A, B> {
         this.maxEntries = maxEntries;
         if (old > maxEntries) {
             int size = size();
-            for (Iterator<Map.Entry<A, B>> iterator = this.entrySet().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Map.Entry<A, B>> iterator = this.entrySet().iterator(); iterator.hasNext();) {
                 Map.Entry<A, B> abEntry = iterator.next();
                 iterator.remove();
                 size--;

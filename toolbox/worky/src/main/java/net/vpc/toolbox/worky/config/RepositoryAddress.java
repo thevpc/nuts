@@ -3,6 +3,7 @@ package net.vpc.toolbox.worky.config;
 import java.util.Objects;
 
 public class RepositoryAddress {
+
     private String nutsWorkspace;
     private String nutsRepository;
 
@@ -26,11 +27,15 @@ public class RepositoryAddress {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         RepositoryAddress that = (RepositoryAddress) o;
-        return Objects.equals(nutsWorkspace, that.nutsWorkspace) &&
-                Objects.equals(nutsRepository, that.nutsRepository);
+        return Objects.equals(nutsWorkspace, that.nutsWorkspace)
+                && Objects.equals(nutsRepository, that.nutsRepository);
     }
 
     @Override

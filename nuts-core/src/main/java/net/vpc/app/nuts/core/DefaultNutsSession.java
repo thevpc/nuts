@@ -52,8 +52,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private boolean verbose = false;
     private NutsConfirmationMode confirm = null;
     private NutsOutputFormat outputFormat;
-    protected NutsIncrementalFormatHandler incrementalOutputFormatHandler = null;
-    protected NutsIncrementalFormat incrementalOutputFormat = null;
+    protected NutsIterableFormat iterFormatHandler = null;
+    protected NutsIterableOutput iterFormat = null;
     protected NutsWorkspace ws = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
     private PrintStream out;
@@ -165,33 +165,33 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsIncrementalFormatHandler getIncrementalOutputFormatHandler() {
-        return incrementalOutputFormatHandler;
+    public NutsIterableFormat getIterableFormat() {
+        return iterFormatHandler;
     }
 
     @Override
-    public NutsIncrementalFormat getIncrementalOutput() {
-        if (incrementalOutputFormatHandler == null) {
+    public NutsIterableOutput getIterableOutput() {
+        if (iterFormatHandler == null) {
             return null;
         }
-        if (incrementalOutputFormat == null) {
-            incrementalOutputFormat = new CustomNutsIncrementalOutputFormat(ws, incrementalOutputFormatHandler);
-            incrementalOutputFormat.session(this);
+        if (iterFormat == null) {
+            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
+            iterFormat.session(this);
         }
-        return incrementalOutputFormat;
+        return iterFormat;
     }
 
     @Override
-    public NutsSession incrementalOutputFormat(NutsIncrementalFormatHandler traceFormat) {
-        return setIncrementalOutputFormat(traceFormat);
+    public NutsSession iterableFormat(NutsIterableFormat traceFormat) {
+        return setIterableFormat(traceFormat);
     }
 
     @Override
-    public NutsSession setIncrementalOutputFormat(NutsIncrementalFormatHandler f) {
+    public NutsSession setIterableFormat(NutsIterableFormat f) {
         if (f == null) {
-            this.incrementalOutputFormatHandler = null;
+            this.iterFormatHandler = null;
         } else {
-            this.incrementalOutputFormatHandler = f;
+            this.iterFormatHandler = f;
             this.setOutputFormat(f.getOutputFormat());
         }
         return this;
@@ -422,7 +422,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsOutputFormat getOutputFormat() {
-        NutsIncrementalFormatHandler f = getIncrementalOutputFormatHandler();
+        NutsIterableFormat f = getIterableFormat();
         if (f != null) {
             NutsOutputFormat o = f.getOutputFormat();
             if (o != null) {
@@ -447,7 +447,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public boolean isPlainTrace() {
         return isTrace()
-                && !isIncrementalOut()
+                && !isIterableOut()
                 && getOutputFormat() == NutsOutputFormat.PLAIN;
     }
 
@@ -458,25 +458,25 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public boolean isStructuredOut() {
-        return !isIncrementalOut()
+        return !isIterableOut()
                 && getOutputFormat() != NutsOutputFormat.PLAIN;
     }
 
     @Override
-    public boolean isIncrementalOut() {
-        return getIncrementalOutputFormatHandler() != null;
+    public boolean isIterableOut() {
+        return getIterableFormat() != null;
     }
 
     @Override
-    public boolean isIncrementalTrace() {
+    public boolean isIterableTrace() {
         return isTrace()
-                && isIncrementalOut();
+                && isIterableOut();
     }
 
     @Override
     public boolean isStructuredTrace() {
         return isTrace()
-                && !isIncrementalOut()
+                && !isIterableOut()
                 && getOutputFormat() != NutsOutputFormat.PLAIN;
     }
 
@@ -659,11 +659,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsObjectPrintStream oout() {
         return new NutsObjectPrintStreamImpl(ws, this, out());
     }
+
     public NutsObjectPrintStream oerr() {
         return new NutsObjectPrintStreamImpl(ws, this, err());
     }
 
     private class NutsObjectPrintStreamImpl implements NutsObjectPrintStream {
+
         private NutsWorkspace ws;
         private NutsSession session;
         private PrintStream out;
@@ -673,7 +675,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             this.session = session;
             this.out = out;
         }
-        
 
         @Override
         public void print(Object o) {

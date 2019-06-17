@@ -80,12 +80,12 @@ public class AnsiPrintStreamSupport extends PrintStream {
         }
     }
 
-
     public AnsiPrintStreamSupport(OutputStream out, int fileno, Type type) {
-        super(new MyOutputStream(out, fileno, type),true);
+        super(new MyOutputStream(out, fileno, type), true);
     }
 
     private static class MyOutputStream extends FilterOutputStream {
+
         private int fileno;
         private Type type;
         private OutputStream base;
@@ -101,7 +101,7 @@ public class AnsiPrintStreamSupport extends PrintStream {
             if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
                 // On windows we know the console does not interpret ANSI codes..
                 try {
-                    this.ansi = new WindowsAnsiPrintStream((base instanceof PrintStream)?(PrintStream) base:(new PrintStream(base)));
+                    this.ansi = new WindowsAnsiPrintStream((base instanceof PrintStream) ? (PrintStream) base : (new PrintStream(base)));
                 } catch (Throwable ignore) {
                     this.ansi = new AnsiOutputStream(base);
                 }

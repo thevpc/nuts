@@ -36,7 +36,7 @@ public class Test01_InstallTest {
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
         System.out.println(Nuts.openWorkspace().exec().command("ls").which());
-        
+
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,
 ////            "--standalone",
@@ -47,7 +47,7 @@ public class Test01_InstallTest {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/"+TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(new File(baseFolder));
     }
 

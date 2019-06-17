@@ -54,7 +54,7 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
     }
 
     @Override
-    public NutsIncrementalFormat iter() {
+    public NutsIterableOutput iter() {
         return new DefaultNutsIncrementalOutputFormat(ws);
     }
 

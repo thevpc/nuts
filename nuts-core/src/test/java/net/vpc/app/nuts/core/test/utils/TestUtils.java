@@ -82,47 +82,47 @@ public class TestUtils {
     }
 
     public static String getCallerSimpleClasMethod(int index) {
-        StackTraceElement i = getCallerStackTraceElement0(3+index);
-        String cn=i.getClassName();
-        String m=i.getClassName();
-        return cn+"."+m;
+        StackTraceElement i = getCallerStackTraceElement0(3 + index);
+        String cn = i.getClassName();
+        String m = i.getClassName();
+        return cn + "." + m;
     }
-    
+
     public static String getCallerMethodId() {
         return getCallerMethodId(1);
     }
-    
+
     public static String getCallerMethodId(int index) {
-        StackTraceElement i = getCallerStackTraceElement0(3+index);
-        String cn=i.getClassName();
-        if(cn.indexOf('.')>0){
-            cn=cn.substring(cn.lastIndexOf('.')+1);
+        StackTraceElement i = getCallerStackTraceElement0(3 + index);
+        String cn = i.getClassName();
+        if (cn.indexOf('.') > 0) {
+            cn = cn.substring(cn.lastIndexOf('.') + 1);
         }
-        String m=i.getMethodName();
-        return cn+"_"+m;
+        String m = i.getMethodName();
+        return cn + "_" + m;
     }
-    
+
     public static String getCallerMethodName() {
         return getCallerMethodId(1);
     }
-    
+
     public static String getCallerMethodName(int index) {
-        return getCallerStackTraceElement0(3+index).getMethodName();
+        return getCallerStackTraceElement0(3 + index).getMethodName();
     }
-    
+
     public static String getCallerClassSimpleName() {
         return getCallerClassSimpleName(1);
     }
-    
+
     public static String getCallerClassSimpleName(int index) {
-        StackTraceElement i = getCallerStackTraceElement0(3+index);
-        String cn=i.getClassName();
-        if(cn.indexOf('.')>0){
-            cn=cn.substring(cn.lastIndexOf('.')+1);
+        StackTraceElement i = getCallerStackTraceElement0(3 + index);
+        String cn = i.getClassName();
+        if (cn.indexOf('.') > 0) {
+            cn = cn.substring(cn.lastIndexOf('.') + 1);
         }
         return cn;
     }
-    
+
     public static StackTraceElement getCallerStackTraceElement(int index) {
         return getCallerStackTraceElement0(3 + index);
     }

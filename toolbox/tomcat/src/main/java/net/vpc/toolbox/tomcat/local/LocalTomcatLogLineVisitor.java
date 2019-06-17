@@ -3,6 +3,7 @@ package net.vpc.toolbox.tomcat.local;
 import net.vpc.common.io.LineVisitor;
 
 class LocalTomcatLogLineVisitor implements LineVisitor {
+
     boolean outOfMemoryError;
     String startMessage;
     String shutdownMessage;

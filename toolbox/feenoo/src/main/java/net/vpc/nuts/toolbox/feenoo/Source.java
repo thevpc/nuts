@@ -19,9 +19,9 @@ public interface Source {
     boolean isFolder();
 
     String getName();
-    
+
     String getExternalPath();
-    
+
     String getInternalPath();
 
     Iterable<Source> getChildren();

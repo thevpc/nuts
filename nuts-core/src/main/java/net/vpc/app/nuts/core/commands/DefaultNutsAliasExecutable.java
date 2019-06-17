@@ -17,14 +17,14 @@ import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
  * @author vpc
  */
 public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
-    
+
     NutsWorkspaceCommandAlias command;
     NutsCommandExecOptions o;
     NutsSession session;
     String[] args;
 
-    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsWorkspace workspace,NutsSession session, String[] args) {
-        super(command.getName(), 
+    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsWorkspace workspace, NutsSession session, String[] args) {
+        super(command.getName(),
                 workspace.commandLine().setArgs(command.getCommand()).toString(),
                 NutsExecutableType.ALIAS);
         this.command = command;
@@ -56,5 +56,5 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
     public String toString() {
         return "CMD " + command.getName() + " @ " + command.getOwner();
     }
-    
+
 }
