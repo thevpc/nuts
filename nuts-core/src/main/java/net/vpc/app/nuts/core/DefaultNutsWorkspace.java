@@ -387,7 +387,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         NutsSession searchSession = session.copy().trace(false);
         NutsDefinition nutToInstall;
         try {
-            nutToInstall = search().id(id).setSession(session).setTransitive(false).inlineDependencies(checkDependencies)
+            nutToInstall = search().id(id).setSession(searchSession).setTransitive(false).inlineDependencies(checkDependencies)
                     .installed()
                     .setOptional(false)
                     .setInstallInformation(true)
@@ -1022,15 +1022,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
 //        NutsWorkspaceEvent event = null;
         for (NutsWorkspaceListener listener : getWorkspaceListeners()) {
-//            if (event == null) {
-//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", null, repository);
-//            }
             listener.onAddRepository(event);
         }
         for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
-//            if (event == null) {
-//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", null, repository);
-//            }
             listener.onAddRepository(event);
         }
     }
@@ -1041,17 +1035,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20),
                 event.getRepository().config().name()});
         }
-//        NutsWorkspaceEvent event = null;
         for (NutsWorkspaceListener listener : getWorkspaceListeners()) {
-//            if (event == null) {
-//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", repository, null);
-//            }
             listener.onRemoveRepository(event);
         }
         for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
-//            if (event == null) {
-//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", repository, null);
-//            }
             listener.onRemoveRepository(event);
         }
     }
