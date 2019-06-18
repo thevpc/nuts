@@ -99,7 +99,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
             os2.printf(message, this.getMessageParameters());
             os2.flush();
             throw new NutsExecutionException(ws, "Unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response (-y|-n) for : " + os.toString(), 243);
+                    + "You need to provide default response (-y|-n) for question : " + os.toString(), 243);
         }
         String message = this.getMessage();
         if (message.endsWith("\n")) {

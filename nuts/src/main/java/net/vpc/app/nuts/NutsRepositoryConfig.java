@@ -39,7 +39,7 @@ import java.util.*;
  */
 public class NutsRepositoryConfig implements Serializable {
 
-    private static final long serialVersionUID = 2;
+    private static final long serialVersionUID = 1;
     private String uuid;
     private String name;
     private String type;

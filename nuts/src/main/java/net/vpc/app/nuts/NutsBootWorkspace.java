@@ -157,7 +157,7 @@ public class NutsBootWorkspace {
         this.runtimeId = NutsUtilsLimited.isBlank(options.getBootRuntime()) ? null : NutsIdLimited.parse(options.getBootRuntime()).toString();
         this.contextClassLoaderProvider = options.getClassLoaderProvider() == null ? NutsDefaultClassLoaderProvider.INSTANCE : options.getClassLoaderProvider();
     }
-
+    
     public boolean hasUnsatisfiedRequirements() {
         return newInstanceRequirements != 0;
     }
@@ -1069,8 +1069,8 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-boot-runtime                : %s%n", actualBootConfig.getRuntimeId() == null ? "<?> Not Found!" : actualBootConfig.getRuntimeId());
         System.err.printf("  nuts-workspace-api-version       : %s%n", workspaceConfig.getApiVersion() == null ? "<?> Not Found!" : workspaceConfig.getApiVersion());
         System.err.printf("  nuts-workspace-runtime           : %s%n", workspaceConfig.getRuntimeId() == null ? "<?> Not Found!" : workspaceConfig.getRuntimeId());
-        System.err.printf("  nuts-store-strategy              : %s%n", workspaceConfig.getStoreLocationStrategy());
-        System.err.printf("  nuts-store-layout                : %s%n", workspaceConfig.getStoreLocationLayout());
+        System.err.printf("  nuts-store-strategy              : %s%n", NutsUtilsLimited.desc(workspaceConfig.getStoreLocationStrategy()));
+        System.err.printf("  nuts-store-layout                : %s%n", NutsUtilsLimited.desc(workspaceConfig.getStoreLocationLayout()));
         System.err.printf("  nuts-store-programs              : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.PROGRAMS));
         System.err.printf("  nuts-store-config                : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.CONFIG));
         System.err.printf("  nuts-store-var                   : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.VAR));

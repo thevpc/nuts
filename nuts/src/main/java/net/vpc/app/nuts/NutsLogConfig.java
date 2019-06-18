@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -36,7 +37,7 @@ import java.util.logging.Level;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsLogConfig {
+public class NutsLogConfig implements Serializable{
 
     private Level logLevel = null;
     private int logSize = 0;

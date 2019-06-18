@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -37,7 +38,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCommandAliasFactoryConfig {
+public class NutsCommandAliasFactoryConfig implements Serializable{
 
     /**
      * Factory id (unique identifier in the workspace)

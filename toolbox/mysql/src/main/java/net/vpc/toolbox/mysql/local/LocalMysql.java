@@ -102,14 +102,14 @@ public class LocalMysql {
         NutsSession session = context.getSession();
         if (session.isIterableOut()) {
             try {
-                session.getIncrementalOutput().start();
+                session.getIterableOutput().start();
                 for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {
                     for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                        session.getIncrementalOutput().next(new Object[]{db.getKey(), cnf.getKey()});
+                        session.getIterableOutput().next(new Object[]{db.getKey(), cnf.getKey()});
                     }
                 }
             } finally {
-                session.getIncrementalOutput().complete();
+                session.getIterableOutput().complete();
             }
         } else {
             switch (session.getOutputFormat()) {

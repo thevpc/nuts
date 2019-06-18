@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Arrays;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsBootConfig implements Cloneable {
+public final class NutsBootConfig implements Cloneable, Serializable {
 
     /**
      * workspace uuid
@@ -257,8 +258,8 @@ public final class NutsBootConfig implements Cloneable {
     public NutsBootConfig copy() {
         try {
             NutsBootConfig p = (NutsBootConfig) clone();
-            p.storeLocations =p.storeLocations==null?null:Arrays.copyOf(p.storeLocations, p.storeLocations.length);
-            p.homeLocations =p.homeLocations==null?null:Arrays.copyOf(p.homeLocations, p.homeLocations.length);
+            p.storeLocations = p.storeLocations == null ? null : Arrays.copyOf(p.storeLocations, p.storeLocations.length);
+            p.homeLocations = p.homeLocations == null ? null : Arrays.copyOf(p.homeLocations, p.homeLocations.length);
 
             return p;
         } catch (CloneNotSupportedException e) {
