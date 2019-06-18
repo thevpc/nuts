@@ -7,8 +7,8 @@ package net.vpc.app.nuts;
  */
 public enum NutsApplicationMode {
     /**
-     * Default application execution Mode. This mode is considered it the
-     * --nuts-exec-mode=... is not the very first argument.
+     * Default application execution Mode. This mode is considered if the
+     * --nuts-exec-mode=... is not present (or is not the very first argument).
      */
     RUN,
     /**

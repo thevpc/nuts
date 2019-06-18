@@ -30,30 +30,33 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Argument parse Type
  * @author vpc
  * @since 0.5.5
  */
 public enum NutsArgumentType {
     /**
-     * option that accepts no argument.
+     * argument that accepts no value.
      */
     ANY,
+    
     /**
-     * option that accepts a string as argument. Either the string is included
+     * argument that accepts a string as value. Either the string is included
      * in the argument itself (--option=value) or succeeds it (--option value).
      */
     STRING,
+    
     /**
-     * option that accepts a string as argument as an immediate (included in the
-     * argument) value : in the form of (--option=value)
+     * argument that accepts a string as value as an immediate (included in the
+     * argument) value : in the form of (--option=value).
      */
     IMMEDIATE,
+    
     /**
-     * option that accepts a boolean as argument. Either the boolean is not
+     * argument that accepts a boolean as value. Either the boolean is not
      * defined (--option), is included in the argument itself (--option=true) or
      * succeeds it (--option true). Parsing boolean is also aware of negated
-     * options (--!option) that will be interpreted as (--!option=false).
+     * options (--!option) that will be interpreted as (--option=false).
      */
     BOOLEAN,
 }

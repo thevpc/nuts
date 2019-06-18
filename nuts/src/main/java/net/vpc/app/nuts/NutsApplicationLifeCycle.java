@@ -30,9 +30,9 @@
 package net.vpc.app.nuts;
 
 /**
- * Application Life Cycle interface to define methods to be overridden to
- * perform specific business for each of the predefined modes
- * {@link NutsApplicationMode}
+ * Application Life Cycle interface define methods to be overridden to
+ * perform specific business for each of the predefined application execution 
+ * modes {@link NutsApplicationMode}.
  *
  * @author vpc
  * @since 0.5.5
@@ -51,7 +51,7 @@ public interface NutsApplicationLifeCycle {
 
     /**
      * this method should be implemented to perform specific business when
-     * application is installed
+     * application is installed.
      *
      * @param applicationContext context
      */
@@ -61,7 +61,7 @@ public interface NutsApplicationLifeCycle {
 
     /**
      * this method should be implemented to perform specific business when
-     * application is updated
+     * application is updated.
      *
      * @param applicationContext context
      */
@@ -71,7 +71,7 @@ public interface NutsApplicationLifeCycle {
 
     /**
      * this method should be implemented to perform specific business when
-     * application is un-installed
+     * application is un-installed.
      *
      * @param applicationContext context
      */
@@ -81,7 +81,7 @@ public interface NutsApplicationLifeCycle {
 
     /**
      * this method should be implemented to create specific ApplicationContext
-     * implementation or return null to use default one
+     * implementation or return null to use default one.
      *
      * @param ws workspace
      * @param args application arguments

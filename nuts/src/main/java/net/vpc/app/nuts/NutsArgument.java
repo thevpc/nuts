@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.NoSuchElementException;
+
 /**
  * Command Line Argument
  *
@@ -61,7 +63,7 @@ public interface NutsArgument extends NutsTokenFilter {
     /**
      * string representation of the argument or the given defaultValue
      *
-     * @param defaultValue
+     * @param defaultValue returned when this argument references null value
      * @return string representation of the argument or the given defaultValue
      */
     String getString(String defaultValue);
@@ -69,9 +71,9 @@ public interface NutsArgument extends NutsTokenFilter {
     /**
      * true if option is in one of the following forms :
      * <ul>
-     * <li>-!name</li>
-     * <li>--!name</li>
-     * <li>!name</li>
+     * <li>-!name[=...]</li>
+     * <li>--!name[=...]</li>
+     * <li>!name[=...]</li>
      * </ul>
      * where name is any valid identifier
      *
@@ -98,8 +100,21 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     boolean isInt();
 
-    int getInt();
+    /**
+     * parse number and return integer.
+     *
+     * @return parsed integer or error
+     * @throws NumberFormatException if not parsable
+     */
+    int getInt() throws NumberFormatException;
 
+    /**
+     * parse number and return integer or {@code defaultValue} 
+     * if not parsable.
+     *
+     * @param defaultValue defaultValue
+     * @return parsed integer or {@code defaultValue} if not parsable
+     */
     int getInt(int defaultValue);
 
     /**
@@ -109,8 +124,21 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     boolean isLong();
 
+    /**
+     * parse number and return long.
+     *
+     * @return parsed long or error
+     * @throws NumberFormatException if not parsable
+     */
     long getLong();
 
+    /**
+     * parse number and return long or {@code defaultValue} 
+     * if not parsable.
+     *
+     * @param defaultValue defaultValue
+     * @return parsed integer or {@code defaultValue} if not parsable
+     */
     long getLong(long defaultValue);
 
     /**
@@ -120,8 +148,21 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     boolean isDouble();
 
+    /**
+     * parse number and return double.
+     *
+     * @return parsed double or error
+     * @throws NumberFormatException if not parsable
+     */
     double getDouble();
 
+    /**
+     * parse number and return double or {@code defaultValue} 
+     * if not parsable.
+     *
+     * @param defaultValue defaultValue
+     * @return parsed integer or {@code defaultValue} if not parsable
+     */
     double getDouble(double defaultValue);
 
     boolean getBoolean();
@@ -152,7 +193,7 @@ public interface NutsArgument extends NutsTokenFilter {
      *
      * @return {@code this} instance
      */
-    NutsArgument required() throws NutsIllegalArgumentException;
+    NutsArgument required() throws NoSuchElementException;
 
     /**
      * true if the argument is in the form key=value

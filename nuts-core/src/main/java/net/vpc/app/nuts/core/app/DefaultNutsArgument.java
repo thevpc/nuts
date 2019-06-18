@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import java.util.NoSuchElementException;
 import net.vpc.app.nuts.core.DefaultNutsTokenFilter;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
@@ -39,8 +40,17 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
  */
 public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
 
+    /**
+     * equal character
+     */
     private final char eq;
 
+    /**
+     * Constructor
+     *
+     * @param expression expression
+     * @param eq equals
+     */
     public DefaultNutsArgument(String expression, char eq) {
         super(expression);
         this.eq = eq;
@@ -225,10 +235,10 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public int getInt() {
-        if (expression == null) {
-            throw new IllegalArgumentException("Missing value");
+        if (CoreStringUtils.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
         }
-        return getInt(0);
+        return Integer.parseInt(expression);
     }
 
     @Override
@@ -258,7 +268,10 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public long getLong() {
-        return getLong(0);
+        if (CoreStringUtils.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
+        }
+        return Long.parseLong(expression);
     }
 
     @Override
@@ -288,7 +301,10 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public double getDouble() {
-        return getDouble(0);
+        if (CoreStringUtils.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
+        }
+        return Double.parseDouble(expression);
     }
 
     @Override
@@ -305,8 +321,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean getBoolean() {
-        Boolean bb = CoreCommonUtils.parseBoolean(expression, null);
-        boolean b = CoreStringUtils.isBlank(expression) ? false : bb == null ? false : bb.booleanValue();
+        boolean b = CoreCommonUtils.parseBoolean(expression, false);
         if (isNegated()) {
             return !b;
         }
@@ -315,17 +330,11 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isBoolean() {
-        if (expression != null) {
-            return CoreCommonUtils.parseBoolean(expression, null) != null;
-        }
-        return false;
+        return CoreCommonUtils.parseBoolean(expression, null) != null;
     }
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        if (expression == null) {
-            return defaultValue;
-        }
         return CoreCommonUtils.parseBoolean(expression, defaultValue);
     }
 
@@ -337,7 +346,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     @Override
     public NutsArgument required() {
         if (expression == null) {
-            throw new IllegalArgumentException("Missing value");
+            throw new NoSuchElementException("Missing value");
         }
         return this;
     }

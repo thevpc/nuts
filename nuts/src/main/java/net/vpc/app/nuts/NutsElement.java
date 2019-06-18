@@ -30,17 +30,34 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Nuts Element types are generic JSON like parsable objects.
  * @author vpc
+ * @since 0.5.6
  */
 public interface NutsElement {
 
+    /**
+     * element type
+     * @return element type
+     */
     NutsElementType type();
 
+    /**
+     * convert this element to {@link NutsPrimitiveElement} or throw ClassCastException
+     * @return {@link NutsPrimitiveElement}
+     */
     NutsPrimitiveElement primitive();
 
+    /**
+     * convert this element to {@link NutsObjectElement} or throw ClassCastException
+     * @return {@link NutsObjectElement}
+     */
     NutsObjectElement object();
 
+    /**
+     * convert this element to {@link NutsArrayElement} or throw ClassCastException
+     * @return {@link NutsArrayElement}
+     */
     NutsArrayElement array();
 
 }

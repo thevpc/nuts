@@ -40,22 +40,86 @@ import java.util.Arrays;
  */
 public final class NutsBootConfig implements Cloneable {
 
-    private String uuid = null;
-    private String name = null;
-    private String apiVersion = null;
-    private String runtimeId = null;
-    private String runtimeDependencies = null;
-    private String repositories = null;
-    private String javaCommand = null;
-    private String javaOptions = null;
-    private String workspace = null;
+    /**
+     * workspace uuid
+     */
+    private String uuid;
+
+    /**
+     * workspace name
+     */
+    private String name;
+
+    /**
+     * workspace path
+     */
+    private String workspace;
+
+    /**
+     * workspace api version
+     */
+    private String apiVersion;
+
+    /**
+     * workspace runtime id (group, name avec version)
+     */
+    private String runtimeId;
+
+    /**
+     * runtime component dependencies id list (; separated)
+     */
+    private String runtimeDependencies;
+
+    /**
+     * repositories list (; separated) where to look for runtime dependencies
+     */
+    private String repositories;
+
+    /**
+     * java executable command to run nuts binaries
+     */
+    private String javaCommand;
+
+    /**
+     * java executable command options to run nuts binaries
+     */
+    private String javaOptions;
+
+    /**
+     * workspace store location strategy
+     */
+    private NutsStoreLocationStrategy storeLocationStrategy;
+
+    /**
+     * workspace repositories store location strategy
+     */
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
+
+    /**
+     * workspace store location layout
+     */
+    private NutsStoreLocationLayout storeLocationLayout;
+
+    /**
+     * when global is true consider system wide folders (user independent but
+     * needs greater privileges)
+     */
+    private boolean global;
+
+    /**
+     * when true enable Desktop GUI components if available
+     */
+    private boolean gui;
+
+    /**
+     * workspace store locations
+     */
     private String[] storeLocations = new String[NutsStoreLocation.values().length];
+    /**
+     * workspace expected locations for all layout. Relevant when moving the
+     * workspace cross operating systems
+     */
     private String[] homeLocations = new String[NutsStoreLocation.values().length * NutsStoreLocationLayout.values().length];
-    private NutsStoreLocationStrategy storeLocationStrategy = null;
-    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
-    private NutsStoreLocationLayout storeLocationLayout = null;
-    private boolean global = false;
-    private boolean gui = false;
 
     public NutsBootConfig() {
     }
@@ -79,6 +143,8 @@ public final class NutsBootConfig implements Cloneable {
 
     public NutsBootConfig(NutsBootContext context) {
         if (context != null) {
+            this.uuid = context.getUuid();
+            this.name = context.getName();
             this.apiVersion = context.getApiId().getVersion().getValue();
             this.runtimeId = context.getRuntimeId().getLongName();
             this.runtimeDependencies = context.getRuntimeDependencies();
@@ -92,13 +158,13 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationLayout = context.getStoreLocationLayout();
             this.global = context.isGlobal();
             this.gui = context.isGui();
-//            this.name = context.getName();
-//            this.uuid = context.getUuid();
         }
     }
 
     public NutsBootConfig(NutsBootConfig other) {
         if (other != null) {
+            this.uuid = other.getUuid();
+            this.name = other.getName();
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
             this.runtimeDependencies = other.getRuntimeDependencies();
@@ -111,9 +177,6 @@ public final class NutsBootConfig implements Cloneable {
             this.storeLocationLayout = other.getStoreLocationLayout();
             this.global = other.isGlobal();
             this.gui = other.isGui();
-            this.uuid = other.getUuid();
-            this.name = other.getName();
-            this.runtimeId = other.getRuntimeId();
         }
     }
 
@@ -193,7 +256,11 @@ public final class NutsBootConfig implements Cloneable {
 
     public NutsBootConfig copy() {
         try {
-            return (NutsBootConfig) clone();
+            NutsBootConfig p = (NutsBootConfig) clone();
+            p.storeLocations =p.storeLocations==null?null:Arrays.copyOf(p.storeLocations, p.storeLocations.length);
+            p.homeLocations =p.homeLocations==null?null:Arrays.copyOf(p.homeLocations, p.homeLocations.length);
+
+            return p;
         } catch (CloneNotSupportedException e) {
             throw new NutsUnexpectedException(null);
         }

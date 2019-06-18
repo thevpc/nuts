@@ -22,5 +22,6 @@
         <word>iterable</word>
         <word>kwallet</word>
         <word>nullable</word>
+        <word>parsable</word>
     </spellchecker-wordlist>
 </project-shared-configuration>

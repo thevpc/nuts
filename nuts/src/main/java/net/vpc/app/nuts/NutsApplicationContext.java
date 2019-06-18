@@ -38,7 +38,7 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsApplicationContext extends NutsCommandLineContext, NutsConfigurable {
+public interface NutsApplicationContext extends NutsConfigurable {
 
     /**
      * string that prefix each auto complete candidate
@@ -79,7 +79,6 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
      *
      * @return Auto complete instance
      */
-    @Override
     NutsCommandAutoComplete getAutoComplete();
 
     /**
@@ -315,7 +314,6 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
      *
      * @return application arguments
      */
-    @Override
     String[] getArguments();
 
     /**
@@ -354,7 +352,8 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
     NutsVersion appPreviousVersion();
 
     /**
-     * a new instance of command line arguments to process
+     * a new instance of command line arguments to process filled 
+     * with application's arguments.
      *
      * @return a new instance of command line arguments to process
      */
@@ -367,6 +366,16 @@ public interface NutsApplicationContext extends NutsCommandLineContext, NutsConf
      */
     NutsCommandLine commandLine();
 
+    /**
+     * application store folder path for the given {@code location}
+     * @param location location type
+     * @return application store folder path for the given {@code location}
+     */
     Path getFolder(NutsStoreLocation location);
 
+    /**
+     * return true if {@code getAutoComplete()==null }
+     * @return true if {@code getAutoComplete()==null } 
+     */
+    boolean isExecMode();
 }

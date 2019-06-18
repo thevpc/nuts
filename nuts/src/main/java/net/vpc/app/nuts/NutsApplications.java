@@ -39,6 +39,7 @@ import java.io.PrintStream;
  */
 public class NutsApplications {
 
+    
     private NutsApplications() {
     }
 
@@ -111,7 +112,7 @@ public class NutsApplications {
     }
 
     /**
-     * run application life cycle
+     * run application with given life cycle.
      *
      * @param args application arguments
      * @param ws workspace
@@ -126,11 +127,16 @@ public class NutsApplications {
             ws = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext = null;
-        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);//ws.config().getOptions().getApplicationArguments()
+        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
             applicationContext = ws.io().createApplicationContext(args, lifeCycle.getClass(), null, startTimeMillis);
         }
         switch (applicationContext.getMode()) {
+            /**
+             * both RUN and AUTO_COMPLETE
+             * executes the save branch. 
+             * Later applicationContext.isExecMode()
+             */
             case RUN:
             case AUTO_COMPLETE: {
                 lifeCycle.onRunApplication(applicationContext);

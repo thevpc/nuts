@@ -7,6 +7,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 public final class DefaultNutsBootContext implements NutsBootContext {
 
+    private final String uuid;
     private final String name;
     private final String workspace;
     private final NutsId bootAPI;
@@ -24,13 +25,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final boolean gui;
     private final NutsWorkspace ws;
 
-    public DefaultNutsBootContext(NutsWorkspace ws, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
+    public DefaultNutsBootContext(NutsWorkspace ws, String uuid, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
             NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
             boolean global, boolean gui
     ) {
         this.ws = ws;
+        this.uuid = uuid;
         this.name = name;
         this.workspace = workspace;
         this.bootAPI = bootAPI;
@@ -64,6 +66,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.ws = ws;
         this.workspace = c.getWorkspace();
         this.name = c.getName();
+        this.uuid = c.getUuid();
         this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
                 ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
@@ -79,6 +82,11 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.homeLocations = c.getHomeLocations();
         this.global = c.isGlobal();
         this.gui = c.isGui();
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
     }
 
     @Override

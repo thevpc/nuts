@@ -51,7 +51,7 @@ import java.util.*;
  * }
  * </pre> Created by vpc on 12/7/16.
  */
-public class DefaultNutsCommand implements NutsCommandLine {
+public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public static final NutsArgumentName VALUE = new DefaultNonOption("value");
 
@@ -66,34 +66,34 @@ public class DefaultNutsCommand implements NutsCommandLine {
     private char eq = '=';
 
     //Constructors
-    public DefaultNutsCommand(NutsWorkspace ws) {
+    public DefaultNutsCommandLine(NutsWorkspace ws) {
         this.ws = ws;
     }
 
-    public DefaultNutsCommand(NutsWorkspace ws, NutsCommandLineContext context) {
+    public DefaultNutsCommandLine(NutsWorkspace ws, NutsApplicationContext context) {
         this.ws = ws;
         setArgs(context == null ? null : context.getArguments());
         setAutoComplete(context == null ? null : context.getAutoComplete());
     }
 
-    public DefaultNutsCommand(NutsWorkspace ws, String[] args, NutsCommandAutoComplete autoComplete) {
+    public DefaultNutsCommandLine(NutsWorkspace ws, String[] args, NutsCommandAutoComplete autoComplete) {
         this.ws = ws;
         setArgs(args);
         setAutoComplete(autoComplete);
     }
 
-    public DefaultNutsCommand(NutsWorkspace ws, String[] args) {
+    public DefaultNutsCommandLine(NutsWorkspace ws, String[] args) {
         this.ws = ws;
         setArgs(args);
     }
 
-    public DefaultNutsCommand(NutsWorkspace ws, List<String> args, NutsCommandAutoComplete autoComplete) {
+    public DefaultNutsCommandLine(NutsWorkspace ws, List<String> args, NutsCommandAutoComplete autoComplete) {
         this.ws = ws;
         setArgs(args);
         setAutoComplete(autoComplete);
     }
 
-    public DefaultNutsCommand(List<String> args) {
+    public DefaultNutsCommandLine(List<String> args) {
         setArgs(args);
     }
 
@@ -746,7 +746,7 @@ public class DefaultNutsCommand implements NutsCommandLine {
     }
 
     public NutsCommandLine copy() {
-        DefaultNutsCommand c = new DefaultNutsCommand(ws, toArray(), autoComplete);
+        DefaultNutsCommandLine c = new DefaultNutsCommandLine(ws, toArray(), autoComplete);
         c.eq = this.eq;
         c.commandName = this.commandName;
         return c;

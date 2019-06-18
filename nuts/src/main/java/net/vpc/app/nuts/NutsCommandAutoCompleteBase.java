@@ -34,11 +34,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- *
+ * Base (Abstract) implementation of NutsCommandAutoComplete
  * @author vpc
  * @since 0.5.5
  */
-public abstract class NutsCommandAutoCompleteBase implements net.vpc.app.nuts.NutsCommandAutoComplete {
+public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComplete {
 
     private final LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
 

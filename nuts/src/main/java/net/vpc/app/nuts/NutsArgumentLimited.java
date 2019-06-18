@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.NoSuchElementException;
+
 /**
  * This is a minimal implementation of NutsArgument and hence should not be
  * used. Instead an instance of NutsArgument can be retrieved using
@@ -55,14 +57,25 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
         this.eq = eq;
     }
 
+    public boolean isUnsupported() {
+        return expression != null
+                && (expression.startsWith("-!!")
+                || expression.startsWith("--!!")
+                || expression.startsWith("---")
+                || expression.startsWith("++")
+                || expression.startsWith("!!"));
+    }
+
     @Override
     public boolean isOption() {
-        return expression != null && expression.startsWith("-");
+        return expression != null
+                && expression.length() > 0
+                && (expression.charAt(0) == '-' || expression.charAt(0) == '+');
     }
 
     @Override
     public boolean isNonOption() {
-        return expression == null || !expression.startsWith("-");
+        return !isOption();
     }
 
     @Override
@@ -151,6 +164,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
                     //ignore leading dashes
                     break;
                 }
+                case '+': {
+                    //ignore leading dashes
+                    break;
+                }
                 case '!': {
                     return true;
                 }
@@ -174,6 +191,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
         while (i < expression.length()) {
             switch (expression.charAt(i)) {
                 case '-': {
+                    opt = true;
+                    break;
+                }
+                case '+': {
                     opt = true;
                     break;
                 }
@@ -211,10 +232,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public int getInt() {
-        if (expression == null) {
-            throw new IllegalArgumentException("Missing value");
+        if (NutsUtilsLimited.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
         }
-        return getInt(0);
+        return Integer.parseInt(expression);
     }
 
     @Override
@@ -244,7 +265,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public long getLong() {
-        return getLong(0);
+        if (NutsUtilsLimited.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
+        }
+        return Long.parseLong(expression);
     }
 
     @Override
@@ -274,7 +298,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public double getDouble() {
-        return getDouble(0);
+        if (NutsUtilsLimited.isBlank(expression)) {
+            throw new NumberFormatException("Missing value");
+        }
+        return Double.parseDouble(expression);
     }
 
     @Override
@@ -291,8 +318,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public boolean getBoolean() {
-        Boolean bb = NutsUtilsLimited.parseBoolean(expression, null);
-        boolean b = NutsUtilsLimited.isBlank(expression) ? false : bb == null ? false : bb.booleanValue();
+        Boolean b = NutsUtilsLimited.parseBoolean(expression, false);
         if (isNegated()) {
             return !b;
         }
@@ -301,17 +327,11 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public boolean isBoolean() {
-        if (expression != null) {
-            return NutsUtilsLimited.parseBoolean(expression, null) != null;
-        }
-        return false;
+        return NutsUtilsLimited.parseBoolean(expression, null) != null;
     }
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        if (expression == null) {
-            return defaultValue;
-        }
         return NutsUtilsLimited.parseBoolean(expression, defaultValue);
     }
 
@@ -323,7 +343,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
     @Override
     public NutsArgument required() {
         if (expression == null) {
-            throw new NutsIllegalArgumentException(null, "Missing value");
+            throw new NoSuchElementException("Missing value");
         }
         return this;
     }

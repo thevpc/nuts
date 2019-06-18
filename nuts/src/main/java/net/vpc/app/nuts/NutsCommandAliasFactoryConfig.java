@@ -32,15 +32,29 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 /**
+ * Command Alias Factory Definition Config
  *
  * @author vpc
  * @since 0.5.4
  */
 public class NutsCommandAliasFactoryConfig {
 
+    /**
+     * Factory id (unique identifier in the workspace)
+     */
     private String factoryId;
+
+    /**
+     * Factory Type
+     */
     private String factoryType;
+    /**
+     * priority (the higher the better)
+     */
     private int priority;
+    /**
+     * factory parameters
+     */
     private Map<String, String> parameters;
 
     public String getFactoryId() {

@@ -17,7 +17,6 @@ import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     private final Class appClass;
-//    private final NutsSessionTerminal terminal;
     private NutsWorkspace workspace;
     private NutsSession session;
     private Path[] folders = new Path[NutsStoreLocation.values().length];
@@ -25,7 +24,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsId appId;
     private long startTimeMillis;
     private String[] args;
-//    private List<String> printObjectOptions = new ArrayList<>();
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
 
     /**
@@ -40,14 +38,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     private String[] modeArgs = new String[0];
 
-    public DefaultNutsApplicationContext(String[] args, NutsWorkspace workspace, Class appClass, String storeId, long startTimeMillis) {
-        this(workspace,
-                args,
-                appClass,
-                storeId,
-                startTimeMillis
-        );
-    }
+//    public DefaultNutsApplicationContext(String[] args, NutsWorkspace workspace, Class appClass, String storeId, long startTimeMillis) {
+//        this(workspace,
+//                args,
+//                appClass,
+//                storeId,
+//                startTimeMillis
+//        );
+//    }
 
     public DefaultNutsApplicationContext(NutsWorkspace workspace, String[] args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
@@ -94,13 +92,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId appId = workspace.format().id().resolveId(appClass);
-        if (appId == null) {
+        NutsId _appId = workspace.format().id().resolveId(appClass);
+        if (_appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
         this.workspace = (workspace);
         this.args = (args);
-        this.appId = (appId);
+        this.appId = (_appId);
         this.appClass = appClass;
         this.storeId = (storeId == null ? this.appId.toString() : storeId);
         this.session = (workspace.createSession());
@@ -472,12 +470,17 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getAppPreviousVersion();
     }
 
+    @Override
+    public boolean isExecMode() {
+        return getAutoComplete() == null;
+    }
+
     private static class AppCommandAutoComplete extends NutsCommandAutoCompleteBase {
 
-        private ArrayList<String> words;
-        int wordIndex;
-        private PrintStream out0;
-        private NutsWorkspace workspace;
+        private final ArrayList<String> words;
+        private int wordIndex;
+        private final PrintStream out0;
+        private final NutsWorkspace workspace;
 
         public AppCommandAutoComplete(NutsWorkspace workspace, String[] args, int wordIndex, PrintStream out0) {
             this.workspace = workspace;
@@ -504,16 +507,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         @Override
         public String getLine() {
-            StringBuilder sb = new StringBuilder();
-            List<String> w = getWords();
-            for (int i = 0; i < w.size(); i++) {
-                if (i > 0) {
-                    sb.append(" ");
-                }
-                String word = w.get(i);
-                sb.append(word);
-            }
-            return sb.toString();
+            return new DefaultNutsCommandLine(workspace).setArgs(getWords()).toString();
         }
 
         @Override

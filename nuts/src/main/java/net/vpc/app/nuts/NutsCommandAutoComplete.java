@@ -32,24 +32,54 @@ package net.vpc.app.nuts;
 import java.util.List;
 
 /**
- *
+ * Auto Complete Helper class used to collect argument candidates
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsCommandAutoComplete {
 
+    /**
+     * command line string
+     * @return 
+     */
     String getLine();
 
+    /**
+     * command line arguments
+     * @return 
+     */
     List<String> getWords();
 
+    /**
+     * current candidates
+     * @return current candidates
+     */
     List<NutsArgumentCandidate> getCandidates();
 
+    /**
+     * candidates index
+     * @return candidates index
+     */
     int getCurrentWordIndex();
 
+    /**
+     * add candidate
+     * @param value candidate value
+     * @param display candidate user display label
+     */
     void addCandidate(String value, String display);
 
+    /**
+     * add candidate
+     * @param type candidate type
+     * @param name candidate name
+     */
     void addExpectedTypedValue(String type, String name);
 
+    /**
+     * add candidate
+     * @param value candidate
+     */
     void addCandidate(NutsArgumentCandidate value);
 
 }

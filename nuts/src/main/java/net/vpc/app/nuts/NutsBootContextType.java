@@ -30,7 +30,8 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Define type of NutsBootContext instance to get using 
+ * {@link NutsWorkspaceConfigManager#getContext(net.vpc.app.nuts.NutsBootContextType) } call.
  * @author vpc
  * @since 0.5.4
  */

@@ -53,7 +53,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
 import net.vpc.app.nuts.NutsSearchCommand;
-import net.vpc.app.nuts.core.app.DefaultNutsCommand;
+import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
 
 /**
  * Created by vpc on 1/6/17.
@@ -954,7 +954,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public NutsCommandLine commandLine() {
-        return new DefaultNutsCommand(this);
+        return new DefaultNutsCommandLine(this);
     }
 
     @Override

@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsElementType;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import net.vpc.app.nuts.NutsPrimitiveElement;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  *
@@ -65,12 +66,50 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public Number getNumber() {
-        return (Number) value;
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value);
+        }
+        if (value instanceof Date) {
+            return ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Integer.parseInt(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
     }
 
     @Override
     public boolean getBoolean() {
-        return (Boolean) value;
+        if (value == null) {
+            return false;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue() != 0;
+        }
+        return CoreCommonUtils.parseBoolean(String.valueOf(value), false);
     }
 
     @Override
@@ -84,9 +123,30 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         if (value instanceof String) {
             try {
                 Integer.parseInt(value.toString());
+                return true;
             } catch (Exception ex) {
                 //
             }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLong() {
+        if (value == null) {
+            return false;
+        }
+        if (value instanceof Number) {
+            if (value.toString().indexOf('.') > 0) {
+                return false;
+            }
+            return true;
+        }
+        try {
+            Long.parseLong(value.toString());
+            return true;
+        } catch (Exception ex) {
+            //
         }
         return false;
     }
@@ -111,23 +171,126 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public int getInt() {
-        return value == null ? 0 : (value instanceof Number) ? ((Number) value).intValue() : Integer.parseInt(getString());
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        if (value instanceof Date) {
+            return (int) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return (int) Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Integer.parseInt(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return (int) Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
     }
 
     @Override
     public long getLong() {
-        return value == null ? 0 : (value instanceof Number) ? ((Number) value).longValue() : Long.parseLong(getString());
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        if (value instanceof Date) {
+            return (int) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return (long) Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Integer.parseInt(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
     }
 
     @Override
     public double getDouble() {
-        return value == null ? 0 : (value instanceof Number) ? ((Number) value).doubleValue() : Double.parseDouble(getString());
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        if (value instanceof Date) {
+            return (double) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
     }
 
     @Override
     public Date getDate() {
-        return value == null ? null : (value instanceof Number) ? new Date(((Number) value).longValue())
-                : (value instanceof Date) ? (Date) value : parseDate(toString());
+        if (value == null || value instanceof Boolean) {
+            return new Date(0);
+        }
+        if (value instanceof Number) {
+            return new Date(((Number) value).longValue());
+        }
+        if (value instanceof Date) {
+            return ((Date) value);
+        }
+        String s = String.valueOf(value);
+        for (String f : DATE_FORMATS) {
+            try {
+                return new SimpleDateFormat(f).parse(s);
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if (isLong()) {
+            try {
+                return new Date(getLong());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return new Date(0);
+    }
+
+    @Override
+    public boolean isNull() {
+        return value == null;
     }
 
     static Date parseDate(String s) {

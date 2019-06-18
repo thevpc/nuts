@@ -80,7 +80,7 @@ import java.util.*;
  * @author vpc
  * @since 0.5.5
  */
-class NutsCommandLimited implements NutsCommandLine {
+class NutsCommandLineLimited implements NutsCommandLine {
 
     private static final String NOT_SUPPORTED = "This a minimal implementation of NutsCommand used to bootstrap. This Method is not supported.";
     private LinkedList<String> args = new LinkedList<>();
@@ -93,7 +93,7 @@ class NutsCommandLimited implements NutsCommandLine {
     private char eq = '=';
     //Constructors
 
-    NutsCommandLimited(String[] args) {
+    NutsCommandLineLimited(String[] args) {
         if (args != null) {
             this.args.addAll(Arrays.asList(args));
         }

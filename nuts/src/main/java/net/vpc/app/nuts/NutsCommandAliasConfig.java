@@ -29,19 +29,48 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
- *
+ * Command Alias definition class Config
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCommandAliasConfig {
+public class NutsCommandAliasConfig implements Serializable{
 
+    /**
+     * alias definition
+     */
     private NutsId owner;
+
+    /**
+     * alias name
+     */
     private String name;
+
+    /**
+     * alias factory id
+     */
     private String factoryId;
+
+    /**
+     * alias command arguments
+     */
     private String[] command;
+
+    /**
+     * alias command execution options
+     */
     private String[] executorOptions;
+
+    /**
+     * alias help command (command to display help)
+     */
     private String[] helpCommand;
+
+    /**
+     * alias help text (meaningful if helpCommand is not defined)
+     */
     private String helpText;
 
     public NutsId getOwner() {

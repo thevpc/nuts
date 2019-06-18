@@ -41,11 +41,14 @@ import java.util.logging.Level;
  */
 public final class NutsArgumentsParser {
 
+    /**
+     * private constructor
+     */
     private NutsArgumentsParser() {
     }
 
     /**
-     * Creates a {@link NutsWorkspaceOptions} instance from string array of
+     * Create a {@link NutsWorkspaceOptions} instance from string array of
      * valid nuts options
      *
      * @param bootArguments input arguments to parse
@@ -58,7 +61,7 @@ public final class NutsArgumentsParser {
     }
 
     /**
-     * Fills a {@link NutsWorkspaceOptions} instance from string array of valid
+     * Fill a {@link NutsWorkspaceOptions} instance from string array of valid
      * nuts options
      *
      * @param bootArguments input arguments to parse
@@ -72,7 +75,7 @@ public final class NutsArgumentsParser {
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdLine = new NutsCommandLimited(bootArguments)
+        NutsCommandLine cmdLine = new NutsCommandLineLimited(bootArguments)
                 .setCommandName("nuts");
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();

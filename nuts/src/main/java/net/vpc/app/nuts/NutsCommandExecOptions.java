@@ -32,16 +32,35 @@ package net.vpc.app.nuts;
 import java.util.Properties;
 
 /**
- *
+ * Command execution options
  * @author vpc
  * @since 0.5.4
  */
 public class NutsCommandExecOptions {
 
+    /**
+     * execution options
+     */
     private String[] executorOptions;
+    
+    /**
+     * execution environment variables
+     */
     private Properties env;
+
+    /**
+     * execution directory
+     */
     private String directory;
+
+    /**
+     * when fail fast,non zero exit value will raise NutsExcutionException
+     */
     private boolean failFast;
+    
+    /**
+     * execution type
+     */
     private NutsExecutionType executionType;
 
     public String[] getExecutorOptions() {
