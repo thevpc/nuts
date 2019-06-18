@@ -35,7 +35,6 @@ import net.vpc.app.nuts.core.util.common.JavascriptHelper;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import java.util.Set;
 
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -66,8 +65,8 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency d, NutsWorkspace ws, NutsSession session) {
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
+    public boolean accept(NutsId from, NutsDependency d, NutsSession session) {
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, session);
         return engineHelper.accept(d);
     }
 

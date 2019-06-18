@@ -155,6 +155,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
+    @Override
+    public NutsWorkspace workspace() {
+        return getWorkspace();
+    }
+
+    @Override
     public NutsSession setTerminal(NutsSessionTerminal terminal) {
         this.terminal = terminal;
         this.out0 = (terminal.fout());
@@ -657,21 +667,19 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     public NutsObjectPrintStream oout() {
-        return new NutsObjectPrintStreamImpl(ws, this, out());
+        return new NutsObjectPrintStreamImpl(this, out());
     }
 
     public NutsObjectPrintStream oerr() {
-        return new NutsObjectPrintStreamImpl(ws, this, err());
+        return new NutsObjectPrintStreamImpl(this, err());
     }
 
     private class NutsObjectPrintStreamImpl implements NutsObjectPrintStream {
 
-        private NutsWorkspace ws;
         private NutsSession session;
         private PrintStream out;
 
-        public NutsObjectPrintStreamImpl(NutsWorkspace ws, NutsSession session, PrintStream out) {
-            this.ws = ws;
+        public NutsObjectPrintStreamImpl(NutsSession session, PrintStream out) {
             this.session = session;
             this.out = out;
         }

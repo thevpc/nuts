@@ -44,7 +44,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
-    public NutsFormat setVersion(NutsVersion version) {
+    public NutsVersionFormat setVersion(NutsVersion version) {
         this.versionIntervall = null;
         this.version = version;
         return this;
@@ -56,14 +56,14 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
-    public NutsFormat setVersionInterval(NutsVersionInterval version) {
+    public NutsVersionFormat setVersionInterval(NutsVersionInterval version) {
         this.versionIntervall = version;
         this.version = null;
         return this;
     }
 
     @Override
-    public NutsFormat setWorkspaceVersion() {
+    public NutsVersionFormat setWorkspaceVersion() {
         version = null;
         versionIntervall = null;
         return this;

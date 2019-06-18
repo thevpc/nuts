@@ -48,18 +48,51 @@ public interface NutsVersionFormat extends NutsFormat {
 
     NutsVersionFormat addProperties(Properties p);
 
+    /**
+     * return version set by {@link #setVersion(net.vpc.app.nuts.NutsVersion) }
+     * @return version set by {@link #setVersion(net.vpc.app.nuts.NutsVersion) }
+     */
     NutsVersion getVersion();
 
-    NutsFormat setVersion(NutsVersion version);
+    /**
+     * set version to print. if null, workspace version will be considered.
+     * @param version version to print
+     * @return {@code this} instance
+     */
+    NutsVersionFormat setVersion(NutsVersion version);
 
+    /**
+     * return version interval set by {@link #setVersionInterval(net.vpc.app.nuts.NutsVersionInterval)}
+     * @return version interval set by {@link #setVersionInterval(net.vpc.app.nuts.NutsVersionInterval)}
+     */
     NutsVersionInterval getVersionInterval();
 
-    NutsFormat setVersionInterval(NutsVersionInterval version);
+    /**
+     * set version interval to print. if null, workspace version will be considered.
+     * version will be reset to null.
+     * @param versionInterval versionInterval to print
+     * @return {@code this} instance
+     */
+    NutsVersionFormat setVersionInterval(NutsVersionInterval versionInterval);
 
-    NutsFormat setWorkspaceVersion();
+    /**
+     * print methods will display workspace version instead of user defined one.
+     * version and versionInterval will be reset to null.
+     * @return {@code this} instance
+     */
+    NutsVersionFormat setWorkspaceVersion();
 
+    /**
+     * return true if both version and version interval are null (default)
+     * @return true if both version and version interval are null (default) 
+     */
     boolean isWorkspaceVersion();
 
+    /**
+     * return version instance representing the {@code version} string
+     * @param version string (may be null)
+     * @return version instance representing the {@code version} string 
+     */
     NutsVersion parseVersion(String version);
 
     NutsVersionFilter parseVersionFilter(String versionFilter);

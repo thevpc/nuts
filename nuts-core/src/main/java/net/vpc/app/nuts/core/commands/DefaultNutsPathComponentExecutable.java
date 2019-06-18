@@ -18,7 +18,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.DefaultNutsExecCommand;
-import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import static net.vpc.app.nuts.core.util.io.CoreIOUtils.createInputSource;
@@ -38,37 +37,35 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
     String[] args;
     String[] executorOptions;
     NutsExecutionType executionType;
-    NutsWorkspace ws;
     NutsSession session;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsWorkspace ws, NutsSession session, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
-                ws.commandLine().setArgs(args).toString(),
+                session.getWorkspace().commandLine().setArgs(args).toString(),
                 NutsExecutableType.COMPONENT);
         this.cmdName = cmdName;
         this.args = args;
         this.executorOptions = executorOptions;
         this.executionType = executionType;
-        this.ws = ws;
         this.session = session;
         this.execCommand = execCommand;
     }
 
     @Override
     public NutsId getId() {
-        NutsFetchCommand p = ws.fetch();
+        NutsFetchCommand p = session.getWorkspace().fetch();
         p.setTransitive(true);
-        try (final CharacterizedExecFile c = characterizeForExec(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
 
     @Override
     public void execute() {
-        NutsFetchCommand p = ws.fetch();
+        NutsFetchCommand p = session.getWorkspace().fetch();
         p.setTransitive(true);
-        try (final CharacterizedExecFile c = characterizeForExec(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
             if (c.descriptor == null) {
                 //this is a native file?
                 c.descriptor = DefaultNutsExecCommand.TEMP_DESC;
@@ -85,8 +82,8 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
         }
     }
 
-    private static CharacterizedExecFile characterizeForExec(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsFetchCommand options, NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
         CharacterizedExecFile c = new CharacterizedExecFile();
         try {
             c.baseFile = contentFile;
@@ -100,7 +97,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                 if (Files.exists(ext)) {
                     c.descriptor = ws.format().descriptor().parse(ext);
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
@@ -157,7 +154,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                         throw new NutsIllegalArgumentException(ws, "Unabel to locale component for " + c.baseFile);
                     }
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
                     if (c.descriptor == null) {
                         c.descriptor = ws.format().descriptor().descriptorBuilder()
                                 .setId("temp")
@@ -176,7 +173,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + ws.commandLine().setArgs(args).toString();
+        return "NUTS " + cmdName + " " + session.getWorkspace().commandLine().setArgs(args).toString();
     }
 
     private static class CharacterizedExecFile implements AutoCloseable {

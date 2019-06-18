@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core.filters;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSearchId;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -48,17 +49,17 @@ public class NutsSearchIdByDescriptor implements NutsSearchId {
     }
 
     @Override
-    public NutsVersion getVersion(NutsWorkspace ws) {
+    public NutsVersion getVersion(NutsSession session) {
         return desc.getId().getVersion();
     }
 
     @Override
-    public NutsId getId(NutsWorkspace ws) {
+    public NutsId getId(NutsSession session) {
         return desc.getId();
     }
 
     @Override
-    public NutsDescriptor getDescriptor(NutsWorkspace ws) {
+    public NutsDescriptor getDescriptor(NutsSession session) {
         return desc;
     }
 

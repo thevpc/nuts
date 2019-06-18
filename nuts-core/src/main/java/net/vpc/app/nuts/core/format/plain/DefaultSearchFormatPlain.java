@@ -10,7 +10,6 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
@@ -19,8 +18,8 @@ import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
-        super(ws, session, writer, NutsOutputFormat.PLAIN);
+    public DefaultSearchFormatPlain(NutsSession session, PrintWriter writer) {
+        super(session, writer, NutsOutputFormat.PLAIN);
     }
 
     @Override
@@ -42,7 +41,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, getWorkspace(), getSession());
+        FormattableNutsId fid = FormattableNutsId.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {

@@ -32,7 +32,7 @@ public class JavaExecutorOptions {
 //    private NutsDefinition nutsMainDef;
     private NutsSession session;
 
-    public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsWorkspace ws, NutsSession session) {
+    public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {
@@ -50,7 +50,7 @@ public class JavaExecutorOptions {
         Path path = def.getPath();
         this.session = session;
 //        this.nutsMainDef = nutsMainDef;
-        this.ws = ws;
+        this.ws = session.getWorkspace();
         this.app = new ArrayList<>(Arrays.asList(args));
         this.dir = dir;
         this.execArgs = executorOptions;

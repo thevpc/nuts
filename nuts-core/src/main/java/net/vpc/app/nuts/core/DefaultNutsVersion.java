@@ -167,7 +167,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         if (CoreStringUtils.isBlank(expression)) {
             return true;
         }
-        return DefaultNutsVersionFilter.parse(expression).accept(this, null, null);
+        return DefaultNutsVersionFilter.parse(expression).accept(this, null);
     }
 
     public static boolean versionMatches(String version, String pattern) {

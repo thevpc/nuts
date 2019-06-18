@@ -278,7 +278,7 @@ public class DefaultNutsInstalledRepository {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
                                         NutsVersion vv = ws.format().version().parseVersion(folder.getName());
-                                        if (filter0.accept(vv, ws, session.getSession()) && (filter == null || filter.accept(id.setVersion(vv), ws, session.getSession()))) {
+                                        if (filter0.accept(vv, session.getSession()) && (filter == null || filter.accept(id.setVersion(vv), session.getSession()))) {
                                             return id.setVersion(folder.getName());
                                         }
                                     }
@@ -302,7 +302,7 @@ public class DefaultNutsInstalledRepository {
             try (DirectoryStream<Path> ds = Files.newDirectoryStream(installFolder)) {
                 for (Path folder : ds) {
                     if (Files.isDirectory(folder) && Files.isRegularFile(folder.resolve(NUTS_INSTALL_FILE))) {
-                        if (filter.accept(ws.format().version().parseVersion(folder.getFileName().toString()), ws, session.getSession())) {
+                        if (filter.accept(ws.format().version().parseVersion(folder.getFileName().toString()), session.getSession())) {
                             ok.add(id.setVersion(folder.getFileName().toString()));
                         }
                     }

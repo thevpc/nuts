@@ -15,7 +15,7 @@ public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<Nut
     }
 
     @Override
-    public boolean accept(NutsVersion version, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsVersion version, NutsSession session) {
         return true;
     }
 

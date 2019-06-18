@@ -338,11 +338,11 @@ public class MavenUtils {
         return nutsDescriptor;
     }
 
-    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NutsWorkspace ws, NutsSession session) {
+    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NutsSession session) {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
-                return filter.accept(MavenUtils.toNutsId(id), ws, session);
+                return filter.accept(MavenUtils.toNutsId(id), session);
             }
         }, autoClose);
         return new Iterator<NutsId>() {

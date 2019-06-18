@@ -54,11 +54,9 @@ public class ShellHelper {
     public static class WsSshListener implements SshListener {
 
         PrintStream out;
-        NutsWorkspace ws;
         NutsSession session;
 
-        public WsSshListener(NutsWorkspace ws, NutsSession session) {
-            this.ws = ws;
+        public WsSshListener(NutsSession session) {
             this.session = session;
             out = session.getTerminal().fout();
         }
@@ -90,7 +88,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, String name) {
-            return ws.io().monitor().source(stream).length(length).name(name).session(session).create();
+            return session.getWorkspace().io().monitor().source(stream).length(length).name(name).session(session).create();
         }
     }
 

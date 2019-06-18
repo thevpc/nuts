@@ -15,8 +15,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsUpdateInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("update", args, ws, session);
+    public DefaultNutsUpdateInternalExecutable(String[] args, NutsSession session) {
+        super("update", args, session);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        ws.update().session(getSession(true).ask().trace()).configure(false, args).update();
+        getSession().getWorkspace().update().session(getSession().ask().trace()).configure(false, args).update();
 
     }
 

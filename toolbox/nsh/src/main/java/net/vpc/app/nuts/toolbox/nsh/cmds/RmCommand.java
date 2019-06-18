@@ -86,7 +86,7 @@ public class RmCommand extends SimpleNshBuiltin {
         if (options.files.size() < 1) {
             throw new NutsExecutionException(context.getWorkspace(), "Missing parameters", 2);
         }
-        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
+        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
         for (XFile p : options.files) {
             if (p instanceof SshXFile) {
                 ((SshXFile) p).setListener(listener);

@@ -452,7 +452,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks("java")) {
             String currVersion = jdk.getVersion();
-            if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion), ws, session)) {
+            if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion), session)) {
                 if (best == null || DefaultNutsVersion.compareVersions(best.getVersion(), currVersion) < 0) {
                     best = jdk;
                 }
@@ -859,7 +859,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         defaultCommandFactory.installCommand(command);
         if (session.isPlainTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(ws, session);
+            PrintStream out = CoreIOUtils.resolveOut(session);
             out.printf("[[install]] command alias ==%s==%n", command.getName());
         }
         return forced;
@@ -880,7 +880,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         defaultCommandFactory.uninstallCommand(name);
         if (session.isPlainTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(ws, session);
+            PrintStream out = CoreIOUtils.resolveOut(session);
             out.printf("[[uninstall]] command alias ==%s==%n", name);
         }
         return true;

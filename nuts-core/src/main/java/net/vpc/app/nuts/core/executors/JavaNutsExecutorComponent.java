@@ -81,7 +81,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
-                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(), ws,
+                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getSession());
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
@@ -199,7 +199,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
 
                 String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-                CoreIOUtils.execAndWait(def, ws, executionContext.getSession(), executionContext.getExecutorProperties(),
+                CoreIOUtils.execAndWait(def, executionContext.getSession(), executionContext.getExecutorProperties(),
                         args.toArray(new String[0]),
                         osEnv, directory,
                         executionContext.getTerminal(), joptions.isShowCommand(), true

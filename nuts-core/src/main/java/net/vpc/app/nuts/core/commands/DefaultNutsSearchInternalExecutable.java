@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -15,8 +14,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsSearchInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("search", args, ws, session);
+    public DefaultNutsSearchInternalExecutable(String[] args, NutsSession session) {
+        super("search", args, session);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        ws.search().session(getSession(true).copy().trace()).configure(false, args).run();
+        getSession().getWorkspace().search().session(getSession().copy().trace()).configure(false, args).run();
     }
 
 }

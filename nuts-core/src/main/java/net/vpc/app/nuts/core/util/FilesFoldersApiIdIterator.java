@@ -83,8 +83,8 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                String[] childrenFolders = FilesFoldersApi.getFolders(file.path, workspace, session.getSession());
-                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, workspace, session.getSession());
+                String[] childrenFolders = FilesFoldersApi.getFolders(file.path, session.getSession());
+                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session.getSession());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if (deep && childrenFolders != null) {
@@ -121,7 +121,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), workspace, session.getSession()))) {
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
                         NutsId nutsId = t.getId().setNamespace(repository);
                         nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;

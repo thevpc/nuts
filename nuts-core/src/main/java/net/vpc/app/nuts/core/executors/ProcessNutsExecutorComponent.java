@@ -92,8 +92,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         String directory = CoreStringUtils.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
-        CoreIOUtils.execAndWait(
-                nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
+        CoreIOUtils.execAndWait(nutMainFile, executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),
                 osEnv, directory, executionContext.getTerminal(), showCommand, true
         );

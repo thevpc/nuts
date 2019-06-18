@@ -22,8 +22,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     private NutsTableFormat table;
 
-    public DefaultSearchFormatTable(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
-        super(ws, session, writer, NutsOutputFormat.TABLE);
+    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer) {
+        super(session, writer, NutsOutputFormat.TABLE);
     }
 
     public NutsTableFormat getTable(NutsWorkspace ws) {
@@ -53,7 +53,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, getWorkspace(), getSession());
+        FormattableNutsId fid = FormattableNutsId.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {

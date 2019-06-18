@@ -355,5 +355,9 @@ public interface NutsSession extends NutsConfigurable {
     NutsSessionTerminal terminal();
 
     NutsSessionTerminal getTerminal();
+    
+    NutsWorkspace getWorkspace();
+    
+    NutsWorkspace workspace();
 
 }

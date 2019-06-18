@@ -10,7 +10,6 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.util.Objects;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 /**
@@ -26,11 +25,11 @@ public class NutsDefaultVersionIdFilter implements NutsIdFilter, Simplifiable<Nu
     }
 
     @Override
-    public boolean accept(NutsId other, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId other, NutsSession session) {
         if (defaultVersion == null) {
             return true;
         }
-        return NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(other) == defaultVersion;
+        return NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().isDefaultVersion(other) == defaultVersion;
     }
 
     @Override

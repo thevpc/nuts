@@ -205,7 +205,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                         String versionName = (String) version.get("name");
                         final NutsId nutsId = id.setVersion(versionName);
 
-                        if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
+                        if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                             continue;
                         }
                         ret.add(
@@ -257,7 +257,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.setVersion(version);
 
-                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
+                    if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                         continue;
                     }
                     ret.add(
@@ -329,7 +329,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 for (String version : foldersFileContent) {
                     final NutsId nutsId = id.setVersion(version);
 
-                    if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
+                    if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                         continue;
                     }
                     ret.add(

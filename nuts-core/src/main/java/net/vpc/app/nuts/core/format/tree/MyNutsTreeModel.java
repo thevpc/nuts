@@ -90,6 +90,6 @@ class MyNutsTreeModel implements NutsTreeModel {
     }
 
     public String stringValue(Object o) {
-        return CoreCommonUtils.stringValueFormatted(o, ws, session);
+        return CoreCommonUtils.stringValueFormatted(o, session);
     }
 }

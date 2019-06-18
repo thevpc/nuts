@@ -48,8 +48,9 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     }
 
     @Override
-    public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsWorkspaceConfigManager rm = workspace.config();
+    public void initialize(NutsSession session) {
+        NutsWorkspace ws = session.getWorkspace();
+        NutsWorkspaceConfigManager rm = ws.config();
         rm.addRepository(new NutsRepositoryDefinition()
                 .setDeployOrder(10)
                 .setCreate(true)
@@ -63,16 +64,16 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         }
 
 //        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
-        workspace.config().addImports("net.vpc.app.nuts.toolbox");
-        workspace.config().addImports("net.vpc.app");
+        ws.config().addImports("net.vpc.app.nuts.toolbox");
+        ws.config().addImports("net.vpc.app");
 
-        workspace.security().updateUser(NutsConstants.Users.ANONYMOUS)
+        ws.security().updateUser(NutsConstants.Users.ANONYMOUS)
                 .resetRights()
                 .addRights(NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT)
                 .run();
 
         //has read rights
-        workspace.security().addUser("user").credentials("user".toCharArray()).rights(
+        ws.security().addUser("user").credentials("user".toCharArray()).rights(
                 NutsConstants.Rights.FETCH_DESC,
                 NutsConstants.Rights.FETCH_CONTENT,
                 NutsConstants.Rights.DEPLOY,

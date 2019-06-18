@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -15,8 +14,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsCheckUpdatesInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("check-updates", args, ws, session);
+    public DefaultNutsCheckUpdatesInternalExecutable(String[] args, NutsSession session) {
+        super("check-updates", args, session);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNu
             showDefaultHelp();
             return;
         }
-        ws.update().session(getSession(true).trace()).configure(false, args).checkUpdates();
+        getSession().getWorkspace().update().session(getSession().trace()).configure(false, args).checkUpdates();
     }
 
 }

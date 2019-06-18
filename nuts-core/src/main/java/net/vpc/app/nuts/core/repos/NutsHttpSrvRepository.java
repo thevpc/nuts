@@ -136,7 +136,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsPatternIdFilter(id.getSimpleNameId())
         ).simplify();
         if (filter2 != null) {
-            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, getWorkspace(), session.getSession())).iterator();
+            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session.getSession())).iterator();
         }
         return it;
     }
@@ -156,7 +156,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, getWorkspace(), session.getSession())).iterator();
+                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session.getSession())).iterator();
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
@@ -170,7 +170,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (filter == null) {
             return new NamedNutIdFromStreamIterator(ret);
         }
-        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, getWorkspace(), session.getSession())).iterator();
+        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session.getSession())).iterator();
 
     }
 

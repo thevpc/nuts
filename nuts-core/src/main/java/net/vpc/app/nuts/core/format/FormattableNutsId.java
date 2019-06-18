@@ -68,7 +68,6 @@ public class FormattableNutsId {
     NutsDescriptor desc;
     NutsDependency dep;
     NutsSession session;
-    NutsWorkspace ws;
     Date dte;
     String usr;
     char status_f;
@@ -78,49 +77,49 @@ public class FormattableNutsId {
     String display;
     boolean built = false;
 
-    public static FormattableNutsId of(Object object, NutsWorkspace ws, NutsSession session) {
+    public static FormattableNutsId of(Object object, NutsSession session) {
         if (object instanceof NutsId) {
             NutsId v = (NutsId) object;
-            return (new FormattableNutsId(v, ws, session));
+            return (new FormattableNutsId(v, session));
         } else if (object instanceof NutsDescriptor) {
             NutsDescriptor v = (NutsDescriptor) object;
-            return (new FormattableNutsId(v, ws, session));
+            return (new FormattableNutsId(v, session));
         } else if (object instanceof NutsDefinition) {
             NutsDefinition v = (NutsDefinition) object;
-            return (new FormattableNutsId(v, ws, session));
+            return (new FormattableNutsId(v, session));
         } else if (object instanceof NutsDependency) {
             NutsDependency v = (NutsDependency) object;
-            return (new FormattableNutsId(v, ws, session));
+            return (new FormattableNutsId(v, session));
         } else if (object instanceof NutsDependencyTreeNode) {
             NutsDependencyTreeNode v = (NutsDependencyTreeNode) object;
-            return (new FormattableNutsId(v, ws, session));
+            return (new FormattableNutsId(v, session));
         } else {
             return null;
         }
 
     }
 
-    public FormattableNutsId(NutsDependencyTreeNode id, NutsWorkspace ws, NutsSession session) {
-        this(null, null, null, id.getDependency(), ws, session);
+    public FormattableNutsId(NutsDependencyTreeNode id, NutsSession session) {
+        this(null, null, null, id.getDependency(), session);
     }
 
-    public FormattableNutsId(NutsId id, NutsWorkspace ws, NutsSession session) {
-        this(id, null, null, null, ws, session);
+    public FormattableNutsId(NutsId id, NutsSession session) {
+        this(id, null, null, null, session);
     }
 
-    public FormattableNutsId(NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
-        this(null, desc, null, null, ws, session);
+    public FormattableNutsId(NutsDescriptor desc, NutsSession session) {
+        this(null, desc, null, null, session);
     }
 
-    public FormattableNutsId(NutsDefinition def, NutsWorkspace ws, NutsSession session) {
-        this(null, null, def, null, ws, session);
+    public FormattableNutsId(NutsDefinition def, NutsSession session) {
+        this(null, null, def, null, session);
     }
 
-    public FormattableNutsId(NutsDependency dep, NutsWorkspace ws, NutsSession session) {
-        this(null, null, null, dep, ws, session);
+    public FormattableNutsId(NutsDependency dep, NutsSession session) {
+        this(null, null, null, dep, session);
     }
 
-    private FormattableNutsId(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsWorkspace ws, NutsSession session) {
+    private FormattableNutsId(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -140,7 +139,6 @@ public class FormattableNutsId {
         this.def = def;
         this.dep = dep;
         this.desc = desc;
-        this.ws = ws;
     }
 
     public String[] getMultiColumnRow(NutsFetchDisplayOptions oo) {
@@ -157,6 +155,7 @@ public class FormattableNutsId {
     }
 
     public String buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
+        NutsWorkspace ws = session.getWorkspace();
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -299,6 +298,7 @@ public class FormattableNutsId {
     public void buildLong() {
         if (!built) {
             built = true;
+            NutsWorkspace ws = session.getWorkspace();
             DefaultNutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
             this.i = rr.isInstalled(id);
             this.d = rr.isDefaultVersion(id);
@@ -424,6 +424,6 @@ public class FormattableNutsId {
     }
 
     private String stringValue(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, ws, session);
+        return CoreCommonUtils.stringValueFormatted(any, session);
     }
 }

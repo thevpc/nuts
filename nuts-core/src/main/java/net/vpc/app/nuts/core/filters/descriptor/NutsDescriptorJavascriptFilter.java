@@ -36,7 +36,6 @@ import net.vpc.app.nuts.core.util.common.JavascriptHelper;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -61,8 +60,9 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
         return code;
     }
 
-    public boolean accept(NutsDescriptor d, NutsWorkspace ws, NutsSession session) {
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
+    @Override
+    public boolean accept(NutsDescriptor d, NutsSession session) {
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", null, null,session);
         return engineHelper.accept(d);
     }
 

@@ -17,9 +17,9 @@ public class NutsDependencyFilterAnd implements NutsDependencyFilter, Simplifiab
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         for (NutsDependencyFilter nutsDependencyFilter : all) {
-            if (nutsDependencyFilter != null && !nutsDependencyFilter.accept(from, dependency, ws, session)) {
+            if (nutsDependencyFilter != null && !nutsDependencyFilter.accept(from, dependency, session)) {
                 return false;
             }
         }

@@ -17,12 +17,12 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         boolean one = false;
         for (NutsDependencyFilter nutsDependencyFilter : all) {
             if (nutsDependencyFilter != null) {
                 one = true;
-                if (nutsDependencyFilter.accept(from, dependency, ws, session)) {
+                if (nutsDependencyFilter.accept(from, dependency, session)) {
                     return true;
                 }
             }

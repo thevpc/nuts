@@ -25,16 +25,16 @@ public class NutstVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFi
     }
 
     @Override
-    public boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
-        return filter == null ? true : filter.acceptSearchId(sid, ws, session);
+    public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
+        return filter == null ? true : filter.acceptSearchId(sid, session);
     }
 
     @Override
-    public boolean accept(NutsId other, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId other, NutsSession session) {
         if (filter == null) {
             return true;
         }
-        return filter.accept(other.getVersion(), ws, session);
+        return filter.accept(other.getVersion(), session);
     }
 
     @Override

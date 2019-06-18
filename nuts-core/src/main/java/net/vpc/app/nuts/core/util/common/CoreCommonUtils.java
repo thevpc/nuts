@@ -317,7 +317,7 @@ public class CoreCommonUtils {
         throw new NoSuchElementException(val + " of type " + e.getSimpleName());
     }
 
-    public static String stringValueFormatted(Object o, NutsWorkspace ws, NutsSession session) {
+    public static String stringValueFormatted(Object o, NutsSession session) {
         if (o == null) {
             return "";
         }
@@ -342,6 +342,7 @@ public class CoreCommonUtils {
         } else if (o instanceof Map) {
             o = ((Map) o).entrySet();
         }
+        NutsWorkspace ws = session.getWorkspace();
         if (o instanceof Boolean) {
             return ws.io().getTerminalFormat().escapeText(String.valueOf(o));
         }
@@ -363,7 +364,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, ws, session)).collect(Collectors.toList())) + "\\]";
+            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, session)).collect(Collectors.toList())) + "\\]";
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
@@ -371,25 +372,25 @@ public class CoreCommonUtils {
                 return "";
             }
             if (len == 1) {
-                return stringValueFormatted(Array.get(o, 0), ws, session);
+                return stringValueFormatted(Array.get(o, 0), session);
             }
             List<String> all = new ArrayList<>(len);
             for (int i = 0; i < len; i++) {
-                all.add(stringValueFormatted(Array.get(o, i), ws, session));
+                all.add(stringValueFormatted(Array.get(o, i), session));
             }
             return "\\[" + CoreStringUtils.join(", ", all) + "\\]";
         }
         if (o instanceof Iterable) {
             Iterable x = (Iterable) o;
-            return stringValueFormatted(x.iterator(), ws, session);
+            return stringValueFormatted(x.iterator(), session);
         }
         if (o instanceof Iterator) {
             Iterator x = (Iterator) o;
             List<String> all = new ArrayList<>();
             while (x.hasNext()) {
-                all.add(stringValueFormatted(x.next(), ws, session));
+                all.add(stringValueFormatted(x.next(), session));
             }
-            return stringValueFormatted(all, ws, session);
+            return stringValueFormatted(all, session);
         }
         return o.toString();
     }

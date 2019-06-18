@@ -158,10 +158,7 @@ public class DefaultNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase
         for (String repository : getRepositrories()) {
             NutsRepository repo = ws.config().getRepository(repository, true);
             repo.updateStatistics()
-                    .session(
-                            NutsWorkspaceHelper.createRepositorySession(
-                                    getWorkspace(),
-                                    getValidSession(), repo, NutsFetchMode.LOCAL, null)
+                    .session(NutsWorkspaceHelper.createRepositorySession(                                    getValidSession(), repo, NutsFetchMode.LOCAL, null)
                     )
                     .run();
         }

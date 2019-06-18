@@ -787,10 +787,10 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static NutsIterableOutput getValidOutputFormat(NutsWorkspace ws, NutsSession session) {
+    public static NutsIterableOutput getValidOutputFormat(NutsSession session) {
         NutsIterableOutput f = session.getIterableOutput();
         if (f == null) {
-            return ws.format().iter().session(session);
+            return session.getWorkspace().format().iter().session(session);
         }
         return f;
     }

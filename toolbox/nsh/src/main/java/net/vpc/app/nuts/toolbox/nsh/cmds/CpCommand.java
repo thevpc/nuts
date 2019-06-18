@@ -106,7 +106,7 @@ public class CpCommand extends SimpleNshBuiltin {
             throw new NutsExecutionException(context.getWorkspace(), "Missing parameters", 2);
         }
 
-        options.sshlistener = new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession());
+        options.sshlistener = new ShellHelper.WsSshListener(context.getSession());
         for (int i = 0; i < options.xfiles.size() - 1; i++) {
             copy(options.xfiles.get(i), options.xfiles.get(options.xfiles.size() - 1), options, context.getExecutionContext());
         }

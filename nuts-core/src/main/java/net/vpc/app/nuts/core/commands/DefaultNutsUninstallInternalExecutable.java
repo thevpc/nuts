@@ -15,8 +15,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsUninstallInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsUninstallInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("uninstall", args, ws, session);
+    public DefaultNutsUninstallInternalExecutable(String[] args, NutsSession session) {
+        super("uninstall", args, session);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class DefaultNutsUninstallInternalExecutable extends DefaultInternalNutsE
             showDefaultHelp();
             return;
         }
-        ws.uninstall().session(getSession(true).trace()).configure(false, args).run();
+        getSession().getWorkspace().uninstall().session(getSession().trace()).configure(false, args).run();
     }
 
 }

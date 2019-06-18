@@ -58,14 +58,14 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     }
 
     @Override
-    public boolean accept(NutsId other, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId other, NutsSession session) {
         if (!g.matcher(other.getGroup()).matches()) {
             return false;
         }
         if (!n.matcher(other.getName()).matches()) {
             return false;
         }
-        if (!v.accept(other.getVersion(), ws, session)) {
+        if (!v.accept(other.getVersion(), session)) {
             return false;
         }
         Map<String, String> oqm = null;

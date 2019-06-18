@@ -293,7 +293,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getValidSession();
         NutsSession searchSession = session.copy().trace(false);
-        PrintStream out = CoreIOUtils.resolveOut(ws, session);
+        PrintStream out = CoreIOUtils.resolveOut(session);
         ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "install");
         if (this.isIncludeCompanions()) {
             emptyCommand = false;

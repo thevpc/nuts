@@ -36,9 +36,9 @@ package net.vpc.app.nuts;
  */
 public interface NutsSearchId {
 
-    NutsVersion getVersion(NutsWorkspace ws);
+    NutsVersion getVersion(NutsSession session);
 
-    NutsId getId(NutsWorkspace ws);
+    NutsId getId(NutsSession session);
 
-    NutsDescriptor getDescriptor(NutsWorkspace ws);
+    NutsDescriptor getDescriptor(NutsSession session);
 }

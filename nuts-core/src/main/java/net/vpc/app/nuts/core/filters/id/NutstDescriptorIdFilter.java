@@ -28,24 +28,24 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
     }
 
     @Override
-    public boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
-        return filter == null ? true : filter.acceptSearchId(sid, ws, session);
+    public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
+        return filter == null ? true : filter.acceptSearchId(sid, session);
     }
 
     @Override
-    public boolean accept(NutsId id, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId id, NutsSession session) {
         if (filter == null) {
             return true;
         }
         NutsDescriptor descriptor = null;
         try {
 //                descriptor = repository.fetchDescriptor().setId(id).session(session).run().getResult();
-            descriptor = ws.fetch().id(id).session(session).getResultDescriptor();
+            descriptor = session.getWorkspace().fetch().id(id).session(session).getResultDescriptor();
             if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
                     //NutsWorkspace ws = repository.getWorkspace();
-                    nutsDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(descriptor, session);
+                    nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
                 } catch (Exception e) {
                     //throw new NutsException(e);
                 }
@@ -58,7 +58,7 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
             }
             return false;
         }
-        if (!filter.accept(descriptor, ws, session)) {
+        if (!filter.accept(descriptor, session)) {
             return false;
         }
         return true;

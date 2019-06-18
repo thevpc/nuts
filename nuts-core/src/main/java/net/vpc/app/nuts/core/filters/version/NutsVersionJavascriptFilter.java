@@ -37,9 +37,6 @@ import net.vpc.app.nuts.core.util.common.JavascriptHelper;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import java.util.Set;
-import java.util.WeakHashMap;
-import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 1/7/17.
@@ -49,7 +46,7 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     private String code;
     private JavascriptHelper engineHelper;
 
-    public static NutsVersionJavascriptFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsVersionJavascriptFilter valueOf(String value, NutsSession session) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
@@ -67,8 +64,8 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsVersion d, NutsWorkspace ws, NutsSession session) {
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, ws, session);
+    public boolean accept(NutsVersion d, NutsSession session) {
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, session);
         return engineHelper.accept(d);
     }
 

@@ -386,7 +386,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         if (Files.exists(descFile)) {
                             descriptor2 = ws.format().descriptor().parse(descFile);
                         } else {
-                            descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
+                            descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(
                                     CoreIOUtils.createInputSource(contentFile).multi(),
                                     fetchOptions, getValidSession());
                         }
@@ -413,7 +413,8 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         }
                     } else {
                         if (descriptor == null) {
-                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, getValidSession());
+                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(
+                                    CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, getValidSession());
                         }
                     }
                     if (descriptor == null) {
@@ -436,7 +437,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
                         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                             repo.deploy()
@@ -456,7 +457,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                         if (!repo.config().isEnabled()) {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
-                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                         effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                         repo.deploy()
                                 .setOffline(this.isOffline())
@@ -721,7 +722,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                     if (Files.exists(ext)) {
                         c.descriptor = ws.format().descriptor().parse(ext);
                     } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
                     }
                 }
                 if (c.descriptor != null) {
@@ -740,7 +741,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                     if (ext.exists()) {
                         c.descriptor = ws.format().descriptor().parse(ext);
                     } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
+                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
                     }
                 }
             } else {

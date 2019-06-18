@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -15,8 +14,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsUndeployInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsUndeployInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("undeploy", args, ws, session);
+    public DefaultNutsUndeployInternalExecutable(String[] args, NutsSession session) {
+        super("undeploy", args, session);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class DefaultNutsUndeployInternalExecutable extends DefaultInternalNutsEx
             showDefaultHelp();
             return;
         }
-        ws.undeploy().session(getSession(true).trace()).configure(false, args).run();
+        getSession().getWorkspace().undeploy().session(getSession().trace()).configure(false, args).run();
     }
 
 }

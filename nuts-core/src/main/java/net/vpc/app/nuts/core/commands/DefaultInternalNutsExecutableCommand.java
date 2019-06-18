@@ -8,7 +8,6 @@ package net.vpc.app.nuts.core.commands;
 import net.vpc.app.nuts.NutsExecutableType;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
@@ -17,26 +16,15 @@ import net.vpc.app.nuts.NutsWorkspace;
 public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsExecutableCommand {
 
     protected String[] args;
-    protected NutsWorkspace ws;
     private NutsSession session;
 
-    public DefaultInternalNutsExecutableCommand(String name, String[] args, NutsWorkspace ws, NutsSession session) {
+    public DefaultInternalNutsExecutableCommand(String name, String[] args, NutsSession session) {
         super(name, name, NutsExecutableType.INTERNAL);
         this.args = args;
-        this.ws = ws;
         this.session = session;
     }
 
     public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsSession getSession(boolean autoCreate) {
-        if (session == null) {
-            if (autoCreate) {
-                session = ws.createSession();
-            }
-        }
         return session;
     }
 
@@ -51,7 +39,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String getHelpText() {
-        return ws.io().getResourceString("/net/vpc/app/nuts/command/" + name + ".help", getClass(), name + ": no help found");
+        return getSession().getWorkspace().io().getResourceString("/net/vpc/app/nuts/command/" + name + ".help", getClass(), name + ": no help found");
     }
 
 }

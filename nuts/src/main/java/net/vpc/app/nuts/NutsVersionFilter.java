@@ -30,16 +30,51 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/8/17.
+ * version interval is a version filter that accepts interval ranges of versions.
+ * 
+ * version intervals can be in one of the following forms
+ * <pre>
+ * [ version, ]
+ * ] version, ] or ( version, ]
+ * [ version, [ or [ version, )
+ * ] version, [ or ] version, [
  *
+ * [ ,version ]
+ * ] ,version ] or ( ,version ]
+ * [ ,version [ or [ ,version )
+ * ] ,version [ or ] ,version [
+ *
+ * [ version1 , version2 ]
+ * ] version1 , version2 ] or ( version1 , version2 ]
+ * [ version1 , version2 [ or [ version1 , version2 )
+ * ] version1 , version2 [ or ] version1 , version2 [
+ *
+ * comma or space separated intervals such as :
+ *   [ version1 , version2 ], [ version1 , version2 ]
+ *   [ version1 , version2 ]  [ version1 , version2 ]
+ * </pre>
+ *
+ * Created by vpc on 1/8/17.
  * @since 0.5.4
  */
 public interface NutsVersionFilter extends NutsSearchIdFilter {
 
-    boolean accept(NutsVersion version, NutsWorkspace ws, NutsSession session);
+    /**
+     * true if the version is accepted by this instance filter
+     * @param version version to check
+     * @param session current session instance
+     * @return true if the version is accepted by this instance interval
+     */
+    boolean accept(NutsVersion version, NutsSession session);
 
+    /**
+     * true if the version is accepted by this instance filter
+     * @param sid search id
+     * @param session current session instance
+     * @return 
+     */
     @Override
-    default boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
-        return accept(sid.getVersion(ws), ws, session);
+    default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
+        return accept(sid.getVersion(session), session);
     }
 }

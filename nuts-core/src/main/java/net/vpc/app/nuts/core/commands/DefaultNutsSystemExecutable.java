@@ -24,18 +24,16 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     private boolean showCommand = false;
     private boolean failFast = true;
     NutsExecCommand execCommand;
-    NutsWorkspace ws;
 
-    public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
+    public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsSession session, NutsExecCommand execCommand) {
         super(cmd[0],
-                ws.commandLine().setArgs(cmd).toString(),
+                session.getWorkspace().commandLine().setArgs(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
-        this.ws = ws;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
-        NutsCommandLine cmdLine = ws.commandLine().setArgs(this.executorOptions);
+        NutsCommandLine cmdLine = session.getWorkspace().commandLine().setArgs(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getStringKey()) {
@@ -66,7 +64,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        CoreIOUtils.execAndWait(ws, execCommand.getCommand(), e2, ws.io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, failFast);
+        CoreIOUtils.execAndWait(session.getWorkspace(), execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, failFast);
     }
 
     @Override
@@ -83,7 +81,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "SYSEXEC " + ws.commandLine().setArgs(cmd).toString();
+        return "SYSEXEC " + session.workspace().commandLine().setArgs(cmd).toString();
     }
 
 }

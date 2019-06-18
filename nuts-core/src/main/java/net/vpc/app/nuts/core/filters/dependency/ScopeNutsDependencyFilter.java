@@ -21,7 +21,7 @@ public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifi
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         String scope = dependency.getScope();
         if (scope == null) {
             scope = "";

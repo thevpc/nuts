@@ -36,11 +36,11 @@ package net.vpc.app.nuts;
  */
 public interface NutsIdFilter extends NutsSearchIdFilter {
 
-    boolean accept(NutsId id, NutsWorkspace ws, NutsSession session);
+    boolean accept(NutsId id, NutsSession session);
 
     @Override
-    default boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
-        return accept(sid.getId(ws), ws, session);
+    default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
+        return accept(sid.getId(session), session);
     }
 
 }

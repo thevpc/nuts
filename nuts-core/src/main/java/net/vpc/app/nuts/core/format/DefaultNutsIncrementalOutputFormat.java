@@ -59,22 +59,22 @@ public class DefaultNutsIncrementalOutputFormat extends NutsIncrementalOutputFor
         if (old == null || old.getOutputFormat() != outputFormat) {
             switch (outputFormat) {
                 case JSON: {
-                    return prepare(new DefaultSearchFormatJson(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatJson(getValidSession(), getValidOut()));
                 }
                 case XML: {
-                    return prepare(new DefaultSearchFormatXml(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatXml(getValidSession(), getValidOut()));
                 }
                 case PLAIN: {
-                    return prepare(new DefaultSearchFormatPlain(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatPlain(getValidSession(), getValidOut()));
                 }
                 case PROPS: {
-                    return prepare(new DefaultSearchFormatProps(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatProps(getValidSession(), getValidOut()));
                 }
                 case TABLE: {
-                    return prepare(new DefaultSearchFormatTable(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatTable(getValidSession(), getValidOut()));
                 }
                 case TREE: {
-                    return prepare(new DefaultSearchFormatTree(getWorkspace(), getValidSession(), getValidOut()));
+                    return prepare(new DefaultSearchFormatTree(getValidSession(), getValidOut()));
                 }
                 default: {
                     throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupproted " + outputFormat);

@@ -32,8 +32,8 @@ package net.vpc.app.nuts.core.filters;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSearchId;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
@@ -41,25 +41,25 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class NutsSearchIdById implements NutsSearchId {
 
-    private NutsId id;
+    private final NutsId id;
 
     public NutsSearchIdById(NutsId id) {
         this.id = id;
     }
 
     @Override
-    public NutsVersion getVersion(NutsWorkspace ws) {
+    public NutsVersion getVersion(NutsSession session) {
         return id.getVersion();
     }
 
     @Override
-    public NutsId getId(NutsWorkspace ws) {
+    public NutsId getId(NutsSession session) {
         return id;
     }
 
     @Override
-    public NutsDescriptor getDescriptor(NutsWorkspace ws) {
-        return ws.fetch().id(id).getResultDescriptor();
+    public NutsDescriptor getDescriptor(NutsSession session) {
+        return session.getWorkspace().fetch().id(id).getResultDescriptor();
     }
 
 }

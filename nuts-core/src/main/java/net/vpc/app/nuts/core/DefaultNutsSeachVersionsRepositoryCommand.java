@@ -79,7 +79,7 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
                     LOG.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
                 if (d != null && !d.isEmpty() && filter != null) {
-                    result = IteratorBuilder.of(d.iterator()).filter(x -> filter.accept(x, getRepo().getWorkspace(), getSession().getSession())).iterator();
+                    result = IteratorBuilder.of(d.iterator()).filter(x -> filter.accept(x, getSession().getSession())).iterator();
                     return this;
                 }
             }

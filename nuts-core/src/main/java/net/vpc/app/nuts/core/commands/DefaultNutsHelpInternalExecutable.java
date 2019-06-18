@@ -22,8 +22,8 @@ import net.vpc.app.nuts.NutsCommandLine;
  */
 public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsHelpInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("help", args, ws, session);
+    public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
+        super("help", args, session);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommandLine cmdLine = ws.commandLine().setArgs(args);
+        NutsCommandLine cmdLine = getSession().getWorkspace().commandLine().setArgs(args);
         NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
         while (cmdLine.hasNext()) {
             NutsOutputFormat of = CoreNutsUtils.readOptionOutputFormat(cmdLine);
@@ -44,7 +44,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 if (a.isOption()) {
                     switch (a.getStringKey()) {
                         default: {
-                            throw new NutsIllegalArgumentException(ws, "Unsupported option " + a);
+                            throw new NutsIllegalArgumentException(getSession().getWorkspace(), "Unsupported option " + a);
                         }
                     }
                 } else {
@@ -57,9 +57,9 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         }
         switch (outputFormat) {
             case PLAIN: {
-                PrintStream fout = getSession(true).getTerminal().fout();
+                PrintStream fout = getSession().getTerminal().fout();
                 if (helpFor.isEmpty()) {
-                    fout.println(NutsWorkspaceExt.of(ws).getHelpText());
+                    fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText());
                     fout.flush();
                 }
                 for (String arg : helpFor) {
@@ -70,7 +70,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         fout.flush();
                     } else {
                         try {
-                            w = ws.exec().command(arg).which();
+                            w = getSession().getWorkspace().exec().command(arg).which();
                         } catch (Exception ex) {
                             //ignore
                         }
@@ -80,14 +80,14 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {
-                            getSession(true).getTerminal().ferr().println(arg + " : Not found");
+                            getSession().getTerminal().ferr().println(arg + " : Not found");
                         }
                     }
                 }
                 break;
             }
             default: {
-                throw new NutsUnsupportedOperationException(ws, "Unsupported format " + outputFormat);
+                throw new NutsUnsupportedOperationException(getSession().getWorkspace(), "Unsupported format " + outputFormat);
             }
         }
 

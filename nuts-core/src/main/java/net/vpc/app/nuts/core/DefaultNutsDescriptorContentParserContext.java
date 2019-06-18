@@ -46,7 +46,6 @@ import net.vpc.app.nuts.core.util.io.InputSource;
  */
 public class DefaultNutsDescriptorContentParserContext implements NutsDescriptorContentParserContext {
 
-    private final NutsWorkspace workspace;
     private final NutsSession session;
     private final InputSource file;
     private final String fileExtension;
@@ -55,9 +54,8 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private byte[] bytes;
     private final NutsFetchCommand options;
 
-    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputSource file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
         this.file = file.multi();
-        this.workspace = workspace;
         this.session = session;
         this.fileExtension = fileExtension;
         this.fileType = fileType;
@@ -65,10 +63,12 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
         this.options = options;
     }
 
+    @Override
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return getSession().getWorkspace();
     }
 
+    @Override
     public NutsSession getSession() {
         return session;
     }

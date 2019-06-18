@@ -67,7 +67,6 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
-import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -90,7 +89,8 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static int execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
+        NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
         Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
@@ -211,7 +211,7 @@ public class CoreIOUtils {
                     System.getProperty("java.version")
             );
             NutsVersionFilter requestedJavaVersionFilter = workspace.format().version().parseVersionFilter(requestedJavaVersion);
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace, workspace.createSession())) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace.createSession())) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -614,18 +614,17 @@ public class CoreIOUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static PrintStream resolveOut(NutsWorkspace ws, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
-        return (session == null || session.getTerminal() == null) ? ws.io().nullPrintStream() : session.getTerminal().out();
+    public static PrintStream resolveOut(NutsSession session) {
+        return (session == null || session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
     }
 
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
+        NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(ws, session, localPath, fileExtension, null, null, queryOptions);
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, null, queryOptions);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {
@@ -672,6 +671,7 @@ public class CoreIOUtils {
      *
      * @param in entree
      * @param out sortie
+     * @param bufferSize
      * @throws IOException when IO error
      */
     public static void copy(InputStream in, OutputStream out, int bufferSize) throws IOException {

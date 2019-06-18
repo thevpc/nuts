@@ -40,27 +40,17 @@ import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
  */
 public class NutsWorkspaceHelper {
 
-//    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
-//        if (CoreStringUtils.isEmpty(workspace)) {
-//            File file = CoreIOUtils.expandPath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
-//            workspace = file == null ? null : file.getPath();
-//        } else {
-//            File file = CoreIOUtils.expandPath(workspace, null, workspaceRoot);
-//            workspace = file == null ? null : file.getPath();
-//        }
-//        return workspace;
-//    }
-    public static NutsRepositorySession createNoRepositorySession(NutsWorkspace ws, NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
-        return new DefaultNutsRepositorySession(ws, session)
+    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
+        return new DefaultNutsRepositorySession(session)
                 .setTransitive(options.isTransitive())
                 .setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
-    public static NutsRepositorySession createRepositorySession(NutsWorkspace ws, NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
+    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
         if (options == null) {
             options = new DefaultNutsFetchCommand(repo.getWorkspace()).setIndexed(true);
         }
-        return new DefaultNutsRepositorySession(ws, session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+        return new DefaultNutsRepositorySession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
     public static NutsFetchMode[] resolveFetchModes(boolean offline) {

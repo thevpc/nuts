@@ -24,12 +24,12 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
  */
 public class FilesFoldersApi {
 
-    public static String[] getFolders(String baseUrl, NutsWorkspace ws, NutsSession session) {
+    public static String[] getFolders(String baseUrl, NutsSession session) {
         InputStream foldersFileStream = null;
         String foldersFileUrl = baseUrl + "/.folders";
         String[] foldersFileContent = null;
         try {
-            foldersFileStream = ws.io().monitor().source(foldersFileUrl).session(session).create();
+            foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
             foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
         } catch (UncheckedIOException ex) {
             //
@@ -37,12 +37,12 @@ public class FilesFoldersApi {
         return foldersFileContent;
     }
 
-    public static String[] getFiles(String baseUrl, NutsWorkspace ws, NutsSession session) {
+    public static String[] getFiles(String baseUrl, NutsSession session) {
         InputStream foldersFileStream = null;
         String foldersFileUrl = baseUrl + "/.files";
         String[] foldersFileContent = null;
         try {
-            foldersFileStream = ws.io().monitor().source(foldersFileUrl).session(session).create();
+            foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
             foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
         } catch (UncheckedIOException ex) {
             //

@@ -19,7 +19,6 @@ import net.vpc.app.nuts.NutsTreeNodeFormat;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
@@ -30,8 +29,8 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 
     private Object lastObject;
 
-    public DefaultSearchFormatTree(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
-        super(ws, session, writer, NutsOutputFormat.TREE);
+    public DefaultSearchFormatTree(NutsSession session, PrintWriter writer) {
+        super(session, writer, NutsOutputFormat.TREE);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         tree.setNodeFormat(new NutsTreeNodeFormat() {
             @Override
             public String format(Object o, int depth) {
-                FormattableNutsId fid = FormattableNutsId.of(o, getWorkspace(), getSession());
+                FormattableNutsId fid = FormattableNutsId.of(o, getSession());
                 if (fid != null) {
                     return format(fid);
                 } else {

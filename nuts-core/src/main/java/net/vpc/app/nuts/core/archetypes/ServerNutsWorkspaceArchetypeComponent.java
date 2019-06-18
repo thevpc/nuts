@@ -47,8 +47,8 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     }
 
     @Override
-    public void initialize(NutsWorkspace workspace, NutsSession session) {
-        workspace.config().addRepository(
+    public void initialize(NutsSession session) {
+        session.getWorkspace().config().addRepository(
                 new NutsCreateRepositoryOptions()
                         .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                         .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
@@ -62,14 +62,14 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         );
 
         //has read rights
-        workspace.security().addUser("guest").credentials("user".toCharArray()).rights(
+        session.getWorkspace().security().addUser("guest").credentials("user".toCharArray()).rights(
                 NutsConstants.Rights.FETCH_DESC,
                 NutsConstants.Rights.FETCH_CONTENT,
                 NutsConstants.Rights.DEPLOY
         ).run();
 
         //has write rights
-        workspace.security().addUser("contributor").credentials("user".toCharArray()).rights(
+        session.getWorkspace().security().addUser("contributor").credentials("user".toCharArray()).rights(
                 NutsConstants.Rights.FETCH_DESC,
                 NutsConstants.Rights.FETCH_CONTENT,
                 NutsConstants.Rights.DEPLOY,

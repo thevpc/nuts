@@ -39,5 +39,5 @@ public interface NutsWorkspaceArchetypeComponent extends NutsComponent<Object> {
 
     String getName();
 
-    void initialize(NutsWorkspace workspace, NutsSession session);
+    void initialize(NutsSession session);
 }

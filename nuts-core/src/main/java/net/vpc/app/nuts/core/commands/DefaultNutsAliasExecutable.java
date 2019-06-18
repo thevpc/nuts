@@ -23,9 +23,9 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
     NutsSession session;
     String[] args;
 
-    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsWorkspace workspace, NutsSession session, String[] args) {
+    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsSession session, String[] args) {
         super(command.getName(),
-                workspace.commandLine().setArgs(command.getCommand()).toString(),
+                session.workspace().commandLine().setArgs(command.getCommand()).toString(),
                 NutsExecutableType.ALIAS);
         this.command = command;
         this.o = o;

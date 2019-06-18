@@ -44,17 +44,41 @@ import net.vpc.app.nuts.core.DefaultNutsVersionInterval;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
- * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
+ * Examples [2.6,], ]2.6,] .
+ * Created by vpc on 1/20/17.
  */
 public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
+    /**
+     * version intervals can be in one of the following forms
+     * <pre>
+     * [ version, ]
+     * ] version, ] or ( version, ]
+     * [ version, [ or [ version, )
+     * ] version, [ or ] version, [
+     * 
+     * [ ,version ]
+     * ] ,version ] or ( ,version ]
+     * [ ,version [ or [ ,version )
+     * ] ,version [ or ] ,version [
+     * 
+     * [ version1 , version2 ]
+     * ] version1 , version2 ] or ( version1 , version2 ]
+     * [ version1 , version2 [ or [ version1 , version2 )
+     * ] version1 , version2 [ or ] version1 , version2 [
+     * 
+     * comma or space separated intervals such as :
+     *   [ version1 , version2 ], [ version1 , version2 ]
+     *   [ version1 , version2 ]  [ version1 , version2 ]
+     * </pre>
+     */
+    public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]\\(])(?<LV1>[^\\[\\]\\(\\),]*),(?<RV1>[^\\[\\]\\(\\),]*)(?<R1>[\\[\\]\\)]))|(?<VAL2>(?<L2>[\\[\\]\\(])(?<V2>[^\\[\\]\\(\\),]*)(?<R2>[\\[\\]\\)]))|(?<VAL3>(?<V3>[^\\[\\\\(\\)], ]+)))(\\s|,|\n)*)");
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
     @Override
-    public boolean accept(NutsVersion version, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsVersion version, NutsSession session) {
         if (intervals.isEmpty()) {
             return true;
         }

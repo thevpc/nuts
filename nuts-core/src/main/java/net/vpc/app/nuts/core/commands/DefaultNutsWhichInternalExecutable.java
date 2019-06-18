@@ -21,8 +21,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 
     private final NutsExecCommand execCommand;
 
-    public DefaultNutsWhichInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
-        super("which", args, ws, session);
+    public DefaultNutsWhichInternalExecutable(String[] args, NutsSession session, NutsExecCommand execCommand) {
+        super("which", args, session);
         this.execCommand = execCommand;
     }
 
@@ -33,6 +33,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             return;
         }
         List<String> commands = new ArrayList<String>();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsCommandLine commandLine = ws.commandLine().setArgs(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
@@ -58,9 +59,9 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             throw new NutsIllegalArgumentException(ws, "which: missing commands");
         }
         for (String arg : this.args) {
-            PrintStream out = getSession(true).getTerminal().fout();
+            PrintStream out = getSession().getTerminal().fout();
             try {
-                NutsExecutableInfo p = execCommand.copy().session(getSession(true)).clearCommand().configure(false, arg).which();
+                NutsExecutableInfo p = execCommand.copy().session(getSession()).clearCommand().configure(false, arg).which();
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {

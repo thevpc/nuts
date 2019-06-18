@@ -112,14 +112,14 @@ public class CoreFilterUtils {
         return createNutsDescriptorFilter(faceMap == null ? null : faceMap.get("arch"), faceMap == null ? null : faceMap.get("os"), faceMap == null ? null : faceMap.get("osdist"), faceMap == null ? null : faceMap.get("platform"));
     }
 
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsWorkspace ws, NutsSession session) {
+    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
         if (t == null) {
             return null;
         }
         return new Predicate<NutsId>() {
             @Override
             public boolean test(NutsId value) {
-                return t.accept(value, ws, session);
+                return t.accept(value, session);
             }
         };
     }
@@ -166,7 +166,7 @@ public class CoreFilterUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+    public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsSession session) {
         if (CoreStringUtils.isBlank(packaging)) {
             return true;
         }
@@ -179,14 +179,14 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsSimpleName(_v2)) {
-            if (_v.getVersion().toFilter().accept(_v2.getVersion(), ws, session)) {
+            if (_v.getVersion().toFilter().accept(_v2.getVersion(), session)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean matchesArch(String arch, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+    public static boolean matchesArch(String arch, NutsDescriptor desc, NutsSession session) {
         if (CoreStringUtils.isBlank(arch)) {
             return true;
         }
@@ -199,7 +199,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), ws, session)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -210,7 +210,7 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+    public static boolean matchesOs(String os, NutsDescriptor desc, NutsSession session) {
         if (CoreStringUtils.isBlank(os)) {
             return true;
         }
@@ -223,7 +223,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), ws, session)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -234,7 +234,7 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsdist(String osdist, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+    public static boolean matchesOsdist(String osdist, NutsDescriptor desc, NutsSession session) {
         if (CoreStringUtils.isBlank(osdist)) {
             return true;
         }
@@ -247,7 +247,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), ws, session)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -259,7 +259,7 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(String platform, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
+    public static boolean matchesPlatform(String platform, NutsDescriptor desc, NutsSession session) {
         if (CoreStringUtils.isBlank(platform)) {
             return true;
         }
@@ -276,7 +276,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), ws, session)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -287,29 +287,29 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesEnv(String arch, String os, String dist, String platform, NutsDescriptor desc, NutsWorkspace ws, NutsSession session) {
-        if (!matchesArch(arch, desc, ws, session)) {
+    public static boolean matchesEnv(String arch, String os, String dist, String platform, NutsDescriptor desc, NutsSession session) {
+        if (!matchesArch(arch, desc, session)) {
             return false;
         }
-        if (!matchesOs(os, desc, ws, session)) {
+        if (!matchesOs(os, desc, session)) {
             return false;
         }
-        if (!matchesOsdist(dist, desc, ws, session)) {
+        if (!matchesOsdist(dist, desc, session)) {
             return false;
         }
-        if (!matchesPlatform(platform, desc, ws, session)) {
+        if (!matchesPlatform(platform, desc, session)) {
             return false;
         }
         return true;
     }
 
-    public static NutsDependency[] filterDependencies(NutsId from, NutsDependency[] d0, NutsDependencyFilter dependencyFilter, NutsWorkspace ws, NutsSession session) {
+    public static NutsDependency[] filterDependencies(NutsId from, NutsDependency[] d0, NutsDependencyFilter dependencyFilter, NutsSession session) {
         if (dependencyFilter == null) {
             return d0;
         }
         List<NutsDependency> r = new ArrayList<>(d0.length);
         for (NutsDependency nutsDependency : d0) {
-            if (dependencyFilter.accept(from, nutsDependency, ws, session)) {
+            if (dependencyFilter.accept(from, nutsDependency, session)) {
                 r.add(nutsDependency);
             }
         }

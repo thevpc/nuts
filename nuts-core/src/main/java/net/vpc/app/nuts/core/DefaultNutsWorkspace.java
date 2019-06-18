@@ -590,7 +590,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         //no right nor group is needed for admin user
         security().updateUser(NutsConstants.Users.ADMIN).setCredentials("admin".toCharArray()).run();
 
-        instance.initialize(this, session);
+        instance.initialize(session);
 
 //        //isn't it too late for adding extensions?
 //        try {
@@ -636,7 +636,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
      */
     @Override
     public String[] getInstalledVersions(NutsId id, NutsSession session) {
-        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(this, session,
+        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session,
                 null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(this));
         return Arrays.stream(getInstalledRepository().findInstalledVersions(id, rsession))
                 .map(x -> x.getVersion().getValue())

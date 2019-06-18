@@ -144,6 +144,6 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     }
 
     private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, ws, getValidSession());
+        return CoreCommonUtils.stringValueFormatted(any, getValidSession());
     }
 }

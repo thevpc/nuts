@@ -185,7 +185,7 @@ public class NutsRepositoryFolderHelper {
                 String arch = query.get("arch");
                 String dist = query.get("dist");
                 String platform = query.get("platform");
-                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, d, ws, session)) {
+                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, d, session)) {
                     return d;
                 }
             }

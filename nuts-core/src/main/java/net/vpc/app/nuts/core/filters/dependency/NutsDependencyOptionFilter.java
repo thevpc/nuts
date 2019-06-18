@@ -19,7 +19,7 @@ public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplif
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         if (optional == null) {
             return false;
         }

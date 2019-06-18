@@ -94,7 +94,7 @@ public class SshCommand extends AbstractNshBuiltin {
             throw new NutsExecutionException(context.getWorkspace(), "Missing ssh command. Interactive ssh is not yet supported!", 2);
         }
         final NutsWorkspace ws = context.getWorkspace();
-        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(ws, context.getSession());
+        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
         try (SShConnection sshSession = new SShConnection(o.address)
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();

@@ -539,7 +539,6 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         switch (executionType) {
             case SYSCALL: {
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
-                        ws,
                         getValidSession().copy().setTerminal(terminal),
                         this
                 );
@@ -702,56 +701,56 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         //resolve internal commands!
         switch (cmdName) {
             case "update": {
-                return new DefaultNutsUpdateInternalExecutable(args, ws, session);
+                return new DefaultNutsUpdateInternalExecutable(args, session);
             }
             case "check-updates": {
-                return new DefaultNutsCheckUpdatesInternalExecutable(args, ws, session);
+                return new DefaultNutsCheckUpdatesInternalExecutable(args, session);
             }
             case "install": {
-                return new DefaultNutsInstallInternalExecutable(args, ws, session);
+                return new DefaultNutsInstallInternalExecutable(args, session);
             }
             case "uninstall": {
-                return new DefaultNutsUninstallInternalExecutable(args, ws, session);
+                return new DefaultNutsUninstallInternalExecutable(args, session);
             }
             case "deploy": {
-                return new DefaultNutsDeployInternalExecutable(args, ws, session);
+                return new DefaultNutsDeployInternalExecutable(args, session);
             }
             case "undeploy": {
-                return new DefaultNutsUndeployInternalExecutable(args, ws, session);
+                return new DefaultNutsUndeployInternalExecutable(args, session);
             }
             case "push": {
-                return new DefaultNutsPushInternalExecutable(args, ws, session);
+                return new DefaultNutsPushInternalExecutable(args, session);
             }
             case "fetch": {
-                return new DefaultNutsFetchInternalExecutable(args, ws, session);
+                return new DefaultNutsFetchInternalExecutable(args, session);
             }
             case "search": {
-                return new DefaultNutsSearchInternalExecutable(args, ws, session);
+                return new DefaultNutsSearchInternalExecutable(args, session);
             }
             case "version": {
-                return new DefaultNutsVersionInternalExecutable(args, ws, session, this);
+                return new DefaultNutsVersionInternalExecutable(args, session, this);
             }
             case "license": {
-                return new DefaultNutsLicenseInternalExecutable(args, ws, session);
+                return new DefaultNutsLicenseInternalExecutable(args, session);
             }
             case "help": {
-                return new DefaultNutsHelpInternalExecutable(args, ws, session);
+                return new DefaultNutsHelpInternalExecutable(args, session);
             }
             case "welcome": {
-                return new DefaultNutsWelcomeInternalExecutable(args, ws, session);
+                return new DefaultNutsWelcomeInternalExecutable(args, session);
             }
             case "info": {
-                return new DefaultNutsInfoInternalExecutable(args, ws, session);
+                return new DefaultNutsInfoInternalExecutable(args, session);
             }
             case "which": {
-                return new DefaultNutsWhichInternalExecutable(args, ws, session, this);
+                return new DefaultNutsWhichInternalExecutable(args, session, this);
             }
             case "exec": {
-                return new DefaultNutsExecInternalExecutable(args, ws, session, this);
+                return new DefaultNutsExecInternalExecutable(args, session, this);
             }
         }
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            return new DefaultNutsPathComponentExecutable(cmdName, args, executorOptions, executionType, ws, getValidSession(), this);
+            return new DefaultNutsPathComponentExecutable(cmdName, args, executorOptions, executionType, getValidSession(), this);
         } else if (cmdName.contains(":")) {
             return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session);
         } else {
@@ -760,7 +759,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             if (command != null) {
                 NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                         .setExecutionType(executionType).setEnv(env);
-                return new DefaultNutsAliasExecutable(command, o, ws, session, args);
+                return new DefaultNutsAliasExecutable(command, o, session, args);
             } else {
                 return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session);
             }
@@ -815,7 +814,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                 .failFast(false)
                 .scope(NutsDependencyScope.PROFILE_RUN)
                 .getResultDefinition();
-        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, ws, session, executionType, this);
+        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }
 
     public void ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType) {

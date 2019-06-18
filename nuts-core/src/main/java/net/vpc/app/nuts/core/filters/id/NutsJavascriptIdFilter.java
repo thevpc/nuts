@@ -38,7 +38,6 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -66,9 +65,9 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
     }
 
     @Override
-    public boolean accept(NutsId id, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId id, NutsSession session) {
         Set<String> blacklist = null;
-        JavascriptHelper engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null, ws, session);
+        JavascriptHelper engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null, session);
         return engineHelper.accept(id);
     }
 

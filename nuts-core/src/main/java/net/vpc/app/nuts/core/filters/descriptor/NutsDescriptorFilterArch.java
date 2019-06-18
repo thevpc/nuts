@@ -36,7 +36,6 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 
 /**
@@ -55,8 +54,8 @@ public class NutsDescriptorFilterArch implements NutsDescriptorFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesArch(arch, descriptor, ws, session);
+    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
+        return CoreFilterUtils.matchesArch(arch, descriptor, session);
     }
 
     /**

@@ -10,7 +10,6 @@ import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
@@ -22,8 +21,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private boolean compact;
     private String rootName = "root";
 
-    public DefaultSearchFormatXml(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
-        super(ws, session, writer, NutsOutputFormat.XML);
+    public DefaultSearchFormatXml(NutsSession session, PrintWriter writer) {
+        super(session, writer, NutsOutputFormat.XML);
     }
 
     public String getRootName() {

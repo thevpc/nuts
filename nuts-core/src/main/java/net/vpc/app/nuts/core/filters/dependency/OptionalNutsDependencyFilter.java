@@ -12,7 +12,7 @@ public class OptionalNutsDependencyFilter implements NutsDependencyFilter, Simpl
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         return optional == dependency.isOptional();
     }
 

@@ -252,7 +252,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 
     private String stringValue(Object o) {
         if (escapeText) {
-            return CoreCommonUtils.stringValueFormatted(o, ws, getValidSession());
+            return CoreCommonUtils.stringValueFormatted(o, getValidSession());
         } else {
             return String.valueOf(o);
         }

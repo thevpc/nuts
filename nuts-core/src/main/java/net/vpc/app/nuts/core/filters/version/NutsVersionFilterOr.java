@@ -31,12 +31,12 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
     }
 
     @Override
-    public boolean accept(NutsVersion id, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsVersion id, NutsSession session) {
         if (all.length == 0) {
             return true;
         }
         for (NutsVersionFilter filter : all) {
-            if (filter.accept(id, ws, session)) {
+            if (filter.accept(id, session)) {
                 return true;
             }
         }

@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core.commands;
 
 import java.io.PrintStream;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsExecCommand;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -17,11 +16,11 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    private final DefaultNutsExecCommand outer;
+    private final DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsVersionInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session, final DefaultNutsExecCommand outer) {
-        super("version", args, ws, session);
-        this.outer = outer;
+    public DefaultNutsVersionInternalExecutable(String[] args, NutsSession session, final DefaultNutsExecCommand execCommand) {
+        super("version", args, session);
+        this.execCommand = execCommand;
     }
 
     @Override
@@ -30,8 +29,8 @@ public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        PrintStream out = getSession(true).getTerminal().fout();
-        ws.format().version().configure(false, args).println(out);
+        PrintStream out = getSession().getTerminal().fout();
+        getSession().getWorkspace().format().version().configure(false, args).println(out);
     }
 
 }

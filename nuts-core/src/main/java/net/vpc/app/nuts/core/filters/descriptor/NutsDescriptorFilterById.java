@@ -49,9 +49,9 @@ public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
         if (id != null) {
-            return id.accept(descriptor.getId(), ws, session);
+            return id.accept(descriptor.getId(), session);
         }
         return true;
     }

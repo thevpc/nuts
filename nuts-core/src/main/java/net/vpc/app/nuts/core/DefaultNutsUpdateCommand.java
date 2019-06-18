@@ -502,7 +502,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
-                    if (!dd.getVersion().toFilter().accept(updated.getId().getVersion(), ws, session)) {
+                    if (!dd.getVersion().toFilter().accept(updated.getId().getVersion(), session)) {
                         throw new NutsIllegalArgumentException(ws, dd + " unsatisfied  : " + updated.getId().getVersion());
                     }
                 }
@@ -518,7 +518,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     protected void traceUpdates(NutsWorkspaceUpdateResult result) {
         if (getValidSession().isPlainTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
+            PrintStream out = CoreIOUtils.resolveOut(getValidSession());
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
                 out.printf("All components are [[up-to-date]]. You are running latest version.%n");
@@ -620,7 +620,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        final PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
+        final PrintStream out = CoreIOUtils.resolveOut(getValidSession());
         boolean accept = ws.io().getTerminal().ask()
                 .forBoolean("Would you like to apply updates").setDefaultValue(true)
                 .session(getValidSession()).getValue();
@@ -690,7 +690,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                                     .filter(new Predicate<NutsDependency>() {
                                         @Override
                                         public boolean test(NutsDependency x) {
-                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x, ws, getValidSession());
+                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x, getValidSession());
                                         }
                                     })
                                     .map(x -> x.getId().getLongName())
@@ -735,7 +735,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
-        final PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
+        final PrintStream out = CoreIOUtils.resolveOut(getValidSession());
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
@@ -865,7 +865,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             return;
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        final PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
+        final PrintStream out = CoreIOUtils.resolveOut(getValidSession());
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
@@ -904,7 +904,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         }
 
         @Override
-        public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
+        public boolean accept(NutsDescriptor descriptor, NutsSession session) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 if (dependency.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
                     if (dependency.getVersion().matches("]" + bootApiVersion + "]")) {

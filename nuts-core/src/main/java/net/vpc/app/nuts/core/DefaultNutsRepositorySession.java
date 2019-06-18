@@ -22,11 +22,9 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
     private boolean cached;
     private boolean indexed;
     private boolean transitive;
-    private NutsWorkspace ws;
 
-    public DefaultNutsRepositorySession(NutsWorkspace ws, NutsSession session) {
+    public DefaultNutsRepositorySession(NutsSession session) {
         this.session = session;
-        this.ws = ws;
     }
 
     @Override
@@ -90,7 +88,7 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
         try {
             t = (NutsRepositorySession) clone();
         } catch (CloneNotSupportedException ex) {
-            throw new NutsException(ws, "Unable to copy " + this);
+            throw new NutsException(getSession().getWorkspace(), "Unable to copy " + this);
         }
         return t;
     }

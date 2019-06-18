@@ -267,7 +267,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                                 null//getDependencyFilter()
                         ));
-                        NutsIdGraph graph = new NutsIdGraph(ws, _session, isFailFast());
+                        NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
                         List<NutsId> ids = Arrays.asList(id);
                         graph.push(ids, _dependencyFilter);
                         NutsId[] pp = graph.collect(ids, ids);
@@ -291,7 +291,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 NutsContent content = repo.fetchContent()
                                         .id(id1).descriptor(foundDefinition.getDescriptor())
                                         .localPath(copyTo)
-                                        .session(NutsWorkspaceHelper.createRepositorySession(getWorkspace(), options.getSession(), repo, mode, options))
+                                        .session(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options))
                                         .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
@@ -357,7 +357,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
             }
             if (getValidSession().isTrace()) {
-                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(ws, getValidSession())
+                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getValidSession())
                         .session(getValidSession());
                 ff.start();
                 ff.next(foundDefinition);
@@ -385,14 +385,14 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             visited.add(root.getId().getLongNameId());
             NutsDependency[] d = def.getDescriptor().getDependencies();
             for (NutsDependency nutsDependency : d) {
-                if (dependencyFilter == null || dependencyFilter.accept(null, nutsDependency, ws, session)) {
+                if (dependencyFilter == null || dependencyFilter.accept(null, nutsDependency, session)) {
                     NutsDefinition def2 = ws.search()
                             .id(nutsDependency.getId()).session(session.copy().trace(false).setProperty("monitor-allowed", false)).effective()
                             .content(shouldIncludeContent(this))
                             .latest().getResultDefinitions().first();
                     if (def2 != null) {
                         NutsDependency[] dependencies = CoreFilterUtils.filterDependencies(def2.getDescriptor().getId(), def2.getDescriptor().getDependencies(),
-                                dependencyFilter, ws, session);
+                                dependencyFilter, session);
                         for (NutsDependency dd : dependencies) {
                             if (dd.getVersion().equals(nutsDependency.getVersion())) {
                                 dd = dd.setId(dd.getId().setQueryProperty("resolved-version", dd.getVersion().getValue()));
@@ -465,7 +465,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
             }
             NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getWorkspace(), getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
             List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, CoreFilterUtils.idFilterOf(versionFilter), rsession))
                     .convert(x -> x.getVersion()).list();
             if (all.size() > 0) {
@@ -478,7 +478,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         }
         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, options)) {
             try {
-                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(getWorkspace(), options.getSession(), repo, mode,
+                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
                         options
                 )).run().getResult();
                 if (descriptor != null) {

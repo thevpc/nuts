@@ -44,17 +44,15 @@ import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
 
     private final NutsFetchDisplayOptions displayOptions;
-    private final NutsWorkspace ws;
     private final NutsSession session;
     private final PrintWriter writer;
     private final NutsOutputFormat format;
 
-    public DefaultSearchFormatBase(NutsWorkspace ws, NutsSession session, PrintWriter writer, NutsOutputFormat format) {
-        this.ws = ws;
+    public DefaultSearchFormatBase(NutsSession session, PrintWriter writer, NutsOutputFormat format) {
         this.format = format;
         this.writer = writer;
         this.session = session;
-        displayOptions = new NutsFetchDisplayOptions(ws);
+        displayOptions = new NutsFetchDisplayOptions(session.getWorkspace());
     }
 
     @Override
@@ -68,16 +66,16 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
 
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, commandLine);
     }
 
     @Override
     public NutsIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "search-" + getOutputFormat().name().toLowerCase());
+        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, args, "search-" + getOutputFormat().name().toLowerCase());
     }
 
     public NutsWorkspace getWorkspace() {
-        return ws;
+        return session.getWorkspace();
     }
 
     public NutsSession getSession() {

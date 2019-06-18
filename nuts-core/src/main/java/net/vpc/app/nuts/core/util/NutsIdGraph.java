@@ -45,13 +45,11 @@ public class NutsIdGraph {
 
     private final Set<NutsId> visited = new LinkedHashSet<>();
     private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
-    private final NutsWorkspace ws;
     private final NutsSession session;
     private final boolean failFast;
     private int maxComplexity = 300;
 
-    public NutsIdGraph(NutsWorkspace ws, NutsSession session, boolean failFast) {
-        this.ws = ws;
+    public NutsIdGraph(NutsSession session, boolean failFast) {
         this.session = session;
         this.failFast = failFast;
     }
@@ -100,8 +98,8 @@ public class NutsIdGraph {
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
-                NutsId nutsId1 = ws.fetch().id(nutsId.id).setSession(session).getResultId();
-                toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, ws, session));
+                NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).setSession(session).getResultId();
+                toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
             } catch (NutsNotFoundException ex) {
                 if (!nutsId.id.isOptional()) {
                     throw ex;
@@ -209,7 +207,7 @@ public class NutsIdGraph {
         Collection<NutsIdNode> n = new ArrayList<>();
         int order = 0;
         for (NutsId x : ids) {
-            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null, dependencyFilter, ws, session));
+            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null, dependencyFilter, session));
         }
         push0(n);
     }
@@ -238,7 +236,7 @@ public class NutsIdGraph {
                 if (curr.id.getVersion().isSingleValue()) {
                     NutsDescriptor effDescriptor = null;
                     try {
-                        effDescriptor = curr.getEffDescriptor(ws, session);
+                        effDescriptor = curr.getEffDescriptor(session);
                     } catch (NutsNotFoundException ex) {
                         if (!curr.id.id.isOptional() && failFast) {
                             throw ex;
@@ -249,7 +247,7 @@ public class NutsIdGraph {
                         context.register(curr.id);
                         int currentOrder = 0;
                         NutsDependency[] dependencies = CoreFilterUtils.filterDependencies(effDescriptor.getId(), effDescriptor.getDependencies(),
-                                curr.id.filter, ws, session);
+                                curr.id.filter, session);
                         for (NutsDependency dept : dependencies) {
                             NutsId[] exclusions = dept.getExclusions();
 
@@ -257,9 +255,9 @@ public class NutsIdGraph {
                             if (exclusions != null && exclusions.length > 0) {
                                 filter2 = new NutsExclusionDependencyFilter(curr.id.filter, exclusions);
                             }
-                            if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept, ws, session)) {
+                            if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept, session)) {
                                 NutsId item = dept.getId();
-                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2, ws, session);
+                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2, session);
                                 if (!item.getVersion().isSingleValue()) {
                                     this.add(curr.id, nextNode);
                                 } else {
@@ -475,20 +473,18 @@ public class NutsIdGraph {
         public List<Integer> path;
         public NutsId parent;
         public NutsDependencyFilter filter;
-        public NutsWorkspace ws;
         public NutsSession session;
 
-        public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsWorkspace ws, NutsSession session) {
+        public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsSession session) {
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>(path);
             this.parent = null;
             this.filter = dependencyFilter;
-            this.ws = ws;
             this.session = session;
         }
 
-        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsWorkspace ws, NutsSession session) {
+        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsSession session) {
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>();
@@ -498,7 +494,6 @@ public class NutsIdGraph {
             this.path.add(order);
             this.parent = parent;
             this.filter = dependencyFilter;
-            this.ws = ws;
             this.session = session;
         }
 
@@ -573,16 +568,16 @@ public class NutsIdGraph {
                     }
                     return c < 0 ? 1 : -1;
                 }
-                if (id1.getVersion().toFilter().accept(id2.getVersion(), ws, session)) {
+                if (id1.getVersion().toFilter().accept(id2.getVersion(), session)) {
                     return 1;
                 }
-                if (id2.getVersion().toFilter().accept(id1.getVersion(), ws, session)) {
+                if (id2.getVersion().toFilter().accept(id1.getVersion(), session)) {
                     return -1;
                 }
 
-                throw new NutsException(ws, "Error");
+                throw new NutsException(session.workspace(), "Error");
             } else {
-                throw new NutsException(ws, "Error");
+                throw new NutsException(session.workspace(), "Error");
             }
         }
 

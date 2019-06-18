@@ -75,7 +75,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     .filter(filter != null ? new Predicate<NutsId>() {
                         @Override
                         public boolean test(NutsId t) {
-                            return filter.acceptSearchId(new NutsSearchIdById(t), repository.getWorkspace(), session.getSession());
+                            return filter.acceptSearchId(new NutsSearchIdById(t), session.getSession());
                         }
                     } : (Predicate<NutsId>) id -> true)
                     .iterator();

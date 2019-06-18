@@ -13,16 +13,16 @@ public class NutsIdAndNutsDependencyFilterItem {
         this.id = id;
     }
 
-    public NutsDescriptor getEffDescriptor(NutsWorkspace ws, NutsSession session) {
+    public NutsDescriptor getEffDescriptor(NutsSession session) {
         if (effDescriptor == null) {
-            effDescriptor = ws.fetch().id(id.id).setInstallInformation(true).setSession(session).setEffective(true).getResultDescriptor();
+            effDescriptor = session.getWorkspace().fetch().id(id.id).setInstallInformation(true).setSession(session).setEffective(true).getResultDescriptor();
         }
         return effDescriptor;
     }
 
-    public NutsDescriptor getDescriptor(NutsWorkspace ws, NutsSession session) {
+    public NutsDescriptor getDescriptor(NutsSession session) {
         if (descriptor == null) {
-            descriptor = ws.fetch().id(id.id).setInstallInformation(true).setSession(session).getResultDescriptor();
+            descriptor = session.getWorkspace().fetch().id(id.id).setInstallInformation(true).setSession(session).getResultDescriptor();
         }
         return descriptor;
     }

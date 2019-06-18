@@ -131,7 +131,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), workspace, session.getSession()))) {
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
                         NutsId nutsId = t.getId().setNamespace(repository);
                         nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;

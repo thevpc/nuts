@@ -18,9 +18,9 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         if (base != null) {
-            if (!base.accept(from, dependency, ws, session)) {
+            if (!base.accept(from, dependency,session)) {
                 return false;
             }
         }
@@ -28,7 +28,7 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
             NutsId nutsId = dependency.getId();
             if (nutsId.groupToken().like(exclusion.getGroup())
                     && nutsId.nameToken().like(exclusion.getName())
-                    && exclusion.getVersion().toFilter().accept(nutsId.getVersion(), ws, session)) {
+                    && exclusion.getVersion().toFilter().accept(nutsId.getVersion(), session)) {
                 return false;
             }
         }

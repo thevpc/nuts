@@ -36,7 +36,6 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 
 /**
@@ -46,8 +45,8 @@ public class NutsDescriptorFilterOs implements NutsDescriptorFilter, Simplifiabl
 
     private final String os;
 
-    public NutsDescriptorFilterOs(String packaging) {
-        this.os = packaging;
+    public NutsDescriptorFilterOs(String os) {
+        this.os = os;
     }
 
     public String getOs() {
@@ -55,8 +54,8 @@ public class NutsDescriptorFilterOs implements NutsDescriptorFilter, Simplifiabl
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesOs(os, descriptor, ws, session);
+    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
+        return CoreFilterUtils.matchesOs(os, descriptor, session);
     }
 
     /**

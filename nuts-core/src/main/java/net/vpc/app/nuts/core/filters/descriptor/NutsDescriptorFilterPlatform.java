@@ -55,8 +55,8 @@ public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simpl
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws, NutsSession session) {
-        return CoreFilterUtils.matchesPlatform(platform, descriptor, ws, session);
+    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
+        return CoreFilterUtils.matchesPlatform(platform, descriptor, session);
     }
 
     /**

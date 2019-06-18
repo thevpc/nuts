@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -15,8 +14,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  */
 public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExecutableCommand {
 
-    public DefaultNutsInstallInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session) {
-        super("install", args, ws, session);
+    public DefaultNutsInstallInternalExecutable(String[] args, NutsSession session) {
+        super("install", args, session);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        ws.install().session(getSession(true).trace()).configure(false, args).run();
+        getSession().getWorkspace().install().session(getSession().trace()).configure(false, args).run();
     }
 
 }

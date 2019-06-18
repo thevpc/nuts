@@ -26,7 +26,7 @@ public class NutsExecStatusIdFilter implements NutsDescriptorFilter, Simplifiabl
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsWorkspace ws, NutsSession session) {
+    public boolean accept(NutsDescriptor other, NutsSession session) {
         if (executable != null) {
             return other.isExecutable() == executable.booleanValue();
         }

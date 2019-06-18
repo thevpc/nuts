@@ -184,7 +184,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
         for (NutsDefinition def : defs) {
             NutsId id = dws.resolveEffectiveId(def.getDescriptor(), ws.fetch().session(session));
             NutsInstallerComponent ii = dws.getInstaller(def, session);
-            PrintStream out = CoreIOUtils.resolveOut(ws, session);
+            PrintStream out = CoreIOUtils.resolveOut(session);
             if (ii != null) {
 //        NutsDescriptor descriptor = nutToInstall.getDescriptor();
                 NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session,

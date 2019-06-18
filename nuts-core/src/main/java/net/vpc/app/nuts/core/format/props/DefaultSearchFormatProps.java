@@ -13,7 +13,6 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.format.NutsFormatUtils;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 
 /**
@@ -22,8 +21,8 @@ import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NutsWorkspace ws, NutsSession session, PrintWriter writer) {
-        super(ws, session, writer, NutsOutputFormat.PROPS);
+    public DefaultSearchFormatProps(NutsSession session, PrintWriter writer) {
+        super(session, writer, NutsOutputFormat.PROPS);
     }
 
     @Override

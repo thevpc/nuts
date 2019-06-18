@@ -177,7 +177,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         String versionName = (String) version.get("name");
                         final NutsId nutsId = id.setVersion(versionName);
 
-                        if (idFilter != null && !idFilter.accept(nutsId, getWorkspace(), session.getSession())) {
+                        if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                             continue;
                         }
                         ret.add(
@@ -211,13 +211,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = FilesFoldersApi.getFolders(CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId), getWorkspace(), session.getSession());
+            String[] all = FilesFoldersApi.getFolders(CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId), session.getSession());
             List<NutsId> n = new ArrayList<>();
             if (all != null) {
                 for (String s : all) {
                     if (!DefaultNutsVersion.isBlank(s)) {
                         NutsId id2 = id.builder().setVersion(s).build();
-                        if (idFilter == null || idFilter.accept(id2, getWorkspace(), session.getSession())) {
+                        if (idFilter == null || idFilter.accept(id2, session.getSession())) {
                             n.add(id2);
                         }
                     }

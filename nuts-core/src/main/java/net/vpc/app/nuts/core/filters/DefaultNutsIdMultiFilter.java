@@ -42,7 +42,7 @@
 //    }
 //
 //    @Override
-//    public boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws, NutsSession session) {
+//    public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
 //        if (idFilter != null) {
 //            if (!idFilter.acceptSearchId(sid, ws, session)) {
 //                return false;
@@ -57,7 +57,7 @@
 //    }
 //
 //    @Override
-//    public boolean accept(NutsId id, NutsWorkspace ws, NutsSession session) {
+//    public boolean accept(NutsId id, NutsSession session) {
 //        if (idFilter != null) {
 //            if (!idFilter.accept(id,ws, session)) {
 //                return false;

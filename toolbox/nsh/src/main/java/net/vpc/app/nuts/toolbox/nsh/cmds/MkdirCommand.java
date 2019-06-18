@@ -92,7 +92,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
         if (options.xfiles.size() < 1) {
             commandLine.required();
         }
-        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession());
+        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
         for (XFile v : options.xfiles) {
             if (v instanceof SshXFile) {
                 ((SshXFile) v).setListener(listener);

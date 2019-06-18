@@ -79,7 +79,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
             case STRING:
             case UNKNWON: {
                 LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                a.put("value", CoreCommonUtils.stringValueFormatted(getValue().primitive().getValue(), ws, getValidSession()));
+                a.put("value", CoreCommonUtils.stringValueFormatted(getValue().primitive().getValue(), getValidSession()));
                 return a;
 
             }
@@ -87,7 +87,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
                 LinkedHashMap<String, Object> a = new LinkedHashMap<>();
                 int index = 1;
                 for (NutsElement datum : getValue().array().children()) {
-                    a.put(String.valueOf(index), CoreCommonUtils.stringValueFormatted(datum, ws, getValidSession()));
+                    a.put(String.valueOf(index), CoreCommonUtils.stringValueFormatted(datum, getValidSession()));
                     index++;
                 }
                 return a;
@@ -95,9 +95,8 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
             case OBJECT: {
                 LinkedHashMap<String, Object> a = new LinkedHashMap<>();
                 for (NutsNamedElement datum : getValue().object().children()) {
-                    a.put(
-                            datum.getName(),
-                            CoreCommonUtils.stringValueFormatted(datum.getValue(), ws, getValidSession())
+                    a.put(datum.getName(),
+                            CoreCommonUtils.stringValueFormatted(datum.getValue(), getValidSession())
                     );
                 }
                 return a;

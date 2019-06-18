@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -18,8 +17,8 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     private final NutsExecCommand execCommand;
 
-    public DefaultNutsExecInternalExecutable(String[] args, NutsWorkspace ws, NutsSession session, NutsExecCommand execCommand) {
-        super("exec", args, ws, session);
+    public DefaultNutsExecInternalExecutable(String[] args, NutsSession session, NutsExecCommand execCommand) {
+        super("exec", args, session);
         this.execCommand = execCommand;
     }
 
@@ -29,7 +28,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
             showDefaultHelp();
             return;
         }
-        execCommand.copy().session(getSession(true)).clearCommand().configure(false, args).failFast().run();
+        execCommand.copy().session(getSession()).clearCommand().configure(false, args).failFast().run();
     }
 
 }
