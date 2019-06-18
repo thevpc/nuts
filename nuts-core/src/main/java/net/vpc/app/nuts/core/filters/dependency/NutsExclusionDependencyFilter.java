@@ -6,11 +6,12 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 
-    private NutsDependencyFilter base;
-    private NutsId[] exclusions;
+    private final NutsDependencyFilter base;
+    private final NutsId[] exclusions;
 
     public NutsExclusionDependencyFilter(NutsDependencyFilter base, NutsId[] exclusions) {
         this.base = base;
@@ -20,7 +21,7 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
     @Override
     public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         if (base != null) {
-            if (!base.accept(from, dependency,session)) {
+            if (!base.accept(from, dependency, session)) {
                 return false;
             }
         }
@@ -78,7 +79,9 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
 
     @Override
     public String toString() {
-        return "NutsExclusionDependencyFilter{" + "base=" + base + ", exclusions=" + (exclusions == null ? "" : Arrays.toString(exclusions)) + '}';
+        return base + (exclusions == null ? "" : (" excludes " + Arrays.stream(exclusions)
+                .map(x -> x.getLongName())
+                .collect(Collectors.joining(","))));
     }
 
 }

@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,26 +27,35 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core.test.whitebox;
 
-import java.io.Serializable;
+import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Created by vpc on 2/1/17.
  *
- * @since 0.5.4
+ * @author vpc
  */
-public interface NutsVersionInterval extends Serializable {
+public class Test09_VersionIntervals {
 
-    boolean acceptVersion(NutsVersion version);
+    @Test
+    public void test1() {
+        check("1.0", "[1.0]");
+        check("[1.0]", "[1.0]");
+        check("[1.0,[", "[1.0,[");
+        check("[1.0[", "[1.0,1.0[");
+        check("]1.0[", "]1.0,1.0[");
+        check("[,1.0[", "],1.0[");
+        check("[,[", "],[");
+        check("[1,2[  ,  [1,3]", "[1,2[, [1,3]");
+    }
 
-    boolean isFixedValue();
-
-    boolean isIncludeLowerBound();
-
-    boolean isIncludeUpperBound();
-
-    String getLowerBound();
-
-    String getUpperBound();
+    private void check(String a, String b) {
+        NutsVersionFilter u = DefaultNutsVersionFilter.parse(a);
+        String b2 = u.toString();
+        Assert.assertEquals(b, b2);
+        System.out.println(a + " ==> " + b);
+    }
 }

@@ -29,23 +29,24 @@
  */
 package net.vpc.app.nuts.core.filters.version;
 
+import java.io.IOException;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.io.Serializable;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.vpc.app.nuts.core.DefaultNutsVersionInterval;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
- * Examples [2.6,], ]2.6,] .
- * Created by vpc on 1/20/17.
+ * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
  */
 public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
 
@@ -58,23 +59,21 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
      * ] version, ] or ( version, ]
      * [ version, [ or [ version, )
      * ] version, [ or ] version, [
-     * 
+     *
      * [ ,version ]
      * ] ,version ] or ( ,version ]
      * [ ,version [ or [ ,version )
      * ] ,version [ or ] ,version [
-     * 
+     *
      * [ version1 , version2 ]
      * ] version1 , version2 ] or ( version1 , version2 ]
      * [ version1 , version2 [ or [ version1 , version2 )
      * ] version1 , version2 [ or ] version1 , version2 [
-     * 
-     * comma or space separated intervals such as :
+     *
+     * comma separated intervals such as :
      *   [ version1 , version2 ], [ version1 , version2 ]
-     *   [ version1 , version2 ]  [ version1 , version2 ]
      * </pre>
      */
-    public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]\\(])(?<LV1>[^\\[\\]\\(\\),]*),(?<RV1>[^\\[\\]\\(\\),]*)(?<R1>[\\[\\]\\)]))|(?<VAL2>(?<L2>[\\[\\]\\(])(?<V2>[^\\[\\]\\(\\),]*)(?<R2>[\\[\\]\\)]))|(?<VAL3>(?<V3>[^\\[\\\\(\\)], ]+)))(\\s|,|\n)*)");
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
     @Override
@@ -98,44 +97,8 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         if (DefaultNutsVersion.isBlank(version)) {
             return AllNutsVersionFilter.INSTANCE;
         }
-
-        DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
-
-        Matcher y = NUTS_VERSION_PATTERN.matcher(version);
-        while (y.find()) {
-            if (y.group("VAL1") != null) {
-                boolean inclusiveLowerBoundary = y.group("L1").equals("[");
-                boolean inclusiveUpperBoundary = y.group("R1").equals("]");
-                String min = y.group("LV1");
-                String max = y.group("RV1");
-                d.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, min, max));
-            } else if (y.group("VAL2") != null) {
-                boolean inclusiveLowerBoundary = y.group("L2").equals("[");
-                boolean inclusiveUpperBoundary = y.group("R2").equals("]");
-                String val = y.group("V2");
-                //  [a]  or ]a[
-                if ((inclusiveLowerBoundary && inclusiveUpperBoundary) || (!inclusiveLowerBoundary && !inclusiveUpperBoundary)) {
-                    d.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, val, val));
-                    // ]a]    == ],a]
-                } else if (!inclusiveLowerBoundary) {
-                    d.add(new DefaultNutsVersionInterval(false, true, null, val));
-                    // [a[    == [a,[
-                } else if (!inclusiveUpperBoundary) {
-                    d.add(new DefaultNutsVersionInterval(false, true, val, null));
-                }
-            } else {
-                String v3 = y.group("V3");
-                if (v3.endsWith("*")) {
-                    String min = v3.substring(0, v3.length() - 1);
-                    String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
-                    d.add(new DefaultNutsVersionInterval(true, false, min, max));
-                } else {
-                    d.add(new DefaultNutsVersionInterval(true, true, v3, v3));
-                }
-            }
-        }
-
-        return d;
+        ParseHelper pp = new ParseHelper();
+        return pp.parse(version);
     }
 
     @Override
@@ -143,7 +106,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         StringBuilder sb = new StringBuilder();
         for (NutsVersionInterval interval : intervals) {
             if (sb.length() > 0) {
-                sb.append(",  ");
+                sb.append(", ");
             }
             sb.append(interval.toString());
         }
@@ -161,10 +124,31 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
 
     @Override
     public NutsVersionFilter simplify() {
-        if (intervals.isEmpty()) {
+        List<NutsVersionInterval> intervals2 = new ArrayList<>();
+        boolean updates = false;
+        for (NutsVersionInterval interval : intervals) {
+            NutsVersionInterval _interval = CoreNutsUtils.simplify(interval);
+            if (_interval != null) {
+                if (_interval.getLowerBound() == null && _interval.getUpperBound() == null) {
+                    return null;
+                }
+                if (!_interval.equals(interval)) {
+                    updates = true;
+                }
+                intervals2.add(interval);
+            } else {
+                updates = true;
+            }
+        }
+        if (intervals2.isEmpty()) {
             return null;
         }
-        return this;
+        if (!updates) {
+            return this;
+        }
+        DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
+        d.intervals.addAll(intervals2);
+        return d;
     }
 
     @Override
@@ -192,4 +176,195 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         return true;
     }
 
+    private static class ParseHelper {
+
+        int t;
+        final int START = 0;
+        final int NEXT = 1;
+        final int NEXT_COMMA = 2;
+        final int EXPECT_V1 = 3;
+        final int EXPECT_V_COMMA = 4;
+        final int EXPECT_V2 = 5;
+        final int EXPECT_CLOSE = 6;
+        int state = NEXT;
+        int open = -1;
+        int close = -1;
+        String v1 = null;
+        String v2 = null;
+        DefaultNutsVersionFilter dd = new DefaultNutsVersionFilter();
+
+        void reset() {
+            open = -1;
+            close = -1;
+            v1 = null;
+            v2 = null;
+        }
+
+        void addNextValue(String sval) {
+            if (sval.endsWith("*")) {
+                String min = sval.substring(0, sval.length() - 1);
+                String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
+                dd.add(new DefaultNutsVersionInterval(true, false, min, max));
+            } else {
+                dd.add(new DefaultNutsVersionInterval(true, true, sval, sval));
+            }
+        }
+
+        void addNextInterval() {
+            boolean inclusiveLowerBoundary = open == '[' && (v1 != null);
+            boolean inclusiveUpperBoundary = close == ']' && (v2 != null);
+            dd.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2));
+            reset();
+        }
+
+        NutsVersionFilter parse(String version) {
+            StreamTokenizer st = new StreamTokenizer(new StringReader(version));
+            st.resetSyntax();
+            st.whitespaceChars(0, 32);
+            for (int i = 33; i < 256; i++) {
+                switch ((char) i) {
+                    case '(':
+                    case ')':
+                    case ',':
+                    case '[':
+                    case ']': {
+                        break;
+                    }
+                    default: {
+                        st.wordChars(i, i);
+                    }
+                }
+            }
+            try {
+                while ((t = st.nextToken()) != StreamTokenizer.TT_EOF) {
+                    switch (state) {
+                        case START:
+                        case NEXT: {
+                            switch (t) {
+                                case StreamTokenizer.TT_WORD: {
+                                    addNextValue(st.sval);
+                                    state = NEXT_COMMA;
+                                    break;
+                                }
+                                case '[':
+                                case ']':
+                                case '(': {
+                                    open = t;
+                                    state = EXPECT_V1;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                }
+                            }
+                            break;
+                        }
+                        case NEXT_COMMA: {
+                            switch (t) {
+                                case ',': {
+                                    state = NEXT;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Expected ',' found " + ((char) t));
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_V1: {
+                            switch (t) {
+                                case StreamTokenizer.TT_WORD: {
+                                    v1 = st.sval;
+                                    state = EXPECT_V_COMMA;
+                                    break;
+                                }
+                                case ',': {
+                                    state = EXPECT_V2;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                }
+                            }
+                            break;
+
+                        }
+                        case EXPECT_V_COMMA: {
+                            switch (t) {
+                                case ',': {
+                                    state = EXPECT_V2;
+                                    break;
+                                }
+                                case ']': {
+                                    close = t;
+                                    v2 = v1;
+                                    addNextInterval();
+                                    state = NEXT_COMMA;
+                                    break;
+                                }
+                                case '[':
+                                case ')': {
+                                    close = t;
+                                    v2 = v1; //the same?
+                                    addNextInterval();
+                                    state = NEXT_COMMA;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_V2: {
+                            switch (t) {
+                                case StreamTokenizer.TT_WORD: {
+                                    v2 = st.sval;
+                                    state = EXPECT_CLOSE;
+                                    break;
+                                }
+                                case '[':
+                                case ']':
+                                case ')': {
+                                    close = t;
+                                    addNextInterval();
+                                    state = NEXT_COMMA;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_CLOSE: {
+                            switch (t) {
+                                case '[':
+                                case ']':
+                                case ')': {
+                                    close = t;
+                                    addNextInterval();
+                                    state = NEXT_COMMA;
+                                    break;
+                                }
+                                default: {
+                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            throw new IllegalArgumentException("Unsupported state " + state);
+                        }
+                    }
+                }
+                if (state != NEXT_COMMA && state != START) {
+                    throw new IllegalArgumentException("Invalid state" + state);
+                }
+            } catch (IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+            return dd;
+        }
+    }
 }

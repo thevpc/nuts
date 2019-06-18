@@ -4,6 +4,8 @@ import net.vpc.app.nuts.*;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 public class NutsDependencyScopeFilter implements NutsDependencyFilter {
 
@@ -20,4 +22,10 @@ public class NutsDependencyScopeFilter implements NutsDependencyFilter {
     public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
         return scope.contains(NutsDependencyScope.lenientParse(dependency.getScope()));
     }
+
+    @Override
+    public String toString() {
+        return "scope in (" + scope.stream().map(x -> CoreCommonUtils.getEnumString(x)).collect(Collectors.joining(", ")) + ')';
+    }
+
 }

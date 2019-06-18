@@ -55,8 +55,8 @@ public class CoreNutsUtils {
 //    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
-    public static final NutsDependencyFilter OPTIONAL = new OptionalNutsDependencyFilter(true);
-    public static final NutsDependencyFilter NON_OPTIONAL = new OptionalNutsDependencyFilter(false);
+    public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
+    public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
     public static final NutsDependencyFilter SCOPE_RUN = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
     public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
 

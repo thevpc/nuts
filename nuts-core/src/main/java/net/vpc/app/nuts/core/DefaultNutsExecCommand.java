@@ -817,11 +817,11 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }
 
-    public void ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType) {
+    public void ws_exec(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType) {
         ws.security().checkAllowed(NutsConstants.Rights.EXEC, commandName);
         session = NutsWorkspaceUtils.validateSession(ws, session);
-        if (nutToRun != null && nutToRun.getPath() != null) {
-            NutsDescriptor descriptor = nutToRun.getDescriptor();
+        if (def != null && def.getPath() != null) {
+            NutsDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");
 //                throw new NutsNotExecutableException(descriptor.getId());
@@ -831,10 +831,10 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             List<String> executorArgs = new ArrayList<>();
             Properties execProps = null;
             if (executor == null) {
-                execComponent = resolveNutsExecutorComponent(nutToRun);
+                execComponent = resolveNutsExecutorComponent(def);
             } else {
                 if (executor.getId() == null) {
-                    execComponent = resolveNutsExecutorComponent(nutToRun);
+                    execComponent = resolveNutsExecutorComponent(def);
                 } else {
                     execComponent = resolveNutsExecutorComponent(executor.getId());
                 }
@@ -842,7 +842,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                 execProps = executor.getProperties();
             }
             executorArgs.addAll(Arrays.asList(executorOptions));
-            final NutsExecutionContext executionContext = new DefaultNutsExecutionContext(nutToRun,
+            final NutsExecutionContext executionContext = new DefaultNutsExecutionContext(def,
                     appArgs, executorArgs.toArray(new String[0]),
                     env, execProps, dir, session, ws, true,
                     temporary,
@@ -853,7 +853,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             return;
 
         }
-        throw new NutsNotFoundException(ws, nutToRun == null ? null : nutToRun.getId());
+        throw new NutsNotFoundException(ws, def == null ? null : def.getId());
     }
 
     private static class SPrintStream2 extends NutsDefaultFormattedPrintStream {

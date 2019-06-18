@@ -44,46 +44,69 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
 
     private static final long serialVersionUID = 1L;
 
-    private final boolean inclusiveLowerBoundary;
-    private final boolean inclusiveUpperBoundary;
-    private final String min;
-    private final String max;
+    private final boolean includeLowerBound;
+    private final boolean includeUpperBound;
+    private final String lowerBound;
+    private final String upperBound;
 
     public DefaultNutsVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
-        this.inclusiveLowerBoundary = inclusiveLowerBoundary;
-        this.inclusiveUpperBoundary = inclusiveUpperBoundary;
-        this.min = min;
-        this.max = max;
+        this.includeLowerBound = inclusiveLowerBoundary;
+        this.includeUpperBound = inclusiveUpperBoundary;
+        this.lowerBound = CoreStringUtils.trimToNull(min);
+        this.upperBound = CoreStringUtils.trimToNull(max);
     }
 
     @Override
     public boolean acceptVersion(NutsVersion version) {
-        if (!CoreStringUtils.isBlank(min) && !min.equals(NutsConstants.Versions.LATEST) && !min.equals(NutsConstants.Versions.RELEASE)) {
-            int t = version.compareTo(min);
-            if ((inclusiveLowerBoundary && t < 0) || (!inclusiveLowerBoundary && t <= 0)) {
+        if (!CoreStringUtils.isBlank(lowerBound) && !lowerBound.equals(NutsConstants.Versions.LATEST) && !lowerBound.equals(NutsConstants.Versions.RELEASE)) {
+            int t = version.compareTo(lowerBound);
+            if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                 return false;
             }
         }
-        if (!CoreStringUtils.isBlank(max) && !max.equals(NutsConstants.Versions.LATEST) && !max.equals(NutsConstants.Versions.RELEASE)) {
-            int t = version.compareTo(max);
-            return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
+        if (!CoreStringUtils.isBlank(upperBound) && !upperBound.equals(NutsConstants.Versions.LATEST) && !upperBound.equals(NutsConstants.Versions.RELEASE)) {
+            int t = version.compareTo(upperBound);
+            return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
         return true;
     }
 
     @Override
     public boolean isFixedValue() {
-        return inclusiveLowerBoundary && inclusiveUpperBoundary && CoreStringUtils.trim(min).equals(CoreStringUtils.trim(max))
-                && !NutsConstants.Versions.LATEST.equals(min) && !NutsConstants.Versions.RELEASE.equals(min);
+        return includeLowerBound && includeUpperBound && CoreStringUtils.trim(lowerBound).equals(CoreStringUtils.trim(upperBound))
+                && !NutsConstants.Versions.LATEST.equals(lowerBound) && !NutsConstants.Versions.RELEASE.equals(lowerBound);
+    }
+
+    @Override
+    public boolean isIncludeLowerBound() {
+        return includeLowerBound;
+    }
+
+    @Override
+    public boolean isIncludeUpperBound() {
+        return includeUpperBound;
+    }
+
+    @Override
+    public String getLowerBound() {
+        return lowerBound;
+    }
+
+    @Override
+    public String getUpperBound() {
+        return upperBound;
     }
 
     @Override
     public String toString() {
-        return (inclusiveLowerBoundary ? "[" : "]")
-                + (min == null ? "" : min)
+        if (lowerBound != null && upperBound != null && lowerBound.equals(upperBound) && includeLowerBound && includeUpperBound) {
+            return "[" + lowerBound + "]";
+        }
+        return (includeLowerBound ? "[" : "]")
+                + (lowerBound == null ? "" : lowerBound)
                 + ","
-                + (max == null ? "" : max)
-                + (inclusiveUpperBoundary ? "]" : "[");
+                + (upperBound == null ? "" : upperBound)
+                + (includeUpperBound ? "]" : "[");
     }
 
 }

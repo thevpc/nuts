@@ -222,7 +222,7 @@ public class NutsIdGraph {
     }
 
     private void push0(Collection<NutsIdNode> ids) {
-        if (ids.size() == 0) {
+        if (ids.isEmpty()) {
             return;
         }
         Stack<NutsIdAndNutsDependencyFilterItem> stack = new Stack<>();

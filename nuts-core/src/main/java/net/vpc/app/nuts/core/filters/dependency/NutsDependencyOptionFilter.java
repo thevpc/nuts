@@ -12,7 +12,7 @@ public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplif
         return b ? OPTIONAL : NON_OPTIONAL;
     }
 
-    private Boolean optional;
+    private final Boolean optional;
 
     public NutsDependencyOptionFilter(Boolean optional) {
         this.optional = optional;
@@ -23,12 +23,13 @@ public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplif
         if (optional == null) {
             return false;
         }
-        String o = dependency.getOptional();
-        if (o == null) {
-            o = "";
-        }
-        o = o.trim().toLowerCase();
-        return optional == (o.isEmpty() || o.equals("true"));
+//        String o = dependency.getOptional();
+//        if (o == null) {
+//            o = "";
+//        }
+//        o = o.trim().toLowerCase();
+//        return optional == (o.isEmpty() || o.equals("true"));
+        return optional == dependency.isOptional();
     }
 
     @Override
@@ -38,4 +39,14 @@ public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplif
         }
         return this;
     }
+
+    @Override
+    public String toString() {
+        if(optional==null){
+            return "any optional";
+        }else{
+            return optional?"optional":"not(optional)";
+        }
+    }
+    
 }

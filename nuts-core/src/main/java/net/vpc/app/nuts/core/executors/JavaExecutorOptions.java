@@ -13,7 +13,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
-public class JavaExecutorOptions {
+public final class JavaExecutorOptions {
 
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
     private String javaHome = null;//runnerProps.getProperty("java.parseVersion");
@@ -27,37 +27,34 @@ public class JavaExecutorOptions {
     private List<String> nutsPath = new ArrayList<>();
     private String[] execArgs;
     private List<String> jvmArgs = new ArrayList<String>();
-    private NutsWorkspace ws;
     private List<String> app;
 //    private NutsDefinition nutsMainDef;
     private NutsSession session;
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
+        this.session = session;
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {
             descriptor = def.getDescriptor();
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsException(ws, "Id should be effective : " + id);
+                throw new NutsException(getWorkspace(), "Id should be effective : " + id);
             }
             id = descriptor.getId();
         } else {
-            descriptor = NutsWorkspaceUtils.getEffectiveDescriptor(ws, def);
+            descriptor = NutsWorkspaceUtils.getEffectiveDescriptor(getWorkspace(), def);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
         }
         Path path = def.getPath();
-        this.session = session;
-//        this.nutsMainDef = nutsMainDef;
-        this.ws = session.getWorkspace();
         this.app = new ArrayList<>(Arrays.asList(args));
         this.dir = dir;
         this.execArgs = executorOptions;
         List<String> classPath0 = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = ws.format().id().setOmitNamespace(true);
+        NutsIdFormat nutsIdFormat = getWorkspace().format().id().setOmitNamespace(true);
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = ws.commandLine().setArgs(getExecArgs());
+        NutsCommandLine cmdLine = getWorkspace().commandLine().setArgs(getExecArgs());
         NutsArgument a;
         while (cmdLine.hasNext()) {
             a = cmdLine.peek();
@@ -133,7 +130,7 @@ public class JavaExecutorOptions {
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = ws.search().session(session.copy().trace(false));
+        NutsSearchCommand se = getWorkspace().search().session(session.copy().trace(false));
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.getId());
@@ -165,13 +162,13 @@ public class JavaExecutorOptions {
                 }
             }
             if (this.excludeBase) {
-                throw new NutsIllegalArgumentException(ws, "Cannot exclude base with jar modifier");
+                throw new NutsIllegalArgumentException(getWorkspace(), "Cannot exclude base with jar modifier");
             }
         } else {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = ws.io().parseExecutionEntries(path);
+                    NutsExecutionEntry[] classes = getWorkspace().io().parseExecutionEntries(path);
                     if (classes.length > 0) {
                         mainClass = CoreStringUtils.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)
@@ -181,7 +178,7 @@ public class JavaExecutorOptions {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException(ws, "Missing Main Class for " + id);
+                throw new NutsIllegalArgumentException(getWorkspace(), "Missing Main Class for " + id);
             }
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
@@ -200,7 +197,7 @@ public class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 if (path == null) {
-                    throw new NutsIllegalArgumentException(ws, "Missing Path for " + id);
+                    throw new NutsIllegalArgumentException(getWorkspace(), "Missing Path for " + id);
                 }
                 nutsPath.add(0, nutsIdFormat.set(id).format());
                 classPath.add(0, path.toString());
@@ -213,13 +210,13 @@ public class JavaExecutorOptions {
                 List<String> possibleClasses = CoreStringUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException(ws, "Missing Main-Class in Manifest for " + id);
+                        throw new NutsIllegalArgumentException(getWorkspace(), "Missing Main-Class in Manifest for " + id);
                     case 1:
                         //
                         break;
                     default:
                         if (!session.isPlainOut()) {
-                            throw new NutsExecutionException(ws, "Multiple runnable classes detected : " + possibleClasses, 102);
+                            throw new NutsExecutionException(getWorkspace(), "Multiple runnable classes detected : " + possibleClasses, 102);
                         }
                         StringBuilder msgString = new StringBuilder();
                         List<Object> msgParams = new ArrayList<>();
@@ -254,7 +251,7 @@ public class JavaExecutorOptions {
                                                 }
                                             }
                                         }
-                                        throw new NutsValidationException(ws);
+                                        throw new NutsValidationException(getWorkspace());
                                     }
                                 }).getValue();
                         break;
@@ -337,16 +334,13 @@ public class JavaExecutorOptions {
     }
 
     public NutsWorkspace getWorkspace() {
-        return ws;
+        return getSession().getWorkspace();
     }
 
     public List<String> getApp() {
         return app;
     }
 
-//    public NutsDefinition getNutsMainDef() {
-//        return nutsMainDef;
-//    }
     public NutsSession getSession() {
         return session;
     }
