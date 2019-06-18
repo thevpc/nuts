@@ -16,7 +16,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
 
-    void setConfig(NutsWorkspaceConfig config);
+    void setConfig(NutsWorkspaceConfig config, NutsSession session);
 
     void setEndCreateTimeMillis(long currentTimeMillis);
 
@@ -24,7 +24,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     Path getConfigFile();
 
-    boolean load();
+    boolean load(NutsSession session);
 
     void setBootApiVersion(String value);
 
@@ -52,7 +52,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     NutsWorkspace getWorkspace();
 
-    void removeAllRepositories();
+    void removeAllRepositories(NutsRemoveOptions options);
 
     Path getRepositoriesRoot();
 

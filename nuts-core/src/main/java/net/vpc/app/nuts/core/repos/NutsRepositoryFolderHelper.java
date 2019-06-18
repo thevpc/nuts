@@ -303,7 +303,7 @@ public class NutsRepositoryFolderHelper {
         deployDescriptor(id, deployment.getDescriptor(), deployment.getSession());
         Path pckFile = deployContent(id, deployment.getContent(), deployment.getSession());
         deployContent(id, deployment.getContent(), deployment.getSession());
-        NutsRepositoryExt.of(repo).fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, getWorkspace(), repo));
+        NutsRepositoryExt.of(repo).fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, deployment.getSession().getSession(), repo));
         return true;
     }
 

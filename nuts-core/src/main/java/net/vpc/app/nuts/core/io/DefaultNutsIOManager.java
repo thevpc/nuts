@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.NullInputStream;
@@ -454,7 +453,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             NutsWorkspaceEvent event = null;
             for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
                 if (event == null) {
-                    event = new DefaultNutsWorkspaceEvent(ws, null, "systemTerminal", old, this.systemTerminal);
+                    event = new DefaultNutsWorkspaceEvent(ws.createSession(), null, "systemTerminal", old, this.systemTerminal);
                 }
                 workspaceListener.onUpdateProperty(event);
             }

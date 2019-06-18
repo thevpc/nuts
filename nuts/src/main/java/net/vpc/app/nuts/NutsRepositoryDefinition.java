@@ -50,6 +50,7 @@ public class NutsRepositoryDefinition {
     private int order;
     private NutsStoreLocationStrategy storeLocationStrategy;
     private int deployOrder = 100;
+    private NutsSession session;
 
     public NutsRepositoryDefinition() {
 
@@ -67,6 +68,20 @@ public class NutsRepositoryDefinition {
         this.storeLocationStrategy = o.storeLocationStrategy;
         this.order = o.order;
         this.temporary = o.temporary;
+        this.session = o.session;
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsRepositoryDefinition setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    public NutsRepositoryDefinition session(NutsSession session) {
+        return setSession(session);
     }
 
     public boolean isTemporary() {

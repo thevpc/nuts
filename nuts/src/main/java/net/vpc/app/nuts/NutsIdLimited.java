@@ -39,9 +39,9 @@ import java.util.Objects;
  */
 final class NutsIdLimited {
 
-    private String groupId;
-    private String artifactId;
-    private String version;
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
 
     public NutsIdLimited(String groupId, String artifactId, String version) {
         this.groupId = groupId;

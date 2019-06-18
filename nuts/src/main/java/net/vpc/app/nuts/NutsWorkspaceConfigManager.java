@@ -240,7 +240,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository getRepository(String repositoryIdOrName, boolean transitive) throws NutsRepositoryNotFoundException;
 
-    NutsWorkspaceConfigManager removeRepository(String locationOrRepositoryId);
+    NutsWorkspaceConfigManager removeRepository(String locationOrRepositoryId, NutsRemoveOptions options);
 
     NutsRepository[] getRepositories();
 

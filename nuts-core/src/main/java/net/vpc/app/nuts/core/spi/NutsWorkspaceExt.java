@@ -12,9 +12,9 @@ import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceEvent;
 import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
 
 /**
@@ -74,9 +74,9 @@ public interface NutsWorkspaceExt {
 
     NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
 
-    public void fireOnAddRepository(NutsRepository repository);
+    public void fireOnAddRepository(NutsWorkspaceEvent event);
 
-    public void fireOnRemoveRepository(NutsRepository repository);
+    public void fireOnRemoveRepository(NutsWorkspaceEvent event);
 
     /**
      * creates a zip file based on the folder. The folder should contain a

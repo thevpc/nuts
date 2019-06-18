@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsRepository;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceEvent;
 
@@ -40,20 +41,25 @@ import net.vpc.app.nuts.NutsWorkspaceEvent;
  */
 public class DefaultNutsWorkspaceEvent implements NutsWorkspaceEvent {
 
-    private final NutsWorkspace workspace;
+    private final NutsSession session;
     private final NutsRepository repository;
     private final String propertyName;
     private final Object propertyOldValue;
     private final Object propertyValue;
 
-    public DefaultNutsWorkspaceEvent(NutsWorkspace workspace, NutsRepository repository, String propertyName, Object propertyOldValue, Object propertyValue) {
-        this.workspace = workspace;
+    public DefaultNutsWorkspaceEvent(NutsSession session, NutsRepository repository, String propertyName, Object propertyOldValue, Object propertyValue) {
+        this.session = session;
         this.repository = repository;
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
         this.propertyOldValue = propertyOldValue;
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+    
     @Override
     public String getPropertyName() {
         return propertyName;
@@ -71,7 +77,7 @@ public class DefaultNutsWorkspaceEvent implements NutsWorkspaceEvent {
 
     @Override
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return getSession().getWorkspace();
     }
 
     @Override

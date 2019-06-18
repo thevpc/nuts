@@ -36,7 +36,7 @@ package net.vpc.app.nuts;
  * @param <V> value type
  * @since 0.2.0
  */
-public interface NutsMapListener<K, V> {
+public interface NutsMapListener<K, V> extends NutsListener{
 
     /**
      * Invoked when item added

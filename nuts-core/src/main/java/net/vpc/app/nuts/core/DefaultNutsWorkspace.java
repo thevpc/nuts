@@ -50,8 +50,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
-import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
 import net.vpc.app.nuts.NutsSearchCommand;
 import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
 
@@ -235,7 +233,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 config.setGlobal(wsBootConfig.isGlobal());
 
                 CoreNutsUtils.optionsToWconfig(options, config);
-                configManager.setConfig(config);
+                configManager.setConfig(config, session);
                 initializeWorkspace(options.getArchetype(), session);
                 if (!config().isReadOnly()) {
                     config().save();
@@ -251,8 +249,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 }
 
                 reconfigurePostInstall(session);
+                DefaultNutsWorkspaceEvent workspaceCreatedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);
                 for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
-                    workspaceListener.onCreateWorkspace(new DefaultNutsWorkspaceEvent(this, null, null, null, null));
+                    workspaceListener.onCreateWorkspace(workspaceCreatedEvent);
                 }
             } else {
                 if (options.getBootCommand() == NutsBootCommand.RECOVER) {
@@ -824,7 +823,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         boolean loadedConfig = false;
         try {
             configManager.setExcludedRepositories(excludedRepositories);
-            loadedConfig = configManager.load();
+            loadedConfig = configManager.load(session);
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
             if (!config().isReadOnly()) {
@@ -873,8 +872,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     LOG.log(Level.SEVERE, "Unable to instantiate Command Factory {0}", commandFactory);
                 }
             }
+            DefaultNutsWorkspaceEvent worksppaeReloadedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);
             for (NutsWorkspaceListener listener : workspaceListeners) {
-                listener.onReloadWorkspace(new DefaultNutsWorkspaceEvent(this, null, null, null, null));
+                listener.onReloadWorkspace(worksppaeReloadedEvent);
             }
             //if save is needed, will be applied
             config().save(false);
@@ -1015,29 +1015,43 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public void fireOnAddRepository(NutsRepository repository) {
+    public void fireOnAddRepository(NutsWorkspaceEvent event) {
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+            LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20),
+                event.getRepository().config().name()});
         }
-        NutsWorkspaceEvent event = null;
+//        NutsWorkspaceEvent event = null;
         for (NutsWorkspaceListener listener : getWorkspaceListeners()) {
-            if (event == null) {
-                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", null, repository);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", null, repository);
+//            }
+            listener.onAddRepository(event);
+        }
+        for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+//            if (event == null) {
+//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", null, repository);
+//            }
             listener.onAddRepository(event);
         }
     }
 
     @Override
-    public void fireOnRemoveRepository(NutsRepository repository) {
+    public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20),
+                event.getRepository().config().name()});
         }
-        NutsWorkspaceEvent event = null;
+//        NutsWorkspaceEvent event = null;
         for (NutsWorkspaceListener listener : getWorkspaceListeners()) {
-            if (event == null) {
-                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", repository, null);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", repository, null);
+//            }
+            listener.onRemoveRepository(event);
+        }
+        for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+//            if (event == null) {
+//                event = new DefaultNutsWorkspaceEvent(this, repository, "mirror", repository, null);
+//            }
             listener.onRemoveRepository(event);
         }
     }

@@ -47,7 +47,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
-    private List<NutsListener> listeners = new ArrayList<>();
+    private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
     private boolean trace;
     private boolean verbose = false;
     private NutsConfirmationMode confirm = null;
@@ -72,7 +72,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             DefaultNutsSession cloned = (DefaultNutsSession) clone();
             cloned.properties = properties == null ? null : properties.copy();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
-            cloned.listeners = listeners == null ? null : new ArrayList<>(listeners);
+            cloned.listeners = null;
+            if (listeners != null) {
+                for (NutsListener listener : getListeners()) {
+                    cloned.addListeners(listener);
+                }
+            }
             return cloned;
         } catch (CloneNotSupportedException e) {
             throw new NutsUnsupportedOperationException(ws, e);
@@ -82,10 +87,28 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsSession addListeners(NutsListener listener) {
         if (listener != null) {
-            if (listeners == null) {
-                listeners = new ArrayList<>();
+            boolean ok = false;
+            for (Class cls : new Class[]{
+                NutsWorkspaceListener.class,
+                NutsRepositoryListener.class,
+                NutsMapListener.class
+            }) {
+                if (cls.isInstance(listener)) {
+                    if (listeners == null) {
+                        listeners = new HashMap<>();
+                    }
+                    LinkedHashSet<NutsListener> li = listeners.get(cls);
+                    if (li == null) {
+                        li = new LinkedHashSet<>();
+                        listeners.put(cls, li);
+                    }
+                    li.add(listener);
+                    ok = true;
+                }
             }
-            listeners.add(listener);
+            if (!ok) {
+                throw new IllegalArgumentException("Unsupported Listener " + listener.getClass().getName() + " : " + listener);
+            }
         }
         return this;
     }
@@ -94,7 +117,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession removeListeners(NutsListener listener) {
         if (listener != null) {
             if (listeners != null) {
-                listeners.remove(listener);
+                for (LinkedHashSet<NutsListener> value : listeners.values()) {
+                    value.remove(listener);
+                }
             }
         }
         return this;
@@ -103,13 +128,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public <T extends NutsListener> T[] getListeners(Class<T> type) {
         if (listeners != null) {
-            List<NutsListener> found = new ArrayList<>();
-            for (NutsListener listener : listeners) {
-                if (type.isInstance(listener)) {
-                    found.add(listener);
-                }
+            LinkedHashSet<NutsListener> tt = listeners.get(type);
+            if (tt != null) {
+                return tt.toArray((T[]) Array.newInstance(type, 0));
             }
-            return found.toArray((T[]) Array.newInstance(type, 0));
         }
         return (T[]) Array.newInstance(type, 0);
     }
@@ -119,7 +141,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (listeners == null) {
             return new NutsListener[0];
         }
-        return listeners.toArray(new NutsListener[0]);
+        LinkedHashSet<NutsListener> all = new LinkedHashSet<>();
+        for (LinkedHashSet<NutsListener> value : listeners.values()) {
+            all.addAll(value);
+        }
+        return all.toArray(new NutsListener[0]);
     }
 
     @Override

@@ -135,7 +135,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.next("remove repo", "rr") != null) {
                 String locationOrRepositoryName = cmdLine.required().nextNonOption(cmdLine.createName("repository")).getString();
                 if (cmdLine.isExecMode()) {
-                    ws.config().removeRepository(locationOrRepositoryName);
+                    ws.config().removeRepository(locationOrRepositoryName,new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
@@ -209,7 +209,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.next("remove repo", "rr") != null) {
                     String location = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
-                    editedRepo.config().removeMirror(location);
+                    editedRepo.config().removeMirror(location, new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("enable", "br") != null) {

@@ -36,6 +36,8 @@ package net.vpc.app.nuts;
  */
 public interface NutsRepositoryEvent {
 
+    NutsSession getSession();
+
     NutsWorkspace getWorkspace();
 
     NutsRepository getParent();

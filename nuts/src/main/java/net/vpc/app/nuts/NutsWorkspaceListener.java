@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public interface NutsWorkspaceListener {
+public interface NutsWorkspaceListener extends NutsListener{
 
     default void onAddRepository(NutsWorkspaceEvent event) {
 

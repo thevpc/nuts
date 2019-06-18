@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Anchor interface for all Nuts Listeners
  * @author vpc
  */
 public interface NutsListener {

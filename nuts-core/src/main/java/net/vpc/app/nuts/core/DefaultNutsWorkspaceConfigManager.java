@@ -118,11 +118,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void setConfig(NutsWorkspaceConfig config) {
-        setConfig(config, true);
+    public void setConfig(NutsWorkspaceConfig config, NutsSession session) {
+        setConfig(config, session, true);
     }
 
-    private void setConfig(NutsWorkspaceConfig config, boolean fire) {
+    private void setConfig(NutsWorkspaceConfig config, NutsSession session, boolean fire) {
         this.config = config;
         if (CoreStringUtils.isBlank(config.getUuid())) {
             config.setUuid(UUID.randomUUID().toString());
@@ -146,11 +146,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 configUsers.put(s.getUser(), s);
             }
         }
-        removeAllRepositories();
+        removeAllRepositories(new NutsRemoveOptions().session(session));
         if (config.getRepositories() != null) {
             for (NutsRepositoryRef ref : config.getRepositories()) {
                 NutsRepository r = this.createRepository(CoreNutsUtils.refToOptions(ref), getRepositoriesRoot(), null);
-                addRepository(ref, r);
+                addRepository(ref, r, session);
             }
         }
         if (fire) {
@@ -1492,11 +1492,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public boolean load() {
+    public boolean load(NutsSession session) {
         Path file = getConfigFile();
         NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.format().json().parse(file, NutsWorkspaceConfig.class) : null;
         if (_config != null) {
-            setConfig(_config, false);
+            setConfig(_config, session,false);
             configurationChanged = false;
             return true;
         } else {
@@ -1570,11 +1570,17 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsWorkspaceConfigManager removeRepository(String repositoryId) {
+    public NutsWorkspaceConfigManager removeRepository(String repositoryId, NutsRemoveOptions options) {
         ws.security().checkAllowed(NutsConstants.Rights.REMOVE_REPOSITORY, "remove-repository");
+        if (options == null) {
+            options = new NutsRemoveOptions();
+        }
+        if (options.getSession() == null) {
+            options.setSession(ws.createSession());
+        }
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
-            NutsWorkspaceExt.of(ws).fireOnRemoveRepository(repository);
+            NutsWorkspaceExt.of(ws).fireOnRemoveRepository(new DefaultNutsWorkspaceEvent(options.getSession(), repository, "repository", repository, null));
         }
         return this;
     }
@@ -1649,9 +1655,15 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void removeAllRepositories() {
+    public void removeAllRepositories(NutsRemoveOptions options) {
+        if (options == null) {
+            options = new NutsRemoveOptions();
+        }
+        if (options.getSession() == null) {
+            options.setSession(ws.createSession());
+        }
         for (NutsRepository repository : repositoryRegistryHelper.getRepositories()) {
-            removeRepository(repository.getUuid());
+            removeRepository(repository.getUuid(), options);
         }
     }
 
@@ -1664,6 +1676,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsRepository addRepository(NutsCreateRepositoryOptions options) {
         if (excludedRepositoriesSet != null && excludedRepositoriesSet.contains(options.getName())) {
             return null;
+        }
+        if (options.getSession() == null) {
+            options.setSession(ws.createSession());
         }
         if (options.isProxy()) {
             if (options.getConfig() == null) {
@@ -1741,15 +1756,17 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         } else {
             NutsRepositoryRef ref = options.isTemporary() ? null : CoreNutsUtils.optionsToRef(options);
             NutsRepository r = this.createRepository(options, getRepositoriesRoot(), null);
-            addRepository(ref, r);
+            addRepository(ref, r, options.getSession());
             return r;
         }
     }
 
-    protected void addRepository(NutsRepositoryRef ref, NutsRepository repo) {
+    protected void addRepository(NutsRepositoryRef ref, NutsRepository repo, NutsSession session) {
         repositoryRegistryHelper.addRepository(ref, repo);
         if (repo != null) {
-            NutsWorkspaceExt.of(ws).fireOnAddRepository(repo);
+            NutsWorkspaceExt.of(ws).fireOnAddRepository(
+                    new DefaultNutsWorkspaceEvent(session, repo, "repository", null, repo)
+            );
         }
     }
 

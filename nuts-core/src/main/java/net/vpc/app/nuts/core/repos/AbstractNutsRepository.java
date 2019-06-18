@@ -47,7 +47,6 @@ import net.vpc.app.nuts.core.DefaultNutsFetchDescriptorRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsSearchRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsSeachVersionsRepositoryCommand;
 import net.vpc.app.nuts.core.DefaultNutsPushRepositoryCommand;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryEvent;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
@@ -87,8 +86,11 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         }
         this.workspace = workspace;
         this.parentRepository = parent;
+        if(options.getSession()==null){
+            options.setSession(workspace.createSession());
+        }
         configManager = new DefaultNutsRepositoryConfigManager(
-                this, options.getLocation(), optionsConfig,
+                this, options.getSession(), options.getLocation(), optionsConfig,
                 Math.max(0, speed), options.getDeployOrder(),
                 options.isTemporary(), options.isEnabled(),
                 optionsConfig.getName(), supportedMirroring,
@@ -364,54 +366,66 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onInstall(evt);
         }
+        for (NutsRepositoryListener listener : evt.getSession().getListeners(NutsRepositoryListener.class)) {
+            listener.onInstall(evt);
+        }
     }
 
     @Override
-    public void fireOnPush(NutsContentEvent file) {
+    public void fireOnPush(NutsContentEvent event) {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
-            listener.onPush(file);
+            listener.onPush(event);
         }
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-            listener.onPush(file);
+            listener.onPush(event);
+        }
+        for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
+            listener.onPush(event);
         }
     }
 
     @Override
-    public void fireOnAddRepository(NutsRepository repository) {
+    public void fireOnAddRepository(NutsRepositoryEvent event) {
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+            LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), event
+                .getRepository().config().name()});
         }
-        NutsRepositoryEvent event = null;
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
-            if (event == null) {
-                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
+//            }
             listener.onAddRepository(event);
         }
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-            if (event == null) {
-                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", null, repository);
+//            }
+            listener.onAddRepository(event);
+        }
+        for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
             listener.onAddRepository(event);
         }
     }
 
     @Override
-    public void fireOnRemoveRepository(NutsRepository repository) {
+    public void fireOnRemoveRepository(NutsRepositoryEvent event) {
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), repository.config().name()});
+            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(this.config().getName(), 20), event
+                .getRepository().config().name()});
         }
-        NutsRepositoryEvent event = null;
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
-            if (event == null) {
-                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", repository, null);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
+//            }
             listener.onRemoveRepository(event);
         }
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-            if (event == null) {
-                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, repository, "mirror", repository, null);
-            }
+//            if (event == null) {
+//                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
+//            }
+            listener.onRemoveRepository(event);
+        }
+        for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
             listener.onRemoveRepository(event);
         }
     }

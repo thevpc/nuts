@@ -44,5 +44,7 @@ public interface NutsContentEvent {
 
     NutsWorkspace getWorkspace();
 
+    NutsSession getSession();
+
     NutsRepository getRepository();
 }

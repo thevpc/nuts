@@ -150,9 +150,10 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     /**
      * @param repositoryId
+     * @param options
      * @return
      */
-    NutsRepositoryConfigManager removeMirror(String repositoryId);
+    NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options);
 
     int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
 

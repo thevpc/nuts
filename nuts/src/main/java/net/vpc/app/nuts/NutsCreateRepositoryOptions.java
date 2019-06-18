@@ -44,6 +44,7 @@ public class NutsCreateRepositoryOptions {
     private boolean proxy;
     private boolean temporary;
     private int deployOrder;
+    private NutsSession session;
     private NutsRepositoryConfig config;
 
     public NutsCreateRepositoryOptions() {
@@ -60,6 +61,20 @@ public class NutsCreateRepositoryOptions {
         this.proxy = o.proxy;
         this.temporary = o.temporary;
         this.deployOrder = o.deployOrder;
+        this.session = o.session;
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsCreateRepositoryOptions setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    public NutsCreateRepositoryOptions session(NutsSession session) {
+        return setSession(session);
     }
 
     public boolean isTemporary() {

@@ -192,7 +192,7 @@ public class NutsRepositoryMirroringHelper {
                     .setOffline(cmd.isOffline())
                     .setSession(session)
                     .run();
-            NutsRepositoryExt.of(repo).fireOnPush(new DefaultNutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
+            NutsRepositoryExt.of(repo).fireOnPush(new DefaultNutsContentEvent(local.getPath(), dep, session.getSession(), repo));
         } else {
             throw new NutsRepositoryNotFoundException(repo.getWorkspace(), repository);
         }

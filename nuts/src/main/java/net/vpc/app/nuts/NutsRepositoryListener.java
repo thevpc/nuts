@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public interface NutsRepositoryListener {
+public interface NutsRepositoryListener extends NutsListener{
 
     default void onUndeploy(NutsContentEvent event) {
 
