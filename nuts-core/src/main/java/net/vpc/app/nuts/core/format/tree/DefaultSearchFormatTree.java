@@ -84,38 +84,47 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 return id.getSingleColumnRow(getDisplayOptions());
             }
         });
-        tree.setModel(new NutsTreeModel() {
-            @Override
-            public Object getRoot() {
-                return null;
-            }
-
-            @Override
-            public List getChildren(Object o) {
-                if (o == null) {
-                    return Arrays.asList(object);
-                } else if (o instanceof NutsDefinition) {
-                    NutsDefinition d = (NutsDefinition) o;
-                    NutsDependencyTreeNode[] z = d.getDependenciesNodes();
-                    if (z != null) {
-                        return Arrays.asList(z);
-                    }
-                    NutsDependency[] dz = d.getDependencies();
-                    if (dz != null) {
-                        return Arrays.asList(dz);
-                    }
-                    return null;
-                } else if (o instanceof NutsDependencyTreeNode) {
-                    NutsDependencyTreeNode[] z = ((NutsDependencyTreeNode) o).getChildren();
-                    if (z == null) {
-                        return null;
-                    }
-                    return Arrays.asList(z);
-                }
-                return null;
-            }
-        });
+        tree.setModel(new SearchResultTreeModel(object));
         tree.println(getWriter());
         getWriter().flush();
+    }
+
+    private static class SearchResultTreeModel implements NutsTreeModel {
+
+        private final Object object;
+
+        public SearchResultTreeModel(Object object) {
+            this.object = object;
+        }
+
+        @Override
+        public Object getRoot() {
+            return null;
+        }
+
+        @Override
+        public List getChildren(Object o) {
+            if (o == null) {
+                return Arrays.asList(object);
+            } else if (o instanceof NutsDefinition) {
+                NutsDefinition d = (NutsDefinition) o;
+                NutsDependencyTreeNode[] z = d.getDependenciesNodes();
+                if (z != null) {
+                    return Arrays.asList(z);
+                }
+                NutsDependency[] dz = d.getDependencies();
+                if (dz != null) {
+                    return Arrays.asList(dz);
+                }
+                return null;
+            } else if (o instanceof NutsDependencyTreeNode) {
+                NutsDependencyTreeNode[] z = ((NutsDependencyTreeNode) o).getChildren();
+                if (z == null) {
+                    return null;
+                }
+                return Arrays.asList(z);
+            }
+            return null;
+        }
     }
 }

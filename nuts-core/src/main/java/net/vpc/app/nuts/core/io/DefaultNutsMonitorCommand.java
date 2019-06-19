@@ -139,21 +139,12 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
     }
 
-    public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
-        if (CoreStringUtils.isBlank(path)) {
-            throw new UncheckedIOException(new IOException("Missing Path"));
-        }
-        if (CoreStringUtils.isBlank(sourceName)) {
-            sourceName = String.valueOf(path);
-        }
-        boolean monitorable = true;
-        if (session == null) {
-            session = ws.createSession();
-        }
+    public boolean acceptMonitoring(String path, Object source, String sourceName, NutsSession session) {
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
             o = ws.commandLine().setArgs(new String[]{String.valueOf(o)}).next().getBoolean();
         }
+        boolean monitorable = true;
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
@@ -179,8 +170,29 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             monitorable = false;
         }
         DefaultNutsInputStreamMonitor monitor = null;
-        if (monitorable && LOG.isLoggable(Level.INFO)) {
-            monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out());
+        if (!LOG.isLoggable(Level.INFO)) {
+            monitorable = false;
+        }
+        return monitorable;
+    }
+
+    public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
+        if (session == null) {
+            session = ws.createSession();
+        }
+        if (CoreStringUtils.isBlank(path)) {
+            throw new UncheckedIOException(new IOException("Missing Path"));
+        }
+        if (CoreStringUtils.isBlank(sourceName)) {
+            sourceName = String.valueOf(path);
+        }
+        if (session == null) {
+            session = ws.createSession();
+        }
+        boolean monitorable = acceptMonitoring(path, source, sourceName, session);
+        DefaultNutsInputStreamMonitor monitor = null;
+        if (monitorable) {
+            monitor = new DefaultNutsInputStreamMonitor(session);
         }
         boolean verboseMode
                 = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false)
@@ -199,25 +211,21 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             }
             throw e;
         }
-        if (stream != null) {
-            if (path.toLowerCase().startsWith("file://")) {
-                LOG.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
-            } else {
-                LOG.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
-            }
+        if (path.toLowerCase().startsWith("file://")) {
+            LOG.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
         } else {
-            LOG.log(Level.FINEST, "[ERROR  ] Downloading url failed : {0}", new Object[]{path});
+            LOG.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
         }
 
-        InputStream open = stream.open();
+        InputStream openedStream = stream.open();
         if (!monitorable || monitor == null) {
-            return open;
+            return openedStream;
         }
         DefaultNutsInputStreamMonitor finalMonitor = monitor;
         if (!verboseMode) {
             monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
         }
-        return CoreIOUtils.monitor(open, source, sourceName, size, new InputStreamMonitor() {
+        return CoreIOUtils.monitor(openedStream, source, sourceName, size, new InputStreamMonitor() {
             @Override
             public void onStart(InputStreamEvent event) {
             }
@@ -245,13 +253,13 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             if (session == null) {
                 session = ws.createSession();
             }
-            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
+            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(session));
         } else {
             if (stream instanceof InputStreamMetadataAware) {
                 if (session == null) {
                     session = ws.createSession();
                 }
-                return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
+                return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(session));
             } else {
                 return stream;
             }

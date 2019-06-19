@@ -63,7 +63,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         this.enabled = enabled;
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
-        setConfig(config, session);
+        setConfig(config, session,false);
     }
 
     @Override
@@ -230,18 +230,21 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         return config.getUuid();
     }
 
-    public void setConfig(NutsRepositoryConfig newConfig, NutsSession session) {
+    public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange) {
         if (newConfig == null) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Config");
         }
         this.config = newConfig;
         if (this.config.getUuid() == null) {
+            fireChange = true;
             this.config.setUuid(UUID.randomUUID().toString());
         }
         if (this.config.getStoreLocationStrategy() == null) {
+            fireChange = true;
             this.config.setStoreLocationStrategy(repository.getWorkspace().config().getRepositoryStoreLocationStrategy());
         }
         if (CoreStringUtils.isBlank(config.getType())) {
+            fireChange = true;
             config.setType(repositoryType);
         } else if (!config.getType().equals(repositoryType)) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "Invalid Repository Type : expected " + repositoryType + ", found " + config.getType());
@@ -261,7 +264,9 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 addMirror(ref, r, session);
             }
         }
-        fireConfigurationChanged();
+        if (fireChange) {
+            fireConfigurationChanged();
+        }
     }
 
     protected void addMirror(NutsRepositoryRef ref, NutsRepository repo, NutsSession session) {

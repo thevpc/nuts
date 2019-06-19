@@ -12,6 +12,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import net.vpc.app.nuts.NutsSession;
 
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputStreamEvent;
@@ -28,11 +29,11 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private PrintStream out;
     private int minLength;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultNutsInputStreamMonitor(NutsWorkspace ws, PrintStream out) {
-        this.out = out;
-        this.ws = ws;
+    public DefaultNutsInputStreamMonitor(NutsSession session) {
+        this.out = session.getTerminal().out();
+        this.session = session;
     }
 
     @Override
@@ -42,24 +43,31 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
 
     @Override
     public void onStart(InputStreamEvent event) {
-        onProgress0(event);
+        if (session.isPlainOut()) {
+            onProgress0(event);
+        }
     }
 
     @Override
     public void onComplete(InputStreamEvent event) {
-        onProgress0(event);
-        out.println();
+        if (session.isPlainOut()) {
+            onProgress0(event);
+            out.println();
+        }
     }
 
     @Override
     public boolean onProgress(InputStreamEvent event) {
-        return onProgress0(event);
+        if (session.isPlainOut()) {
+            return onProgress0(event);
+        }
+        return true;
     }
 
     public boolean onProgress0(InputStreamEvent event) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
-            NutsTerminalFormat terminalFormat = ws.io().getTerminalFormat();
+            NutsTerminalFormat terminalFormat = session.getWorkspace().io().getTerminalFormat();
             out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             double globalSeconds = event.getGlobalMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);

@@ -129,7 +129,14 @@ public class WorkspaceService {
                     result.add(config);
                 }
             }
-            appContext.session().oout().print(result);
+            result.sort((x,y)->x.getId().compareTo(y.getId()));
+            if (appContext.session().isPlainOut()) {
+                for (ProjectConfig p2 : result) {
+                    appContext.session().out().printf("[[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                }
+            } else {
+                appContext.session().oout().println(result);
+            }
         }
     }
 
@@ -186,7 +193,7 @@ public class WorkspaceService {
             } else if (cmd.peek().isOption()) {
                 cmd.setCommandName("worky check").unexpectedArgument();
             } else {
-                filters.add(a.getString());
+                filters.add(cmd.next().getString());
             }
         }
 
@@ -201,6 +208,7 @@ public class WorkspaceService {
         List<DataRow> ddd = new ArrayList<>();
 
         List<ProjectService> all = findProjectServices();
+        all.sort((x,y)->x.getConfig().getId().compareTo(y.getConfig().getId()));
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
             if (!matches(projectService.getConfig().getId(), filters)) {
@@ -219,7 +227,7 @@ public class WorkspaceService {
                     appContext.session().out().printf("`move-line-start`");
                     appContext.session().out().printf("`move-up`");
                 }
-                appContext.session().out().printf("(%s / %s) %s\n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                appContext.session().out().printf("(%s / %s) %s%n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -284,11 +292,17 @@ public class WorkspaceService {
                     break;
                 }
             }
-            //"%s %s %s\n",projectService.getConfig().getId(),local,remote
+            //"%s %s %s%n",projectService.getConfig().getId(),local,remote
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
         if (!ddd.isEmpty() || !appContext.session().isPlainOut()) {
-            appContext.session().oout().println(ddd);
+            if (appContext.session().isPlainOut()) {
+                for (DataRow p2 : ddd) {
+                    appContext.session().out().printf("[[%s]] [%N] : %N - %N%n", p2.id, p2.status, p2.local, p2.remote);
+                }
+            } else {
+                appContext.session().oout().println(ddd);
+            }
         }
     }
 
@@ -351,15 +365,15 @@ public class WorkspaceService {
                     if (p3.equals(p2)) {
                         //no updates!
                         if (appContext.session().isPlainOut()) {
-                            appContext.session().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.session().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                         }
                     } else if (!p2.getPath().equals(p3.getPath())) {
                         if (appContext.session().isPlainOut()) {
-                            appContext.session().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + SCAN + "=false  :  ==%s== -- ==%s==\n", p2.getId(), p2.getPath(), p3.getPath());
+                            appContext.session().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + SCAN + "=false  :  ==%s== -- ==%s==%n", p2.getId(), p2.getPath(), p3.getPath());
                         }
                     } else {
                         if (appContext.session().isPlainOut()) {
-                            appContext.session().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.session().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                         }
 //                String repo = term.readLine("Enter Repository ==%s==: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
@@ -375,7 +389,7 @@ public class WorkspaceService {
                 } else {
 
                     if (appContext.session().isPlainOut()) {
-                        appContext.session().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        appContext.session().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                     }
                     if (interactive) {
                         String id = appContext.session().terminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));

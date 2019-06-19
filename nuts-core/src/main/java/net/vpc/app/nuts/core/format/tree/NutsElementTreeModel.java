@@ -7,6 +7,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import java.util.*;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsElementType;
 import net.vpc.app.nuts.NutsNamedElement;
 
 class NutsElementTreeModel implements NutsTreeModel {
@@ -18,7 +19,7 @@ class NutsElementTreeModel implements NutsTreeModel {
     public NutsElementTreeModel(NutsWorkspace ws, String rootName, NutsElement data, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        this.root = new XNode(null, data, rootName);
+        this.root = new XNode(null, data,data.type().isPrimitive()?null: rootName);
     }
 
     @Override
@@ -53,12 +54,16 @@ class NutsElementTreeModel implements NutsTreeModel {
             if (p != null) {
                 return stringValue(key);
             }
-            String title = resolveTitle();
+            String _title = resolveTitle();
             if (key == null) {
-                return stringValue(title != null ? title : value);
+                return stringValue(_title != null ? _title : value);
             } else {
-                return "==" + stringValue(key) + "=="
-                        + "\\=" + stringValue(title != null ? title : value);
+                if (value.type() == NutsElementType.ARRAY || value.type() == NutsElementType.OBJECT) {
+                    return "==" + stringValue(key) + "==";
+                } else {
+                    return "==" + stringValue(key) + "=="
+                            + "\\=" + stringValue(_title != null ? _title : value);
+                }
             }
         }
 
@@ -125,7 +130,7 @@ class NutsElementTreeModel implements NutsTreeModel {
                         } else {
                             all.add(new XNode(stringValue(me.getName()),
                                     ws.format().element().toElement(Arrays.asList(map)),
-                                     null));
+                                    null));
                         }
                     }
                     return all;
@@ -138,7 +143,7 @@ class NutsElementTreeModel implements NutsTreeModel {
     }
 
     public String stringValue(Object o) {
-        String a = CoreCommonUtils.stringValueFormatted(o, false,session);
+        String a = CoreCommonUtils.stringValueFormatted(o, false, session);
         return a;
     }
 }

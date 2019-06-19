@@ -46,7 +46,7 @@ public class ProjectService {
 
     public Path getConfigFile() {
         Path storeLocation = context.getConfigFolder().resolve("projects");
-        return storeLocation.resolve(config.getId() + ".config");
+        return storeLocation.resolve(config.getId().replace(":", "-") + ".config");
     }
 
     public void save() throws IOException {
@@ -96,7 +96,7 @@ public class ProjectService {
                         if (ok > 0) {
 
                             if (p2.getId() == null) {
-                                p2.setId(g.getGroupId() + "-" + g.getArtifactId());
+                                p2.setId(g.getGroupId()+ ":" + g.getArtifactId());
                             }
                             if (new File(f, "src/main").isDirectory()) {
                                 p2.getTechnologies().add("maven");
