@@ -431,17 +431,17 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     protected void helperHttpDownloadToFile(String path, Path file, boolean mkdirs) throws IOException {
-        InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), path).open();
-        if (stream != null) {
-            if (!path.toLowerCase().startsWith("file://")) {
-                LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
-            } else {
-                LOG.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
-            }
-        } else {
-            LOG.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
-        }
-        getWorkspace().io().copy().from(stream).to(file).safeCopy().monitorable().run();
+//        InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), path).open();
+//        if (stream != null) {
+//            if (!path.toLowerCase().startsWith("file://")) {
+//                LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
+//            } else {
+//                LOG.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
+//            }
+//        } else {
+//            LOG.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
+//        }
+        getWorkspace().io().copy().from(path).to(file).safeCopy().monitorable().run();
     }
 
     protected String getIdRemotePath(NutsId id) {

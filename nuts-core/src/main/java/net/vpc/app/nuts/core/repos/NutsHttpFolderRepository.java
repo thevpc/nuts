@@ -303,24 +303,20 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localFile, NutsRepositorySession session) {
-        try {
-            if (descriptor.getLocations().length == 0) {
-                String path = getPath(id);
-                helperHttpDownloadToFile(path, localFile, true);
-                return new DefaultNutsContent(localFile, false, false);
-            } else {
-                for (String location : descriptor.getLocations()) {
-                    try {
-                        helperHttpDownloadToFile(location, localFile, true);
-                        return new DefaultNutsContent(localFile, false, false);
-                    } catch (Exception ex) {
-                        //ignore!!
-                    }
+        if (descriptor.getLocations().length == 0) {
+            String path = getPath(id);
+            getWorkspace().io().copy().from(path).to(localFile).safeCopy().monitorable().run();
+            return new DefaultNutsContent(localFile, false, false);
+        } else {
+            for (String location : descriptor.getLocations()) {
+                try {
+                    getWorkspace().io().copy().from(location).to(localFile).safeCopy().monitorable().run();
+                    return new DefaultNutsContent(localFile, false, false);
+                } catch (Exception ex) {
+                    //ignore!!
                 }
-                return null;
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            return null;
         }
     }
 

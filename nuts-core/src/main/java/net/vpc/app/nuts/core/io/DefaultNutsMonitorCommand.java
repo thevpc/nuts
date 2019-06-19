@@ -111,8 +111,8 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     }
 
     @Override
-    public NutsMonitorCommand source(InputStream path) {
-        return setSource(path);
+    public NutsMonitorCommand source(InputStream inputStream) {
+        return setSource(inputStream);
     }
 
     @Override

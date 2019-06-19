@@ -81,5 +81,11 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         public InputStream upload(NutsTransportParamPart... parts) {
             throw new NutsUnsupportedOperationException(null, "Upload unsupported");
         }
+
+        @Override
+        public String toString() {
+            return String.valueOf(url);
+        }
+        
     }
 }

@@ -100,9 +100,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     NutsInstallCommand setIncludeCompanions(boolean includecompanions);
 
-    int getResultCount();
-
-    NutsDefinition[] getResult();
+    NutsSearchResult<NutsDefinition> getResult();
 
     @Override
     NutsInstallCommand session(NutsSession session);

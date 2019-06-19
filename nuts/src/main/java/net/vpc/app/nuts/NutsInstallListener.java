@@ -36,9 +36,12 @@ package net.vpc.app.nuts;
  */
 public interface NutsInstallListener extends NutsListener {
 
-    default void onInstall(NutsDefinition nutsDefinition, boolean forceInstallation, NutsSession session) {
+    default void onInstall(NutsDefinition definition, boolean forced, NutsSession session) {
     }
 
-    default void onUpdate(NutsDefinition nutsDefinition, NutsSession session) {
+    default void onUninstall(NutsDefinition definition, boolean forced, NutsSession session) {
+    }
+
+    default void onUpdate(NutsDefinition definition, boolean forced, NutsSession session) {
     }
 }
