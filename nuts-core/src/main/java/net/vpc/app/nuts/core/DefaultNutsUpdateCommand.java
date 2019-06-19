@@ -474,20 +474,20 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                         apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().toString()
                         : bootVersion, session);
                 if (runtimeUpdate.isUpdateAvailable()) {
-                    allUpdates.put(runtimeUpdate.getAvailable().getId().getSimpleName(), runtimeUpdate);
+                    allUpdates.put(runtimeUpdate.getId().getSimpleName(), runtimeUpdate);
                 }
             }
         }
         for (NutsId ext : getExtensionsToUpdate()) {
             NutsUpdateResult extUpdate = checkCoreUpdate(ext, bootVersion, session);
-            allUpdates.put(extUpdate.getAvailable().getId().getSimpleName(), extUpdate);
-            extUpdates.put(extUpdate.getAvailable().getId().getSimpleName(), extUpdate);
+            allUpdates.put(extUpdate.getId().getSimpleName(), extUpdate);
+            extUpdates.put(extUpdate.getId().getSimpleName(), extUpdate);
         }
 
         for (NutsId ext : getCompanionsToUpdate()) {
             NutsUpdateResult extUpdate = checkCoreUpdate(ext, bootVersion, session);
-            allUpdates.put(extUpdate.getAvailable().getId().getSimpleName(), extUpdate);
-            regularUpdates.put(extUpdate.getAvailable().getId().getSimpleName(), extUpdate);
+            allUpdates.put(extUpdate.getId().getSimpleName(), extUpdate);
+            regularUpdates.put(extUpdate.getId().getSimpleName(), extUpdate);
         }
 
         for (NutsId id : this.getRegularIds()) {
