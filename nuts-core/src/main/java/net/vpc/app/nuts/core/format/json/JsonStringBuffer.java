@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.format.json;
 
-import net.vpc.app.nuts.core.format.json.JsonStatus;
 import net.vpc.app.nuts.NutsWorkspace;
 
 public class JsonStringBuffer {

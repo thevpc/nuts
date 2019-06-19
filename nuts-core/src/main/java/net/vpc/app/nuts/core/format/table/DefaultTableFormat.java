@@ -600,24 +600,29 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.rendered = rendered;
         }
 
+        @Override
         public int getColspan() {
             return colspan;
         }
 
+        @Override
         public DefaultCell setColspan(int colspan) {
             this.colspan = colspan <= 0 ? 1 : colspan;
             return this;
         }
 
+        @Override
         public int getRowspan() {
             return rowspan;
         }
 
+        @Override
         public DefaultCell setRowspan(int rowspan) {
             this.rowspan = rowspan <= 0 ? 1 : rowspan;
             return this;
         }
 
+        @Override
         public int getX() {
             return x;
         }
@@ -625,6 +630,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         //        public void setX(int x) {
 //            this.x = x;
 //        }
+        @Override
         public int getY() {
             return y;
         }
@@ -632,10 +638,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         //        public void setY(int y) {
 //            this.y = y;
 //        }
+        @Override
         public Object getValue() {
             return value;
         }
 
+        @Override
         public DefaultCell setValue(Object value) {
             this.value = value;
             return this;

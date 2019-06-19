@@ -55,6 +55,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return this;
     }
 
+    @Override
     public Map getModel() {
         return model;
     }

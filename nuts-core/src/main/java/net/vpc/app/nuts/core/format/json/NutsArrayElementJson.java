@@ -32,9 +32,7 @@ package net.vpc.app.nuts.core.format.json;
 import net.vpc.app.nuts.core.format.elem.*;
 import net.vpc.app.nuts.NutsElementType;
 import com.google.gson.JsonArray;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsArrayElement;
@@ -46,8 +44,8 @@ import net.vpc.app.nuts.core.util.common.IteratorBuilder;
  */
 public class NutsArrayElementJson extends AbstractNutsElement implements NutsArrayElement {
 
-    private NutsElementFactoryContext context;
-    private JsonArray array;
+    private final NutsElementFactoryContext context;
+    private final JsonArray array;
 
     public NutsArrayElementJson(JsonArray array, NutsElementFactoryContext context) {
         super(NutsElementType.ARRAY);

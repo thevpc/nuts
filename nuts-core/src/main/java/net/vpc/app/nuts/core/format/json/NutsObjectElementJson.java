@@ -47,7 +47,7 @@ import net.vpc.app.nuts.core.format.elem.NutsObjectElementBase;
  */
 class NutsObjectElementJson extends NutsObjectElementBase {
 
-    private JsonObject value;
+    private final JsonObject value;
 
     public NutsObjectElementJson(JsonObject value, NutsElementFactoryContext context) {
         super(context);

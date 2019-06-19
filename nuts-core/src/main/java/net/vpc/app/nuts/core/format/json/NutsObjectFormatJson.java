@@ -17,11 +17,11 @@ import net.vpc.app.nuts.core.format.NutsObjectFormatBase;
  */
 public class NutsObjectFormatJson extends NutsObjectFormatBase {
 
-    final NutsOutputFormat t;
-    final NutsWorkspace ws;
-    private String rootName = "";
-    private List<String> extraConfig = new ArrayList<>();
-    private Map<String, String> multilineProperties = new HashMap<>();
+    private final NutsOutputFormat t;
+    private final NutsWorkspace ws;
+    private final String rootName = "";
+    private final List<String> extraConfig = new ArrayList<>();
+    private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatJson(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.JSON.name().toLowerCase() + "-format");

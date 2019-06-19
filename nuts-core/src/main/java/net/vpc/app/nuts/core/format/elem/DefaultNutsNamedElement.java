@@ -38,8 +38,8 @@ import net.vpc.app.nuts.NutsNamedElement;
  */
 public class DefaultNutsNamedElement implements NutsNamedElement {
 
-    private String key;
-    private NutsElement value;
+    private final String key;
+    private final NutsElement value;
 
     public DefaultNutsNamedElement(String key, NutsElement value) {
         this.key = key;

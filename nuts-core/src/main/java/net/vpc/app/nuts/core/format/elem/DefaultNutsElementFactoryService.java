@@ -38,11 +38,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.ClassMap;
 import org.w3c.dom.Node;
 import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsInstallInfo;
 import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.json.NutsElementFactoryJsonElement;
@@ -248,19 +250,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 NutsDefinition def = (NutsDefinition) je;
                 Map<String, Object> x = new LinkedHashMap<>();
                 x.put("id", def.getId());
-                if (def.getContent() != null) {
-                    if (def.getContent().getPath() != null) {
-                        x.put("path", def.getContent().getPath().toString());
+                NutsContent content = def.getContent();
+                if (content != null) {
+                    if (content.getPath() != null) {
+                        x.put("path", content.getPath().toString());
                     }
-                    x.put("cached", def.getContent().isCached());
-                    x.put("temporary", def.getContent().isTemporary());
+                    x.put("cached", content.isCached());
+                    x.put("temporary", content.isTemporary());
                 }
-                if (def.getInstallation() != null) {
-                    if (def.getInstallation().getInstallFolder() != null) {
-                        x.put("install-folder", def.getInstallation().getInstallFolder().toString());
+                NutsInstallInfo installation = def.getInstallation();
+                if (installation != null) {
+                    if (installation.getInstallFolder() != null) {
+                        x.put("install-folder", installation.getInstallFolder().toString());
                     }
-                    x.put("installed", def.getInstallation().isInstalled());
-                    x.put("just-installed", def.getInstallation().isJustInstalled());
+                    x.put("installed", installation.isInstalled());
+                    x.put("just-installed", installation.isJustInstalled());
                 }
                 if (def.getRepositoryName() != null) {
                     x.put("repository-name", def.getRepositoryName());

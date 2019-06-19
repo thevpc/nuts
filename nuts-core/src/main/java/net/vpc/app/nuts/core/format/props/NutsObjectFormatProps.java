@@ -20,13 +20,13 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class NutsObjectFormatProps extends NutsObjectFormatBase {
 
-    final NutsOutputFormat t;
-    final NutsWorkspace ws;
-    private String rootName = "";
-    private boolean omitNull = true;
-    private boolean escapeText = false;
-    private List<String> extraConfig = new ArrayList<>();
-    private Map<String, String> multilineProperties = new HashMap<>();
+    private final NutsOutputFormat t;
+    private final NutsWorkspace ws;
+    private final String rootName = "";
+    private final boolean omitNull = true;
+    private final boolean escapeText = false;
+    private final List<String> extraConfig = new ArrayList<>();
+    private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatProps(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.PROPS.name().toLowerCase() + "-format");

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.format.elem;
 
 import net.vpc.app.nuts.NutsElementType;
-import com.google.gson.JsonArray;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,8 +45,8 @@ import net.vpc.app.nuts.NutsArrayElement;
  */
 public class DefaultNutsArrayElement extends AbstractNutsElement implements NutsArrayElement {
 
-    private NutsElementFactoryContext context;
-    private List<Object> values = new ArrayList<>();
+    private final NutsElementFactoryContext context;
+    private final List<Object> values = new ArrayList<>();
 
     public DefaultNutsArrayElement(Object array, NutsElementFactoryContext context) {
         super(NutsElementType.ARRAY);

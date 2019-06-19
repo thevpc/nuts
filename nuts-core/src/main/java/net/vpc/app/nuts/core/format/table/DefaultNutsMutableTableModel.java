@@ -58,7 +58,7 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
 
     @Override
     public void addCell(Object value) {
-        if (rows.size() == 0) {
+        if (rows.isEmpty()) {
             newRow();
         }
         DefaultCell c = new DefaultCell();
@@ -144,42 +144,44 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
 
         Object value;
 
+        @Override
         public int getColspan() {
             return colspan;
         }
 
+        @Override
         public DefaultCell setColspan(int colspan) {
             this.colspan = colspan <= 0 ? 1 : colspan;
             return this;
         }
 
+        @Override
         public int getRowspan() {
             return rowspan;
         }
 
+        @Override
         public DefaultCell setRowspan(int rowspan) {
             this.rowspan = rowspan <= 0 ? 1 : rowspan;
             return this;
         }
 
+        @Override
         public int getX() {
             return x;
         }
 
-        //        public void setX(int x) {
-//            this.x = x;
-//        }
+        @Override
         public int getY() {
             return y;
         }
 
-        //        public void setY(int y) {
-//            this.y = y;
-//        }
+        @Override
         public Object getValue() {
             return value;
         }
 
+        @Override
         public DefaultCell setValue(Object value) {
             this.value = value;
             return this;
