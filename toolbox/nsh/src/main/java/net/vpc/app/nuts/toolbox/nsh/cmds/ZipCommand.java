@@ -38,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.NutsCommandLine;
@@ -58,6 +56,7 @@ public class ZipCommand extends AbstractNshBuiltin {
         boolean r = false;
     }
 
+    @Override
     public void exec(String[] args, NshExecutionContext context) {
         NutsCommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();

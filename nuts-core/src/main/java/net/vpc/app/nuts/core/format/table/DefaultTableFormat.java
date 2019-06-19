@@ -43,6 +43,7 @@ import java.util.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
+import net.vpc.app.nuts.core.util.StringBuilder2;
 
 /**
  * Created by vpc on 2/17/17.
@@ -162,9 +163,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
+    @Override
     public void print(Writer w) {
         PrintWriter out = getValidPrintWriter(w);
-
+        StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild();
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
@@ -172,19 +174,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     + getSeparator(Separator.FIRST_ROW_SEP)
                     + getSeparator(Separator.FIRST_ROW_LINE)
                     + getSeparator(Separator.FIRST_ROW_END)).length() > 0) {
-                out.write(getSeparator(Separator.FIRST_ROW_START));
+                line.write(getSeparator(Separator.FIRST_ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        out.write(getSeparator(Separator.FIRST_ROW_SEP));
+                        line.write(getSeparator(Separator.FIRST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
+                    line.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                 }
-                out.write(getSeparator(Separator.FIRST_ROW_END));
-                out.write("\n");
+                line.write(getSeparator(Separator.FIRST_ROW_END));
+
+                out.write(line.trim().newLine().toString());
                 out.flush();
+                line.clear();
             }
             for (int i1 = 0; i1 < rows.size(); i1++) {
                 if (i1 > 0) {
@@ -192,59 +196,64 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             + getSeparator(Separator.INTER_ROW_SEP)
                             + getSeparator(Separator.INTER_ROW_LINE)
                             + getSeparator(Separator.INTER_ROW_END)).length() > 0) {
-                        out.write(getSeparator(Separator.INTER_ROW_START));
+                        line.write(getSeparator(Separator.INTER_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                out.write(getSeparator(Separator.INTER_ROW_SEP));
+                                line.write(getSeparator(Separator.INTER_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.INTER_ROW_LINE);
                             String s = cell.rendered.toString();
-                            out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
+                            line.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                         }
-                        out.write(getSeparator(Separator.INTER_ROW_END));
-                        out.write("\n");
+                        line.write(getSeparator(Separator.INTER_ROW_END));
+
+                        out.write(line.trim().newLine().toString());
                         out.flush();
+                        line.clear();
                     }
                 }
 
                 Row row = rows.get(i1);
                 cells = row.cells;
 
-                out.write(getSeparator(Separator.ROW_START));
+                line.write(getSeparator(Separator.ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        out.write(getSeparator(Separator.ROW_SEP));
+                        line.write(getSeparator(Separator.ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String s = cell.rendered.toString();
-                    out.write(s);
+                    line.write(s);
                 }
-                out.write(getSeparator(Separator.ROW_END));
+                line.write(getSeparator(Separator.ROW_END));
 
-                out.write("\n");
+                out.write(line.trim().newLine().toString());
                 out.flush();
+                line.clear();
             }
 
             if ((getSeparator(Separator.LAST_ROW_START)
                     + getSeparator(Separator.LAST_ROW_SEP)
                     + getSeparator(Separator.LAST_ROW_LINE)
                     + getSeparator(Separator.LAST_ROW_END)).length() > 0) {
-                out.write(getSeparator(Separator.LAST_ROW_START));
+                line.write(getSeparator(Separator.LAST_ROW_START));
                 cells = rows.get(0).cells;
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        out.write(getSeparator(Separator.LAST_ROW_SEP));
+                        line.write(getSeparator(Separator.LAST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    out.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
+                    line.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                 }
-                out.write(getSeparator(Separator.LAST_ROW_END));
+                line.write(getSeparator(Separator.LAST_ROW_END));
             }
         }
+        out.write(line.trim().toString());
         out.flush();
+        line.clear();
     }
 
     public static class Row {
@@ -285,6 +294,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         sb.append(' ');
                     } else {
                         sb.insert(0, ' ');
+                    }
+                    after = !after;
+                    length++;
+                }
+                break;
+            }
+            case HEADER: {
+                boolean after = true;
+                int maxBefore=10;
+                while (length < columns) {
+                    if (after || maxBefore<=0) {
+                        sb.append(' ');
+                    } else {
+                        sb.insert(0, ' ');
+                        maxBefore--;
                     }
                     after = !after;
                     length++;

@@ -22,7 +22,7 @@ public class DefaultTableHeaderFormat implements NutsTableCellFormat {
 
     @Override
     public NutsAlignFormat getHorizontalAlign(int row, int col, Object value) {
-        return NutsAlignFormat.CENTER;
+        return NutsAlignFormat.HEADER;
     }
 
 }

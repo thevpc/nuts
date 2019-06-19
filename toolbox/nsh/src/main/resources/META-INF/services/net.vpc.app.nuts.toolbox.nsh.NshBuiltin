@@ -44,3 +44,5 @@ net.vpc.app.nuts.toolbox.nsh.cmds.TestCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.JsonCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.XmlCommand
 
+net.vpc.app.nuts.toolbox.nsh.cmds.JpsCommand
+

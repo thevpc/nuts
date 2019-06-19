@@ -47,5 +47,9 @@ public enum NutsAlignFormat {
     /**
      * RIGHT, BOTTOM
      */
-    LAST
+    LAST,
+    /**
+     * Mostly like CENTER but limits centering for huge columns
+     */
+    HEADER
 }

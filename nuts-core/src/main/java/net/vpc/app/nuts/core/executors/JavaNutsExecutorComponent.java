@@ -106,7 +106,13 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     th = ex;
                 }
                 if (th != null) {
-                    throw new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                    if (!(th instanceof NutsExecutionException)) {
+                        th = new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                    }
+                    NutsExecutionException nex = (NutsExecutionException) th;
+                    if (nex.getExitCode() != 0) {
+                        throw new NutsExecutionException(ws, "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                    }
                 }
                 break;
             }

@@ -295,21 +295,23 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 
     @Override
     public NutsExecCommand grabOutputString() {
-        setOut(new SPrintStream2());
+        // DO NOT CALL setOut :: setOut(new SPrintStream());
+        this.out=new SPrintStream();
         return this;
     }
 
     @Override
     public NutsExecCommand grabErrorString() {
-        setErr(new SPrintStream2());
+        // DO NOT CALL setOut :: setErr(new SPrintStream());
+        this.err=new SPrintStream();
         return this;
     }
 
     @Override
     public String getOutputString() {
         PrintStream o = getOut();
-        if (o instanceof SPrintStream2) {
-            return ((SPrintStream2) o).out.getStringBuffer();
+        if (o instanceof SPrintStream) {
+            return ((SPrintStream) o).getStringBuffer();
         }
         throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
     }
@@ -320,8 +322,8 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             return getOutputString();
         }
         PrintStream o = getErr();
-        if (o instanceof SPrintStream2) {
-            return ((SPrintStream2) o).out.getStringBuffer();
+        if (o instanceof SPrintStream) {
+            return ((SPrintStream) o).getStringBuffer();
         }
         throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
     }
@@ -677,11 +679,11 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     }
 
     public boolean isGrabOutputString() {
-        return out instanceof SPrintStream2;
+        return out instanceof SPrintStream;
     }
 
     public boolean isGrabErrorString() {
-        return err instanceof SPrintStream2;
+        return err instanceof SPrintStream;
     }
 
 //    public NutsExecutableInfoExt execExternal(String[] cmd, String[] executorOptions, NutsSession session) {
@@ -856,19 +858,19 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         throw new NutsNotFoundException(ws, def == null ? null : def.getId());
     }
 
-    private static class SPrintStream2 extends NutsDefaultFormattedPrintStream {
-
-        private SPrintStream out;
-
-        public SPrintStream2() {
-            this(new SPrintStream());
-        }
-
-        public SPrintStream2(SPrintStream s) {
-            super(s);
-            this.out = s;
-        }
-    }
+//    private static class SPrintStream2 extends NutsDefaultFormattedPrintStream {
+//
+//        private SPrintStream out;
+//
+//        public SPrintStream2() {
+//            this(new SPrintStream());
+//        }
+//
+//        public SPrintStream2(SPrintStream s) {
+//            super(s);
+//            this.out = s;
+//        }
+//    }
 
     private static class SPrintStream extends PrintStream {
 

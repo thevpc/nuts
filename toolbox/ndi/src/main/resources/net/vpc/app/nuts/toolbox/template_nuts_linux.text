@@ -26,4 +26,4 @@ fi
 _NUTS_JAVA_OPTIONS=`echo "$NUTS_JAVA_OPTIONS -jar" | xargs`
 
 
-$_java "$_NUTS_JAVA_OPTIONS" "$$NUTS_JAR$$" $@
+$_java "$_NUTS_JAVA_OPTIONS" "$$NUTS_JAR$$" "$@"

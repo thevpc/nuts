@@ -10,10 +10,11 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import net.vpc.app.nuts.core.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.core.format.NutsObjectFormatBase;
+import net.vpc.app.nuts.core.format.table.NutsObjectFormatTable;
+import net.vpc.app.nuts.core.format.tree.NutsObjectFormatTree;
 
 /**
  *
@@ -91,6 +92,11 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 out.flush();
                 break;
             }
+            case DATE: {
+                out.print(ws.io().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
+                out.flush();
+                break;
+            }
             case UNKNWON: {
                 out.print(value.toString());
                 out.flush();
@@ -99,37 +105,15 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             case NULL: {
                 break;
             }
-            case DATE: {
-                out.print(ws.io().getTerminalFormat().escapeText(
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(
-                                value.primitive().getDate()
-                        )));
-                out.flush();
-                break;
-            }
             case ARRAY: {
-                boolean first = true;
-                for (NutsElement datum : value.array().children()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        out.println();
-                    }
-                    print(out, datum);
-                }
+                NutsObjectFormatTable table = new NutsObjectFormatTable(ws);
+                table.configure(true, "--border=spaces");
+                table.set(value).print(w);
                 break;
             }
             case OBJECT: {
-                boolean first = true;
-                for (NutsNamedElement datum : value.object().children()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        out.println();
-                    }
-                    out.printf("%s = ", datum.getName());
-                    print(out, datum.getValue());
-                }
+                NutsObjectFormatTree tree = new NutsObjectFormatTree(ws);
+                tree.set(value).print(w);
                 break;
             }
             default: {
@@ -144,6 +128,6 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     }
 
     private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false,getValidSession());
+        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
     }
 }

@@ -167,11 +167,7 @@ public class CoreCommonUtils {
             return defaultValue;
         }
         DefaultNutsArgument u = new DefaultNutsArgument(o, '=');
-        if (u.isKeyValue()) {
-            return u.getBoolean(defaultValue);
-        } else {
-            return true;
-        }
+        return u.getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {
