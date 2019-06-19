@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * primitive values implementation of Nuts Element type. Nuts Element types are
@@ -52,7 +52,7 @@ public interface NutsPrimitiveElement extends NutsElement {
      *
      * @return value as java Date
      */
-    Date getDate();
+    Instant getDate();
 
     /**
      * value as any java Number. Best effort is applied to convert to this type.

@@ -5,7 +5,7 @@
 ==worky== {{scan}} \[{{-i}}|{{--interactive}}\]]]  <path>
     scan for maven projetcs
 
-==worky== {{check}} <id>
+==worky== {{status}} <id>
     check id status
     Options
         **-c** | **--commitable** | **--changed** 

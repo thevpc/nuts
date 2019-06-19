@@ -997,7 +997,11 @@ public class NutsBootWorkspace {
     }
 
     private void deleteStoreLocations(NutsWorkspace workspace, boolean includeBoot, boolean includeRoot, NutsStoreLocation... locations) {
-        if (this.getOptions().getOutputFormat() != null && this.getOptions().getOutputFormat() != NutsOutputFormat.PLAIN) {
+        NutsWorkspaceOptions o = getOptions();
+        NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
+        if (confirm==NutsConfirmationMode.ASK 
+                && this.getOptions().getOutputFormat() != null 
+                && this.getOptions().getOutputFormat() != NutsOutputFormat.PLAIN) {
             throw new NutsExecutionException(workspace, "Unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace", 243);
         }
@@ -1005,8 +1009,6 @@ public class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "Deleting Workspace locations : {0}", runningBootConfig.getWorkspace());
         }
         boolean force = false;
-        NutsWorkspaceOptions o = getOptions();
-        NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
         switch (confirm) {
             case ASK: {
                 break;

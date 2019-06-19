@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.*;
 import java.util.logging.Formatter;
@@ -91,7 +91,7 @@ public final class NutsLogUtils {
         }
         int MEGA = 1024 * 1024;
         if (name == null || NutsUtilsLimited.isBlank(name)) {
-            name = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date()) + "-nuts-%g.log";
+            name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || NutsUtilsLimited.isBlank(folder)) {
             folder = defaultLogFolder;
@@ -302,7 +302,7 @@ public final class NutsLogUtils {
         public String format(LogRecord record) {
             StringBuilder sb = new StringBuilder();
 
-            sb.append(new SimpleDateFormat("yyyy-MM-dd HH:MM:ss").format(new Date(record.getMillis())));
+            sb.append(Instant.ofEpochMilli(record.getMillis()).toString().replace(":", ""));
             if (verboseLog) {
                 sb.append(" ");
                 int len = sb.length() + 4;

@@ -155,7 +155,7 @@ public class WorkspaceService {
         }
     }
 
-    public void check(NutsCommandLine cmd, NutsApplicationContext appContext) {
+    public void status(NutsCommandLine cmd, NutsApplicationContext appContext) {
         boolean progress = true;
         Boolean commitable = null;
         Boolean newP = null;
@@ -287,7 +287,9 @@ public class WorkspaceService {
             //"%s %s %s\n",projectService.getConfig().getId(),local,remote
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
-        appContext.session().oout().println(ddd);
+        if (!ddd.isEmpty() || !appContext.session().isPlainOut()) {
+            appContext.session().oout().println(ddd);
+        }
     }
 
     private boolean matches(String id, List<String> filters) {

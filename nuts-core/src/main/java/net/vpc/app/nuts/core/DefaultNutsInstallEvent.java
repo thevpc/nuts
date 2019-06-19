@@ -27,28 +27,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
 
-import java.nio.file.Path;
-import java.time.Instant;
+import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsInstallEvent;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
  * @author vpc
- * @since 0.5.5
+ * @since 0.5.3
  */
-public interface NutsInstallInfo {
+public class DefaultNutsInstallEvent implements NutsInstallEvent {
 
-    boolean isInstalled();
+    private final NutsDefinition definition;
+    private final NutsSession session;
+    private final boolean force;
 
-    Instant getInstallDate();
+    public DefaultNutsInstallEvent(NutsDefinition definition, NutsSession session, boolean force) {
+        this.definition = definition;
+        this.session = session;
+        this.force = force;
+    }
 
-    boolean isDefaultVersion();
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 
-    Path getInstallFolder();
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return getSession().getWorkspace();
+    }
 
-    boolean isJustInstalled();
+    @Override
+    public NutsDefinition getDefinition() {
+        return definition;
+    }
 
-    String getInstallUser();
+    @Override
+    public boolean isForce() {
+        return force;
+    }
 
 }

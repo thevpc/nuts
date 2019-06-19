@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.core.io;
 
-import java.util.Date;
+import java.time.Instant;
 import net.vpc.app.nuts.NutsURLHeader;
 
 /**
@@ -44,12 +44,13 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
     private long contentLength;
     private String contentType;
     private String contentEncoding;
-    private Date lastModified;
+    private Instant lastModified;
 
     public DefaultNutsURLHeader(String url) {
         this.url = url;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
@@ -58,6 +59,7 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         this.url = url;
     }
 
+    @Override
     public long getContentLength() {
         return contentLength;
     }
@@ -66,6 +68,7 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         this.contentLength = contentLength;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -74,19 +77,22 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         this.contentType = contentType;
     }
 
+    @Override
     public String getContentEncoding() {
         return contentEncoding;
     }
 
+    @Override
     public void setContentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
     }
 
-    public Date getLastModified() {
+    @Override
+    public Instant getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(Instant lastModified) {
         this.lastModified = lastModified;
     }
 

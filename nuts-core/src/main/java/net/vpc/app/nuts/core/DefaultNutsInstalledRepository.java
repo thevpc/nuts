@@ -35,6 +35,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +71,7 @@ public class DefaultNutsInstalledRepository {
     public static class InstallInfoConfig {
 
         private NutsId id;
-        private Date installDate;
+        private Instant installDate;
         private String installUser;
 
         public NutsId getId() {
@@ -89,11 +90,11 @@ public class DefaultNutsInstalledRepository {
             this.id = id;
         }
 
-        public Date getInstallDate() {
+        public Instant getInstallDate() {
             return installDate;
         }
 
-        public void setInstallDate(Date installDate) {
+        public void setInstallDate(Instant installDate) {
             this.installDate = installDate;
         }
 
@@ -205,6 +206,7 @@ public class DefaultNutsInstalledRepository {
             try {
                 return readJson(id, NUTS_INSTALL_FILE, InstallInfoConfig.class);
             } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
         return null;
@@ -321,7 +323,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public NutsInstallInfo install(NutsId id) {
-        Date now = new Date();
+        Instant now = Instant.now();
         String user = ws.security().getCurrentLogin();
         NutsWorkspaceUtils.checkReadOnly(ws);
         InstallInfoConfig ii;

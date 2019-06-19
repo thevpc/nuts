@@ -25,8 +25,8 @@ public class WorkyMain extends NutsApplication {
             } else if ((a = cmdLine.next("scan")) != null) {
                 service.scan(cmdLine, appContext);
                 return;
-            } else if ((a = cmdLine.next("check")) != null) {
-                service.check(cmdLine, appContext);
+            } else if ((a = cmdLine.next("status")) != null) {
+                service.status(cmdLine, appContext);
                 return;
             } else if (cmdLine.next("enable scan") != null) {
                 service.enableScan(cmdLine, appContext, true);

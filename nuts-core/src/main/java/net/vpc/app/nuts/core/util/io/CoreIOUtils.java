@@ -60,6 +60,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -279,7 +280,7 @@ public class CoreIOUtils {
             File f = toFile(url);
             DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
             info.setContentLength(f.length());
-            info.setLastModified(new Date(f.lastModified()));
+            info.setLastModified(Instant.ofEpochMilli(f.lastModified()));
             return info;
         }
         URLConnection conn = null;
@@ -298,9 +299,8 @@ public class CoreIOUtils {
             info.setContentType(conn.getContentType());
             info.setContentEncoding(conn.getContentEncoding());
             info.setContentLength(conn.getContentLengthLong());
-//            info.setLastModified(parseHttpDate(f));
             long m = conn.getLastModified();
-            info.setLastModified(m == 0 ? null : new Date(m));
+            info.setLastModified(m == 0 ? null : Instant.ofEpochMilli(m));
             return info;
         } finally {
             if (conn instanceof HttpURLConnection) {

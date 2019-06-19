@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.core.format;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
@@ -68,7 +68,7 @@ public class FormattableNutsId {
     NutsDescriptor desc;
     NutsDependency dep;
     NutsSession session;
-    Date dte;
+    Instant dte;
     String usr;
     char status_f;
     char status_i;

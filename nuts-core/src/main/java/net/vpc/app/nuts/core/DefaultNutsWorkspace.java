@@ -61,6 +61,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspace.class.getName());
     public static final NutsInstallInfo NOT_INSTALLED = new DefaultNutsInstallInfo(false, false, null, null, null);
     private final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
+    private final List<NutsInstallListener> installListeners = new ArrayList<>();
     private boolean initializing;
     protected final NutsWorkspaceSecurityManager securityManager = new DefaultNutsWorkspaceSecurityManager(this);
     protected NutsWorkspaceConfigManagerExt configManager;
@@ -131,6 +132,23 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public NutsWorkspaceListener[] getWorkspaceListeners() {
         return workspaceListeners.toArray(new NutsWorkspaceListener[0]);
+    }
+
+    @Override
+    public void removeInstallListener(NutsInstallListener listener) {
+        installListeners.add(listener);
+    }
+
+    @Override
+    public void addInstallListener(NutsInstallListener listener) {
+        if (listener != null) {
+            installListeners.add(listener);
+        }
+    }
+
+    @Override
+    public NutsInstallListener[] getInstallListeners() {
+        return installListeners.toArray(new NutsInstallListener[0]);
     }
 
     @Override
@@ -704,12 +722,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 ((DefaultNutsDefinition) def).setInstallation(getInstalledRepository().getInstallInfo(def.getId()));
             }
         }
-        for (NutsInstallListener nutsListener : session.getListeners(NutsInstallListener.class)) {
-            if (isUpdate) {
-                nutsListener.onUpdate(def, reinstall, session);
-            } else {
-                nutsListener.onInstall(def, reinstall, session);
-            }
+        if(isUpdate){
+            fireOnUpdate(new DefaultNutsInstallEvent(def, session, reinstall));
+        }else{
+            fireOnInstall(new DefaultNutsInstallEvent(def, session, reinstall));
         }
         ((DefaultNutsInstallInfo) def.getInstallation()).setJustInstalled(true);
         if (updateDefaultVersion) {
@@ -747,6 +763,33 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     out.printf("%N installed ##successfully##.%N%n", format().id().set(def.getId()).format(), setAsDefaultString);
                 }
             }
+        }
+    }
+
+    public void fireOnInstall(NutsInstallEvent event) {
+        for (NutsInstallListener listener : getInstallListeners()) {
+            listener.onInstall(event);
+        }
+        for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+            listener.onInstall(event);
+        }
+    }
+
+    public void fireOnUpdate(NutsInstallEvent event) {
+        for (NutsInstallListener listener : getInstallListeners()) {
+            listener.onUpdate(event);
+        }
+        for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+            listener.onUpdate(event);
+        }
+    }
+
+    public void fireOnUninstall(NutsInstallEvent event) {
+        for (NutsInstallListener listener : getInstallListeners()) {
+            listener.onUninstall(event);
+        }
+        for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+            listener.onUninstall(event);
         }
     }
 

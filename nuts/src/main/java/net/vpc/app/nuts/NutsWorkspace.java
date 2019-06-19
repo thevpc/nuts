@@ -126,4 +126,10 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsWorkspaceListener[] getWorkspaceListeners();
 
+    void removeInstallListener(NutsInstallListener listener);
+
+    void addInstallListener(NutsInstallListener listener);
+
+    NutsInstallListener[] getInstallListeners();
+
 }

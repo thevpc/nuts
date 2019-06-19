@@ -24,6 +24,8 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
@@ -234,7 +236,9 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter())
                 .registerTypeHierarchyAdapter(Path.class, new PathJsonAdapter())
-                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter());
+                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter())
+                .registerTypeHierarchyAdapter(Date.class, new DateJsonAdapter())
+                .registerTypeHierarchyAdapter(Instant.class, new InstantJsonAdapter());
     }
 
     private static class NutsIdJsonAdapter implements
@@ -395,6 +399,36 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         @Override
         public JsonElement serialize(File src, Type typeOfSrc, JsonSerializationContext context) {
             return context.serialize(src.getPath());
+        }
+    }
+
+    private class DateJsonAdapter implements
+            com.google.gson.JsonSerializer<Date>,
+            com.google.gson.JsonDeserializer<Date> {
+
+        @Override
+        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return new Date(NutsElementUtils.forDate(json.getAsString()).primitive().getDate().toEpochMilli());
+        }
+
+        @Override
+        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+            return context.serialize(src.toInstant().toString());
+        }
+    }
+
+    private class InstantJsonAdapter implements
+            com.google.gson.JsonSerializer<Instant>,
+            com.google.gson.JsonDeserializer<Instant> {
+
+        @Override
+        public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return NutsElementUtils.forDate(json.getAsString()).primitive().getDate();
+        }
+
+        @Override
+        public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
+            return context.serialize(src.toString());
         }
     }
 

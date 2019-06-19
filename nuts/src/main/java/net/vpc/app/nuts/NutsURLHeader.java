@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  *
@@ -48,6 +48,6 @@ public interface NutsURLHeader {
 
     void setContentEncoding(String contentEncoding);
 
-    Date getLastModified();
+    Instant getLastModified();
 
 }

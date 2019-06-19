@@ -59,6 +59,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_BOOLEANS = new NutsElementFactoryBoolean();
     private static final NutsElementFactory F_ENUMS = new NutsElementFactoryEnum();
     private static final NutsElementFactory F_DATE = new NutsElementFactoryDate();
+    private static final NutsElementFactory F_INSTANT = new NutsElementFactoryDate();
     private static final NutsElementFactory F_COLLECTION = new NutsElementFactoryCollection();
     private static final NutsElementFactory F_ITERATOR = new NutsElementFactoryIterator();
     private static final NutsElementFactory F_MAP = new NutsElementFactoryMap();
@@ -80,6 +81,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addHirarchyFactory(StringBuffer.class, F_STRINGS);
         addHirarchyFactory(Number.class, F_NUMBERS);
         addHirarchyFactory(java.util.Date.class, F_DATE);
+        addHirarchyFactory(java.time.Instant.class, F_INSTANT);
         addHirarchyFactory(Enum.class, F_ENUMS);
 
         addHirarchyFactory(JsonElement.class, F_JSONELEMENT);
@@ -191,6 +193,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     }
 
     private static class NutsElementFactoryDate implements NutsElementFactory {
+
+        @Override
+        public NutsElement create(Object o, NutsElementFactoryContext context) {
+            return NutsElementUtils.forDate((Date) o);
+        }
+    }
+    private static class NutsElementFactoryInstant implements NutsElementFactory {
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {

@@ -29,26 +29,18 @@
  */
 package net.vpc.app.nuts;
 
-import java.nio.file.Path;
-import java.time.Instant;
-
 /**
  *
  * @author vpc
- * @since 0.5.5
+ * @since 0.5.6
  */
-public interface NutsInstallInfo {
+public interface NutsInstallEvent {
 
-    boolean isInstalled();
+    NutsDefinition getDefinition();
 
-    Instant getInstallDate();
+    NutsWorkspace getWorkspace();
 
-    boolean isDefaultVersion();
-
-    Path getInstallFolder();
-
-    boolean isJustInstalled();
-
-    String getInstallUser();
-
+    NutsSession getSession();
+    
+    boolean isForce();
 }

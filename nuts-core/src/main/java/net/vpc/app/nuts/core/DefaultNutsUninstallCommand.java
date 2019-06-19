@@ -13,6 +13,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -177,42 +178,46 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
         for (NutsId id : this.getIds()) {
             List<NutsDefinition> resultDefinitions = ws.search().id(id).installed().setSession(searchSession).setTransitive(false).setOptional(false)
                     .setInstallInformation(true).getResultDefinitions().list();
-            if(resultDefinitions.isEmpty()){
-                throw new NutsIllegalArgumentException(ws, id + " Not Installed");
+            for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
+                NutsDefinition resultDefinition = it.next();
+                if (!resultDefinition.getInstallation().isInstalled()) {
+                    it.remove();
+                }
+            }
+            if (resultDefinitions.isEmpty()) {
+                throw new NutsIllegalArgumentException(ws, id + " is not installed");
             }
             defs.addAll(resultDefinitions);
         }
         for (NutsDefinition def : defs) {
             NutsId id = dws.resolveEffectiveId(def.getDescriptor(), ws.fetch().session(searchSession));
+
             NutsInstallerComponent ii = dws.getInstaller(def, session);
             PrintStream out = CoreIOUtils.resolveOut(session);
             if (ii != null) {
-//        NutsDescriptor descriptor = nutToInstall.getDescriptor();
                 NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session,
                         true,
                         false,
                         ws.config().options().getExecutionType(),
                         null);
                 ii.uninstall(executionContext, this.isErase());
-                try {
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.PROGRAMS).toFile());
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
-                    if (this.isErase()) {
-                        CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
-                        CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                if (getValidSession().isPlainTrace()) {
-                    out.printf("%N uninstalled ##successfully##%n", ws.format().id().set(id).format());
-                }
-            } else {
-                if (getValidSession().isPlainTrace()) {
-                    out.printf("%N @@could not@@ be uninstalled%n", ws.format().id().set(id).format());
-                }
             }
+            try {
+                dws.getInstalledRepository().uninstall(id);
+                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.PROGRAMS).toFile());
+                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
+                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
+                if (this.isErase()) {
+                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
+                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            if (getValidSession().isPlainTrace()) {
+                out.printf("%N uninstalled ##successfully##%n", ws.format().id().set(id).format());
+            }
+            dws.fireOnUninstall(new DefaultNutsInstallEvent(def, session, erase));
         }
         return this;
     }

@@ -81,7 +81,7 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
+                    int r = executionContext.getWorkspace().exec().command(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
                     executionContext.getWorkspace().io().getTerminal().fout().printf("Installation Exited with code : " + r + " %n");
                 }
             }

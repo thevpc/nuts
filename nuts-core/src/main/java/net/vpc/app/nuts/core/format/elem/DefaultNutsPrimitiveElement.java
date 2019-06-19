@@ -31,6 +31,8 @@ package net.vpc.app.nuts.core.format.elem;
 
 import net.vpc.app.nuts.NutsElementType;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -260,32 +262,40 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
-    public Date getDate() {
+    public Instant getDate() {
         if (value == null || value instanceof Boolean) {
-            return new Date(0);
+            return Instant.MIN;
         }
         if (value instanceof Number) {
-            return new Date(((Number) value).longValue());
+            return Instant.ofEpochMilli(((Number) value).longValue());
         }
         if (value instanceof Date) {
-            return ((Date) value);
+            return ((Date) value).toInstant();
+        }
+        if (value instanceof Instant) {
+            return ((Instant) value);
         }
         String s = String.valueOf(value);
+        try {
+            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
+        } catch (Exception ex) {
+            //
+        }
         for (String f : DATE_FORMATS) {
             try {
-                return new SimpleDateFormat(f).parse(s);
+                return new SimpleDateFormat(f).parse(s).toInstant();
             } catch (Exception ex) {
                 //
             }
         }
         if (isLong()) {
             try {
-                return new Date(getLong());
+                return Instant.ofEpochMilli(getLong());
             } catch (Exception ex) {
                 //
             }
         }
-        return new Date(0);
+        return Instant.MIN;
     }
 
     @Override
@@ -293,10 +303,15 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         return value == null;
     }
 
-    static Date parseDate(String s) {
+    public static Instant parseDate(String s) {
+        try {
+            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
+        } catch (Exception ex) {
+            //
+        }
         for (String f : DATE_FORMATS) {
             try {
-                return new SimpleDateFormat(f).parse(s);
+                return new SimpleDateFormat(f).parse(s).toInstant();
             } catch (Exception ex) {
                 //
             }
@@ -316,7 +331,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             case NUMBER:
                 return String.valueOf(getNumber());
             case DATE:
-                return "\"" + new SimpleDateFormat("").format(getDate()) + "\"";
+                return "\"" + getDate().toString() + "\"";
         }
         return getString();
     }

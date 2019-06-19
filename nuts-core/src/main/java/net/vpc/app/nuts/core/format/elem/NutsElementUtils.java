@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.format.elem;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Date;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementType;
@@ -109,6 +110,13 @@ public class NutsElementUtils {
     }
 
     public static NutsElement forDate(Date s) {
+        if (s == null) {
+            throw new NullPointerException();
+        }
+        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, s.toInstant());
+    }
+
+    public static NutsElement forDate(Instant s) {
         if (s == null) {
             throw new NullPointerException();
         }
