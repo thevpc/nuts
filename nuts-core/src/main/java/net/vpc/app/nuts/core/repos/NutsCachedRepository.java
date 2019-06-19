@@ -142,7 +142,9 @@ public class NutsCachedRepository extends AbstractNutsRepository {
                 //already deployed because fetchContentImpl2 is run against cachePath
 //                cache.deployContent(id, c.getPath(), session);
                 if (localPath != null) {
-                    getWorkspace().io().copy().from(cachePath).to(localPath).run();
+                    getWorkspace().io().copy()
+                            .session(session.getSession())
+                            .from(cachePath).to(localPath).run();
                 } else {
                     localPath = cachePath;
                 }

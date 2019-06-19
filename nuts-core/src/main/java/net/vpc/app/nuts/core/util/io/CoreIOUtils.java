@@ -1597,7 +1597,9 @@ public class CoreIOUtils {
         final Path cacheBasePath = ws.config().getStoreLocation(ws.config().getRuntimeId(), NutsStoreLocation.CACHE);
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
-        ws.io().copy().from(path + ".sha1").to(t).run();
+        ws.io().copy()
+                .session(session)
+                .from(path + ".sha1").to(t).run();
         String sha1 = new String(t.toByteArray()).trim();
         final PersistentMap<String, String> cu = getCachedUrls(ws);
         String cachedSha1 = cu.get("sha1://" + path);

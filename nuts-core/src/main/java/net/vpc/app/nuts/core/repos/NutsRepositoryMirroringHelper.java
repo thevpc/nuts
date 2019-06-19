@@ -80,7 +80,8 @@ public class NutsRepositoryMirroringHelper {
                     NutsContent c = mirror.fetchContent().id(id).descriptor(descriptor).localPath(cacheContent).session(session).run().getResult();
                     if (c != null) {
                         if (localPath != null) {
-                            getWorkspace().io().copy().from(c.getPath()).to(localPath).safeCopy().run();
+                            getWorkspace().io().copy().session(session.getSession())
+                                    .from(c.getPath()).to(localPath).safeCopy().run();
                         } else {
                             return c;
                         }

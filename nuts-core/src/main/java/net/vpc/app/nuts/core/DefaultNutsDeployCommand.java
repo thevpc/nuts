@@ -369,7 +369,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 }
                 String name = ws.config().getDefaultIdFilename(descriptor.getId().setFaceDescriptor());
                 tempFile = ws.io().createTempFile(name);
-                ws.io().copy().from(contentSource.open()).to(tempFile).safeCopy().run();
+                ws.io().copy().session(getValidSession()).from(contentSource.open()).to(tempFile).safeCopy().run();
                 contentFile2 = tempFile;
 
                 Path contentFile0 = contentFile2;

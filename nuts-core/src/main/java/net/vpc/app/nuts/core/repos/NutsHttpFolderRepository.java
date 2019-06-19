@@ -305,12 +305,12 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localFile, NutsRepositorySession session) {
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
-            getWorkspace().io().copy().from(path).to(localFile).safeCopy().monitorable().run();
+            getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safeCopy().monitorable().run();
             return new DefaultNutsContent(localFile, false, false);
         } else {
             for (String location : descriptor.getLocations()) {
                 try {
-                    getWorkspace().io().copy().from(location).to(localFile).safeCopy().monitorable().run();
+                    getWorkspace().io().copy().session(session.getSession()).from(location).to(localFile).safeCopy().monitorable().run();
                     return new DefaultNutsContent(localFile, false, false);
                 } catch (Exception ex) {
                     //ignore!!

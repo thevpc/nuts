@@ -444,7 +444,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     return new DefaultNutsContent(content, true, false);
                 } else {
                     Path tempFile = getWorkspace().io().createTempFile(content.getFileName().toString(), this);
-                    getWorkspace().io().copy().from(content).to(tempFile).safeCopy().run();
+                    getWorkspace().io().copy()
+                            .session(session.getSession())
+                            .from(content).to(tempFile).safeCopy().run();
                     return new DefaultNutsContent(tempFile, true, false);
                 }
             }
@@ -453,7 +455,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String p = helper.getIdPath(id);
             Path tempFile = getWorkspace().io().createTempFile(new File(p).getName(), this);
             try {
-                getWorkspace().io().copy().from(helper.getStream(id, session)).to(tempFile).validator(new NutsPathCopyAction.Validator() {
+                getWorkspace().io().copy()
+                        .session(session.getSession())
+                        .from(helper.getStream(id, session)).to(tempFile).validator(new NutsPathCopyAction.Validator() {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
@@ -469,7 +473,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             return new DefaultNutsContent(tempFile, false, true);
         } else {
             try {
-                getWorkspace().io().copy().from(helper.getStream(id, session)).to(localPath).validator(new NutsPathCopyAction.Validator() {
+                getWorkspace().io().copy()
+                        .session(session.getSession())
+                        .from(helper.getStream(id, session)).to(localPath).validator(new NutsPathCopyAction.Validator() {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {

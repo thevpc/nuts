@@ -635,7 +635,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             NutsBootConfig bc = ws.config().getBootConfig();
             bc.setApiVersion(apiUpdate.getAvailable().getId().getVersion().toString());
             ws.config().setBootConfig(bc);
-            ws.io().copy().from(apiUpdate.getAvailable().getPath()).to(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
+            ws.io().copy().session(getValidSession()).from(apiUpdate.getAvailable().getPath()).to(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
                     .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
             ).run();
             ws.format().descriptor().set(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor()
@@ -650,7 +650,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             bc.setRuntimeDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
             NutsWorkspaceUtils.checkReadOnly(ws);
             ws.config().setBootConfig(bc);
-            ws.io().copy().from(runtimeUpdate.getAvailable().getPath())
+            ws.io().copy()
+                    .session(getValidSession())
+                    .from(runtimeUpdate.getAvailable().getPath())
                     .to(ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
                             .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
                     ).run();

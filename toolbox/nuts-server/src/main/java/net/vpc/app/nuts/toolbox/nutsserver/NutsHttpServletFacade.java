@@ -267,6 +267,7 @@ public class NutsHttpServletFacade {
                                     )
                             );
                             context.getWorkspace().io().copy()
+                                    .session(context.getSession())
                                     .setSource(info.getContent())
                                     .setTarget(contentFile)
                                     .run();

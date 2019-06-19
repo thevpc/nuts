@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
@@ -46,14 +47,15 @@ public class Test06_CacheURL {
             "--yes",
             "--skip-install-companions"
         });
+        NutsSession session = ws.createSession();
         final String url = "http://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputSource j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
-        ws.io().copy().from(j1).to(new ByteArrayOutputStream()).monitorable().run();
+        ws.io().copy().session(session).from(j1).to(new ByteArrayOutputStream()).monitorable().run();
         System.out.println(j1);
         InputSource j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
-        ws.io().copy().from(j2).to(new ByteArrayOutputStream()).monitorable().run();
+        ws.io().copy().session(session).from(j2).to(new ByteArrayOutputStream()).monitorable().run();
         System.out.println(j2);
     }
 

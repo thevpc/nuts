@@ -169,7 +169,6 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
             monitorable = false;
         }
-        DefaultNutsInputStreamMonitor monitor = null;
         if (!LOG.isLoggable(Level.INFO)) {
             monitorable = false;
         }

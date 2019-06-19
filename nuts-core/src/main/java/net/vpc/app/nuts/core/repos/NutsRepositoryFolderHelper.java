@@ -320,7 +320,7 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
         }
         getWorkspace().format().descriptor().set(desc).print(descFile);
-        getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         return descFile;
     }
 
@@ -337,8 +337,8 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
         }
 
-        getWorkspace().io().copy().from(content).to(pckFile).safeCopy().run();
-        getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(content).to(pckFile).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
         return pckFile;
     }
 
