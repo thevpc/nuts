@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -144,8 +143,14 @@ public class JpsCommand extends SimpleNshBuiltin {
     }
 
     public static String resolveJpsCommand() {
-        String exe = NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "jps.exe" : "jps";
-        String javaHome = System.getProperty("java.home");
+        return resolveJavaToolCommand(null, "jps");
+    }
+
+    public static String resolveJavaToolCommand(String javaHome, String javaCommand) {
+        String exe = NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+        if (javaHome == null) {
+            javaHome = System.getProperty("java.home");
+        }
         Path jh = Paths.get(javaHome);
         Path p = jh.resolve("bin").resolve(exe);
         if (Files.exists(p)) {
