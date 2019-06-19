@@ -489,7 +489,7 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--...**=any-value
       equivalent to **--...** any-value
 
- **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[f]]
+ **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[t]]
       option will switched to [[true]]
 
  **--...**=[[false]]|[[disable]]|[[disabled]]|[[no]]|[[none]]|[[never]]|[[n]]|[[off]]|[[ko]]|[[f]]
