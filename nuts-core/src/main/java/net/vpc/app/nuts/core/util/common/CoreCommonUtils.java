@@ -36,7 +36,7 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -349,8 +349,11 @@ public class CoreCommonUtils {
         if (o.getClass().isEnum()) {
             return ws.io().getTerminalFormat().escapeText(getEnumString((Enum) o));
         }
+        if (o instanceof Instant) {
+            return ws.io().getTerminalFormat().escapeText(((Instant) o).toString());
+        }
         if (o instanceof Date) {
-            return ws.io().getTerminalFormat().escapeText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o));
+            return ws.io().getTerminalFormat().escapeText(((Date) o).toInstant().toString());
         }
         if (o instanceof NutsId) {
             return ws.format().id().set((NutsId) o).format();
@@ -407,7 +410,10 @@ public class CoreCommonUtils {
             return getEnumString((Enum) o);
         }
         if (o instanceof Date) {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format((Date) o);
+            return ((Date) o).toInstant().toString();
+        }
+        if (o instanceof Instant) {
+            return ((Instant) o).toString();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
