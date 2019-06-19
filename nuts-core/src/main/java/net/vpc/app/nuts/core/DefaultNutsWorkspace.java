@@ -963,7 +963,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         NutsId nutsId = format().id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
-            URL resource = getClass().getResource(urlPath);
+            URL resource = clazz.getResource(urlPath);
             if (resource == null) {
                 return null;
             }
