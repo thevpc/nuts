@@ -706,7 +706,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         for (NutsInstallListener nutsListener : session.getListeners(NutsInstallListener.class)) {
             if (isUpdate) {
-                nutsListener.onUpdate(def, session);
+                nutsListener.onUpdate(def, reinstall, session);
             } else {
                 nutsListener.onInstall(def, reinstall, session);
             }

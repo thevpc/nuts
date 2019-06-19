@@ -172,17 +172,18 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         ws.security().checkAllowed(NutsConstants.Rights.UNINSTALL, "uninstall");
+        NutsSession searchSession = session.copy().trace(false);
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
-            NutsDefinition def = ws.fetch().id(id).setSession(session.copy()).setTransitive(false).setOptional(false).dependencies()
-                    .setInstallInformation(true).getResultDefinition();
-            if (!def.getInstallation().isInstalled()) {
+            List<NutsDefinition> resultDefinitions = ws.search().id(id).installed().setSession(searchSession).setTransitive(false).setOptional(false)
+                    .setInstallInformation(true).getResultDefinitions().list();
+            if(resultDefinitions.isEmpty()){
                 throw new NutsIllegalArgumentException(ws, id + " Not Installed");
             }
-            defs.add(def);
+            defs.addAll(resultDefinitions);
         }
         for (NutsDefinition def : defs) {
-            NutsId id = dws.resolveEffectiveId(def.getDescriptor(), ws.fetch().session(session));
+            NutsId id = dws.resolveEffectiveId(def.getDescriptor(), ws.fetch().session(searchSession));
             NutsInstallerComponent ii = dws.getInstaller(def, session);
             PrintStream out = CoreIOUtils.resolveOut(session);
             if (ii != null) {

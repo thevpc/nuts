@@ -51,6 +51,8 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConfirmationMode;
+import net.vpc.app.nuts.core.util.NutsCollectionSearchResult;
+import net.vpc.app.nuts.NutsSearchResult;
 
 /**
  *
@@ -300,7 +302,10 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             if (ws.io().getTerminal().ask()
                     .forBoolean("The following ==nuts== companion tools are going to be installed : "
                             + Arrays.stream(dws.getCompanionTools())
-                                    .map(x -> ws.format().id().setOmitImportedGroup(true).set(ws.format().id().parse(x)).format())
+                                    .map(x -> ws.format().id()
+                                            .setOmitNamespace(true)
+                                            .setOmitImportedGroup(false)
+                                            .set(ws.format().id().parse(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -424,15 +429,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     }
 
     @Override
-    public int getResultCount() {
-        return getResult().length;
-    }
-
-    @Override
-    public NutsDefinition[] getResult() {
+    public NutsSearchResult<NutsDefinition> getResult() {
         if (result == null) {
             run();
         }
-        return result;
+        return new NutsCollectionSearchResult<NutsDefinition>(ws,
+                ids.isEmpty() ? null : ids.get(0).toString(),
+                Arrays.asList(result)
+        );
     }
 }

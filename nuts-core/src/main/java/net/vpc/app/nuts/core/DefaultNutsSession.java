@@ -91,6 +91,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             for (Class cls : new Class[]{
                 NutsWorkspaceListener.class,
                 NutsRepositoryListener.class,
+                NutsInstallListener.class,
                 NutsMapListener.class
             }) {
                 if (cls.isInstance(listener)) {
