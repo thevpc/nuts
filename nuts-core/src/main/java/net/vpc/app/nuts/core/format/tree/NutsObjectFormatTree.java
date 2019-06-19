@@ -58,13 +58,14 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
         return false;
     }
 
+    @Override
     public void print(Writer w) {
         NutsTreeFormat t = ws.format().tree();
         t.configure(true, getExtraConfigArray());
         t.setModel(new NutsElementTreeModel(ws, rootName, getValue(), getValidSession()) {
             @Override
             protected String[] getMultilineArray(String key, NutsElement value) {
-                return getMultilineArray(key, value);
+                return NutsObjectFormatTree.this.getMultilineArray(key, value);
             }
         });
         t.print(w);
@@ -100,6 +101,6 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
     }
 
     private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, getValidSession());
+        return CoreCommonUtils.stringValueFormatted(any, false,getValidSession());
     }
 }

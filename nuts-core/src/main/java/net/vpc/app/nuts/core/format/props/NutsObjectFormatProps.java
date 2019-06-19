@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.core.format.NutsObjectFormatBase;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
@@ -22,6 +23,8 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     final NutsOutputFormat t;
     final NutsWorkspace ws;
     private String rootName = "";
+    private boolean omitNull = true;
+    private boolean escapeText = false;
     private List<String> extraConfig = new ArrayList<>();
     private Map<String, String> multilineProperties = new HashMap<>();
 
@@ -63,7 +66,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
         PrintWriter out = getValidPrintWriter(w);
         NutsPropertiesFormat ff = ws.format().props().model(toMap());
         ff.configure(true, getExtraConfigArray());
-        ff.configure(true, "--props");
+        ff.configure(true, "--escape-text=false");
         ff.print(out);
     }
 
@@ -72,41 +75,59 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     }
 
     private Map toMap() {
-        switch (getValue().type()) {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        fillMap(getValue(), map, rootName);
+        return map;
+    }
+
+    private void fillMap(NutsElement e, Map<String, String> map, String prefix) {
+        switch (e.type()) {
+            case NULL: {
+                if (omitNull) {
+                    //do nothing;
+                } else {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? "value" : prefix;
+                    map.put(k, stringValue(e.primitive().getValue()));
+                }
+                break;
+            }
             case BOOLEAN:
             case DATE:
             case NUMBER:
             case STRING:
             case UNKNWON: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                a.put("value", CoreCommonUtils.stringValueFormatted(getValue().primitive().getValue(), getValidSession()));
-                return a;
-
+                String k = (CoreStringUtils.isBlank(prefix)) ? "value" : prefix;
+                map.put(k, stringValue(e.primitive().getValue()));
+                break;
             }
             case ARRAY: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
                 int index = 1;
-                for (NutsElement datum : getValue().array().children()) {
-                    a.put(String.valueOf(index), CoreCommonUtils.stringValueFormatted(datum, getValidSession()));
+                for (NutsElement datum : e.array().children()) {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
+                    fillMap(datum, map, k);
                     index++;
                 }
-                return a;
+                break;
             }
             case OBJECT: {
-                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
-                for (NutsNamedElement datum : getValue().object().children()) {
-                    a.put(datum.getName(),
-                            CoreCommonUtils.stringValueFormatted(datum.getValue(), getValidSession())
-                    );
+                for (NutsNamedElement datum : e.object().children()) {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? datum.getName() : (prefix + "." + datum.getName());
+                    fillMap(datum.getValue(), map, k);
                 }
-                return a;
+                break;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(ws, e.type().name());
             }
         }
-        throw new NutsUnsupportedArgumentException(ws, getValue().type().name());
     }
 
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {
         multilineProperties.put(property, separator);
         return this;
+    }
+
+    public String stringValue(Object o) {
+        return CoreCommonUtils.stringValueFormatted(o, escapeText, getValidSession());
     }
 }

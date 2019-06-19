@@ -156,6 +156,6 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
     }
 
     private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, getValidSession());
+        return CoreCommonUtils.stringValueFormatted(any, false,getValidSession());
     }
 }

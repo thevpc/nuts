@@ -26,6 +26,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     private NutsTreeModel tree;
     private boolean omitRoot = false;
     private boolean infinite = false;
+    private boolean omitEmptyRoot = true;
 
     public DefaultTreeFormat(NutsWorkspace ws) {
         super(ws, "tree-format");
@@ -92,6 +93,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         return this;
     }
 
+    public boolean isEffectiveOmitRoot() {
+        return isOmitRoot()
+                || (omitEmptyRoot
+                && (tree.getRoot() == null || tree.getRoot().toString().isEmpty()));
+    }
+
     public boolean isOmitRoot() {
         return omitRoot;
     }
@@ -104,21 +111,21 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(b);
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isOmitRoot(), 0);
+        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
         return b.toString();
     }
 
     @Override
     public void print(PrintStream out) {
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isOmitRoot(), 0);
+        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
     }
 
     @Override
     public void print(Writer w) {
         PrintWriter out = getValidPrintWriter(w);
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isOmitRoot(), 0);
+        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
     }
 

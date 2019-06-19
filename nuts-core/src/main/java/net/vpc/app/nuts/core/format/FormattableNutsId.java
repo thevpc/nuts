@@ -424,6 +424,6 @@ public class FormattableNutsId {
     }
 
     private String stringValue(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, session);
+        return CoreCommonUtils.stringValueFormatted(any, false,session);
     }
 }

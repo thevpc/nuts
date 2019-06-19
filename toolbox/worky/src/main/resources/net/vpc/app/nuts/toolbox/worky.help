@@ -22,13 +22,13 @@
             show progress
 
 ==worky== {{enable scan}} <path>
-    enable scan path for maven projetcs
+    enable scan path for maven projects
 
 ==worky== {{disable scan}} <path>
-    enable scan path for maven projetcs
+    disable scan path for maven projects
 
 ==worky== {{list}}
-    list configurations
+    list projects
 
 ==worky== {{set}} ...
     set project configurations

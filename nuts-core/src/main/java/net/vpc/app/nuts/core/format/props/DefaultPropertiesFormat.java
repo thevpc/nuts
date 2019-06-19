@@ -186,28 +186,6 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         out.flush();
     }
 
-//    private Map<String, String> getMultilineMap(String key, Object value) {
-//        String[] a = getMultilineArray(key, value);
-//        if (a == null) {
-//            return null;
-//        }
-//        LinkedHashMap<String, String> m = new LinkedHashMap<>();
-//        for (int i = 0; i < a.length; i++) {
-//            m.put(String.valueOf(i + 1), a[i]);
-//        }
-//        return m;
-//    }
-//    private String[] getMultilineArray(String key, Object value) {
-//        String sep = getMultilineSeparator(key);
-//        if (sep == null) {
-//            return null;
-//        }
-//        String[] vv = stringValue(value).split(sep);
-//        if (vv.length == 0 || vv.length == 1) {
-//            return null;
-//        }
-//        return vv;
-//    }
     private String getMultilineSeparator(String key) {
         String sep = multilineProperties.get(key);
         if (sep != null && sep.length() == 0) {
@@ -246,13 +224,13 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 }
             }
         } else {
-            out.printf(prefix + "==%N==%s%s", formattedKey, separator, value);
+            out.printf(prefix + "==%N==%s%N", formattedKey, separator, value);
         }
     }
 
     private String stringValue(Object o) {
         if (escapeText) {
-            return CoreCommonUtils.stringValueFormatted(o, getValidSession());
+            return CoreCommonUtils.stringValueFormatted(o, escapeText,getValidSession());
         } else {
             return String.valueOf(o);
         }

@@ -19,7 +19,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 
 public class WorkspaceService {
 
-    public static final String NOSCAN = "net.vpc.app.nuts.toolbox.worky.noscan";
+    public static final String SCAN = "net.vpc.app.nuts.toolbox.worky.scan";
     private WorkspaceConfig config;
     private NutsApplicationContext appContext;
 
@@ -98,7 +98,7 @@ public class WorkspaceService {
             } else {
                 String expression = cmd.next().getString();
                 if (cmd.isExecMode()) {
-                    setNoScan(context.getWorkspace().io().path(expression), enable);
+                    setScanEnabled(context.getWorkspace().io().path(expression), enable);
                     count++;
                 }
             }
@@ -162,14 +162,14 @@ public class WorkspaceService {
         Boolean uptodate = null;
         Boolean old = null;
         Boolean invalid = null;
-        NutsTableFormat tf = appContext.getWorkspace().format().table()
-                .addHeaderCells("Id", "Local", "Remote", "Status");
+//        NutsTableFormat tf = appContext.getWorkspace().format().table()
+//                .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (appContext.configureFirst(cmd)) {
                 //consumed
-            } else if (tf.configureFirst(cmd)) {
+//            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
                 commitable = a.getBooleanValue();
@@ -198,27 +198,7 @@ public class WorkspaceService {
         old = b[3];
         invalid = b[4];
 
-        class Data implements Comparable<Data> {
-
-            String id;
-            String loc;
-            String rem;
-            String status;
-
-            @Override
-            public int compareTo(Data o) {
-                int v = status.compareTo(o.status);
-                if (v != 0) {
-                    return v;
-                }
-                v = id.compareTo(o.id);
-                if (v != 0) {
-                    return v;
-                }
-                return 0;
-            }
-        }
-        List<Data> ddd = new ArrayList<>();
+        List<DataRow> ddd = new ArrayList<>();
 
         List<ProjectService> all = findProjectServices();
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
@@ -231,9 +211,9 @@ public class WorkspaceService {
         int maxSize = 1;
         for (int i = 0; i < all.size(); i++) {
             ProjectService projectService = all.get(i);
-            Data d = new Data();
+            DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            if (progress) {
+            if (progress && appContext.session().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
                 if (i > 0) {
                     appContext.session().out().printf("`move-line-start`");
@@ -241,17 +221,17 @@ public class WorkspaceService {
                 }
                 appContext.session().out().printf("(%s / %s) %s\n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
-            d.loc = projectService.detectLocalVersion();
-            d.rem = d.loc == null ? null : projectService.detectRemoteVersion();
-            if (d.loc == null) {
+            d.local = projectService.detectLocalVersion();
+            d.remote = d.local == null ? null : projectService.detectRemoteVersion();
+            if (d.local == null) {
                 d.status = "invalid";
-                d.loc = "";
-                d.rem = "";
-            } else if (d.rem == null) {
-                d.rem = "";
+                d.local = "";
+                d.remote = "";
+            } else if (d.remote == null) {
+                d.remote = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().format().version().parseVersion(d.loc).compareTo(d.rem);
+                int t = appContext.getWorkspace().format().version().parseVersion(d.local).compareTo(d.remote);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -264,8 +244,8 @@ public class WorkspaceService {
         }
 
         Collections.sort(ddd);
-        for (Iterator<Data> iterator = ddd.iterator(); iterator.hasNext();) {
-            Data d = iterator.next();
+        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext();) {
+            DataRow d = iterator.next();
             switch (d.status) {
                 case "invalid": {
                     if (!invalid) {
@@ -278,7 +258,7 @@ public class WorkspaceService {
                         iterator.remove();
                     }
                     d.status = "{{new}}";
-                    d.loc = "[[" + d.loc + "]]";
+                    d.local = "[[" + d.local + "]]";
                     break;
                 }
                 case "commitable": {
@@ -286,7 +266,7 @@ public class WorkspaceService {
                         iterator.remove();
                     }
                     d.status = "[[commitable]]";
-                    d.loc = "[[" + d.loc + "]]";
+                    d.local = "[[" + d.local + "]]";
                     break;
                 }
                 case "old": {
@@ -294,7 +274,7 @@ public class WorkspaceService {
                         iterator.remove();
                     }
                     d.status = "{{old}}";
-                    d.loc = "@@" + d.loc + "@@";
+                    d.local = "@@" + d.local + "@@";
                     break;
                 }
                 case "uptodate": {
@@ -304,10 +284,10 @@ public class WorkspaceService {
                     break;
                 }
             }
-            //"%s %s %s\n",projectService.getConfig().getId(),loc,rem
-            tf.addRow(d.id, d.loc, d.rem, d.status);
+            //"%s %s %s\n",projectService.getConfig().getId(),local,remote
+//            tf.addRow(d.id, d.local, d.remote, d.status);
         }
-        appContext.session().out().print(tf.toString());
+        appContext.session().oout().println(ddd);
     }
 
     private boolean matches(String id, List<String> filters) {
@@ -351,7 +331,7 @@ public class WorkspaceService {
 
     public void scan(File folder, boolean interactive) {
         if (folder.isDirectory()) {
-            if (isNoScan(folder)) {
+            if (!isScanEnabled(folder)) {
                 return;
             }
             ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
@@ -368,11 +348,17 @@ public class WorkspaceService {
                     ProjectConfig p3 = projectService.getConfig();
                     if (p3.equals(p2)) {
                         //no updates!
-                        appContext.session().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        if (appContext.session().isPlainOut()) {
+                            appContext.session().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        }
                     } else if (!p2.getPath().equals(p3.getPath())) {
-                        appContext.session().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + NOSCAN + "=true  :  ==%s== -- ==%s==\n", p2.getId(), p2.getPath(), p3.getPath());
+                        if (appContext.session().isPlainOut()) {
+                            appContext.session().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + SCAN + "=false  :  ==%s== -- ==%s==\n", p2.getId(), p2.getPath(), p3.getPath());
+                        }
                     } else {
-                        appContext.session().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        if (appContext.session().isPlainOut()) {
+                            appContext.session().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        }
 //                String repo = term.readLine("Enter Repository ==%s==: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
@@ -386,7 +372,9 @@ public class WorkspaceService {
                     }
                 } else {
 
-                    appContext.session().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                    if (appContext.session().isPlainOut()) {
+                        appContext.session().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==\n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                    }
                     if (interactive) {
                         String id = appContext.session().terminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
                         if (!StringUtils.isBlank(id)) {
@@ -414,27 +402,27 @@ public class WorkspaceService {
         }
     }
 
-    public void setNoScan(Path folder, boolean enable) {
+    public void setScanEnabled(Path folder, boolean enable) {
         Path ni = folder.resolve(".nuts-info");
         Properties p = null;
-        boolean noscan = false;
+        boolean scan = true;
         if (Files.isRegularFile(ni)) {
             try {
                 p = IOUtils.loadProperties(ni);
-                String v = p.getProperty("net.vpc.app.nuts.toolbox.worky.noscan");
-                if (v != null && "true".equals(v.trim())) {
-                    noscan = true;
+                String v = p.getProperty(SCAN);
+                if (v == null || "false".equals(v.trim())) {
+                    scan = false;
                 }
             } catch (Exception ex) {
                 throw new IllegalArgumentException(ex);
             }
             //=true
         }
-        if (noscan != enable) {
+        if (scan != enable) {
             if (p == null) {
                 p = new Properties();
             }
-            p.setProperty(NOSCAN, String.valueOf(enable));
+            p.setProperty(SCAN, String.valueOf(enable));
             try {
                 IOUtils.saveProperties(p, "", ni);
             } catch (IOException ex) {
@@ -443,22 +431,23 @@ public class WorkspaceService {
         }
     }
 
-    public boolean isNoScan(File folder) {
+    public boolean isScanEnabled(File folder) {
+        boolean scan = true;
         File ni = new File(folder, ".nuts-info");
         Properties p = null;
         if (ni.isFile()) {
             try {
                 p = IOUtils.loadProperties(ni);
-                String v = p.getProperty(NOSCAN);
-                if (v != null && "true".equals(v.trim())) {
-                    return true;
+                String v = p.getProperty(SCAN);
+                if (v == null || "false".equals(v.trim())) {
+                    scan = false;
                 }
             } catch (Exception ex) {
                 //ignore
             }
             //=true
         }
-        return false;
+        return scan;
     }
 
     public int setWorkspaceConfigParam(NutsCommandLine cmd, NutsApplicationContext appContext) {
@@ -515,4 +504,24 @@ public class WorkspaceService {
         return sb.toString();
     }
 
+    static class DataRow implements Comparable<DataRow> {
+
+        String id;
+        String local;
+        String remote;
+        String status;
+
+        @Override
+        public int compareTo(DataRow o) {
+            int v = status.compareTo(o.status);
+            if (v != 0) {
+                return v;
+            }
+            v = id.compareTo(o.id);
+            if (v != 0) {
+                return v;
+            }
+            return 0;
+        }
+    }
 }

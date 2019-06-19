@@ -317,7 +317,7 @@ public class CoreCommonUtils {
         throw new NoSuchElementException(val + " of type " + e.getSimpleName());
     }
 
-    public static String stringValueFormatted(Object o, NutsSession session) {
+    public static String stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
         if (o == null) {
             return "";
         }
@@ -364,7 +364,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, session)).collect(Collectors.toList())) + "\\]";
+            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\]";
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
@@ -372,27 +372,31 @@ public class CoreCommonUtils {
                 return "";
             }
             if (len == 1) {
-                return stringValueFormatted(Array.get(o, 0), session);
+                return stringValueFormatted(Array.get(o, 0), escapeString, session);
             }
             List<String> all = new ArrayList<>(len);
             for (int i = 0; i < len; i++) {
-                all.add(stringValueFormatted(Array.get(o, i), session));
+                all.add(stringValueFormatted(Array.get(o, i), escapeString, session));
             }
             return "\\[" + CoreStringUtils.join(", ", all) + "\\]";
         }
         if (o instanceof Iterable) {
             Iterable x = (Iterable) o;
-            return stringValueFormatted(x.iterator(), session);
+            return stringValueFormatted(x.iterator(), escapeString, session);
         }
         if (o instanceof Iterator) {
             Iterator x = (Iterator) o;
             List<String> all = new ArrayList<>();
             while (x.hasNext()) {
-                all.add(stringValueFormatted(x.next(), session));
+                all.add(stringValueFormatted(x.next(), escapeString, session));
             }
-            return stringValueFormatted(all, session);
+            return stringValueFormatted(all, escapeString, session);
         }
-        return o.toString();
+        String s = o.toString();
+        if (escapeString) {
+            s = session.getWorkspace().io().terminalFormat().escapeText(s);
+        }
+        return s;
     }
 
     public static String stringValue(Object o) {

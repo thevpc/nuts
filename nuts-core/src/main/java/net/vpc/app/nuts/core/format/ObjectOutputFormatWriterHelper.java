@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.format;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
@@ -55,7 +56,7 @@ public class ObjectOutputFormatWriterHelper {
 
     public static Map<String, String> explodeMap(Map m) {
         LinkedHashMap<String, String> res = new LinkedHashMap<>();
-        for (Object k : new HashSet(m.keySet())) {
+        for (Object k : m.keySet()) {
             String sk = CoreCommonUtils.stringValue(k);
             Object v = m.get(k);
             if (isMapStringObject(v)) {

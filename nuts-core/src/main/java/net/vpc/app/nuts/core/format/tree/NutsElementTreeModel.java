@@ -18,7 +18,7 @@ class NutsElementTreeModel implements NutsTreeModel {
     public NutsElementTreeModel(NutsWorkspace ws, String rootName, NutsElement data, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        this.root = new XNode(rootName, data);
+        this.root = new XNode(null, data, rootName);
     }
 
     @Override
@@ -28,33 +28,7 @@ class NutsElementTreeModel implements NutsTreeModel {
 
     @Override
     public List getChildren(Object o) {
-        XNode t = (XNode) o;
-        switch (t.value.type()) {
-            case ARRAY: {
-                List<XNode> all = new ArrayList<>();
-                for (NutsElement me : t.value.array().children()) {
-                    all.add(new XNode(me));
-                }
-                return all;
-            }
-            case OBJECT: {
-                List<XNode> all = new ArrayList<>();
-                for (NutsNamedElement me : t.value.object().children()) {
-                    String[] map = getMultilineArray(stringValue(me.getName()), me.getValue());
-                    if (map == null) {
-                        all.add(new XNode(stringValue(me.getName()), me.getValue()));
-                    } else {
-                        all.add(new XNode(stringValue(me.getName()),
-                                ws.format().element().toElement(Arrays.asList(map))
-                        ));
-                    }
-                }
-                return all;
-            }
-            default: {
-                return null;
-            }
-        }
+        return ((XNode) o).getChildren();
     }
 
     protected String[] getMultilineArray(String key, NutsElement value) {
@@ -63,41 +37,108 @@ class NutsElementTreeModel implements NutsTreeModel {
 
     class XNode {
 
-        String name;
+        String key;
         NutsElement value;
-        boolean noName = false;
+        String title;
 
-        public XNode(NutsElement value) {
+        public XNode(String key, NutsElement value, String title) {
+            this.key = key;
             this.value = value;
-            noName = true;
-        }
-
-        public XNode(String name, NutsElement value) {
-            this.name = name;
-            this.value = value;
+            this.title = title;
         }
 
         @Override
         public String toString() {
-            if (value instanceof Map) {
-                return ws.io().getTerminalFormat().escapeText(stringValue(name));
-            } else if (value instanceof Collection) {
-                return ws.io().getTerminalFormat().escapeText(stringValue(name));
+            String[] p = getMultilineArray(stringValue(key), value);
+            if (p != null) {
+                return stringValue(key);
+            }
+            String title = resolveTitle();
+            if (key == null) {
+                return stringValue(title != null ? title : value);
             } else {
-                String[] p = getMultilineArray(stringValue(name), value);
-                if (p != null) {
-                    return ws.io().getTerminalFormat().escapeText(stringValue(name));
+                return "==" + stringValue(key) + "=="
+                        + "\\=" + stringValue(title != null ? title : value);
+            }
+        }
+
+        private String resolveTitle() {
+            if (title != null) {
+                return title;
+            }
+            switch (this.value.type()) {
+                case ARRAY: {
+                    return "";
                 }
-                if (noName) {
-                    return ws.io().getTerminalFormat().escapeText(stringValue(value));
-                } else {
-                    return "==" + ws.io().getTerminalFormat().escapeText(stringValue(name)) + "==" + "\\=" + ws.io().getTerminalFormat().escapeText(stringValue(value));
+                case OBJECT: {
+                    NutsElement bestElement = null;
+                    int bestKeyOrder = -1;
+                    for (NutsNamedElement me : this.value.object().children()) {
+                        int keyOrder = -1;
+                        switch (me.getName()) {
+                            case "id": {
+                                keyOrder = 1;
+                                break;
+                            }
+                            case "name": {
+                                keyOrder = 10;
+                                break;
+                            }
+                            case "title": {
+                                keyOrder = 2;
+                                break;
+                            }
+                            case "label": {
+                                keyOrder = 3;
+                                break;
+                            }
+                        }
+                        if (keyOrder > bestKeyOrder) {
+                            bestKeyOrder = keyOrder;
+                            bestElement = me.getValue();
+                        }
+                    }
+                    if (bestKeyOrder >= 0) {
+                        return stringValue(bestElement);
+                    }
+                    break;
+                }
+            }
+            return null;
+        }
+
+        public List getChildren() {
+            switch (this.value.type()) {
+                case ARRAY: {
+                    List<XNode> all = new ArrayList<>();
+                    for (NutsElement me : this.value.array().children()) {
+                        all.add(new XNode(null, me, null));
+                    }
+                    return all;
+                }
+                case OBJECT: {
+                    List<XNode> all = new ArrayList<>();
+                    for (NutsNamedElement me : this.value.object().children()) {
+                        String[] map = getMultilineArray(stringValue(me.getName()), me.getValue());
+                        if (map == null) {
+                            all.add(new XNode(stringValue(me.getName()), me.getValue(), null));
+                        } else {
+                            all.add(new XNode(stringValue(me.getName()),
+                                    ws.format().element().toElement(Arrays.asList(map)),
+                                     null));
+                        }
+                    }
+                    return all;
+                }
+                default: {
+                    return null;
                 }
             }
         }
     }
 
     public String stringValue(Object o) {
-        return CoreCommonUtils.stringValueFormatted(o, session);
+        String a = CoreCommonUtils.stringValueFormatted(o, false,session);
+        return a;
     }
 }
