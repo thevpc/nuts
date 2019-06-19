@@ -183,43 +183,46 @@ public class WhoamiCommand extends SimpleNshBuiltin {
 
     @Override
     protected void printPlainObject(SimpleNshCommandContext context) {
+        Options options = context.getOptions();
         Result result = context.getResult();
         context.out().printf("%s\n", result.login);
-        if (result.loginStack != null) {
-            context.out().print("===stack===      :");
-            for (String log : result.loginStack) {
-                context.out().print(" [[" + log + "]]");
+        if (options.nutsUser) {
+            if (result.loginStack != null) {
+                context.out().print("===stack===      :");
+                for (String log : result.loginStack) {
+                    context.out().print(" [[" + log + "]]");
+                }
+                context.out().println();
             }
-            context.out().println();
-        }
-        if (result.groups != null && result.groups.length > 0) {
-            context.out().printf("===identities=== : %s\n", Arrays.toString(result.groups));
-        }
-        if (result.rights != null && result.rights.length > 0) {
-            context.out().printf("===rights===     : %s\n", Arrays.toString(result.rights));
-        }
-        if (result.inherited != null && result.inherited.length > 0) {
-            context.out().printf("===inherited===  : %s\n", Arrays.toString(result.inherited));
-        } else {
-            context.out().printf("===inherited===  : %s\n", "NONE");
-        }
-        if (result.remoteId != null) {
-            context.out().printf("===remote-id===  : %s\n", result.remoteId);
-        }
-        if (result.repos != null) {
-            for (RepoResult repo : result.repos) {
-                context.out().printf("[ [[%s]] ]: \n", repo.name);
-                if (repo.identities.length > 0) {
-                    context.out().printf("    ===identities=== : %s\n", Arrays.toString(repo.identities));
-                }
-                if (result.rights != null && repo.rights.length > 0) {
-                    context.out().printf("    ===rights===     : %s\n", Arrays.toString(repo.rights));
-                }
-                if (repo.inherited != null && repo.inherited.length > 0) {
-                    context.out().printf("    ===inherited===  : %s\n", Arrays.toString(repo.inherited));
-                }
-                if (repo.remoteId != null) {
-                    context.out().printf("    ===remote-id===  : %s\n", repo.remoteId);
+            if (result.groups != null && result.groups.length > 0) {
+                context.out().printf("===identities=== : %s\n", Arrays.toString(result.groups));
+            }
+            if (result.rights != null && result.rights.length > 0) {
+                context.out().printf("===rights===     : %s\n", Arrays.toString(result.rights));
+            }
+            if (result.inherited != null && result.inherited.length > 0) {
+                context.out().printf("===inherited===  : %s\n", Arrays.toString(result.inherited));
+            } else {
+                context.out().printf("===inherited===  : %s\n", "NONE");
+            }
+            if (result.remoteId != null) {
+                context.out().printf("===remote-id===  : %s\n", result.remoteId);
+            }
+            if (result.repos != null) {
+                for (RepoResult repo : result.repos) {
+                    context.out().printf("[ [[%s]] ]: \n", repo.name);
+                    if (repo.identities.length > 0) {
+                        context.out().printf("    ===identities=== : %s\n", Arrays.toString(repo.identities));
+                    }
+                    if (result.rights != null && repo.rights.length > 0) {
+                        context.out().printf("    ===rights===     : %s\n", Arrays.toString(repo.rights));
+                    }
+                    if (repo.inherited != null && repo.inherited.length > 0) {
+                        context.out().printf("    ===inherited===  : %s\n", Arrays.toString(repo.inherited));
+                    }
+                    if (repo.remoteId != null) {
+                        context.out().printf("    ===remote-id===  : %s\n", repo.remoteId);
+                    }
                 }
             }
         }
