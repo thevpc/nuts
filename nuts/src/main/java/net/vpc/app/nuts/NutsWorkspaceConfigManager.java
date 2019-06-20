@@ -176,9 +176,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
-    void setStoreLocationLayout(NutsStoreLocationLayout layout);
+    void setStoreLocationLayout(NutsOsFamily layout);
 
-    NutsStoreLocationLayout getStoreLocationLayout();
+    NutsOsFamily getStoreLocationLayout();
 
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
@@ -216,7 +216,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceListManager createWorkspaceListManager(String name);
 
-    void setHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType, String location);
+    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
 
     NutsId getApiId();
 

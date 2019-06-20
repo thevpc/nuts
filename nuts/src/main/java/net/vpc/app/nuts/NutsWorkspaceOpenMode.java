@@ -47,5 +47,14 @@ public enum NutsWorkspaceOpenMode {
     /**
      * Open Workspace (if found) or throw Error (if not found)
      */
-    OPEN_EXISTING
+    OPEN_EXISTING;
+    private final String id;
+
+    NutsWorkspaceOpenMode() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

@@ -43,9 +43,15 @@ public enum NutsElementType {
     OBJECT(false),
     UNKNWON(false);
     private final boolean primitive;
+    private final String id;
 
     private NutsElementType(boolean primitive) {
+        this.id = name().toLowerCase().replace('_', '-');
         this.primitive = primitive;
+    }
+
+    public String id() {
+        return id;
     }
 
     public boolean isPrimitive() {

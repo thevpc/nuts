@@ -42,7 +42,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/allVersions"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/allVersions"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
@@ -65,7 +65,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "?repositoryUuid=" + repository.getUuid();
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "?repositoryUuid=" + repository.getUuid();
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
@@ -100,7 +100,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/delete"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),
@@ -121,7 +121,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/addData"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),

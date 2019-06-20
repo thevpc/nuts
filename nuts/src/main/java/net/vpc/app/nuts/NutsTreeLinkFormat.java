@@ -39,7 +39,16 @@ public interface NutsTreeLinkFormat {
     public enum Type {
         FIRST,
         MIDDLE,
-        LAST
+        LAST;
+        private final String id;
+
+        Type() {
+            this.id = name().toLowerCase().replace('_', '-');
+        }
+
+        public String id() {
+            return id;
+        }
     }
 
     String formatMain(Type type);

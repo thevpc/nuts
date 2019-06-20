@@ -46,5 +46,14 @@ public enum NutsExecutableType {
      */
     ALIAS,
     COMPONENT,
-    SYSTEM
+    SYSTEM;
+    private final String id;
+
+    NutsExecutableType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

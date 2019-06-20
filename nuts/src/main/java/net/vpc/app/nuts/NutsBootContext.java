@@ -49,7 +49,7 @@ public interface NutsBootContext {
 
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
-    NutsStoreLocationLayout getStoreLocationLayout();
+    NutsOsFamily getStoreLocationLayout();
 
     /**
      * all store locations ordered according NutsStoreFolder constant
@@ -83,10 +83,11 @@ public interface NutsBootContext {
      * @return array of available home locations
      */
     String[] getHomeLocations();
+    String[] getDefaultHomeLocations();
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType);
+    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType);
 
     NutsId getApiId();
 

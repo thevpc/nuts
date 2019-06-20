@@ -48,7 +48,14 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
     private final boolean stopFast;
     private NutsFetchMode[] all;
 
+    private final String id;
+
+    public String id() {
+        return id;
+    }
+
     private NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
+        this.id = name().toLowerCase().replace('_', '-');
         this.stopFast = stopFast;
         this.all = Arrays.copyOf(all, all.length);
     }

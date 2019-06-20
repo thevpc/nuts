@@ -186,17 +186,18 @@ public final class NutsConstants {
 
         private Folders() {
         }
-        /**
-         * default components root name. By default repositories are stored
-         * under ${workspace-location}/lib
-         */
-        public static final String LIB = "lib";
+//        /**
+//         * default components root name. By default repositories are stored
+//         * under ${workspace-location}/lib
+//         */
+//        public static final String LIB = "lib";
         public static final String BOOT = "boot";
         /**
          * default repositories root name. By default repositories are stored
-         * under ${workspace-location}/repos or ${repository-location}/repos
+         * under ${workspace-location-config}/repos or ${repository-location}/repos
          */
         public static final String REPOSITORIES = "repos";
+        public static final String COMPONENTS   = "comps";
 
     }
 

@@ -37,5 +37,14 @@ package net.vpc.app.nuts;
 public enum NutsFetchMode {
     INSTALLED,
     LOCAL,
-    REMOTE,
+    REMOTE;
+    private final String id;
+
+    NutsFetchMode() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

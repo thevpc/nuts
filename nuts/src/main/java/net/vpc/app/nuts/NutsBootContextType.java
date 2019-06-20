@@ -31,7 +31,9 @@ package net.vpc.app.nuts;
 
 /**
  * Define type of NutsBootContext instance to get using 
- * {@link NutsWorkspaceConfigManager#getContext(net.vpc.app.nuts.NutsBootContextType) } call.
+ * {@link NutsWorkspaceConfigManager#getContext(net.vpc.app.nuts.NutsBootContextType) }
+ * call.
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -48,5 +50,14 @@ public enum NutsBootContextType {
      * Run-time configuration (may be different from Boot time as configuration
      * changes)
      */
-    CONFIG,
+    CONFIG;
+    private final String id;
+
+    NutsBootContextType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

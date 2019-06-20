@@ -47,6 +47,7 @@ public class Test04_CreateLoadLinuxTest {
 
         CoreIOUtils.delete(base);
         Nuts.runWorkspace(new String[]{
+            "--reset",
             "--system-programs-home", new File(base, "system.programs").getPath(),
             "--system-config-home", new File(base, "system.config").getPath(),
             "--system-var-home", new File(base, "system.var").getPath(),
@@ -54,6 +55,7 @@ public class Test04_CreateLoadLinuxTest {
             "--system-temp-home", new File(base, "system.temp").getPath(),
             "--system-cache-home", new File(base, "system.cache").getPath(),
             "--system-lib-home", new File(base, "system.lib").getPath(),
+            "--system-run-home", new File(base, "system.run").getPath(),
             //            "--verbose", 
             "--skip-install-companions",
             "--yes",
@@ -64,68 +66,81 @@ public class Test04_CreateLoadLinuxTest {
             "--system-config-home", new File(base, "system.config").getPath(),
             "info"
         });
+        System.out.println("==========================");
+        w.format().info().println();
+        System.out.println("==========================");
+        System.out.println(new File(base, "system.programs").getPath());
         System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
         Assert.assertEquals(
-                new File(base, "system.programs/default-workspace/programs").getPath(),
+                new File(base, "system.programs/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.PROGRAMS).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.config/default-workspace/config").getPath(),
+                new File(base, "system.config/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.CONFIG).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.var/default-workspace/var").getPath(),
+                new File(base, "system.var/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.VAR).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.log/default-workspace/log").getPath(),
+                new File(base, "system.log/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.LOG).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.temp/default-workspace/temp").getPath(),
+                new File(base, "system.temp/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.TEMP).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.cache/default-workspace/cache").getPath(),
+                new File(base, "system.cache/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.CACHE).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.lib/default-workspace/lib").getPath(),
+                new File(base, "system.lib/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.LIB).toString()
+        );
+        Assert.assertEquals(
+                new File(base, "system.run/default-workspace").getPath(),
+                w.config().getStoreLocation(NutsStoreLocation.RUN).toString()
         );
 
         w = Nuts.openWorkspace(new String[]{
+//            "--workspace", "default-workspace",
             "--workspace", new File(base, "system.config/default-workspace").getPath(),
             "info"
         });
         System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
         Assert.assertEquals(
-                new File(base, "system.programs/default-workspace/programs").getPath(),
+                new File(base, "system.programs/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.PROGRAMS).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.config/default-workspace/config").getPath(),
+                new File(base, "system.config/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.CONFIG).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.var/default-workspace/var").getPath(),
+                new File(base, "system.var/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.VAR).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.log/default-workspace/log").getPath(),
+                new File(base, "system.log/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.LOG).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.temp/default-workspace/temp").getPath(),
+                new File(base, "system.temp/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.TEMP).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.cache/default-workspace/cache").getPath(),
+                new File(base, "system.cache/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.CACHE).toString()
         );
         Assert.assertEquals(
-                new File(base, "system.lib/default-workspace/lib").getPath(),
+                new File(base, "system.lib/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.LIB).toString()
+        );
+        Assert.assertEquals(
+                new File(base, "system.run/default-workspace").getPath(),
+                w.config().getStoreLocation(NutsStoreLocation.RUN).toString()
         );
     }
 

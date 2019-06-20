@@ -37,51 +37,53 @@ package net.vpc.app.nuts;
 public enum NutsStoreLocation {
 
     /**
-     * defines the base directory relative to which user specific executable 
+     * defines the base directory relative to which user specific executable
      * files should be stored.
      */
     PROGRAMS,
-
     /**
      * defines the base directory relative to which user specific configuration
      * files should be stored. equivalent to $XDG_CONFIG_HOME on LINUX systems
      */
     CONFIG,
-
     /**
      * defines the base directory relative to which user specific data files
      * should be stored. equivalent to $XDG_DATA_HOME on LINUX systems
      */
     VAR,
-
     /**
-     * defines the base directory relative to which user log files
-     * should be stored. equivalent to $XDG_LOG_HOME on LINUX systems
+     * defines the base directory relative to which user log files should be
+     * stored. equivalent to $XDG_LOG_HOME on LINUX systems
      */
     LOG,
-
     /**
-     * defines the base directory relative to which user temp files
-     * should be stored. 
+     * defines the base directory relative to which user temp files should be
+     * stored.
      */
     TEMP,
-    
     /**
      * defines the base directory relative to which user specific non-essential
      * data files should be stored. equivalent to $XDG_CACHE_HOME on LINUX
      */
     CACHE,
-
     /**
-     * defines the base directory relative to which user binary non executable 
+     * defines the base directory relative to which user binary non executable
      * files should be stored.
      */
     LIB,
     /**
      * defines the base directory relative to which user-specific non-essential
      * runtime files and other file objects (such as sockets, named pipes, ...)
-     * should be stored.
-     * equivalent to $XDG_RUNTIME_DIR on LINUX systems
+     * should be stored. equivalent to $XDG_RUNTIME_DIR on LINUX systems
      */
-    RUN,
+    RUN;
+    private final String id;
+
+    NutsStoreLocation() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

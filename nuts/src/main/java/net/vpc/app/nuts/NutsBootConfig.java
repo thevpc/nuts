@@ -99,7 +99,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * workspace store location layout
      */
-    private NutsStoreLocationLayout storeLocationLayout;
+    private NutsOsFamily storeLocationLayout;
 
     /**
      * when global is true consider system wide folders (user independent but
@@ -120,7 +120,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
      */
-    private String[] homeLocations = new String[NutsStoreLocation.values().length * NutsStoreLocationLayout.values().length];
+    private String[] homeLocations = new String[NutsStoreLocation.values().length * NutsOsFamily.values().length];
+    private String[] defaultHomeLocations = new String[NutsStoreLocation.values().length];
 
     public NutsBootConfig() {
     }
@@ -289,7 +290,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public NutsStoreLocationLayout getStoreLocationLayout() {
+    public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
@@ -302,16 +303,20 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this.storeLocations[folder.ordinal()];
     }
 
-    public NutsBootConfig setHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folder, String value) {
-        this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+    public NutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
+        if (layout == null) {
+            this.defaultHomeLocations[folder.ordinal()] = value;
+        } else {
+            this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+        }
         return this;
     }
 
-    public String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folder) {
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
         return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
     }
 
-    public NutsBootConfig setStoreLocationLayout(NutsStoreLocationLayout storeLocationLayout) {
+    public NutsBootConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
     }
@@ -331,6 +336,10 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
+    }
+
+    public String[] getDefaultHomeLocations() {
+        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
     }
 
     public boolean isGlobal() {
@@ -395,7 +404,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
                 sb.append(value.name().toLowerCase()).append("StoreLocation='").append(s).append('\'');
             }
         }
-        for (NutsStoreLocationLayout value : NutsStoreLocationLayout.values()) {
+        for (NutsOsFamily value : NutsOsFamily.values()) {
             for (NutsStoreLocation value1 : NutsStoreLocation.values()) {
                 String s = getHomeLocation(value, value1);
                 if (!NutsUtilsLimited.isBlank(s)) {

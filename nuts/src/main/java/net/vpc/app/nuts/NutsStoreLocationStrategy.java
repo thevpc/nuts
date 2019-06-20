@@ -41,5 +41,14 @@ public enum NutsStoreLocationStrategy {
     /**
      * locations will be located at the very same root folder
      */
-    STANDALONE,
+    STANDALONE;
+    private final String id;
+
+    NutsStoreLocationStrategy() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

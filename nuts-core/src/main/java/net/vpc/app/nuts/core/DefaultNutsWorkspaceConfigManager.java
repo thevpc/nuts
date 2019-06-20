@@ -996,6 +996,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return ws.io().path(NutsPlatformUtils.resolveHomeFolder(
                 runningBootConfig.getStoreLocationLayout(),
                 folderType, runningBootConfig.getHomeLocations(),
+                runningBootConfig.getDefaultHomeLocations(),
                 runningBootConfig.isGlobal(),
                 runningBootConfig.getName()
         ));
@@ -1019,6 +1020,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Path storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
+        }
+        switch (folderType) {
+            case CACHE:
+            case CONFIG:
+                return storeLocation.resolve(NutsConstants.Folders.COMPONENTS).resolve(getDefaultIdBasedir(id));
         }
         return storeLocation.resolve(getDefaultIdBasedir(id));
     }
@@ -1158,50 +1164,50 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void setHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType, String location) {
+    public void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location) {
         if (layout == null) {
-            throw new NutsIllegalArgumentException(ws, "Invalid layout home null");
+            switch (folderType) {
+                case PROGRAMS: {
+                    config.setProgramsSystemHome(location);
+                    break;
+                }
+                case CACHE: {
+                    config.setCacheSystemHome(location);
+                    break;
+                }
+                case CONFIG: {
+                    config.setConfigSystemHome(location);
+                    break;
+                }
+                case LOG: {
+                    config.setLogSystemHome(location);
+                    break;
+                }
+                case TEMP: {
+                    config.setTempSystemHome(location);
+                    break;
+                }
+                case VAR: {
+                    config.setVarSystemHome(location);
+                    break;
+                }
+                case LIB: {
+                    config.setLibSystemHome(location);
+                    break;
+                }
+                case RUN: {
+                    config.setRunSystemHome(location);
+                    break;
+                }
+                default: {
+                    throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
+                }
+            }
         }
         if (folderType == null) {
             throw new NutsIllegalArgumentException(ws, "Invalid store folder null");
         }
         switch (layout) {
-            case SYSTEM: {
-                switch (folderType) {
-                    case PROGRAMS: {
-                        config.setProgramsSystemHome(location);
-                        break;
-                    }
-                    case CACHE: {
-                        config.setCacheSystemHome(location);
-                        break;
-                    }
-                    case CONFIG: {
-                        config.setConfigSystemHome(location);
-                        break;
-                    }
-                    case LOG: {
-                        config.setLogSystemHome(location);
-                        break;
-                    }
-                    case TEMP: {
-                        config.setTempSystemHome(location);
-                        break;
-                    }
-                    case VAR: {
-                        config.setVarSystemHome(location);
-                        break;
-                    }
-                    case LIB: {
-                        config.setLibSystemHome(location);
-                        break;
-                    }
-                    default: {
-                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-                    }
-                }
-                break;
-            }
             case WINDOWS: {
                 switch (folderType) {
                     case PROGRAMS: {
@@ -1230,6 +1236,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     }
                     case LIB: {
                         config.setLibWindowsHome(location);
+                        break;
+                    }
+                    case RUN: {
+                        config.setRunWindowsHome(location);
                         break;
                     }
                     default: {
@@ -1268,6 +1278,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         config.setLibMacOsHome(location);
                         break;
                     }
+                    case RUN: {
+                        config.setRunMacOsHome(location);
+                        break;
+                    }
                     default: {
                         throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
                     }
@@ -1302,6 +1316,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     }
                     case LIB: {
                         config.setLibLinuxHome(location);
+                        break;
+                    }
+                    case RUN: {
+                        config.setRunLinuxHome(location);
                         break;
                     }
                     default: {
@@ -1340,20 +1358,18 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void setStoreLocationLayout(NutsStoreLocationLayout layout) {
-        if (layout == null) {
-            layout = NutsStoreLocationLayout.values()[0];
-        }
+    public void setStoreLocationLayout(NutsOsFamily layout) {
         config.setStoreLocationLayout(layout);
         fireConfigurationChanged();
     }
 
     @Override
-    public NutsStoreLocationLayout getStoreLocationLayout() {
-        NutsStoreLocationLayout s = config.getStoreLocationLayout();
-        return s == null ? NutsStoreLocationLayout.values()[0] : s;
+    public NutsOsFamily getStoreLocationLayout() {
+        NutsOsFamily s = config.getStoreLocationLayout();
+        return s == null ? NutsOsFamily.values()[0] : s;
     }
 
+    @Override
     public NutsWorkspace getWorkspace() {
         return ws;
     }
@@ -1496,7 +1512,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Path file = getConfigFile();
         NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.format().json().parse(file, NutsWorkspaceConfig.class) : null;
         if (_config != null) {
-            setConfig(_config, session,false);
+            setConfig(_config, session, false);
             configurationChanged = false;
             return true;
         } else {
@@ -1587,7 +1603,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getRepositoriesRoot() {
-        return ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.REPOSITORIES);
+        return ws.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     @Override
@@ -1785,7 +1801,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Path root = this.getRepositoriesRoot();
         NutsWorkspaceConfigManager configManager = this.ws.config();
         return ws.io().path(ws.io().expandPath(repositoryLocation,
-                root != null ? root.toString() : configManager.getWorkspaceLocation().resolve(NutsConstants.Folders.REPOSITORIES).toString()));
+                root != null ? root.toString() : configManager.getStoreLocation(NutsStoreLocation.CONFIG)
+                        .resolve(NutsConstants.Folders.REPOSITORIES).toString()));
     }
 
     private static class DummyNutsIndexStoreClient implements NutsIndexStoreClient {

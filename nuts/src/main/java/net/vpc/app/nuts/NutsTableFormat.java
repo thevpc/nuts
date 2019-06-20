@@ -109,9 +109,15 @@ public interface NutsTableFormat extends NutsFormat {
         LAST_ROW_SEP('N'),
         LAST_ROW_END('O');
         char c;
+        private final String id;
 
         Separator(char c) {
             this.c = c;
+            this.id = name().toLowerCase().replace('_', '-');
+        }
+
+        public String id() {
+            return id;
         }
     }
 

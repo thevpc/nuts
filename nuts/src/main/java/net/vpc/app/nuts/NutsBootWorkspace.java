@@ -157,7 +157,7 @@ public class NutsBootWorkspace {
         this.runtimeId = NutsUtilsLimited.isBlank(options.getBootRuntime()) ? null : NutsIdLimited.parse(options.getBootRuntime()).toString();
         this.contextClassLoaderProvider = options.getClassLoaderProvider() == null ? NutsDefaultClassLoaderProvider.INSTANCE : options.getClassLoaderProvider();
     }
-    
+
     public boolean hasUnsatisfiedRequirements() {
         return newInstanceRequirements != 0;
     }
@@ -711,6 +711,7 @@ public class NutsBootWorkspace {
                 runningBootConfig.getStoreLocationLayout(),
                 storeFolder,
                 runningBootConfig.getHomeLocations(),
+                runningBootConfig.getDefaultHomeLocations(),
                 runningBootConfig.isGlobal(),
                 runningBootConfig.getName()
         );
@@ -1000,8 +1001,8 @@ public class NutsBootWorkspace {
     private void deleteStoreLocations(NutsWorkspace workspace, boolean includeBoot, boolean includeRoot, NutsStoreLocation... locations) {
         NutsWorkspaceOptions o = getOptions();
         NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
-        if (confirm==NutsConfirmationMode.ASK 
-                && this.getOptions().getOutputFormat() != null 
+        if (confirm == NutsConfirmationMode.ASK
+                && this.getOptions().getOutputFormat() != null
                 && this.getOptions().getOutputFormat() != NutsOutputFormat.PLAIN) {
             throw new NutsExecutionException(workspace, "Unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace", 243);
@@ -1135,7 +1136,7 @@ public class NutsBootWorkspace {
             lastConfigPath
                     = NutsUtilsLimited.isValidWorkspaceName(ws)
                     ? NutsPlatformUtils.resolveHomeFolder(
-                            null, null, null,
+                            null, null, null, null,
                             config.isGlobal(),
                             NutsUtilsLimited.resolveValidWorkspaceName(ws)
                     ) : NutsUtilsLimited.getAbsolutePath(ws);
@@ -1172,7 +1173,7 @@ public class NutsBootWorkspace {
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
                 config.setStoreLocation(type, lastConfigLoaded.getStoreLocation(type));
             }
-            for (NutsStoreLocationLayout layout : NutsStoreLocationLayout.values()) {
+            for (NutsOsFamily layout : NutsOsFamily.values()) {
                 for (NutsStoreLocation loc : NutsStoreLocation.values()) {
                     String homeLocation = lastConfigLoaded.getHomeLocation(layout, loc);
                     if (!NutsUtilsLimited.isBlank(homeLocation)) {
@@ -1184,9 +1185,10 @@ public class NutsBootWorkspace {
             }
         }
         String[] homeLocations = config.getHomeLocations();
-        final NutsStoreLocationLayout storeLocationLayout = config.getStoreLocationLayout();
+        String[] defaultHomeLocations = config.getDefaultHomeLocations();
+        final NutsOsFamily storeLocationLayout = config.getStoreLocationLayout();
         if (storeLocationLayout == null) {
-            config.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
+            config.setStoreLocationLayout(null);
         }
         if (config.getStoreLocationStrategy() == null) {
             config.setStoreLocationStrategy(namedWorkspace ? NutsStoreLocationStrategy.EXPLODED : NutsStoreLocationStrategy.STANDALONE);
@@ -1198,7 +1200,8 @@ public class NutsBootWorkspace {
             String workspace = config.getWorkspace();
             String[] homes = new String[NutsStoreLocation.values().length];
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
-                homes[type.ordinal()] = NutsPlatformUtils.resolveHomeFolder(storeLocationLayout, type, homeLocations, config.isGlobal(), config.getName());
+                homes[type.ordinal()] = NutsPlatformUtils.resolveHomeFolder(storeLocationLayout, type, homeLocations, defaultHomeLocations, 
+                        config.isGlobal(), config.getName());
                 if (NutsUtilsLimited.isBlank(homes[type.ordinal()])) {
                     throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());
                 }
@@ -1393,7 +1396,7 @@ public class NutsBootWorkspace {
                                         LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     String t = k.substring(0, k.length() - "SystemHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.valueOf(t), val);
+                                    c.setHomeLocation(null, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "programsWindowsHome":
@@ -1408,7 +1411,7 @@ public class NutsBootWorkspace {
                                         LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     String t = k.substring(0, k.length() - "WindowsHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.valueOf(t), val);
+                                    c.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "programsMacOsHome":
@@ -1423,7 +1426,7 @@ public class NutsBootWorkspace {
                                         LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     String t = k.substring(0, k.length() - "MacOsHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.valueOf(t), val);
+                                    c.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "programsLinuxHome":
@@ -1438,7 +1441,7 @@ public class NutsBootWorkspace {
                                         LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     String t = k.substring(0, k.length() - "LinuxHome".length()).toUpperCase();
-                                    c.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.valueOf(t), val);
+                                    c.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "storeLocationStrategy": {
@@ -1460,10 +1463,10 @@ public class NutsBootWorkspace {
                                     if (LOG.isLoggable(Level.FINEST)) {
                                         LOG.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
-                                    NutsStoreLocationLayout layout = NutsStoreLocationLayout.SYSTEM;
+                                    NutsOsFamily layout = null;
                                     if (!val.isEmpty()) {
                                         try {
-                                            layout = NutsStoreLocationLayout.valueOf(val.toUpperCase());
+                                            layout = NutsOsFamily.valueOf(val.toUpperCase());
                                         } catch (Exception ex) {
                                             //
                                         }

@@ -488,37 +488,37 @@ public class CoreNutsUtils {
         bconfig.setStoreLocation(NutsStoreLocation.CACHE, wconfig.getCacheStoreLocation());
         bconfig.setStoreLocation(NutsStoreLocation.LIB, wconfig.getLibStoreLocation());
 
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.PROGRAMS, wconfig.getProgramsSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CONFIG, wconfig.getConfigSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.VAR, wconfig.getVarSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LOG, wconfig.getLogSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.TEMP, wconfig.getTempSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CACHE, wconfig.getCacheSystemHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LIB, wconfig.getLibSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.PROGRAMS, wconfig.getProgramsSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.CONFIG, wconfig.getConfigSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.VAR, wconfig.getVarSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.LOG, wconfig.getLogSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.TEMP, wconfig.getTempSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.CACHE, wconfig.getCacheSystemHome());
+        bconfig.setHomeLocation(null, NutsStoreLocation.LIB, wconfig.getLibSystemHome());
 
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CONFIG, wconfig.getConfigWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.VAR, wconfig.getVarWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LOG, wconfig.getLogWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.TEMP, wconfig.getTempWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE, wconfig.getCacheWindowsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB, wconfig.getLibWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CONFIG, wconfig.getConfigWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.VAR, wconfig.getVarWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LOG, wconfig.getLogWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.TEMP, wconfig.getTempWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CACHE, wconfig.getCacheWindowsHome());
+        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LIB, wconfig.getLibWindowsHome());
 
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CONFIG, wconfig.getConfigMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.VAR, wconfig.getVarMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LOG, wconfig.getLogMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.TEMP, wconfig.getTempMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CACHE, wconfig.getCacheMacOsHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LIB, wconfig.getLibMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CONFIG, wconfig.getConfigMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.VAR, wconfig.getVarMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LOG, wconfig.getLogMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.TEMP, wconfig.getTempMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CACHE, wconfig.getCacheMacOsHome());
+        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LIB, wconfig.getLibMacOsHome());
 
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS, wconfig.getProgramsLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG, wconfig.getConfigLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.VAR, wconfig.getVarLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LOG, wconfig.getLogLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.TEMP, wconfig.getTempLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CACHE, wconfig.getCacheLinuxHome());
-        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LIB, wconfig.getLibLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.PROGRAMS, wconfig.getProgramsLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CONFIG, wconfig.getConfigLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.VAR, wconfig.getVarLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LOG, wconfig.getLogLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.TEMP, wconfig.getTempLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CACHE, wconfig.getCacheLinuxHome());
+        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LIB, wconfig.getLibLinuxHome());
     }
 
     public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
@@ -529,38 +529,43 @@ public class CoreNutsUtils {
         wconfig.setTempStoreLocation(options.getStoreLocation(NutsStoreLocation.TEMP));
         wconfig.setCacheStoreLocation(options.getStoreLocation(NutsStoreLocation.CACHE));
         wconfig.setLibStoreLocation(options.getStoreLocation(NutsStoreLocation.LIB));
+        wconfig.setRunStoreLocation(options.getStoreLocation(NutsStoreLocation.RUN));
 
-        wconfig.setProgramsSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CONFIG));
-        wconfig.setVarSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.VAR));
-        wconfig.setLogSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LOG));
-        wconfig.setTempSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.TEMP));
-        wconfig.setCacheSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CACHE));
-        wconfig.setLibSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LIB));
+        wconfig.setProgramsSystemHome(options.getHomeLocation(null, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigSystemHome(options.getHomeLocation(null, NutsStoreLocation.CONFIG));
+        wconfig.setVarSystemHome(options.getHomeLocation(null, NutsStoreLocation.VAR));
+        wconfig.setLogSystemHome(options.getHomeLocation(null, NutsStoreLocation.LOG));
+        wconfig.setTempSystemHome(options.getHomeLocation(null, NutsStoreLocation.TEMP));
+        wconfig.setCacheSystemHome(options.getHomeLocation(null, NutsStoreLocation.CACHE));
+        wconfig.setLibSystemHome(options.getHomeLocation(null, NutsStoreLocation.LIB));
+        wconfig.setRunSystemHome(options.getHomeLocation(null, NutsStoreLocation.RUN));
 
-        wconfig.setProgramsWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CONFIG));
-        wconfig.setVarWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.VAR));
-        wconfig.setLogWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LOG));
-        wconfig.setTempWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.TEMP));
-        wconfig.setCacheWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE));
-        wconfig.setLibWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB));
+        wconfig.setProgramsWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CONFIG));
+        wconfig.setVarWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.VAR));
+        wconfig.setLogWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LOG));
+        wconfig.setTempWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.TEMP));
+        wconfig.setCacheWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CACHE));
+        wconfig.setLibWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LIB));
+        wconfig.setRunWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.RUN));
 
-        wconfig.setProgramsMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CONFIG));
-        wconfig.setVarMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.VAR));
-        wconfig.setLogMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LOG));
-        wconfig.setTempMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.TEMP));
-        wconfig.setCacheMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CACHE));
-        wconfig.setLibMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LIB));
+        wconfig.setProgramsMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CONFIG));
+        wconfig.setVarMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.VAR));
+        wconfig.setLogMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LOG));
+        wconfig.setTempMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.TEMP));
+        wconfig.setCacheMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CACHE));
+        wconfig.setLibMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LIB));
+        wconfig.setRunMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.RUN));
 
-        wconfig.setProgramsLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG));
-        wconfig.setVarLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.VAR));
-        wconfig.setLogLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LOG));
-        wconfig.setTempLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.TEMP));
-        wconfig.setCacheLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CACHE));
-        wconfig.setLibLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LIB));
+        wconfig.setProgramsLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CONFIG));
+        wconfig.setVarLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.VAR));
+        wconfig.setLogLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LOG));
+        wconfig.setTempLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.TEMP));
+        wconfig.setCacheLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CACHE));
+        wconfig.setLibLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LIB));
+        wconfig.setRunLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.RUN));
 
     }
 

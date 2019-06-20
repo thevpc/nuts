@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class Test03_CreateLayoutLinuxTest {
 
-    private static final int NSH_BUILTINS = 34;
+    private static final int NSH_BUILTINS = 33;
     private static final int NDI_COMPANIONS = 4;
 
     @Test
@@ -57,23 +57,23 @@ public class Test03_CreateLayoutLinuxTest {
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "system.config/default-workspace/config/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "system.config/default-workspace/"+NutsConstants.Folders.COMPONENTS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
-                listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(base, "system.programs/default-workspace/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 NDI_COMPANIONS,
-                listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                listNamesSet(new File(base, "system.programs/default-workspace/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(base, "system.cache/default-workspace/cache"), x -> x.isDirectory()).size()
+                listNamesSet(new File(base, "system.cache/default-workspace/"+NutsConstants.Folders.COMPONENTS), x -> x.isDirectory()).size()
         );
-        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            Assert.assertFalse(new File(f).exists());
-        }
+//        for (String f : TestUtils.NUTS_STD_FOLDERS) {
+//            Assert.assertFalse(new File(f).exists());
+//        }
 //        Assert.assertEquals(
 //                false,
 //                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
@@ -88,13 +88,13 @@ public class Test03_CreateLayoutLinuxTest {
         System.out.println("Deleting " + base);
         CoreIOUtils.delete(base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--workspace", base.getPath(), "--standalone", "--yes", "info"});
+        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--reset","--debug","--workspace", base.getPath(), "--standalone", "--yes", "info"});
         Path c = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
         System.out.println(c);
         System.out.println(new File(base, "config").getPath());
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "config/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "/config/"+NutsConstants.Folders.COMPONENTS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -106,7 +106,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 createNamesSet("com", "net", "org"),
-                listNamesSet(new File(base, "cache"), x -> x.isDirectory())
+                listNamesSet(new File(base, "cache/"+NutsConstants.Folders.COMPONENTS), x -> x.isDirectory())
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
             Assert.assertFalse(f + " should not exist", new File(f).exists());
@@ -124,19 +124,19 @@ public class Test03_CreateLayoutLinuxTest {
         Nuts.runWorkspace(new String[]{"--verbose", "--yes", "info"});
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/"+NutsConstants.Folders.COMPONENTS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(TestUtils.LINUX_PROGRAMS, "default-workspace/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 NDI_COMPANIONS,
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + TestUtils.NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                listNamesSet(new File(TestUtils.LINUX_PROGRAMS, "default-workspace/net/vpc/app/nuts/toolbox/ndi/" + TestUtils.NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/cache"), x -> x.isDirectory()).size()
+                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/"+NutsConstants.Folders.COMPONENTS), x -> x.isDirectory()).size()
         );
 //        Assert.assertEquals(
 //                false,

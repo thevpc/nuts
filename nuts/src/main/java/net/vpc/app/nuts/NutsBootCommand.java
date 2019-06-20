@@ -54,5 +54,14 @@ public enum NutsBootCommand {
      * runs a command on nuts workspace and exit. requires the workspace to boot
      * correctly.
      */
-    EXEC
+    EXEC;
+    private final String id;
+
+    NutsBootCommand() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

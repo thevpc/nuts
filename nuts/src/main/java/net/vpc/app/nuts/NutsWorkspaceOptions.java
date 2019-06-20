@@ -199,13 +199,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private String[] homeLocations = new String[NutsStoreLocationLayout.values().length * NutsStoreLocation.values().length];
+    private String[] homeLocations = new String[NutsOsFamily.values().length * NutsStoreLocation.values().length];
+
+    private String[] defaultHomeLocations = new String[NutsStoreLocation.values().length];
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NutsStoreLocationLayout storeLocationLayout = null;
+    private NutsOsFamily storeLocationLayout = null;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -317,6 +319,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
             t.storeLocations = Arrays.copyOf(storeLocations, storeLocations.length);
             t.homeLocations = Arrays.copyOf(homeLocations, homeLocations.length);
+            t.defaultHomeLocations = Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
             t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
             t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
             t.setTransientRepositories(t.getTransientRepositories() == null ? null : Arrays.copyOf(t.getTransientRepositories(), t.getTransientRepositories().length));
@@ -456,11 +459,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsStoreLocationLayout getStoreLocationLayout() {
+    public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
-    public NutsWorkspaceOptions setStoreLocationLayout(NutsStoreLocationLayout storeLocationLayout) {
+    public NutsWorkspaceOptions setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
     }
@@ -487,7 +490,10 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return storeLocations[folder.ordinal()];
     }
 
-    public String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folder) {
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
+        if (layout == null) {
+            return defaultHomeLocations[folder.ordinal()];
+        }
         return homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
     }
 
@@ -496,8 +502,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsWorkspaceOptions setHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folder, String value) {
-        homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+    public NutsWorkspaceOptions setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
+        if (layout == null) {
+            defaultHomeLocations[folder.ordinal()] = value;
+        } else {
+            homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+        }
         return this;
     }
 

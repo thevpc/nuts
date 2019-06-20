@@ -36,5 +36,14 @@ package net.vpc.app.nuts;
  */
 public enum NutsRepositorySupportedAction {
     SEARCH,
-    DEPLOY
+    DEPLOY;
+    private final String id;
+
+    NutsRepositorySupportedAction() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

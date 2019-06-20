@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Argument parse Type
+ *
  * @author vpc
  * @since 0.5.5
  */
@@ -39,24 +40,30 @@ public enum NutsArgumentType {
      * argument that accepts no value.
      */
     ANY,
-    
     /**
-     * argument that accepts a string as value. Either the string is included
-     * in the argument itself (--option=value) or succeeds it (--option value).
+     * argument that accepts a string as value. Either the string is included in
+     * the argument itself (--option=value) or succeeds it (--option value).
      */
     STRING,
-    
     /**
      * argument that accepts a string as value as an immediate (included in the
      * argument) value : in the form of (--option=value).
      */
     IMMEDIATE,
-    
     /**
      * argument that accepts a boolean as value. Either the boolean is not
      * defined (--option), is included in the argument itself (--option=true) or
      * succeeds it (--option true). Parsing boolean is also aware of negated
      * options (--!option) that will be interpreted as (--option=false).
      */
-    BOOLEAN,
+    BOOLEAN;
+    private final String id;
+
+    NutsArgumentType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

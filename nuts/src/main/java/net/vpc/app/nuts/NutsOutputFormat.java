@@ -40,5 +40,14 @@ public enum NutsOutputFormat {
     PROPS,
     TABLE,
     TREE,
-    PLAIN
+    PLAIN;
+    private final String id;
+
+    NutsOutputFormat() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

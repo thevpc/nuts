@@ -36,6 +36,7 @@ import java.util.EnumSet;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
+import net.vpc.app.nuts.core.DefaultNutsDependency;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.dependency.ScopeNutsDependencyFilter;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -79,7 +80,7 @@ public class NutsDependencyScopes {
     }
 
     public static boolean isDefaultScope(String s1) {
-        return normalizeScope(s1).equals("compile");
+        return normalizeScope(s1).equals(NutsDependencyScope.API.id());
     }
 
     public static int getScopesPriority(String s1) {
@@ -105,13 +106,13 @@ public class NutsDependencyScopes {
 //        aa.addAll(bb);
 //        return aa;
 //    }
-
     public static EnumSet<NutsDependencyScope> add(Collection<NutsDependencyScope> a, NutsDependencyScopePattern... b) {
         EnumSet<NutsDependencyScope> aa = EnumSet.copyOf(a);
         EnumSet<NutsDependencyScope> bb = expand(b == null ? null : Arrays.asList(b));
         aa.addAll(bb);
         return aa;
     }
+
     public static EnumSet<NutsDependencyScope> add(Collection<NutsDependencyScope> a, NutsDependencyScope... b) {
         EnumSet<NutsDependencyScope> aa = EnumSet.copyOf(a);
         Collection<NutsDependencyScope> bb = (b == null ? Collections.emptyList() : Arrays.asList(b));

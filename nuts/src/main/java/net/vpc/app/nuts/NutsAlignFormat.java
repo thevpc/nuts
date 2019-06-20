@@ -51,5 +51,14 @@ public enum NutsAlignFormat {
     /**
      * Mostly like CENTER but limits centering for huge columns
      */
-    HEADER
+    HEADER;
+    private final String id;
+
+    NutsAlignFormat() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

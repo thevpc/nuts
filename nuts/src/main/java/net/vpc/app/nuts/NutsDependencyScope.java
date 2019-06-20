@@ -35,34 +35,28 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public enum NutsDependencyScope {
-    API(false),
-    IMPLEMENTATION(false),
-    PROVIDED(false),
-    IMPORT(false),
-    RUNTIME(false),
-    SYSTEM(false),
-    TEST_COMPILE(false),
-    TEST_PROVIDED(false),
-    TEST_RUNTIME(false),
-    OTHER(false),;
+    API,
+    IMPLEMENTATION,
+    PROVIDED,
+    IMPORT,
+    RUNTIME,
+    SYSTEM,
+    TEST_COMPILE,
+    TEST_PROVIDED,
+    TEST_RUNTIME,
+    OTHER;
 
-    private boolean filter;
     private String id;
 
-    private NutsDependencyScope(boolean filter) {
+    private NutsDependencyScope() {
         this.id = name().toLowerCase().replace('_', '-');
-        this.filter = filter;
-    }
-
-    public boolean isFilter() {
-        return filter;
     }
 
     public String id() {
         return id;
     }
 
-    public static NutsDependencyScope lenientParse(String s) {
+    public static NutsDependencyScope parseLenient(String s) {
         if (s == null) {
             s = "";
         }
@@ -76,6 +70,7 @@ public enum NutsDependencyScope {
                 return IMPLEMENTATION;
             case "provided": //maven
             case "compileOnly": //gradle
+            case "compile-only": //gradle
                 return PROVIDED;
             case "runtime":
                 return RUNTIME;

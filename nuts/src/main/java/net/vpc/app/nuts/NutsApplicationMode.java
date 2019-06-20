@@ -43,5 +43,14 @@ public enum NutsApplicationMode {
      * important to notice that "--nuts-exec-mode=install &lt;ARG> ..." is a
      * SINGLE argument, so spaces must be escaped.
      */
-    UPDATE
+    UPDATE;
+    private final String id;
+
+    NutsApplicationMode() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

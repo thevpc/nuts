@@ -39,5 +39,14 @@ public enum NutsOsFamily {
     LINUX,
     MACOS,
     UNIX,
-    UNKNOWN
+    UNKNOWN;
+    private final String id;
+
+    NutsOsFamily() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

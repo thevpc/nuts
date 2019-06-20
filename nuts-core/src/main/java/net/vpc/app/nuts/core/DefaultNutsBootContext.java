@@ -18,8 +18,9 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final String bootJavaOptions;
     private final NutsStoreLocationStrategy storeLocationStrategy;
     private final NutsStoreLocationStrategy repositoryStoreLocationStrategy;
-    private final NutsStoreLocationLayout storeLocationLayout;
+    private final NutsOsFamily storeLocationLayout;
     private final String[] storeLocations;
+    private final String[] defaultHomeLocations;
     private final String[] homeLocations;
     private final boolean global;
     private final boolean gui;
@@ -27,8 +28,10 @@ public final class DefaultNutsBootContext implements NutsBootContext {
 
     public DefaultNutsBootContext(NutsWorkspace ws, String uuid, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
-            String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
-            NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
+            String[] locations, 
+            String[] dhlocations, 
+            String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
+            NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
             boolean global, boolean gui
     ) {
         this.ws = ws;
@@ -44,6 +47,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.storeLocationStrategy = storeLocationStrategy;
         this.storeLocationLayout = storeLocationLayout;
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        
         if (locations.length != NutsStoreLocation.values().length) {
             throw new NutsIllegalArgumentException(ws, "Invalid locations count");
         }
@@ -51,10 +55,19 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         for (int i = 0; i < storeLocations.length; i++) {
             this.storeLocations[i] = locations[i];
         }
-        if (homeLocations.length != NutsStoreLocation.values().length * 2) {
+        
+        if (dhlocations.length != NutsStoreLocation.values().length) {
+            throw new NutsIllegalArgumentException(ws, "Invalid default home locations count");
+        }
+        defaultHomeLocations = new String[NutsStoreLocation.values().length];
+        for (int i = 0; i < defaultHomeLocations.length; i++) {
+            this.defaultHomeLocations[i] = dhlocations[i];
+        }
+        
+        if (homeLocations.length != NutsStoreLocation.values().length * NutsOsFamily.values().length) {
             throw new NutsIllegalArgumentException(ws, "Invalid home locations count");
         }
-        this.homeLocations = new String[NutsStoreLocation.values().length * 2];
+        this.homeLocations = new String[NutsStoreLocation.values().length * NutsOsFamily.values().length];
         for (int i = 0; i < homeLocations.length; i++) {
             this.homeLocations[i] = homeLocations[i];
         }
@@ -79,6 +92,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
         this.storeLocationLayout = c.getStoreLocationLayout();
         this.storeLocations = c.getStoreLocations();
+        this.defaultHomeLocations = c.getDefaultHomeLocations();
         this.homeLocations = c.getHomeLocations();
         this.global = c.isGlobal();
         this.gui = c.isGui();
@@ -163,14 +177,23 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
     }
-
+    
     @Override
-    public String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType) {
-        return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()];
+    public String[] getDefaultHomeLocations() {
+        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
     }
 
     @Override
-    public NutsStoreLocationLayout getStoreLocationLayout() {
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
+        if (layout == null) {
+            return this.defaultHomeLocations[folderType.ordinal()];
+        } else {
+            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()];
+        }
+    }
+
+    @Override
+    public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
 

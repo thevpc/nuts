@@ -268,28 +268,35 @@ public final class NutsArgumentsParser {
                     case "--system-layout": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
+                            options.setStoreLocationLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
+                            options.setStoreLocationLayout(NutsOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setStoreLocationLayout(NutsStoreLocationLayout.MACOS);
+                            options.setStoreLocationLayout(NutsOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
+                            options.setStoreLocationLayout(NutsOsFamily.LINUX);
+                        }
+                        break;
+                    }
+                    case "--unix-layout": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setStoreLocationLayout(NutsOsFamily.UNIX);
                         }
                         break;
                     }
@@ -315,6 +322,7 @@ public final class NutsArgumentsParser {
                     case "--system-temp-home":
                     case "--system-cache-home":
                     case "--system-lib-home":
+                    case "--system-run-home":
                     case "--windows-programs-home":
                     case "--windows-config-home":
                     case "--windows-var-home":
@@ -322,6 +330,7 @@ public final class NutsArgumentsParser {
                     case "--windows-temp-home":
                     case "--windows-cache-home":
                     case "--windows-lib-home":
+                    case "--windows-run-home":
                     case "--macos-programs-home":
                     case "--macos-config-home":
                     case "--macos-var-home":
@@ -329,16 +338,19 @@ public final class NutsArgumentsParser {
                     case "--macos-temp-home":
                     case "--macos-cache-home":
                     case "--macos-lib-home":
+                    case "--macos-run-home":
                     case "--linux-programs-home":
                     case "--linux-config-home":
                     case "--linux-var-home":
                     case "--linux-log-home":
                     case "--linux-temp-home":
                     case "--linux-cache-home":
-                    case "--linux-lib-home": {
+                    case "--linux-lib-home": 
+                    case "--linux-run-home": 
+                    {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
-                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
+                        NutsOsFamily layout = NutsOsFamily.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         NutsStoreLocation folder = NutsStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
                         if (enabled) {
                             options.setHomeLocation(layout, folder, v);
@@ -945,7 +957,7 @@ public final class NutsArgumentsParser {
         throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationStrategy : " + s0);
     }
 
-    private static NutsStoreLocationLayout parseNutsStoreLocationLayout(String s) {
+    private static NutsOsFamily parseNutsStoreLocationLayout(String s) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -954,16 +966,16 @@ public final class NutsArgumentsParser {
         switch (s) {
             case "L":
             case "LINUX":
-                return NutsStoreLocationLayout.LINUX;
+                return NutsOsFamily.LINUX;
             case "W":
             case "WINDOWS":
-                return NutsStoreLocationLayout.WINDOWS;
+                return NutsOsFamily.WINDOWS;
             case "M":
             case "MACOS":
-                return NutsStoreLocationLayout.MACOS;
+                return NutsOsFamily.MACOS;
             case "S":
             case "SYSTEM":
-                return NutsStoreLocationLayout.SYSTEM;
+                return null;
         }
         throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationLayout : " + s0);
     }

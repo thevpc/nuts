@@ -115,11 +115,11 @@ public class NutsWorkspaceOptionsFormat {
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
             String[] homeLocations = options.getHomeLocations();
-            for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
+            for (int i = 0; i < NutsOsFamily.values().length; i++) {
                 for (int j = 0; j < NutsStoreLocation.values().length; j++) {
                     String s = homeLocations[i * NutsStoreLocation.values().length + j];
                     if (!NutsUtilsLimited.isBlank(s)) {
-                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
+                        NutsOsFamily layout = NutsOsFamily.values()[i];
                         NutsStoreLocation folder = NutsStoreLocation.values()[j];
                         //config is exported!
                         if ((folder == NutsStoreLocation.CONFIG)) {
@@ -182,10 +182,10 @@ public class NutsWorkspaceOptionsFormat {
                 fillOption("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location", null, storeLocations[i], arguments);
             }
             String[] homeLocations = options.getHomeLocations();
-            for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
+            for (int i = 0; i < NutsOsFamily.values().length; i++) {
                 for (int j = 0; j < NutsStoreLocation.values().length; j++) {
                     String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
+                    NutsOsFamily layout = NutsOsFamily.values()[i];
                     NutsStoreLocation folder = NutsStoreLocation.values()[j];
                     //config is exported!
                     if (!(folder == NutsStoreLocation.CONFIG)) {
@@ -266,23 +266,31 @@ public class NutsWorkspaceOptionsFormat {
         }
         if (value != null) {
             if (shortOptions) {
-                if (value instanceof NutsStoreLocationLayout) {
-                    switch ((NutsStoreLocationLayout) value) {
-                        case LINUX: {
-                            fillOption0(selectOptionName(longName, shortName), "l", arguments);
-                            return;
-                        }
-                        case WINDOWS: {
-                            fillOption0(selectOptionName(longName, shortName), "w", arguments);
-                            return;
-                        }
-                        case MACOS: {
-                            fillOption0(selectOptionName(longName, shortName), "m", arguments);
-                            return;
-                        }
-                        case SYSTEM: {
-                            fillOption0(selectOptionName(longName, shortName), "s", arguments);
-                            return;
+                if (value instanceof NutsOsFamily) {
+                    if (value == null) {
+                        fillOption0(selectOptionName(longName, shortName), "s", arguments);
+                    } else {
+                        switch ((NutsOsFamily) value) {
+                            case LINUX: {
+                                fillOption0(selectOptionName(longName, shortName), "l", arguments);
+                                return;
+                            }
+                            case WINDOWS: {
+                                fillOption0(selectOptionName(longName, shortName), "w", arguments);
+                                return;
+                            }
+                            case MACOS: {
+                                fillOption0(selectOptionName(longName, shortName), "m", arguments);
+                                return;
+                            }
+                            case UNIX: {
+                                fillOption0(selectOptionName(longName, shortName), "u", arguments);
+                                return;
+                            }
+                            case UNKNOWN: {
+                                fillOption0(selectOptionName(longName, shortName), "x", arguments);
+                                return;
+                            }
                         }
                     }
                 } else if (value instanceof NutsStoreLocationStrategy) {

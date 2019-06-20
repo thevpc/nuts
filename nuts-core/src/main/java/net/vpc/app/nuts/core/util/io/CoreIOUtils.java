@@ -1488,6 +1488,11 @@ public class CoreIOUtils {
             base.close();
         }
 
+        @Override
+        public String toString() {
+            return base.toString();
+        }
+
     }
 
     public static abstract class AbstractMultiReadSourceItem
@@ -1676,6 +1681,11 @@ public class CoreIOUtils {
             byte[] bytes = (byte[]) this.getSource();
             return bytes.length;
         }
+
+        @Override
+        public String toString() {
+            return "bytes(" + ((byte[]) this.getSource()).length + ")";
+        }
     }
 
     private static class URLInputSource extends AbstractSourceItem {
@@ -1741,6 +1751,12 @@ public class CoreIOUtils {
                 throw new UncheckedIOException(ex);
             }
         }
+
+        @Override
+        public String toString() {
+            return getURL().toString();
+        }
+
     }
 
     private static class PathInputSource extends AbstractMultiReadSourceItem {
@@ -1791,6 +1807,12 @@ public class CoreIOUtils {
                 throw new UncheckedIOException(ex);
             }
         }
+
+        @Override
+        public String toString() {
+            return getPath().toString();
+        }
+
     }
 
     private static class InputStreamSource extends AbstractSourceItem {
@@ -1816,6 +1838,11 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "InputStream(" + getSource() + ")";
         }
     }
 

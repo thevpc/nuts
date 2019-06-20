@@ -89,7 +89,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
-    private NutsStoreLocationLayout storeLocationLayout = null;
+    private NutsOsFamily storeLocationLayout = null;
 
     private String programsSystemHome = null;
     private String configSystemHome = null;
@@ -433,11 +433,11 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public NutsStoreLocationLayout getStoreLocationLayout() {
+    public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
-    public NutsWorkspaceConfig setStoreLocationLayout(NutsStoreLocationLayout storeLocationLayout) {
+    public NutsWorkspaceConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
     }

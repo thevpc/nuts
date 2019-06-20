@@ -56,5 +56,14 @@ public enum NutsConfirmationMode {
     /**
      * non interactive mode, throw exception
      */
-    ERROR,
+    ERROR;
+    private final String id;
+
+    NutsConfirmationMode() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

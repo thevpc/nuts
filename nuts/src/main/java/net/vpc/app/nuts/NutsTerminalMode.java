@@ -37,5 +37,14 @@ package net.vpc.app.nuts;
 public enum NutsTerminalMode {
     INHERITED,
     FORMATTED,
-    FILTERED,
+    FILTERED;
+    private final String id;
+
+    NutsTerminalMode() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }

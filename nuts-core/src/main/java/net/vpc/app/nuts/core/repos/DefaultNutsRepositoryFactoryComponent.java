@@ -85,13 +85,17 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         if (!workspace.config().isGlobal()) {
+            
             return new NutsRepositoryDefinition[]{
                 new NutsRepositoryDefinition()
                 .setDeployOrder(100)
                 .setName("system")
                 .setLocation(
-                CoreIOUtils.getNativePath(workspace.config().getPlatformOsHome(NutsStoreLocation.CONFIG)
-                + "/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME
+                CoreIOUtils.getNativePath(
+                        NutsPlatformUtils.resolveHomeFolder(null, 
+                                NutsStoreLocation.CONFIG, null, null,
+                                true, 
+                                NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
                 + "/" + NutsConstants.Folders.REPOSITORIES
                 + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
                 )).setType(NutsConstants.RepoTypes.NUTS).setProxy(false).setReference(true).setFailSafe(true).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL),};

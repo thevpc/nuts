@@ -50,5 +50,14 @@ public enum NutsExecutionType {
      * command will resolved as a class to run within the current Virtual
      * Machine
      */
-    EMBEDDED,
+    EMBEDDED;
+    private final String id;
+
+    NutsExecutionType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    public String id() {
+        return id;
+    }
 }
