@@ -279,10 +279,6 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String getBootsrap() {
-        return getWorkspace() + File.separator + NutsConstants.Folders.BOOT;
-    }
-
     public String getWorkspace() {
         return workspace;
     }

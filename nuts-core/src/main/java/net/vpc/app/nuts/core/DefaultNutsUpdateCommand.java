@@ -56,6 +56,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsSearchCommand;
+import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
@@ -637,7 +638,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             throw new NutsUserCancelException(ws);
         }
         NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
-        Path bootstrapFolder = ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.BOOT);
+        Path bootstrapFolder = ws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
         if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
             NutsWorkspaceUtils.checkReadOnly(ws);
 

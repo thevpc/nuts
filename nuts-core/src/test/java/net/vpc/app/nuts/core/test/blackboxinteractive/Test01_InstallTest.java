@@ -35,7 +35,7 @@ public class Test01_InstallTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        System.out.println(Nuts.openWorkspace().exec().command("ls").which());
+        System.out.println(Nuts.openWorkspace("-y").exec().command("ls").which());
 
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,

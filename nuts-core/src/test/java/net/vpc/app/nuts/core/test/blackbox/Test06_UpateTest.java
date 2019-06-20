@@ -124,23 +124,26 @@ public class Test06_UpateTest {
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+//        Path bootFolder=Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT);
+//        Path bootCompFolder=Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT);
+        Path bootFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
         ));
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts.properties")
         ));
 
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
                 .resolve("nuts-core-" + newRuntimeVersion + ".jar")
         ));
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
                 .resolve("nuts-core-" + newRuntimeVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
         ));
-        Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
+        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
                 .resolve("nuts.properties")
         ));
 

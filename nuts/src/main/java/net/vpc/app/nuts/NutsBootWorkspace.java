@@ -208,7 +208,7 @@ public class NutsBootWorkspace {
         ));
         File file = NutsUtilsLimited.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + requiredBootVersion,
                 repos.toArray(new String[0]),
-                runningBootConfig.getBootsrap()//defaultWorkspaceLibFolder
+                runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)+ File.separator + NutsConstants.Folders.BOOT
         );
         if (file == null) {
             errors.append("Unable to load ").append(bootId).append("\n");
@@ -289,7 +289,7 @@ public class NutsBootWorkspace {
             throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load ClassPath");
         }
 
-        String workspaceBootLibFolder = runningBootConfig.getBootsrap();
+        String workspaceBootLibFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)+ File.separator + NutsConstants.Folders.BOOT;
         NutsIdLimited bootRuntime;
         if (NutsUtilsLimited.isBlank(info.runningBootConfig.getRuntimeId())) {
             bootRuntime = NutsIdLimited.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.runningBootConfig.getRuntimeId());
