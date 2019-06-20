@@ -338,6 +338,9 @@ public class CoreCommonUtils {
         } else if (o instanceof Map) {
             o = ((Map) o).entrySet();
         }
+        if (o == null) {
+            return "";
+        }
         NutsWorkspace ws = session.getWorkspace();
         if (o instanceof Boolean) {
             return ws.io().getTerminalFormat().escapeText(String.valueOf(o));

@@ -122,7 +122,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private NutsTerminalMode terminalMode = null;
-
+    
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -182,6 +182,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsBootCommand bootCommand = NutsBootCommand.EXEC;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private boolean inherited= false;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -327,6 +332,16 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         this.executionType = executionType;
         return this;
     }
+
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    NutsWorkspaceOptions setInherited(boolean inherited) {
+        this.inherited = inherited;
+        return this;
+    }
+    
 
     public NutsWorkspaceOptions copy() {
         try {

@@ -108,6 +108,7 @@ public class Nuts {
             throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
         }
         boot.getOptions().setCreationTime(startTime);
+        boot.getOptions().setInherited(true);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 

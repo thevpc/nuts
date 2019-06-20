@@ -1173,8 +1173,9 @@ public class NutsBootWorkspace {
             config.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
             config.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
             config.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-            for (NutsStoreLocation type : NutsStoreLocation.values()) {
-                config.setStoreLocation(type, lastConfigLoaded.getStoreLocation(type));
+            for (NutsStoreLocation folder : NutsStoreLocation.values()) {
+                config.setStoreLocation(folder, lastConfigLoaded.getStoreLocation(folder));
+                config.setHomeLocation(null, folder,lastConfigLoaded.getHomeLocation(null,folder));
             }
             for (NutsOsFamily layout : NutsOsFamily.values()) {
                 for (NutsStoreLocation loc : NutsStoreLocation.values()) {

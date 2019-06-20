@@ -204,6 +204,9 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
         props.put("user-dir", System.getProperty("user.dir"));
         props.put("command-line-long", ws.config().options().format().compact(false).getBootCommandLine());
         props.put("command-line-short", ws.config().options().format().compact(true).getBootCommandLine());
+        props.put("inherited", ws.config().options().isInherited());
+        props.put("inherited-nuts-boot-args", System.getProperty("nuts.boot.args"));
+        props.put("inherited-nuts-args", System.getProperty("nuts.args"));
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());

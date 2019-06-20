@@ -1897,6 +1897,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
                 conf = CoreIOUtils.loadNutsRepositoryConfig(ws.io().path(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), ws);
                 if (conf == null) {
+                    if (options.isFailSafe()) {
+                        return null;
+                    }
                     throw new NutsInvalidRepositoryException(ws, options.getLocation(), "Invalid location " + options.getLocation());
                 }
                 options.setConfig(conf);

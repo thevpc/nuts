@@ -55,7 +55,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
      * workspace path
      */
     private String workspace;
-    
+
     /**
      * workspace api version
      */
@@ -315,7 +315,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     }
 
     public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
-        return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
+        if (layout == null) {
+            return this.defaultHomeLocations[folder.ordinal()];
+        } else {
+            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
+        }
     }
 
     public NutsBootConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {

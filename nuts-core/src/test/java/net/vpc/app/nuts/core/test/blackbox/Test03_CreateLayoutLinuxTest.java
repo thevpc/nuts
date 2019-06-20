@@ -42,7 +42,7 @@ public class Test03_CreateLayoutLinuxTest {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-
+        System.setProperty("nuts.export.debug", "true");
         CoreIOUtils.delete(base);
         resetLinuxFolders();
         Nuts.runWorkspace(new String[]{
@@ -55,7 +55,7 @@ public class Test03_CreateLayoutLinuxTest {
             "--system-lib-home", new File(base, "system.lib").getPath(),
             "--system-run-home", new File(base, "system.run").getPath(),
             //            "--verbose", 
-            "--yes", "--trace", "-k",
+            "--yes", "--trace",
             "info"
         });
         
@@ -69,7 +69,7 @@ public class Test03_CreateLayoutLinuxTest {
             "--system-lib-home", new File(base, "system.lib").getPath(),
             "--system-run-home", new File(base, "system.run").getPath(),
             //            "--verbose", 
-            "--yes", "--trace", "-k",
+            "--yes", "--trace",
             "info"
         });
 
