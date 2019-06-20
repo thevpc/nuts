@@ -98,7 +98,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-//    @Test
+    @Test
     public void customLayout_use_standalone() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
@@ -135,7 +135,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-//    @Test
+    @Test
     public void customLayout_use_standard() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));

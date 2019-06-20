@@ -62,7 +62,7 @@ public class Test08_NutsAuthenticationAgent {
         Assert.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
     }
 
-    private void testHelperHashed(NutsAuthenticationAgent a) {
+    private void testHelperHashed(NutsAuthenticationAgent a, boolean alwaysRetrievable) {
         String mySecret = "my-secret";
         NutsEnvProvider envProvider = null;
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
@@ -75,11 +75,22 @@ public class Test08_NutsAuthenticationAgent {
         } catch (SecurityException ex) {
             Assert.assertTrue(true);
         }
-        try {
-            a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider);
-            Assert.assertTrue(false);
-        } catch (SecurityException ex) {
-            Assert.assertTrue(true);
+        if (alwaysRetrievable) {
+            try {
+                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider);
+                Assert.assertTrue(true);
+            } catch (SecurityException ex) {
+                Assert.assertTrue(false);
+            }
+
+        } else {
+            try {
+                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider);
+                Assert.assertTrue(false);
+            } catch (SecurityException ex) {
+                Assert.assertTrue(true);
+            }
+
         }
 
     }
@@ -87,20 +98,19 @@ public class Test08_NutsAuthenticationAgent {
     @Test
     public void testCredentialsRetrievableDefault() {
         testHelperRetrievable(new DefaultNutsAuthenticationAgent());
+        testHelperHashed(new DefaultNutsAuthenticationAgent(),false);
     }
 
     @Test
     public void testCredentialsRetrievablePlain() {
         testHelperRetrievable(new PlainNutsAuthenticationAgent());
+        testHelperHashed(new PlainNutsAuthenticationAgent(),true);
     }
 
     @Test
     public void testCredentialsHashedDefault() {
         testHelperRetrievable(new DefaultNutsAuthenticationAgent());
+        testHelperHashed(new DefaultNutsAuthenticationAgent(),false);
     }
 
-    @Test
-    public void testCredentialsHashedPlain() {
-        testHelperHashed(new PlainNutsAuthenticationAgent());
-    }
 }

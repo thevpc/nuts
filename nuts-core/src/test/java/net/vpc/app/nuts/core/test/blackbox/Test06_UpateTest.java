@@ -64,7 +64,7 @@ public class Test06_UpateTest {
         nws.config().addRepository(new NutsCreateRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
-        nws.format().info().println();
+        nws.format().info().showRepositories().println();
         System.out.println("\n------------------------------------------");
 
         NutsRepository r = nws.config().getRepository("temp", false);
@@ -155,7 +155,6 @@ public class Test06_UpateTest {
                 "--workspace", workpacePath,
                 "--color=never",
                 "--version",
-                "--min",
                 "--json"
         );
         System.out.println(uws.commandLine().setArgs(b.createProcessCommandLine()).toString());

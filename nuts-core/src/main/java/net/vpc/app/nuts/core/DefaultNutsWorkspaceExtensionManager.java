@@ -69,11 +69,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     public void setExcludedExtensions(String[] excluded) {
         this.exclusions.clear();
-        for (String e : CoreStringUtils.split(Arrays.asList(excluded), ",; ")) {
-            if (e != null && !e.trim().isEmpty()) {
-                NutsId ee = ws.format().id().parse(e);
-                if (ee != null) {
-                    this.exclusions.add(ee.getSimpleName());
+        if (excluded != null) {
+            for (String e : CoreStringUtils.split(Arrays.asList(excluded), ",; ")) {
+                if (e != null && !e.trim().isEmpty()) {
+                    NutsId ee = ws.format().id().parse(e);
+                    if (ee != null) {
+                        this.exclusions.add(ee.getSimpleName());
+                    }
                 }
             }
         }

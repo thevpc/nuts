@@ -46,7 +46,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
 
     private char[] extractId(char[] a) {
         if (!CoreStringUtils.isBlank(a)) {
-            char[] idc = (getId()).toCharArray();
+            char[] idc = (getId()+":").toCharArray();
             if (a.length > idc.length + 1) {
                 boolean ok = true;
                 for (int i = 0; i < idc.length; i++) {

@@ -473,7 +473,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (this.isUpdateRuntime()) {
             if (dws.requiresCoreExtension()) {
                 runtimeUpdate = checkCoreUpdate(ws.format().id().parse(actualBootConfig.getRuntimeId().getSimpleName()),
-                        apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().toString()
+                        apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion().toString()
                         : bootVersion, session);
                 if (runtimeUpdate.isUpdateAvailable()) {
                     allUpdates.put(runtimeUpdate.getId().getSimpleName(), runtimeUpdate);
@@ -815,7 +815,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             try {
                 newId = ws.search()
                         .addId(oldFile != null ? oldFile.getId().setVersion("").toString() : NutsConstants.Ids.NUTS_RUNTIME)
-                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
+                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.format().version().parseVersion(bootApiVersion)))
                         .latest()
                         .anyWhere()
                         .session(searchSession)
@@ -836,7 +836,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             }
             try {
                 newId = ws.search().session(searchSession).addId(id)
-                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
+                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.format().version().parseVersion(bootApiVersion)))
                         .anyWhere()
                         .getResultIds().first();
                 newFile = newId == null ? null : latestOnlineDependencies(ws.fetch().session(searchSession).id(newId))
@@ -908,9 +908,9 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     private static class BootAPINutsDescriptorFilter implements NutsDescriptorFilter {
 
-        private final String bootApiVersion;
+        private final NutsVersion bootApiVersion;
 
-        public BootAPINutsDescriptorFilter(String bootApiVersion) {
+        public BootAPINutsDescriptorFilter(NutsVersion bootApiVersion) {
             this.bootApiVersion = bootApiVersion;
         }
 
@@ -918,7 +918,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         public boolean accept(NutsDescriptor descriptor, NutsSession session) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 if (dependency.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
-                    if (dependency.getVersion().matches("]" + bootApiVersion + "]")) {
+                    if (bootApiVersion.matches(dependency.getVersion().toString())) {
                         return true;
                     } else {
                         return false;

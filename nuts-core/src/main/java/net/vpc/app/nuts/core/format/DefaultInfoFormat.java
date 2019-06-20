@@ -155,6 +155,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
             extraKeys = new TreeSet(extraProperties.keySet());
         }
 
+        props.put("name", stringValue(rtcontext.getName()));
         props.put("nuts-api-version", stringValue(rtcontext.getApiId().getVersion().toString()));
         props.put("nuts-api-id", stringValue(rtcontext.getApiId().toString()));
         props.put("nuts-runtime-id", stringValue(rtcontext.getRuntimeId().toString()));

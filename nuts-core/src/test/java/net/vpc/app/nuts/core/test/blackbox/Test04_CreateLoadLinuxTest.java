@@ -106,7 +106,7 @@ public class Test04_CreateLoadLinuxTest {
 
         w = Nuts.openWorkspace(new String[]{
 //            "--workspace", "default-workspace",
-            "--workspace", new File(base, "system.config/default-workspace").getPath(),
+//            "--workspace", new File(base, "system.config/default-workspace").getPath(),
             "info"
         });
         System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));

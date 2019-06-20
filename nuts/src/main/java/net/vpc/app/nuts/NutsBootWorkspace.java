@@ -405,6 +405,7 @@ public class NutsBootWorkspace {
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.format().getBootCommandLine());
             LOG.log(Level.CONFIG, "Open Workspace with config        : ");
+            LOG.log(Level.CONFIG, "\t nuts-name                      : {0}", NutsUtilsLimited.desc(runningBootConfig.getName()));
             LOG.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
             LOG.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtilsLimited.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
             LOG.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocationStrategy(), runningBootConfig.getStoreLocationStrategy()));
