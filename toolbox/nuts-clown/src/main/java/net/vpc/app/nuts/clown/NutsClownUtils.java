@@ -5,13 +5,14 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.vpc.app.nuts.NutsDependencyScope;
 
 public class NutsClownUtils {
 
     public static Map<String, String> nutsIdToMap(NutsId id) {
         Map<String, String> entity = new HashMap<>();
         id = id.setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace())
-            .setScope(StringUtils.isEmpty(id.getScope()) ? "compile" : id.getScope());
+            .setScope(StringUtils.isEmpty(id.getScope()) ? NutsDependencyScope.API.id() : id.getScope());
         _condPut(entity, "name", id.getName());
         _condPut(entity, "namespace", id.getNamespace());
         _condPut(entity, "group", id.getGroup());

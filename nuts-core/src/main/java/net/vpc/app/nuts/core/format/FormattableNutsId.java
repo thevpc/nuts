@@ -349,8 +349,12 @@ public class FormattableNutsId {
                 NutsDependencyScope ss = CoreCommonUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
                 if (ss != null) {
                     switch (ss) {
-                        case COMPILE: {
+                        case API:{
                             this.status_s = 'c';
+                            break;
+                        }
+                        case IMPLEMENTATION: {
+                            this.status_s = 'i';
                             break;
                         }
                         case RUNTIME: {
@@ -365,12 +369,8 @@ public class FormattableNutsId {
                             this.status_s = 'p';
                             break;
                         }
-                        case TEST: {
+                        case TEST_COMPILE: {
                             this.status_s = 't';
-                            break;
-                        }
-                        case IMPLEMENTATION: {
-                            this.status_s = 'i';
                             break;
                         }
                         case IMPORT: {
@@ -424,6 +424,6 @@ public class FormattableNutsId {
     }
 
     private String stringValue(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false,session);
+        return CoreCommonUtils.stringValueFormatted(any, false, session);
     }
 }

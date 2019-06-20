@@ -60,7 +60,7 @@ public class NutsIndexerUtils {
     public static Map<String, String> nutsIdToMap(NutsId id) {
         Map<String, String> entity = new HashMap<>();
         id = id.setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace())
-                .setScope(StringUtils.isEmpty(id.getScope()) ? "compile" : id.getScope());
+                .setScope(StringUtils.isEmpty(id.getScope()) ? NutsDependencyScope.API.id() : id.getScope());
         _condPut(entity, "name", id.getName());
         _condPut(entity, "namespace", id.getNamespace());
         _condPut(entity, "group", id.getGroup());
@@ -86,7 +86,7 @@ public class NutsIndexerUtils {
         _condPut(entity, "face", dependency.getId().getFace());
         _condPut(entity, "os", dependency.getId().getOs());
         _condPut(entity, "osdist", dependency.getId().getOsdist());
-        dependency.getId().setScope(StringUtils.isEmpty(dependency.getId().getScope()) ? "compile" : dependency.getId().getScope());
+        dependency.getId().setScope(StringUtils.isEmpty(dependency.getId().getScope()) ? NutsDependencyScope.API.id() : dependency.getId().getScope());
         _condPut(entity, "scope", dependency.getScope());
         _condPut(entity, "arch", dependency.getId().getArch());
         _condPut(entity, "classifier", dependency.getId().getClassifier());

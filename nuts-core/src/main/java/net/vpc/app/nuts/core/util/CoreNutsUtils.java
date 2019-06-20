@@ -57,8 +57,6 @@ public class CoreNutsUtils {
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
-    public static final NutsDependencyFilter SCOPE_RUN = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
-    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
 
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
         @Override
@@ -161,7 +159,7 @@ public class CoreNutsUtils {
                     .setDependencies(
                             new NutsDependency[]{
                                 new DefaultNutsDependency(
-                                        "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), "compile",
+                                        "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), null,
                                         "false", new NutsId[0]
                                 )
                             }
@@ -416,144 +414,12 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static boolean isDefaultScope(String s1) {
-        return normalizeScope(s1).equals("compile");
-    }
 
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
     }
 
-    public static String normalizeScope(String s1) {
-        if (s1 == null) {
-            s1 = "";
-        }
-        s1 = s1.toLowerCase().trim();
-        if (s1.isEmpty()) {
-            s1 = "compile";
-        }
-        return s1;
-    }
-
-//    public static String combineScopes(String s1, String s2) {
-//        s1 = normalizeScope(s1);
-//        s2 = normalizeScope(s2);
-//        switch (s1) {
-//            case "compile": {
-//                switch (s2) {
-//                    case "compile":
-//                        return "compile";
-//                    case "runtime":
-//                        return "runtime";
-//                    case "provided":
-//                        return "provided";
-//                    case "system":
-//                        return "system";
-//                    case "test":
-//                        return "test";
-//                    default:
-//                        return s2;
-//                }
-//            }
-//            case "runtime": {
-//                switch (s2) {
-//                    case "compile":
-//                        return "runtime";
-//                    case "runtime":
-//                        return "runtime";
-//                    case "provided":
-//                        return "provided";
-//                    case "system":
-//                        return "system";
-//                    case "test":
-//                        return "test";
-//                    default:
-//                        return "runtime";
-//                }
-//            }
-//            case "provided": {
-//                switch (s2) {
-//                    case "compile":
-//                        return "provided";
-//                    case "runtime":
-//                        return "provided";
-//                    case "provided":
-//                        return "provided";
-//                    case "system":
-//                        return "provided";
-//                    case "test":
-//                        return "provided";
-//                    default:
-//                        return "provided";
-//                }
-//            }
-//            case "system": {
-//                switch (s2) {
-//                    case "compile":
-//                        return "system";
-//                    case "runtime":
-//                        return "system";
-//                    case "provided":
-//                        return "system";
-//                    case "system":
-//                        return "system";
-//                    case "test":
-//                        return "system";
-//                    default:
-//                        return "system";
-//                }
-//            }
-//            case "test": {
-//                switch (s2) {
-//                    case "compile":
-//                        return "test";
-//                    case "runtime":
-//                        return "test";
-//                    case "provided":
-//                        return "provided";
-//                    case "system":
-//                        return "test";
-//                    case "test":
-//                        return "test";
-//                    default:
-//                        return "test";
-//                }
-//            }
-//            default: {
-//                return s1;
-//            }
-//        }
-//    }
-    public static int getScopesPriority(String s1) {
-        switch (normalizeScope(s1)) {
-            case "compile":
-                return 5;
-            case "runtime":
-                return 4;
-            case "provided":
-                return 3;
-            case "system":
-                return 2;
-            case "test":
-                return 1;
-            default:
-                return -1;
-        }
-    }
-
-    public static int compareScopes(String s1, String s2) {
-        int x = getScopesPriority(s1);
-        int y = getScopesPriority(s2);
-        int c = Integer.compare(x, y);
-        if (c != 0) {
-            return x;
-        }
-        if (x == -1) {
-            return normalizeScope(s1).compareTo(normalizeScope(s2));
-        }
-        return 0;
-    }
 
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
@@ -868,4 +734,5 @@ public class CoreNutsUtils {
         }
         return pattern.getLongName().equals(id.getLongName());
     }
+
 }

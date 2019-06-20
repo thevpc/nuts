@@ -928,7 +928,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     private NutsId[] findDependencies(List<NutsId> ids) {
         NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
         NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
-                new NutsDependencyScopeFilter(getScope()),
+                new NutsDependencyScopeFilter().addScopes(getScope()),
                 getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                 getDependencyFilter()
         ));

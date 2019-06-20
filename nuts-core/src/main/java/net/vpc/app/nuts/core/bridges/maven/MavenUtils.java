@@ -47,7 +47,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -98,13 +97,16 @@ public class MavenUtils {
     }
 
     public static NutsDependency toNutsDependency(PomDependency d) {
+        String s = d.getScope();
+        if("compile".equals(s)){
+            s="api";
+        }
         return new DefaultNutsDependency(
                 null,
                 d.getGroupId(),
                 d.getArtifactId(),
                 d.getClassifier(),
-                DefaultNutsVersion.valueOf(toNutsVersion((d.getVersion()))),
-                d.getScope(),
+                DefaultNutsVersion.valueOf(toNutsVersion((d.getVersion()))), s,
                 d.getOptional(),
                 toNutsId(d.getExclusions())
         );

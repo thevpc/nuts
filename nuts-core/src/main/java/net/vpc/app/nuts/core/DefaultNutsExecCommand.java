@@ -5,7 +5,6 @@ import net.vpc.app.nuts.core.commands.*;
 import net.vpc.app.nuts.core.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.core.spi.NutsExecutableInfoExt;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
@@ -813,8 +812,8 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         }
         NutsId goodId = ff.get(0);
         def = ws.fetch().id(goodId).session(searchSession).setOptional(false).dependencies()
-                .failFast(false)
-                .scope(NutsDependencyScope.PROFILE_RUN)
+                .failFast()
+                .scope(NutsDependencyScopePattern.RUN)
                 .getResultDefinition();
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }

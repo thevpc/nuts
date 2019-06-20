@@ -10,6 +10,7 @@ import java.util.Map;
 import net.vpc.app.nuts.core.DefaultNutsIdBuilder;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdResolver;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> implements NutsIdFormat {
@@ -178,7 +179,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
 
 //        if (highlightScope) {
-        if (!CoreStringUtils.isBlank(scope) && !"compile".equalsIgnoreCase(scope)) {
+        if (!NutsDependencyScopes.isDefaultScope(scope)) {
             if (firstQ) {
                 sb.append("{{\\?}}");
                 firstQ = false;

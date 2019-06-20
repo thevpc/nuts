@@ -9,13 +9,28 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 public class NutsDependencyScopeFilter implements NutsDependencyFilter {
 
-    private EnumSet<NutsDependencyScope> scope;
+    private EnumSet<NutsDependencyScope> scope=EnumSet.noneOf(NutsDependencyScope.class);
 
-    public NutsDependencyScopeFilter(Collection<NutsDependencyScope> scope) {
-        this.scope = NutsDependencyScope.expand(scope);
-        if (this.scope.isEmpty()) {
-            this.scope = NutsDependencyScope.expand(EnumSet.of(NutsDependencyScope.ALL));
+    public NutsDependencyScopeFilter() {
+
+    }
+
+    private NutsDependencyScopeFilter(Collection<NutsDependencyScope> scope) {
+        this.scope = EnumSet.copyOf(scope);
+    }
+
+    public NutsDependencyScopeFilter addScopes(Collection<NutsDependencyScope> scope) {
+        EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
+        s2.addAll(scope);
+        return new NutsDependencyScopeFilter(s2);
+    }
+
+    public NutsDependencyScopeFilter addScopePatterns(Collection<NutsDependencyScopePattern> scope) {
+        EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
+        for (NutsDependencyScopePattern ss : scope) {
+            s2.addAll(ss.expand());
         }
+        return new NutsDependencyScopeFilter(s2);
     }
 
     @Override

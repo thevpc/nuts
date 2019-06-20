@@ -36,6 +36,8 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsDependencyScope;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
  * Created by vpc on 1/5/17.
@@ -60,9 +62,8 @@ public class DefaultNutsDependency implements NutsDependency {
         this.group = CoreStringUtils.trimToNull(group);
         this.name = CoreStringUtils.trimToNull(name);
         this.version = version == null ? DefaultNutsVersion.EMPTY : version;
-        String s = CoreStringUtils.trimToNull(scope);
         this.classifier = CoreStringUtils.trimToNull(classifier);
-        this.scope = CoreStringUtils.isBlank(s) ? "compile" : s;
+        this.scope = NutsDependencyScopes.normalizeScope(scope);
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
@@ -90,7 +91,7 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public NutsId getId() {
         Map<String, String> m = new LinkedHashMap<>();
-        if (!CoreStringUtils.isBlank(scope) && !"compile".equals(scope)) {
+        if (!NutsDependencyScopes.isDefaultScope(scope)) {
             m.put("scope", scope);
         }
         if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
@@ -187,7 +188,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         Map<String, String> p = new TreeMap<>();
         if (!CoreStringUtils.isBlank(scope)) {
-            if (!scope.equals("compile")) {
+            if (!scope.equals(NutsDependencyScope.API.id())) {
                 p.put("scope", scope);
             }
         }

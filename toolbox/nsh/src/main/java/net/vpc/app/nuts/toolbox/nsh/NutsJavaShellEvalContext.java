@@ -244,7 +244,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             List<NutsId> nutsIds = ws.search()
                     .id(commandName)
                     .latest()
-                    .addScope(NutsDependencyScope.PROFILE_RUN)
+                    .addScope(NutsDependencyScopePattern.RUN)
                     .optional(false)
                     .offline()
                     .setSession(this.getSession().copy().trace(false))

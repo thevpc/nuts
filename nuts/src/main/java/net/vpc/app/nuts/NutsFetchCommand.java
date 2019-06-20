@@ -155,20 +155,25 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     NutsFetchCommand anyWhere();
 
+    NutsFetchCommand scope(NutsDependencyScopePattern scope);
+
     NutsFetchCommand scope(NutsDependencyScope scope);
+
+    NutsFetchCommand addScope(NutsDependencyScopePattern scope);
 
     NutsFetchCommand addScope(NutsDependencyScope scope);
 
-    NutsFetchCommand scopes(Collection<NutsDependencyScope> scope);
-
-    NutsFetchCommand addScopes(Collection<NutsDependencyScope> scope);
-
     NutsFetchCommand scopes(NutsDependencyScope... scope);
+
+    NutsFetchCommand scopes(NutsDependencyScopePattern... scope);
 
     NutsFetchCommand addScopes(NutsDependencyScope... scope);
 
-//    NutsFetchCommand removeScope(Collection<NutsDependencyScope> scope);
+    NutsFetchCommand addScopes(NutsDependencyScopePattern... scope);
+
     NutsFetchCommand removeScope(NutsDependencyScope scope);
+
+    NutsFetchCommand removeScope(NutsDependencyScopePattern scope);
 
     NutsFetchCommand clearScopes();
 

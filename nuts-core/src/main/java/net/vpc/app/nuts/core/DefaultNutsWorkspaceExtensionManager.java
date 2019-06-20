@@ -175,7 +175,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 .copyFrom(options)
                 .session(searchSession)
                 .addId(id).setSession(session)
-                .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
+                .addScope(NutsDependencyScopePattern.RUN)
                 .optional(false)
                 .inlineDependencies().getResultDefinitions().list();
         NutsId toWire = null;

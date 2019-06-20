@@ -22,6 +22,8 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDependencyScopePattern;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
  *
@@ -209,11 +211,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    //@Override
-    public T scopes(Collection<NutsDependencyScope> scope) {
-        return DefaultNutsQueryBaseOptions.this.addScopes(scope);
-    }
-
+//    //@Override
+//    public T scopes(Collection<NutsDependencyScope> scope) {
+//        return DefaultNutsQueryBaseOptions.this.addScopes(scope);
+//    }
     //@Override
     public T clearScopes() {
         this.scope = EnumSet.noneOf(NutsDependencyScope.class);
@@ -221,18 +222,26 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    public T addScopes(Collection<NutsDependencyScope> scope) {
-        this.scope = NutsDependencyScope.add(this.scope, scope);
-        return (T) this;
+//    public T addScopes(Collection<NutsDependencyScope> scope) {
+//        this.scope = NutsDependencyScopes.add(this.scope, scope);
+//        return (T) this;
+//    }
+    public T scope(NutsDependencyScope scope) {
+        return addScope(scope);
     }
 
-    public T scope(NutsDependencyScope scope) {
+    public T scope(NutsDependencyScopePattern scope) {
         return addScope(scope);
     }
 
     //@Override
     public T addScope(NutsDependencyScope scope) {
-        this.scope = NutsDependencyScope.add(this.scope, scope);
+        this.scope = NutsDependencyScopes.add(this.scope, scope);
+        return (T) this;
+    }
+
+    public T addScope(NutsDependencyScopePattern scope) {
+        this.scope = NutsDependencyScopes.add(this.scope, scope);
         return (T) this;
     }
 
@@ -240,21 +249,40 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return addScopes(scopes);
     }
 
+    public T scopes(NutsDependencyScopePattern... scopes) {
+        return addScopes(scopes);
+    }
+
     //@Override
     public T addScopes(NutsDependencyScope... scope) {
-        this.scope = NutsDependencyScope.add(this.scope, scope);
+        this.scope = NutsDependencyScopes.add(this.scope, scope);
+        return (T) this;
+    }
+
+    public T addScopes(NutsDependencyScopePattern... scope) {
+        this.scope = NutsDependencyScopes.add(this.scope, scope);
         return (T) this;
     }
 
     //@Override
-    public T removeScopes(Collection<NutsDependencyScope> scope) {
-        this.scope = NutsDependencyScope.remove(this.scope, scope);
+    public T removeScopes(NutsDependencyScope... scope) {
+        this.scope = NutsDependencyScopes.remove(this.scope, scope);
+        return (T) this;
+    }
+
+    public T removeScopes(NutsDependencyScopePattern... scope) {
+        this.scope = NutsDependencyScopes.remove(this.scope, scope);
         return (T) this;
     }
 
     //@Override
     public T removeScope(NutsDependencyScope scope) {
-        this.scope = NutsDependencyScope.remove(this.scope, scope);
+        this.scope = NutsDependencyScopes.remove(this.scope, scope);
+        return (T) this;
+    }
+
+    public T removeScope(NutsDependencyScopePattern scope) {
+        this.scope = NutsDependencyScopes.remove(this.scope, scope);
         return (T) this;
     }
 

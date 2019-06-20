@@ -654,6 +654,7 @@ public class NutsBootWorkspace {
                             } else if (version.contains("$")) {
                                 throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
                             }
+                            //this is maven dependency, using "compile"
                             if (NutsUtilsLimited.isBlank(scope) || scope.equals("compile")) {
                                 dependencies.add(groupId + ":" + artifactId + "#" + version);
                             } else if (version.contains("$")) {

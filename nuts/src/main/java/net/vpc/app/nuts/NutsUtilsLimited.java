@@ -629,6 +629,7 @@ final class NutsUtilsLimited {
                                     }
                                 }
                             }
+                            //this is maven dependency, using "compile"
                             if (scope.isEmpty() || scope.equals("compile")) {
                                 deps.add(new NutsIdLimited(
                                         groupId, artifactId, version

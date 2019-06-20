@@ -13,6 +13,7 @@ import net.vpc.app.nuts.core.filters.dependency.NutsDependencyOptionFilter;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyScopeFilter;
 import net.vpc.app.nuts.core.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 import net.vpc.app.nuts.core.util.NutsIdGraph;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
@@ -258,12 +259,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         foundDefinition.setDependencyTreeNodes(buildTreeNode(null,
                                 new DefaultNutsDependency(id),
                                 foundDefinition, new HashSet<NutsId>(), getSession().copy().trace(false),
-                                getScope().isEmpty() ? null : new NutsDependencyScopeFilter(getScope())).getChildren());
+                                getScope().isEmpty() ? null : new NutsDependencyScopeFilter().addScopes(getScope())).getChildren());
                     }
                     if (isDependencies()) {
                         NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
                         NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
-                                new NutsDependencyScopeFilter(getScope()),
+                                new NutsDependencyScopeFilter().addScopes(getScope()),
                                 getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                                 null//getDependencyFilter()
                         ));
@@ -339,11 +340,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
             }
             if (isInlineDependencies()) {
-                NutsDependencyScope[] s = (getScope() == null || getScope().isEmpty())
-                        ? new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
-                        : getScope().toArray(new NutsDependencyScope[0]);
+                Set<NutsDependencyScope> s = getScope();
+                if (s == null || s.isEmpty()) {
+                    s = NutsDependencyScopePattern.RUN.expand();
+                }
                 ws.search().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
-                        .addScopes(s)
+                        .addScopes(s.toArray(new NutsDependencyScope[0]))
                         .setOptional(getOptional())
                         .main(false).inlineDependencies().getResultDefinitions();
 
@@ -486,7 +488,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         newIdBuilder.setClassifier(classifier);
                     }
                     Map<String, String> q = id.getQueryMap();
-                    if (!CoreNutsUtils.isDefaultScope(q.get(NutsConstants.QueryKeys.SCOPE))) {
+                    if (!NutsDependencyScopes.isDefaultScope(q.get(NutsConstants.QueryKeys.SCOPE))) {
                         newIdBuilder.setScope(q.get(NutsConstants.QueryKeys.SCOPE));
                     }
                     if (!CoreNutsUtils.isDefaultOptional(q.get(NutsConstants.QueryKeys.OPTIONAL))) {

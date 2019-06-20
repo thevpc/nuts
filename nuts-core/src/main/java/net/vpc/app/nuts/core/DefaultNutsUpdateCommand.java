@@ -53,8 +53,10 @@ import net.vpc.app.nuts.NutsUserCancelException;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsSearchCommand;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
  *
@@ -541,18 +543,25 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     }
 
     private NutsSearchCommand latestDependencies(NutsSearchCommand se) {
-        return se.inlineDependencies()
-                .scopes(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
-                .optional(includeOptional ? null : false)
-                .latest();
+        se.inlineDependencies();
+        if (scopes.isEmpty()) {
+            se.scope(NutsDependencyScopePattern.RUN);
+        } else {
+            se.scopes(scopes.toArray(new NutsDependencyScope[0]));
+        }
+        se.optional(includeOptional ? null : false).latest();
+        return se;
     }
 
     private NutsFetchCommand latestOnlineDependencies(NutsFetchCommand se) {
-        return se
-                .scopes(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
-                .optional(includeOptional ? null : false)
-                .online()
-                .dependencies();
+        se.dependencies();
+        if (scopes.isEmpty()) {
+            se.scope(NutsDependencyScopePattern.RUN);
+        } else {
+            se.scopes(scopes.toArray(new NutsDependencyScope[0]));
+        }
+        se.optional(includeOptional ? null : false).online();
+        return se;
     }
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id) {
@@ -692,7 +701,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                                     .filter(new Predicate<NutsDependency>() {
                                         @Override
                                         public boolean test(NutsDependency x) {
-                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x, getValidSession());
+                                            return !x.isOptional() && NutsDependencyScopes.SCOPE_RUN.accept(rtId, x, getValidSession());
                                         }
                                     })
                                     .map(x -> x.getId().getLongName())

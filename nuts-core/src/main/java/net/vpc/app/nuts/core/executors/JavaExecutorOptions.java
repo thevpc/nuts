@@ -142,7 +142,7 @@ public final class JavaExecutorOptions {
             nutsDefinitions.addAll(
                     se
                             .transitive()
-                            .scope(NutsDependencyScope.PROFILE_RUN)
+                            .scope(NutsDependencyScopePattern.RUN)
                             .optional(false)
                             .duplicates(false)
                             .latest()

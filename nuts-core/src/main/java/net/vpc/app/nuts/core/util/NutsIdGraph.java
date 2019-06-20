@@ -286,12 +286,8 @@ public class NutsIdGraph {
     }
 
     private NutsId prepareDepId(NutsDependency dept, NutsId item) {
-        String scope = dept.getScope();
-        if (CoreStringUtils.isBlank(scope)) {
-            scope = "compile";
-        }
-        if (!"compile".equals(scope)) {
-            item = item.setQueryProperty("scope", scope);
+        if (!NutsDependencyScopes.isDefaultScope(dept.getScope())) {
+            item = item.setQueryProperty("scope", dept.getScope());
         }
         if (dept.isOptional()) {
             item = item.setQueryProperty("optional", "true");
@@ -555,7 +551,7 @@ public class NutsIdGraph {
                 }
                 if (id1.getVersion().isSingleValue() && id2.getVersion().isSingleValue()) {
                     int x = id1.getVersion().compareTo(id2.getVersion());
-                    int c = CoreNutsUtils.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
+                    int c = NutsDependencyScopes.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
                     if (x != 0) {
                         if (c == 0) {
                             //better version with same scope

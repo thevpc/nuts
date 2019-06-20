@@ -345,15 +345,21 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsSearchCommand addScope(NutsDependencyScope scope);
 
-    NutsSearchCommand scopes(Collection<NutsDependencyScope> scope);
-
-    NutsSearchCommand addScopes(Collection<NutsDependencyScope> scope);
-
     NutsSearchCommand scopes(NutsDependencyScope... scope);
 
     NutsSearchCommand addScopes(NutsDependencyScope... scope);
 
     NutsSearchCommand removeScope(NutsDependencyScope scope);
+
+    NutsSearchCommand scope(NutsDependencyScopePattern scope);
+
+    NutsSearchCommand addScope(NutsDependencyScopePattern scope);
+
+    NutsSearchCommand scopes(NutsDependencyScopePattern... scope);
+
+    NutsSearchCommand addScopes(NutsDependencyScopePattern... scope);
+
+    NutsSearchCommand removeScope(NutsDependencyScopePattern scope);
 
     /**
      *

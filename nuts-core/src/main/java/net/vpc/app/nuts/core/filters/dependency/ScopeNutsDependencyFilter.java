@@ -1,39 +1,27 @@
 package net.vpc.app.nuts.core.filters.dependency;
 
+import java.util.EnumSet;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 
-    private Set<String> scopes = new HashSet<>();
+    private EnumSet<NutsDependencyScope> scopes = EnumSet.noneOf(NutsDependencyScope.class);
 
-    public ScopeNutsDependencyFilter(String scope) {
-        for (String s : scope.split("[ ,]")) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                scopes.add(s.toLowerCase());
-            }
+    public ScopeNutsDependencyFilter(NutsDependencyScopePattern... scopes) {
+        for (NutsDependencyScopePattern scope : scopes) {
+            this.scopes.addAll(scope.expand());
         }
     }
 
     @Override
     public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
-        String scope = dependency.getScope();
-        if (scope == null) {
-            scope = "";
-        }
-        scope = scope.toLowerCase();
-        if (scope.isEmpty()) {
-            scope = "compile";
-        }
-        if (!(scopes.contains(scope))) {
-            return false;
-        }
-        return true;
+
+        NutsDependencyScope d = NutsDependencyScopes.parseScope(dependency.getScope(), true);
+        return d != null && scopes.contains(d);
     }
 
     @Override
@@ -43,7 +31,7 @@ public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifi
 
     @Override
     public String toString() {
-        return "ScopeNutsDependencyFilter" + scopes;
+        return "(" + scopes + ")";
     }
 
     @Override
