@@ -7,15 +7,16 @@ import java.util.Arrays;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
-public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
+public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private String message;
     private Object[] messageParameters;
     private Object[] acceptedValues;
-    private Object defaultValue;
+    private T defaultValue;
     private Class<T> valueType;
-    private NutsResponseParser parser;
-    private NutsResponseValidator<T> validator;
+    private NutsQuestionFormat<T> format;
+    private NutsQuestionParser<T> parser;
+    private NutsQuestionValidator<T> validator;
 
     private final NutsTerminal terminal;
     private final PrintStream out;
@@ -26,7 +27,7 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNutsQuestionExecutor(NutsWorkspace ws, NutsTerminal terminal, PrintStream out) {
+    public DefaultNutsQuestion(NutsWorkspace ws, NutsTerminal terminal, PrintStream out) {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;
@@ -106,18 +107,24 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
             message = message.substring(0, message.length() - 1);
         }
         boolean extraInfo = false;
+        NutsQuestionParser<T> p = this.getParser();
+        if (p == null) {
+            p = new DefaultNutsResponseParser<T>(ws, this.getValueType());
+        }
+        NutsQuestionFormat<T> ff = this.getFormat();
+        if (ff == null) {
+            ff = new DefaultNutsQuestionFormat<T>(ws);
+        }
+        Object[] _acceptedValues = this.getAcceptedValues();
+        if (_acceptedValues == null) {
+            _acceptedValues = ff.getDefaultValues(this.getValueType(),this);
+        }
+        if (_acceptedValues == null) {
+            _acceptedValues = new Object[0];
+        }
         while (true) {
             out.printf(message, this.getMessageParameters());
-            NutsResponseParser p = this.getParser();
-            if (p == null) {
-                p = new DefaultNutsResponseParser(ws);
-            }
-            Object[] acceptedValues = this.getAcceptedValues();
-            if (acceptedValues == null) {
-                acceptedValues = p.getDefaultAcceptedValues(this.getValueType());
-            }
             boolean first = true;
-
             if (this.getDefaultValue() != null) {
                 if (first) {
                     first = false;
@@ -125,10 +132,10 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is [[%s]]", p.format(this.getDefaultValue()));
+                out.printf("default is [[%s]]", ff.format(this.getDefaultValue(),this));
             }
 
-            if (acceptedValues != null && acceptedValues.length > 0) {
+            if (_acceptedValues.length > 0) {
                 if (first) {
                     first = false;
                     out.print(" \\(");
@@ -136,12 +143,12 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                     out.print(", ");
                 }
                 StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < acceptedValues.length; i++) {
-                    Object acceptedValue = acceptedValues[i];
+                for (int i = 0; i < _acceptedValues.length; i++) {
+                    Object acceptedValue = _acceptedValues[i];
                     if (i > 0) {
                         sb.append(", ");
                     }
-                    sb.append(p.format(acceptedValue));
+                    sb.append(ff.format(acceptedValue,this));
                 }
                 out.printf("accepts [[%s]]", sb.toString());
             }
@@ -183,7 +190,16 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
                     throw new NutsUserCancelException(ws);
                 }
-                return (T) v;
+                try {
+                    if (this.validator != null) {
+                        v = (char[]) this.validator.validate((T) v, this);
+                    }
+                    return (T) v;
+                } catch (NutsUserCancelException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                }
             } else {
                 String v = null;
                 if (extraInfo) {
@@ -194,34 +210,16 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
                     out.flush();
                     v = terminal.readLine(" ? : ");
                 }
-                if ("cancel!".equals(v)) {
-                    throw new NutsUserCancelException(ws);
-                }
-                T parsed = null;
-                if (v == null || v.length() == 0) {
-                    try {
-                        parsed = (T) p.parse(this.getDefaultValue(), this.getValueType());
-                        if (this.validator != null) {
-                            parsed = this.validator.validate(parsed, this);
-                        }
-                        return parsed;
-                    } catch (NutsUserCancelException ex) {
-                        throw ex;
-                    } catch (Exception ex) {
-                        out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                try {
+                    T parsed = (T) p.parse(v, (T) this.getDefaultValue(),this);
+                    if (this.validator != null) {
+                        parsed = this.validator.validate(parsed, this);
                     }
-                } else {
-                    try {
-                        parsed = (T) p.parse(v, this.getValueType());
-                        if (this.validator != null) {
-                            parsed = this.validator.validate(parsed, this);
-                        }
-                        return parsed;
-                    } catch (NutsUserCancelException ex) {
-                        throw ex;
-                    } catch (Exception ex) {
-                        out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
-                    }
+                    return parsed;
+                } catch (NutsUserCancelException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                 }
             }
             extraInfo = true;
@@ -230,47 +228,46 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
 
     @Override
     public NutsQuestion<Boolean> forBoolean(String msg, Object... params) {
-        return (NutsQuestion<Boolean>) setValueType(Boolean.class).setMessage(msg, params);
+        return ((NutsQuestion<Boolean>) this).setValueType(Boolean.class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<String> forString(String msg, Object... params) {
-        return (NutsQuestion<String>) setValueType(String.class).setMessage(msg, params);
+        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<char[]> forPassword(String msg, Object... params) {
         this.password = true;
-        return (NutsQuestion<char[]>) setValueType(char[].class).setMessage(msg, params);
+        return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<Integer> forInteger(String msg, Object... params) {
-        return (NutsQuestion<Integer>) setValueType(Integer.class).setMessage(msg, params);
+        return ((NutsQuestion<Integer>) this).setValueType(Integer.class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<Long> forLong(String msg, Object... params) {
-        return (NutsQuestion<Long>) setValueType(Long.class).setMessage(msg, params);
+        return ((NutsQuestion<Long>) this).setValueType(Long.class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<Float> forFloat(String msg, Object... params) {
-        return (NutsQuestion<Float>) setValueType(Float.class).setMessage(msg, params);
+        return ((NutsQuestion<Float>) this).setValueType(Float.class).setMessage(msg, params);
     }
 
     @Override
     public NutsQuestion<Double> forDouble(String msg, Object... params) {
-        return (NutsQuestion<Double>) setValueType(Double.class).setMessage(msg, params);
+        return ((NutsQuestion<Double>) this).setValueType(Double.class).setMessage(msg, params);
     }
 
     @Override
     public <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params) {
         K[] values = enumType.getEnumConstants();
-        setValueType(enumType)
+        return ((NutsQuestion<K>) this).setValueType(enumType)
                 .setMessage(msg, params)
                 .setAcceptedValues(values);
-        return (NutsQuestion<K>) this;
     }
 
     @Override
@@ -334,49 +331,65 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public Object getDefaultValue() {
+    public T getDefaultValue() {
         return defaultValue;
     }
 
     @Override
-    public NutsQuestion<T> defaultValue(Object defautValue) {
+    public NutsQuestion<T> defaultValue(T defautValue) {
         return setDefaultValue(defautValue);
     }
 
     @Override
-    public NutsQuestion<T> setDefaultValue(Object defaultValue) {
+    public NutsQuestion<T> setDefaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
     @Override
-    public Class getValueType() {
+    public Class<T> getValueType() {
         return valueType;
     }
 
     @Override
-    public NutsQuestion<T> valueType(Class valueType) {
+    public NutsQuestion<T> valueType(Class<T> valueType) {
         return setValueType(valueType);
     }
 
     @Override
-    public NutsQuestion<T> setValueType(Class valueType) {
+    public NutsQuestion<T> setValueType(Class<T> valueType) {
         this.valueType = valueType;
         return this;
     }
 
     @Override
-    public NutsResponseParser getParser() {
+    public NutsQuestionFormat<T> getFormat() {
+        return format;
+    }
+
+    @Override
+    public NutsQuestion<T> format(NutsQuestionFormat<T> parser) {
+        return setFormat(parser);
+    }
+
+    @Override
+    public NutsQuestion<T> setFormat(NutsQuestionFormat<T> parser) {
+        this.format = parser;
+        return this;
+    }
+
+    @Override
+    public NutsQuestionParser<T> getParser() {
         return parser;
     }
 
     @Override
-    public NutsQuestion<T> parser(NutsResponseParser parser) {
+    public NutsQuestion<T> parser(NutsQuestionParser<T> parser) {
         return setParser(parser);
     }
 
     @Override
-    public NutsQuestion<T> setParser(NutsResponseParser parser) {
+    public NutsQuestion<T> setParser(NutsQuestionParser<T> parser) {
         this.parser = parser;
         return this;
     }
@@ -407,18 +420,18 @@ public class DefaultNutsQuestionExecutor<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> validator(NutsResponseValidator<T> validator) {
+    public NutsQuestion<T> validator(NutsQuestionValidator<T> validator) {
         return setValidator(validator);
     }
 
     @Override
-    public NutsQuestion<T> setValidator(NutsResponseValidator<T> validator) {
+    public NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator) {
         this.validator = validator;
         return this;
     }
 
     @Override
-    public NutsResponseValidator<T> getValidator() {
+    public NutsQuestionValidator<T> getValidator() {
         return this.validator;
     }
 

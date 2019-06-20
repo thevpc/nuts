@@ -21,7 +21,6 @@ import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsConfirmationMode;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.NutsResponseValidator;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsUserCancelException;
@@ -36,6 +35,7 @@ import net.vpc.common.strings.StringToObject;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.strings.format.AbstractFunction;
 import org.w3c.dom.Document;
+import net.vpc.app.nuts.NutsQuestionValidator;
 
 /**
  *
@@ -77,7 +77,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 }
                 return term.ask().forString("[[%s]] (<<%s>>)\n", propertyTitle, propName)
                         .defaultValue(defaultValue)
-                        .setValidator(new NutsResponseValidator<String>() {
+                        .setValidator(new NutsQuestionValidator<String>() {
                             @Override
                             public String validate(String value, NutsQuestion<String> question) throws NutsValidationException {
                                 return validator.validate(value);

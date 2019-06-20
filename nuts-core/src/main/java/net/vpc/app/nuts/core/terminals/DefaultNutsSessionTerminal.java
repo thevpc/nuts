@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsQuestionExecutor;
+import net.vpc.app.nuts.core.DefaultNutsQuestion;
 
 import java.io.*;
 import java.util.Scanner;
@@ -261,7 +261,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public <T> NutsQuestion<T> ask() {
-        return new DefaultNutsQuestionExecutor<T>(ws, this, fout());
+        return new DefaultNutsQuestion<T>(ws, this, fout());
     }
 
     @Override

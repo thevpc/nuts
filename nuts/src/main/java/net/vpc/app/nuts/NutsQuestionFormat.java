@@ -34,7 +34,9 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsResponseValidator<T> {
+public interface NutsQuestionFormat<T> {
 
-    T validate(T value, NutsQuestion<T> question) throws NutsValidationException;
+    String format(Object value, NutsQuestion<T> question);
+
+    Object[] getDefaultValues(Class type, NutsQuestion<T> question);
 }

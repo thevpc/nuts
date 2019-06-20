@@ -6,6 +6,7 @@ import net.vpc.common.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -243,26 +244,37 @@ public class LinuxNdi implements SystemNdi {
                 }
             }
             if (updatedNdirc || updatedBashrc) {
-                String r = context.session().terminal().ask()
-                        .forString(
+                context.session().terminal().ask()
+                        .forBoolean(
                                 "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
                                 + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                                 ". ~/.bashrc"
                         )
                         .session(context.getSession())
-                        .validator(new NutsResponseValidator<String>() {
+                        .parser(new NutsQuestionParser<Boolean>() {
                             @Override
-                            public String validate(String r, NutsQuestion<String> question) throws NutsValidationException {
+                            public Boolean parse(Object response, Boolean defaultValue,NutsQuestion<Boolean> question) {
+                                if (response instanceof Boolean) {
+                                    return (Boolean) response;
+                                }
+                                if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
+                                    response = defaultValue;
+                                }
+                                if (response == null) {
+                                    throw new NutsValidationException(context.getWorkspace(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
+                                }
+                                String r = response.toString();
                                 if ("ok".equalsIgnoreCase(r)) {
-                                    return r;
+                                    return true;
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
-                                    context.session().out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
-                                    context.session().out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
-                                    context.session().out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                                    context.session().out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
-                                    context.session().out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                    context.session().out().printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
+                                    PrintStream out = context.session().out();
+                                    out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
+                                    out.print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
+                                    out.print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
+                                    out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
+                                    out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
+                                    out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
                                     throw new NutsValidationException(context.getWorkspace(), "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                     throw new NutsUserCancelException(context.getWorkspace());

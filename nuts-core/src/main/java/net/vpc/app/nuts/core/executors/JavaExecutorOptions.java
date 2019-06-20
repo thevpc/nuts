@@ -235,7 +235,7 @@ public final class JavaExecutorOptions {
 
                         mainClass = session.getTerminal()
                                 .ask().forString(msgString.toString(), msgParams.toArray())
-                                .setValidator(new NutsResponseValidator<String>() {
+                                .setValidator(new NutsQuestionValidator<String>() {
                                     @Override
                                     public String validate(String value, NutsQuestion<String> question) throws NutsValidationException {
                                         Integer anyInt = CoreCommonUtils.convertToInteger(value, null);

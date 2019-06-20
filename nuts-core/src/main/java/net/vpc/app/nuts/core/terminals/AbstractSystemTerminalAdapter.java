@@ -1,11 +1,11 @@
 package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsQuestionExecutor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.core.DefaultNutsQuestion;
 
 public abstract class AbstractSystemTerminalAdapter implements NutsSystemTerminal {
 
@@ -114,7 +114,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (p instanceof NutsTerminal) {
             return ((NutsTerminal) p).ask();
         } else {
-            return new DefaultNutsQuestionExecutor<T>(
+            return new DefaultNutsQuestion<T>(
                     ws,
                     this, out()
             );

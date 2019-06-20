@@ -3,22 +3,30 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
-public class DefaultNutsResponseParser implements NutsResponseParser {
+public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
 
-//    public static final NutsResponseParser INSTANCE = new DefaultNutsResponseParser();
-    private NutsWorkspace ws;
+//    public static final NutsResponseFormat INSTANCE = new DefaultNutsResponseFormat();
+    private final NutsWorkspace ws;
+    private final Class<T> type;
 
-    public DefaultNutsResponseParser(NutsWorkspace ws) {
+    public DefaultNutsResponseParser(NutsWorkspace ws, Class<T> type) {
         this.ws = ws;
+        this.type = type;
     }
 
     @Override
-    public Object parse(Object response, Class type) {
+    public T parse(Object response, T defaultValue, NutsQuestion<T> question) {
+        if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
+            response = defaultValue;
+        }
+        if ("cancel!".equals(response)) {
+            throw new NutsUserCancelException(ws);
+        }
         if (response == null) {
             return null;
         }
         if (type.isInstance(response)) {
-            return response;
+            return (T) response;
         }
         if (type.isEnum()) {
             String s = String.valueOf(response).trim();
@@ -26,11 +34,11 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 return null;
             }
             try {
-                return Enum.valueOf(type, s);
+                return (T) Enum.valueOf((Class) type, s);
             } catch (Exception ex) {
                 for (Object enumConstant : type.getEnumConstants()) {
                     if (enumConstant.toString().equalsIgnoreCase(s.replace("-", "_"))) {
-                        return enumConstant;
+                        return (T) enumConstant;
                     }
                 }
                 throw ex;
@@ -38,23 +46,23 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
         }
         switch (type.getName()) {
             case "java.lang.String": {
-                return String.valueOf(response);
+                return (T) (Object) String.valueOf(response);
             }
             case "int":
             case "java.lang.Integer": {
-                return Integer.parseInt(String.valueOf(response));
+                return (T) (Object) Integer.parseInt(String.valueOf(response));
             }
             case "long":
             case "java.lang.Long": {
-                return Long.parseLong(String.valueOf(response));
+                return (T) (Object) Long.parseLong(String.valueOf(response));
             }
             case "float":
             case "java.lang.Float": {
-                return Float.parseFloat(String.valueOf(response));
+                return (T) (Object) Float.parseFloat(String.valueOf(response));
             }
             case "double":
             case "java.lang.Double": {
-                return Double.parseDouble(String.valueOf(response));
+                return (T) (Object) Double.parseDouble(String.valueOf(response));
             }
             case "boolean":
             case "java.lang.Boolean": {
@@ -66,7 +74,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 if (!a.isBoolean()) {
                     throw new NutsIllegalArgumentException(ws, "Invalid response " + sReponse);
                 }
-                return a.getBoolean();
+                return (T) (Object) a.getBoolean();
             }
 
             default: {
@@ -74,48 +82,4 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
             }
         }
     }
-
-    @Override
-    public Object[] getDefaultAcceptedValues(Class type) {
-        if (type.isEnum()) {
-            return type.getEnumConstants();
-        }
-        switch (type.getName()) {
-            case "java.lang.String": {
-                return null;
-            }
-            case "int":
-            case "java.lang.Integer": {
-                return null;
-            }
-            case "long":
-            case "java.lang.Long": {
-                return null;
-            }
-            case "float":
-            case "java.lang.Float": {
-                return null;
-            }
-            case "double":
-            case "java.lang.Double": {
-                return null;
-            }
-            case "boolean":
-            case "java.lang.Boolean": {
-                return new Object[]{true, false};
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type.getName());
-            }
-        }
-    }
-
-    @Override
-    public String format(Object value) {
-        if (value instanceof Boolean) {
-            return ((Boolean) value) ? "y" : "n";
-        }
-        return String.valueOf(value);
-    }
-
 }

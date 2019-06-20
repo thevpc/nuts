@@ -34,11 +34,7 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsResponseParser {
+public interface NutsQuestionParser<T> {
 
-    String format(Object value);
-
-    Object[] getDefaultAcceptedValues(Class type);
-
-    Object parse(Object response, Class type);
+    T parse(Object response, T defaultValue, NutsQuestion<T> question);
 }

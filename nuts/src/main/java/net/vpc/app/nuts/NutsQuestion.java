@@ -75,29 +75,35 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     NutsQuestion<T> setAcceptedValues(Object[] acceptedValues);
 
-    Object getDefaultValue();
+    T getDefaultValue();
 
-    NutsQuestion<T> defaultValue(Object defautValue);
+    NutsQuestion<T> defaultValue(T defautValue);
 
-    NutsQuestion<T> setDefaultValue(Object defaultValue);
+    NutsQuestion<T> setDefaultValue(T defaultValue);
 
-    Class getValueType();
+    Class<T> getValueType();
 
-    NutsQuestion<T> valueType(Class valueType);
+    NutsQuestion<T> valueType(Class<T> valueType);
 
-    NutsQuestion<T> setValueType(Class valueType);
+    NutsQuestion<T> setValueType(Class<T> valueType);
 
-    NutsResponseParser getParser();
+    NutsQuestionFormat<T> getFormat();
 
-    NutsQuestion<T> parser(NutsResponseParser parser);
+    NutsQuestion<T> format(NutsQuestionFormat<T> format);
 
-    NutsQuestion<T> setParser(NutsResponseParser parser);
+    NutsQuestion<T> setFormat(NutsQuestionFormat<T> format);
 
-    NutsQuestion<T> validator(NutsResponseValidator<T> validator);
+    NutsQuestionParser<T> getParser();
 
-    NutsQuestion<T> setValidator(NutsResponseValidator<T> validator);
+    NutsQuestion<T> parser(NutsQuestionParser<T> parser);
 
-    NutsResponseValidator<T> getValidator();
+    NutsQuestion<T> setParser(NutsQuestionParser<T> parser);
+
+    NutsQuestion<T> validator(NutsQuestionValidator<T> validator);
+
+    NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator);
+
+    NutsQuestionValidator<T> getValidator();
 
     NutsQuestion<T> run();
 
