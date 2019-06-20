@@ -353,7 +353,7 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("E").append(binaryPrefix ? "i" : "");
+                        sb.append(formatLeft(r, 3)).append(binaryPrefix ? "Ei" : "E");
                         if (r != 0) {
                             leading = false;
                         }
@@ -374,7 +374,7 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("P").append(binaryPrefix ? "i" : "");
+                        sb.append(formatLeft(r, 3)).append(binaryPrefix ? "Pi" : "P");
                         if (r != 0) {
                             leading = false;
                         }
@@ -395,7 +395,7 @@ public class BytesSizeFormat {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
-                        sb.append(formatLeft(r, 3)).append("T").append(binaryPrefix ? "i" : "");
+                        sb.append(formatLeft(r, 3)).append(binaryPrefix ? "Ti" : "T");
                         if (r != 0) {
                             leading = false;
                         }
@@ -421,7 +421,7 @@ public class BytesSizeFormat {
                         if (r != 0) {
                             leading = false;
                         }
-                        sb.append(formatLeft(r, 3)).append("G").append(binaryPrefix ? "i" : "");
+                        sb.append(formatLeft(r, 3)).append(binaryPrefix ? "Gi" : "G");
                         v = v % G;
                         empty = false;
                     }
@@ -442,7 +442,7 @@ public class BytesSizeFormat {
                                 if (r != 0) {
                                     leading = false;
                                 }
-                                sb.append(formatLeft(r, 3)).append("M").append(binaryPrefix ? "i" : "");
+                                sb.append(formatLeft(r, 3)).append(binaryPrefix ? "Mi" : "M");
                                 v = v % M;
                                 empty = false;
                             }
@@ -484,7 +484,7 @@ public class BytesSizeFormat {
                                     if (r != 0) {
                                         leading = false;
                                     }
-                                    sb.append(formatLeft(v, 3)).append("B");
+                                    sb.append(formatLeft(v, 3)).append(binaryPrefix ? "B " : "B");
                                     empty = false;
                                 }
                             }
@@ -498,14 +498,14 @@ public class BytesSizeFormat {
                 sb.insert(0, "-");
             }
             if (low >= T) {
-                sb.append(formatLeft(0, 3)).append("T");
+                sb.append(formatLeft(0, 3)).append(binaryPrefix ? "Ti" : "T");
             } else if (low >= G) {
-                sb.append(formatLeft(0, 3)).append("G");
+                sb.append(formatLeft(0, 3)).append(binaryPrefix ? "Gi" : "G");
             } else if (low >= M) {
-                sb.append(formatLeft(0, 3)).append("M");
+                sb.append(formatLeft(0, 3)).append(binaryPrefix ? "Mi" : "M");
             } else if (low >= K) {
-                sb.append(formatLeft(0, 3)).append("K");
-                sb.append(formatLeft(0, 3)).append("B");
+                sb.append(formatLeft(0, 3)).append(binaryPrefix ? "Ki" : "K");
+                sb.append(formatLeft(0, 3)).append(binaryPrefix ? "B " : "B");
             }
         } else {
             if (neg) {

@@ -59,10 +59,12 @@ public class Test07_AppTypeTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
+        CoreIOUtils.delete(new File(baseFolder));
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
+        CoreIOUtils.delete(new File(baseFolder));
     }
 
     @Before

@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -y -c jps</exec.args>
+            <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ls -l -h /home/vpc</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir></exec.workingdir>
         </properties>
@@ -25,7 +25,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -y -c jps</exec.args>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ls -l -h /home/vpc</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir></exec.workingdir>
@@ -41,7 +41,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -y -c jps</exec.args>
+            <exec.args>-Dnuts.boot.args=--//debug -Dnuts.export.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ls -l -h /home/vpc</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir></exec.workingdir>
         </properties>

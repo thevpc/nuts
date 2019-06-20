@@ -144,6 +144,7 @@ public class Test05_FindLinuxTest {
 
     @AfterClass
     public static void tearUpClass() throws IOException {
+        CoreIOUtils.delete(new File(baseFolder));
     }
 
     @Before

@@ -47,7 +47,7 @@ public class Test01_CreateTest {
             "--skip-install-companions"
         });
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(wsPath + "/" + NutsConstants.Folders.REPOSITORIES + "/local/cache", ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        org.junit.Assert.assertEquals(wsPath + "/config/" + NutsConstants.Folders.REPOSITORIES + "/local/cache", ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
     }
 
     @Test
@@ -97,10 +97,10 @@ public class Test01_CreateTest {
             "--yes",
             "--skip-install-companions"
         });
-        org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/cache",
+        org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
                 ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(
-                System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/cache/"
+                System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/"
                 + NutsConstants.Folders.REPOSITORIES + "/"
                 + ws.config().getRepositories()[0].config().name()
                 + "/" + ws.config().getRepositories()[0].config().uuid(),
@@ -147,6 +147,7 @@ public class Test01_CreateTest {
 
     @AfterClass
     public static void tearUpClass() throws IOException {
+        CoreIOUtils.delete(new File(baseFolder));
     }
 
     @Before

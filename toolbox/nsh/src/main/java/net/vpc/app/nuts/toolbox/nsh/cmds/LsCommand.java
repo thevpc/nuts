@@ -63,7 +63,7 @@ public class LsCommand extends SimpleNshBuiltin {
         boolean l = false;
         boolean h = false;
         List<String> paths = new ArrayList<>();
-        BytesSizeFormat byteFormat = new BytesSizeFormat("ID1");
+        BytesSizeFormat byteFormat = new BytesSizeFormat("iD1F");
     }
 
     private static class ResultSuccess {
@@ -88,6 +88,7 @@ public class LsCommand extends SimpleNshBuiltin {
 
     public static class ResultItem {
 
+        String name;
         String path;
         char type;
         String uperms;
@@ -246,8 +247,8 @@ public class LsCommand extends SimpleNshBuiltin {
 
     private ResultItem build(File path) {
         ResultItem r = new ResultItem();
-        String name = path.getName();
         r.path = path.getPath();
+        r.name = path.getName();
         boolean dir = path.isDirectory();
         boolean regular = path.isFile();
         boolean link = false;
@@ -362,15 +363,29 @@ public class LsCommand extends SimpleNshBuiltin {
 
     private static class FileSorter implements Comparator<File> {
 
+        boolean foldersFirst = true;
+        boolean groupCase = true;
+//        boolean hiddenFirst = true;
+
         @Override
         public int compare(File o1, File o2) {
             int d1 = o1.isDirectory() ? 0 : o1.isFile() ? 1 : 2;
             int d2 = o2.isDirectory() ? 0 : o2.isFile() ? 1 : 2;
-            int x = d1 - d2;
-            if (x != 0) {
-                return x;
+            int x = 0;
+            if (foldersFirst) {
+                x = d1 - d2;
+                if (x != 0) {
+                    return x;
+                }
             }
-            return o1.getPath().compareTo(o2.getPath());
+            if (groupCase) {
+                x = o1.getPath().toLowerCase().compareTo(o2.getPath().toLowerCase());
+                if (x != 0) {
+                    return x;
+                }
+            }
+            x = o1.getPath().compareTo(o2.getPath());
+            return x;
         }
 
     }

@@ -52,6 +52,7 @@ public class Test02_LoadTest {
 
     @AfterClass
     public static void tearUpClass() throws IOException {
+        CoreIOUtils.delete(new File(baseFolder));
     }
 
     @Before

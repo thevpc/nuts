@@ -1,89 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
-        <action>
-            <actionName>CUSTOM-Run Project External</actionName>
-            <displayName>Run Project External</displayName>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>--hold -e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts console</exec.args>
-                <exec.executable>/usr/bin/konsole</exec.executable>
-                <jpda.listen>true</jpda.listen>
-            </properties>
-        </action>
-        <action>
-            <actionName>CUSTOM-Debug project external</actionName>
-            <displayName>Debug project external</displayName>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
-                <exec.executable>/usr/bin/konsole</exec.executable>
-                <jpda.listen>true</jpda.listen>
-            </properties>
-        </action>
-        <action>
-            <actionName>CUSTOM-Profile Project external</actionName>
-            <displayName>Profile Project external</displayName>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts console</exec.args>
-                <exec.executable>java</exec.executable>
-            </properties>
-        </action>
-        <action>
-            <actionName>profile</actionName>
-            <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-Dnuts.export.debug=true -Dnuts.export.show-command_=true -classpath %classpath net.vpc.app.nuts.Nuts --reset install mvn</exec.args>
-                <exec.executable>java</exec.executable>
-                <exec.workingdir>/home/vpc</exec.workingdir>
+    <action>
+        <actionName>CUSTOM-Run Project External</actionName>
+        <displayName>Run Project External</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>--hold -e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts console</exec.args>
+            <exec.executable>/usr/bin/konsole</exec.executable>
+            <jpda.listen>true</jpda.listen>
+        </properties>
+    </action>
+    <action>
+        <actionName>CUSTOM-Debug project external</actionName>
+        <displayName>Debug project external</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
+            <exec.executable>/usr/bin/konsole</exec.executable>
+            <jpda.listen>true</jpda.listen>
+        </properties>
+    </action>
+    <action>
+        <actionName>CUSTOM-Profile Project external</actionName>
+        <displayName>Profile Project external</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts console</exec.args>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+    <action>
+        <actionName>profile</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Dnuts.export.debug=true -Dnuts.export.show-command=false -classpath %classpath net.vpc.app.nuts.Nuts --reset -y dbclient</exec.args>
+            <exec.executable>java</exec.executable>
+            <exec.workingdir>/home/vpc</exec.workingdir>
                 
-            </properties>
-        </action>
-        <action>
-            <actionName>run</actionName>
-            <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-Dnuts.export.debug=true -Dnuts.export.show-command_=true -classpath %classpath net.vpc.app.nuts.Nuts --reset install mvn</exec.args>
-                <exec.executable>java</exec.executable>
-                <exec.workingdir>/home/vpc</exec.workingdir>
-            </properties>
-        </action>
-        <action>
-            <actionName>debug</actionName>
-            <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dnuts.export.debug=true -Dnuts.export.show-command_=true -classpath %classpath net.vpc.app.nuts.Nuts --reset install mvn</exec.args>
-                <exec.executable>java</exec.executable>
-                <jpda.listen>true</jpda.listen>
-                <exec.workingdir>/home/vpc</exec.workingdir>
-            </properties>
-        </action>
+        </properties>
+    </action>
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Dnuts.export.debug=true -Dnuts.export.show-command=false -classpath %classpath net.vpc.app.nuts.Nuts --reset -y dbclient</exec.args>
+            <exec.executable>java</exec.executable>
+            <exec.workingdir>/home/vpc/aa</exec.workingdir>
+        </properties>
+    </action>
+    <action>
+        <actionName>debug</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Dnuts.export.debug=true -Dnuts.export.show-command=false -classpath %classpath net.vpc.app.nuts.Nuts --reset -y dbclient</exec.args>
+            <exec.executable>java</exec.executable>
+            <jpda.listen>true</jpda.listen>
+            <exec.workingdir>/home/vpc/aa</exec.workingdir>
+        </properties>
+    </action>
         
-    </actions>
+</actions>
