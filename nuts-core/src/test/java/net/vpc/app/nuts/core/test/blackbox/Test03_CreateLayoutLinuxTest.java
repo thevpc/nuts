@@ -44,6 +44,7 @@ public class Test03_CreateLayoutLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         CoreIOUtils.delete(base);
+        resetLinuxFolders();
         Nuts.runWorkspace(new String[]{
             "--system-programs-home", new File(base, "system.programs").getPath(),
             "--system-config-home", new File(base, "system.config").getPath(),
@@ -52,8 +53,25 @@ public class Test03_CreateLayoutLinuxTest {
             "--system-temp-home", new File(base, "system.temp").getPath(),
             "--system-cache-home", new File(base, "system.cache").getPath(),
             "--system-lib-home", new File(base, "system.lib").getPath(),
+            "--system-run-home", new File(base, "system.run").getPath(),
             //            "--verbose", 
-            "--yes", "--trace", "info"});
+            "--yes", "--trace", "-k",
+            "info"
+        });
+        
+        Nuts.runWorkspace(new String[]{
+            "--system-programs-home", new File(base, "system.programs").getPath(),
+            "--system-config-home", new File(base, "system.config").getPath(),
+            "--system-var-home", new File(base, "system.var").getPath(),
+            "--system-log-home", new File(base, "system.log").getPath(),
+            "--system-temp-home", new File(base, "system.temp").getPath(),
+            "--system-cache-home", new File(base, "system.cache").getPath(),
+            "--system-lib-home", new File(base, "system.lib").getPath(),
+            "--system-run-home", new File(base, "system.run").getPath(),
+            //            "--verbose", 
+            "--yes", "--trace", "-k",
+            "info"
+        });
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
@@ -80,7 +98,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-    @Test
+//    @Test
     public void customLayout_use_standalone() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
@@ -117,7 +135,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-    @Test
+//    @Test
     public void customLayout_use_standard() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
@@ -161,9 +179,7 @@ public class Test03_CreateLayoutLinuxTest {
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
         File stash = new File(System.getProperty("user.home"), "stash/nuts");
         stash.mkdirs();
-        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            CoreIOUtils.delete(new File(f));
-        }
+        TestUtils.resetLinuxFolders();
         TestUtils.unsetNutsSystemProperties();
     }
 

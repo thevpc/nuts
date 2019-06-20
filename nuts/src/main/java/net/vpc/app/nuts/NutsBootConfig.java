@@ -55,7 +55,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
      * workspace path
      */
     private String workspace;
-
+    
     /**
      * workspace api version
      */
@@ -129,11 +129,13 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     public NutsBootConfig(NutsWorkspaceOptions options) {
         if (options != null) {
             this.setWorkspace(options.getWorkspace());
+            this.setName(options.getName());
             this.setStoreLocationStrategy(options.getStoreLocationStrategy());
             this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.storeLocations = options.getStoreLocations();
             this.homeLocations = options.getHomeLocations();
+            this.defaultHomeLocations = options.getDefaultHomeLocations();
             this.setRuntimeId(options.getBootRuntime());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getRepositories());

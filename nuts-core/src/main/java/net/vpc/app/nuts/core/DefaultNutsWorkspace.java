@@ -202,7 +202,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 new DefaultNutsBootContext(this, wsBootConfig),
                 bootClassWorldURLs,
                 bootClassLoader == null ? Thread.currentThread().getContextClassLoader() : bootClassLoader);
-
+        configManager.setExcludedRepositories(options.getExcludedRepositories());
+        extensionManager.setExcludedExtensions(options.getExcludedExtensions());
         boolean exists = config().isValidWorkspaceFolder();
         NutsWorkspaceOpenMode openMode = options.getOpenMode();
         if (openMode != null) {
@@ -231,7 +232,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
         initializing = true;
         try {
-            if (!reloadWorkspace(session, options.getExcludedExtensions(), options.getExcludedRepositories())) {
+            if (!reloadWorkspace(session, options.getExcludedExtensions(), null)) {
                 //workspace wasn't loaded. Create new configuration...
                 NutsWorkspaceUtils.checkReadOnly(this);
                 LOG.log(Level.CONFIG, "Workspace not found. Creating new one at {0}", config().getContext(NutsBootContextType.RUNTIME).getWorkspace());
@@ -239,6 +240,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 NutsWorkspaceConfig config = new NutsWorkspaceConfig();
                 //load from config with resolution applied
                 config.setUuid(UUID.randomUUID().toString());
+                config.setName(wsBootConfig.getName());
                 config.setBootApiVersion(wsBootConfig.getApiVersion());
                 config.setBootRuntime(wsBootConfig.getRuntimeId());
                 config.setBootRuntimeDependencies(wsBootConfig.getRuntimeDependencies());
@@ -722,9 +724,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 ((DefaultNutsDefinition) def).setInstallation(getInstalledRepository().getInstallInfo(def.getId()));
             }
         }
-        if(isUpdate){
+        if (isUpdate) {
             fireOnUpdate(new DefaultNutsInstallEvent(def, session, reinstall));
-        }else{
+        } else {
             fireOnInstall(new DefaultNutsInstallEvent(def, session, reinstall));
         }
         ((DefaultNutsInstallInfo) def.getInstallation()).setJustInstalled(true);
@@ -861,11 +863,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     protected boolean reloadWorkspace(NutsSession session, String[] excludedExtensions, String[] excludedRepositories) {
-        Set<String> excludedExtensionsSet = excludedExtensions == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(excludedExtensions), " ,;"));
         session = NutsWorkspaceUtils.validateSession(this, session);
         boolean loadedConfig = false;
         try {
-            configManager.setExcludedRepositories(excludedRepositories);
             loadedConfig = configManager.load(session);
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
@@ -884,18 +884,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             }
         }
         if (loadedConfig) {
-            //configExt().removeAllRepositories();
-
             //extensions already wired... this is needless!
             for (NutsId extensionId : extensions().getExtensions()) {
-                if (excludedExtensionsSet != null && NutsWorkspaceUtils.findNutsIdBySimpleNameInStrings(this, extensionId, excludedExtensionsSet) != null) {
+                if (extensionManager.isExcludedExtension(extensionId)) {
                     continue;
                 }
                 NutsSession sessionCopy = session.copy();
                 extensionManager.wireExtension(extensionId,
-                        fetch().session(session).setFetchStratery(NutsFetchStrategy.ONLINE)
-                                .setTransitive(true),
-                        sessionCopy);
+                        fetch().session(sessionCopy).setFetchStratery(NutsFetchStrategy.ONLINE)
+                                .setTransitive(true)
+                );
                 if (sessionCopy.getTerminal() != session.getTerminal()) {
                     session.setTerminal(sessionCopy.getTerminal());
                 }

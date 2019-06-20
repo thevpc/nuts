@@ -42,6 +42,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private static final long serialVersionUID = 2;
     private String uuid = null;
     private boolean global;
+    private String name = null;
     private String workspace = null;
     private String bootApiVersion = null;
 
@@ -154,6 +155,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig(NutsWorkspaceConfig other) {
         this.secure = other.isSecure();
+        this.name = other.getName();
         this.workspace = other.getWorkspace();
         this.bootApiVersion = other.getBootApiVersion();
         this.createApiVersion = other.getCreateApiVersion();
@@ -215,6 +217,15 @@ public final class NutsWorkspaceConfig implements Serializable {
             this.env = new Properties();
             this.env.putAll(other.getEnv());
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public NutsWorkspaceConfig setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getWorkspace() {

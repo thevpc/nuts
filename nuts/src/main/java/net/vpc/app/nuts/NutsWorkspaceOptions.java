@@ -65,6 +65,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private String workspace = null;
+    
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private String name = null;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -239,6 +244,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setWorkspace(String workspace) {
         this.workspace = workspace;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public NutsWorkspaceOptions setName(String workspaceName) {
+        this.name = workspaceName;
         return this;
     }
 
@@ -562,6 +576,10 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
+    }
+
+    public String[] getDefaultHomeLocations() {
+        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
     }
 
     public NutsWorkspaceOptions addOutputFormatOptions(String... options) {

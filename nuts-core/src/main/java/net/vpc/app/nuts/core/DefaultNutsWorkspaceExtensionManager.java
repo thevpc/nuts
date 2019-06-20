@@ -54,12 +54,29 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private NutsURLClassLoader workspaceExtensionsClassLoader;
     private final ListMap<String, String> defaultWiredComponents = new ListMap<>();
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
+    private final Set<String> exclusions = new HashSet<String>();
     private final NutsWorkspace ws;
     private final NutsWorkspaceFactory objectFactory;
 
     protected DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceFactory objectFactory) {
         this.ws = ws;
         this.objectFactory = objectFactory;
+    }
+
+    public boolean isExcludedExtension(NutsId excluded) {
+        return this.exclusions.contains(excluded.getSimpleName());
+    }
+
+    public void setExcludedExtensions(String[] excluded) {
+        this.exclusions.clear();
+        for (String e : CoreStringUtils.split(Arrays.asList(excluded), ",; ")) {
+            if (e != null && !e.trim().isEmpty()) {
+                NutsId ee = ws.format().id().parse(e);
+                if (ee != null) {
+                    this.exclusions.add(ee.getSimpleName());
+                }
+            }
+        }
     }
 
     @Override
@@ -134,7 +151,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsId oldId = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
-            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE), session);
+            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE).session(session));
             addExtension(id);
             return e;
         } else {
@@ -160,8 +177,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
-    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
         NutsSession searchSession = session.trace(false);
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");

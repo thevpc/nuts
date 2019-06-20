@@ -1510,7 +1510,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean load(NutsSession session) {
         Path file = getConfigFile();
-        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.format().json().parse(file, NutsWorkspaceConfig.class) : null;
+        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? parseConfigForAnyVersion(file) : null;
         if (_config != null) {
             setConfig(_config, session, false);
             configurationChanged = false;
@@ -1518,6 +1518,28 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         } else {
             return false;
         }
+    }
+
+    private NutsWorkspaceConfig parseConfigForAnyVersion(Path file) {
+        NutsWorkspaceConfig _config = ws.format().json().parse(file, NutsWorkspaceConfig.class);
+        String version = _config.getCreateApiVersion();
+        if (version == null) {
+            version = "0.5.6";
+        }
+        int buildNumber = getNutsApiVersionOrdinalNumber(version);
+        if (buildNumber < 502) {
+            //deprecated, will ignore
+            return _config;
+        }
+        return _config;
+    }
+
+    private static int getNutsApiVersionOrdinalNumber(String s) {
+        int a = 0;
+        for (String part : s.split("\\.")) {
+            a = a * 100 + Integer.parseInt(part);
+        }
+        return a;
     }
 
     public Map<String, List<NutsSdkLocation>> getSdk() {

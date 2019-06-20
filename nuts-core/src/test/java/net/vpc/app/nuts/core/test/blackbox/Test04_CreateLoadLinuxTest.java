@@ -159,9 +159,7 @@ public class Test04_CreateLoadLinuxTest {
     @Before
     public void startup() throws IOException {
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
-        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            CoreIOUtils.delete(new File(f));
-        }
+        TestUtils.resetLinuxFolders();
         TestUtils.unsetNutsSystemProperties();
     }
 

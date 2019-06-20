@@ -185,6 +185,14 @@ public final class NutsArgumentsParser {
                     // They will be persisted then (to the configuration file)
                     // but They will be ignored elsewhere if the workspace already 
                     // exists : configured parameters will be in use.
+                    case "--name":{
+                        a = cmdLine.nextString();
+                        String v = a.getStringValue();
+                        if (enabled) {
+                            options.setName(v);
+                        }
+                        break;
+                    }
                     case "--archetype":
                     case "-A": {
                         a = cmdLine.nextString();
@@ -323,6 +331,16 @@ public final class NutsArgumentsParser {
                     case "--system-cache-home":
                     case "--system-lib-home":
                     case "--system-run-home":
+                    {
+                        a = cmdLine.nextString();
+                        String v = a.getStringValue();
+                        NutsStoreLocation folder = NutsStoreLocation.valueOf(
+                                k.substring(3 + "system".length(), k.indexOf('-', 3 + "system".length())).toUpperCase());
+                        if (enabled) {
+                            options.setHomeLocation(null, folder, v);
+                        }
+                        break;
+                    }
                     case "--windows-programs-home":
                     case "--windows-config-home":
                     case "--windows-var-home":
@@ -347,6 +365,14 @@ public final class NutsArgumentsParser {
                     case "--linux-cache-home":
                     case "--linux-lib-home": 
                     case "--linux-run-home": 
+                    case "--unix-programs-home":
+                    case "--unix-config-home":
+                    case "--unix-var-home":
+                    case "--unix-log-home":
+                    case "--unix-temp-home":
+                    case "--unix-cache-home":
+                    case "--unix-lib-home": 
+                    case "--unix-run-home": 
                     {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
@@ -967,6 +993,12 @@ public final class NutsArgumentsParser {
             case "L":
             case "LINUX":
                 return NutsOsFamily.LINUX;
+            case "U":
+            case "UNIX":
+                return NutsOsFamily.UNIX;
+            case "X":
+            case "UNKNOWN":
+                return NutsOsFamily.UNKNOWN;
             case "W":
             case "WINDOWS":
                 return NutsOsFamily.WINDOWS;

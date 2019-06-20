@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.test.utils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  *
@@ -26,7 +28,7 @@ public class TestUtils {
     public static final String LINUX_CONFIG = new File(System.getProperty("user.home") + "/.config/nuts").getPath();
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
-    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP};
+    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_PROGRAMS};
     public static final String NUTS_VERSION = Nuts.getVersion();
     public static final String NDI_VERSION = NUTS_VERSION + ".0";
 
@@ -131,6 +133,17 @@ public class TestUtils {
 
     public static StackTraceElement getCallerStackTraceElement() {
         return getCallerStackTraceElement0(3);
+    }
+
+    public static void resetLinuxFolders() throws IOException {
+        for (String string : NUTS_STD_FOLDERS) {
+            File[] c = new File(string).listFiles();
+            if (c != null) {
+                for (File file : c) {
+                    CoreIOUtils.delete(file);
+                }
+            }
+        }
     }
 
     public static StackTraceElement getCallerStackTraceElement0(int index) {

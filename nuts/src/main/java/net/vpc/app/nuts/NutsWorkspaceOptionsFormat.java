@@ -173,6 +173,7 @@ public class NutsWorkspaceOptionsFormat {
         }
 
         if (createOptions || isImplicitAll()) {
+            fillOption("--name", null, NutsUtilsLimited.trim(options.getName()), arguments);
             fillOption("--archetype", "-A", options.getArchetype(), arguments);
             fillOption("--store-layout", null, options.getStoreLocationLayout(), arguments);
             fillOption("--store-strategy", null, options.getStoreLocationStrategy(), arguments);
