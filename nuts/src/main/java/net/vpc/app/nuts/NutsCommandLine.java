@@ -51,7 +51,7 @@ import java.util.List;
  * <ul>
  * <li>--!enable : option 'enable' with 'false' value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown buts the result
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result
  * is undefined)</li>
  * </ul>
  * </li>
@@ -111,8 +111,9 @@ public interface NutsCommandLine {
     /**
      * set command name that will be used as an extra info in thrown exceptions
      *
-     * @param commandName
-     * @return
+     * @param commandName commandName
+     * @return {@code this} instance
+     * 
      */
     NutsCommandLine setCommandName(String commandName);
 

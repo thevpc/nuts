@@ -121,7 +121,7 @@ public interface NutsId extends NutsTokenFilter, Serializable {
     /**
      * return a string representation of this id. All of group, name, version,
      * namespace, queryMap values are printed. This method is equivalent to
-     * {@link #toString()}
+     * {@link Object#toString()}
      *
      * @return string representation of this id
      */

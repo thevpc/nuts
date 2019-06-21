@@ -52,7 +52,6 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     String getPackaging();
 
-//    String getExt();
     String getAlternative();
 
     String[] getArch();
@@ -91,7 +90,6 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setExecutor(NutsExecutorDescriptor executor);
 
-//    NutsDescriptorBuilder setExt(String ext);
     NutsDescriptorBuilder addProperty(String name, String value);
 
     NutsDescriptorBuilder removeProperty(String name);
@@ -146,7 +144,6 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setProperties(Map<String, String> map, boolean append);
 
-//    NutsDescriptorBuilder applyParents(NutsDescriptorBuilder[] parentDescriptors);
     NutsDescriptorBuilder applyProperties();
 
     NutsDescriptorBuilder applyParents(NutsDescriptor[] parentDescriptors);

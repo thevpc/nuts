@@ -73,7 +73,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     public NutsDescriptor parse(URL url) {
         try {
             try {
-                return read(url.openStream(), true);
+                return parse(url.openStream(), true);
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
@@ -86,7 +86,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public NutsDescriptor parse(byte[] bytes) {
-        return read(new ByteArrayInputStream(bytes), true);
+        return parse(new ByteArrayInputStream(bytes), true);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
             throw new NutsNotFoundException(ws, "at file " + path);
         }
         try {
-            return read(Files.newInputStream(path), true);
+            return parse(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -113,10 +113,10 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         if (CoreStringUtils.isBlank(str)) {
             return null;
         }
-        return read(new ByteArrayInputStream(str.getBytes()), true);
+        return parse(new ByteArrayInputStream(str.getBytes()), true);
     }
 
-    private NutsDescriptor read(InputStream in, boolean closeStream) {
+    private NutsDescriptor parse(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
             return ws.format().json().parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
@@ -124,13 +124,9 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         }
     }
 
-//    @Override
-//    public NutsDescriptor descriptor(File file) {
-//        return CoreNutsUtils.parseNutsDescriptor(file);
-//    }
     @Override
     public NutsDescriptor parse(InputStream stream) {
-        return read(stream, false);
+        return parse(stream, false);
     }
 
     @Override

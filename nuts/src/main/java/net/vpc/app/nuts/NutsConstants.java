@@ -44,8 +44,8 @@ public final class NutsConstants {
         public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
         /**
          * default repository name. By default a repository named "local" is
-         * created as folder ~/.nuts/default-workspace/local (assuming default
-         * workspace and default root naming)
+         * created as folder ~/.config/nuts/default-workspace/local (assuming default
+         * workspace and default root naming on linux machine)
          */
         public static final String DEFAULT_REPOSITORY_NAME = "local";
 

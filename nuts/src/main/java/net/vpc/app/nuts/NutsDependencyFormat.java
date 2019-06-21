@@ -69,13 +69,14 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setHighlightOptional(boolean highlightOptional);
 
     /**
-     * @return @since 0.5.6
+     * @return current value to format
+     * @since 0.5.6
      */
     NutsDependency getValue();
 
     /**
      * @param id
-     * @return
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsDependencyFormat set(NutsDependency id);
@@ -86,7 +87,7 @@ public interface NutsDependencyFormat extends NutsFormat {
 
     /**
      * @param id
-     * @return
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsDependencyFormat setValue(NutsDependency id);
@@ -99,7 +100,7 @@ public interface NutsDependencyFormat extends NutsFormat {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

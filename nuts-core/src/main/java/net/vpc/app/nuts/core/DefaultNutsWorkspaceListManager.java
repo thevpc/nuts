@@ -11,7 +11,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  * Class for managing a Workspace list
  *
  * @author Nasreddine Bac Ali
- * @date 2019-03-02
+ * date 2019-03-02
  */
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 

@@ -49,7 +49,7 @@ public interface NutsArgumentName {
     /**
      * argument candidate values
      *
-     * @return
+     * @return candidates list
      */
     List<NutsArgumentCandidate> getCandidates();
 }

@@ -44,8 +44,8 @@ public class DefaultNutsWorkspaceFormatManager implements NutsFormatManager {
     }
 
     @Override
-    public NutsWorkspaceInfoFormat info() {
-        return new DefaultInfoFormat(ws);
+    public NutsInfoFormat info() {
+        return new DefaultNutsInfoFormat(ws);
     }
 
     @Override

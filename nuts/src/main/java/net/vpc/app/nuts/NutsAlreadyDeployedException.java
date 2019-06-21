@@ -55,7 +55,7 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
     /**
      * Custom Constructor
      *
-     * @param workspace
+     * @param workspace workspace
      * @param id nuts id
      */
     public NutsAlreadyDeployedException(NutsWorkspace workspace, String id) {

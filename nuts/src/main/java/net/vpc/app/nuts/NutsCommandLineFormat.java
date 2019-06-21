@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Format used to format command line by {@link NutsExecCommand}
  *
- * @see NutsExecCommand#setCommandStringFormat(NutsCommandStringFormat)
+ * @see NutsExecCommand#setCommandLineFormat(net.vpc.app.nuts.NutsCommandLineFormat)
  * @see NutsExecCommand#getCommandString()
  * @author vpc
  * @since 0.5.4

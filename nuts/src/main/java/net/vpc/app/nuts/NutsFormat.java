@@ -44,46 +44,132 @@ public interface NutsFormat extends NutsConfigurable {
     /**
      * equivalent to {@link #format() }
      *
-     * @return
+     * @return formatted current value
      */
     @Override
     String toString();
 
+    /**
+     * format current value and return the string result
+     *
+     * @return formatted current value
+     */
     String format();
 
-    void print(PrintStream out);
-
-    void print(Writer out);
-
-    void print(Path out);
-
-    void print(File out);
-
+    /**
+     * format current value and write result to {@code getSession().out()}.
+     *
+     */
     void print();
 
-    void print(NutsTerminal terminal);
-
-    void println(Writer w);
-
-    void println(PrintStream out);
-
-    void println(Path path);
-
+    /**
+     * format current value and write result to {@code getSession().out()} and
+     * finally appends a new line.
+     */
     void println();
 
+    /**
+     * format current value and write result to {@code out}
+     *
+     * @param out recipient print stream
+     */
+    void print(PrintStream out);
+
+    /**
+     * format current value and write result to {@code out}
+     *
+     * @param out recipient writer
+     */
+    void print(Writer out);
+
+    /**
+     * format current value and write result to {@code out}
+     *
+     * @param out recipient path
+     */
+    void print(Path out);
+
+    /**
+     * format current value and write result to {@code out}
+     *
+     * @param out recipient file
+     */
+    void print(File out);
+
+    /**
+     * format current value and write result to {@code terminal}
+     *
+     * @param terminal recipient terminal
+     */
+    void print(NutsTerminal terminal);
+
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient
+     */
+    void println(Writer out);
+
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient print stream
+     */
+    void println(PrintStream out);
+
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient path
+     */
+    void println(Path out);
+
+    /**
+     * format current value and write result to {@code terminal} and finally appends
+     * a new line.
+     *
+     * @param terminal recipient terminal
+     */
     void println(NutsTerminal terminal);
 
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param file recipient file
+     */
     void println(File file);
 
+    /**
+     * session associated to this format instance
+     *
+     * @return session associated to this format instance
+     */
     NutsSession getSession();
 
+    /**
+     * equivalent to {@link #setSession(net.vpc.app.nuts.NutsSession) }
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     NutsFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     NutsFormat setSession(NutsSession session);
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

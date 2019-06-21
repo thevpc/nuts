@@ -52,7 +52,6 @@ public interface NutsDescriptor extends Serializable {
 
     String getPackaging();
 
-//    String getExt();
     String getAlternative();
 
     String[] getArch();
@@ -73,7 +72,7 @@ public interface NutsDescriptor extends Serializable {
      * The dependencies specified here are not used until they are referenced in
      * a POM within the group. This allows the specification of a
      * &quot;standard&quot; version for a particular. This corresponds to
-     * dependencyManagement.dependencies in maven
+     * "dependencyManagement.dependencies" in maven
      *
      * @return "standard" dependencies
      */
@@ -95,7 +94,6 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptor setExecutor(NutsExecutorDescriptor executor);
 
-//    NutsDescriptor setExt(String ext);
     NutsDescriptor addProperty(String name, String value);
 
     NutsDescriptor removeProperty(String name);
@@ -138,13 +136,6 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptor applyProperties(Map<String, String> properties);
 
-//    boolean matchesPlatform(String platform);
-//
-//    boolean matchesOs(String os);
-//
-//    boolean matchesArch(String arch);
-//
-//    boolean matchesOsdist(String oddist);
     NutsDescriptorBuilder builder();
 
     NutsDescriptor setAlternative(String alternative);

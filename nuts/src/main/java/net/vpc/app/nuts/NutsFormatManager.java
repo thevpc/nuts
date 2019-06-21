@@ -51,7 +51,7 @@ public interface NutsFormatManager {
 
     NutsVersionFormat version();
 
-    NutsWorkspaceInfoFormat info();
+    NutsInfoFormat info();
 
     NutsDescriptorFormat descriptor();
 

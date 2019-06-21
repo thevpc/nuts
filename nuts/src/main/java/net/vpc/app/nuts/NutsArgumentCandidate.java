@@ -30,7 +30,9 @@
 package net.vpc.app.nuts;
 
 /**
- * Argument Candidate used in Auto Complete Created by vpc on 3/7/17.
+ * Argument Candidate used in Auto Complete.
+ * 
+ * Created by vpc on 3/7/17.
  *
  * @since 0.5.5
  */

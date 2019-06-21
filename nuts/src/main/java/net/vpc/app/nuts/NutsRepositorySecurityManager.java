@@ -92,7 +92,7 @@ public interface NutsRepositorySecurityManager {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetreive when true {@link #getCredentials(char[]) can be invoked over {@code credentialId}
+     * @param allowRetreive when true {@link #getCredentials(char[])} can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @return credentials-id
      */

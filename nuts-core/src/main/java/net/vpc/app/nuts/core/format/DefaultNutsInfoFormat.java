@@ -19,30 +19,30 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  *
  * @author vpc
  */
-public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat> implements NutsWorkspaceInfoFormat {
+public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> implements NutsInfoFormat {
 
     private final Properties extraProperties = new Properties();
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
 
-    public DefaultInfoFormat(NutsWorkspace ws) {
+    public DefaultNutsInfoFormat(NutsWorkspace ws) {
         super(ws, "info");
     }
 
     @Override
-    public NutsWorkspaceInfoFormat showRepositories() {
+    public NutsInfoFormat showRepositories() {
         showRepositories(true);
         return this;
     }
 
     @Override
-    public NutsWorkspaceInfoFormat showRepositories(boolean enable) {
+    public NutsInfoFormat showRepositories(boolean enable) {
         return setShowRepositories(enable);
     }
 
     @Override
-    public NutsWorkspaceInfoFormat setShowRepositories(boolean enable) {
+    public NutsInfoFormat setShowRepositories(boolean enable) {
         this.showRepositories = true;
         return this;
     }
@@ -53,13 +53,13 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
     }
 
     @Override
-    public NutsWorkspaceInfoFormat addProperty(String key, String value) {
+    public NutsInfoFormat addProperty(String key, String value) {
         extraProperties.setProperty(key, value);
         return this;
     }
 
     @Override
-    public NutsWorkspaceInfoFormat addProperties(Properties p) {
+    public NutsInfoFormat addProperties(Properties p) {
         if (p != null) {
             extraProperties.putAll(p);
         }
@@ -72,7 +72,7 @@ public class DefaultInfoFormat extends DefaultFormatBase<NutsWorkspaceInfoFormat
     }
 
     @Override
-    public NutsWorkspaceInfoFormat setFancy(boolean fancy) {
+    public NutsInfoFormat setFancy(boolean fancy) {
         this.fancy = fancy;
         return this;
     }

@@ -51,8 +51,8 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
 
     /**
      *
-     * @param workspace
-     * @param id
+     * @param workspace workspace
+     * @param id id
      */
     public NutsAlreadyInstalledException(NutsWorkspace workspace, String id) {
         super(workspace, "Already Installed nuts " + (id == null ? "<null>" : id));

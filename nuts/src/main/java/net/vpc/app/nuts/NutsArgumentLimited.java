@@ -57,6 +57,11 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
         this.eq = eq;
     }
 
+    /**
+     * true if the expression is a an option (starts with '-' or '+') 
+     * but cannot not be evaluated.
+     * @return true if option is not evaluable argument.
+     */
     public boolean isUnsupported() {
         return expression != null
                 && (expression.startsWith("-!!")
@@ -66,6 +71,10 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
                 || expression.startsWith("!!"));
     }
 
+    /**
+     * true if expression starts with '-' or '+'
+     * @return true if expression starts with '-' or '+'
+     */
     @Override
     public boolean isOption() {
         return expression != null

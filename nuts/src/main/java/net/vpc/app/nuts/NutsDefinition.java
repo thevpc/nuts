@@ -51,7 +51,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *
      * optional
      *
-     * @return
+     * @return install info
      */
     NutsInstallInfo getInstallation();
 
@@ -59,17 +59,17 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *
      * optional
      *
-     * @return
+     * @return descriptor
      */
     NutsDescriptor getEffectiveDescriptor();
 
     /**
-     * all of some of the transitive dependencies of the current Nuts as List
+     * all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
      *
      * optional
      *
-     * @return
+     * @return dependencies
      */
     NutsDependency[] getDependencies();
 
@@ -79,7 +79,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *
      * optional
      *
-     * @return
+     * @return dependencies tree nodes
      */
     NutsDependencyTreeNode[] getDependenciesNodes();
 

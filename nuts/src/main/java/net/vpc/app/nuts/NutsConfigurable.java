@@ -57,12 +57,12 @@ public interface NutsConfigurable {
     boolean configure(boolean skipUnsupported, NutsCommandLine commandLine);
 
     /**
-     * ask {@code this} instance to configure with the very first argument of {
-     *
-     * @commandLine}. If the first argument is not supported, return
+     * ask {@code this} instance to configure with the very first argument of
+     * {@code commandLine}. If the first argument is not supported, return
      * {@code false} and consume (skip/read) the argument. If the argument
      * required one or more parameters, these arguments are also consumed and
      * finally return {@code true}
+     *
      * @param commandLine arguments to configure with
      * @return {@code this} instance
      */

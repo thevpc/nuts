@@ -41,14 +41,6 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
     /**
      * return session
      *
-     * @param autoCreate if true session will be created if null
-     * @return
-     */
-    NutsSession getSession(boolean autoCreate);
-
-    /**
-     * return session
-     *
      * @return session
      */
     NutsSession getSession();
@@ -71,7 +63,7 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

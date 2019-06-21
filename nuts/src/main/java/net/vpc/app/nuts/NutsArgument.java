@@ -40,16 +40,17 @@ import java.util.NoSuchElementException;
 public interface NutsArgument extends NutsTokenFilter {
 
     /**
-     * true if the argument starts with '-'
+     * true if the argument starts with '-' or '+'
      *
      * @return true if the argument starts with '-'
      */
     boolean isOption();
 
     /**
-     * true if the argument do not start with '-'
+     * true if the argument do not start with '-' or '+' or is blank.
+     * this is equivalent to {@code !isOption()}.
      *
-     * @return true if the argument do not start with '-'
+     * @return true if the argument do not start with '-' or '+'
      */
     boolean isNonOption();
 
@@ -165,12 +166,17 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     double getDouble(double defaultValue);
 
+    /**
+     * parse boolean.
+     * equivalent to {@code getBoolean(false)}
+     * @return parsed boolean
+     */
     boolean getBoolean();
 
     /**
      * test if the argument is valid boolean. a valid boolean mush match one of
      * the following regular expressions :
-     * "true|enable|enabled|yes|always|y|on|ok" : will be evaluated as true
+     * "true|enable|enabled|yes|always|y|on|ok|t" : will be evaluated as true
      * boolean. "false|disable|disabled|no|none|never|n|off|ko" : will be
      * evaluated as false boolean. In both cases, this method returns true.
      * Otherwise, it will return false.
@@ -183,6 +189,8 @@ public interface NutsArgument extends NutsTokenFilter {
      * return boolean value if the current argument can be parsed as valid
      * boolean of defaultValue if not
      *
+     * "true|enable|enabled|yes|always|y|on|ok|t" are considered 'true'.
+     * "false|disable|disabled|no|none|never|n|off|ko" are considered 'false'.
      * @param defaultValue default value
      * @return boolean value of the current argument
      */
@@ -217,7 +225,7 @@ public interface NutsArgument extends NutsTokenFilter {
      * </li>
      * </ul>
      *
-     * @return
+     * @return new instance (never null) of the key part of the argument
      */
     NutsArgument getArgumentKey();
 
@@ -239,7 +247,7 @@ public interface NutsArgument extends NutsTokenFilter {
      * Argument("value") </li>
      * </ul>
      *
-     * @return
+     * @return new instance (never null) of the value part of the argument (after =)
      */
     NutsArgument getArgumentValue();
 

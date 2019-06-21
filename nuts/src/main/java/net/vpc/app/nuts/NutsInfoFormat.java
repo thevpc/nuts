@@ -36,17 +36,17 @@ import java.util.Properties;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsWorkspaceInfoFormat extends NutsFormat {
+public interface NutsInfoFormat extends NutsFormat {
 
     @Override
-    NutsWorkspaceInfoFormat session(NutsSession session);
+    NutsInfoFormat session(NutsSession session);
 
     @Override
-    NutsWorkspaceInfoFormat setSession(NutsSession session);
+    NutsInfoFormat setSession(NutsSession session);
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(java.lang.String...)}
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
@@ -54,21 +54,21 @@ public interface NutsWorkspaceInfoFormat extends NutsFormat {
      * @return {@code this} instance
      */
     @Override
-    NutsWorkspaceInfoFormat configure(boolean skipUnsupported, String... args);
+    NutsInfoFormat configure(boolean skipUnsupported, String... args);
 
-    NutsWorkspaceInfoFormat addProperty(String key, String value);
+    NutsInfoFormat addProperty(String key, String value);
 
-    NutsWorkspaceInfoFormat addProperties(Properties p);
+    NutsInfoFormat addProperties(Properties p);
 
-    NutsWorkspaceInfoFormat showRepositories();
+    NutsInfoFormat showRepositories();
 
-    NutsWorkspaceInfoFormat showRepositories(boolean enable);
+    NutsInfoFormat showRepositories(boolean enable);
 
-    NutsWorkspaceInfoFormat setShowRepositories(boolean enable);
+    NutsInfoFormat setShowRepositories(boolean enable);
 
     boolean isShowRepositories();
 
-    NutsWorkspaceInfoFormat setFancy(boolean fancy);
+    NutsInfoFormat setFancy(boolean fancy);
 
     boolean isFancy();
 

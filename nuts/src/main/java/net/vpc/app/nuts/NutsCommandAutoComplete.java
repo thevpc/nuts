@@ -40,13 +40,13 @@ public interface NutsCommandAutoComplete {
 
     /**
      * command line string
-     * @return 
+     * @return line
      */
     String getLine();
 
     /**
      * command line arguments
-     * @return 
+     * @return words
      */
     List<String> getWords();
 

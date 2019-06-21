@@ -1180,7 +1180,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
             Iterator<NutsId> base = findBasket(false).iterator();
             NutsSession s = ws.createSession();
             NutsFetchCommand fetch = toFetch();
-            fetch.getSession(true).trace(false);
+            fetch.getSession().trace(false);
             Iterator<NutsDefinition> ii = new Iterator<NutsDefinition>() {
                 private NutsDefinition n = null;
 

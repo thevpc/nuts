@@ -41,8 +41,8 @@ import java.util.logging.Formatter;
 /**
  * Log util helper
  *
- * @author Taha BEN SALAH <taha.bensalah@gmail.com>
- * @creationdate 9/16/12 10:00 PM
+ * @author thevpc
+ * creation-date 9/16/12 10:00 PM
  * @since 0.5.4
  */
 public final class NutsLogUtils {

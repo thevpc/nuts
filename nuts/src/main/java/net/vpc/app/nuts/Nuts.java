@@ -30,16 +30,16 @@
 package net.vpc.app.nuts;
 
 /**
- * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts
- * class is it's main class for creating and opening nuts workspaces. Created by
- * vpc on 1/5/17.
+ * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts is
+ * it's main class for creating and opening nuts workspaces.
  *
+ * Created by vpc on 1/5/17.
  * @since 0.1.0
  */
 public class Nuts {
 
     /**
-     * Running Nuts version
+     * current Nuts version
      */
     public static String version;
 

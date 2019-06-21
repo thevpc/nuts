@@ -135,34 +135,28 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setVerbose(boolean verbose);
 
     /**
-     * equivalent to {
+     * equivalent to {@code setConfirm(true)}
      *
-     * @ setConfirm(true)}
      * @return {@code this} instance
      */
     NutsSession trace();
 
     /**
-     * equivalent to {
+     * equivalent to {@code setTrace(trace)}
      *
-     * @ setTrace(trace)}
      * @param trace new value
      * @return {@code this} instance
      */
     NutsSession trace(boolean trace);
 
     /**
-     * equivalent to {
-     *
-     * @ setConfirm(true)}
+     * equivalent to {@code setConfirm(true)}
      * @return {@code this} instance
      */
     NutsSession verbose();
 
     /**
-     * equivalent to {
-     *
-     * @ setTrace(trace)}
+     * equivalent to {@code setTrace(trace)}
      * @param verbose new value
      * @return {@code this} instance
      */
@@ -219,8 +213,9 @@ public interface NutsSession extends NutsConfigurable {
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of {@link #setIterableFormatHandler(net.vpc.app.nuts.NutsIterableFormatHandler)
-     * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat) } has
+     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of 
+     * {@link #setIterableFormat(net.vpc.app.nuts.NutsIterableFormat)
+     * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)} has
      * been called (or called with null values) {@link NutsOutputFormat#PLAIN}
      * should be returned.
      *
@@ -265,7 +260,7 @@ public interface NutsSession extends NutsConfigurable {
     Object getProperty(String key);
 
     /**
-     * return confirmation mode or {@link NutsConfirmationMode#CANCEL}
+     * return confirmation mode or {@link NutsConfirmationMode#ASK}
      *
      * @return confirmation mode
      */
@@ -355,9 +350,9 @@ public interface NutsSession extends NutsConfigurable {
     NutsSessionTerminal terminal();
 
     NutsSessionTerminal getTerminal();
-    
+
     NutsWorkspace getWorkspace();
-    
+
     NutsWorkspace workspace();
 
 }
