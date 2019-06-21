@@ -3,16 +3,16 @@ package net.vpc.app.nuts.toolbox.ndi;
 import net.vpc.app.nuts.NutsExecutionType;
 
 import java.util.List;
+import net.vpc.app.nuts.NutsSession;
 
 public class NdiScriptOptions {
 
     private String id;
-    private boolean force;
     private boolean forceBoot;
-    private boolean trace = true;
     private boolean fetch;
     private NutsExecutionType execType;
     private List<String> executorOptions;
+    private NutsSession session;
 
     public String getId() {
         return id;
@@ -23,30 +23,12 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public boolean isForce() {
-        return force;
-    }
-
-    public NdiScriptOptions setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
-
     public boolean isForceBoot() {
         return forceBoot;
     }
 
     public NdiScriptOptions setForceBoot(boolean forceBoot) {
         this.forceBoot = forceBoot;
-        return this;
-    }
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public NdiScriptOptions setTrace(boolean trace) {
-        this.trace = trace;
         return this;
     }
 
@@ -76,4 +58,14 @@ public class NdiScriptOptions {
         this.executorOptions = executorOptions;
         return this;
     }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NdiScriptOptions setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+    
 }

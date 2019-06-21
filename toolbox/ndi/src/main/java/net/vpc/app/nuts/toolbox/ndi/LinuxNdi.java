@@ -25,18 +25,18 @@ public class LinuxNdi implements SystemNdi {
 
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
-        if ("nuts".equals(options.getId())) {
-            return createBootScript(options.isForceBoot() || options.isForce(), options.isTrace());
+        NutsId nid = context.getWorkspace().format().id().parse(options.getId());
+        if ("nuts".equals(nid.getSimpleName()) || "net.vpc.app.nut:nuts".equals(nid.getSimpleName())) {
+            return createBootScript(options.isForceBoot() || options.getSession().isForce(), options.getSession().isTrace());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>();
             r.addAll(Arrays.asList(createBootScript(false, false)));
-            NutsId nutsId = context.getWorkspace().format().id().parse(options.getId());
             NutsDefinition fetched = null;
-            if (nutsId.getVersion().isBlank()) {
+            if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
                         .session(context.getSession().copy().trace(false))
                         .id(options.getId()).latest().getResultDefinitions().required();
-                nutsId = fetched.getId().getSimpleNameId();
+                nid = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
 //            if (options.isFetch()) {
@@ -45,16 +45,16 @@ public class LinuxNdi implements SystemNdi {
 //                }
 //                //appContext.out().printf("==%s== resolved as ==%s==\n", parse,fetched.getId());
 //            }
-            String n = nutsId.getName();
+            String n = nid.getName();
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
-            if (!options.isForce() && exists) {
-                if (options.isTrace() && context.getSession().isPlainTrace()) {
+            if (!options.getSession().isForce() && exists) {
+                if (context.getSession().isPlainTrace()) {
                     context.session().out().printf("Script already exists ==%s==%n", ff);
                 }
             } else {
-                final NutsId fnutsId = nutsId;
-                NdiScriptnfo p = createScript(n, fnutsId, options.isTrace(), nutsId.toString(),
+                final NutsId fnutsId = nid;
+                NdiScriptnfo p = createScript(n, fnutsId, options.getSession().isTrace(), nid.toString(),
                         x -> {
                             switch (x) {
                                 case "NUTS_ID":
@@ -76,6 +76,22 @@ public class LinuxNdi implements SystemNdi {
                 r.add(p);
             }
             return r.toArray(new NdiScriptnfo[0]);
+        }
+    }
+
+    @Override
+    public void removeNutsScript(String id, NutsSession session) throws IOException {
+        NutsId nid = context.getWorkspace().format().id().parse(id);
+        Path f = getScriptFile(nid.getName());
+        if (Files.isRegularFile(f)) {
+            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm", f.toString())
+                    .defaultValue(true)
+                    .getBooleanValue()) {
+                Files.delete(f);
+                if (session.isPlainTrace()) {
+                    session.out().printf("Tool ==%s== removed.%n", f.toString());
+                }
+            }
         }
     }
 
@@ -165,7 +181,7 @@ public class LinuxNdi implements SystemNdi {
     }
 
     @Override
-    public void configurePath(boolean force, boolean trace) throws IOException {
+    public void configurePath(NutsSession session) throws IOException {
         File bashrc = new File(System.getProperty("user.home"), ".bashrc");
         boolean found = false;
         boolean updatedBashrc = false;
@@ -202,7 +218,7 @@ public class LinuxNdi implements SystemNdi {
             lines.add(goodLine);
             updatedBashrc = true;
         }
-        if (force || updatedBashrc) {
+        if (session.isForce() || updatedBashrc) {
             IOUtils.saveString(lines.stream().collect(Collectors.joining("\n")) + "\n", bashrc);
         }
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
@@ -217,18 +233,18 @@ public class LinuxNdi implements SystemNdi {
                 .session(context.getSession().copy().trace(false))
                 .id(context.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
-        goodNdiRc.append("[[ \":$PATH:\" != *\":"+programsFolder+":\"* ]] && PATH=\""+programsFolder+":${PATH}\"\n");
+        goodNdiRc.append("[[ \":$PATH:\" != *\":" + programsFolder + ":\"* ]] && PATH=\"" + programsFolder + ":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");
 
         String fileContent = (nutsndirc.isFile()) ? IOUtils.loadString(nutsndirc) : "";
         if (!fileContent.trim().equals(goodNdiRc.toString().trim())) {
             updatedNdirc = true;
         }
-        if (force || updatedNdirc) {
+        if (session.isForce() || updatedNdirc) {
             IOUtils.saveString(goodNdiRc.toString(), nutsndirc);
         }
-        if ((force || updatedBashrc || updatedNdirc) && trace) {
-            if (force) {
+        if ((session.isForce() || updatedBashrc || updatedNdirc) && session.isTrace()) {
+            if (session.isForce()) {
                 if (context.getSession().isPlainTrace()) {
                     context.session().out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                 }
@@ -253,7 +269,7 @@ public class LinuxNdi implements SystemNdi {
                         .session(context.getSession())
                         .parser(new NutsQuestionParser<Boolean>() {
                             @Override
-                            public Boolean parse(Object response, Boolean defaultValue,NutsQuestion<Boolean> question) {
+                            public Boolean parse(Object response, Boolean defaultValue, NutsQuestion<Boolean> question) {
                                 if (response instanceof Boolean) {
                                     return (Boolean) response;
                                 }

@@ -1,12 +1,28 @@
 ==ndi== (or ==nuts== desktop integration) is a portable desktop integration companion.
-==ndi= help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
+==ndi== help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
 Only [[Linux]] operating systems si supported in the current version.
 
 ##SYNOPSIS:##
-==ndi== {{in}}|{{install}} <command> ...
+==ndi== {{in}}|{{install}} **<options>** <command> ...
     install scripts/shortcuts for the given command so that it can be called directly by it\'s name
 
+==ndi== {{un}}|{{uninstall}} **<options>** <command> ...
+    uninstall scripts/shortcuts for the given
+
 ##OPTIONS##:
+==ndi== {{in}}|{{install}} **<options>** <command> ...
+
+ **--embedded** | **-b**
+    enable embedded mode
+ **--external** | **--spawn** | **-x**
+    enable spawn process mode
+ **--syscall** | **--native** | **-s**
+    enable system command mode
+ **--exec-options** | **-X** <option>
+    exec options
+
+==ndi== {{un}}|{{uninstall}} **<options>** <command> ...
+
  **--embedded** | **-b**
     enable embedded mode
  **--external** | **--spawn** | **-x**

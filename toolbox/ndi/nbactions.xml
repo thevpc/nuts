@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>"-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --nuts-exec-mode=install --force</exec.args>
+            <exec.args>"-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --help</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -24,7 +24,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} "-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --nuts-exec-mode=install --force</exec.args>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} "-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --help</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -39,7 +39,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>"-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --nuts-exec-mode=install --force</exec.args>
+            <exec.args>"-Dnuts.boot.args=-w=/data/vpc/data/xprojects/net/vpc/apps/nuts/nuts-core/runtime/test/Test03_CreateLayoutLinuxTest_customLayout_use_standalone -y" -Dnuts.debug=true -classpath %classpath net.vpc.app.nuts.toolbox.ndi.NdiMain --help</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
