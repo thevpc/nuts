@@ -193,6 +193,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             h = "Help is @@missing@@.";
         }
         getSession().out().println(h);
+        //need flush if the help is syntactically incorrect
+        getSession().out().flush();
     }
 
     @Override
