@@ -263,7 +263,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     LOG.log(Level.CONFIG, "nuts workspace v{0} created.", new Object[]{nutsVersion});
                 }
 
-                if (session.isPlainOut()) {
+                if (session.isPlainTrace()) {
                     PrintStream out = io().getTerminal().fout();
                     out.printf("==nuts== workspace v[[%s]] created.%n", nutsVersion);
                 }

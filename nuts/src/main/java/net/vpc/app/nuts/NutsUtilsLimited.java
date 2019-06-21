@@ -810,6 +810,15 @@ final class NutsUtilsLimited {
         return s.replace('/', File.separatorChar);
     }
 
+    public static String nvl(Object ...all) {
+        for (Object object : all) {
+            if(object!=null){
+                return desc(object);
+            }
+        }
+        return desc(null);
+    }
+    
     public static String formatLogValue(Object unresolved, Object resolved) {
         String a = NutsUtilsLimited.desc(unresolved);
         String b = NutsUtilsLimited.desc(resolved);
