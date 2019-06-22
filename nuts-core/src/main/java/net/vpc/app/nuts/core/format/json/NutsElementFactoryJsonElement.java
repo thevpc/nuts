@@ -33,7 +33,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
-import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactory;
 
 /**
@@ -46,15 +45,15 @@ public class NutsElementFactoryJsonElement implements NutsElementFactory {
     public NutsElement create(Object o, NutsElementFactoryContext context) {
         JsonElement je = (JsonElement) o;
         if (je.isJsonNull()) {
-            return NutsElementUtils.NULL;
+            return context.builder().forNull();
         } else if (je.isJsonPrimitive()) {
             JsonPrimitive jr = je.getAsJsonPrimitive();
             if (jr.isString()) {
-                return NutsElementUtils.forString(jr.getAsString());
+                return context.builder().forString(jr.getAsString());
             } else if (jr.isNumber()) {
-                return NutsElementUtils.forNumber(jr.getAsNumber());
+                return context.builder().forNumber(jr.getAsNumber());
             } else if (jr.isBoolean()) {
-                return NutsElementUtils.forBoolean(jr.getAsBoolean());
+                return context.builder().forBoolean(jr.getAsBoolean());
             } else {
                 throw new IllegalArgumentException("Unsupported");
             }

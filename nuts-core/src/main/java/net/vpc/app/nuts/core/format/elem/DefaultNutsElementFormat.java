@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core.format.elem;
 
+import net.vpc.app.nuts.NutsElementBuilder;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +14,17 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private NutsElementFactory fallback;
     private final Map<String, Object> properties = new HashMap<>();
     private Object value;
+    private NutsElementBuilder builder;
 
     public DefaultNutsElementFormat(NutsWorkspace ws) {
         super(ws, "element-format");
         nvalueFactory = new DefaultNutsElementFactoryService(ws);
+        builder = new DefaultNutsElementBuilder();
+    }
+
+    @Override
+    public NutsElementBuilder builder() {
+        return builder;
     }
 
     @Override
@@ -88,11 +96,10 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     @Override
     public NutsElementPath compilePath(String pathExpression) {
         NutsSession session = getSession();
-        if(session==null){
-            session=ws.createSession();
+        if (session == null) {
+            session = ws.createSession();
         }
         return NutsElementPathFilter.compile(pathExpression, session);
     }
 
-    
 }

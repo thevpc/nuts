@@ -29,20 +29,64 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.Instant;
-import java.util.Date;
+import net.vpc.app.nuts.NutsObjectElementBuilder;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementType;
-import net.vpc.app.nuts.NutsPrimitiveElement;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.NutsNamedElement;
 
 /**
  *
  * @author vpc
  */
-public class NutsElementUtils {
+public class DefaultNutsObjectElemenBuilder extends AbstractNutsElement implements NutsObjectElementBuilder {
 
+    private Map<String, NutsElement> values = new LinkedHashMap<String, NutsElement>();
+
+    public DefaultNutsObjectElemenBuilder() {
+        super(NutsElementType.OBJECT);
+    }
+
+    @Override
+    public Collection<NutsNamedElement> children() {
+        return values.entrySet().stream().map(x -> new DefaultNutsNamedElement(x.getKey(), x.getValue())).collect(Collectors.toList());
+    }
     
+    @Override
+    public NutsElement get(String s){
+        return values.get(s);
+    }
+    
+    @Override
+    public NutsObjectElementBuilder set(String s,NutsElement e){
+        if(e==null){
+            e=DefaultNutsElementBuilder.NULL;
+        }
+        values.put(s, e);
+        return this;
+    }
+    
+    @Override
+    public int size() {
+        return values.size();
+    }
+    
+    @Override
+    public NutsObjectElementBuilder remove(String s) {
+        values.remove(s);
+        return this;
+    }
+    
+    @Override
+    public String toString() {
+        return "[" + children().stream().map(x -> "{"
+                + x.getName()
+                + ":"
+                + x.getValue().toString()
+                + "}").collect(Collectors.joining(", ")) + "]";
+    }
+
 }

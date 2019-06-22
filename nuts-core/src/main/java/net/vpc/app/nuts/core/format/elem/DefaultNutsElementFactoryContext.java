@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
+import net.vpc.app.nuts.NutsElementBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsElement;
@@ -44,9 +45,16 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     private NutsElementFactory fallback;
     private final Map<String, Object> properties = new HashMap<String, Object>();
     private final NutsWorkspace ws;
+    private final NutsElementBuilder builder;
 
     public DefaultNutsElementFactoryContext(NutsWorkspace ws) {
         this.ws = ws;
+        builder = new DefaultNutsElementBuilder();
+    }
+
+    @Override
+    public NutsElementBuilder builder() {
+        return builder;
     }
 
     @Override

@@ -133,7 +133,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
 
     protected NutsElement fromXmlElement(org.w3c.dom.Element element) {
         if (element == null) {
-            return NutsElementUtils.NULL;
+            return xmlContext.builder().forNull();
         }
         String ta = getTypeAttributeName();
         String d = element.getAttribute(ta);
@@ -165,24 +165,24 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
             if (count == 0) {
                 String s = element.getTextContent();
                 if (s == null) {
-                    return NutsElementUtils.NULL;
+                    return xmlContext.builder().forNull();
                 }
                 switch (s) {
                     case "true":
-                        return NutsElementUtils.TRUE;
+                        return xmlContext.builder().forBoolean(true);
                     case "false":
-                        return NutsElementUtils.FALSE;
+                        return xmlContext.builder().forBoolean(false);
                     case "null":
-                        return NutsElementUtils.NULL;
+                        return xmlContext.builder().forNull();
                 }
                 if (NUM_REGEXP.matcher(s).matches()) {
                     try {
-                        return NutsElementUtils.forNumber(s);
+                        return xmlContext.builder().forNumber(s);
                     } catch (Exception ex) {
-                        return NutsElementUtils.forString(s);
+                        return xmlContext.builder().forString(s);
                     }
                 } else {
-                    return NutsElementUtils.forString(s);
+                    return xmlContext.builder().forString(s);
                 }
                 //primitive
             } else if (distinct) {
@@ -199,19 +199,19 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         }
         switch (elementType) {
             case BOOLEAN:
-                return NutsElementUtils.forBoolean(element.getTextContent());
+                return xmlContext.builder().forBoolean(element.getTextContent());
             case NUMBER:
-                return NutsElementUtils.forNumber(element.getTextContent());
+                return xmlContext.builder().forNumber(element.getTextContent());
             case DATE:
-                return NutsElementUtils.forDate(element.getTextContent());
+                return xmlContext.builder().forDate(element.getTextContent());
             case STRING:
-                return NutsElementUtils.forString(element.getTextContent());
+                return xmlContext.builder().forString(element.getTextContent());
             case ARRAY:
                 return new NutsArrayElementXml(element, xmlContext);
             case OBJECT:
                 return new NutsObjectElementXml(element, xmlContext);
             case NULL:
-                return NutsElementUtils.NULL;
+                return xmlContext.builder().forNull();
         }
         throw new IllegalArgumentException("Unsupported");
     }

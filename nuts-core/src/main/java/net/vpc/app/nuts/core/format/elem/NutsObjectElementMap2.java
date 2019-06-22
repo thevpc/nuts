@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsNamedElement;
 
 /**
@@ -65,6 +66,24 @@ class NutsObjectElementMap2 extends NutsObjectElementBase {
             all.add(new DefaultNutsNamedElement("entry", context.toElement(m2)));
         }
         return all;
+    }
+
+    @Override
+    public NutsElement get(String name) {
+        if ("entry".equals(name)) {
+            for (Map.Entry<String, Object> entry : value.entrySet()) {
+                Map<String, Object> m2 = new HashMap<>();
+                m2.put("key", entry.getKey());
+                m2.put("value", entry.getValue());
+                return context.toElement(m2);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return value.size();
     }
 
 }

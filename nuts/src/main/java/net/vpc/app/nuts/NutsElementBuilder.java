@@ -29,34 +29,37 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collection;
+import java.time.Instant;
+import java.util.Date;
+import net.vpc.app.nuts.NutsPrimitiveElement;
 
 /**
- * Array implementation of Nuts Element type.
- * Nuts Element types are generic JSON like parsable objects.
+ *
  * @author vpc
- * @since 0.5.6
  */
-public interface NutsArrayElement extends NutsElement {
+public interface NutsElementBuilder {
 
-    /**
-     * array items
-     * @return array items
-     */
-    Collection<NutsElement> children();
+    NutsPrimitiveElement forBoolean(String string);
+
+    NutsPrimitiveElement forBoolean(boolean s);
+
+    NutsPrimitiveElement forDate(Date s);
+
+    NutsPrimitiveElement forDate(Instant s);
+
+    NutsPrimitiveElement forDate(String s);
+
+    NutsPrimitiveElement forNull();
+
+    NutsPrimitiveElement forNumber(Number s);
+
+    NutsPrimitiveElement forNumber(String s);
+
+    NutsPrimitiveElement forString(String s);
+
+    NutsObjectElementBuilder forObject();
     
-    /**
-     * element count
-     * @return element count
-     */
-    int size();
-    
-    
-    /**
-     * element at index
-     * @param index index
-     * @return element at index
-     */
-    NutsElement get(int index);
+    NutsArrayElementBuilder forArray();
+
     
 }

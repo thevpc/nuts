@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsNamedElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
@@ -66,6 +67,20 @@ class NutsObjectElementJson extends NutsObjectElementBase {
             all.add(new DefaultNutsNamedElement(entry.getKey(), context.toElement(entry.getValue())));
         }
         return all;
+    }
+
+    @Override
+    public NutsElement get(String name) {
+        JsonElement o = value.get(name);
+        if (o == null) {
+            return null;
+        }
+        return context.toElement(o);
+    }
+
+    @Override
+    public int size() {
+        return value.size();
     }
 
 }

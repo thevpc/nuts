@@ -80,4 +80,14 @@ public class DefaultNutsArrayElement extends AbstractNutsElement implements Nuts
         return "[" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "]";
     }
 
+    @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
+    public NutsElement get(int index) {
+        return context.toElement(values.get(index));
+    }
+
 }

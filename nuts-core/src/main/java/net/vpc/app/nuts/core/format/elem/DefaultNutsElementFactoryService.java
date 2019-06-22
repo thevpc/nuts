@@ -107,7 +107,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     @Override
     public NutsElement create(Object o, NutsElementFactoryContext context) {
         if (o == null) {
-            return NutsElementUtils.NULL;
+            return context.builder().forNull();
         }
         if (o instanceof NutsElement) {
             return (NutsElement) o;
@@ -198,14 +198,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forDate((Date) o);
+            return context.builder().forDate((Date) o);
         }
     }
     private static class NutsElementFactoryInstant implements NutsElementFactory {
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forDate((Date) o);
+            return context.builder().forDate((Date) o);
         }
     }
 
@@ -213,7 +213,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forNumber((Number) o);
+            return context.builder().forNumber((Number) o);
         }
     }
 
@@ -221,7 +221,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forBoolean((Boolean) o);
+            return context.builder().forBoolean((Boolean) o);
         }
     }
 
@@ -229,7 +229,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forString(String.valueOf(o));
+            return context.builder().forString(String.valueOf(o));
         }
     }
 
@@ -237,7 +237,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return NutsElementUtils.forString(String.valueOf(o));
+            return context.builder().forString(String.valueOf(o));
         }
     }
 

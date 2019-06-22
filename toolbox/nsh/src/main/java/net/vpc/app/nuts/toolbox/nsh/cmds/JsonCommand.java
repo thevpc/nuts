@@ -135,9 +135,9 @@ public class JsonCommand extends SimpleNshBuiltin {
                         }
                     }
                     if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
-                        context.setPrintOutObject(context.getWorkspace().format().json().set(resultDocument).format());
+                        context.setPrintlnOutObject(context.getWorkspace().format().json().set(resultDocument).format());
                     } else {
-                        context.setPrintOutObject(resultDocument);
+                        context.setPrintlnOutObject(resultDocument);
                     }
                     break;
                 }
@@ -152,9 +152,9 @@ public class JsonCommand extends SimpleNshBuiltin {
                         );
                     }
                     if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
-                        context.setPrintOutObject(context.getWorkspace().format().json().set(all.size() == 1 ? all.get(0) : all).format());
+                        context.setPrintlnOutObject(context.getWorkspace().format().json().set(all.size() == 1 ? all.get(0) : all).format());
                     } else {
-                        context.setPrintOutObject(all.size() == 1 ? all.get(0) : all);
+                        context.setPrintlnOutObject(all.size() == 1 ? all.get(0) : all);
                     }
                     break;
                 }

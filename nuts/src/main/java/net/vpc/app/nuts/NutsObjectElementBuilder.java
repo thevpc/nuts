@@ -29,34 +29,16 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collection;
+import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsObjectElement;
 
 /**
- * Array implementation of Nuts Element type.
- * Nuts Element types are generic JSON like parsable objects.
+ *
  * @author vpc
- * @since 0.5.6
  */
-public interface NutsArrayElement extends NutsElement {
+public interface NutsObjectElementBuilder extends NutsObjectElement {
 
-    /**
-     * array items
-     * @return array items
-     */
-    Collection<NutsElement> children();
-    
-    /**
-     * element count
-     * @return element count
-     */
-    int size();
-    
-    
-    /**
-     * element at index
-     * @param index index
-     * @return element at index
-     */
-    NutsElement get(int index);
-    
+    public NutsObjectElementBuilder set(String name, NutsElement e);
+
+    NutsObjectElementBuilder remove(String s);
 }

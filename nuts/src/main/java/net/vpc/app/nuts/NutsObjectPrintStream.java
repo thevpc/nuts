@@ -30,12 +30,31 @@
 package net.vpc.app.nuts;
 
 /**
- *
- * @author vpc
+ * Object Print Stream
+ * vpc
+ * @since 0.5.6
  */
 public interface NutsObjectPrintStream {
 
-    void print(Object o);
+    /**
+     * format object and return string
+     *
+     * @param object object to format
+     * @return formatted object
+     */
+    String format(Object object);
 
-    void println(Object o);
+    /**
+     * format object and print to standard output
+     *
+     * @param object object to format
+     */
+    void print(Object object);
+
+    /**
+     * format object and print to standard output then add trailing new line.
+     *
+     * @param object object to format
+     */
+    void println(Object object);
 }

@@ -109,6 +109,12 @@ public interface NutsElementFormat extends NutsFormat {
      * @return Element Path filter
      */
     NutsElementPath compilePath(String pathExpression);
+    
+    /**
+     * element builder
+     * @return element builder
+     */
+    NutsElementBuilder builder();
 
     /**
      * configure the current command with the given arguments. This is an

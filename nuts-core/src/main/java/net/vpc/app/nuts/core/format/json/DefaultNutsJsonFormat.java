@@ -146,15 +146,15 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     public NutsElement fromJsonElement(JsonElement o) {
         JsonElement je = (JsonElement) o;
         if (je.isJsonNull()) {
-            return NutsElementUtils.NULL;
+            return dummyContext.builder().forNull();
         } else if (je.isJsonPrimitive()) {
             JsonPrimitive jr = je.getAsJsonPrimitive();
             if (jr.isString()) {
-                return NutsElementUtils.forString(jr.getAsString());
+                return dummyContext.builder().forString(jr.getAsString());
             } else if (jr.isNumber()) {
-                return NutsElementUtils.forNumber(jr.getAsNumber());
+                return dummyContext.builder().forNumber(jr.getAsNumber());
             } else if (jr.isBoolean()) {
-                return NutsElementUtils.forBoolean(jr.getAsBoolean());
+                return dummyContext.builder().forBoolean(jr.getAsBoolean());
             } else {
                 throw new IllegalArgumentException("Unsupported");
             }
@@ -408,7 +408,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return new Date(NutsElementUtils.forDate(json.getAsString()).primitive().getDate().toEpochMilli());
+            return new Date(dummyContext.builder().forDate(json.getAsString()).primitive().getDate().toEpochMilli());
         }
 
         @Override
@@ -423,7 +423,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return NutsElementUtils.forDate(json.getAsString()).primitive().getDate();
+            return dummyContext.builder().forDate(json.getAsString()).primitive().getDate();
         }
 
         @Override

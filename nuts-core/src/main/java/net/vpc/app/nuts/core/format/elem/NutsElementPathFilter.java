@@ -36,9 +36,15 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsArrayElementBuilder;
 import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsElementBuilder;
 import net.vpc.app.nuts.NutsElementPath;
 import net.vpc.app.nuts.NutsElementType;
 import net.vpc.app.nuts.NutsNamedElement;
@@ -49,6 +55,20 @@ import net.vpc.app.nuts.NutsSession;
  * @author vpc
  */
 public class NutsElementPathFilter {
+
+    private static final NutsElementNameMatcherFalse NUTS_ELEMENT_NAME_MATCHER_FALSE = new NutsElementNameMatcherFalse();
+    private static final NutsElementNameMatcherEven NUTS_ELEMENT_NAME_MATCHER_EVEN = new NutsElementNameMatcherEven();
+    private static final NutsElementNameMatcherOdd NUTS_ELEMENT_NAME_MATCHER_ODD = new NutsElementNameMatcherOdd();
+    private static final NutsElementNameMatcherValue NUTS_ELEMENT_NAME_MATCHER_VALUE_ZERO = new NutsElementNameMatcherValue(0);
+    private static final NutsElementNameMatcherValue NUTS_ELEMENT_NAME_MATCHER_VALUE_MINUS_ONE = new NutsElementNameMatcherValue(-1);
+    private static final NutsElementNameMatcherTrue NUTS_ELEMENT_NAME_MATCHER_TRUE = new NutsElementNameMatcherTrue();
+    private static final NutsElementIndexMatcherFalse NUTS_ELEMENT_INDEX_MATCHER_FALSE = new NutsElementIndexMatcherFalse();
+    private static final NutsElementIndexMatcherUnique NUTS_ELEMENT_INDEX_MATCHER_UNIQUE = new NutsElementIndexMatcherUnique();
+    private static final NutsElementIndexMatcherEven NUTS_ELEMENT_INDEX_MATCHER_EVEN = new NutsElementIndexMatcherEven();
+    private static final NutsElementIndexMatcherOdd NUTS_ELEMENT_INDEX_MATCHER_ODD = new NutsElementIndexMatcherOdd();
+    private static final NutsElementIndexMatcherForValue NUTS_ELEMENT_INDEX_MATCHER_FOR_VALUE_0 = new NutsElementIndexMatcherForValue(0);
+    private static final NutsElementIndexMatcherForValue NUTS_ELEMENT_INDEX_MATCHER_FOR_VALUE_MINUS_ONE = new NutsElementIndexMatcherForValue(-1);
+    private static final NutsElementIndexMatcherTrue NUTS_ELEMENT_INDEX_MATCHER_TRUE = new NutsElementIndexMatcherTrue();
 
     private static void compile_readChar(StreamTokenizer st, char c) throws IOException {
         int i = st.nextToken();
@@ -82,33 +102,41 @@ public class NutsElementPathFilter {
      */
     public static NutsElementPath compile(String jpath, NutsSession session) {
         StreamTokenizer st = new StreamTokenizer(new StringReader(jpath));
-        st.wordChars('0', '9');
-        st.wordChars('-', '-');
-        st.wordChars('*', '+');
-        st.wordChars('+', '+');
-        st.wordChars('/', '/');
-        st.wordChars('=', '=');
-        st.wordChars(':', ':');
-        st.wordChars('_', '_');
-        st.wordChars('@', '@');
-        st.wordChars('#', '#');
-        st.wordChars('&', '&');
+        st.resetSyntax();
+        st.wordChars(33, 255);
         st.ordinaryChar('.');
+        st.ordinaryChar('[');
+        st.ordinaryChar(']');
         QueueJsonPath q = new QueueJsonPath();
         try {
+            boolean wasNotDotName = false;
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
                 switch (st.ttype) {
                     case StreamTokenizer.TT_WORD: {
+                        wasNotDotName = true;
                         q.queue.add(new SubItemJsonPath(st.sval, session));
                         break;
                     }
                     case '.': {
+                        if (!wasNotDotName) {
+                            q.queue.add(new SubItemJsonPath("*", session));
+                        }
+                        wasNotDotName = false;
                         break;
                     }
                     case '[': {
+                        wasNotDotName = true;
                         st.pushBack();
-                        q.queue.add(new SubItemJsonPath(compile_readArrItem(st), session));
+                        String p = compile_readArrItem(st);
+                        if (p.isEmpty()) {
+                            q.queue.add(new ArrItemCollectorJsonPath(session));
+                        } else {
+                            q.queue.add(new SubItemJsonPath(p, session));
+                        }
                         break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException("Unexpected " + st);
                     }
                 }
             }
@@ -144,6 +172,34 @@ public class NutsElementPathFilter {
 
     }
 
+    private static class ArrItemCollectorJsonPath implements NutsElementPath {
+
+        private NutsSession session;
+        private NutsElementBuilder builder;
+
+        public ArrItemCollectorJsonPath(NutsSession session) {
+            this.session = session;
+            builder = session.workspace().format().element().builder();
+        }
+
+        @Override
+        public List<NutsElement> filter(NutsElement element) {
+            NutsArrayElementBuilder aa = builder.forArray();
+            aa.add(element);
+            return Arrays.asList(aa);
+        }
+
+        @Override
+        public List<NutsElement> filter(List<NutsElement> elements) {
+            NutsArrayElementBuilder aa = builder.forArray();
+            for (NutsElement element : elements) {
+                aa.add(element);
+            }
+            return Arrays.asList(aa);
+        }
+
+    }
+
     private static class SubItemJsonPath extends AbstractJsonPath {
 
         private String pattern;
@@ -165,9 +221,11 @@ public class NutsElementPathFilter {
                 List<NutsElement> result = new ArrayList<>();
                 int len = arr.size();
                 NutsElementIndexMatcher indexMatcher = matchesIndex(pattern);
+                Map<String, Object> matchContext = new HashMap<>();
                 for (int i = 0; i < arr.size(); i++) {
-                    if (indexMatcher.matches(i, len)) {
-                        result.add(arr.get(i));
+                    NutsElement value = arr.get(i);
+                    if (indexMatcher.matches(value, i, len, matchContext, session)) {
+                        result.add(value);
                     }
                 }
                 return result;
@@ -176,9 +234,10 @@ public class NutsElementPathFilter {
                 Collection<NutsNamedElement> aa0 = element.object().children();
                 int len = aa0.size();
                 int index = 0;
+                Map<String, Object> matchContext = new HashMap<>();
                 NutsElementNameMatcher nameMatcher = matchesName(pattern);
                 for (NutsNamedElement se : aa0) {
-                    if (nameMatcher.matches(index, se.getName(), len)) {
+                    if (nameMatcher.matches(index, se.getName(), len, matchContext, session)) {
                         result.add(se.getValue());
                     }
                     index++;
@@ -193,44 +252,19 @@ public class NutsElementPathFilter {
                 case "*":
                 case ":*":
                 case ":#*": {
-                    return new NutsElementNameMatcher() {
-                        @Override
-                        public boolean matches(int index, String s, int len) {
-                            return true;
-                        }
-                    };
+                    return NUTS_ELEMENT_NAME_MATCHER_TRUE;
                 }
                 case ":last": {
-                    return new NutsElementNameMatcher() {
-                        @Override
-                        public boolean matches(int index, String name, int len) {
-                            return index == len - 1;
-                        }
-                    };
+                    return NUTS_ELEMENT_NAME_MATCHER_VALUE_MINUS_ONE;
                 }
                 case ":first": {
-                    return new NutsElementNameMatcher() {
-                        @Override
-                        public boolean matches(int index, String name, int len) {
-                            return index == 0;
-                        }
-                    };
+                    return NUTS_ELEMENT_NAME_MATCHER_VALUE_ZERO;
                 }
                 case ":odd": {
-                    return new NutsElementNameMatcher() {
-                        @Override
-                        public boolean matches(int index, String name, int len) {
-                            return index % 2 == 1;
-                        }
-                    };
+                    return NUTS_ELEMENT_NAME_MATCHER_ODD;
                 }
                 case ":even": {
-                    return new NutsElementNameMatcher() {
-                        @Override
-                        public boolean matches(int index, String name, int len) {
-                            return index % 2 == 0;
-                        }
-                    };
+                    return NUTS_ELEMENT_NAME_MATCHER_EVEN;
                 }
                 default: {
                     if (s.startsWith(":#")) {
@@ -244,22 +278,12 @@ public class NutsElementPathFilter {
                                     if (inter.length == 2 && isInt(inter[0]) && isInt(inter[1])) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
-                                        ors.add(new NutsElementNameMatcher() {
-                                            @Override
-                                            public boolean matches(int index, String name, int len) {
-                                                return index >= a && index <= b;
-                                            }
-                                        });
+                                        ors.add(new NutsElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
                                     if (isInt(vir)) {
                                         int a = Integer.parseInt(vir);
-                                        ors.add(new NutsElementNameMatcher() {
-                                            @Override
-                                            public boolean matches(int index, String name, int len) {
-                                                return index == a;
-                                            }
-                                        });
+                                        ors.add(new NutsElementNameMatcherValue(a));
                                     }
                                 }
                             }
@@ -269,30 +293,12 @@ public class NutsElementPathFilter {
                         } else if (ors.size() > 1) {
                             return new OrNutsElementNameMatcher(ors.toArray(new NutsElementNameMatcher[0]));
                         } else {
-                            return new NutsElementNameMatcher() {
-                                @Override
-                                public boolean matches(int index, String name, int len) {
-                                    return false;
-                                }
-                            };
+                            return NUTS_ELEMENT_NAME_MATCHER_FALSE;
                         }
                     } else if (s.startsWith(":nocase=")) {
-                        s = s.substring(":nocase=".length()).toLowerCase();
-                        String pat = s;
-                        return new NutsElementNameMatcher() {
-                            @Override
-                            public boolean matches(int index, String name, int len) {
-                                return name.toLowerCase().matches(pat);
-                            }
-                        };
+                        return new NutsElementNameMatcherString(s.substring(":nocase=".length()), true);
                     } else {
-                        String pat = pattern;
-                        return new NutsElementNameMatcher() {
-                            @Override
-                            public boolean matches(int index, String name, int len) {
-                                return name.matches(pat);
-                            }
-                        };
+                        return new NutsElementNameMatcherString(pattern, false);
                     }
                 }
             }
@@ -303,98 +309,63 @@ public class NutsElementPathFilter {
                 case "*":
                 case ":*":
                 case ":#*": {
-                    return new NutsElementIndexMatcher() {
-                        @Override
-                        public boolean matches(int index, int len) {
-                            return true;
-                        }
-                    };
+                    return NUTS_ELEMENT_INDEX_MATCHER_TRUE;
                 }
                 case ":last": {
-                    return new NutsElementIndexMatcher() {
-                        @Override
-                        public boolean matches(int index, int len) {
-                            return index == len - 1;
-                        }
-                    };
+                    return NUTS_ELEMENT_INDEX_MATCHER_FOR_VALUE_MINUS_ONE;
                 }
                 case ":first": {
-                    return new NutsElementIndexMatcher() {
-                        @Override
-                        public boolean matches(int index, int len) {
-                            return index == 0;
-                        }
-                    };
+                    return NUTS_ELEMENT_INDEX_MATCHER_FOR_VALUE_0;
                 }
                 case ":odd": {
-                    return new NutsElementIndexMatcher() {
-                        @Override
-                        public boolean matches(int index, int len) {
-                            return index % 2 == 1;
-                        }
-                    };
+                    return NUTS_ELEMENT_INDEX_MATCHER_ODD;
                 }
                 case ":even": {
-                    return new NutsElementIndexMatcher() {
-                        @Override
-                        public boolean matches(int index, int len) {
-                            return index % 2 == 0;
-                        }
-                    };
+                    return NUTS_ELEMENT_INDEX_MATCHER_EVEN;
+                }
+                case ":unique": {
+                    return NUTS_ELEMENT_INDEX_MATCHER_UNIQUE;
                 }
                 default: {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
-                        List<NutsElementIndexMatcher> ors = new ArrayList<>();
-                        for (String vir : s.split(",")) {
-                            vir = vir.trim();
-                            if (vir.length() > 0) {
-                                if (vir.indexOf('-') > 0) {
-                                    String[] inter = vir.split("-");
-                                    if (inter.length == 2 && isInt(inter[0]) && isInt(inter[1])) {
-                                        int a = Integer.parseInt(inter[0]);
-                                        int b = Integer.parseInt(inter[1]);
-                                        ors.add(new NutsElementIndexMatcher() {
-                                            @Override
-                                            public boolean matches(int index, int len) {
-                                                return index >= a && index <= b;
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    if (isInt(vir)) {
-                                        int a = Integer.parseInt(vir);
-                                        ors.add(new NutsElementIndexMatcher() {
-                                            @Override
-                                            public boolean matches(int index, int len) {
-                                                return index == a;
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        if (ors.size() == 1) {
-                            return ors.get(0);
-                        } else if (ors.size() > 1) {
-                            return new OrNutsElementIndexMatcher(ors.toArray(new NutsElementIndexMatcher[0]));
-                        } else {
-                            return new NutsElementIndexMatcher() {
-                                @Override
-                                public boolean matches(int index, int len) {
-                                    return false;
-                                }
-                            };
-                        }
+                        return createIndexValueInervalMatcher(s);
+                    } else if (isInt(s)) {
+                        return new NutsElementIndexMatcherForValue(Integer.parseInt(s));
+                    } else if (s.matches("[0-9][0-9,-]+")) {
+                        return createIndexValueInervalMatcher(s);
                     } else {
-                        return new NutsElementIndexMatcher() {
-                            @Override
-                            public boolean matches(int index, int len) {
-                                return false;
-                            }
-                        };
+                        return NUTS_ELEMENT_INDEX_MATCHER_FALSE;
                     }
                 }
+            }
+        }
+
+        private NutsElementIndexMatcher createIndexValueInervalMatcher(String s) throws NumberFormatException {
+            List<NutsElementIndexMatcher> ors = new ArrayList<>();
+            for (String vir : s.split(",")) {
+                vir = vir.trim();
+                if (vir.length() > 0) {
+                    if (vir.indexOf('-') > 0) {
+                        String[] inter = vir.split("-");
+                        if (inter.length == 2 && isInt(inter[0]) && isInt(inter[1])) {
+                            int a = Integer.parseInt(inter[0]);
+                            int b = Integer.parseInt(inter[1]);
+                            ors.add(new NutsElementIndexMatcherValueInterval(a, b));
+                        }
+                    } else {
+                        if (isInt(vir)) {
+                            ors.add(new NutsElementIndexMatcherForValue(Integer.parseInt(vir)));
+                        }
+                    }
+                }
+            }
+            if (ors.size() == 1) {
+                return ors.get(0);
+            } else if (ors.size() > 1) {
+                return new OrNutsElementIndexMatcher(ors.toArray(new NutsElementIndexMatcher[0]));
+            } else {
+                return new NutsElementIndexMatcherFalse();
             }
         }
 
@@ -442,9 +413,9 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len) {
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
             for (NutsElementNameMatcher any : all) {
-                if (any.matches(index, name, len)) {
+                if (any.matches(index, name, len, matchContext, session)) {
                     return true;
                 }
             }
@@ -462,9 +433,9 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, int len) {
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
             for (NutsElementIndexMatcher any : all) {
-                if (any.matches(index, len)) {
+                if (any.matches(value, index, len, matchContext, session)) {
                     return true;
                 }
             }
@@ -480,12 +451,204 @@ public class NutsElementPathFilter {
 
     public interface NutsElementNameMatcher {
 
-        boolean matches(int index, String name, int len);
+        boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session);
     }
 
     public interface NutsElementIndexMatcher {
 
-        boolean matches(int index, int len);
+        boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session);
     }
 
+    private static class NutsElementIndexMatcherEven implements NutsElementIndexMatcher {
+
+        public NutsElementIndexMatcherEven() {
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index % 2 == 0;
+        }
+    }
+
+    private static class NutsElementIndexMatcherOdd implements NutsElementIndexMatcher {
+
+        public NutsElementIndexMatcherOdd() {
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index % 2 == 1;
+        }
+    }
+
+    private static class NutsElementIndexMatcherTrue implements NutsElementIndexMatcher {
+
+        public NutsElementIndexMatcherTrue() {
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            return true;
+        }
+    }
+
+    private static class NutsElementNameMatcherTrue implements NutsElementNameMatcher {
+
+        public NutsElementNameMatcherTrue() {
+        }
+
+        @Override
+        public boolean matches(int index, String s, int len, Map<String, Object> matchContext, NutsSession session) {
+            return true;
+        }
+    }
+
+    private static class NutsElementNameMatcherValue implements NutsElementNameMatcher {
+
+        private final int a;
+
+        public NutsElementNameMatcherValue(int a) {
+            this.a = a;
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            if (a < 0) {
+                return index == len + a;
+            }
+            return index == a;
+        }
+    }
+
+    private static class NutsElementNameMatcherOdd implements NutsElementNameMatcher {
+
+        public NutsElementNameMatcherOdd() {
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index % 2 == 1;
+        }
+    }
+
+    private static class NutsElementNameMatcherEven implements NutsElementNameMatcher {
+
+        public NutsElementNameMatcherEven() {
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index % 2 == 0;
+        }
+    }
+
+    private static class NutsElementNameMatcherValueInterval implements NutsElementNameMatcher {
+
+        private final int a;
+        private final int b;
+
+        public NutsElementNameMatcherValueInterval(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index >= a && index <= b;
+        }
+    }
+
+    private static class NutsElementNameMatcherFalse implements NutsElementNameMatcher {
+
+        public NutsElementNameMatcherFalse() {
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            return false;
+        }
+    }
+
+    private static class NutsElementNameMatcherString implements NutsElementNameMatcher {
+
+        private final String pat;
+        private final boolean lower;
+
+        public NutsElementNameMatcherString(String pat, boolean lower) {
+            this.lower = lower;
+            this.pat = lower ? pat.toLowerCase() : pat;
+        }
+
+        @Override
+        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+            return lower
+                    ? name.toLowerCase().matches(pat)
+                    : name.matches(pat);
+        }
+    }
+
+    private static class NutsElementIndexMatcherForValue implements NutsElementIndexMatcher {
+
+        private final int a;
+
+        public NutsElementIndexMatcherForValue(int a) {
+            this.a = a;
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            if (a < 0) {
+                return index == len + a;
+            }
+            return index == a;
+        }
+    }
+
+    private static class NutsElementIndexMatcherFalse implements NutsElementIndexMatcher {
+
+        public NutsElementIndexMatcherFalse() {
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            return false;
+        }
+    }
+
+    private static class NutsElementIndexMatcherValueInterval implements NutsElementIndexMatcher {
+
+        private final int a;
+        private final int b;
+
+        public NutsElementIndexMatcherValueInterval(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            return index >= a && index <= b;
+        }
+    }
+
+    private static class NutsElementIndexMatcherUnique implements NutsElementIndexMatcher {
+
+        public NutsElementIndexMatcherUnique() {
+        }
+
+        @Override
+        public boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session) {
+            Set<String> u = (Set<String>) matchContext.get("unique");
+            if (u == null) {
+                u = new HashSet<>();
+                matchContext.put("unique", u);
+            }
+            String v = session.workspace().format().json().set(value).format();
+            if (u.contains(v)) {
+                return false;
+            }
+            u.add(v);
+            return true;
+        }
+    }
 }

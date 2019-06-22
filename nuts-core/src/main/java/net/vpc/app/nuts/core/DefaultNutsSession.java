@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsPropertiesHolder;
@@ -39,6 +40,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import net.vpc.app.nuts.core.format.CustomNutsIncrementalOutputFormat;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 /**
  * Created by vpc on 2/1/17.
@@ -422,10 +424,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                             break;
                         }
                         case "filtered":
-                        case "never": 
-                        case "no": 
-                        case "none": 
-                        {
+                        case "never":
+                        case "no":
+                        case "none": {
                             setTerminalMode(NutsTerminalMode.FILTERED);
                             break;
                         }
@@ -710,5 +711,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 a.print(out);
             }
         }
+
+        @Override
+        public String format(Object o) {
+            ByteArrayPrintStream s = new ByteArrayPrintStream();
+            NutsObjectFormat a = ws.format().object().session(session).value(o);
+            a.configure(true, ws.config().options().getOutputFormatOptions());
+            a.configure(true, session.getOutputFormatOptions()
+            );
+            a.print(s);
+            return s.toString();
+        }
+
     }
 }

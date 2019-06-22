@@ -40,8 +40,22 @@ import java.util.Collection;
 public interface NutsObjectElement extends NutsElement {
 
     /**
+     * return value for name or null.
+     * If multiple values are available return any of them.
+     * @param name key name
+     * @return value for name or null
+     */
+    NutsElement get(String name);
+    
+    /**
      * object (key,value) attributes
      * @return object attributes
      */
     Collection<NutsNamedElement> children();
+    
+    /**
+     * element count
+     * @return element count
+     */
+    int size();
 }

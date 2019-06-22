@@ -65,6 +65,16 @@ public class NutsArrayElementXml extends AbstractNutsElement implements NutsArra
     }
 
     @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
+    public NutsElement get(int index) {
+        return context.toElement(values.get(index));
+    }
+
+    @Override
     public String toString() {
         return "[" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "]";
     }

@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsElementType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.vpc.app.nuts.NutsElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -94,6 +95,59 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
             }
         }
         return all;
+    }
+
+    @Override
+    public NutsElement get(String name0) {
+        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
+        NamedNodeMap aa = value.getAttributes();
+        NutsElementType type = null;
+        for (int i = 0; i < aa.getLength(); i++) {
+            Node object = aa.item(i);
+            String name = object.getNodeName();
+            String value = object.getNodeValue();
+            if (name.equals(xml.getTypeAttributeName())) {
+                type = CoreCommonUtils.parseEnumString(value, NutsElementType.class, true);
+            } else {
+                if ((xml.getAttributePrefix() + name).equals(name0)) {
+                    return context.toElement(value);
+                }
+            }
+        }
+        NodeList cn = value.getChildNodes();
+        for (int i = 0; i < cn.getLength(); i++) {
+            Node object = cn.item(i);
+            if (object instanceof Element) {
+                if (object.getNodeName().equals(name0)) {
+                    return context.toElement(object);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int size() {
+        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
+        NamedNodeMap aa = value.getAttributes();
+        int size = 0;
+        for (int i = 0; i < aa.getLength(); i++) {
+            Node object = aa.item(i);
+            String name = object.getNodeName();
+            if (name.equals(xml.getTypeAttributeName())) {
+                //
+            } else {
+                size++;
+            }
+        }
+        NodeList cn = value.getChildNodes();
+        for (int i = 0; i < cn.getLength(); i++) {
+            Node object = cn.item(i);
+            if (object instanceof Element) {
+                size++;
+            }
+        }
+        return size;
     }
 
 }

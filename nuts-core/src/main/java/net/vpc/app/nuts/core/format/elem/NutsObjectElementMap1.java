@@ -59,4 +59,17 @@ class NutsObjectElementMap1 extends NutsObjectElementBase {
         return all;
     }
 
+    @Override
+    public NutsElement get(String name) {
+        if (value.containsKey(name)) {
+            return context.toElement(value.get(name));
+        }
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return value.size();
+    }
+
 }

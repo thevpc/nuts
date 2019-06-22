@@ -65,4 +65,14 @@ public class NutsArrayElementJson extends AbstractNutsElement implements NutsArr
         return "[" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "]";
     }
 
+    @Override
+    public int size() {
+        return array.size();
+    }
+
+    @Override
+    public NutsElement get(int index) {
+        return context.toElement(array.get(index));
+    }
+
 }
