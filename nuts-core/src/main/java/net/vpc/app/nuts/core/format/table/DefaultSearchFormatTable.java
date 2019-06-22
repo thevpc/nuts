@@ -13,6 +13,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.FormattableNutsId;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
+import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
 /**
  *
@@ -22,8 +23,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     private NutsTableFormat table;
 
-    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer) {
-        super(session, writer, NutsOutputFormat.TABLE);
+    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+        super(session, writer, NutsOutputFormat.TABLE,options);
     }
 
     public NutsTableFormat getTable(NutsWorkspace ws) {

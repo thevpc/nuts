@@ -63,30 +63,43 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         return displayOptions;
     }
 
-    protected NutsIterableFormat prepare(NutsIterableFormat format) {
+    protected NutsIterableFormat setFormat(NutsIterableFormat format) {
         this.format = format;
         return format;
     }
 
-    public NutsIterableFormat getFormat() {
+    public NutsIterableFormat getEffectiveFormat() {
+        return getFormat();
+    }
+
+    public final NutsIterableFormat getFormat() {
         return format;
     }
 
     @Override
     public void start() {
         index = 0;
-        getFormat().start();
+        NutsIterableFormat e = getEffectiveFormat();
+        if (e != null) {
+            e.start();
+        }
     }
 
     @Override
     public void next(Object object) {
-        getFormat().next(object, index);
+        NutsIterableFormat e = getEffectiveFormat();
+        if (e != null) {
+            e.next(object, index);
+        }
         index++;
     }
 
     @Override
     public void complete() {
-        getFormat().complete(index);
+        NutsIterableFormat e = getEffectiveFormat();
+        if (e != null) {
+            e.complete(index);
+        }
     }
 
     public PrintWriter getValidOut() {
@@ -114,10 +127,19 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         if (a == null) {
             return false;
         }
+        String[] arr = cmd.toArray();
         if (getDisplayOptions().configureFirst(cmd)) {
+            if (getFormat() != null) {
+                getFormat().configureFirst(ws.commandLine().setArgs(arr));
+            }
             return true;
         }
-        return getFormat().configureFirst(cmd);
+        if (getFormat() != null) {
+            if (getFormat().configureFirst(cmd)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public NutsWorkspace getWorkspace() {

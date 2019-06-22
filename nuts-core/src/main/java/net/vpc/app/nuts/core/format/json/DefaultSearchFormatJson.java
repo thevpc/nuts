@@ -11,6 +11,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
+import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
 /**
  *
@@ -20,8 +21,8 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    public DefaultSearchFormatJson(NutsSession session, PrintWriter writer) {
-        super(session, writer, NutsOutputFormat.JSON);
+    public DefaultSearchFormatJson(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+        super(session, writer, NutsOutputFormat.JSON,options);
     }
 
     @Override

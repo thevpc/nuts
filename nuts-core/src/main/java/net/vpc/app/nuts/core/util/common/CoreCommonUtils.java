@@ -382,10 +382,10 @@ public class CoreCommonUtils {
             }
             return "\\[" + CoreStringUtils.join(", ", all) + "\\]";
         }
-        if (o instanceof Iterable) {
-            Iterable x = (Iterable) o;
-            return stringValueFormatted(x.iterator(), escapeString, session);
-        }
+//        if (o instanceof Iterable) {
+//            Iterable x = (Iterable) o;
+//            return stringValueFormatted(x.iterator(), escapeString, session);
+//        }
         if (o instanceof Iterator) {
             Iterator x = (Iterator) o;
             List<String> all = new ArrayList<>();

@@ -93,9 +93,6 @@ Java         Version: **${java.version} (${java.vm.name})**
       load runtime (nuts-core) version. either version may be expressed or full nuts implementation
       (other than nuts-core) should be defined
 
- **--runtime-source-url** <runtime-source-url>
-      url to runtime library(nuts-core). In that case, the runtime library should be self sufficient (no dependencies)
-
  **--java**      <java-command>
  **--boot-java** <java-command>
  **-j** <java-command>
@@ -121,25 +118,25 @@ Java         Version: **${java.version} (${java.vm.name})**
       when opening a non existing workspace, ==nuts== will create it
       using the default archetype. Supported archetypes are :
           [[default]] : should handle most cases. Will create 6 repositories
-                    [[local]]            : containing local ==nuts== (java and non java ==nuts==)
-                    [[maven-local]]      : referencing ~/.m2/repository local maven repository
-                    [[maven-central]]    : referencing http://repo.maven.apache.org/maven2/ (with cache support)
-                    [[vpc-public-maven]] : referencing https://.../vpc-public-maven/master author\'s github maven repo (cached)
-                    [[vpc-public-nuts]]  : referencing https://.../vpc-public-nuts/master  author\'s github ==nuts==  repo (cached)
-                    [[system]]           : referencing global (root, system wide) repository if available
-          [[minimal]] : will create an almost empty workspace with a single ==nuts== local repository
-          [[server]]  : will create an almost empty workspace with a couple of users __guest__ (read support) and __contributor__
-                    (write support)
+                    [[local]]            : containing local ==nuts== (java and non java ==nuts==).
+                    [[maven-local]]      : referencing "~/.m2/repository" local maven repository.
+                    [[maven-central]]    : referencing "http://repo.maven.apache.org/maven2/" (with cache support).
+                    [[vpc-public-maven]] : referencing "https://.../vpc-public-maven/master" author\'s github maven repo (cached).
+                    [[vpc-public-nuts]]  : referencing "https://.../vpc-public-nuts/master"  author\'s github ==nuts==  repo (cached).
+                    [[system]]           : referencing global (root, system wide) repository if available.
+          [[minimal]] : will create an almost empty workspace with a single ==nuts== local repository and no users.
+          [[server]]  : will create an almost empty workspace with a single ==nuts== local repository 
+                        and a couple of users __guest__ (read support) and __contributor__ (write support).
 
  **--store-strategy** <store-strategy>
-      Defines store strategy used for persisting config and data of the workspace.
+      Define store strategy used for persisting configuration and data of the workspace.
       Valid values of <store-strategy> are [[exploded]], [[standalone]].
       [[exploded]]   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
       [[standalone]] : use a self contained folder for all types of data of the workspace. This is interesting for sharing 
                    workspaces across multiple machines.
 
  **--standalone-workspace**
-       will boot with standalone strategy so that all file will be stored in the workspace folder
+       will boot with standalone strategy so that all files will be stored in the workspace folder
        overriding workspace config. same as  **--store-strategy** [[standalone]]
  
  **--exploded-workspace**
@@ -156,19 +153,19 @@ Java         Version: **${java.version} (${java.vm.name})**
                    workspaces across multiple machines.
 
  **--standalone-repositories**
-       will boot with standalone strategy so that all file will be stored in the repository\'s folder
+       for newly created repos, will boot with standalone strategy so that all file will be stored in the repository\'s folder
        overriding workspace config. same as  **--repo-store-strategy** [[standalone]]
  
- **--exploded-repositories** or **--exploded-strategy**
-       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
+ **--exploded-repositories**
+       for newly created repos, boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
        particularly will be stored elsewhere depending on on configuration.
-       same as  **--repo-store-strategy** [[exploded]]
+       same as  **--repo-store-strategy** [[exploded]] (this is default)
 
  **--standalone**
-    Equivalent of **--standalone-workspace** and **--standalone-repositories**
+    Equivalent of **--standalone-workspace**
 
  **--exploded**
-    Equivalent of **--exploded-workspace** and **--exploded-repositories**
+    Equivalent of **--exploded-workspace**
 
  **--store-layout** <store-layout>
       Defines store layout relatively to the running operating system. This resolve root locations of data folders.
@@ -198,7 +195,7 @@ Java         Version: **${java.version} (${java.vm.name})**
         cache    : "$HOME/AppData/Local/nuts/cache"
         run      : "$HOME/AppData/Local/nuts/run"
 
-     In the Linux (and MacOS) layout, default locations resolve (according to XDG Base Directory Specification) 
+     In the Linux/Unix/MacOS layout, default locations resolve (according to XDG Base Directory Specification) 
      to ($HOME is the user\'s home folder)
         config   : "$HOME/.config/nuts"
         programs : "$HOME/.local/share/nuts/programs"
@@ -218,21 +215,17 @@ Java         Version: **${java.version} (${java.vm.name})**
             **--system-temp-home** <path>
             **--system-cache-home** <path>
 
-            **--windows-programs-home** <path>
-            **--windows-lib-home** <path>
-            **--windows-config-home** <path>
-            **--windows-var-home** <path>
-            **--windows-log-home** <path>
-            **--windows-temp-home** <path>
-            **--windows-cache-home** <path>
+            **--<os-family>-programs-home** <path>
+            **--<os-family>-lib-home** <path>
+            **--<os-family>-config-home** <path>
+            **--<os-family>-var-home** <path>
+            **--<os-family>-log-home** <path>
+            **--<os-family>-temp-home** <path>
+            **--<os-family>-cache-home** <path>
 
-            **--linux-programs-home** <path>
-            **--linux-lib-home** <path>
-            **--linux-config-home** <path>
-            **--linux-var-home** <path>
-            **--linux-log-home** <path>
-            **--linux-temp-home** <path>
-            **--linux-cache-home** <path>
+            where <os-family> in one of [[windows]], [[linux]], [[unix]], [[macos]] or [[system]].
+            This help moving folder from/to distinct os families while providing a centralized configuration.
+            when using [[system]] OS family, the effective OS family will be detected at runtime.
 
  **--system-layout** or **--system**
        will use current system layout to resolve folder candidates for log,config,programs ...etc.
@@ -263,9 +256,9 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--global**  or **-g**
       use root/system wide workspace instead of user\'s own workspace. 
       requires admin privileges.
-      Use shared workspace located at :
-      Windows    : "$ProgramFiles/nuts/system-workspace/repositories/local"
-      Linux/Unix : "/usr/share/nuts/system-workspace/repositories/local"
+      shared/system workspace is located at :
+      Windows    : "$ProgramFiles/nuts/default-workspace"
+      Linux/Unix : "/usr/share/nuts/default-workspace"
       More generally folder homes are defines as follows :
       Windows Layout   :
         programs : "$ProgramFiles/nuts"
@@ -375,6 +368,10 @@ Java         Version: **${java.version} (${java.vm.name})**
 
  **--reset**  or **-Z**
       reset (delete) ==nuts== workspace folder before starting the workspace. All user configuration will not be deleted.
+
+ **--skip-welcome**  or **-K**
+      do not call welcome command if the command line is empty. This is helpful in conjuction with **--reset** not 
+      to start a new workspace after resetting the configuration folders.
 
  **--embedded**  or **-b**
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)

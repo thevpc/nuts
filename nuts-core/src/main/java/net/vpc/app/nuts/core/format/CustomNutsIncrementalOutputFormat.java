@@ -40,6 +40,6 @@ public class CustomNutsIncrementalOutputFormat extends NutsIncrementalOutputForm
 
     public CustomNutsIncrementalOutputFormat(NutsWorkspace ws, NutsIterableFormat handler) {
         super(ws);
-        prepare(handler);
+        setFormat(handler);
     }
 }

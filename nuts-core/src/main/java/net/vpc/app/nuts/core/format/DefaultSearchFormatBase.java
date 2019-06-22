@@ -48,11 +48,14 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
     private final PrintWriter writer;
     private final NutsOutputFormat format;
 
-    public DefaultSearchFormatBase(NutsSession session, PrintWriter writer, NutsOutputFormat format) {
+    public DefaultSearchFormatBase(NutsSession session, PrintWriter writer, NutsOutputFormat format,NutsFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
         this.session = session;
         displayOptions = new NutsFetchDisplayOptions(session.getWorkspace());
+        if(options!=null){
+            displayOptions.configure(true, options.toCommandLineOptions());
+        }
     }
 
     @Override

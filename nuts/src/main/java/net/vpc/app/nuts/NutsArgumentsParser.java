@@ -214,7 +214,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
-                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+//                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
 
@@ -231,7 +231,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+//                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }

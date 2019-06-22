@@ -33,6 +33,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -183,7 +184,7 @@ public class FormattableNutsId {
             }
             case ARCH: {
                 if (desc != null) {
-                    return stringValue(desc.getArch());
+                    return keywordArr1(desc.getArch());
                 }
                 return "@@missing-arch@@";
             }
@@ -195,25 +196,25 @@ public class FormattableNutsId {
             }
             case OS: {
                 if (desc != null) {
-                    return stringValue(desc.getOs());
+                    return keywordArr2(desc.getOs());
                 }
                 return "@@missing-os@@";
             }
             case OSDIST: {
                 if (desc != null) {
-                    return stringValue(desc.getOsdist());
+                    return keywordArr2(desc.getOsdist());
                 }
                 return "@@missing-os@@";
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return stringValue(desc.getPackaging());
+                    return "{{" + stringValue(desc.getPackaging()) + "}}";
                 }
                 return "@@missing-packaging@@";
             }
             case PLATFORM: {
                 if (desc != null) {
-                    return stringValue(desc.getPlatform());
+                    return keywordArr1(desc.getPlatform());
                 }
                 return "@@missing-platform@@";
             }
@@ -349,7 +350,7 @@ public class FormattableNutsId {
                 NutsDependencyScope ss = CoreCommonUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
                 if (ss != null) {
                     switch (ss) {
-                        case API:{
+                        case API: {
                             this.status_s = 'c';
                             break;
                         }
@@ -418,9 +419,35 @@ public class FormattableNutsId {
 
     public String getFormattedStatusString() {
         if (dep != null) {
-            return "<<\\[" + status_f + status_i + status_s + "\\]>>";
+            return "**" + status_f + status_i + status_s + "**";
         }
-        return "<<\\[" + status_f + status_i + "\\]>>";
+        return "**" + status_f + status_i + "**";
+    }
+
+    private String keywordArr1(String[] any) {
+        return keywordArr0(any, "[[", "]]");
+    }
+
+    private String keywordArr2(String[] any) {
+        return keywordArr0(any, "{{", "}}");
+    }
+
+    private String keywordArr3(String[] any) {
+        return keywordArr0(any, "**", "**");
+    }
+
+    private String keywordArr4(String[] any) {
+        return keywordArr0(any, "==", "==");
+    }
+
+    private String keywordArr0(String[] any, String a, String b) {
+        if (any == null || any.length == 0) {
+            return "";
+        }
+        if (any.length == 1) {
+            return a + stringValue(any[0]) + b;
+        }
+        return "\\[" + Arrays.stream(any).map(x -> (a + x + b)).collect(Collectors.joining(",")) + "\\]";
     }
 
     private String stringValue(Object any) {

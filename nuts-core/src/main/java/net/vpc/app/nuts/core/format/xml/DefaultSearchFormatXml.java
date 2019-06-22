@@ -11,6 +11,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
+import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
 /**
  *
@@ -21,8 +22,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private boolean compact;
     private String rootName = "root";
 
-    public DefaultSearchFormatXml(NutsSession session, PrintWriter writer) {
-        super(session, writer, NutsOutputFormat.XML);
+    public DefaultSearchFormatXml(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+        super(session, writer, NutsOutputFormat.XML,options);
     }
 
     public String getRootName() {
