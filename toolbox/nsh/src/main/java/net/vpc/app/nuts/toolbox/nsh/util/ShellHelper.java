@@ -62,7 +62,7 @@ public class ShellHelper {
         }
 
         private boolean isTrace() {
-            return session.isPlainTrace() && session.isVerbose();
+            return session.isPlainTrace();
         }
 
         @Override

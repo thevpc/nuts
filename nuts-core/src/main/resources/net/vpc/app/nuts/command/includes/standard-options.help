@@ -1,0 +1,57 @@
+##STANDARD OPTIONS## :
+    This command supports standard options :
+       **--help**   : show application help and exit
+       **--version**: show application version and exit
+
+       **--ask**        : all confirmations will be prompted (default)
+
+       **--yes**|**--y**
+      |**--force**      : all confirmations are resolved as [[yes]]. No prompt.
+
+       **--no**|**--n** : all confirmations are resolved as [[no]] . No prompt.
+
+       **--error**      : all confirmations will throw error and program exist.
+       
+       **--trace**      : further test output is printed
+
+       **--term-system**      
+      |**--term**=
+      |**--term**=[[system]]      
+      |**--term**=[[auto]]      
+      |**--color**=
+      |**--color**=[[system]]      
+      |**--color**=[[auto]]      
+                        : auto detect system terminal type (this is the default)
+
+       **--term-inherited**      
+      |**--term**=[[inherited]]      
+      |**--color**=[[inherited]]      
+                        : use parent process terminal
+
+       **--term-filtered**      
+      |**--term**=[[filtered]]
+      |**--color**=[[filtered]]
+      |**--color**=[[no]]      
+      |**--color**=[[none]]      
+      |**--color**=[[never]]      
+      |**--no-color**      
+                        : do not use colors (escape all nuts format special characters)
+
+       **--term-formatted**      
+      |**--term**=[[formatted]]
+      |**--color**=[[formatted]]
+      |**--color**=[[yes]]      
+      |**--color**=[[always]]      
+                        : use nuts format coloring
+
+       **--output-format**=[[plain]]|[[props]]|[[json]]|[[xml]]|[[table]]|[[tree]]
+                        : define the format to trace operation. default is [[plain]]
+       **--plain**      : trace operation as plain text. equivalent to **--output-format**=[[plain]]
+       **--json**       : trace operation as json. equivalent to **--output-format**=[[json]]
+       **--xml**        : trace operation xml. equivalent to **--output-format**=[[xml]]
+       **--props**      : trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
+       **--table**      : trace operation as table. equivalent to **--output-format**=[[table]]
+       **--tree**       : trace operation as tree. equivalent to **--output-format**=[[tree]]
+       **--output-format-option**=<option>
+       |**-T**=<option>
+                        : add specific format option

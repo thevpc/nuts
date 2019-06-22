@@ -49,7 +49,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
     private boolean trace;
-    private boolean verbose = false;
     private NutsConfirmationMode confirm = null;
     private NutsOutputFormat outputFormat;
     protected NutsIterableFormat iterFormatHandler = null;
@@ -364,10 +363,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     this.setTrace(cmdLine.nextBoolean().getBooleanValue());
                     return true;
                 }
-                case "--verbose": {
-                    this.setVerbose(cmdLine.nextBoolean().getBooleanValue());
-                    return true;
-                }
                 case "--term-system": {
                     cmdLine.skip();
                     setTerminalMode(null);
@@ -427,10 +422,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                             break;
                         }
                         case "filtered":
-                        case "never": {
+                        case "never": 
+                        case "no": 
+                        case "none": 
+                        {
                             setTerminalMode(NutsTerminalMode.FILTERED);
                             break;
                         }
+                        case "yes":
                         case "always":
                         case "formatted": {
                             setTerminalMode(NutsTerminalMode.FORMATTED);
@@ -521,27 +520,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setTrace(boolean trace) {
         this.trace = trace;
         return this;
-    }
-
-    @Override
-    public NutsSession setVerbose(boolean verbose) {
-        this.verbose = verbose;
-        return this;
-    }
-
-    @Override
-    public boolean isVerbose() {
-        return isTrace() && verbose;
-    }
-
-    @Override
-    public NutsSession verbose() {
-        return setVerbose(true);
-    }
-
-    @Override
-    public NutsSession verbose(boolean verbose) {
-        return setVerbose(verbose);
     }
 
     @Override

@@ -1,0 +1,18 @@
+##STANDARD OPTIONS FORMAT## :
+Command line arguments parses nuts options and application options in the very same manner. 
+It supports the following forms of options.
+
+ **--!...** or **-!...** 
+      option will negated if boolean. Actually, **--!option** is equivalent to **--option**=[[false]]
+
+ **--...**=any-value
+      equivalent to **--...** any-value
+
+ **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[t]]
+      option will switched to [[true]]
+
+ **--...**=[[false]]|[[disable]]|[[disabled]]|[[no]]|[[none]]|[[never]]|[[n]]|[[off]]|[[ko]]|[[f]]
+      option will switched to [[false]]
+
+ **--//...** or **-//...** 
+      option will be discarded (and all of its parameters). Though, it is up to the application to add such behavior.

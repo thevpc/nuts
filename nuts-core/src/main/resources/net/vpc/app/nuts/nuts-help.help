@@ -1,9 +1,4 @@
-==    _   _\_      _\_       ==
-==   / | / /_  _\_/ /_\_\_\_\_\_ ==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
-==  /  |/ / / / / _\_/ _\_\_/ ==  <<The Open Source Package Manager for __Java__ (TM)>>
-== / /|  / /_/ / /_\(_\_  \)  ==  <<and other __Things__>> ... by ==vpc==
-==/_/ |_/\\_\_,_/\\_\_/_\_\_\_/ ==    __http://github.com/thevpc/nuts__
-    version [[${nuts.workspace-runtime.version}]]
+#!include</net/vpc/app/nuts/command/includes/standard-header.help>
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
 and non Java world. It helps discovering, downloading, assembling and executing  remote components (packages) in
@@ -483,21 +478,7 @@ Java         Version: **${java.version} (${java.vm.name})**
  **-** <args>...
    run a nut\'s shell (nsh) command with the remaining arguments
 
- **--!...** or **-!...** 
-      option will negated if boolean. Actually, **--!option** is equivalent to **--option**=[[false]]
-
- **--...**=any-value
-      equivalent to **--...** any-value
-
- **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[t]]
-      option will switched to [[true]]
-
- **--...**=[[false]]|[[disable]]|[[disabled]]|[[no]]|[[none]]|[[never]]|[[n]]|[[off]]|[[ko]]|[[f]]
-      option will switched to [[false]]
-
- **--//...** or **-//...** 
-      option will be discarded (and all of its parameters)
-
+#!include</net/vpc/app/nuts/command/includes/standard-options-format.help>
 
 ##EXAMPLES:##
         ==nuts== {{help}}

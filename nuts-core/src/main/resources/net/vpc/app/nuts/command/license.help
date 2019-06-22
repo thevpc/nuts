@@ -1,6 +1,8 @@
 ==nuts== {{license}}
       show license info and exit
 
+#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+
 ##EXAMPLES##:
         ==nuts== {{license}} **--help**
             shows this help and exit

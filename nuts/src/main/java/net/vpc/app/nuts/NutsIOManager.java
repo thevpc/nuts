@@ -47,7 +47,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     String expandPath(String path, String baseFolder);
 
-    String getResourceString(String resource, Class cls, String defaultValue);
+    String loadHelpString(String resource, Class cls, String defaultValue);
 
     NutsHashCommand hash();
 

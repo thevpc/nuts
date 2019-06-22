@@ -60,11 +60,11 @@ public class DerbyService {
         Path targetFile = folder.resolve(iid.getName() + ".jar");
         if (!Files.exists(targetFile)) {
             appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
-            if (appContext.session().isVerbose()) {
+            if (appContext.session().isPlainTrace()) {
                 appContext.getSession().getTerminal().out().println("downloading " + id + " to " + targetFile);
             }
         } else {
-            if (appContext.session().isVerbose()) {
+            if (appContext.session().isPlainTrace()) {
                 appContext.getSession().getTerminal().out().println("using " + id + " form " + targetFile);
             }
         }
@@ -123,7 +123,7 @@ public class DerbyService {
         executorOptions.add(
                 "--classpath=" + derby + ":" + derbynet + ":" + derbyclient + ":" + derbytools + ":" + derbyoptionaltools
         );
-        if (appContext.session().isVerbose()) {
+        if (appContext.session().isPlainTrace()) {
             executorOptions.add("--show-command");
         }
         executorOptions.add("--main-class=org.apache.derby.drda.NetworkServerControl");

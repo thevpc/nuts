@@ -175,7 +175,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     getSession().out().printf("%s%n", getWorkspace().format().id().resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(workspace, "Help", 0);
+                throw new NutsExecutionException(workspace, "Version", 0);
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {

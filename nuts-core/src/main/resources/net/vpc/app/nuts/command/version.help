@@ -4,15 +4,7 @@
 ==nuts== **-v**
       show version
 
-##STANDARD OPTIONS## :
-    This command supports standard options :
-       **--output-format**=[[props|plain|json]] : define the format to trace operation
-       **--plain**: trace operation as plain text. equivalent to **--output-format**=[[plain]]
-       **--json**: trace operation as json. equivalent to **--output-format**=[[json]]
-       **--xml**: trace operation xml. equivalent to **--output-format**=[[xml]]
-       **--props**: trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
-       **--table**: trace operation as table. equivalent to **--output-format**=[[table]]
-       **--tree**: trace operation as tree. equivalent to **--output-format**=[[tree]]
+#!include</net/vpc/app/nuts/command/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{version}} **--help**

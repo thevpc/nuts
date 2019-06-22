@@ -1,8 +1,4 @@
-##    _   __      _\_        ##
-##   / | / /_  _\_/ /_\_\_\_\_\_  ##  
-##  /  |/ / / / / __/ _\_\_/  ## 
-## / /|  / /_/ / /_\(_\_  \)   ## 
-##/_/ |_/\\_\_,_/\\_\_/_\_\_\_/  ## version ${nuts.workspace-runtime.version}##
+#!include</net/vpc/app/nuts/command/includes/standard-header.help>
 
 
  Is a new Open Source Package Manager to help install packages

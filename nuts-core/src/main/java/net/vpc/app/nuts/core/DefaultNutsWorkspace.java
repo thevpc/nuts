@@ -961,19 +961,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         NutsId nutsId = format().id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
-            URL resource = clazz.getResource(urlPath);
-            if (resource == null) {
-                return null;
-            }
-            String s;
-            try {
-                s = CoreIOUtils.loadString(resource.openStream(), true);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            if (!CoreStringUtils.isBlank(s)) {
-                return s;
-            }
+            return io().loadHelpString(urlPath, clazz, "no help found");
         }
         return null;
     }
@@ -985,12 +973,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public String getHelpText() {
-        return this.io().getResourceString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
+        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
     }
 
     @Override
     public String getWelcomeText() {
-        return this.io().getResourceString("/net/vpc/app/nuts/nuts-welcome.help", getClass(), "no welcome found");
+        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-welcome.help", getClass(), "no welcome found");
     }
 
     @Override
@@ -1000,7 +988,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public String getLicenseText() {
-        return this.io().getResourceString("/net/vpc/app/nuts/nuts-license.help", getClass(), "no license found");
+        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-license.help", getClass(), "no license found");
     }
 
     @Override

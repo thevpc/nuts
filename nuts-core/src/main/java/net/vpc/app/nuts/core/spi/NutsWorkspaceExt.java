@@ -41,8 +41,9 @@ public interface NutsWorkspaceExt {
     /**
      * return installed version
      *
-     * @param id
-     * @return
+     * @param id id
+     * @param session session
+     * @return installed version
      */
     String[] getInstalledVersions(NutsId id, NutsSession session);
 

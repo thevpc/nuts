@@ -84,8 +84,8 @@ public enum NutsDependencyScopePattern {
             {
                 v.add(NutsDependencyScope.API);
                 v.add(NutsDependencyScope.IMPLEMENTATION);
-                v.add(NutsDependencyScope.RUNTIME);
                 v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.RUNTIME);
                 break;
             }
             case RUN_TEST: {

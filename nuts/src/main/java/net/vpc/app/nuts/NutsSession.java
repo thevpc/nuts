@@ -49,16 +49,6 @@ public interface NutsSession extends NutsConfigurable {
     boolean isTrace();
 
     /**
-     * When isTrace() is true and isVerbose() is true, operations are invited to
-     * print to output stream even more extra information about processing.
-     * Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIterableFormat()}
-     *
-     * @return true if trace flag is armed
-     */
-    boolean isVerbose();
-
-    /**
      * true if non iterable and plain formats along with trace flag are armed.
      * equivalent to {@code isTrace()
      * && !isIterableOut()
@@ -124,17 +114,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setTrace(boolean trace);
 
     /**
-     * When isTrace() is true and verbose is true, operations are invited to
-     * print to output stream even more extra information about processing.
-     * Output may be in different formats according to
-     * {@link #getOutputFormat()} and {@link #getIterableFormat()}
-     *
-     * @param verbose verbose mode
-     * @return true if trace flag is armed
-     */
-    NutsSession setVerbose(boolean verbose);
-
-    /**
      * equivalent to {@code setConfirm(true)}
      *
      * @return {@code this} instance
@@ -148,19 +127,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return {@code this} instance
      */
     NutsSession trace(boolean trace);
-
-    /**
-     * equivalent to {@code setConfirm(true)}
-     * @return {@code this} instance
-     */
-    NutsSession verbose();
-
-    /**
-     * equivalent to {@code setTrace(trace)}
-     * @param verbose new value
-     * @return {@code this} instance
-     */
-    NutsSession verbose(boolean verbose);
 
     /**
      * true if force flag is armed. some operations may require user

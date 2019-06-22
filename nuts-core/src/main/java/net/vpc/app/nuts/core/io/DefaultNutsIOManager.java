@@ -8,10 +8,12 @@ import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
 import net.vpc.app.nuts.core.util.io.NullOutputStream;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -170,28 +172,53 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String getResourceString(String resource, Class cls, String defaultValue) {
-        String help = null;
-        try {
-            InputStream s = null;
-            try {
-                s = cls.getResourceAsStream(resource);
-                if (s != null) {
-                    help = CoreIOUtils.loadString(s, true);
-                }
-            } finally {
-                if (s != null) {
-                    s.close();
-                }
-            }
-        } catch (IOException e) {
-            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load text from " + resource, e);
-        }
+    public String loadHelpString(String resource, Class cls, String defaultValue) {
+        String help = loadHelp(resource, cls, false);
         if (help == null) {
             help = defaultValue;//"no help found";
         }
         help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
         return help;
+    }
+
+    private String loadHelp(String urlPath, Class clazz, boolean err) {
+        return loadHelp(urlPath, clazz, err, 36);
+    }
+
+    private String loadHelp(String urlPath, Class clazz, boolean err, int depth) {
+        if (depth <= 0) {
+            throw new IllegalArgumentException("Unable to load " + urlPath + ". Too many recursions");
+        }
+        URL resource = clazz.getResource(urlPath);
+        if (resource == null) {
+            if (err) {
+                return "@@Not Found resource " + terminalFormat().escapeText(urlPath) + "@@";
+            }
+            return null;
+        }
+        String s;
+        try (InputStream is = resource.openStream()) {
+            s = CoreIOUtils.loadString(is, true);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        StringTokenizer st = new StringTokenizer(s, "\n\r", true);
+        StringBuilder sb = new StringBuilder();
+        while (st.hasMoreElements()) {
+            String e = st.nextToken();
+            if (e.length() > 0) {
+                if (e.charAt(0) == '\n' || e.charAt(0) == '\r') {
+                    sb.append(e);
+                } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
+                    e = e.trim();
+                    e = e.substring("#!include<".length(), e.length() - 1);
+                    sb.append(loadHelp(e, clazz, true, depth - 1));
+                } else {
+                    sb.append(e);
+                }
+            }
+        }
+        return sb.toString();
     }
 
     @Override
