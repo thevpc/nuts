@@ -8,19 +8,19 @@
        **-e** or **--extensions** : update all workspace\'s extensions
        **-r** or **--runtime** : update workspace\'s runtime component (minor workspace update)
        **-A** or **--api** : update workspace\'s api (major workspace update)
-       **-v** \<arguments\>
-       or **--version** \<version\>
+       **-v** \<version\>
+       or **--to-version** \<version\>
             : force updates to the provided \<version\> (may be a downgrade)
        <args> ...        : provide arguments to pass to updater
             
 #!include</net/vpc/app/nuts/command/includes/standard-command.help>
 
 ##SYNOPSIS:##
-==nuts== ##update## [ --force ] id1 ...
+==nuts== ##update## id1 ...
 
    update the ==nuts== to the latest version. If --force is armed, will re-download the components and its dependencies.
 
-==nuts== ##update## [ --force ] [ --version <VERSION> ]
+==nuts== ##update## [ --to-version <version> ]
 
    update the current workspace to latest version or to the given version if provided.
 

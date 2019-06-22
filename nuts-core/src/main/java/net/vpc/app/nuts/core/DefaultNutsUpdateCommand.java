@@ -1186,7 +1186,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 return true;
             }
             case "-v":
-            case "--version": {
+            case "--to-version": {
                 this.setApiVersion(cmdLine.nextString().getStringValue());
                 return true;
             }

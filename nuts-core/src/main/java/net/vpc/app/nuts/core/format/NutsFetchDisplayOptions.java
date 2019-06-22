@@ -126,59 +126,8 @@ public class NutsFetchDisplayOptions {
         }
         switch (a.getStringKey()) {
             case "-l":
-            case "--long":
-            case "--display-long": {
+            case "--long":{
                 setDisplayLong(cmdLine.nextBoolean().getBooleanValue());
-                return true;
-            }
-            case "--display-id": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.ID);
-                return true;
-            }
-            case "--display-name": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.NAME);
-                return true;
-            }
-            case "--display-exec-entry": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.ID);
-                return true;
-            }
-            case "--display-arch": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.ARCH);
-                return true;
-            }
-            case "--display-file": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.FILE);
-                return true;
-            }
-            case "--display-file-name": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.FILE_NAME);
-                return true;
-            }
-            case "--display-packaging": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.PACKAGING);
-                return true;
-            }
-            case "--display-os": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.OS);
-                return true;
-            }
-            case "--display-osdist": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.OSDIST);
-                return true;
-            }
-            case "--display-platform": {
-                cmdLine.skip();
-                setDisplay(NutsDisplayProperty.PLATFORM);
                 return true;
             }
             case "--display": {

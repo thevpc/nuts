@@ -556,27 +556,37 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 this.addScope(CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false));
                 return true;
             }
-            case "--anywhere": {
+            case "-a": 
+            case "--anywhere": 
+            {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
                 return true;
             }
-            case "--installed": {
+            case "-i": 
+            case "--installed": 
+            {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.INSTALLED);
                 return true;
             }
-            case "--offline": {
+            case "-F":
+            case "--offline":
+            {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.OFFLINE);
                 return true;
             }
-            case "--online": {
+            case "-O": 
+            case "--online": 
+            {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.ONLINE);
                 return true;
             }
-            case "--remote": {
+            case "-R": 
+            case "--remote": 
+            {
                 cmdLine.skip();
                 this.setFetchStratery(NutsFetchStrategy.REMOTE);
                 return true;

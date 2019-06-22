@@ -1,5 +1,6 @@
 ##STANDARD OPTIONS## :
-    This command supports standard options :
+Nuts commands share a set of options that are automatically supported and handled.
+
        **--help**   : show application help and exit
        **--version**: show application version and exit
 

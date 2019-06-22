@@ -3,35 +3,33 @@ search for components/==nuts==
 ##SYNOPSYS##:
 ==nuts== {{search}}  \[**options**\]... \<ids\> ...  <args> ...
        search for \<ids\> 
-       **--lenient** : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default 'no'
-       **--all-versions** : return all versions of the same ids. if 'false' will always return the ==latest== one. default [[yes]]
+       **--lenient** : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default [[no]]
+       **--all-versions** : return all versions of the same ids. if [[no]] will always return the ==latest== one. default [[yes]]
        **--duplicate** or **--duplicate-versions** : return the same version from distinct repositories if found. default [[yes]]
        **-L** or **--latest** or **--latest-versions** : return latest version of each searched id. equivalent to **--all-versions**=[[no]]
        **-S** or **--single** or **--single-versions** : return one instance of each version even if found in distinct repositories. equivalent to **--duplicate**=[[no]]
-       **-s** or **--sort** : sort result. default 'no'
+       **-s** or **--sort** : sort result. default [[no]]
        **--main**           : include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to [[no]]. default [[yes]]
-       **--dependencies**   : include dependencies in result. default 'no'
+       **--dependencies**   : include dependencies in result. default [[no]]
        **--main-only**      : include main result and no dependencies. equivalent to **--main**=[[yes]] **--dependencies**=[[no]]
        **--dependencies-only** : include dependencies and no main. equivalent to **--main**=[[no]] **--dependencies=**=[[no]]
        **--main-and-dependencies** : include main result and no dependencies. equivalent to **--main**=[[yes]] **--dependencies**=[[yes]]
        **-r** or **--repository** \<repo-name\> : include repository in the search process. if none defined, all repositories are searched.
        **--arch** [[x86]]|[[amd64]]|[[ia64]]|[[ppc]]|[[sparc]] : include architecture in the search process. if none defined, all architectures are searched.
        **--packaging** [[jar]]|[[war]]|[[...]] : include packaging in the search process. if none defined, all packagings are searched.
-       **--cached**    : include cached in the search process. default 'true'
-       **--indexed**   : include search index in the search process. default 'true'
-       **--effective** : compute effective descriptor. default 'false'
-       **--content**   : include content. default 'false'
+       **--cached**    : include cached in the search process. default [[yes]]
+       **--indexed**   : include search index in the search process. default [[yes]]
+       **--effective** : compute effective descriptor. default [[no]]
+       **--content**   : include content. default [[no]]
        **--install-info** : include install information. default [[false]]
        **--location**  : force found contents to be copied to location
        **-f** or **--fetch** [[offline]]|[[online]]|[[anywhere]]|[[installed]]|[[remote]]
             : include fetch mode in the search process. if none defined, all fetch modes are searched.
-       **--offline**   : equivalent to **--fetch**=[[offline]]
-       **--wired**     : equivalent to **--fetch**=[[wired]]
-       **--online**    : equivalent to **--fetch**=[[online]]
-       **--anywhere**  : equivalent to **--fetch**=[[anywhere]]
-       **--installed** : equivalent to **--fetch**=[[installed]]
-       **--local**     : equivalent to **--fetch**=[[local]]
-       **--remote**    : equivalent to **--fetch**=[[remote]]
+       **--offline**|**-F**   : equivalent to **--fetch**=[[offline]]
+       **--online**|**-O**    : equivalent to **--fetch**=[[online]]
+       **--anywhere**|**-a**  : equivalent to **--fetch**=[[anywhere]]
+       **--installed**|**-i** : equivalent to **--fetch**=[[installed]]
+       **--remote**|**-R**    : equivalent to **--fetch**=[[remote]]
        **--optional**  : relevant when **--dependencies** is armed.
            **--optional**=         : search for all dependencies, including optional (default)
            **--optional**=[[yes]]  : search for optional dependencies only
@@ -44,10 +42,69 @@ search for components/==nuts==
               include scope in the search dependencies process. if none defined, only [[installed]] scope is searched.
             
        **--default** or **--default-versions** : find only default installed versions. This  is meaningful with **--installed** flag
-       **-v** \<arguments\>
-       or **--version** \<version\>
-            : force updates to the provided \<version\>
-            
+
+       **-l**      
+      |**--long**       
+      |**--display-long**      : equivalent to **--display**=[[long]]
+       
+       **--display**=<comma-separated-columns>
+                       : define columns to display (ordered list of columns, comma separated)
+                         Accepted columns are :
+                                [[status]]            : show nuts status using condensed format using 3 characters
+                                      char \#1    : show installation status
+                                                     **I** : means 'installed' and is 'default'
+                                                     **i** : means 'installed' and is not default
+                                                     **f** : means 'fetched' locally but not installed
+                                                     **r** : means 'remote' (not fetched)
+                                      char \#2    : show application status
+                                                     **X** : means executable nuts application (implementing NutsApplication)
+                                                     **x** : means executable regular application
+                                                     **-** : means non executable or unknown
+                                      char \#3    : show scope status
+                                                     **c** : compile/api scope
+                                                     **i** : implementation scope
+                                                     **r** : runtime scope
+                                                     **s** : system scope
+                                                     **p** : provided scope
+                                                     **t** : test-compile scope
+                                                     **P** : test-provided scope
+                                                     **R** : test-runtime scope
+                                                     **m** : import scope
+                                                     **O** : other
+                                                     **-** : unknown
+
+                                [[install-date]]      : component install date
+                                [[install-user]]      : component install user
+                                [[id]]                : component id
+                                [[name]]              : simple name
+                                [[packaging]]         : component packaging
+                                [[arch]]              : component supported architectures
+                                [[platform]]          : component supported platforms
+                                [[os]]                : component supported operation systems
+                                [[osdist]]            : component supported OS distributions
+                                [[exec-entry]]        : Main class
+                                [[file-name]]         : component file name
+                                [[file]]              : component file path
+                                [[var-location]]      : component var folder
+                                [[temp-location]]     : component temp folder
+                                [[config-location]]   : component config folder
+                                [[lib-location]]      : component lib folder
+                                [[log-location]]      : component log folder
+                                [[cache-location]]    : component cache folder
+                                [[programs-location]] : component programs folder
+                                [[run-location]]      : component run folder
+                                [[long]]              : equivalent to [[status]],[[install-date]],[[install-user]],[[id]]
+                                [[all]]               : equivalent to all of the above
+   
+       **--omit-env**                  : when formatting id, omit env
+       **--omit-face**                 : when formatting id, omit face
+       **--omit-group**                : when formatting id, omit group
+       **--omit-imported-group**       : when formatting id, omit imported group
+       **--omit-namespace**            : when formatting id, omit namespace
+       **--highlight-imported-group**  : when formatting id, highlight imported group
+       **--highlight-optional**        : when formatting id, highlight optional
+       **--highlight-scope**           : when formatting id, highlight scope
+
 #!include</net/vpc/app/nuts/command/includes/standard-command.help>
 
 ##EXAMPLES##:

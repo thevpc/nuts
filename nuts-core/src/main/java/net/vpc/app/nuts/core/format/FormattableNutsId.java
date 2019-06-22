@@ -391,7 +391,7 @@ public class FormattableNutsId {
                             break;
                         }
                         default: {
-                            this.status_s = 'x';
+                            this.status_s = '-';
                             break;
                         }
                     }

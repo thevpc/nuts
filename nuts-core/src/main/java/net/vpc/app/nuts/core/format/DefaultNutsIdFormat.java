@@ -247,14 +247,17 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return sb.toString();
     }
 
+    @Override
     public NutsId getValue() {
         return id;
     }
 
+    @Override
     public NutsIdFormat set(NutsId id) {
         return setValue(id);
     }
 
+    @Override
     public NutsIdFormat setValue(NutsId id) {
         this.id = id;
         return this;

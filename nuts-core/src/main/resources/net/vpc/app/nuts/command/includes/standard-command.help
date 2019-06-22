@@ -1,6 +1,3 @@
-##STANDARD COMMAND## :
-Nuts commands share a set of options that are automatically supported and handled.
-
 #!include</net/vpc/app/nuts/command/includes/standard-options.help>
 
 #!include</net/vpc/app/nuts/command/includes/standard-options-format.help>

@@ -1,9 +1,4 @@
-==    _   _\_      _\_       ==
-==   / | / /_  _\_/ /_\_\_\_\_\_ ==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
-==  /  |/ / / / / _\_/ _\_\_/ ==  <<The Open Source Package Manager for __Java__ (TM)>>
-== / /|  / /_/ / /_\(_\_  \)  ==  <<and other __Things__>> ... by ==vpc==
-==/_/ |_/\\_\_,_/\\_\_/_\_\_\_/ ==    __http://github.com/thevpc/nuts__
-    version [[${nuts.workspace-runtime.version}]]
+#!include</net/vpc/app/nuts/command/includes/standard-header.help>
 
 ##SYNOPSIS:##
 ==nuts== \[**options**\]... {{\<command\>}} \<args\> ...

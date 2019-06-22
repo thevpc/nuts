@@ -1,6 +1,5 @@
 ##STANDARD OPTIONS FORMAT## :
-Command line arguments parses nuts options and application options in the very same manner. 
-It supports the following forms of options.
+Standard format of options is supported as follows :
 
  **--!...** or **-!...** 
       option will negated if boolean. Actually, **--!option** is equivalent to **--option**=[[false]]

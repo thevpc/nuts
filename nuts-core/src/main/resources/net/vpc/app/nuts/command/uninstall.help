@@ -1,10 +1,8 @@
-
 ==nuts== {{uninstall}} \<nuts-component\>... <args> ...        
       uninstall one or more ==nuts== from repositories if installed
       If no [nuts-id] is defined an error will occur
 
 ##OPTIONS##:
-       **-**] or **--force** : ignore non existing components
        **-e** or **--erase** : enable erase mode to delete all of component\'s config data as well
        <args> ...        : provide arguments to pass to uninstaller
 
