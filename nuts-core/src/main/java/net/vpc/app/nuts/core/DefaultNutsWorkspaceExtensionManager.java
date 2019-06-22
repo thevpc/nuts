@@ -52,6 +52,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             )
     );
     private NutsURLClassLoader workspaceExtensionsClassLoader;
+    private Map<NutsURLClassLoaderKey, NutsURLClassLoader> cachedClassLoaders = new HashMap<>();
     private final ListMap<String, String> defaultWiredComponents = new ListMap<>();
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
     private final Set<String> exclusions = new HashSet<String>();
@@ -135,7 +136,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     protected void onInitializeWorkspace(ClassLoader bootClassLoader) {
         //now will iterate over Extension classes to wire them ...
-        List<Class> loadedExtensions = discoverTypes(NutsComponent.class, bootClassLoader);
+        discoverTypes(bootClassLoader);
+        List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class);
         for (Class extensionImpl : loadedExtensions) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
                 if (installExtensionComponentType(extensionPointType, extensionImpl)) {
@@ -143,8 +145,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 }
             }
         }
-        //versionProperties = IOUtils.loadProperties(DefaultNutsWorkspace.class.getResource("/META-INF/nuts-core-parseVersion.properties"));
-        this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], bootClassLoader);
+        this.workspaceExtensionsClassLoader = getNutsURLClassLoader(new URL[0], bootClassLoader);
     }
 
     @Override
@@ -215,7 +216,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        List<Class> serviceLoader = discoverTypes(NutsComponent.class, workspaceExtension.getClassLoader());
+        discoverTypes(workspaceExtension.getClassLoader());
+        List<Class> serviceLoader = getImplementationTypes(NutsComponent.class);
         for (Class extensionImpl : serviceLoader) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
                 if (installExtensionComponentType(extensionPointType, extensionImpl)) {
@@ -283,6 +285,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return false;
     }
 
+    @Override
     public boolean registerType(Class extensionPointType, Class extensionType) {
         if (!isRegisteredType(extensionPointType, extensionType.getName()) && !isRegisteredType(extensionPointType, extensionType)) {
             objectFactory.registerType(extensionPointType, extensionType);
@@ -373,13 +376,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     @Override
-    public List<Class> discoverTypes(Class type, ClassLoader bootClassLoader) {
-        return objectFactory.discoverTypes(type, bootClassLoader);
+    public List<Class> getImplementationTypes(Class type) {
+        return objectFactory.getImplementationTypes(type);
     }
 
     @Override
-    public <T> List<T> discoverInstances(Class<T> type, ClassLoader bootClassLoader) {
-        return objectFactory.discoverInstances(type, bootClassLoader);
+    public List<Class> discoverTypes(ClassLoader classLoader) {
+        return objectFactory.discoverTypes(classLoader);
     }
 
     @Override
@@ -527,4 +530,54 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return configExt().getStoredConfig();
     }
 
+    public synchronized NutsURLClassLoader getNutsURLClassLoader(URL[] urls, ClassLoader parent) {
+        NutsURLClassLoaderKey k = new NutsURLClassLoaderKey(urls, parent);
+        NutsURLClassLoader v = cachedClassLoaders.get(k);
+        if (v == null) {
+            v = new NutsURLClassLoader(ws, urls, parent);
+            cachedClassLoaders.put(k, v);
+        }
+        return v;
+    }
+
+    private static class NutsURLClassLoaderKey {
+
+        private URL[] urls;
+        private ClassLoader parent;
+
+        public NutsURLClassLoaderKey(URL[] urls, ClassLoader parent) {
+            this.urls = urls;
+            this.parent = parent;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 13 * hash + Arrays.deepHashCode(this.urls);
+            hash = 13 * hash + Objects.hashCode(this.parent);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final NutsURLClassLoaderKey other = (NutsURLClassLoaderKey) obj;
+            if (!Arrays.deepEquals(this.urls, other.urls)) {
+                return false;
+            }
+            if (!Objects.equals(this.parent, other.parent)) {
+                return false;
+            }
+            return true;
+        }
+
+    }
 }

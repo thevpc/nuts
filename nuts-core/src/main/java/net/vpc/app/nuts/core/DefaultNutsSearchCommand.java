@@ -952,7 +952,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     @Override
-    public NutsSearchResult<String> getResultFiles() {
+    public NutsSearchResult<String> getResultPaths() {
         IteratorBuilder<String> a = IteratorBuilder.of(getResultDefinitions(false).iterator())
                 .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().toString())
                 .filter(x -> !CoreStringUtils.isBlank(x));
@@ -1335,7 +1335,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                 throw new UncheckedIOException(ex);
             }
         }
-        return new NutsURLClassLoader(ws, all, parent);
+        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(all, parent);
     }
 
     @Override
@@ -1357,7 +1357,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                     }
                     case FILE:
                     case FILE_NAME: {
-                        r = getResultFiles();
+                        r = getResultPaths();
                         break;
                     }
                     case NAME: {

@@ -27,6 +27,16 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         }
+        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            if (cmdLine.next("show "+value.id()+"-location") != null) {
+                if (cmdLine.isExecMode()) {
+                    NutsSession session = context.getSession();
+                    PrintStream out = session.getTerminal().fout();
+                    out.printf("%s%n", context.getWorkspace().config().getStoreLocation(value));
+                }
+                return true;
+            }
+        }
         if (cmdLine.next("create workspace", "cw") != null) {
             boolean ignoreIdFound = false;
             boolean save = false;

@@ -41,7 +41,7 @@ import java.util.Map;
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.core.util.ClassMap;
+import net.vpc.app.nuts.core.util.common.ClassMap;
 import org.w3c.dom.Node;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsInstallInfo;

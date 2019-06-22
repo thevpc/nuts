@@ -35,6 +35,8 @@ import java.util.Comparator;
 import java.util.Set;
 
 /**
+ * Search command class helps searching multiple component with all of their
+ * files.
  *
  * @author vpc
  * @since 0.5.4
@@ -46,66 +48,240 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     NutsSearchCommand clearIds();
 
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand addId(String id);
 
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand addId(NutsId id);
 
+    /**
+     * add ids to search.
+     *
+     * @param ids id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand addIds(String... ids);
 
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand addIds(NutsId... ids);
 
+    /**
+     * remove id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand removeId(String id);
 
+    /**
+     * remove id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand removeId(NutsId id);
 
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand id(String id);
 
+    /**
+     * set lib filter. lib (non app) only are retrieved.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand lib();
 
+    /**
+     * set lib filter. if true lib (non app) only are retrieved.
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand lib(boolean enable);
 
+    /**
+     * set lib filter. if true lib (non app) only are retrieved.
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand setLib(boolean enable);
 
+    /**
+     * set app filter. non lib (app) only are retrieved.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand app();
 
+    /**
+     * set app filter. if true non lib (app) only are retrieved.
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand app(boolean enable);
 
+    /**
+     * set app filter. if true non lib (app) only are retrieved.
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand setApp(boolean enable);
 
+    /**
+     * set nuts app filter. nuts app (implementing NutsApplication) only are retrieved.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand nutsApp();
 
+    /**
+     * set nuts app filter. if true nuts app (implementing NutsApplication) only are retrieved.
+     *
+     * @param enable ap filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand nutsApp(boolean enable);
 
+    /**
+     * set nuts app filter. if true nuts app (implementing NutsApplication) only are retrieved.
+     *
+     * @param enable ap filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand setNutsApp(boolean enable);
 
+    /**
+     * app filter
+     * @return app filter
+     */
     boolean isApp();
 
+    /**
+     * nuts app filter
+     * @return nuts app filter
+     */
     boolean isNutsApp();
 
+    /**
+     * lib filter
+     * @return lib filter
+     */
     boolean isLib();
 
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand id(NutsId id);
 
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand ids(String... ids);
 
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
     NutsSearchCommand ids(NutsId... ids);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand script(String value);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScript(String value);
 
+    /**
+     * remove javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand removeScript(String value);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scripts(Collection<String> value);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScripts(Collection<String> value);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scripts(String... value);
 
+    /**
+     * add javascript filter.
+     *
+     * @param value javascript filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScripts(String... value);
 
+    /**
+     * remove all javascript filters
+     * @return {@code this} instance
+     */
     NutsSearchCommand clearScripts();
 
+    /**
+     * return javascript filters
+     *
+     * @return javascript filters
+     */
     String[] getScripts();
 
     NutsSearchCommand clearArchs();
@@ -157,9 +333,9 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand repositories(String... value);
 
     /**
-     * <code>setSort(true)</code>
+     * equivalent to {@code setSort(true)}
      *
-     * @return
+     * @return sort mode
      */
     NutsSearchCommand sort();
 
@@ -170,7 +346,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     /**
      * latest version only
      *
-     * @return
+     * @return {@code this} instance
      */
     NutsSearchCommand latest();
 
@@ -208,10 +384,30 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsSearchCommand setIdFilter(String filter);
 
+    /**
+     * set armed (true) fail safe mode. null replaces
+     * NutsNotFoundException.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand failFast();
 
+    /**
+     * set armed (or disarmed) fail safe mode. if true, null replaces
+     * NutsNotFoundException.
+     *
+     * @param enable if true, null replaces NutsNotFoundException.
+     * @return {@code this} instance
+     */
     NutsSearchCommand failFast(boolean enable);
 
+    /**
+     * set armed (or disarmed) fail safe mode. if true, null replaces
+     * NutsNotFoundException.
+     *
+     * @param enable if true, null replaces NutsNotFoundException.
+     * @return {@code this} instance
+     */
     NutsSearchCommand setFailFast(boolean enable);
 
     NutsSearchCommand sort(Comparator<NutsId> comparator);
@@ -258,7 +454,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     /**
      * when true, NutsNotFoundException instances are ignored
      *
-     * @return
+     * @return true if armed FailFast mode
      */
     boolean isFailFast();
 
@@ -293,159 +489,423 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-    NutsSearchCommand fetchStratery(NutsFetchStrategy mode);
 
-    NutsSearchCommand setFetchStratery(NutsFetchStrategy mode);
+    /**
+     * set fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return {@code this} instance
+     */
+    NutsSearchCommand fetchStratery(NutsFetchStrategy fetchStrategy);
 
-    NutsSearchCommand setTransitive(boolean transitive);
+    /**
+     * set fetch strategy.
+     *
+     * @param fetchStrategy fetch strategy
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setFetchStratery(NutsFetchStrategy fetchStrategy);
 
-    NutsSearchCommand transitive(boolean transitive);
+    /**
+     * set or unset transitive mode
+     *
+     * @param enable if true, transitive mode is armed
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setTransitive(boolean enable);
 
+    /**
+     * set or unset transitive mode
+     *
+     * @param enable if true, transitive mode is armed
+     * @return {@code this} instance
+     */
+    NutsSearchCommand transitive(boolean enable);
+
+    /**
+     * set transitive mode to true
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand transitive();
 
     /**
-     * cache enabled
-     *
-     * @param cached
-     * @return
-     */
-    /**
      * remote only
      *
-     * @return
+     * @return {@code this} instance
      */
     NutsSearchCommand remote();
 
     /**
-     * installed and local
+     * local only (installed or not)
      *
-     * @return
+     * @return {@code this} instance
      */
     NutsSearchCommand offline();
 
     /**
-     * installed, local and remote
+     * local or remote. If local result found will not fetch remote.
      *
-     * @return
+     * @return {@code this} instance
      */
     NutsSearchCommand online();
 
     /**
-     * local and remote
+     * only installed components
      *
-     * @return
+     * @return {@code this} instance
      */
     NutsSearchCommand installed();
 
+    /**
+     * all components (local and remote). If local result found will any way
+     * fetch remote.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand anyWhere();
 
+    /**
+     * remove all dependency scope filters.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand clearScopes();
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scope(NutsDependencyScope scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScope(NutsDependencyScope scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scopes(NutsDependencyScope... scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScopes(NutsDependencyScope... scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand removeScope(NutsDependencyScope scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scope(NutsDependencyScopePattern scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScope(NutsDependencyScopePattern scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand scopes(NutsDependencyScopePattern... scope);
 
+    /**
+     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand addScopes(NutsDependencyScopePattern... scope);
 
+    /**
+     * remove dependency scope filter. Only relevant with {@link #dependencies(boolean)
+     * } and {@link #dependenciesTree(boolean)}
+     *
+     * @param scope scope filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand removeScope(NutsDependencyScopePattern scope);
 
     /**
-     *
+     * default version only
      * @return @since v0.5.5
      */
     NutsSearchCommand defaultVersions();
 
     /**
-     *
-     * @param acceptDefaultVersion
+     * default version only filter
+     * @param enable if non null apply filter
      * @since v0.5.5
-     * @return
+     * @return {@code this} instance
      */
-    NutsSearchCommand defaultVersions(Boolean acceptDefaultVersion);
+    NutsSearchCommand defaultVersions(Boolean enable);
 
     /**
-     *
-     * @param acceptDefaultVersion
-     * @return
+     * default version only filter
+     * @param enable if non null apply filter
      * @since v0.5.5
+     * @return {@code this} instance
      */
-    NutsSearchCommand setDefaultVersions(Boolean acceptDefaultVersion);
+    NutsSearchCommand setDefaultVersions(Boolean enable);
 
+    /**
+     * retrieve optional only
+     * @return {@code this} instance
+     */
     NutsSearchCommand optional();
 
-    NutsSearchCommand optional(Boolean acceptOptional);
+    /**
+     * set option filter. if null filter is removed. if false only non optional
+     * will be retrieved. if true, only optional will be retrieved.
+     *
+     * @param enable option filter
+     * @return {@code this} instance
+     */
+    NutsSearchCommand optional(Boolean enable);
 
-    NutsSearchCommand setOptional(Boolean acceptOptional);
+    /**
+     * set option filter. if null filter is removed. if false only non optional
+     * will be retrieved. if true, only optional will be retrieved.
+     *
+     * @param enable option filter
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setOptional(Boolean enable);
 
-    NutsSearchCommand setIndexed(Boolean indexEnabled);
+    /**
+     * set index filter.if null index is removed. if false do not consider index. 
+     * if true, consider index.
+     *
+     * @param enable index filter.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setIndexed(Boolean enable);
 
+    /**
+     * set index filter to true.
+     * @return {@code this} instance
+     */
     NutsSearchCommand indexed();
 
+    /**
+     * set index filter.if null index is removed. if false do not consider index. 
+     * if true, consider index.
+     *
+     * @param enable index filter.
+     * @return {@code this} instance
+     */
     NutsSearchCommand indexed(boolean enable);
 
+    /**
+     * enable inlined dependencies list retrieval
+     * @return {@code this} instance
+     */
     NutsSearchCommand inlineDependencies();
 
-    NutsSearchCommand inlineDependencies(boolean include);
+    /**
+     * enable/disable inlined dependencies list retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand inlineDependencies(boolean enable);
 
-    NutsSearchCommand setInlineDependencies(boolean inlineDependencies);
+    /**
+     * enable/disable inlined dependencies list retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setInlineDependencies(boolean enable);
 
+    /**
+     * enable dependencies list retrieval
+     * @return {@code this} instance
+     */
     NutsSearchCommand dependencies();
 
-    NutsSearchCommand dependencies(boolean include);
+    /**
+     * enable/disable dependencies list retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand dependencies(boolean enable);
 
-    NutsSearchCommand setDependencies(boolean inlineDependencies);
+    /**
+     * enable/disable dependencies list retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setDependencies(boolean enable);
 
+    /**
+     * enable dependencies tree retrieval
+     * @return {@code this} instance
+     */
     NutsSearchCommand dependenciesTree();
 
-    NutsSearchCommand dependenciesTree(boolean include);
+    /**
+     * enable/disable dependencies tree retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand dependenciesTree(boolean enable);
 
-    NutsSearchCommand setDependenciesTree(boolean inlineDependencies);
+    /**
+     * enable/disable dependencies tree retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setDependenciesTree(boolean enable);
 
-    NutsSearchCommand setEffective(boolean effective);
+    /**
+     * enable/disable effective descriptor evaluation
+     * @param enable if true evaluation is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setEffective(boolean enable);
 
-    NutsSearchCommand effective(boolean effective);
+    /**
+     * enable/disable effective descriptor evaluation
+     * @param enable if true evaluation is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand effective(boolean enable);
 
+    /**
+     * enable effective descriptor evaluation
+     * @return {@code this} instance
+     */
     NutsSearchCommand effective();
 
+    /**
+     * enable retrieval from cache
+     * @return {@code this} instance
+     */
     NutsSearchCommand cached();
 
-    NutsSearchCommand cached(boolean cached);
+    /**
+     * enable/disable retrieval from cache
+     * @param enable if true cache is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand cached(boolean enable);
 
-    NutsSearchCommand setCached(boolean cached);
+    /**
+     * enable/disable retrieval from cache
+     * @param enable if true cache is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setCached(boolean enable);
 
+    /**
+     * enable retrieval of content info
+     * @return {@code this} instance
+     */
     NutsSearchCommand content();
 
-    NutsSearchCommand content(boolean includeContent);
+    /**
+     * enable/disable retrieval of content info
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand content(boolean enable);
 
-    NutsSearchCommand setContent(boolean includeContent);
+    /**
+     * enable/disable retrieval of content info
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setContent(boolean enable);
 
+    /**
+     * enable retrieval of installation info
+     * @return {@code this} instance
+     */
     NutsSearchCommand installInformation();
 
-    NutsSearchCommand installInformation(boolean includeInstallInformation);
+    /**
+     * enable/disable retrieval of installation info
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand installInformation(boolean enable);
 
-    NutsSearchCommand setInstallInformation(boolean includeInstallInformation);
+    /**
+     * enable/disable retrieval of installation info
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setInstallInformation(boolean enable);
 
+    /**
+     * set locating where to fetch the component. If the location is a folder, a
+     * new name will be generated.
+     *
+     * @param fileOrFolder path to store to
+     * @return {@code this} instance
+     */
     NutsSearchCommand setLocation(Path fileOrFolder);
 
+    /**
+     * set locating where to fetch the component. If the location is a folder, a
+     * new name will be generated.
+     *
+     * @param fileOrFolder path to store to
+     * @return {@code this} instance
+     */
     NutsSearchCommand location(Path fileOrFolder);
 
+    /**
+     * unset location to store to fetched id and fall back to default location.
+     *
+     * @return {@code this} instance
+     */
     NutsSearchCommand setDefaultLocation();
 
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
+    /**
+     * get locating where to fetch the component. If the location is a folder, a
+     * new name will be generated.
+     *
+     * @return location path
+     */
     Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
@@ -484,9 +944,21 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     //
     // NutsWorkspaceCommand overridden methods
     //    
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsSearchCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsSearchCommand setSession(NutsSession session);
 
@@ -510,19 +982,59 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     @Override
     NutsSearchCommand run();
 
-    NutsSearchResult<String> getResultFiles();
+    /**
+     * return result as content paths
+     *
+     * @return result as content paths
+     */
+    NutsSearchResult<String> getResultPaths();
 
+    /**
+     * return result as component names
+     *
+     * @return result as component names
+     */
     NutsSearchResult<String> getResultNames();
 
+    /**
+     * return result as operating system names
+     *
+     * @return result as operating system names
+     */
     NutsSearchResult<String> getResultOses();
 
+    /**
+     * return result as execution entries
+     *
+     * @return result as execution entries
+     */
     NutsSearchResult<NutsExecutionEntry> getResultExecutionEntries();
 
+    /**
+     * return result as osdist names
+     *
+     * @return result as osdist names
+     */
     NutsSearchResult<String> getResultOsdists();
 
+    /**
+     * return result as packagings
+     *
+     * @return result as packagings
+     */
     NutsSearchResult<String> getResultPackagings();
 
+    /**
+     * return result as platforms
+     *
+     * @return result as platforms
+     */
     NutsSearchResult<String> getResultPlatforms();
 
+    /**
+     * return result as archs
+     *
+     * @return result as archs
+     */
     NutsSearchResult<String> getResultArchs();
 }

@@ -27,7 +27,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util;
+package net.vpc.app.nuts.core.util.common;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -43,6 +43,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 /**
+ * register parent class/interface and get value for all sub classes
  *
  * @author vpc
  */
@@ -69,8 +70,8 @@ public class ClassMap<V> {
     private static final long serialVersionUID = 1L;
     private Class keyType;
     private Class<V> valueType;
-    private HashMap<Class, V> values;
-    private HashMap<Class, V[]> cachedValues;
+    protected HashMap<Class, V> values;
+    protected HashMap<Class, V[]> cachedValues;
     private HashMap<Class, Class[]> cachedHierarchy;
 
     public ClassMap(Class keyType, Class<V> valueType) {
@@ -95,7 +96,7 @@ public class ClassMap<V> {
         return values.remove(classKey);
     }
 
-    public Class[] getKeis(Class classKey) {
+    public Class[] getKeys(Class classKey) {
         Class[] keis = cachedHierarchy.get(classKey);
         if (keis == null) {
             keis = findClassHierarchy(classKey, keyType);
@@ -107,6 +108,10 @@ public class ClassMap<V> {
     public V getRequired(Class key) {
         V[] found = getAllRequired(key);
         return found[0];
+    }
+
+    public boolean containsExactKey(Class key) {
+        return values.containsKey(key);
     }
 
     public V getExact(Class key) {
@@ -129,18 +134,22 @@ public class ClassMap<V> {
         throw new NoSuchElementException(key.getName());
     }
 
+    protected V[] getAllImpl(Class key) {
+        Class[] keis = getKeys(key);
+        List<V> all = new ArrayList<V>(keis.length);
+        for (Class c : keis) {
+            V u = values.get(c);
+            if (u != null) {
+                all.add(u);
+            }
+        }
+        return all.toArray((V[]) Array.newInstance(valueType, 0));
+    }
+
     public V[] getAll(Class key) {
         V[] found = cachedValues.get(key);
         if (found == null) {
-            Class[] keis = getKeis(key);
-            List<V> all = new ArrayList<V>(keis.length);
-            for (Class c : keis) {
-                V u = values.get(c);
-                if (u != null) {
-                    all.add(u);
-                }
-            }
-            found = all.toArray((V[]) Array.newInstance(valueType, all.size()));
+            found = getAllImpl(key);
             cachedValues.put(key, found);
         }
         return found;

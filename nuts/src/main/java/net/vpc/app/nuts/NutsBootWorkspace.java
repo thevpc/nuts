@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -317,12 +316,13 @@ public class NutsBootWorkspace {
                 LOG.log(Level.CONFIG, "\t {0}", new Object[]{NutsUtilsLimited.formatURL(bootClassWorldURL)});
             }
         }
-        info.workspaceClassLoader = info.bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(info.bootClassWorldURLs, getContextClassLoader());
+        info.workspaceClassLoader = info.bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(info.bootClassWorldURLs, getContextClassLoader());
 
         ServiceLoader<NutsWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceFactory.class, info.workspaceClassLoader);
 
         NutsWorkspaceFactory factoryInstance = null;
         for (NutsWorkspaceFactory a : serviceLoader) {
+            a.discoverTypes(info.workspaceClassLoader);
             factoryInstance = a;
             info.nutsWorkspace = a.createSupported(NutsWorkspace.class, this);
             break;
@@ -1321,6 +1321,12 @@ public class NutsBootWorkspace {
     }
 
 
+    static class NutsBootClassLoader extends URLClassLoader{
+        NutsBootClassLoader(URL[] urls, ClassLoader parent) {
+            super(urls, parent);
+        }
+    }
+    
     private static class OpenWorkspaceData {
 
         NutsBootConfig userBootConfig = null;

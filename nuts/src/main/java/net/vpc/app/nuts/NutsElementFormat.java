@@ -30,40 +30,90 @@
 package net.vpc.app.nuts;
 
 /**
+ * Class responsible of manipulating {@link NutsElement} type. It help parsing
+ * from, converting to and formatting such types.
  *
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsElementFormat extends NutsFormat {
 
+    /**
+     * convert any object to valid {@link NutsElement}.
+     *
+     * @param object object to convert
+     * @return converted value
+     */
     NutsElement toElement(Object object);
 
-    <T> T fromElement(NutsElement element, Class<T> cls);
+    /**
+     * convert element to the specified object if applicable or throw an
+     * exception.
+     *
+     * @param <T> return type
+     * @param element element to convert
+     * @param clazz class type
+     * @return instance of type {@code T} converted from {@code element}
+     */
+    <T> T fromElement(NutsElement element, Class<T> clazz);
 
     /**
+     * return current value to format.
+     *
+     * @return current value to format
      * @since 0.5.6
      */
     Object getValue();
 
     /**
+     * set current value to format.
+     *
+     * @param value value to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsElementFormat set(Object value);
 
     /**
+     * set current value to format.
+     *
+     * @param value value to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsElementFormat setValue(Object value);
 
+    /**
+     * set current session.
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsElementFormat session(NutsSession session);
 
+    /**
+     * set current session.
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsElementFormat setSession(NutsSession session);
 
     /**
+     * compile pathExpression into a valid NutsElementPath that helps filtering
+     * elements tree.
+     *
+     * @param pathExpression
+     * @return Element Path filter
+     */
+    NutsElementPath compilePath(String pathExpression);
+
+    /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

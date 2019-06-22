@@ -85,4 +85,14 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         getWorkspace().format().json().set(value).print(out);
     }
 
+    @Override
+    public NutsElementPath compilePath(String pathExpression) {
+        NutsSession session = getSession();
+        if(session==null){
+            session=ws.createSession();
+        }
+        return NutsElementPathFilter.compile(pathExpression, session);
+    }
+
+    
 }

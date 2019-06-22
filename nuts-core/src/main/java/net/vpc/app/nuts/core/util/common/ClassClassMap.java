@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core.util.common;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Anchor interface for all Nuts Listeners.
+ *
  * @author vpc
  */
-public interface NutsListener {
+public class ClassClassMap extends ClassMap<Class> {
+
+    public ClassClassMap() {
+        super(Object.class, Class.class);
+    }
+
+    public void add(Class key) {
+        super.put(key, key);
+    }
+
+    /**
+     * Unsupported. use add() instead.
+     *
+     * @param classKey classKey
+     * @param value value
+     * @return throw error
+     * @deprecated throw error, use add() instead.
+     */
+    @Override
+    @Deprecated
+    public Class put(Class classKey, Class value) {
+        throw new IllegalArgumentException("Unsupported. use add() instead.");
+    }
+
+    @Override
+    public Class[] getAllImpl(Class key) {
+        List<Class> all = new ArrayList<Class>();
+        for (Class value : values.values()) {
+            if(key.isAssignableFrom(value)){
+                all.add(value);
+            }
+        }
+        return all.toArray(new Class[0]);
+    }
+
 }

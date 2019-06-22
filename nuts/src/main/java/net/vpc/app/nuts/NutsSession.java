@@ -33,6 +33,7 @@ import java.io.PrintStream;
 import java.util.Map;
 
 /**
+ * session is context defining common command options and parameters.
  *
  * @author vpc
  * @since 0.5.4
@@ -160,69 +161,210 @@ public interface NutsSession extends NutsConfigurable {
     /**
      * equivalent to {@code setForce(force)}
      *
-     * @param force new value
+     * @param enable new value
      * @return {@code this} instance
      */
-    NutsSession force(boolean force);
+    NutsSession force(boolean enable);
 
+    /**
+     * equivalent to {@code setAsk(true)}
+     *
+     * @return {@code this} instance
+     */
     NutsSession ask();
 
+    /**
+     * equivalent to {@code setAsk(enable)}
+     *
+     * @param enable new value
+     * @return {@code this} instance
+     */
     NutsSession ask(boolean enable);
 
+    /**
+     * equivalent to {@code setConfirm(enable?ASK:null)}
+     *
+     * @param enable new value
+     * @return {@code this} instance
+     */
     NutsSession setAsk(boolean enable);
 
+    /**
+     * true if ASK is armed.
+     *
+     * @return true if ASK is armed.
+     */
     boolean isAsk();
 
+    /**
+     * return current Output Format or {@code defaultValue} if null
+     *
+     * @param defaultValue value when Output Format is not set
+     * @return current Output Format or {@code defaultValue} if null
+     */
     NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue);
 
     /**
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of 
-     * {@link #setIterableFormat(net.vpc.app.nuts.NutsIterableFormat)
-     * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)} has
-     * been called (or called with null values) {@link NutsOutputFormat#PLAIN}
-     * should be returned.
+     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of      {@link #setIterableFormat(net.vpc.app.nuts.NutsIterableFormat)
+     * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)} has been
+     * called (or called with null values) {@link NutsOutputFormat#PLAIN} should
+     * be returned.
      *
      * @return effective trace output format
      */
     NutsOutputFormat getOutputFormat();
 
+    /**
+     * set output format
+     *
+     * @param outputFormat output format
+     * @return {@code this} instance
+     */
     NutsSession outputFormat(NutsOutputFormat outputFormat);
 
+    /**
+     * set output format
+     *
+     * @param outputFormat output format
+     * @return {@code this} instance
+     */
     NutsSession setOutputFormat(NutsOutputFormat outputFormat);
 
+    /**
+     * set json output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession json();
 
+    /**
+     * set plain text (default) output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession plain();
 
+    /**
+     * set properties output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession props();
 
+    /**
+     * set tree output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession tree();
 
+    /**
+     * set table output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession table();
 
+    /**
+     * set xml output format
+     *
+     * @return {@code this} instance
+     */
     NutsSession xml();
 
+    /**
+     * return new instance copy of {@code this} session
+     *
+     * @return new instance copy of {@code this} session
+     */
     NutsSession copy();
 
-    NutsSession addListeners(NutsListener listener);
+    /**
+     * add session listener. supported listeners are instances of:
+     * <ul>
+     * <li>{@link NutsWorkspaceListener}</li>
+     * <li>{@link NutsInstallListener}</li>
+     * <li>{@link NutsMapListener}</li>
+     * <li>{@link NutsRepositoryListener}</li>
+     * </ul>
+     *
+     * @param listener listener
+     * @return {@code this} instance
+     */
+    NutsSession addListener(NutsListener listener);
 
-    NutsSession removeListeners(NutsListener listener);
+    /**
+     * remove session listener. supported listeners are instances of:
+     * <ul>
+     * <li>{@link NutsWorkspaceListener}</li>
+     * <li>{@link NutsInstallListener}</li>
+     * <li>{@link NutsMapListener}</li>
+     * <li>{@link NutsRepositoryListener}</li>
+     * </ul>
+     *
+     * @param listener listener
+     * @return {@code this} instance
+     */
+    NutsSession removeListener(NutsListener listener);
 
+    /**
+     * return registered listeners for the given type.
+     * Supported types are :
+     * <ul>
+     * <li>{@link NutsWorkspaceListener}</li>
+     * <li>{@link NutsInstallListener}</li>
+     * <li>{@link NutsMapListener}</li>
+     * <li>{@link NutsRepositoryListener}</li>
+     * </ul>
+     *
+     * @param <T> listener type
+     * @param type listener type class
+     * @return registered listeners
+     */
     <T extends NutsListener> T[] getListeners(Class<T> type);
 
+    /**
+     * return all registered listeners.
+     * @return all registered listeners.
+     */
     NutsListener[] getListeners();
 
+    /**
+     * set session terminal
+     * @param terminal session terminal
+     * @return {@code this} instance
+     */
     NutsSession setTerminal(NutsSessionTerminal terminal);
 
+    /**
+     * set session property
+     * @param key property key
+     * @param value property value
+     * @return {@code this} instance
+     */
     NutsSession setProperty(String key, Object value);
 
+    /**
+     * add session properties
+     * @param properties properties
+     * @return {@code this} instance
+     */
     NutsSession setProperties(Map<String, Object> properties);
 
+    /**
+     * return defined properties
+     * @return defined properties
+     */
     Map<String, Object> getProperties();
 
+    /**
+     * return property value or null
+     * @param key property key
+     * @return return property value or null
+     */
     Object getProperty(String key);
 
     /**
@@ -233,18 +375,37 @@ public interface NutsSession extends NutsConfigurable {
     NutsConfirmationMode getConfirm();
 
     /**
-     *
-     * @param confirm
-     * @return
+     * set confirm mode.
+     * @param confirm confirm type.
+     * @return {@code this} instance
      */
     NutsSession confirm(NutsConfirmationMode confirm);
 
+    /**
+     * set confirm mode.
+     * @param confirm confirm type.
+     * @return {@code this} instance
+     */
     NutsSession setConfirm(NutsConfirmationMode confirm);
 
+    /**
+     * set output format options (clear and add)
+     * @param options output format options.
+     * @return {@code this} instance
+     */
     NutsSession setOutputFormatOptions(String... options);
 
+    /**
+     * add output format options
+     * @param options output format options.
+     * @return {@code this} instance
+     */
     NutsSession addOutputFormatOptions(String... options);
 
+    /**
+     * output format options
+     * @return output format options
+     */
     String[] getOutputFormatOptions();
 
     /**
@@ -305,20 +466,58 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsObjectPrintStream oerr();
 
+    /**
+     * return iterable output
+     * @return iterable output
+     */
     NutsIterableOutput getIterableOutput();
 
+    /**
+     * return iterable output format
+     * @return iterable output format
+     */
     NutsIterableFormat getIterableFormat();
 
+    /**
+     * set iterable output format
+     * @param value iterable output format
+     * @return {@code this} instance
+     */
     NutsSession iterableFormat(NutsIterableFormat value);
 
+    /**
+     * set iterable output format
+     * @param value iterable output format
+     * @return {@code this} instance
+     */
     NutsSession setIterableFormat(NutsIterableFormat value);
 
+    /**
+     * current terminal
+     *
+     * @return current terminal
+     */
     NutsSessionTerminal terminal();
 
+    /**
+     * current terminal
+     *
+     * @return current terminal
+     */
     NutsSessionTerminal getTerminal();
 
+    /**
+     * current workspace
+     *
+     * @return current workspace
+     */
     NutsWorkspace getWorkspace();
 
+    /**
+     * current workspace
+     *
+     * @return current workspace
+     */
     NutsWorkspace workspace();
 
 }

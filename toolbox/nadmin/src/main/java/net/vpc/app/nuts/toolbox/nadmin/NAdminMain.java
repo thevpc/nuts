@@ -16,6 +16,7 @@ public class NAdminMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
+        context.getWorkspace().extensions().discoverTypes(Thread.currentThread().getContextClassLoader());
         if (subCommands == null) {
             subCommands = new ArrayList<>(
                     context.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, this)

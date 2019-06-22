@@ -72,9 +72,9 @@ public interface NutsWorkspaceExtensionManager {
 
     String[] getExtensionRepositoryLocations(NutsId appId);
 
-    List<Class> discoverTypes(Class type, ClassLoader bootClassLoader);
+    List<Class> discoverTypes(ClassLoader classLoader);
 
-    <T> List<T> discoverInstances(Class<T> type, ClassLoader bootClassLoader);
+    List<Class> getImplementationTypes(Class type);
 
     <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 

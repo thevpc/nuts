@@ -18,11 +18,17 @@
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
     </properties>
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>api</word>
         <word>config</word>
+        <word>ids</word>
+        <word>inlined</word>
         <word>iterable</word>
+        <word>javascript</word>
+        <word>json</word>
         <word>kwallet</word>
         <word>nullable</word>
         <word>parsable</word>
         <word>runtime'</word>
+        <word>xml</word>
     </spellchecker-wordlist>
 </project-shared-configuration>

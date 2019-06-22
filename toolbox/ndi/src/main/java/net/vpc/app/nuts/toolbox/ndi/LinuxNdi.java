@@ -231,7 +231,7 @@ public class LinuxNdi implements SystemNdi {
         goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().getApiId().getVersion().getValue()).append("'\n");
         goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
-                .id(context.getWorkspace().config().getApiId()).getResultFiles().required()).append("'\n");
+                .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("[[ \":$PATH:\" != *\":" + programsFolder + ":\"* ]] && PATH=\"" + programsFolder + ":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");

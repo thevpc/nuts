@@ -39,9 +39,9 @@ import java.util.Set;
  */
 public interface NutsWorkspaceFactory extends NutsComponent<NutsWorkspaceFactory> {
 
-    List<Class> discoverTypes(Class type, ClassLoader bootClassLoader);
-
-    <T> List<T> discoverInstances(Class<T> type, ClassLoader bootClassLoader);
+    List<Class> discoverTypes(ClassLoader bootClassLoader);
+    
+    List<Class> getImplementationTypes(Class type);
 
     <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria);
 

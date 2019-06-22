@@ -74,7 +74,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             cloned.listeners = null;
             if (listeners != null) {
                 for (NutsListener listener : getListeners()) {
-                    cloned.addListeners(listener);
+                    cloned.addListener(listener);
                 }
             }
             return cloned;
@@ -84,7 +84,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession addListeners(NutsListener listener) {
+    public NutsSession addListener(NutsListener listener) {
         if (listener != null) {
             boolean ok = false;
             for (Class cls : new Class[]{
@@ -114,7 +114,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession removeListeners(NutsListener listener) {
+    public NutsSession removeListener(NutsListener listener) {
         if (listener != null) {
             if (listeners != null) {
                 for (LinkedHashSet<NutsListener> value : listeners.values()) {

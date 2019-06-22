@@ -66,7 +66,8 @@ public class JsonCommand extends SimpleNshBuiltin {
     private static class Options {
 
         String input;
-        List<String> xpaths = new ArrayList<>();
+        String queryType = "jpath";
+        List<String> queries = new ArrayList<>();
     }
 
     @Override
@@ -81,8 +82,13 @@ public class JsonCommand extends SimpleNshBuiltin {
         if ((a = commandLine.nextString("-f", "--file")) != null) {
             options.input = a.getStringValue();
             return true;
-        } else if ((a = commandLine.nextString("-q", "--xpath")) != null) {
-            options.xpaths.add(a.getStringValue());
+        } else if ((a = commandLine.nextString("-q")) != null) {
+            options.queryType = "jpath";
+            options.queries.add(a.getStringValue());
+            return true;
+        } else if ((a = commandLine.nextString("--xpath")) != null) {
+            options.queryType = "xpath";
+            options.queries.add(a.getStringValue());
             return true;
         }
         return false;
@@ -95,7 +101,7 @@ public class JsonCommand extends SimpleNshBuiltin {
 //            commandLine.required();
 //        }
 
-        if (options.xpaths.isEmpty()) {
+        if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 context.setPrintOutObject(context.getWorkspace().format().json().set(inputDocument).format());
@@ -103,34 +109,57 @@ public class JsonCommand extends SimpleNshBuiltin {
                 context.setPrintOutObject(inputDocument);
             }
         } else {
-            Document inputDocument = readJsonConvertXml(options.input, context.getGlobalContext());
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-            Document resultDocument;
-            try {
-                resultDocument = documentFactory.newDocumentBuilder().newDocument();
-            } catch (ParserConfigurationException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex, 1);
-            }
-            Element resultElement = resultDocument.createElement("result");
-            resultDocument.appendChild(resultElement);
-            for (String query : options.xpaths) {
-                try {
-                    NodeList evaluated = (NodeList) xPath.compile(query).evaluate(inputDocument, XPathConstants.NODESET);
-                    for (int i = 0; i < evaluated.getLength(); i++) {
-                        Node item = evaluated.item(i);
-                        Node o = resultDocument.importNode(item, true);
-                        resultElement.appendChild(o);
+            switch (options.queryType) {
+                case "xpath": {
+                    Document inputDocument = readJsonConvertXml(options.input, context.getGlobalContext());
+                    XPath xPath = XPathFactory.newInstance().newXPath();
+                    DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+                    Document resultDocument;
+                    try {
+                        resultDocument = documentFactory.newDocumentBuilder().newDocument();
+                    } catch (ParserConfigurationException ex) {
+                        throw new NutsExecutionException(context.getWorkspace(), ex, 1);
                     }
-                } catch (XPathExpressionException ex) {
-                    throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 103);
+                    Element resultElement = resultDocument.createElement("result");
+                    resultDocument.appendChild(resultElement);
+                    for (String query : options.queries) {
+                        try {
+                            NodeList evaluated = (NodeList) xPath.compile(query).evaluate(inputDocument, XPathConstants.NODESET);
+                            for (int i = 0; i < evaluated.getLength(); i++) {
+                                Node item = evaluated.item(i);
+                                Node o = resultDocument.importNode(item, true);
+                                resultElement.appendChild(o);
+                            }
+                        } catch (XPathExpressionException ex) {
+                            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 103);
+                        }
+                    }
+                    if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
+                        context.setPrintOutObject(context.getWorkspace().format().json().set(resultDocument).format());
+                    } else {
+                        context.setPrintOutObject(resultDocument);
+                    }
+                    break;
+                }
+                case "jpath": {
+                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
+                    List<NutsElement> all = new ArrayList<>();
+                    for (String query : options.queries) {
+                        all.addAll(context.getWorkspace().format().element()
+                                .session(context.getSession())
+                                .compilePath(query)
+                                .filter(inputDocument)
+                        );
+                    }
+                    if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
+                        context.setPrintOutObject(context.getWorkspace().format().json().set(all.size() == 1 ? all.get(0) : all).format());
+                    } else {
+                        context.setPrintOutObject(all.size() == 1 ? all.get(0) : all);
+                    }
+                    break;
                 }
             }
-            if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN || context.getSession().getOutputFormat() == NutsOutputFormat.JSON) {
-                context.setPrintOutObject(context.getWorkspace().format().json().set(resultDocument).format());
-            } else {
-                context.setPrintOutObject(resultDocument);
-            }
+
         }
     }
 

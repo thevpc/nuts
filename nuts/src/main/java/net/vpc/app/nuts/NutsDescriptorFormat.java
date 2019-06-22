@@ -35,73 +35,109 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- *
+ * Descriptor Format class that help building, formatting and parsing Descriptors.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsDescriptorFormat extends NutsFormat {
 
+    /**
+     * true if compact flag is armed.
+     * When true, formatted Descriptor will compact JSON result.
+     * @return true if compact flag is armed
+     */
     boolean isCompact();
 
+    /**
+     * set compact flag.
+     * When true, formatted Descriptor will compact JSON result.
+     * @param compact compact value
+     * @return {@code this} instance
+     */
     NutsDescriptorFormat compact(boolean compact);
 
+    /**
+     * set compact flag to true.
+     * When true, formatted Descriptor will compact JSON result.
+     * @return {@code this} instance
+     */
     NutsDescriptorFormat compact();
 
+    /**
+     * set compact flag.
+     * When true, formatted Descriptor will compact JSON result.
+     * @param compact compact value
+     * @return {@code this} instance
+     */
     NutsDescriptorFormat setCompact(boolean compact);
 
     /**
      * set the descriptor instance to print
      *
-     * @param descriptor value to print
+     * @param descriptor value to format
      * @return {@code this} instance
      * @since 0.5.6
      */
     NutsDescriptorFormat set(NutsDescriptor descriptor);
 
     /**
-     * *
+     * parse descriptor.
      *
      * @param url url to parse
-     * @return Descriptor
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(URL url);
 
     /**
-     * *
+     * parse descriptor.
      *
+     * @param bytes value to parse
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(byte[] bytes);
 
     /**
-     * *
+     * parse descriptor.
      *
+     * @param path path to parse
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(Path path);
 
     /**
-     * *
+     * parse descriptor.
      *
+     * @param file file to parse
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(File file);
 
     /**
-     * *
+     * parse descriptor.
      *
+     * @param stream stream to parse
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(InputStream stream);
 
     /**
-     * *
-     *
+     * parse descriptor.
+     * 
+     * @param descriptorString string to parse
+     * @return parsed Descriptor
      * @since 0.5.6
      */
     NutsDescriptor parse(String descriptorString);
 
+    /**
+     * create descriptor builder.
+     * @return new instance of NutsDescriptorBuilder
+     */
     NutsDescriptorBuilder descriptorBuilder();
 
     /**

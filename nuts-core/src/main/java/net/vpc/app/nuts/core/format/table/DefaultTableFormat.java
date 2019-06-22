@@ -43,7 +43,7 @@ import java.util.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
-import net.vpc.app.nuts.core.util.StringBuilder2;
+import net.vpc.app.nuts.core.util.common.StringBuilder2;
 
 /**
  * Created by vpc on 2/17/17.

@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,16 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.List;
+
 /**
- * Anchor interface for all Nuts Listeners.
+ * Element XPath like filter
+ *
  * @author vpc
  */
-public interface NutsListener {
+public interface NutsElementPath {
+
+    List<NutsElement> filter(NutsElement element);
+
+    List<NutsElement> filter(List<NutsElement> elements);
 }

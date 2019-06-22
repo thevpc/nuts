@@ -43,9 +43,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.NutsURLClassLoader;
+import net.vpc.app.nuts.core.DefaultNutsWorkspaceExtensionManager;
 
 /**
  * Created by vpc on 1/7/17.
@@ -88,9 +87,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 ClassLoader classLoader = null;
                 Throwable th = null;
                 try {
-                    classLoader = new NutsURLClassLoader(
-                            ws,
-                            joptions.getClassPath().toArray(new String[0]),
+                    classLoader = ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(
+                            CoreIOUtils.toURL(joptions.getClassPath().toArray(new String[0])),
                             ws.config().getBootClassLoader()
                     );
                     Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
