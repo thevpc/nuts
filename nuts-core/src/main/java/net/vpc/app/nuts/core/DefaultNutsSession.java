@@ -291,159 +291,161 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument arg = cmdLine.peek();
-        if (arg != null) {
-            switch (arg.getStringKey()) {
+        NutsArgument a = cmdLine.peek();
+        if (a != null) {
+            boolean enabled = a.isEnabled();
+            switch (a.getStringKey()) {
                 case "--output-format": {
-                    arg = cmdLine.nextString();
-                    NutsOutputFormat outf = CoreCommonUtils.parseEnumString(arg.getStringValue(), NutsOutputFormat.class, false);
-                    this.setOutputFormat(outf);
-                    cmdLine.skip();
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        NutsOutputFormat outf = CoreCommonUtils.parseEnumString(a.getStringValue(), NutsOutputFormat.class, false);
+                        this.setOutputFormat(outf);
+                    }
                     return true;
                 }
                 case "-T":
                 case "--output-format-option": {
-                    arg = cmdLine.nextString();
-                    this.addOutputFormatOptions(arg.getStringValue());
-                    cmdLine.skip();
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.JSON);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.PROPS);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.PLAIN);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--table": {
-                    this.setOutputFormat(NutsOutputFormat.TABLE);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.TABLE);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--tree": {
-                    this.setOutputFormat(NutsOutputFormat.TREE);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.TREE);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--xml": {
-                    this.setOutputFormat(NutsOutputFormat.XML);
-                    cmdLine.skip();
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        this.setOutputFormat(NutsOutputFormat.XML);
+                        this.addOutputFormatOptions(a.getStringValue(""));
+                    }
                     return true;
                 }
                 case "--force":
                 case "--yes":
                 case "-y": {
-                    this.setConfirm(NutsConfirmationMode.YES);
+                    if (enabled) {
+                        this.setConfirm(NutsConfirmationMode.YES);
+                    }
                     cmdLine.skip();
                     return true;
                 }
                 case "--ask": {
-                    this.setConfirm(NutsConfirmationMode.ASK);
+                    if (enabled) {
+                        this.setConfirm(NutsConfirmationMode.ASK);
+                    }
                     cmdLine.skip();
                     return true;
                 }
                 case "--no":
                 case "-n": {
-                    this.setConfirm(NutsConfirmationMode.NO);
+                    if (enabled) {
+                        this.setConfirm(NutsConfirmationMode.NO);
+                    }
                     cmdLine.skip();
                     return true;
                 }
                 case "--error": {
-                    this.setConfirm(NutsConfirmationMode.ERROR);
+                    if (enabled) {
+                        this.setConfirm(NutsConfirmationMode.ERROR);
+                    }
                     cmdLine.skip();
                     return true;
                 }
                 case "--trace": {
-                    this.setTrace(cmdLine.nextBoolean().getBooleanValue());
-                    return true;
-                }
-                case "--term-system": {
-                    cmdLine.skip();
-                    setTerminalMode(null);
-                    return true;
-                }
-                case "--term-filtered": {
-                    cmdLine.skip();
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    return true;
-                }
-                case "--no-color": {
-                    cmdLine.skip();
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    return true;
-                }
-                case "--term-formatted": {
-                    cmdLine.skip();
-                    setTerminalMode(NutsTerminalMode.FORMATTED);
-                    return true;
-                }
-                case "--term-inherited": {
-                    cmdLine.skip();
-                    setTerminalMode(NutsTerminalMode.INHERITED);
-                    return true;
-                }
-                case "--term": {
-                    String s = cmdLine.nextString().getStringValue("").toLowerCase();
-                    switch (s) {
-                        case "":
-                        case "system":
-                        case "auto": {
-                            setTerminalMode(null);
-                            break;
-                        }
-                        case "filtered": {
-                            setTerminalMode(NutsTerminalMode.FILTERED);
-                            break;
-                        }
-                        case "formatted": {
-                            setTerminalMode(NutsTerminalMode.FORMATTED);
-                            break;
-                        }
-                        case "inherited": {
-                            setTerminalMode(NutsTerminalMode.INHERITED);
-                            break;
-                        }
+                    NutsArgument v = cmdLine.nextBoolean();
+                    if (enabled) {
+                        this.setTrace(v.getBooleanValue());
                     }
                     return true;
                 }
                 case "--color": {
-                    String s = cmdLine.nextString().getStringValue("").toLowerCase();
-                    switch (s) {
-                        case "":
-                        case "system":
-                        case "auto": {
-                            setTerminalMode(null);
-                            break;
+                    //if the value is imediately attatched with '=' don't consider
+                    a = cmdLine.nextImmediate();
+                    if (enabled) {
+                        String v = a.getStringValue("");
+                        NutsArgument bb = cmdLine.newArgument(v);
+                        Boolean b = bb.getBoolean(null);
+                        if (b != null) {
+                            if (b) {
+                                setTerminalMode(NutsTerminalMode.FORMATTED);
+
+                            } else {
+                                setTerminalMode(NutsTerminalMode.FILTERED);
+                            }
+                        } else {
+                            switch (v.toLowerCase()) {
+                                case "formatted": {
+                                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                                    break;
+                                }
+                                case "filtered": {
+                                    setTerminalMode(NutsTerminalMode.FILTERED);
+                                    break;
+                                }
+                                case "h":
+                                case "inherited": {
+                                    setTerminalMode(NutsTerminalMode.INHERITED);
+                                    break;
+                                }
+                                case "s":
+                                case "auto":
+                                case "system": {
+                                    setTerminalMode(null);
+                                    break;
+                                }
+                                default: {
+                                    cmdLine.pushBack(a);
+                                    cmdLine.unexpectedArgument();
+                                }
+                            }
                         }
-                        case "filtered":
-                        case "never":
-                        case "no":
-                        case "none": {
-                            setTerminalMode(NutsTerminalMode.FILTERED);
-                            break;
-                        }
-                        case "yes":
-                        case "always":
-                        case "formatted": {
-                            setTerminalMode(NutsTerminalMode.FORMATTED);
-                            break;
-                        }
-                        case "inherited": {
-                            setTerminalMode(NutsTerminalMode.INHERITED);
-                            break;
-                        }
-                        default: {
-                            Boolean bval = cmdLine.newArgument(s).getBoolean(false);
-                            setTerminalMode(bval ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
-                        }
+                    }
+                    return true;
+                }
+                case "-C":
+                case "--no-color": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled) {
+                        setTerminalMode(NutsTerminalMode.FILTERED);
                     }
                     return true;
                 }
@@ -604,9 +606,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsSession addOutputFormatOptions(String... options) {
-        for (String option : options) {
-            if (!CoreStringUtils.isBlank(option)) {
-                outputFormatOptions.add(option);
+        if (options != null) {
+            for (String option : options) {
+                if (!CoreStringUtils.isBlank(option)) {
+                    outputFormatOptions.add(option);
+                }
             }
         }
         return this;

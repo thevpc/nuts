@@ -135,7 +135,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--user", "-u", options.getUserName(), arguments);
             fillOption("--password", "-p", options.getPassword(), arguments);
             fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments);
-            fillOption("--term", "-m", options.getTerminalMode(), arguments);
+            fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments);
             if (options.getLogConfig() != null) {
                 if (options.getLogConfig().getLogLevel() != null) {
                     if (options.getLogConfig().getLogLevel() == Level.FINEST) {
@@ -175,9 +175,9 @@ public class NutsWorkspaceOptionsFormat {
         if (createOptions || isImplicitAll()) {
             fillOption("--name", null, NutsUtilsLimited.trim(options.getName()), arguments);
             fillOption("--archetype", "-A", options.getArchetype(), arguments);
-            fillOption("--store-layout", null, options.getStoreLocationLayout(), arguments);
-            fillOption("--store-strategy", null, options.getStoreLocationStrategy(), arguments);
-            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), arguments);
+            fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments);
+            fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments);
+            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments);
             String[] storeLocations = options.getStoreLocations();
             for (int i = 0; i < storeLocations.length; i++) {
                 fillOption("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location", null, storeLocations[i], arguments);
@@ -261,37 +261,33 @@ public class NutsWorkspaceOptionsFormat {
         }
     }
 
-    private void fillOption(String longName, String shortName, Enum value, List<String> arguments) {
+    private void fillOption(String longName, String shortName, Enum value, Class enumType, List<String> arguments) {
         if (tryFillOptionShort(value, arguments)) {
             return;
         }
         if (value != null) {
             if (shortOptions) {
                 if (value instanceof NutsOsFamily) {
-                    if (value == null) {
-                        fillOption0(selectOptionName(longName, shortName), "s", arguments);
-                    } else {
-                        switch ((NutsOsFamily) value) {
-                            case LINUX: {
-                                fillOption0(selectOptionName(longName, shortName), "l", arguments);
-                                return;
-                            }
-                            case WINDOWS: {
-                                fillOption0(selectOptionName(longName, shortName), "w", arguments);
-                                return;
-                            }
-                            case MACOS: {
-                                fillOption0(selectOptionName(longName, shortName), "m", arguments);
-                                return;
-                            }
-                            case UNIX: {
-                                fillOption0(selectOptionName(longName, shortName), "u", arguments);
-                                return;
-                            }
-                            case UNKNOWN: {
-                                fillOption0(selectOptionName(longName, shortName), "x", arguments);
-                                return;
-                            }
+                    switch ((NutsOsFamily) value) {
+                        case LINUX: {
+                            fillOption0(selectOptionName(longName, shortName), "l", arguments);
+                            return;
+                        }
+                        case WINDOWS: {
+                            fillOption0(selectOptionName(longName, shortName), "w", arguments);
+                            return;
+                        }
+                        case MACOS: {
+                            fillOption0(selectOptionName(longName, shortName), "m", arguments);
+                            return;
+                        }
+                        case UNIX: {
+                            fillOption0(selectOptionName(longName, shortName), "u", arguments);
+                            return;
+                        }
+                        case UNKNOWN: {
+                            fillOption0(selectOptionName(longName, shortName), "x", arguments);
+                            return;
                         }
                     }
                 } else if (value instanceof NutsStoreLocationStrategy) {
@@ -308,7 +304,7 @@ public class NutsWorkspaceOptionsFormat {
                 } else if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            fillOption0(selectOptionName(longName, shortName), "l", arguments);
+                            fillOption0(selectOptionName(longName, shortName), "n", arguments);
                             return;
                         }
                         case INHERITED: {
@@ -316,13 +312,15 @@ public class NutsWorkspaceOptionsFormat {
                             return;
                         }
                         case FORMATTED: {
-                            fillOption0(selectOptionName(longName, shortName), "f", arguments);
+                            fillOption0(selectOptionName(longName, shortName), "y", arguments);
                             return;
                         }
                     }
                 }
             }
             fillOption0(selectOptionName(longName, shortName), value.toString().toLowerCase(), arguments);
+        } else if (enumType.equals(NutsTerminalMode.class)) {
+            fillOption0(selectOptionName(longName, shortName), "s", arguments);
         }
     }
 

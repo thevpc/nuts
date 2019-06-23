@@ -17,4 +17,7 @@
         <netbeans.hint.jdkPlatform>default_platform</netbeans.hint.jdkPlatform>
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
     </properties>
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>json</word>
+    </spellchecker-wordlist>
 </project-shared-configuration>

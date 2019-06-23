@@ -15,44 +15,27 @@ Nuts commands share a set of options that are automatically supported and handle
        
        **--trace**      : further test output is printed
 
-       **--term-system**      
-      |**--term**=
-      |**--term**=[[system]]      
-      |**--term**=[[auto]]      
-      |**--color**=
-      |**--color**=[[system]]      
-      |**--color**=[[auto]]      
-                        : auto detect system terminal type (this is the default)
-
-       **--term-inherited**      
-      |**--term**=[[inherited]]      
-      |**--color**=[[inherited]]      
-                        : use parent process terminal
-
-       **--term-filtered**      
-      |**--term**=[[filtered]]
-      |**--color**=[[filtered]]
-      |**--color**=[[no]]      
-      |**--color**=[[none]]      
-      |**--color**=[[never]]      
-      |**--no-color**      
-                        : do not use colors (escape all nuts format special characters)
-
-       **--term-formatted**      
-      |**--term**=[[formatted]]
-      |**--color**=[[formatted]]
-      |**--color**=[[yes]]      
-      |**--color**=[[always]]      
-                        : use nuts format coloring
+       **--color**
+          **--color**=[[always]]|[[yes]]|[[true]]|[[y]]|[[formatted]]
+            enables formatted (colorful) terminal ([[formatted]] terminal)
+          **--color**=[[inherited]]|[[h]]
+            use parent process terminal mode
+          **--color**=[[auto]]|[[system]]|[[s]]
+            auto detected terminal (default)
+          **--color**=[[never]]|[[none]]|[[no]]|[[false]]|[[n]]
+            equivalent to **--no-color**
+          @@Attention@@ : --color argument, should it accept a value, it must be an immediate one (with '=')
+       **--no-color**
+            disable formatted (colorful) terminal ([[filtered]] terminal).
 
        **--output-format**=[[plain]]|[[props]]|[[json]]|[[xml]]|[[table]]|[[tree]]
                         : define the format to trace operation. default is [[plain]]
-       **--plain**      : trace operation as plain text. equivalent to **--output-format**=[[plain]]
-       **--json**       : trace operation as json. equivalent to **--output-format**=[[json]]
-       **--xml**        : trace operation xml. equivalent to **--output-format**=[[xml]]
-       **--props**      : trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
-       **--table**      : trace operation as table. equivalent to **--output-format**=[[table]]
-       **--tree**       : trace operation as tree. equivalent to **--output-format**=[[tree]]
-       **--output-format-option**=<option>
-       |**-T**=<option>
+       **--plain**[=**<format-options>**]      : trace operation as plain text. equivalent to **--output-format**=[[plain]]
+       **--json**[=**<format-options>**]       : trace operation as json. equivalent to **--output-format**=[[json]]
+       **--xml**[=**<format-options>**]        : trace operation xml. equivalent to **--output-format**=[[xml]]
+       **--props**[=**<format-options>**]      : trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
+       **--table**[=**<format-options>**]      : trace operation as table. equivalent to **--output-format**=[[table]]
+       **--tree**[=**<format-options>**]       : trace operation as tree. equivalent to **--output-format**=[[tree]]
+       **--output-format-option**=<format-options>
+       |**-T**=<format-options>
                         : add specific format option

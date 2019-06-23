@@ -261,7 +261,7 @@ Java         Version: **${java.version} (${java.vm.name})**
       Linux/Unix : "/usr/share/nuts/default-workspace"
       More generally folder homes are defines as follows :
       Windows Layout   :
-        programs : "$ProgramFiles/nuts"
+        apps     : "$ProgramFiles/nuts"
         lib      : "$ProgramFiles/nuts"
         config   : "$ProgramFiles/nuts"
         var      : "$ProgramFiles/nuts"
@@ -269,7 +269,7 @@ Java         Version: **${java.version} (${java.vm.name})**
         temp     : "$TMP/nuts"
         cache    : "$ProgramFiles/nuts"
       Linux Layout    :
-        programs : "/opt/nuts/programs"
+        apps     : "/opt/nuts/programs"
         lib      : "/opt/nuts/lib"
         config   : "/etc/opt/nuts"
         var      : "/var/opt/nuts"
@@ -277,42 +277,46 @@ Java         Version: **${java.version} (${java.vm.name})**
         temp     : "/tmp/nuts/global"
         cache    : "/var/cache/nuts"
 
- **--color** or **-C**
+ **--color** or **-c**
+      
+    **--color**=[[always]]|[[yes]]|[[true]]|[[y]]|[[formatted]]
       enables formatted (colorful) terminal ([[formatted]] terminal)
-    **--color**=[[always]]|[[yes]]|[[true]]|[[y]]
-      equivalent to **--term-formatted**
+    **--color**=[[inherited]]|[[h]]
+      use parent process terminal mode
+    **--color**=[[auto]]|[[system]]|[[s]]
+      auto detected terminal (default)
     **--color**=[[never]]|[[none]]|[[no]]|[[false]]|[[n]]
-      equivalent to **--term-filtered**
-    **--color**=[[inherited]]|[[system]]
-      equivalent to **--color**=[[none]] or **--term-filtered**
-
+      equivalent to **--no-color**
+    @@Attention@@ : --color argument, should it accept a value, it must be an immediate one (with '=')
+**-C**
  **--no-color**
-      disable formatted (colorful) terminal (**filtered** terminal).
-      equivalent to 
-
- **--term-system** or **-S**
-      use default (system\'s) terminal (may be or may be not **formatted** terminal)
-
- **--term-formatted** or **-L**
-      use formatted (colorful) terminal (as far as it is possible)
-
- **--term-filtered** or **-L**
-      use filtered terminal (no colors)
-
- **--term-inherited** or **-H**
-      use inherited (from parent workspace process) terminal
-
- **--term** <term-type>
- **-m** <term-type>
-      use one of the available terminal types :
-      + [[formatted]]
-      + [[filtered]]
-      + [[inherited]]
+      disable formatted (colorful) terminal ([[filtered]] terminal).
 
  **--trace**
  **-t**
       apply trace mode which allows a more verbose output
 
+ **--plain**[=**<format-options>**]
+      define plain text format as default output format (this is default)
+
+ **--json**[=**<format-options>**]
+      define json format as default output format
+
+ **--table**[=**<format-options>**]
+      define table format as default output format
+
+ **--tree**[=**<format-options>**]
+      define tree format as default output format
+
+ **--xml**[=**<format-options>**]
+      define xml format as default output format
+
+ **--props**[=**<format-options>**]
+      define props format as default output format
+
+ **--output-format-option**=<format-options>
+ |**-T**=<format-options>
+                  : add specific format option
  **--read-only** or **-R** 
       read only mode. All changes to the workspace - if ever - are not persisted.
 
@@ -324,9 +328,9 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--log-size**       <size>
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
       supported units are :
-        **k** or **kb** : for kilo-bytes (example 10k)
-        **m** or **mb** : for mega-bytes (example 10m)
-        **g** or **gb** : for giga-bytes (example 10g)
+        [[k]] or [[kb]] : for kilo-bytes (example 10k)
+        [[m]] or [[mb]] : for mega-bytes (example 10m)
+        [[g]] or [[gb]] : for giga-bytes (example 10g)
 
  **--log-folder**     <log-folder-path>
       define log file folder path
@@ -370,8 +374,8 @@ Java         Version: **${java.version} (${java.vm.name})**
       reset (delete) ==nuts== workspace folder before starting the workspace. All user configuration will not be deleted.
 
  **--skip-welcome**  or **-K**
-      do not call welcome command if the command line is empty. This is helpful in conjuction with **--reset** not 
-      to start a new workspace after resetting the configuration folders.
+      do not call welcome command if the command line is empty. This is helpful in conjunction with **--reset** not 
+      to start a new workspace (and recreate config files) after resetting the configuration folders.
 
  **--embedded**  or **-b**
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
