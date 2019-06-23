@@ -33,7 +33,7 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.format().element().toElement(value));
+        return super.setValue(ws.element().toElement(value));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     @Override
     public void print(Writer w) {
-        NutsTreeFormat t = ws.format().tree();
+        NutsTreeFormat t = ws.tree();
         t.configure(true, getExtraConfigArray());
         t.setModel(new NutsElementTreeModel(ws, rootName, getValue(), getValidSession()) {
             @Override

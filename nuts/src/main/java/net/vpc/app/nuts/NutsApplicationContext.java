@@ -157,18 +157,18 @@ public interface NutsApplicationContext extends NutsConfigurable {
     NutsApplicationContext setSession(NutsSession session);
 
     /**
-     * path to the programs folder of this application
+     * path to the apps folder of this application
      *
-     * @return path to the programs folder of this application
+     * @return path to the apps folder of this application
      */
-    Path getProgramsFolder();
+    Path getAppsFolder();
 
     /**
-     * equivalent to {@code getProgramsFolder()}
+     * equivalent to {@code getAppsFolder()}
      *
-     * @return path to the programs folder of this application
+     * @return path to the apps folder of this application
      */
-    Path programsFolder();
+    Path appsFolder();
 
     /**
      * path to the configuration folder of this application

@@ -32,7 +32,7 @@ public class NutsTraceIterator<T> implements Iterator<T> {
         this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = ws.format().iter();
+            this.listFormat = ws.iter();
         }
         this.listFormat
                 .session(session)

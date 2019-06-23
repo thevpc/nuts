@@ -93,8 +93,8 @@ public interface NutsVersionFormat extends NutsFormat {
      * @param version string (may be null)
      * @return version instance representing the {@code version} string 
      */
-    NutsVersion parseVersion(String version);
+    NutsVersion parse(String version);
 
-    NutsVersionFilter parseVersionFilter(String versionFilter);
+    NutsVersionFilter parseFilter(String versionFilter);
 
 }

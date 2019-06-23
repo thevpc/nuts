@@ -29,12 +29,12 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
-    public NutsVersionFilter parseVersionFilter(String versionFilter) {
+    public NutsVersionFilter parseFilter(String versionFilter) {
         return DefaultNutsVersionFilter.parse(versionFilter);
     }
 
     @Override
-    public NutsVersion parseVersion(String version) {
+    public NutsVersion parse(String version) {
         return DefaultNutsVersion.valueOf(version);
     }
 
@@ -130,11 +130,11 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             }
         } else {
             if (isWorkspaceVersion()) {
-                ws.format().object().session(getValidSession()).value(buildProps()).print(out);
+                ws.object().session(getValidSession()).set(buildProps()).print(out);
             } else if (getVersion() != null) {
-                ws.format().object().session(getValidSession()).value(getVersion()).print(out);
+                ws.object().session(getValidSession()).set(getVersion()).print(out);
             } else if (getVersionInterval() != null) {
-                ws.format().object().session(getValidSession()).value(getVersionInterval()).print(out);
+                ws.object().session(getValidSession()).set(getVersionInterval()).print(out);
             }
         }
     }

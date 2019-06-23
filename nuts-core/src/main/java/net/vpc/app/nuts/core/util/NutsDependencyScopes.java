@@ -36,7 +36,6 @@ import java.util.EnumSet;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
-import net.vpc.app.nuts.core.DefaultNutsDependency;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.dependency.ScopeNutsDependencyFilter;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;

@@ -196,7 +196,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.format().id().parseRequired(s));
+                    ids.add(ws.id().parseRequired(s));
                 }
             }
         }
@@ -507,14 +507,14 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
 
     @Override
     public NutsSearchCommand removeId(String id) {
-        ids.remove(ws.format().id().parse(id));
+        ids.remove(ws.id().parse(id));
         return this;
     }
 
     @Override
     public NutsSearchCommand addId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.format().id().parseRequired(id));
+            ids.add(ws.id().parseRequired(id));
         }
         return this;
     }
@@ -741,7 +741,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         }
         if (!wildcardIds.isEmpty()) {
             for (String wildcardId : wildcardIds) {
-                _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.format().id().parse(wildcardId))));
+                _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.id().parse(wildcardId))));
             }
         }
         NutsFetchCommand k = toFetch();
@@ -1222,7 +1222,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         NutsFetchStrategy fetchMode = NutsWorkspaceHelper.validate(search.getOptions().getFetchStrategy());
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = ws.format().id().parse(id);
+                NutsId nutsId = ws.id().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (nutsId.getGroup() == null) {

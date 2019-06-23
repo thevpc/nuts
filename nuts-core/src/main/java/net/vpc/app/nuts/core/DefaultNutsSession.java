@@ -701,7 +701,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
 
         private void printObject(Object anyObject, boolean newLine) {
-            NutsObjectFormat a = ws.format().object().session(session).value(anyObject);
+            NutsObjectFormat a = ws.object().session(session).value(anyObject);
             a.configure(true, ws.config().options().getOutputFormatOptions());
             a.configure(true, session.getOutputFormatOptions()
             );
@@ -715,7 +715,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         @Override
         public String format(Object o) {
             ByteArrayPrintStream s = new ByteArrayPrintStream();
-            NutsObjectFormat a = ws.format().object().session(session).value(o);
+            NutsObjectFormat a = ws.object().session(session).value(o);
             a.configure(true, ws.config().options().getOutputFormatOptions());
             a.configure(true, session.getOutputFormatOptions()
             );

@@ -198,7 +198,7 @@ public class NdedMain extends NutsApplication {
         this.context = context;
         String[] args = context.getArguments();
 //        f = this.appContext.getWorkspace().getExtensionManager();
-        NutsDescriptorBuilder b = this.context.getWorkspace().format().descriptor().descriptorBuilder();
+        NutsDescriptorBuilder b = this.context.getWorkspace().descriptor().descriptorBuilder();
         fillArgs(b);
         final PrintStream out = this.context.session().out();
         out.print("[[Creating new Nuts descriptor...]]\n");
@@ -235,7 +235,7 @@ public class NdedMain extends NutsApplication {
         if (!confirm("Confirm ?")) {
             throw new NutsUserCancelException(context.getWorkspace());
         }
-        NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().format().descriptor();
+        NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor();
         nutsDescriptorFormat.set(desc).print(file);
         nutsDescriptorFormat.set(desc).print(out);
     }

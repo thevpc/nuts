@@ -86,7 +86,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 
     @Override
     public NutsInstallCommand addId(String id) {
-        return addId(id == null ? null : ws.format().id().parse(id));
+        return addId(id == null ? null : ws.id().parse(id));
     }
 
     @Override
@@ -126,7 +126,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
     @Override
     public NutsInstallCommand removeId(String id) {
         if (id != null) {
-            this.ids.remove(ws.format().id().parse(id));
+            this.ids.remove(ws.id().parse(id));
         }
         return this;
     }
@@ -302,10 +302,10 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             if (ws.io().getTerminal().ask()
                     .forBoolean("The following ==nuts== companion tools are going to be installed : "
                             + Arrays.stream(dws.getCompanionTools())
-                                    .map(x -> ws.format().id()
+                                    .map(x -> ws.id()
                                             .setOmitNamespace(true)
                                             .setOmitImportedGroup(false)
-                                            .set(ws.format().id().parse(x)).format())
+                                            .set(ws.id().parse(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -321,7 +321,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        NutsCommandExecBuilder e = createExecBuilder();
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
-                        if (session.isForce() || !dws.isInstalled(ws.format().id().parseRequired(companionTool), false, session)) {
+                        if (session.isForce() || !dws.isInstalled(ws.id().parseRequired(companionTool), false, session)) {
                             NutsDefinition r = null;
                             if (session.isTrace()) {
                                 if (companionCount == 0) {
@@ -399,13 +399,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         }
         for (NutsDefinition def : defsToIgnore) {
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already installed%n", ws.format().id().set(def.getId()).format());
+                out.printf("%N already installed%n", ws.id().set(def.getId()).format());
             }
         }
         if (!defsToInstall.isEmpty() && ws.io().getTerminal().ask()
                 .forBoolean("The following ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be installed : "
                         + defsToInstall.stream()
-                                .map(x -> ws.format().id().setOmitImportedGroup(true).set(x.getId().getLongNameId()).format())
+                                .map(x -> ws.id().setOmitImportedGroup(true).set(x.getId().getLongNameId()).format())
                                 .collect(Collectors.joining(", "))
                         + "%nAccept"
                 )
@@ -418,7 +418,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already ==installed==. Set as ##default##.%n", ws.format().id().set(def.getId()).format());
+                out.printf("%N already ==installed==. Set as ##default##.%n", ws.id().set(def.getId()).format());
             }
         }
         if (emptyCommand) {

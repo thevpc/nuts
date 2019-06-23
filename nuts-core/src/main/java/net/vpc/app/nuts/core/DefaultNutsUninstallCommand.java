@@ -47,7 +47,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand addId(String id) {
-        return addId(id == null ? null : ws.format().id().parse(id));
+        return addId(id == null ? null : ws.id().parse(id));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
 
     @Override
     public NutsUninstallCommand removeId(String id) {
-        return removeId(ws.format().id().parse(id));
+        return removeId(ws.id().parse(id));
     }
 
     @Override
@@ -204,7 +204,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
             }
             try {
                 dws.getInstalledRepository().uninstall(id);
-                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.PROGRAMS).toFile());
+                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
                 CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
                 CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
                 if (this.isErase()) {
@@ -215,7 +215,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                 throw new UncheckedIOException(ex);
             }
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N uninstalled ##successfully##%n", ws.format().id().set(id).format());
+                out.printf("%N uninstalled ##successfully##%n", ws.id().set(id).format());
             }
             dws.fireOnUninstall(new DefaultNutsInstallEvent(def, session, erase));
         }

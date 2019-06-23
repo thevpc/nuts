@@ -49,7 +49,7 @@ public class Test10_ElementPath {
     @Test
     public void test1() {
         NutsWorkspace ws = Nuts.openWorkspace();
-        NutsElementFormat e = ws.format().element();
+        NutsElementFormat e = ws.element();
         NutsElementBuilder b = e.builder();
         NutsElement p
                 = b.forArray()

@@ -88,7 +88,7 @@ public class NutsBootWorkspace {
                     return runningBootConfig.getWorkspace();
                 case "user.home":
                     return System.getProperty("user.home");
-                case "home.programs":
+                case "home.apps":
                 case "home.config":
                 case "home.lib":
                 case "home.temp":
@@ -97,7 +97,7 @@ public class NutsBootWorkspace {
                 case "home.run":
                 case "home.log":
                     return getHome(NutsStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()));
-                case "programs":
+                case "apps":
                 case "config":
                 case "lib":
                 case "cache":
@@ -309,6 +309,14 @@ public class NutsBootWorkspace {
             }
             allExtensionFiles.put(id.toString(), f);
         }
+        for (String idStr : NutsUtilsLimited.split(info.runningBootConfig.getExtensionDependencies(), "\n\t ;,")) {
+            NutsIdLimited id = NutsIdLimited.parse(idStr);
+            f = getBootFile(id, getFileName(id, "jar"), repositories, workspaceBootLibFolder, !recover);
+            if (f == null) {
+                throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load Extension " + id);
+            }
+            allExtensionFiles.put(id.toString(), f);
+        }
         info.bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
         LOG.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : {1}", new Object[]{info.bootClassWorldURLs.length, Arrays.asList(info.bootClassWorldURLs)});
         if (LOG.isLoggable(Level.CONFIG)) {
@@ -404,7 +412,7 @@ public class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "\t nuts-name                      : {0}", NutsUtilsLimited.desc(runningBootConfig.getName()));
             LOG.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
             LOG.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtilsLimited.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
-            LOG.log(Level.CONFIG, "\t nuts-store-programs            : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.PROGRAMS), runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS)));
+            LOG.log(Level.CONFIG, "\t nuts-store-apps                : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.APPS), runningBootConfig.getStoreLocation(NutsStoreLocation.APPS)));
             LOG.log(Level.CONFIG, "\t nuts-store-config              : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), runningBootConfig.getStoreLocation(NutsStoreLocation.CONFIG)));
             LOG.log(Level.CONFIG, "\t nuts-store-var                 : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), runningBootConfig.getStoreLocation(NutsStoreLocation.VAR)));
             LOG.log(Level.CONFIG, "\t nuts-store-log                 : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.LOG), runningBootConfig.getStoreLocation(NutsStoreLocation.LOG)));
@@ -1074,7 +1082,7 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-workspace-api-version       : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getApiVersion(),"<?> Not Found!"));
         System.err.printf("  nuts-workspace-runtime           : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getRuntimeId(),"<?> Not Found!"));
         System.err.printf("  workspace-location               : %s%n", NutsUtilsLimited.nvl(workspace ,"<default-location>"));
-        System.err.printf("  nuts-store-programs              : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.PROGRAMS));
+        System.err.printf("  nuts-store-apps                  : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.APPS));
         System.err.printf("  nuts-store-config                : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.CONFIG));
         System.err.printf("  nuts-store-var                   : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.VAR));
         System.err.printf("  nuts-store-log                   : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.LOG));
@@ -1164,6 +1172,7 @@ public class NutsBootWorkspace {
             config.setApiVersion(lastConfigLoaded.getApiVersion());
             config.setRuntimeId(lastConfigLoaded.getRuntimeId());
             config.setRuntimeDependencies(lastConfigLoaded.getRuntimeDependencies());
+            config.setExtensionDependencies(lastConfigLoaded.getExtensionDependencies());
             config.setRepositories(lastConfigLoaded.getRepositories());
             config.setJavaCommand(lastConfigLoaded.getJavaCommand());
             config.setJavaOptions(lastConfigLoaded.getJavaOptions());

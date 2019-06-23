@@ -27,7 +27,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
 
     /**
-     * previous parseVersion for "update" mode
+     * previous parse for "update" mode
      */
     private NutsVersion appPreviousVersion;
 
@@ -79,7 +79,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = workspace.format().version().parseVersion(execModeCommand.next().getString());
+                            appPreviousVersion = workspace.version().parse(execModeCommand.next().getString());
                         }
                         modeArgs = execModeCommand.toArray();
                         execModeCommand.skipAll();
@@ -92,7 +92,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId _appId = workspace.format().id().resolveId(appClass);
+        NutsId _appId = workspace.id().resolveId(appClass);
         if (_appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
@@ -172,7 +172,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    getSession().out().printf("%s%n", getWorkspace().format().id().resolveId(getClass()).getVersion().toString());
+                    getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(workspace, "Version", 0);
@@ -229,12 +229,12 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public Path getProgramsFolder() {
-        return getFolder(NutsStoreLocation.PROGRAMS);
+    public Path getAppsFolder() {
+        return getFolder(NutsStoreLocation.APPS);
     }
 
-    public NutsApplicationContext setProgramsFolder(Path folder) {
-        return setFolder(NutsStoreLocation.PROGRAMS, folder);
+    public NutsApplicationContext setAppsFolder(Path folder) {
+        return setFolder(NutsStoreLocation.APPS, folder);
     }
 
     @Override
@@ -408,8 +408,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public Path programsFolder() {
-        return getProgramsFolder();
+    public Path appsFolder() {
+        return getAppsFolder();
     }
 
     @Override

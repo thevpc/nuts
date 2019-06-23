@@ -48,7 +48,7 @@ public class Test04_CreateLoadLinuxTest {
         CoreIOUtils.delete(base);
         Nuts.runWorkspace(new String[]{
             "--reset",
-            "--system-programs-home", new File(base, "system.programs").getPath(),
+            "--system-apps-home", new File(base, "system.apps").getPath(),
             "--system-config-home", new File(base, "system.config").getPath(),
             "--system-var-home", new File(base, "system.var").getPath(),
             "--system-log-home", new File(base, "system.log").getPath(),
@@ -67,13 +67,13 @@ public class Test04_CreateLoadLinuxTest {
             "info"
         });
         System.out.println("==========================");
-        w.format().info().println();
+        w.info().println();
         System.out.println("==========================");
-        System.out.println(new File(base, "system.programs").getPath());
-        System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
+        System.out.println(new File(base, "system.apps").getPath());
+        System.out.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
         Assert.assertEquals(
-                new File(base, "system.programs/default-workspace").getPath(),
-                w.config().getStoreLocation(NutsStoreLocation.PROGRAMS).toString()
+                new File(base, "system.apps/default-workspace").getPath(),
+                w.config().getStoreLocation(NutsStoreLocation.APPS).toString()
         );
         Assert.assertEquals(
                 new File(base, "system.config/default-workspace").getPath(),
@@ -109,10 +109,10 @@ public class Test04_CreateLoadLinuxTest {
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
             "info"
         });
-        System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
+        System.out.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
         Assert.assertEquals(
-                new File(base, "system.programs/default-workspace").getPath(),
-                w.config().getStoreLocation(NutsStoreLocation.PROGRAMS).toString()
+                new File(base, "system.apps/default-workspace").getPath(),
+                w.config().getStoreLocation(NutsStoreLocation.APPS).toString()
         );
         Assert.assertEquals(
                 new File(base, "system.config/default-workspace").getPath(),

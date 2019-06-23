@@ -26,7 +26,7 @@ public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         PrintStream out = getSession().getTerminal().fout();
-        getSession().getWorkspace().format().info().configure(false, args).println(out);
+        getSession().getWorkspace().info().configure(false, args).println(out);
     }
 
 }

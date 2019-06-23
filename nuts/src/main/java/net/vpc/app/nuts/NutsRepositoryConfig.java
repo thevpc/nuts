@@ -40,18 +40,15 @@ import java.util.*;
 public class NutsRepositoryConfig implements Serializable {
 
     private static final long serialVersionUID = 1;
+    /**
+     * Api version having created the config
+     */
+    private String createApiVersion = null;
     private String uuid;
     private String name;
     private String type;
     private String location;
-    private String programsStoreLocation = null;
-    private String configStoreLocation = null;
-    private String varStoreLocation = null;
-    private String libStoreLocation = null;
-    private String logStoreLocation = null;
-    private String tempStoreLocation = null;
-    private String cacheStoreLocation = null;
-    private String runStoreLocation = null;
+    private String[] storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
     private Properties env;
@@ -61,38 +58,6 @@ public class NutsRepositoryConfig implements Serializable {
     private String authenticationAgent;
 
     public NutsRepositoryConfig() {
-    }
-
-    public NutsRepositoryConfig(NutsRepositoryConfig other) {
-        this.name = other.getName();
-        this.uuid = other.getUuid();
-        this.location = other.getLocation();
-        this.type = other.getType();
-        this.groups = other.getGroups();
-        this.programsStoreLocation = other.programsStoreLocation;
-        this.configStoreLocation = other.configStoreLocation;
-        this.varStoreLocation = other.varStoreLocation;
-        this.libStoreLocation = other.libStoreLocation;
-        this.logStoreLocation = other.logStoreLocation;
-        this.tempStoreLocation = other.tempStoreLocation;
-        this.cacheStoreLocation = other.cacheStoreLocation;
-        this.storeLocationStrategy = other.storeLocationStrategy;
-        this.indexEnabled = other.indexEnabled;
-        this.authenticationAgent = other.authenticationAgent;
-        this.mirrors = other.getMirrors() == null ? null : new ArrayList<>(other.getMirrors());
-        this.users = other.getUsers() == null ? null : new ArrayList<>(other.getUsers());
-        if (other.getEnv() == null) {
-            this.env = null;
-        } else {
-            this.env = new Properties();
-            this.env.putAll(other.getEnv());
-        }
-    }
-
-    public NutsRepositoryConfig(String name, String location, String type) {
-        this.name = name;
-        this.location = location;
-        this.type = type;
     }
 
     public String getName() {
@@ -128,78 +93,6 @@ public class NutsRepositoryConfig implements Serializable {
 
     public NutsRepositoryConfig setLocation(String location) {
         this.location = location;
-        return this;
-    }
-
-    public String getProgramsStoreLocation() {
-        return programsStoreLocation;
-    }
-
-    public NutsRepositoryConfig setProgramsStoreLocation(String programsStoreLocation) {
-        this.programsStoreLocation = programsStoreLocation;
-        return this;
-    }
-
-    public String getConfigStoreLocation() {
-        return configStoreLocation;
-    }
-
-    public NutsRepositoryConfig setConfigStoreLocation(String configStoreLocation) {
-        this.configStoreLocation = configStoreLocation;
-        return this;
-    }
-
-    public String getVarStoreLocation() {
-        return varStoreLocation;
-    }
-
-    public NutsRepositoryConfig setVarStoreLocation(String varStoreLocation) {
-        this.varStoreLocation = varStoreLocation;
-        return this;
-    }
-
-    public String getLibStoreLocation() {
-        return libStoreLocation;
-    }
-
-    public NutsRepositoryConfig setLibStoreLocation(String libStoreLocation) {
-        this.libStoreLocation = libStoreLocation;
-        return this;
-    }
-
-    public String getLogStoreLocation() {
-        return logStoreLocation;
-    }
-
-    public NutsRepositoryConfig setLogStoreLocation(String logStoreLocation) {
-        this.logStoreLocation = logStoreLocation;
-        return this;
-    }
-
-    public String getTempStoreLocation() {
-        return tempStoreLocation;
-    }
-
-    public NutsRepositoryConfig setTempStoreLocation(String tempStoreLocation) {
-        this.tempStoreLocation = tempStoreLocation;
-        return this;
-    }
-
-    public String getCacheStoreLocation() {
-        return cacheStoreLocation;
-    }
-
-    public NutsRepositoryConfig setCacheStoreLocation(String cacheStoreLocation) {
-        this.cacheStoreLocation = cacheStoreLocation;
-        return this;
-    }
-
-    public String getRunStoreLocation() {
-        return runStoreLocation;
-    }
-
-    public NutsRepositoryConfig setRunStoreLocation(String runStoreLocation) {
-        this.runStoreLocation = runStoreLocation;
         return this;
     }
 
@@ -266,28 +159,38 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
+    public String getCreateApiVersion() {
+        return createApiVersion;
+    }
+
+    public void setCreateApiVersion(String createApiVersion) {
+        this.createApiVersion = createApiVersion;
+    }
+
+    public String[] getStoreLocations() {
+        return storeLocations;
+    }
+
+    public void setStoreLocations(String[] storeLocations) {
+        this.storeLocations = storeLocations;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.uuid);
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.type);
-        hash = 59 * hash + Objects.hashCode(this.location);
-        hash = 59 * hash + Objects.hashCode(this.programsStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.configStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.varStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.libStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.logStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.tempStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.cacheStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.runStoreLocation);
-        hash = 59 * hash + Objects.hashCode(this.storeLocationStrategy);
-        hash = 59 * hash + Objects.hashCode(this.groups);
-        hash = 59 * hash + Objects.hashCode(this.env);
-        hash = 59 * hash + Objects.hashCode(this.mirrors);
-        hash = 59 * hash + Objects.hashCode(this.users);
-        hash = 59 * hash + (this.indexEnabled ? 1 : 0);
-        hash = 59 * hash + Objects.hashCode(this.authenticationAgent);
+        hash = 53 * hash + Objects.hashCode(this.createApiVersion);
+        hash = 53 * hash + Objects.hashCode(this.uuid);
+        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + Objects.hashCode(this.type);
+        hash = 53 * hash + Objects.hashCode(this.location);
+        hash = 53 * hash + Arrays.deepHashCode(this.storeLocations);
+        hash = 53 * hash + Objects.hashCode(this.storeLocationStrategy);
+        hash = 53 * hash + Objects.hashCode(this.groups);
+        hash = 53 * hash + Objects.hashCode(this.env);
+        hash = 53 * hash + Objects.hashCode(this.mirrors);
+        hash = 53 * hash + Objects.hashCode(this.users);
+        hash = 53 * hash + (this.indexEnabled ? 1 : 0);
+        hash = 53 * hash + Objects.hashCode(this.authenticationAgent);
         return hash;
     }
 
@@ -306,6 +209,9 @@ public class NutsRepositoryConfig implements Serializable {
         if (this.indexEnabled != other.indexEnabled) {
             return false;
         }
+        if (!Objects.equals(this.createApiVersion, other.createApiVersion)) {
+            return false;
+        }
         if (!Objects.equals(this.uuid, other.uuid)) {
             return false;
         }
@@ -318,34 +224,13 @@ public class NutsRepositoryConfig implements Serializable {
         if (!Objects.equals(this.location, other.location)) {
             return false;
         }
-        if (!Objects.equals(this.programsStoreLocation, other.programsStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.configStoreLocation, other.configStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.varStoreLocation, other.varStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.libStoreLocation, other.libStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.logStoreLocation, other.logStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.tempStoreLocation, other.tempStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.cacheStoreLocation, other.cacheStoreLocation)) {
-            return false;
-        }
-        if (!Objects.equals(this.runStoreLocation, other.runStoreLocation)) {
-            return false;
-        }
         if (!Objects.equals(this.groups, other.groups)) {
             return false;
         }
         if (!Objects.equals(this.authenticationAgent, other.authenticationAgent)) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.storeLocations, other.storeLocations)) {
             return false;
         }
         if (this.storeLocationStrategy != other.storeLocationStrategy) {
@@ -365,7 +250,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", runStoreLocation=" + runStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + "createApiVersion=" + createApiVersion + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + storeLocations + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
 }

@@ -308,7 +308,7 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--programs-location":
+                    case "--apps-location":
                     case "--config-location":
                     case "--var-location":
                     case "--log-location":
@@ -323,7 +323,7 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--system-programs-home":
+                    case "--system-apps-home":
                     case "--system-config-home":
                     case "--system-var-home":
                     case "--system-log-home":
@@ -341,7 +341,7 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--windows-programs-home":
+                    case "--windows-apps-home":
                     case "--windows-config-home":
                     case "--windows-var-home":
                     case "--windows-log-home":
@@ -349,7 +349,7 @@ public final class NutsArgumentsParser {
                     case "--windows-cache-home":
                     case "--windows-lib-home":
                     case "--windows-run-home":
-                    case "--macos-programs-home":
+                    case "--macos-apps-home":
                     case "--macos-config-home":
                     case "--macos-var-home":
                     case "--macos-log-home":
@@ -357,7 +357,7 @@ public final class NutsArgumentsParser {
                     case "--macos-cache-home":
                     case "--macos-lib-home":
                     case "--macos-run-home":
-                    case "--linux-programs-home":
+                    case "--linux-apps-home":
                     case "--linux-config-home":
                     case "--linux-var-home":
                     case "--linux-log-home":
@@ -365,7 +365,7 @@ public final class NutsArgumentsParser {
                     case "--linux-cache-home":
                     case "--linux-lib-home": 
                     case "--linux-run-home": 
-                    case "--unix-programs-home":
+                    case "--unix-apps-home":
                     case "--unix-config-home":
                     case "--unix-var-home":
                     case "--unix-log-home":

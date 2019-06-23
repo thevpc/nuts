@@ -44,8 +44,8 @@ public final class NutsConstants {
         public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
         /**
          * default repository name. By default a repository named "local" is
-         * created as folder ~/.config/nuts/default-workspace/local (assuming default
-         * workspace and default root naming on linux machine)
+         * created as folder ~/.config/nuts/default-workspace/local (assuming
+         * default workspace and default root naming on linux machine)
          */
         public static final String DEFAULT_REPOSITORY_NAME = "local";
 
@@ -186,18 +186,14 @@ public final class NutsConstants {
 
         private Folders() {
         }
-//        /**
-//         * default components root name. By default repositories are stored
-//         * under ${workspace-location}/lib
-//         */
-//        public static final String LIB = "lib";
         public static final String BOOT = "boot";
         /**
          * default repositories root name. By default repositories are stored
-         * under ${workspace-location-config}/repos or ${repository-location}/repos
+         * under ${workspace-location-config}/repos or
+         * ${repository-location}/repos
          */
         public static final String REPOSITORIES = "repos";
-        public static final String COMPONENTS   = "comps";
+        public static final String APPS = "apps";
 
     }
 

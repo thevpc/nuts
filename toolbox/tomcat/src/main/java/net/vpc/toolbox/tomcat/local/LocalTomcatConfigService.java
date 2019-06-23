@@ -91,7 +91,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         Path f = getConfigPath();
-        context.workspace().format().json().set(config).print(f);
+        context.workspace().json().set(config).print(f);
         return this;
     }
 
@@ -575,7 +575,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
-            config = context.workspace().format().json().parse(f, LocalTomcatConfig.class);
+            config = context.workspace().json().parse(f, LocalTomcatConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -605,7 +605,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         result.put("base", getCatalinaBase());
         result.put("out", getOutLogFile());
         result.put("config", getConfig());
-        context.workspace().format().json().set(result).print(out);
+        context.workspace().json().set(result).print(out);
         return this;
     }
 

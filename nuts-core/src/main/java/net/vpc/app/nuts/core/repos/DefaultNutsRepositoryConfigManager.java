@@ -173,37 +173,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
 
     @Override
     public Path getStoreLocation(NutsStoreLocation folderType) {
-        String n = "";
-        switch (folderType) {
-            case PROGRAMS: {
-                n = config.getProgramsStoreLocation();
-                break;
-            }
-            case TEMP: {
-                n = config.getTempStoreLocation();
-                break;
-            }
-            case CACHE: {
-                n = config.getCacheStoreLocation();
-                break;
-            }
-            case CONFIG: {
-                n = config.getConfigStoreLocation();
-                break;
-            }
-            case LOG: {
-                n = config.getLogStoreLocation();
-                break;
-            }
-            case VAR: {
-                n = config.getVarStoreLocation();
-                break;
-            }
-            case LIB: {
-                n = config.getLibStoreLocation();
-                break;
-            }
-        }
+        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
         switch (getStoreLocationStrategy()) {
             case STANDALONE: {
                 if (CoreStringUtils.isBlank(n)) {
@@ -387,7 +357,10 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            repository.getWorkspace().format().json().set(config).print(file);
+            if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
+                config.setCreateApiVersion(repository.getWorkspace().config().getApiId().getVersion().getValue());
+            }
+            repository.getWorkspace().json().set(config).print(file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {

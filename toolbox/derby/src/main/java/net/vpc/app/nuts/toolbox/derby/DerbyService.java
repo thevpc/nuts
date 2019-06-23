@@ -55,7 +55,7 @@ public class DerbyService {
     }
 
     private Path download(String id, Path folder) {
-        final NutsId iid = appContext.getWorkspace().format().id().parse(id);
+        final NutsId iid = appContext.getWorkspace().id().parse(id);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getName() + ".jar");
         if (!Files.exists(targetFile)) {
@@ -98,7 +98,7 @@ public class DerbyService {
         } catch (IOException ex) {
             throw new NutsExecutionException(ws, 1);
         }
-        Path derbyBinHome = ws.config().getStoreLocation(appContext.getAppId(), NutsStoreLocation.PROGRAMS).resolve(currentDerbyVersion);
+        Path derbyBinHome = ws.config().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome);

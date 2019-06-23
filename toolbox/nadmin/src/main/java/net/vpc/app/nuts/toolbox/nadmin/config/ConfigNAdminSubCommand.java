@@ -32,8 +32,8 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("delete var") != null) {
             deleteVar(context, readForce(cmdLine, name));
             return true;
-        } else if (cmdLine.next("delete programs") != null) {
-            deletePrograms(context, readForce(cmdLine, name));
+        } else if (cmdLine.next("delete apps") != null) {
+            deleteApps(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.next("delete config") != null) {
             deleteConfig(context, readForce(cmdLine, name));
@@ -64,8 +64,8 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         deleteFolder(context, force, NutsStoreLocation.VAR);
     }
 
-    private void deletePrograms(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force, NutsStoreLocation.PROGRAMS);
+    private void deleteApps(NutsApplicationContext context, boolean force) {
+        deleteFolder(context, force, NutsStoreLocation.APPS);
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {

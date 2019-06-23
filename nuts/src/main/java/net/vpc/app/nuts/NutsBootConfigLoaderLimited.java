@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +50,11 @@ class NutsBootConfigLoaderLimited {
             createApiVersion = "0.5.6";
         }
         int buildNumber = getNutsApiVersionOrdinalNumber(createApiVersion);
-        loadConfigVersion502(c, jsonObject);
+        if (buildNumber < 506) {
+            loadConfigVersion502(c, jsonObject);
+        } else {
+            loadConfigVersion506(c, jsonObject);
+        }
         return c;
     }
 
@@ -67,7 +72,50 @@ class NutsBootConfigLoaderLimited {
 
     /**
      * best effort to load config object from jsonObject saved with nuts version
-     * "0.5.2" and later.
+     * "0.5.6" and later.
+     *
+     * @param config config object to fill
+     * @param jsonObject config JSON object
+     */
+    private static void loadConfigVersion506(NutsBootConfig config, Map<String, Object> jsonObject) {
+        config.setUuid((String) jsonObject.get("uuid"));
+        config.setName((String) jsonObject.get("name"));
+        config.setWorkspace((String) jsonObject.get("workspace"));
+        config.setApiVersion((String) jsonObject.get("bootApiVersion"));
+        config.setRuntimeId((String) jsonObject.get("bootRuntime"));
+        config.setRepositories((String) jsonObject.get("bootRepositories"));
+        config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
+        config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
+        config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
+        List<String> sl = (List<String>) jsonObject.get("storeLocations");
+        if (sl != null) {
+            config.setStoreLocations(sl.toArray(new String[0]));
+        }
+        List<String> hl = (List<String>) jsonObject.get("homeLocations");
+        if (hl != null) {
+            config.setHomeLocations(hl.toArray(new String[0]));
+        }
+        List<String> dhl = (List<String>) jsonObject.get("defaultHomeLocations");
+        if (dhl != null) {
+            config.setDefaultHomeLocations(dhl.toArray(new String[0]));
+        }
+        String s = (String) jsonObject.get("storeLocationStrategy");
+        if (s != null && s.length() > 0) {
+            config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
+        }
+        s = (String) jsonObject.get("repositoryStoreLocationStrategy");
+        if (s != null && s.length() > 0) {
+            config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
+        }
+        s = (String) jsonObject.get("storeLocationLayout");
+        if (s != null && s.length() > 0) {
+            config.setStoreLocationLayout(NutsOsFamily.valueOf(s.toUpperCase()));
+        }
+    }
+
+    /**
+     * best effort to load config object from jsonObject saved with nuts version
+     * "[0.5.2,0.5.6[".
      *
      * @param config config object to fill
      * @param jsonObject config JSON object
@@ -83,33 +131,37 @@ class NutsBootConfigLoaderLimited {
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
-            String k = folder.name().toLowerCase() + "StoreLocation";
+            String folderName502 = folder.name();
+            if(folder==NutsStoreLocation.APPS){
+                folderName502="programs";
+            }
+            String k = folderName502.toLowerCase() + "StoreLocation";
             String v = (String) jsonObject.get(k);
             config.setStoreLocation(folder, v);
 
-            k = folder.name().toLowerCase() + "SystemHome";
+            k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
             config.setHomeLocation(null, folder, v);
             for (NutsOsFamily layout : NutsOsFamily.values()) {
                 switch (layout) {
                     case LINUX: {
-                        k = folder.name().toLowerCase() + "LinuxHome";
+                        k = folderName502.toLowerCase() + "LinuxHome";
                         break;
                     }
                     case UNIX: {
-                        k = folder.name().toLowerCase() + "UnixHome";
+                        k = folderName502.toLowerCase() + "UnixHome";
                         break;
                     }
                     case MACOS: {
-                        k = folder.name().toLowerCase() + "MacOsHome";
+                        k = folderName502.toLowerCase() + "MacOsHome";
                         break;
                     }
                     case WINDOWS: {
-                        k = folder.name().toLowerCase() + "WindowsHome";
+                        k = folderName502.toLowerCase() + "WindowsHome";
                         break;
                     }
                     case UNKNOWN: {
-                        k = folder.name().toLowerCase() + "UnknownHome";
+                        k = folderName502.toLowerCase() + "UnknownHome";
                         break;
                     }
                     default: {

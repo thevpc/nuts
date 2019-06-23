@@ -49,11 +49,20 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * thrown.Particularly, if grabOutputString is used, error exception will
      * state the output message
      *
-     * @param failFast
+     * @param failFast failFast if true an exception will be thrown if exit code is not zero
      * @return {@code this} instance
      */
     NutsExecCommand setFailFast(boolean failFast);
 
+
+    /**
+     * when the execution returns a non zero result, an exception is
+     * thrown.Particularly, if grabOutputString is used, error exception will
+     * state the output message
+     *
+     * @param failFast failFast if true an exception will be thrown if exit code is not zero
+     * @return {@code this} instance
+     */
     NutsExecCommand failFast(boolean failFast);
 
     /**

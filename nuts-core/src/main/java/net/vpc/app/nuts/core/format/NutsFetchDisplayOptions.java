@@ -40,7 +40,7 @@ public class NutsFetchDisplayOptions {
 
     public NutsFetchDisplayOptions(NutsWorkspace ws) {
         this.ws = ws;
-        this.idFormat = ws.format().id();
+        this.idFormat = ws.id();
     }
 
     public void setIdFormat(NutsIdFormat idFormat) {

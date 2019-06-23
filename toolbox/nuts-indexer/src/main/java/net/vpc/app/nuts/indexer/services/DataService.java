@@ -145,13 +145,12 @@ public class DataService {
                     .content(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.format().
-                    json().set(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());
+            row.put("allDependencies", ws.json().set(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());
             updateData(dirPath, oldRow, row);
         }
-        String[] array = ws.format().json().parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = ws.json().parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parse(s)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -162,9 +161,9 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = ws.format().json().parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = ws.json().parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parse(s)))
                 .collect(Collectors.toList());
         return dependencies;
     }

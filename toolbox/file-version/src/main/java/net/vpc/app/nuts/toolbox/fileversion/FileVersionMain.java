@@ -132,7 +132,7 @@ public class FileVersionMain extends NutsApplication {
             PrintStream err = context.session().out();
 
             if (table) {
-                NutsPropertiesFormat tt = context.getWorkspace().format().props().setSort(sort);
+                NutsPropertiesFormat tt = context.getWorkspace().props().setSort(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -177,7 +177,7 @@ public class FileVersionMain extends NutsApplication {
                             out.printf("[[%s]]%n", descriptor.getId());
                         } else if (longFormat) {
                             out.printf("[[%s]]%n", descriptor.getId());
-                            NutsPropertiesFormat f = context.getWorkspace().format().props()
+                            NutsPropertiesFormat f = context.getWorkspace().props()
                                     .setSort(true);
                             f.model(descriptor.getProperties()).print(out);
                         } else {
@@ -296,7 +296,7 @@ public class FileVersionMain extends NutsApplication {
                 p.setProperty("nuts.version-provider", "win-pe");
                 if (!StringUtils.isBlank(artifactId) && !StringUtils.isBlank(artifactVersion)) {
                     d.add(new VersionDescriptor(
-                            ws.format().id().builder().setName(artifactId).setVersion(artifactVersion).build(),
+                            ws.id().builder().setName(artifactId).setVersion(artifactVersion).build(),
                             p
                     ));
                 }
@@ -356,14 +356,14 @@ public class FileVersionMain extends NutsApplication {
                                 && !StringUtils.isBlank(Bundle_Name)
                                 && !StringUtils.isBlank(Bundle_Version)) {
                             all.add(new VersionDescriptor(
-                                    ws.format().id().builder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
+                                    ws.id().builder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties
                             ));
                         }
 
                     } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         try {
-                            NutsDescriptor d = ws.format().descriptor().parse(inputStream);
+                            NutsDescriptor d = ws.descriptor().parse(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));
@@ -412,7 +412,7 @@ public class FileVersionMain extends NutsApplication {
                                 }
                             }
                             all.add(new VersionDescriptor(
-                                    ws.format().id().builder().setGroup(d.getPomId().getGroupId())
+                                    ws.id().builder().setGroup(d.getPomId().getGroupId())
                                             .setNamespace(d.getPomId().getArtifactId())
                                             .setVersion(d.getPomId().getVersion())
                                             .build(),
@@ -435,7 +435,7 @@ public class FileVersionMain extends NutsApplication {
                             prop.setProperty("nuts.version-provider", "maven");
                             if (version != null && version.trim().length() != 0) {
                                 all.add(new VersionDescriptor(
-                                        ws.format().id().builder()
+                                        ws.id().builder()
                                                 .setGroup(groupId).setName(artifactId).setVersion(version)
                                                 .build(),
                                         prop

@@ -24,11 +24,11 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 public class TestUtils {
 
     public static final String LINUX_LOG = new File(System.getProperty("user.home") + "/.local/log/nuts").getPath();
-    public static final String LINUX_PROGRAMS = new File(System.getProperty("user.home") + "/.local/share/nuts/programs").getPath();
+    public static final String LINUX_APPS = new File(System.getProperty("user.home") + "/.local/share/nuts/apps").getPath();
     public static final String LINUX_CONFIG = new File(System.getProperty("user.home") + "/.config/nuts").getPath();
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
-    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_PROGRAMS};
+    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_APPS};
     public static final String NUTS_VERSION = Nuts.getVersion();
     public static final String NDI_VERSION = NUTS_VERSION + ".0";
 

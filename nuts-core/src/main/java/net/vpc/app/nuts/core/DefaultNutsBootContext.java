@@ -13,6 +13,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final NutsId bootAPI;
     private final NutsId bootRuntime;
     private final String bootRuntimeDependencies;
+    private final String bootExtensionDependencies;
     private final String bootRepositories;
     private final String bootJavaCommand;
     private final String bootJavaOptions;
@@ -27,7 +28,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final NutsWorkspace ws;
 
     public DefaultNutsBootContext(NutsWorkspace ws, String uuid, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
-            String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
+            String bootRuntimeDependencies, String bootExtensionDependencies,String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, 
             String[] dhlocations, 
             String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
@@ -41,6 +42,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.bootAPI = bootAPI;
         this.bootRuntime = bootRuntime;
         this.bootRuntimeDependencies = bootRuntimeDependencies;
+        this.bootExtensionDependencies = bootExtensionDependencies;
         this.bootRepositories = bootRepositories;
         this.bootJavaCommand = bootJavaCommand;
         this.bootJavaOptions = bootJavaOptions;
@@ -85,6 +87,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
                 ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
                 : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         this.bootRuntimeDependencies = c.getRuntimeDependencies();
+        this.bootExtensionDependencies = c.getExtensionDependencies();
         this.bootRepositories = c.getRepositories();
         this.bootJavaCommand = c.getJavaCommand();
         this.bootJavaOptions = c.getJavaOptions();
@@ -97,6 +100,12 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.global = c.isGlobal();
         this.gui = c.isGui();
     }
+
+    @Override
+    public String getExtensionDependencies() {
+        return bootExtensionDependencies;
+    }
+    
 
     @Override
     public String getUuid() {
@@ -201,7 +210,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     public Path getNutsJar() {
         return ws.fetch().id(bootAPI).getResultPath();
 //        try {
-//            NutsId baseId = ws.format().id().parseRequiredId(NutsConstants.Ids.NUTS_API);
+//            NutsId baseId = ws.id().parseRequiredId(NutsConstants.Ids.NUTS_API);
 //            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {

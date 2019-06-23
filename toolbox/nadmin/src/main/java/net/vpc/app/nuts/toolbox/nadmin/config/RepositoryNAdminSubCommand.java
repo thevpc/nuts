@@ -142,7 +142,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 
             } else if (cmdLine.next("list repos", "lr") != null) {
                 if (cmdLine.isExecMode()) {
-                    NutsTableFormat t = ws.format().table()
+                    NutsTableFormat t = ws.table()
                             .setColumnsConfig("id", "enabled", "type", "location")
                             .addHeaderCells("Id", "Enabled", "Type", "Location");
                     while (cmdLine.hasNext()) {
@@ -225,7 +225,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     NutsRepository[] linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : new NutsRepository[0];
                     out.printf("%s sub repositories.%n", linkRepositories.length);
-                    NutsTableFormat t = ws.format().table()
+                    NutsTableFormat t = ws.table()
                             .setColumnsConfig("id", "enabled", "type", "location")
                             .addHeaderCells("Id", "Enabled", "Type", "Location");
                     while (cmdLine.hasNext()) {

@@ -47,7 +47,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
 
     @Override
     public NutsUndeployCommand addId(String id) {
-        return addId(CoreStringUtils.isBlank(id) ? null : ws.format().id().parseRequired(id));
+        return addId(CoreStringUtils.isBlank(id) ? null : ws.id().parseRequired(id));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.format().id().parseRequired(s));
+                    ids.add(ws.id().parseRequired(s));
                 }
             }
         }
@@ -158,7 +158,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
             addResult(id);
         }
         if (getValidSession().isTrace()) {
-            ws.format().object().session(getValidSession()).value(result).println();
+            ws.object().session(getValidSession()).value(result).println();
         }
         return this;
     }
@@ -171,7 +171,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (getValidSession().isTrace()) {
             if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (getValidSession().getOutputFormat() == null || getValidSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.format().id().set(id).format());
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.id().set(id).format());
                 }
             }
         }

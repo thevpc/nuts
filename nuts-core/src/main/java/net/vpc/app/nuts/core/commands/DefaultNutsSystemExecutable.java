@@ -22,7 +22,6 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     String[] executorOptions;
     NutsSession session;
     private boolean showCommand = false;
-    private boolean failFast = true;
     NutsExecCommand execCommand;
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsSession session, NutsExecCommand execCommand) {
@@ -39,10 +38,6 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
             switch (a.getStringKey()) {
                 case "--show-command": {
                     showCommand = cmdLine.nextBoolean().getBooleanValue();
-                    break;
-                }
-                case "--fail-fast": {
-                    failFast = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 default: {
@@ -64,7 +59,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        CoreIOUtils.execAndWait(session.getWorkspace(), execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, failFast);
+        CoreIOUtils.execAndWait(session.getWorkspace(), execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, true);
     }
 
     @Override

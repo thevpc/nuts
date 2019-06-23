@@ -28,7 +28,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.format().json().parse(file, NutsWorkspaceListConfig.class);
+            this.config = this.defaultWorkspace.json().parse(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -51,7 +51,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 .config()
                 .getStoreLocation(
                         this.defaultWorkspace
-                                .format().id().resolveId(DefaultNutsWorkspaceListManager.class)
+                                .id().resolveId(DefaultNutsWorkspaceListManager.class)
                                 .getSimpleNameId(),
                         NutsStoreLocation.CONFIG).resolve(name + "-nuts-workspace-list.json");
     }
@@ -108,7 +108,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.format().json().set(this.config).print(file);
+        this.defaultWorkspace.json().set(this.config).print(file);
     }
 
     @Override

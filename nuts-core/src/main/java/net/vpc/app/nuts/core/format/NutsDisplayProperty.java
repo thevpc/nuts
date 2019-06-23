@@ -53,5 +53,5 @@ public enum NutsDisplayProperty {
     LIB_FOLDER,
     LOG_FOLDER,
     CACHE_FOLDER,
-    PROGRAMS_FOLDER,
+    APPS_FOLDER,
 }

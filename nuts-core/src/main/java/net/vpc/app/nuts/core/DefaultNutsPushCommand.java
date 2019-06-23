@@ -88,12 +88,12 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
 
     @Override
     public NutsPushCommand addId(String id) {
-        return addId(id == null ? null : ws.format().id().parseRequired(id));
+        return addId(id == null ? null : ws.id().parseRequired(id));
     }
 
     @Override
     public NutsPushCommand addFrozenId(String id) {
-        return addFrozenId(id == null ? null : ws.format().id().parseRequired(id));
+        return addFrozenId(id == null ? null : ws.id().parseRequired(id));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     @Override
     public NutsPushCommand removeId(String id) {
         if (id != null) {
-            ids.remove(ws.format().id().parse(id));
+            ids.remove(ws.id().parse(id));
         }
         return this;
     }
@@ -136,7 +136,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
     public NutsPushCommand removeFrozenId(String id) {
         if (id != null) {
             if (frozenIds != null) {
-                frozenIds.remove(ws.format().id().parse(id));
+                frozenIds.remove(ws.id().parse(id));
             }
         }
         return this;

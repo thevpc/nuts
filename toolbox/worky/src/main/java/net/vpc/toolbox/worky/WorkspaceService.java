@@ -28,7 +28,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().format().json().parse(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().json().parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -60,7 +60,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().format().json().set(c).print(configFile);
+        appContext.getWorkspace().json().set(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -239,7 +239,7 @@ public class WorkspaceService {
                 d.remote = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().format().version().parseVersion(d.local).compareTo(d.remote);
+                int t = appContext.getWorkspace().version().parse(d.local).compareTo(d.remote);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {

@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.security.DefaultNutsWorkspaceSecurityManager;
 import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
-import net.vpc.app.nuts.core.format.DefaultNutsWorkspaceFormatManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -47,11 +46,26 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsSearchCommand;
 import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
+import net.vpc.app.nuts.core.format.DefaultNutsDependencyFormat;
+import net.vpc.app.nuts.core.format.DefaultNutsIdFormat;
+import net.vpc.app.nuts.core.format.DefaultNutsIncrementalOutputFormat;
+import net.vpc.app.nuts.core.format.DefaultNutsInfoFormat;
+import net.vpc.app.nuts.core.format.DefaultNutsObjectFormat;
+import net.vpc.app.nuts.core.format.DefaultVersionFormat;
+import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFormat;
+import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
+import net.vpc.app.nuts.core.format.props.DefaultPropertiesFormat;
+import net.vpc.app.nuts.core.format.table.DefaultTableFormat;
+import net.vpc.app.nuts.core.format.tree.DefaultTreeFormat;
+import net.vpc.app.nuts.core.format.xml.DefaultNutsXmlFormat;
 
 /**
  * Created by vpc on 1/6/17.
@@ -69,7 +83,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     private final ObservableMap<String, Object> userProperties = new ObservableMap<>();
 
     private NutsIOManager ioManager;
-    private NutsFormatManager formatManager;
     private DefaultNutsInstalledRepository installedRepository;
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
@@ -194,7 +207,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         installedRepository = new DefaultNutsInstalledRepository(this);
         ioManager = new DefaultNutsIOManager(this);
-        formatManager = new DefaultNutsWorkspaceFormatManager(this);
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
         configManager = new DefaultNutsWorkspaceConfigManager(this);
         configManager.onInitializeWorkspace(options,
@@ -495,7 +507,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             Path eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
                 try {
-                    NutsDescriptor d = format().descriptor().parse(eff);
+                    NutsDescriptor d = descriptor().parse(eff);
                     if (d != null) {
                         return d;
                     }
@@ -511,7 +523,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         String nn = config().getDefaultIdFilename(effectiveDescriptor.getId().setFace("cache-eff-nuts"));
         Path eff = l.resolve(nn);
         try {
-            format().descriptor().set(effectiveDescriptor).print(eff);
+            descriptor().set(effectiveDescriptor).print(eff);
         } catch (Exception ex) {
             //
         }
@@ -648,7 +660,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     /**
-     * return installed parseVersion
+     * return installed parse
      *
      * @param id
      * @return
@@ -703,7 +715,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to update : %s.%n", format().id().set(def.getId()).format(), ex.toString());
+                            out.printf("%N @@Failed@@ to update : %s.%n", id().set(def.getId()).format(), ex.toString());
                         }
                         throw new NutsExecutionException(this, "Unable to update " + def.getId().toString(), ex);
                     }
@@ -715,7 +727,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to install : %s.%n", format().id().set(def.getId()).format(), ex.toString());
+                            out.printf("%N @@Failed@@ to install : %s.%n", id().set(def.getId()).format(), ex.toString());
                         }
                         getInstalledRepository().uninstall(executionContext.getDefinition().getId());
                         throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);
@@ -742,27 +754,27 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from temporarily file %s.%N%n", format().id().set(def.getId()).format(), def.getPath(), setAsDefaultString);
+                            out.printf("%N installed ##successfully## from temporarily file %s.%N%n", id().set(def.getId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from remote repository.%N%n", format().id().set(def.getId()).format(), setAsDefaultString);
+                            out.printf("%N installed ##successfully## from remote repository.%N%n", id().set(def.getId()).format(), setAsDefaultString);
                         }
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local temporarily file %s.%N%n", format().id().set(def.getId()).format(), def.getPath(), setAsDefaultString);
+                            out.printf("%N installed from local temporarily file %s.%N%n", id().set(def.getId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local repository.%N%n", format().id().set(def.getId()).format(), setAsDefaultString);
+                            out.printf("%N installed from local repository.%N%n", id().set(def.getId()).format(), setAsDefaultString);
                         }
                     }
                 }
             } else {
                 if (session.isPlainTrace()) {
-                    out.printf("%N installed ##successfully##.%N%n", format().id().set(def.getId()).format(), setAsDefaultString);
+                    out.printf("%N installed ##successfully##.%N%n", id().set(def.getId()).format(), setAsDefaultString);
                 }
             }
         }
@@ -826,7 +838,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         if (args != null) {
             aargs.addAll(Arrays.asList(args));
         }
-        Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);
+        Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.APPS);
         Properties env = new Properties();
         return new DefaultNutsExecutionContext(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, temporary, executionType, commandName);
     }
@@ -958,7 +970,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public String resolveDefaultHelp(Class clazz) {
-        NutsId nutsId = format().id().resolveId(clazz);
+        NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
             return io().loadHelpString(urlPath, clazz, "no help found");
@@ -1004,11 +1016,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public NutsIOManager io() {
         return ioManager;
-    }
-
-    @Override
-    public NutsFormatManager format() {
-        return formatManager;
     }
 
     @Override
@@ -1072,6 +1079,63 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
     }
 
+    @Override
+    public void deployBoot(NutsSession session, NutsId id, boolean withDependencies) {
+        Map<NutsId, NutsDefinition> todo = new HashMap<>();
+        NutsDefinition m = fetch().id(id).content().dependencies().failFast(false).getResultDefinition();
+        todo.put(m.getId().getLongNameId(), m);
+        if (withDependencies) {
+            for (NutsDependency dependency : m.getDependencies()) {
+                if (!todo.containsKey(dependency.getId().getLongNameId())) {
+                    m = fetch().id(id).content().dependencies().failFast(false).getResultDefinition();
+                    todo.put(m.getId().getLongNameId(), m);
+                }
+            }
+        }
+        NutsWorkspaceConfigManager cfg = config();
+        for (NutsDefinition def : todo.values()) {
+            Path bootstrapFolder = cfg.getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
+            NutsId id2 = def.getId();
+            this.io().copy().session(session).from(def.getPath())
+                    .to(cfg.getStoreLocation(id2, bootstrapFolder)
+                            .resolve(cfg.getDefaultIdFilename(id2.setFaceComponent().setPackaging("jar")))
+                    ).run();
+            this.descriptor().set(this.fetch().id(id2).getResultDescriptor())
+                    .print(cfg.getStoreLocation(id2, bootstrapFolder)
+                            .resolve(cfg.getDefaultIdFilename(id2.setFaceDescriptor())));
+
+            Map<String, String> pr = new LinkedHashMap<>();
+            pr.put("file.updated.date", Instant.now().toString());
+            pr.put("project.id", def.getId().getSimpleNameId().toString());
+            pr.put("project.name", def.getId().getSimpleNameId().toString());
+            pr.put("project.version", def.getId().getVersion().toString());
+            pr.put("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
+//            pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
+            pr.put("project.dependencies.compile",
+                    CoreStringUtils.join(";",
+                            Arrays.stream(def.getDependencies())
+                                    .filter(new Predicate<NutsDependency>() {
+                                        @Override
+                                        public boolean test(NutsDependency x) {
+                                            return !x.isOptional() && NutsDependencyScopes.SCOPE_RUN.accept(def.getId(), x, session);
+                                        }
+                                    })
+                                    .map(x -> x.getId().getLongName())
+                                    .collect(Collectors.toList())
+                    )
+            );
+
+            try (Writer writer = Files.newBufferedWriter(
+                    this.config().getStoreLocation(def.getId().getLongNameId(), bootstrapFolder)
+                            .resolve("nuts.properties")
+            )) {
+                CoreIOUtils.storeProperties(pr, writer, false);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+    }
+
     /**
      * creates a zip file based on the folder. The folder should contain a
      * descriptor file at its root
@@ -1130,4 +1194,70 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //            return false;
 //        }
 //    }
+    
+    
+     @Override
+    public NutsJsonFormat json() {
+        return new DefaultNutsJsonFormat(this);
+    }
+
+    @Override
+    public NutsElementFormat element() {
+        return new DefaultNutsElementFormat(this);
+    }
+
+    @Override
+    public NutsXmlFormat xml() {
+        return new DefaultNutsXmlFormat(this);
+    }
+
+    @Override
+    public NutsIdFormat id() {
+        return new DefaultNutsIdFormat(this);
+    }
+
+    @Override
+    public NutsVersionFormat version() {
+        return new DefaultVersionFormat(this);
+    }
+
+    @Override
+    public NutsInfoFormat info() {
+        return new DefaultNutsInfoFormat(this);
+    }
+
+    @Override
+    public NutsDescriptorFormat descriptor() {
+        return new DefaultNutsDescriptorFormat(this);
+    }
+
+    @Override
+    public NutsIterableOutput iter() {
+        return new DefaultNutsIncrementalOutputFormat(this);
+    }
+
+    @Override
+    public NutsTableFormat table() {
+        return new DefaultTableFormat(this);
+    }
+
+    @Override
+    public NutsPropertiesFormat props() {
+        return new DefaultPropertiesFormat(this);
+    }
+
+    @Override
+    public NutsTreeFormat tree() {
+        return new DefaultTreeFormat(this);
+    }
+
+    @Override
+    public NutsObjectFormat object() {
+        return new DefaultNutsObjectFormat(this);
+    }
+
+    @Override
+    public NutsDependencyFormat dependency() {
+        return new DefaultNutsDependencyFormat(this);
+    }
 }

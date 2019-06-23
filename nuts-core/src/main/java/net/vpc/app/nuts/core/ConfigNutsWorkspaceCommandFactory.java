@@ -33,7 +33,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public Path getStoreLocation() {
-        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.PROGRAMS);
+        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.APPS);
     }
 
     @Override
@@ -54,14 +54,14 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public void installCommand(NutsCommandAliasConfig command) {
         Path file = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        configManagerExt.getWorkspace().format().json().set(command).print(file);
+        configManagerExt.getWorkspace().json().set(command).print(file);
     }
 
     @Override
     public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = configManagerExt.getWorkspace().format().json().parse(file, NutsCommandAliasConfig.class);
+            NutsCommandAliasConfig c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -92,7 +92,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
                     try {
-                        c = configManagerExt.getWorkspace().format().json().parse(file, NutsCommandAliasConfig.class);
+                        c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
                         //
                     }

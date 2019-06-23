@@ -62,7 +62,7 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 context.sendResponseText(200,
                         context.getWorkspace()
-                                .format().id().builder()
+                                .id().builder()
                                 .setNamespace(context.getServerId())
                                 .setGroup("net.vpc.app.nuts")
                                 .setName("nuts-server")
@@ -248,7 +248,7 @@ public class NutsHttpServletFacade {
                     switch (name) {
                         case "descriptor":
                             try {
-                                descriptor = context.getWorkspace().format().descriptor().parse(info.getContent());
+                                descriptor = context.getWorkspace().descriptor().parse(info.getContent());
                             } finally {
                                 info.getContent().close();
                             }

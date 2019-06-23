@@ -40,7 +40,7 @@ public enum NutsStoreLocation {
      * defines the base directory relative to which user specific executable
      * files should be stored.
      */
-    PROGRAMS,
+    APPS,
     /**
      * defines the base directory relative to which user specific configuration
      * files should be stored. equivalent to $XDG_CONFIG_HOME on LINUX systems

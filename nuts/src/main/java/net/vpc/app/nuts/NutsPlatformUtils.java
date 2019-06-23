@@ -60,13 +60,13 @@ public class NutsPlatformUtils {
 
     public static String getPlatformOsGlobalHome(NutsStoreLocation location, String id) {
         switch (location) {
-            case PROGRAMS: {
+            case APPS: {
                 switch (getPlatformOsFamily()) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/opt/nuts/programs/" + id;
+                        return "/opt/nuts/apps/" + id;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
@@ -264,7 +264,7 @@ public class NutsPlatformUtils {
         } else {
             switch (folderType) {
                 case VAR:
-                case PROGRAMS:
+                case APPS:
                 case LIB: {
                     switch (storeLocationLayout) {
                         case WINDOWS: {

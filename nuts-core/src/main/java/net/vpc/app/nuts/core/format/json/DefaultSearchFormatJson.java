@@ -53,7 +53,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (index > 0) {
             getWriter().print(", ");
         }
-        getWriter().printf("%N%n", getWorkspace().format().json().compact(isCompact()).set(object).format());
+        getWriter().printf("%N%n", getWorkspace().json().compact(isCompact()).set(object).format());
         getWriter().flush();
     }
 

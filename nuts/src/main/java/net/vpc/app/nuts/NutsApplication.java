@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Nuts Application is the Top class to be handled by nuts as rich console
+ * Nuts Application is the Top Level class to be handled by nuts as rich console
  * application. By default NutsApplication classes :
  * <ul>
  * <li>have a nutsApplication=true in their descriptor file</li>
@@ -47,7 +47,7 @@ package net.vpc.app.nuts;
  * <li>have many default options enabled (such as --help, --version, --json,
  * --table, etc.) and thus support natively multi output channels</li>
  * </ul>
- * Typically a Nuts Application has follows this code pattern :
+ * Typically a Nuts Application follows this code pattern :
  * <pre>
  *   public class MyApplication extends NutsApplication{
  *     public static void main(String[] args) {
@@ -57,33 +57,33 @@ package net.vpc.app.nuts;
  *     // do the main staff in launch method
  *     public void run(NutsApplicationContext appContext) {
  *         boolean myBooleanOption=false;
- *         NutsCommand cmdLine=appContext.getCommandLine()
+ *         NutsCommandLine cmdLine=appContext.getCommandLine()
  *         boolean boolOption=false;
  *         String stringOption=null;
  *         Argument a;
  *         while(cmdLine.hasNext()){
- *             if(appContext.configure(cmd)){
+ *             if(appContext.configureFirst(cmdLine)){
  *                 //do nothing
  *             }else {
- *                  a=cmd.peek();
+ *                  a=cmdLine.peek();
  *                  switch(a.getStringKey())[
  *                      case "-o": case "--option":{
- *                          boolOption=cmd.nextBoolean().getBooleanValue();
+ *                          boolOption=cmdLine.nextBoolean().getBooleanValue();
  *                          break;
  *                      }
  *                      case "-n": case "--name":{
- *                          stringOption=cmd.nextString().getStringValue();
+ *                          stringOption=cmdLine.nextString().getStringValue();
  *                          break;
  *                      }
  *                      default:{
- *                          cmd.unexpectedArgument();
+ *                          cmdLine.unexpectedArgument();
  *                      }
  *                  }
  *             }
  *         }
  *         // test if application is running in exec mode
  *         // (and not in autoComplete mode)
- *         if(cmd.isExecMode()){
+ *         if(cmdLine.isExecMode()){
  *              //do the good staff here
  *         }
  *     }
@@ -117,7 +117,7 @@ public abstract class NutsApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     public void run(String[] args) {
-        run(null, args);
+        run((NutsWorkspace) null, args);
     }
 
     /**

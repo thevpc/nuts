@@ -38,7 +38,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCommandAliasFactoryConfig implements Serializable{
+public class NutsCommandAliasFactoryConfig implements Serializable {
 
     /**
      * Factory id (unique identifier in the workspace)

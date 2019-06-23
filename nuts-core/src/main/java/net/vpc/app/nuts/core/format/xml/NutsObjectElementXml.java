@@ -68,7 +68,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
         if (xml != null) {
             return xml;
         }
-        return context.getWorkspace().format().xml();
+        return context.getWorkspace().xml();
     }
 
     @Override

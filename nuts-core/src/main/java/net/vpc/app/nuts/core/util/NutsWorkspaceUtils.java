@@ -302,7 +302,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
         NutsIdFormat f = (NutsIdFormat) ws.userProperties().get(k);
         if (f == null) {
-            f = ws.format().id();
+            f = ws.id();
             ws.userProperties().put(k, f);
         }
         return f;
@@ -312,7 +312,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.userProperties().get(k);
         if (f == null) {
-            f = ws.format().descriptor();
+            f = ws.descriptor();
             ws.userProperties().put(k, f);
         }
         return f;

@@ -133,7 +133,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         .setExecutor(new NutsExecutorDescriptor(BASH))
                         .build();
             }
-            return ws.format().descriptor().parse(comment.getValidString());
+            return ws.descriptor().parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

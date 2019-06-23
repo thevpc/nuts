@@ -43,7 +43,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     @Override
     public NutsFetchCommand setId(String id) {
-        this.id = ws.format().id().parseRequired(id);
+        this.id = ws.id().parseRequired(id);
         return this;
     }
 
@@ -409,7 +409,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             Map<String, String> map = null;
             try {
                 if (Files.isRegularFile(f)) {
-                    map = ws.format().json().parse(f, Map.class);
+                    map = ws.json().parse(f, Map.class);
                 }
             } catch (Exception ex) {
                 //
@@ -430,7 +430,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.format().json().set(map).print(f);
+                        ws.json().set(map).print(f);
                     } catch (Exception ex) {
                         //
                     }

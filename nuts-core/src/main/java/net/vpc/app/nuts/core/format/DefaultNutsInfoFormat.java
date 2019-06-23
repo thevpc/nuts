@@ -93,7 +93,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        NutsObjectFormat m = ws.format().object().session(getValidSession()).value(r);
+        NutsObjectFormat m = ws.object().session(getValidSession()).value(r);
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {

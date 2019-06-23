@@ -42,7 +42,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/allVersions"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.APPS + "/allVersions"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
@@ -50,9 +50,9 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().format().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().format().id().parse(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().id().parse(s.get("stringId").toString()))
                     .collect(Collectors.toList());
         } catch (UncheckedIOException e) {
             setInaccessible();
@@ -65,13 +65,13 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "?repositoryUuid=" + repository.getUuid();
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.APPS + "?repositoryUuid=" + repository.getUuid();
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().format().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().format().id().parse(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().id().parse(s.get("stringId").toString()))
                     .filter(filter != null ? new Predicate<NutsId>() {
                         @Override
                         public boolean test(NutsId t) {
@@ -100,7 +100,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/delete"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.APPS + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),
@@ -121,7 +121,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.COMPONENTS + "/addData"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.APPS + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),

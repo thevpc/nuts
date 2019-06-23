@@ -53,7 +53,7 @@ public class Test06_UpateTest {
         NutsRepository updateRepo1 = uws.config().getRepository("local", false);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         System.out.println(updateRepo1.config().getStoreLocationStrategy());
-        uws.format().info().println();
+        uws.info().println();
         System.out.println("\n------------------------------------------");
         NutsWorkspace nws = Nuts.openWorkspace(
                 "--workspace", workpacePath,
@@ -64,7 +64,7 @@ public class Test06_UpateTest {
         nws.config().addRepository(new NutsCreateRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
-        nws.format().info().showRepositories().println();
+        nws.info().showRepositories().println();
         System.out.println("\n------------------------------------------");
 
         NutsRepository r = nws.config().getRepository("temp", false);

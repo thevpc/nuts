@@ -266,9 +266,9 @@ public class FormattableNutsId {
                 }
                 return "@@nobody@@";
             }
-            case PROGRAMS_FOLDER: {
+            case APPS_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS));
+                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.APPS));
                 }
                 return "@@nobody@@";
             }

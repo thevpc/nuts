@@ -126,7 +126,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 return f;
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.format().json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.json();
         return create(json.convert(o, JsonElement.class), context);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }

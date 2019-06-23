@@ -295,14 +295,14 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     @Override
     public NutsExecCommand grabOutputString() {
         // DO NOT CALL setOut :: setOut(new SPrintStream());
-        this.out=new SPrintStream();
+        this.out = new SPrintStream();
         return this;
     }
 
     @Override
     public NutsExecCommand grabErrorString() {
         // DO NOT CALL setOut :: setErr(new SPrintStream());
-        this.err=new SPrintStream();
+        this.err = new SPrintStream();
         return this;
     }
 
@@ -591,6 +591,22 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         return this;
     }
 
+    private String getExtraErrorMessage() {
+        if (isRedirectErrorStream()) {
+            if (isGrabOutputString()) {
+                return getOutputString();
+            }
+        } else {
+            if (isGrabErrorString()) {
+                return getErrorString();
+            }
+            if (isGrabOutputString()) {
+                return getOutputString();
+            }
+        }
+        return null;
+    }
+
     @Override
     public NutsExecCommand run() {
         NutsExecutableInfoExt exec = (NutsExecutableInfoExt) which();
@@ -598,11 +614,25 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         try {
             exec.execute();
         } catch (NutsExecutionException ex) {
-            result = ex;
+            String p = getExtraErrorMessage();
+            if (p != null) {
+                result = new NutsExecutionException(ws,
+                        "Execution Failed with code " + ex.getExitCode() + " and message : " + p,
+                        ex, ex.getExitCode());
+            } else {
+                result = ex;
+            }
         } catch (Exception ex) {
-            result = new NutsExecutionException(ws, ex, 244);
+            String p = getExtraErrorMessage();
+            if (p != null) {
+                result = new NutsExecutionException(ws,
+                        "Execution Failed with code " + 244 + " and message : " + p,
+                        ex, 244);
+            } else {
+                result = new NutsExecutionException(ws, ex, 244);
+            }
         }
-        if (result != null) {
+        if (result != null && failFast) {
             throw result;
 //            checkFailFast(result.getExitCode());
         }
@@ -788,7 +818,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 //    }
     protected NutsExecutableInfoExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
         NutsDefinition def = null;
-        NutsId nid = ws.format().id().parse(commandName);
+        NutsId nid = ws.id().parse(commandName);
         NutsSession searchSession = session.copy().trace(false);
         List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
                 .defaultVersions()
@@ -870,7 +900,6 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
 //            this.out = s;
 //        }
 //    }
-
     private static class SPrintStream extends PrintStream {
 
         private ByteArrayOutputStream out;

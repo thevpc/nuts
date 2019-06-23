@@ -52,7 +52,7 @@ public final class JavaExecutorOptions {
         this.dir = dir;
         this.execArgs = executorOptions;
         List<String> classPath0 = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = getWorkspace().format().id().setOmitNamespace(true);
+        NutsIdFormat nutsIdFormat = getWorkspace().id().setOmitNamespace(true);
         //will accept all -- and - based options!
         NutsCommandLine cmdLine = getWorkspace().commandLine().setArgs(getExecArgs());
         NutsArgument a;

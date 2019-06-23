@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -70,6 +69,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
      * runtime component dependencies id list (; separated)
      */
     private String runtimeDependencies;
+
+    /**
+     *
+     */
+    private String extensionDependencies;
 
     /**
      * repositories list (; separated) where to look for runtime dependencies
@@ -152,6 +156,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.apiVersion = context.getApiId().getVersion().getValue();
             this.runtimeId = context.getRuntimeId().getLongName();
             this.runtimeDependencies = context.getRuntimeDependencies();
+            this.extensionDependencies = context.getExtensionDependencies();
             this.repositories = context.getRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
@@ -172,6 +177,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
             this.runtimeDependencies = other.getRuntimeDependencies();
+            this.extensionDependencies = other.getExtensionDependencies();
             this.repositories = other.getRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
@@ -228,6 +234,15 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
     public NutsBootConfig setRuntimeDependencies(String runtimeDependencies) {
         this.runtimeDependencies = runtimeDependencies;
+        return this;
+    }
+
+    public String getExtensionDependencies() {
+        return extensionDependencies;
+    }
+
+    public NutsBootConfig setExtensionDependencies(String extensionDependencies) {
+        this.extensionDependencies = extensionDependencies;
         return this;
     }
 
@@ -299,6 +314,22 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
     public String getStoreLocation(NutsStoreLocation folder) {
         return this.storeLocations[folder.ordinal()];
+    }
+
+    public void setDefaultHomeLocations(String[] defaultHomeLocations) {
+        this.defaultHomeLocations = defaultHomeLocations;
+    }
+
+    public void setStoreLocations(String[] storeLocations) {
+        this.storeLocations = storeLocations;
+    }
+
+    public void setHomeLocations(String[] homeLocations) {
+        this.homeLocations = homeLocations;
+    }
+
+    public String[] getStoreLocation() {
+        return this.storeLocations;
     }
 
     public NutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {

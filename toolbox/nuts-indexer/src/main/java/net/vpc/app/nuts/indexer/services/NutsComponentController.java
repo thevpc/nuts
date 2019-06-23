@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("indexer/"+NutsConstants.Folders.COMPONENTS)
+@RequestMapping("indexer/"+NutsConstants.Folders.APPS)
 public class NutsComponentController {
 
     @Autowired
     private DataService dataService;
-    private static final Logger logger = LoggerFactory.getLogger(NutsComponentController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NutsComponentController.class);
 
         @Autowired
     private NutsWorkspaceListManagerPool listManagerPool;
@@ -45,7 +45,7 @@ public class NutsComponentController {
     public ResponseEntity<List<Map<String, Object>>> getAll(@RequestParam("repositoryUuid") String repositoryUuid) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
-            logger.info("Getting all components data for subscriber " + subscriber.cacheFolderName());
+            LOG.info("Getting all components data for subscriber " + subscriber.cacheFolderName());
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
@@ -56,7 +56,7 @@ public class NutsComponentController {
                 return ResponseEntity.ok(resData);
             }
         }
-        logger.error("Error in getting all components data for subscriber " + repositoryUuid);
+        LOG.error("Error in getting all components data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
@@ -75,12 +75,12 @@ public class NutsComponentController {
                                                                      @RequestParam("all") Boolean all) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
-            logger.info("Getting dependencies of component " + name + " data for subscriber " + subscriber.cacheFolderName());
+            LOG.info("Getting dependencies of component " + name + " data for subscriber " + subscriber.cacheFolderName());
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.format().id().builder()
+                NutsId id = ws.id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -101,7 +101,7 @@ public class NutsComponentController {
                 return ResponseEntity.ok(result);
             }
         }
-        logger.error("Error in getting dependencies of component " + name + " data for subscriber " + repositoryUuid);
+        LOG.error("Error in getting dependencies of component " + name + " data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
@@ -118,12 +118,12 @@ public class NutsComponentController {
                                                                     @RequestParam("alternative") String alternative) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
-            logger.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
+            LOG.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.format().id().builder()
+                NutsId id = ws.id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -139,7 +139,7 @@ public class NutsComponentController {
                 return ResponseEntity.ok(resData);
             }
         }
-        logger.error("Error in getting all versions of component " + name + " data for subscriber " + repositoryUuid);
+        LOG.error("Error in getting all versions of component " + name + " data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
@@ -157,13 +157,13 @@ public class NutsComponentController {
                                                    @RequestParam("alternative") String alternative) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
-            logger.info("Deleting the component " + name + " data for subscriber " + subscriber.cacheFolderName());
+            LOG.info("Deleting the component " + name + " data for subscriber " + subscriber.cacheFolderName());
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        ws.format().id().builder()
+                        ws.id().builder()
                                 .setName(name)
                                 .setNamespace(namespace)
                                 .setGroup(group)
@@ -179,7 +179,7 @@ public class NutsComponentController {
                 return ResponseEntity.ok(true);
             }
         }
-        logger.error("Error in deleting the component " + name + " data for subscriber " + repositoryUuid);
+        LOG.error("Error in deleting the component " + name + " data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
@@ -197,12 +197,12 @@ public class NutsComponentController {
                                                @RequestParam("alternative") String alternative) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
-            logger.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
+            LOG.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = ws.format().id().builder()
+                NutsId id = ws.id().builder()
                         .setName(name)
                         .setNamespace(namespace)
                         .setGroup(group)
@@ -228,7 +228,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.format().json().set(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
+                        data.put("dependencies", ws.json().set(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
 
                         this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                     } else {
@@ -238,7 +238,7 @@ public class NutsComponentController {
                 return ResponseEntity.ok(true);
             }
         }
-        logger.error("Error in deleting the component " + name + " data for subscriber " + repositoryUuid);
+        LOG.error("Error in deleting the component " + name + " data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
@@ -247,18 +247,18 @@ public class NutsComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = ws.format().json().parse(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = ws.json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.id().parse(s)));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = ws.format().json().parse(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = ws.json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.format().id().parse(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.id().parse(s)));
                 }
                 d.put("allDependencies", allDependencies);
             }

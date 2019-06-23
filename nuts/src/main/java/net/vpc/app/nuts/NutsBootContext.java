@@ -40,7 +40,7 @@ import java.nio.file.Path;
 public interface NutsBootContext {
 
     String getUuid();
-    
+
     String getName();
 
     String getWorkspace();
@@ -55,7 +55,7 @@ public interface NutsBootContext {
      * all store locations ordered according NutsStoreFolder constant
      * definitions example of order is :
      * <pre>
-     *  PROGRAMS
+     *  APPS
      *  CONFIG
      *  ....
      * </pre>
@@ -69,13 +69,13 @@ public interface NutsBootContext {
      * NutsStoreLocationLayout constant definitions. Note that
      * NutsStoreLocationLayout. example of order is :
      * <pre>
-     *  SYSTEM  PROGRAMS
+     *  SYSTEM  APPS
      *  SYSTEM  CONFIG
      *  ....
-     *  WINDOWS PROGRAMS
+     *  WINDOWS APPS
      *  WINDOWS CONFIG
      *  ....
-     *  LINUX   PROGRAMS
+     *  LINUX   APPS
      *  LINUX   CONFIG
      *  ....
      * </pre>
@@ -83,6 +83,7 @@ public interface NutsBootContext {
      * @return array of available home locations
      */
     String[] getHomeLocations();
+
     String[] getDefaultHomeLocations();
 
     String getStoreLocation(NutsStoreLocation folderType);
@@ -94,6 +95,8 @@ public interface NutsBootContext {
     NutsId getRuntimeId();
 
     String getRuntimeDependencies();
+
+    String getExtensionDependencies();
 
     String getRepositories();
 

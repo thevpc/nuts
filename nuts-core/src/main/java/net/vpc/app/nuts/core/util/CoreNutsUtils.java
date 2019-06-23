@@ -413,12 +413,10 @@ public class CoreNutsUtils {
         return child;
     }
 
-
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
     }
-
 
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
@@ -479,93 +477,15 @@ public class CoreNutsUtils {
     }
 
     public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
-        bconfig.setStoreLocation(NutsStoreLocation.PROGRAMS, wconfig.getProgramsStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.CONFIG, wconfig.getConfigStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.VAR, wconfig.getVarStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.LOG, wconfig.getLogStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.TEMP, wconfig.getTempStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.CACHE, wconfig.getCacheStoreLocation());
-        bconfig.setStoreLocation(NutsStoreLocation.LIB, wconfig.getLibStoreLocation());
-
-        bconfig.setHomeLocation(null, NutsStoreLocation.PROGRAMS, wconfig.getProgramsSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.CONFIG, wconfig.getConfigSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.VAR, wconfig.getVarSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.LOG, wconfig.getLogSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.TEMP, wconfig.getTempSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.CACHE, wconfig.getCacheSystemHome());
-        bconfig.setHomeLocation(null, NutsStoreLocation.LIB, wconfig.getLibSystemHome());
-
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CONFIG, wconfig.getConfigWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.VAR, wconfig.getVarWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LOG, wconfig.getLogWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.TEMP, wconfig.getTempWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CACHE, wconfig.getCacheWindowsHome());
-        bconfig.setHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LIB, wconfig.getLibWindowsHome());
-
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CONFIG, wconfig.getConfigMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.VAR, wconfig.getVarMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LOG, wconfig.getLogMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.TEMP, wconfig.getTempMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CACHE, wconfig.getCacheMacOsHome());
-        bconfig.setHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LIB, wconfig.getLibMacOsHome());
-
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.PROGRAMS, wconfig.getProgramsLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CONFIG, wconfig.getConfigLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.VAR, wconfig.getVarLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LOG, wconfig.getLogLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.TEMP, wconfig.getTempLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CACHE, wconfig.getCacheLinuxHome());
-        bconfig.setHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LIB, wconfig.getLibLinuxHome());
+        bconfig.setStoreLocations(nonNullIfEmpty(wconfig.getStoreLocations(), NutsStoreLocation.values().length));
+        bconfig.setDefaultHomeLocations(nonNullIfEmpty(wconfig.getDefaultHomeLocations(), NutsStoreLocation.values().length));
+        bconfig.setHomeLocations(nonNullIfEmpty(wconfig.getHomeLocations(), NutsStoreLocation.values().length * NutsOsFamily.values().length));
     }
 
     public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
-        wconfig.setProgramsStoreLocation(options.getStoreLocation(NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigStoreLocation(options.getStoreLocation(NutsStoreLocation.CONFIG));
-        wconfig.setVarStoreLocation(options.getStoreLocation(NutsStoreLocation.VAR));
-        wconfig.setLogStoreLocation(options.getStoreLocation(NutsStoreLocation.LOG));
-        wconfig.setTempStoreLocation(options.getStoreLocation(NutsStoreLocation.TEMP));
-        wconfig.setCacheStoreLocation(options.getStoreLocation(NutsStoreLocation.CACHE));
-        wconfig.setLibStoreLocation(options.getStoreLocation(NutsStoreLocation.LIB));
-        wconfig.setRunStoreLocation(options.getStoreLocation(NutsStoreLocation.RUN));
-
-        wconfig.setProgramsSystemHome(options.getHomeLocation(null, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigSystemHome(options.getHomeLocation(null, NutsStoreLocation.CONFIG));
-        wconfig.setVarSystemHome(options.getHomeLocation(null, NutsStoreLocation.VAR));
-        wconfig.setLogSystemHome(options.getHomeLocation(null, NutsStoreLocation.LOG));
-        wconfig.setTempSystemHome(options.getHomeLocation(null, NutsStoreLocation.TEMP));
-        wconfig.setCacheSystemHome(options.getHomeLocation(null, NutsStoreLocation.CACHE));
-        wconfig.setLibSystemHome(options.getHomeLocation(null, NutsStoreLocation.LIB));
-        wconfig.setRunSystemHome(options.getHomeLocation(null, NutsStoreLocation.RUN));
-
-        wconfig.setProgramsWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CONFIG));
-        wconfig.setVarWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.VAR));
-        wconfig.setLogWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LOG));
-        wconfig.setTempWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.TEMP));
-        wconfig.setCacheWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.CACHE));
-        wconfig.setLibWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.LIB));
-        wconfig.setRunWindowsHome(options.getHomeLocation(NutsOsFamily.WINDOWS, NutsStoreLocation.RUN));
-
-        wconfig.setProgramsMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CONFIG));
-        wconfig.setVarMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.VAR));
-        wconfig.setLogMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LOG));
-        wconfig.setTempMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.TEMP));
-        wconfig.setCacheMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.CACHE));
-        wconfig.setLibMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.LIB));
-        wconfig.setRunMacOsHome(options.getHomeLocation(NutsOsFamily.MACOS, NutsStoreLocation.RUN));
-
-        wconfig.setProgramsLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.PROGRAMS));
-        wconfig.setConfigLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CONFIG));
-        wconfig.setVarLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.VAR));
-        wconfig.setLogLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LOG));
-        wconfig.setTempLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.TEMP));
-        wconfig.setCacheLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.CACHE));
-        wconfig.setLibLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.LIB));
-        wconfig.setRunLinuxHome(options.getHomeLocation(NutsOsFamily.LINUX, NutsStoreLocation.RUN));
-
+        wconfig.setStoreLocations(nullIfEmpty(wconfig.getStoreLocations(), NutsStoreLocation.values().length));
+        wconfig.setDefaultHomeLocations(nullIfEmpty(wconfig.getDefaultHomeLocations(), NutsStoreLocation.values().length));
+        wconfig.setHomeLocations(nullIfEmpty(wconfig.getHomeLocations(), NutsStoreLocation.values().length * NutsOsFamily.values().length));
     }
 
     public static void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
@@ -597,17 +517,17 @@ public class CoreNutsUtils {
     }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
-        NutsIdFormat idFormat = ws.format().id();
+        NutsIdFormat idFormat = ws.id();
         return idFormat.set(id).format();
     }
 
     public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.format().id();
+        NutsIdFormat idFormat = ws.id();
         return idFormat.set(id.getId()).format();
     }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.format().id();
+        NutsIdFormat idFormat = ws.id();
         return idFormat.set(id.getId()).toString();
     }
 
@@ -635,8 +555,8 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", ws.format().descriptor().set(def.getDescriptor()).format());
-            x.put("effective-descriptor", ws.format().descriptor().set(
+            x.put("descriptor", ws.descriptor().set(def.getDescriptor()).format());
+            x.put("effective-descriptor", ws.descriptor().set(
                     NutsWorkspaceUtils.getEffectiveDescriptor(ws, def)
             ).format());
         }
@@ -660,7 +580,7 @@ public class CoreNutsUtils {
     public static NutsIterableOutput getValidOutputFormat(NutsSession session) {
         NutsIterableOutput f = session.getIterableOutput();
         if (f == null) {
-            return session.getWorkspace().format().iter().session(session);
+            return session.getWorkspace().iter().session(session);
         }
         return f;
     }
@@ -739,4 +659,53 @@ public class CoreNutsUtils {
         return pattern.getLongName().equals(id.getLongName());
     }
 
+    public static String[] nullIfEmpty(String[] a, int size) {
+        if (a == null) {
+            return null;
+        }
+        boolean ok = false;
+        for (String string : a) {
+            if (string != null) {
+                ok = true;
+                break;
+            }
+        }
+        if (ok) {
+            if (a.length == size) {
+                return a;
+            }
+            String[] aa = new String[size];
+            System.arraycopy(a, 0, aa, 0, size);
+            return aa;
+        }
+        return null;
+    }
+
+    public static String getArrItem(String[] a, int index) {
+        return (a == null || a.length <= index) ? null : a[index];
+    }
+
+    public static String[] nonNullIfEmpty(String[] a, int size) {
+        if (a == null) {
+            return new String[size];
+        }
+        if (a.length == size) {
+            return a;
+        }
+        String[] aa = new String[size];
+        System.arraycopy(a, 0, aa, 0, size);
+        return aa;
+    }
+
+    public static int getNutsApiVersionOrdinalNumber(String s) {
+        try {
+            int a = 0;
+            for (String part : s.split("\\.")) {
+                a = a * 100 + Integer.parseInt(part);
+            }
+            return a;
+        } catch (Exception ex) {
+            return -1;
+        }
+    }
 }

@@ -62,13 +62,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
         if (org.w3c.dom.Node.class.isAssignableFrom(cls)) {
             if (org.w3c.dom.Document.class.isAssignableFrom(cls)) {
-                return (T) ws.format().xml().toXmlDocument(element);
+                return (T) ws.xml().toXmlDocument(element);
             }
             if (org.w3c.dom.Element.class.isAssignableFrom(cls)) {
-                return (T) ws.format().xml().toXmlElement(element, null);
+                return (T) ws.xml().toXmlElement(element, null);
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.format().json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.json();
         return json.convert(element, cls);
     }
 
@@ -90,7 +90,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public void print(Writer out) {
-        getWorkspace().format().json().set(value).print(out);
+        getWorkspace().json().set(value).print(out);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public void print(Writer out) {
-        ws.format().json().compact(isCompact()).set(desc).print(out);
+        ws.json().compact(isCompact()).set(desc).print(out);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return ws.format().json().parse(rr, NutsDescriptor.class);
+            return ws.json().parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

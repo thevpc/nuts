@@ -47,7 +47,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                         })
                         .collect(Collectors.toList());
                 if (context.session().isPlainOut()) {
-                    context.getWorkspace().format().props()
+                    context.getWorkspace().props()
                             .session(context.getSession())
                             .model(
                                     r.stream().collect(Collectors.toMap(

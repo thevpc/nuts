@@ -43,8 +43,8 @@ public interface NutsWorkspaceExtensionManager {
     /**
      * find all available extensions for the current workspace
      *
-     * @param session
-     * @return
+     * @param session session
+     * @return all available extensions for the current workspace
      */
     List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session);
 
@@ -62,7 +62,7 @@ public interface NutsWorkspaceExtensionManager {
 
     List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session);
 
-    NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session);
+//    NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session);
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
@@ -106,12 +106,12 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsId[] getExtensions();
 
-    boolean addExtension(NutsId extensionId);
+//    boolean addExtension(NutsId extensionId);
 
-    boolean removeExtension(NutsId extensionId);
+//    boolean removeExtension(NutsId extensionId);
 
-    boolean updateExtension(NutsId extensionId);
+//    boolean updateExtension(NutsId extensionId);
 
-    boolean containsExtension(NutsId extensionId);
+//    boolean containsExtension(NutsId extensionId);
 
 }

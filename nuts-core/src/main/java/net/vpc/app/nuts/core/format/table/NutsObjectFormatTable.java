@@ -33,7 +33,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.format().element().toElement(value));
+        return super.setValue(ws.element().toElement(value));
     }
 
     @Override
@@ -93,15 +93,15 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             case UNKNWON: {
                 List<NutsElement> a = new ArrayList<>();
                 a.add(value);
-                print(w, ws.format().element().toElement(a));
+                print(w, ws.element().toElement(a));
                 break;
             }
             case OBJECT: {
-                print(w, ws.format().element().toElement(value.object().children()));
+                print(w, ws.element().toElement(value.object().children()));
                 break;
             }
             case ARRAY: {
-                NutsTableFormat t = ws.format().table();
+                NutsTableFormat t = ws.table();
                 t.configure(true, getExtraConfigArray());
                 LinkedHashSet<String> columns = new LinkedHashSet<>();
                 resolveColumns(value, columns);

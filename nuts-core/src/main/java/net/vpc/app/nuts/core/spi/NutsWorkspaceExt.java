@@ -81,6 +81,8 @@ public interface NutsWorkspaceExt {
     void fireOnRemoveRepository(NutsWorkspaceEvent event);
 
     void fireOnUninstall(NutsInstallEvent event);
+    
+    public void deployBoot(NutsSession session, NutsId def,boolean withDependencies);
 
     /**
      * creates a zip file based on the folder. The folder should contain a

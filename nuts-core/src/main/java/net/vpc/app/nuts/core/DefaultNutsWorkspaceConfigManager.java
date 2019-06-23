@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.io.ByteArrayInputStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -38,15 +39,20 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.compat.NutsWorkspaceConfig502;
 import net.vpc.app.nuts.core.repos.NutsRepositoryRegistryHelper;
 import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
@@ -447,7 +453,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
-        NutsVersionFilter javaVersionFilter = ws.format().version().parseVersionFilter(requestedVersion);
+        NutsVersionFilter javaVersionFilter = ws.version().parseFilter(requestedVersion);
         NutsSdkLocation best = null;
         final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks("java")) {
@@ -500,11 +506,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             config.setSdk(plainSdks);
             Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-            if (!Files.isRegularFile(file)
-                    || CoreStringUtils.isBlank(config.getCreateApiVersion())) {
+            if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
                 config.setCreateApiVersion(getApiId().getVersion().getValue());
             }
-            ws.format().json().set(config).print(file);
+            ws.json().set(config).print(file);
             configurationChanged = false;
             ok = true;
         }
@@ -567,7 +572,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    @Override
 //    public Path getBootNutsJar() {
 //        try {
-//            NutsId baseId = ws.format().id().parseRequired(NutsConstants.Ids.NUTS_API);
+//            NutsId baseId = ws.id().parseRequired(NutsConstants.Ids.NUTS_API);
 //            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {
@@ -1005,14 +1010,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public Path getStoreLocation(NutsStoreLocation folderType) {
         if (folderType == null) {
-            folderType = NutsStoreLocation.PROGRAMS;
+            folderType = NutsStoreLocation.APPS;
         }
         return ws.io().path(runningBootConfig.getStoreLocation(folderType));
     }
 
     @Override
     public Path getStoreLocation(String id, NutsStoreLocation folderType) {
-        return getStoreLocation(ws.format().id().parse(id), folderType);
+        return getStoreLocation(ws.id().parse(id), folderType);
     }
 
     @Override
@@ -1024,7 +1029,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         switch (folderType) {
             case CACHE:
             case CONFIG:
-                return storeLocation.resolve(NutsConstants.Folders.COMPONENTS).resolve(getDefaultIdBasedir(id));
+                return storeLocation.resolve(NutsConstants.Folders.APPS).resolve(getDefaultIdBasedir(id));
         }
         return storeLocation.resolve(getDefaultIdBasedir(id));
     }
@@ -1037,7 +1042,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformOs() {
         if (platformOs == null) {
-            platformOs = ws.format().id().parse(CorePlatformUtils.getPlatformOs());
+            platformOs = ws.id().parse(CorePlatformUtils.getPlatformOs());
         }
         return platformOs;
     }
@@ -1045,7 +1050,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformOsDist() {
         if (platformOsdist == null) {
-            platformOsdist = ws.format().id().parse(CorePlatformUtils.getPlatformOsDist());
+            platformOsdist = ws.id().parse(CorePlatformUtils.getPlatformOsDist());
         }
         return platformOsdist;
     }
@@ -1063,7 +1068,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getPlatformArch() {
         if (platformArch == null) {
-            platformArch = ws.format().id().parse(CorePlatformUtils.getPlatformArch());
+            platformArch = ws.id().parse(CorePlatformUtils.getPlatformArch());
         }
         return platformArch;
     }
@@ -1127,212 +1132,27 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (folderType == null) {
             throw new NutsIllegalArgumentException(ws, "Invalid store root folder null");
         }
-        switch (folderType) {
-            case PROGRAMS: {
-                config.setProgramsStoreLocation(location);
-                break;
-            }
-            case CACHE: {
-                config.setCacheStoreLocation(location);
-                break;
-            }
-            case CONFIG: {
-                config.setConfigStoreLocation(location);
-                break;
-            }
-            case LOG: {
-                config.setLogStoreLocation(location);
-                break;
-            }
-            case TEMP: {
-                config.setTempStoreLocation(location);
-                break;
-            }
-            case VAR: {
-                config.setVarStoreLocation(location);
-                break;
-            }
-            case LIB: {
-                config.setLibStoreLocation(location);
-                break;
-            }
-            default: {
-                throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-            }
-        }
+        String[] loc = CoreNutsUtils.nonNullIfEmpty(config.getStoreLocations(), NutsStoreLocation.values().length);
+        loc[folderType.ordinal()] = location;
+        config.setStoreLocations(loc);
         fireConfigurationChanged();
     }
 
     @Override
-    public void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location) {
+    public void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String location) {
         if (layout == null) {
-            switch (folderType) {
-                case PROGRAMS: {
-                    config.setProgramsSystemHome(location);
-                    break;
-                }
-                case CACHE: {
-                    config.setCacheSystemHome(location);
-                    break;
-                }
-                case CONFIG: {
-                    config.setConfigSystemHome(location);
-                    break;
-                }
-                case LOG: {
-                    config.setLogSystemHome(location);
-                    break;
-                }
-                case TEMP: {
-                    config.setTempSystemHome(location);
-                    break;
-                }
-                case VAR: {
-                    config.setVarSystemHome(location);
-                    break;
-                }
-                case LIB: {
-                    config.setLibSystemHome(location);
-                    break;
-                }
-                case RUN: {
-                    config.setRunSystemHome(location);
-                    break;
-                }
-                default: {
-                    throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-                }
-            }
+            String[] loc = CoreNutsUtils.nonNullIfEmpty(config.getDefaultHomeLocations(), NutsStoreLocation.values().length);
+            loc[folder.ordinal()] = location;
+            config.setDefaultHomeLocations(loc);
+            fireConfigurationChanged();
+            return;
         }
-        if (folderType == null) {
+        if (folder == null) {
             throw new NutsIllegalArgumentException(ws, "Invalid store folder null");
         }
-        switch (layout) {
-            case WINDOWS: {
-                switch (folderType) {
-                    case PROGRAMS: {
-                        config.setProgramsWindowsHome(location);
-                        break;
-                    }
-                    case CACHE: {
-                        config.setCacheWindowsHome(location);
-                        break;
-                    }
-                    case CONFIG: {
-                        config.setConfigWindowsHome(location);
-                        break;
-                    }
-                    case LOG: {
-                        config.setLogWindowsHome(location);
-                        break;
-                    }
-                    case TEMP: {
-                        config.setTempWindowsHome(location);
-                        break;
-                    }
-                    case VAR: {
-                        config.setVarWindowsHome(location);
-                        break;
-                    }
-                    case LIB: {
-                        config.setLibWindowsHome(location);
-                        break;
-                    }
-                    case RUN: {
-                        config.setRunWindowsHome(location);
-                        break;
-                    }
-                    default: {
-                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-                    }
-                }
-                break;
-            }
-            case MACOS: {
-                switch (folderType) {
-                    case PROGRAMS: {
-                        config.setProgramsMacOsHome(location);
-                        break;
-                    }
-                    case CACHE: {
-                        config.setCacheMacOsHome(location);
-                        break;
-                    }
-                    case CONFIG: {
-                        config.setConfigMacOsHome(location);
-                        break;
-                    }
-                    case LOG: {
-                        config.setLogMacOsHome(location);
-                        break;
-                    }
-                    case TEMP: {
-                        config.setTempMacOsHome(location);
-                        break;
-                    }
-                    case VAR: {
-                        config.setVarMacOsHome(location);
-                        break;
-                    }
-                    case LIB: {
-                        config.setLibMacOsHome(location);
-                        break;
-                    }
-                    case RUN: {
-                        config.setRunMacOsHome(location);
-                        break;
-                    }
-                    default: {
-                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-                    }
-                }
-                break;
-            }
-            case LINUX: {
-                switch (folderType) {
-                    case PROGRAMS: {
-                        config.setProgramsLinuxHome(location);
-                        break;
-                    }
-                    case CACHE: {
-                        config.setCacheLinuxHome(location);
-                        break;
-                    }
-                    case CONFIG: {
-                        config.setConfigLinuxHome(location);
-                        break;
-                    }
-                    case LOG: {
-                        config.setLogLinuxHome(location);
-                        break;
-                    }
-                    case TEMP: {
-                        config.setTempLinuxHome(location);
-                        break;
-                    }
-                    case VAR: {
-                        config.setVarLinuxHome(location);
-                        break;
-                    }
-                    case LIB: {
-                        config.setLibLinuxHome(location);
-                        break;
-                    }
-                    case RUN: {
-                        config.setRunLinuxHome(location);
-                        break;
-                    }
-                    default: {
-                        throw new NutsIllegalArgumentException(ws, "Invalid folder type " + folderType);
-                    }
-                }
-                break;
-            }
-            default: {
-                throw new NutsIllegalArgumentException(ws, "Invalid layout " + layout);
-            }
-        }
-
+        String[] loc = CoreNutsUtils.nonNullIfEmpty(config.getHomeLocations(), NutsStoreLocation.values().length * NutsOsFamily.values().length);
+        loc[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = location;
+        config.setHomeLocations(loc);
         fireConfigurationChanged();
     }
 
@@ -1521,25 +1341,39 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     private NutsWorkspaceConfig parseConfigForAnyVersion(Path file) {
-        NutsWorkspaceConfig _config = ws.format().json().parse(file, NutsWorkspaceConfig.class);
-        String version = _config.getCreateApiVersion();
-        if (version == null) {
-            version = "0.5.6";
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(file);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
-        int buildNumber = getNutsApiVersionOrdinalNumber(version);
-        if (buildNumber < 502) {
-            //deprecated, will ignore
-            return _config;
+        try {
+            Map<String, Object> a_config0 = ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), Map.class);
+            String version = (String) a_config0.get("createApiVersion");
+            if (version == null) {
+                version = "0.5.6";
+            }
+            int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
+            if (buildNumber < 506) {
+                //deprecated, will ignore
+                return ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), NutsWorkspaceConfig502.class).toWorkspaceConfig();
+            }
+            return ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), NutsWorkspaceConfig.class);
+        } catch (RuntimeException ex) {
+            LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+            if (!ws.config().isReadOnly()) {
+                Path newfile = file.getParent().resolve("nuts-workspace-" + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()) + ".json");
+                LOG.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.toString());
+                try {
+                    Files.move(file, newfile);
+                } catch (IOException e) {
+                    throw new UncheckedIOException("Unable to load and re-create config file " + file.toString() + " : " + e.toString(), new IOException(ex));
+                }
+            } else {
+                throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
+            }
+            return null;
         }
-        return _config;
-    }
-
-    private static int getNutsApiVersionOrdinalNumber(String s) {
-        int a = 0;
-        for (String part : s.split("\\.")) {
-            a = a * 100 + Integer.parseInt(part);
-        }
-        return a;
     }
 
     public Map<String, List<NutsSdkLocation>> getSdk() {
@@ -1594,12 +1428,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsId getApiId() {
-        return ws.format().id().parse(getBootConfig().getApiId());
+        return ws.id().parse(getBootConfig().getApiId());
     }
 
     @Override
     public NutsId getRuntimeId() {
-        return ws.format().id().parse(getBootConfig().getRuntimeId());
+        return ws.id().parse(getBootConfig().getRuntimeId());
     }
 
     @Override

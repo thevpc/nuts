@@ -52,7 +52,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
             session.getWorkspace().security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
 //            if (session.getTerminal().ask()
 //                    .forBoolean("%N is not yet installed. Continue",
-//                            session.getWorkspace().format().id().set(def.getId().getLongNameId()).format()
+//                            session.getWorkspace().id().set(def.getId().getLongNameId()).format()
 //                    ).defaultValue(true).session(session).getBooleanValue()) {
                 session.getWorkspace().install().id(def.getId()).run();
 //            } else {

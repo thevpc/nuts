@@ -53,7 +53,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         Path f = getServerConfigPath();
-        context.getWorkspace().format().json().set(config).print(f);
+        context.getWorkspace().json().set(config).print(f);
         return this;
     }
 
@@ -86,7 +86,7 @@ public class LocalMysqlConfigService {
         String name = getName();
         Path f = getServerConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().format().json().parse(f, LocalMysqlConfig.class);
+            config = context.getWorkspace().json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -107,7 +107,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().format().json().set(getConfig()).print(out);
+        context.getWorkspace().json().set(getConfig()).print(out);
         return this;
     }
 

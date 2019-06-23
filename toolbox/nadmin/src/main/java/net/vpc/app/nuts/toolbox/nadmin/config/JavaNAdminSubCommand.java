@@ -81,7 +81,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java") != null) {
-            NutsTableFormat t = context.getWorkspace().format().table()
+            NutsTableFormat t = context.getWorkspace().table()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")

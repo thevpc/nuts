@@ -38,8 +38,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
             switch (from) {
                 case "home.config":
                     return ws.config().getHomeLocation(NutsStoreLocation.CONFIG).toString();
-                case "home.programs":
-                    return ws.config().getHomeLocation(NutsStoreLocation.PROGRAMS).toString();
+                case "home.apps":
+                    return ws.config().getHomeLocation(NutsStoreLocation.APPS).toString();
                 case "home.lib":
                     return ws.config().getHomeLocation(NutsStoreLocation.LIB).toString();
                 case "home.temp":
@@ -60,8 +60,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CONFIG);
                 case "lib":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LIB);
-                case "programs":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.PROGRAMS);
+                case "apps":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.APPS);
                 case "cache":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CACHE);
                 case "run":

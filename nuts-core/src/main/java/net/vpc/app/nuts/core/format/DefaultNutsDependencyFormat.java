@@ -114,7 +114,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public String format() {
-        return ws.format().id()
+        return ws.id()
                 .session(getSession())
                 .setValue(value.getId())
                 .setHighlightImportedGroup(isHighlightImportedGroup())

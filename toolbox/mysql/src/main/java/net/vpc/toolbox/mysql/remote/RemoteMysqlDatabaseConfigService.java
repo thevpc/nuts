@@ -53,7 +53,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().format().json().set(getConfig()).print(out);
+        context.getWorkspace().json().set(getConfig()).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
@@ -118,7 +118,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteTempPath = null;
         final SshAddress sshAddress = new SshAddress(prepareSshServer(cconfig.getServer()));
         final String searchResultString = execRemoteNuts("search --no-color --json net.vpc.app.nuts.toolbox:mysql --display temp-folder --installed --first");
-        List<Map> result = this.context.getWorkspace().format().json().parse(new StringReader(searchResultString), List.class);
+        List<Map> result = this.context.getWorkspace().json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new IllegalArgumentException("Mysql is not installed on the remote machine");
         }

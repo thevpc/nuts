@@ -104,8 +104,15 @@ public interface NutsElementFormat extends NutsFormat {
     /**
      * compile pathExpression into a valid NutsElementPath that helps filtering
      * elements tree.
-     *
-     * @param pathExpression
+     * JSONPath expressions refer to a JSON structure the same way as XPath expression are used with XML documents. 
+     * JSONPath expressions can use the dot notation and/or bracket  notations
+     *  .store.book[0].title
+     *  The trailing root is not necessary : 
+     *  .store.book[0].title
+     *  You can also use  bracket notation
+     *  store['book'][0].title
+     *  for input paths.
+     * @param pathExpression element path expression
      * @return Element Path filter
      */
     NutsElementPath compilePath(String pathExpression);

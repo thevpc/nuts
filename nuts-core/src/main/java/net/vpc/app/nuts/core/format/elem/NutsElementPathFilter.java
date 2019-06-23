@@ -179,7 +179,7 @@ public class NutsElementPathFilter {
 
         public ArrItemCollectorJsonPath(NutsSession session) {
             this.session = session;
-            builder = session.workspace().format().element().builder();
+            builder = session.workspace().element().builder();
         }
 
         @Override
@@ -643,7 +643,7 @@ public class NutsElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = session.workspace().format().json().set(value).format();
+            String v = session.workspace().json().set(value).format();
             if (u.contains(v)) {
                 return false;
             }

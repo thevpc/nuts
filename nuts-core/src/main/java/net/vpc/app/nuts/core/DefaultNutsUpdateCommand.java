@@ -57,6 +57,7 @@ import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsSearchCommand;
 import net.vpc.app.nuts.NutsStoreLocation;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
@@ -103,7 +104,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     @Override
     public NutsUpdateCommand addId(String id) {
-        return addId(id == null ? null : ws.format().id().parse(id));
+        return addId(id == null ? null : ws.id().parse(id));
     }
 
     @Override
@@ -152,7 +153,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
     @Override
     public NutsUpdateCommand removeId(String id) {
-        return removeId(ws.format().id().parse(id));
+        return removeId(ws.id().parse(id));
     }
 
     @Override
@@ -410,7 +411,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
         for (String extension : NutsWorkspaceExt.of(ws).getCompanionTools()) {
-            ext.add(ws.format().id().parse(extension).getSimpleNameId());
+            ext.add(ws.id().parse(extension).getSimpleNameId());
         }
         return ext;
     }
@@ -461,7 +462,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             bootVersion = this.getApiVersion();
         }
         if (this.isUpdateApi() || !CoreStringUtils.isBlank(this.getApiVersion())) {
-            apiUpdate = checkCoreUpdate(ws.format().id().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session);
+            apiUpdate = checkCoreUpdate(ws.id().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session);
             if (apiUpdate.isUpdateAvailable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion().getValue();
                 allUpdates.put(NutsConstants.Ids.NUTS_API, apiUpdate);
@@ -473,7 +474,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsUpdateResult runtimeUpdate = null;
         if (this.isUpdateRuntime()) {
             if (dws.requiresCoreExtension()) {
-                runtimeUpdate = checkCoreUpdate(ws.format().id().parse(actualBootConfig.getRuntimeId().getSimpleName()),
+                runtimeUpdate = checkCoreUpdate(ws.id().parse(actualBootConfig.getRuntimeId().getSimpleName()),
                         apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion().toString()
                         : bootVersion, session);
                 if (runtimeUpdate.isUpdateAvailable()) {
@@ -637,20 +638,14 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (getValidSession().isAsk() && !accept) {
             throw new NutsUserCancelException(ws);
         }
-        NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
-        Path bootstrapFolder = ws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
+//        NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
         if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
             NutsWorkspaceUtils.checkReadOnly(ws);
 
             NutsBootConfig bc = ws.config().getBootConfig();
             bc.setApiVersion(apiUpdate.getAvailable().getId().getVersion().toString());
             ws.config().setBootConfig(bc);
-            ws.io().copy().session(getValidSession()).from(apiUpdate.getAvailable().getPath()).to(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
-                    .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
-            ).run();
-            ws.format().descriptor().set(ws.fetch().id(apiUpdate.getAvailable().getId()).getResultDescriptor()
-            ).print(ws.config().getStoreLocation(apiUpdate.getAvailable().getId(), bootstrapFolder)
-                    .resolve(ws.config().getDefaultIdFilename(apiUpdate.getAvailable().getId().setFaceDescriptor())));
+            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), apiUpdate.getAvailable().getId(),false);
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
@@ -660,71 +655,88 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             bc.setRuntimeDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
             NutsWorkspaceUtils.checkReadOnly(ws);
             ws.config().setBootConfig(bc);
-            ws.io().copy()
-                    .session(getValidSession())
-                    .from(runtimeUpdate.getAvailable().getPath())
-                    .to(ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
-                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
-                    ).run();
-            NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailable().getId()).getResultDescriptor();
-            ws.format().descriptor().set(runtimeDesc).print(
-                    ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
-                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceDescriptor()))
-            );
-            for (NutsDependency dependency : runtimeDesc.getDependencies()) {
-                if (dependency.getId().getSimpleNameId().equals(actualBootConfig.getApiId().getSimpleNameId())) {
-                    Map<String, String> pr = new LinkedHashMap<>();
-                    pr.put("file.updated.date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
-                    pr.put("project.id", dependency.getId().getSimpleNameId().toString());
-                    pr.put("project.name", dependency.getId().getSimpleNameId().toString());
-                    pr.put("project.version", dependency.getId().getVersion().toString());
-                    pr.put("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
-                    pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
-                    try (Writer writer = Files.newBufferedWriter(
-                            ws.config().getStoreLocation(dependency.getId().getLongNameId(), bootstrapFolder)
-                                    .resolve("nuts.properties")
-                    )) {
-                        CoreIOUtils.storeProperties(pr, writer, false);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            }
-            Map<String, String> pr = new LinkedHashMap<>();
-            pr.put("file.updated.date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
-            pr.put("project.id", runtimeUpdate.getAvailable().getId().getSimpleNameId().toString());
-            pr.put("project.name", runtimeUpdate.getAvailable().getId().getSimpleNameId().toString());
-            pr.put("project.version", runtimeUpdate.getAvailable().getId().getVersion().toString());
-            final NutsId rtId = runtimeUpdate.getAvailable().getId();
-            pr.put("project.dependencies.compile",
-                    CoreStringUtils.join(";",
-                            Arrays.stream(runtimeDesc.getDependencies())
-                                    .filter(new Predicate<NutsDependency>() {
-                                        @Override
-                                        public boolean test(NutsDependency x) {
-                                            return !x.isOptional() && NutsDependencyScopes.SCOPE_RUN.accept(rtId, x, getValidSession());
-                                        }
-                                    })
-                                    .map(x -> x.getId().getLongName())
-                                    .collect(Collectors.toList())
-                    )
-            );
-            try (Writer writer = Files.newBufferedWriter(
-                    ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId().getLongNameId(), bootstrapFolder)
-                            .resolve("nuts.properties")
-            )) {
-                CoreIOUtils.storeProperties(pr, writer, false);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), runtimeUpdate.getAvailable().getId(),true);
+
+//            ws.io().copy()
+//                    .session(getValidSession())
+//                    .from(runtimeUpdate.getAvailable().getPath())
+//                    .to(ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
+//                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
+//                    ).run();
+//            NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailable().getId()).getResultDescriptor();
+//            ws.descriptor().set(runtimeDesc).print(
+//                    ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
+//                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceDescriptor()))
+//            );
+//            for (NutsDependency dependency : runtimeDesc.getDependencies()) {
+//                if (dependency.getId().getSimpleNameId().equals(actualBootConfig.getApiId().getSimpleNameId())) {
+//                    Map<String, String> pr = new LinkedHashMap<>();
+//                    pr.put("file.updated.date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
+//                    pr.put("project.id", dependency.getId().getSimpleNameId().toString());
+//                    pr.put("project.name", dependency.getId().getSimpleNameId().toString());
+//                    pr.put("project.version", dependency.getId().getVersion().toString());
+//                    pr.put("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
+//                    pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
+//                    try (Writer writer = Files.newBufferedWriter(
+//                            ws.config().getStoreLocation(dependency.getId().getLongNameId(), bootstrapFolder)
+//                                    .resolve("nuts.properties")
+//                    )) {
+//                        CoreIOUtils.storeProperties(pr, writer, false);
+//                    } catch (IOException ex) {
+//                        throw new UncheckedIOException(ex);
+//                    }
+//                }
+//            }
+//            Map<String, String> pr = new LinkedHashMap<>();
+//            pr.put("file.updated.date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
+//            pr.put("project.id", runtimeUpdate.getAvailable().getId().getSimpleNameId().toString());
+//            pr.put("project.name", runtimeUpdate.getAvailable().getId().getSimpleNameId().toString());
+//            pr.put("project.version", runtimeUpdate.getAvailable().getId().getVersion().toString());
+//            final NutsId rtId = runtimeUpdate.getAvailable().getId();
+//            pr.put("project.dependencies.compile",
+//                    CoreStringUtils.join(";",
+//                            Arrays.stream(runtimeDesc.getDependencies())
+//                                    .filter(new Predicate<NutsDependency>() {
+//                                        @Override
+//                                        public boolean test(NutsDependency x) {
+//                                            return !x.isOptional() && NutsDependencyScopes.SCOPE_RUN.accept(rtId, x, getValidSession());
+//                                        }
+//                                    })
+//                                    .map(x -> x.getId().getLongName())
+//                                    .collect(Collectors.toList())
+//                    )
+//            );
+//            try (Writer writer = Files.newBufferedWriter(
+//                    ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId().getLongNameId(), bootstrapFolder)
+//                            .resolve("nuts.properties")
+//            )) {
+//                CoreIOUtils.storeProperties(pr, writer, false);
+//            } catch (IOException ex) {
+//                throw new UncheckedIOException(ex);
+//            }
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
             traceSingleUpdate(runtimeUpdate);
         }
+        boolean extensionsChanged = false;
+        NutsWorkspaceConfigManagerExt xcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
+        NutsExtensionListHelper h = new NutsExtensionListHelper(xcfg.getStoredConfig().getExtensions())
+                .save();
         for (NutsUpdateResult extension : result.getExtensions()) {
             if (!extension.isUpdateApplied()) {
-                ws.extensions().updateExtension(extension.getAvailable().getId());
+                if (extension.getAvailable() != null) {
+                    h.add(extension.getAvailable().getId());
+                    if (h.hasChanged()) {
+                        NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), extension.getAvailable().getId(), true);
+                        extensionsChanged = true;
+                    }
+                }
                 ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
+                traceSingleUpdate(extension);
             }
+        }
+        if (extensionsChanged) {
+            xcfg.getStoredConfig().setExtensions(h.getIds());
+            xcfg.fireConfigurationChanged();
         }
         for (NutsUpdateResult component : result.getComponents()) {
             applyRegularUpdate((DefaultNutsUpdateResult) component);
@@ -816,7 +828,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             try {
                 newId = ws.search()
                         .addId(oldFile != null ? oldFile.getId().setVersion("").toString() : NutsConstants.Ids.NUTS_RUNTIME)
-                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.format().version().parseVersion(bootApiVersion)))
+                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.version().parse(bootApiVersion)))
                         .latest()
                         .anyWhere()
                         .session(searchSession)
@@ -837,7 +849,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             }
             try {
                 newId = ws.search().session(searchSession).addId(id)
-                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.format().version().parseVersion(bootApiVersion)))
+                        .setDescriptorFilter(new BootAPINutsDescriptorFilter(ws.version().parse(bootApiVersion)))
                         .anyWhere()
                         .getResultIds().first();
                 newFile = newId == null ? null : latestOnlineDependencies(ws.fetch().session(searchSession).id(newId))
@@ -1042,7 +1054,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
     @Override
     public NutsUpdateCommand addFrozenId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            frozenIds.add(ws.format().id().parseRequired(id));
+            frozenIds.add(ws.id().parseRequired(id));
         }
         return this;
     }

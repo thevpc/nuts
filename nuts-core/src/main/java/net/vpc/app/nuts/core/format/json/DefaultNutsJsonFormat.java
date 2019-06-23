@@ -338,12 +338,12 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public org.w3c.dom.Element deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return ws.format().xml().toXmlElement(fromJsonElement(json), null);
+            return ws.xml().toXmlElement(fromJsonElement(json), null);
         }
 
         @Override
         public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(ws.format().xml().fromXmlElement(src, NutsElement.class));
+            return toJsonElement(ws.xml().fromXmlElement(src, NutsElement.class));
         }
     }
 
@@ -359,7 +359,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             } catch (ParserConfigurationException ex) {
                 throw new JsonParseException(ex.getMessage(), ex);
             }
-            Element ee = ws.format().xml().toXmlElement(fromJsonElement(json), doc);
+            Element ee = ws.xml().toXmlElement(fromJsonElement(json), doc);
             ee = (Element) doc.importNode(ee, true);
             doc.appendChild(ee);
             return doc;
@@ -367,7 +367,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = ws.format().xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
+            NutsElement element = ws.xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
             return toJsonElement(element);
         }
     }

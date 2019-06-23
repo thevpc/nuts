@@ -25,7 +25,7 @@ public class LinuxNdi implements SystemNdi {
 
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
-        NutsId nid = context.getWorkspace().format().id().parse(options.getId());
+        NutsId nid = context.getWorkspace().id().parse(options.getId());
         if ("nuts".equals(nid.getSimpleName()) || "net.vpc.app.nut:nuts".equals(nid.getSimpleName())) {
             return createBootScript(options.isForceBoot() || options.getSession().isForce(), options.getSession().isTrace());
         } else {
@@ -81,7 +81,7 @@ public class LinuxNdi implements SystemNdi {
 
     @Override
     public void removeNutsScript(String id, NutsSession session) throws IOException {
-        NutsId nid = context.getWorkspace().format().id().parse(id);
+        NutsId nid = context.getWorkspace().id().parse(id);
         Path f = getScriptFile(nid.getName());
         if (Files.isRegularFile(f)) {
             if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm", f.toString())
@@ -187,7 +187,7 @@ public class LinuxNdi implements SystemNdi {
         boolean updatedBashrc = false;
         boolean updatedNdirc = false;
         List<String> lines = new ArrayList<>();
-        Path programsFolder = context.getProgramsFolder();
+        Path appsFolder = context.getAppsFolder();
         String goodLine = "source ~/.nuts-ndirc";
         if (bashrc.isFile()) {
             String fileContent = IOUtils.loadString(bashrc);
@@ -233,7 +233,7 @@ public class LinuxNdi implements SystemNdi {
                 .session(context.getSession().copy().trace(false))
                 .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
-        goodNdiRc.append("[[ \":$PATH:\" != *\":" + programsFolder + ":\"* ]] && PATH=\"" + programsFolder + ":${PATH}\"\n");
+        goodNdiRc.append("[[ \":$PATH:\" != *\":" + appsFolder + ":\"* ]] && PATH=\"" + appsFolder + ":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");
 
         String fileContent = (nutsndirc.isFile()) ? IOUtils.loadString(nutsndirc) : "";
@@ -305,7 +305,7 @@ public class LinuxNdi implements SystemNdi {
     }
 
     public Path getScriptFile(String name) {
-        Path bin = context.getProgramsFolder();
+        Path bin = context.getAppsFolder();
         return bin.resolve(name);
     }
 

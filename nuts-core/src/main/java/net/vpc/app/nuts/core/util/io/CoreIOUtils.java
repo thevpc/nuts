@@ -68,6 +68,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -211,7 +212,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.format().version().parseVersionFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parseFilter(requestedJavaVersion);
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace.createSession())) {
                 bestJava = current;
             }
@@ -582,8 +583,24 @@ public class CoreIOUtils {
     public static NutsRepositoryConfig loadNutsRepositoryConfig(Path file, NutsWorkspace ws) {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file)) {
+            byte[] bytes;
             try {
-                conf = ws.format().json().parse(file, NutsRepositoryConfig.class);
+                bytes = Files.readAllBytes(file);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+
+            try {
+                Map<String, Object> a_config0 = ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), Map.class);
+                String version = (String) a_config0.get("createApiVersion");
+                if (version == null) {
+                    version = "0.5.6";
+                }
+                int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
+                if (buildNumber < 506) {
+                    
+                }
+                conf = ws.json().parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!ws.config().isReadOnly()) {

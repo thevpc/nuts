@@ -26,12 +26,12 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.next("add extension", "ax") != null) {
             String extensionId = cmdLine.required().nextNonOption(cmdLine.createName("extension")).getString();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().format().id().parse(extensionId), context.getSession());
+//                context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().id().parse(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
                 extensionId = cmdLine.required().nextNonOption(cmdLine.createName("extension")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().format().id().parse(extensionId), context.getSession());
+//                    context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().id().parse(extensionId), context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {

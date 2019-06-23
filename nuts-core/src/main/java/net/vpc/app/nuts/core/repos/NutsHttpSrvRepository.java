@@ -90,7 +90,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().format().descriptor().set(desc).print(new OutputStreamWriter(descStream));
+        getWorkspace().descriptor().set(desc).print(new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
@@ -109,7 +109,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         boolean transitive = session.isTransitive();
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
-            NutsDescriptor descriptor = getWorkspace().format().descriptor().parse(stream);
+            NutsDescriptor descriptor = getWorkspace().descriptor().parse(stream);
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                 if (hash.equals(descriptor.toString())) {
@@ -307,7 +307,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().format().id().parseRequired(line);
+            NutsId nutsId = getWorkspace().id().parseRequired(line);
             return nutsId.setNamespace(config().getName());
         }
     }

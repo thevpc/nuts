@@ -36,7 +36,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.format().element().toElement(value));
+        return super.setValue(ws.element().toElement(value));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     @Override
     public void print(Writer w) {
         PrintWriter out = getValidPrintWriter(w);
-        NutsPropertiesFormat ff = ws.format().props().model(toMap());
+        NutsPropertiesFormat ff = ws.props().model(toMap());
         ff.configure(true, getExtraConfigArray());
         ff.configure(true, "--escape-text=false");
         ff.print(out);

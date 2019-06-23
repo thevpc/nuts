@@ -29,7 +29,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     public NutsTableFormat getTable(NutsWorkspace ws) {
         if (table == null) {
-            table = ws.format().table();
+            table = ws.table();
         }
         return table;
     }

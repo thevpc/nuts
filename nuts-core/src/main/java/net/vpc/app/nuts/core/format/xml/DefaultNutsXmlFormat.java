@@ -33,8 +33,6 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -46,7 +44,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementType;
-import net.vpc.app.nuts.NutsFormatManager;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
@@ -54,7 +51,6 @@ import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsXmlFormat;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
-import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import org.w3c.dom.Node;
@@ -126,8 +122,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         if (NutsElement.class.isAssignableFrom(cls)) {
             return (T) fromXmlElement(element);
         }
-        NutsFormatManager wsformat = ws.format();
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) wsformat.json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.json();
         return json.convert(element, cls);
     }
 
@@ -309,7 +304,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
             }
         }
 
-        NutsElement elem = ws.format().element().toElement(obj);
+        NutsElement elem = ws.element().toElement(obj);
 
         if (doc == null) {
             if (defaulDocument == null) {

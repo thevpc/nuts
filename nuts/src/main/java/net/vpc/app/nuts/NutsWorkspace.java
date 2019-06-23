@@ -95,8 +95,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsIOManager io();
 
-    NutsFormatManager format();
-
     /**
      * new instance of an empty command line
      *
@@ -132,4 +130,107 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsInstallListener[] getInstallListeners();
 
+    /**
+     * create json format instance
+     *
+     * @since 0.5.5
+     * @return json format
+     */
+    NutsJsonFormat json();
+
+    /**
+     * create xml format instance
+     *
+     * @since 0.5.5
+     * @return xml format
+     */
+    NutsXmlFormat xml();
+
+    /**
+     * create element format instance
+     *
+     * @since 0.5.5
+     * @return element format
+     */
+    NutsElementFormat element();
+
+    /**
+     * create id format instance
+     *
+     * @since 0.5.5
+     * @return id format
+     */
+    NutsIdFormat id();
+
+    /**
+     * create version format instance
+     *
+     * @since 0.5.5
+     * @return version format
+     */
+    NutsVersionFormat version();
+
+    /**
+     * create info format instance
+     *
+     * @since 0.5.5
+     * @return info format
+     */
+    NutsInfoFormat info();
+
+    /**
+     * create descriptor format instance
+     *
+     * @since 0.5.5
+     * @return descriptor format
+     */
+    NutsDescriptorFormat descriptor();
+
+    /**
+     * create dependency format instance
+     *
+     * @since 0.5.5
+     * @return dependency format
+     */
+    NutsDependencyFormat dependency();
+
+    /**
+     * create tree format instance
+     *
+     * @since 0.5.5
+     * @return tree format
+     */
+    NutsTreeFormat tree();
+
+    /**
+     * create table format instance
+     *
+     * @since 0.5.5
+     * @return json table
+     */
+    NutsTableFormat table();
+
+    /**
+     * create properties format instance
+     *
+     * @since 0.5.5
+     * @return properties format
+     */
+    NutsPropertiesFormat props();
+
+    /**
+     * create object format instance
+     *
+     * @since 0.5.5
+     * @return object format
+     */
+    NutsObjectFormat object();
+
+    /**
+     * create iterable format instance
+     *
+     * @since 0.5.6
+     * @return iterable format
+     */
+    NutsIterableOutput iter();
 }

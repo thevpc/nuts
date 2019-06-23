@@ -62,7 +62,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.workspace().format().json().set(config).print(f);
+        context.workspace().json().set(config).print(f);
         return this;
     }
 
@@ -146,7 +146,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.workspace().format().json().parse(f, RemoteTomcatConfig.class);
+            config = context.workspace().json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -164,7 +164,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService write(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.workspace().format().json().set(getConfig()).print(new PrintWriter(out));
+        context.workspace().json().set(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

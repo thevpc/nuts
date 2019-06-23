@@ -51,7 +51,7 @@ public class NutsObjectFormatXml extends NutsObjectFormatBase {
     public void print(Writer w) {
         try {
             Document document = NutsXmlUtils.createDocument();
-            document.appendChild(ws.format().xml().toXmlElement(getValue(), document));
+            document.appendChild(ws.xml().toXmlElement(getValue(), document));
             NutsXmlUtils.writeDocument(document, new StreamResult(w), false);
         } catch (TransformerException | ParserConfigurationException ex) {
             throw new NutsException(ws, ex);

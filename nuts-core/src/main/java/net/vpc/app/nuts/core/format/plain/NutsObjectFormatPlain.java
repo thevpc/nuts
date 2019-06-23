@@ -36,7 +36,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.format().element().toElement(value));
+        return super.setValue(ws.element().toElement(value));
     }
 
     @Override
