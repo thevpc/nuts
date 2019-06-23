@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -40,37 +39,7 @@ import java.util.Set;
  */
 public interface NutsWorkspaceExtensionManager {
 
-    /**
-     * find all available extensions for the current workspace
-     *
-     * @param session session
-     * @return all available extensions for the current workspace
-     */
-    List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session);
-
-    /**
-     * finds all available extensions (from remote repositories) for the given
-     * boot version (aka version of nuts api)
-     *
-     * @param version boot version
-     * @param session current session
-     * @return all available extensions
-     */
-    List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session);
-
-    List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session);
-
-    List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session);
-
-//    NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session);
-
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
-
-    NutsWorkspaceExtension[] getWorkspaceExtensions();
-
-    URL[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
-
-    String[] getExtensionRepositoryLocations(NutsId appId);
 
     List<Class> discoverTypes(ClassLoader classLoader);
 
@@ -104,14 +73,10 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
+    /**
+     * reurn loaded extensions
+     * @return 
+     */
     NutsId[] getExtensions();
-
-//    boolean addExtension(NutsId extensionId);
-
-//    boolean removeExtension(NutsId extensionId);
-
-//    boolean updateExtension(NutsId extensionId);
-
-//    boolean containsExtension(NutsId extensionId);
 
 }

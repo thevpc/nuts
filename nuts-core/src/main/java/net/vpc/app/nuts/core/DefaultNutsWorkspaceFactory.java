@@ -72,11 +72,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (types == null) {
             types = CoreCommonUtils.loadServiceClasses(NutsComponent.class, bootClassLoader);
             discoveredCacheByLoader.put(bootClassLoader, types);
-            for (Class type : types) {
+            for (Iterator<Class> it = types.iterator(); it.hasNext();) {
+                Class type = it.next();
                 if (!discoveredCacheByClass.containsExactKey(type)) {
                     if (type.isInterface()
                             || (type.getModifiers() & Modifier.ABSTRACT) != 0) {
                         LOG.log(Level.WARNING, "Abstract type {0} is defined as implementation. Ignored.", new Object[]{type.getName()});
+                        it.remove();
                     } else {
                         discoveredCacheByClass.add(type);
                     }

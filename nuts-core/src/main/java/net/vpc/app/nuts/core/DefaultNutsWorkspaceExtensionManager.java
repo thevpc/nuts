@@ -82,12 +82,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
     }
 
-    @Override
+//    @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
         return findWorkspaceExtensions(ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString(), session);
     }
 
-    @Override
+  //  @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
             version = ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString();
@@ -96,12 +96,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return findExtensions(id, "extensions", session);
     }
 
-    @Override
+    //@Override
     public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
         return findExtensions(ws.id().parseRequired(id), extensionType, session);
     }
 
-    @Override
+   // @Override
     public List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException(ws, "Missing version");
@@ -186,7 +186,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         throw new ClassCastException(NutsComponent.class.getName());
     }
 
-    @Override
+//    @Override
     public NutsWorkspaceExtension[] getWorkspaceExtensions() {
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
@@ -344,7 +344,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
     }
 
-    @Override
+    //@Override
     public URL[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
@@ -355,7 +355,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return bootUrls.toArray(new URL[0]);
     }
 
-    @Override
+    //@Override
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
