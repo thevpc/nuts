@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("indexer/"+NutsConstants.Folders.APPS)
+@RequestMapping("indexer/"+NutsConstants.Folders.ID)
 public class NutsComponentController {
 
     @Autowired

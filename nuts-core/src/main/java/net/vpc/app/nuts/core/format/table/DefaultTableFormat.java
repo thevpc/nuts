@@ -1195,7 +1195,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     break;
                 }
             }
-            setVisibleHeader(true);
             return true;
         } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
             for (Map.Entry<String, Integer> e : columns.entrySet()) {

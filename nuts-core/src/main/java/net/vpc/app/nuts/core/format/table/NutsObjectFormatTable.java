@@ -129,7 +129,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
                         default: {
                             for (String column : columns) {
                                 if (column.equals("value")) {
-                                    t.addCell(formatObject(elem.primitive().getValue()));
+                                    t.addCell(formatObject(elem/*.primitive().getValue()*/));
                                 } else {
                                     t.addCell("");
                                 }

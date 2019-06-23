@@ -75,7 +75,7 @@ public class Test03_CreateLayoutLinuxTest {
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "system.config/default-workspace/"+NutsConstants.Folders.APPS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "system.config/default-workspace/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -87,7 +87,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(base, "system.cache/default-workspace/"+NutsConstants.Folders.APPS), x -> x.isDirectory()).size()
+                listNamesSet(new File(base, "system.cache/default-workspace/"+NutsConstants.Folders.ID), x -> x.isDirectory()).size()
         );
 //        for (String f : TestUtils.NUTS_STD_FOLDERS) {
 //            Assert.assertFalse(new File(f).exists());
@@ -112,7 +112,7 @@ public class Test03_CreateLayoutLinuxTest {
         System.out.println(new File(base, "config").getPath());
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "/config/"+NutsConstants.Folders.APPS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "/config/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -124,7 +124,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 createNamesSet("com", "net", "org"),
-                listNamesSet(new File(base, "cache/"+NutsConstants.Folders.APPS), x -> x.isDirectory())
+                listNamesSet(new File(base, "cache/"+NutsConstants.Folders.ID), x -> x.isDirectory())
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
             Assert.assertFalse(f + " should not exist", new File(f).exists());
@@ -142,7 +142,7 @@ public class Test03_CreateLayoutLinuxTest {
         Nuts.runWorkspace(new String[]{"--verbose", "--yes", "info"});
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/"+NutsConstants.Folders.APPS+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -154,7 +154,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/"+NutsConstants.Folders.APPS), x -> x.isDirectory()).size()
+                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/"+NutsConstants.Folders.ID), x -> x.isDirectory()).size()
         );
 //        Assert.assertEquals(
 //                false,

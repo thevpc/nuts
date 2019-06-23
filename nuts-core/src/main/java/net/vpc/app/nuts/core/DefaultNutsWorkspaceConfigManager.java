@@ -1028,8 +1028,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         switch (folderType) {
             case CACHE:
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
             case CONFIG:
-                return storeLocation.resolve(NutsConstants.Folders.APPS).resolve(getDefaultIdBasedir(id));
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
         }
         return storeLocation.resolve(getDefaultIdBasedir(id));
     }

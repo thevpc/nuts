@@ -192,15 +192,6 @@ public interface NutsCommandLine {
     NutsArgument nextString(String... names);
 
     /**
-     * next argument with immediate string value. equivalent to
-     * next(NutsArgumentType.IMMEDIATE,names)
-     *
-     * @param names names
-     * @return next argument
-     */
-    NutsArgument nextImmediate(String... names);
-
-    /**
      * next argument with any value type (may having not a value). equivalent to
      * next(NutsArgumentType.VOID,names)
      *

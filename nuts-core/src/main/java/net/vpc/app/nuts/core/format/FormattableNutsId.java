@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -60,6 +61,7 @@ public class FormattableNutsId {
     NutsId id;
     boolean i;
     boolean d;
+    Boolean extension = null;
     Boolean executable = null;
     Boolean executableApp = null;
     boolean fetched = false;
@@ -72,6 +74,7 @@ public class FormattableNutsId {
     Instant dte;
     String usr;
     char status_f;
+    char status_e;
     char status_i;
     char status_s;
     char status_o;
@@ -343,7 +346,11 @@ public class FormattableNutsId {
                 this.executableApp = desc.isNutsApplication();
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
-            this.status_i = this.executableApp != null ? (this.executableApp ? 'X' : this.executable ? 'x' : '-') : '.';
+            this.status_e = def.getId().getSimpleName().equals(NutsConstants.Ids.NUTS_API) ? 'a'
+                    : def.getId().getSimpleName().equals(NutsConstants.Ids.NUTS_RUNTIME) ? 'r'
+                    : extension != null && extension ? 'e'
+                            : '-';
+            this.status_i = buildComponentAppStatus();
             this.status_s = '-';
             this.status_o = '-';
             if (dep != null) {
@@ -417,11 +424,15 @@ public class FormattableNutsId {
 
     }
 
+    private char buildComponentAppStatus() {
+        return this.executableApp != null ? (this.executableApp ? 'X' : this.executable ? 'x' : '-') : '.';
+    }
+
     public String getFormattedStatusString() {
         if (dep != null) {
-            return "**" + status_f + status_i + status_s + "**";
+            return "**" + status_f + status_e + status_i + status_s + "**";
         }
-        return "**" + status_f + status_i + "**";
+        return "**" + status_f + status_e + status_i + "**";
     }
 
     private String keywordArr1(String[] any) {

@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
@@ -325,13 +326,13 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             case NULL:
                 return "null";
             case STRING:
-                return "\"" + getString() + "\"";
+                return CoreStringUtils.dblQuote(getString());
             case BOOLEAN:
                 return String.valueOf(getBoolean());
             case NUMBER:
                 return String.valueOf(getNumber());
             case DATE:
-                return "\"" + getDate().toString() + "\"";
+                return CoreStringUtils.dblQuote(getDate().toString());
         }
         return getString();
     }

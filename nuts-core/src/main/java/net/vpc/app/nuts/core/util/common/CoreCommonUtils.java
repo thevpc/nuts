@@ -52,6 +52,7 @@ import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsArrayElement;
+import net.vpc.app.nuts.NutsElementType;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsNamedElement;
@@ -322,19 +323,38 @@ public class CoreCommonUtils {
         } else if (o instanceof NutsArrayElement) {
             o = ((NutsArrayElement) o).children();
         } else if (o instanceof NutsObjectElement) {
-            o = ((NutsObjectElement) o).children();
+            Collection<NutsNamedElement> c= ((NutsObjectElement) o).children();
+            Object[] a = c.toArray();
+            if (a.length == 0) {
+                return "";
+            }
+            if (a.length == 1) {
+                return stringValue(a[0]);
+            }
+            return "\\{" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
+            
         } else if (o instanceof NutsNamedElement) {
             NutsNamedElement ne = (NutsNamedElement) o;
-            Map<String, Object> m = new HashMap<String, Object>();
-            m.put("name", ne.getName());
-            m.put("value", ne.getValue());
-            o = m;
+            StringBuilder sb = new StringBuilder();
+            sb.append(stringValueFormatted(ne.getName(), escapeString, session));
+            sb.append("=");
+            if (ne.getValue().type() == NutsElementType.STRING) {
+                sb.append(CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session)));
+            } else {
+                sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
+            }
+            o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            Map<String, Object> m = new HashMap<String, Object>();
-            m.put("name", ne.getKey());
-            m.put("value", ne.getValue());
-            o = m;
+            StringBuilder sb = new StringBuilder();
+            sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
+            sb.append("=");
+            if (ne.getValue() instanceof String || (ne.getValue() instanceof NutsPrimitiveElement && ((NutsPrimitiveElement) ne.getValue()).type() == NutsElementType.STRING)) {
+                sb.append(CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session)));
+            } else {
+                sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
+            }
+            o = sb.toString();
         } else if (o instanceof Map) {
             o = ((Map) o).entrySet();
         }
@@ -367,6 +387,17 @@ public class CoreCommonUtils {
                 return stringValue(a[0]);
             }
             return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\]";
+        }
+        if (o instanceof Map) {
+            Map c = ((Map) o);
+            Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
+            if (a.length == 0) {
+                return "";
+            }
+            if (a.length == 1) {
+                return stringValue(a[0]);
+            }
+            return "\\{" + CoreStringUtils.join(", ", Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);

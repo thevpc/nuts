@@ -428,7 +428,7 @@ public final class NutsArgumentsParser {
                     case "--color":
                     case "-c": {
                         //if the value is imediately attatched with '=' don't consider
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             String v = a.getStringValue("");
                             Boolean b = NutsUtilsLimited.parseBoolean(v, null);
@@ -551,42 +551,42 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     case "--json":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.JSON);
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
                     case "--plain":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.PLAIN);
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
                     case "--xml":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.XML);
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
                     case "--table":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.TABLE);
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
                     case "--tree":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.TREE);
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
                     case "--props":
-                        a = cmdLine.nextImmediate();
+                        a = cmdLine.next();
                         if (enabled) {
                             options.setOutputFormat(NutsOutputFormat.PROPS);
                             options.addOutputFormatOptions(a.getString(""));

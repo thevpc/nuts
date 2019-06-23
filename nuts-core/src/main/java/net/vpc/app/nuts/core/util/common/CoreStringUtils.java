@@ -232,7 +232,7 @@ public class CoreStringUtils {
                     break;
                 }
                 default: {
-                    if (entrySeparators.indexOf(c) >= 0) {
+                    if (entrySeparators!=null && entrySeparators.indexOf(c) >= 0) {
                         q = true;
                         sb.append("\\").append(c);
                     } else {
@@ -245,6 +245,59 @@ public class CoreStringUtils {
         if (q) {
             sb.insert(0, '\'');
             sb.append('\'');
+        }
+        return sb.toString();
+    }
+
+    public static String dblQuote(String text) {
+        return dblQuote(text,false,null);
+    }
+    
+    /**
+     * @param text
+     * @param compact if true, quotes will not be used unless necessary
+     * @param entrySeparators
+     * @return
+     */
+    public static String dblQuote(String text, boolean compact, String entrySeparators) {
+        StringBuilder sb = new StringBuilder();
+        boolean q = !compact;
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case '\n': {
+                    q = true;
+                    sb.append("\\n");
+                    break;
+                }
+                case '\f': {
+                    q = true;
+                    sb.append("\\f");
+                    break;
+                }
+                case '\r': {
+                    q = true;
+                    sb.append("\\r");
+                    break;
+                }
+                case '\"': {
+                    q = true;
+                    sb.append("\\").append(c);
+                    break;
+                }
+                default: {
+                    if (entrySeparators!=null && entrySeparators.indexOf(c) >= 0) {
+                        q = true;
+                        sb.append("\\").append(c);
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+            }
+        }
+        if (q) {
+            sb.insert(0, '\"');
+            sb.append('\"');
         }
         return sb.toString();
     }

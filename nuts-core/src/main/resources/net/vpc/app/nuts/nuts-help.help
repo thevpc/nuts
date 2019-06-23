@@ -224,7 +224,7 @@ Java         Version: **${java.version} (${java.vm.name})**
             **--<os-family>-cache-home** <path>
 
             where <os-family> in one of [[windows]], [[linux]], [[unix]], [[macos]] or [[system]].
-            This help moving folder from/to distinct os families while providing a centralized configuration.
+            This helps moving workspace folder from/to distinct os families while providing a centralized configuration.
             when using [[system]] OS family, the effective OS family will be detected at runtime.
 
  **--system-layout** or **--system**

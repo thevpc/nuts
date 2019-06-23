@@ -282,11 +282,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsArgument nextImmediate(String... names) {
-        return next(NutsArgumentType.IMMEDIATE, names);
-    }
-
-    @Override
     public NutsArgument next(String... names) {
         return next(NutsArgumentType.ANY, names);
     }
@@ -334,13 +329,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                         case ANY: {
                             skip(nameSeqArray.length);
                             return p;
-                        }
-                        case IMMEDIATE: {
-                            if (p.isKeyValue()) {
-                                skip(nameSeqArray.length);
-                                return p;
-                            }
-                            break;
                         }
                         case STRING: {
                             skip(nameSeqArray.length);

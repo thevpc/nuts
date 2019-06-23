@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.format.elem;
 
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsNamedElement;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
@@ -38,21 +39,27 @@ import net.vpc.app.nuts.NutsNamedElement;
  */
 public class DefaultNutsNamedElement implements NutsNamedElement {
 
-    private final String key;
+    private final String name;
     private final NutsElement value;
 
     public DefaultNutsNamedElement(String key, NutsElement value) {
-        this.key = key;
+        this.name = key;
         this.value = value;
     }
 
     @Override
     public String getName() {
-        return key;
+        return name;
     }
 
     @Override
     public NutsElement getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultNutsNamedElement{" + "name=" + CoreStringUtils.dblQuote(name) + ", value=" + value + '}';
+    }
+
 }

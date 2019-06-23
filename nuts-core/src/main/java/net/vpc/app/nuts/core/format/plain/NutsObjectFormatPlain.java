@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.core.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.core.format.NutsObjectFormatBase;
+import net.vpc.app.nuts.core.format.props.NutsObjectFormatProps;
 import net.vpc.app.nuts.core.format.table.NutsObjectFormatTable;
 import net.vpc.app.nuts.core.format.tree.NutsObjectFormatTree;
 
@@ -107,12 +108,12 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             }
             case ARRAY: {
                 NutsObjectFormatTable table = new NutsObjectFormatTable(ws);
-                table.configure(true, "--border=spaces");
+                table.configure(true, "--no-header","--border=spaces");
                 table.set(value).print(w);
                 break;
             }
             case OBJECT: {
-                NutsObjectFormatTree tree = new NutsObjectFormatTree(ws);
+                NutsObjectFormatProps tree = new NutsObjectFormatProps(ws);
                 tree.set(value).print(w);
                 break;
             }

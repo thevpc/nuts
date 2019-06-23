@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,38 +27,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
 
 /**
- * Argument parse Type
  *
  * @author vpc
- * @since 0.5.5
  */
-public enum NutsArgumentType {
-    /**
-     * argument that accepts no value.
-     */
-    ANY,
-    /**
-     * argument that accepts a string as value. Either the string is included in
-     * the argument itself (--option=value) or succeeds it (--option value).
-     */
-    STRING,
-    /**
-     * argument that accepts a boolean as value. Either the boolean is not
-     * defined (--option), is included in the argument itself (--option=true) or
-     * succeeds it (--option true). Parsing boolean is also aware of negated
-     * options (--!option) that will be interpreted as (--option=false).
-     */
-    BOOLEAN;
-    private final String id;
+public class CoreNutsConstants {
+     public static final class Versions {
 
-    NutsArgumentType() {
-        this.id = name().toLowerCase().replace('_', '-');
-    }
-
-    public String id() {
-        return id;
+        private Versions() {
+        }
+        public static final String CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
     }
 }

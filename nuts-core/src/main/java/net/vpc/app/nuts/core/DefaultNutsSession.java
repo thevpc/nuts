@@ -312,7 +312,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--json": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.JSON);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -320,7 +320,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--props": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.PROPS);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -328,7 +328,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--plain": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.PLAIN);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -336,7 +336,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--table": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.TABLE);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -344,7 +344,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--tree": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.TREE);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -352,7 +352,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--xml": {
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsOutputFormat.XML);
                         this.addOutputFormatOptions(a.getStringValue(""));
@@ -399,7 +399,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
                 case "--color": {
                     //if the value is imediately attatched with '=' don't consider
-                    a = cmdLine.nextImmediate();
+                    a = cmdLine.next();
                     if (enabled) {
                         String v = a.getStringValue("");
                         NutsArgument bb = cmdLine.newArgument(v);
@@ -456,7 +456,21 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue) {
-        return outputFormat == null ? defaultValue : outputFormat;
+        NutsIterableFormat f = getIterableFormat();
+        if (f != null) {
+            NutsOutputFormat o = f.getOutputFormat();
+            if (o != null) {
+                return o;
+            }
+        }
+        if (this.outputFormat != null) {
+            return this.outputFormat;
+        }
+        NutsOutputFormat o = ws.config().options().getOutputFormat();
+        if (o != null) {
+            return o;
+        }
+        return defaultValue;
     }
 
     @Override

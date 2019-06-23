@@ -16,4 +16,9 @@
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
         <netbeans.hint.jdkPlatform>default_platform</netbeans.hint.jdkPlatform>
     </properties>
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>https</word>
+        <word>uninstall</word>
+        <word>urls</word>
+    </spellchecker-wordlist>
 </project-shared-configuration>

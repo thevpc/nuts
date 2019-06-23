@@ -29,7 +29,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatProps(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.PROPS.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.PROPS.id() + "-format");
         this.t = NutsOutputFormat.PROPS;
         this.ws = ws;
     }

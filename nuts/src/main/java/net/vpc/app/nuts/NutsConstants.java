@@ -173,10 +173,16 @@ public final class NutsConstants {
         private Ids() {
         }
 
+        /**
+         * nuts api id
+         */
         public static final String NUTS_API = "net.vpc.app.nuts:nuts";
+        /**
+         * nuts runtime id
+         */
         public static final String NUTS_RUNTIME = "net.vpc.app.nuts:nuts-core";
         /**
-         * repository config file name
+         * nuts shell id
          */
         public static final String NUTS_SHELL = "net.vpc.app.nuts.toolbox:nsh";
 
@@ -186,29 +192,33 @@ public final class NutsConstants {
 
         private Folders() {
         }
+        
+        /**
+         * bootstrap cache folder name. Typically this is stored at 
+         * ${workspace-location-cache}/boot
+         */
         public static final String BOOT = "boot";
         /**
          * default repositories root name. By default repositories are stored
-         * under ${workspace-location-config}/repos or
-         * ${repository-location}/repos
+         * under ${workspace-location-config}/repos 
+         * (${workspace-location}/config/repos for standalone workspaces).
+         * Repository mirros are stored under  ${repository-config-location}/repos
          */
         public static final String REPOSITORIES = "repos";
-        public static final String APPS = "apps";
 
-    }
+        /**
+         * folder that contains information about particular nuts components.
+         * each nuts component as its very own folder defined by its group, name
+         * and version path parts
+         */
+        public static final String ID = "id";
 
-    public static final class Misc {
-
-        private Misc() {
-        }
-        public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
     }
 
     public static final class Versions {
 
         private Versions() {
         }
-        public static final String CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
         public static final String LATEST = "LATEST";
         public static final String RELEASE = "RELEASE";
     }

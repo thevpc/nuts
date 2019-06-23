@@ -422,7 +422,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                     }
                     //remove workspace
                     descriptor = descriptor.setId(descriptor.getId().setNamespace(null));
-                    if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                    if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                         throw new NutsIllegalArgumentException(ws, "Invalid Version " + descriptor.getId().getVersion());
                     }
 

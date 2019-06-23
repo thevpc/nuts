@@ -59,6 +59,10 @@ It should show a result like this (nuts-api-version/nuts-impl-version)
 0.5.6/0.5.6.0
 ```
 
+# Troubleshooting
+Whenever installation of running fails, it is more likely there is a mis-configuration or invalid libraries that are used. 
+see [troubleshooting documentation](docs/troubleshooting.md) for more details
+
 
 ## Examples of usage
 ### show version and exit
@@ -104,7 +108,7 @@ java -jar nuts-0.5.6.jar ...your command here...
 
 ## Latest News
 
-+ 2019/06/17 	nuts 0.5.6.0 released [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.6.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md)
++ 2019/06/23 	nuts 0.5.6.0 released [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.6.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md)
 + 2019/06/08 	nuts 0.5.5.0 released [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.5.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md)
 + 2019/04/21 	nuts 0.5.4.0 released [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.4.0.md)
 + 2019/01/05 	nuts 0.5.3.0 released [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.3.0.md)
