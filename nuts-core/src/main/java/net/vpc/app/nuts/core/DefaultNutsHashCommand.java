@@ -168,7 +168,7 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().compact().set((NutsDescriptor) value).print(new OutputStreamWriter(o));
+                ws.descriptor().compact().value((NutsDescriptor) value).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

@@ -58,7 +58,7 @@ public class ShellHelper {
 
         public WsSshListener(NutsSession session) {
             this.session = session;
-            out = session.getTerminal().fout();
+            out = session.out();
         }
 
         private boolean isTrace() {

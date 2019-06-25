@@ -35,6 +35,8 @@ import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutionEntry;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -74,15 +76,17 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
-        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsSession session = executionContext.getSession();
+        NutsWorkspace ws = executionContext.getWorkspace();
+        NutsWorkspaceUtils.checkReadOnly(ws);
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().io().parseExecutionEntries(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = ws.io().parseExecutionEntries(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().command(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
-                    executionContext.getWorkspace().io().getTerminal().fout().printf("Installation Exited with code : " + r + " %n");
+                    int r = ws.exec().command(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).run().getResult();
+                    session.out().printf("Installation Exited with code : " + r + " %n");
                 }
             }
         }

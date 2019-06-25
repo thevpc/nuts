@@ -21,7 +21,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
-                    context.session().getTerminal().fout().printf("%s%n", imp);
+                    context.session().out().printf("%s%n", imp);
                 }
             }
             return true;

@@ -88,6 +88,8 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             base = createObjectFormat();
             base.setValue(getValue());
             base.setSession(getValidSession());
+            base.configure(true, ws.config().options().getOutputFormatOptions());
+            base.configure(true, getValidSession().getOutputFormatOptions());
         }
         return base;
     }
@@ -116,10 +118,6 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         throw new NutsException(ws, "Unsupported");
     }
 
-//    @Override
-//    public NutsTerminalFormat getTerminalFormat() {
-//        return base!=null?base.getTerminalFormat():terminalFormat;
-//    }
     @Override
     public NutsSession getSession() {
         return base != null ? base.getSession() : super.getSession();

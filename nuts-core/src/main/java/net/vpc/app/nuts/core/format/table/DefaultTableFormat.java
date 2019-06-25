@@ -88,7 +88,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     private NutsTableBordersFormat border = SIMPLE_BORDER;
     private NutsTableModel model = new DefaultNutsMutableTableModel();
     private List<Boolean> visibleColumns = new ArrayList<>();
-    private Map<String, Integer> columns = new HashMap<>();
     private boolean visibleHeader = true;
 
     public DefaultTableFormat(NutsWorkspace ws) {
@@ -103,20 +102,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     @Override
     public DefaultTableFormat setVisibleHeader(boolean visibleHeader) {
         this.visibleHeader = visibleHeader;
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat setColumnsConfig(String... names) {
-        for (int i = 0; i < names.length; i++) {
-            this.columns.put(names[i], i);
-        }
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat setColumnConfigIndex(String name, int index) {
-        this.columns.put(name, index);
         return this;
     }
 
@@ -192,21 +177,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             for (int i1 = 0; i1 < rows.size(); i1++) {
                 if (i1 > 0) {
-                    if ((getSeparator(Separator.INTER_ROW_START)
-                            + getSeparator(Separator.INTER_ROW_SEP)
-                            + getSeparator(Separator.INTER_ROW_LINE)
-                            + getSeparator(Separator.INTER_ROW_END)).length() > 0) {
-                        line.write(getSeparator(Separator.INTER_ROW_START));
+                    if ((getSeparator(Separator.MIDDLE_ROW_START)
+                            + getSeparator(Separator.MIDDLE_ROW_SEP)
+                            + getSeparator(Separator.MIDDLE_ROW_LINE)
+                            + getSeparator(Separator.MIDDLE_ROW_END)).length() > 0) {
+                        line.write(getSeparator(Separator.MIDDLE_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                line.write(getSeparator(Separator.INTER_ROW_SEP));
+                                line.write(getSeparator(Separator.MIDDLE_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
-                            String B = getSeparator(Separator.INTER_ROW_LINE);
+                            String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
                             line.write(CoreStringUtils.fillString(B, ws.io().terminalFormat().textLength(s)));
                         }
-                        line.write(getSeparator(Separator.INTER_ROW_END));
+                        line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
                         out.write(line.trim().newLine().toString());
                         out.flush();
@@ -302,9 +287,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             case HEADER: {
                 boolean after = true;
-                int maxBefore=10;
+                int maxBefore = 10;
                 while (length < columns) {
-                    if (after || maxBefore<=0) {
+                    if (after || maxBefore <= 0) {
                         sb.append(' ');
                     } else {
                         sb.insert(0, ' ');
@@ -855,6 +840,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
+    public NutsMutableTableModel createModel() {
+        return new DefaultNutsMutableTableModel();
+    }
+
+    @Override
     public NutsTableModel getModel() {
         return model;
     }
@@ -865,52 +855,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             model = new DefaultNutsMutableTableModel();
         }
         this.model = model;
-    }
-
-    public NutsMutableTableModel getMutableModel() {
-        return ((NutsMutableTableModel) getModel());
-    }
-
-    @Override
-    public DefaultTableFormat newRow() {
-        getMutableModel().newRow();
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat clearHeader() {
-        getMutableModel().clearHeader();
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat addHeaderCells(Object... values) {
-        getMutableModel().addHeaderCells(values);
-        return this;
-    }
-
-    @Override
-    public NutsTableFormat addHeaderCell(Object value) {
-        getMutableModel().addHeaderCell(value);
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat addRow(Object... values) {
-        getMutableModel().addRow(values);
-        return this;
-    }
-
-    @Override
-    public DefaultTableFormat addCells(Object... values) {
-        getMutableModel().addCells(values);
-        return this;
-    }
-
-    @Override
-    public NutsTableFormat addCell(Object value) {
-        getMutableModel().addCell(value);
-        return this;
     }
 
     public static class Pos {
@@ -1197,6 +1141,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
+            int cc = getModel().getColumnsCount();
+
+            Map<String, Integer> columns = new HashMap<>();
+            for (int i = 0; i < cc; i++) {
+                Object v = getModel().getHeaderValue(cc);
+                if (v instanceof String) {
+                    columns.put(v.toString().toLowerCase(), i);
+                }
+            }
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
                 if (cmdLine.next("--" + e.getKey()) != null) {
                     setVisibleColumn(e.getValue(), true);

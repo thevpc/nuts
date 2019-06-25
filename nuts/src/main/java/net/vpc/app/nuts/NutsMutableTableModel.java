@@ -35,28 +35,28 @@ package net.vpc.app.nuts;
  */
 public interface NutsMutableTableModel extends NutsTableModel {
 
-    public void newRow();
+    NutsMutableTableModel newRow();
 
-    public void clearHeader();
+    NutsMutableTableModel clearHeader();
 
-    public void addHeaderCells(Object... values);
+    NutsMutableTableModel addHeaderCells(Object... values);
 
-    public void addHeaderCell(Object value);
+    NutsMutableTableModel addHeaderCell(Object value);
 
-    public void addRow(Object... values);
+    NutsMutableTableModel addRow(Object... values);
 
-    public void addCells(Object... values);
+    NutsMutableTableModel addCells(Object... values);
 
-    public void addCell(Object value);
+    NutsMutableTableModel addCell(Object value);
 
-    void setCellValue(int row, int column, Object value);
+    NutsMutableTableModel setCellValue(int row, int column, Object value);
 
-    void setCellColSpan(int row, int column, int value);
+    NutsMutableTableModel setCellColSpan(int row, int column, int value);
 
-    void setCellRowSpan(int row, int column, int value);
+    NutsMutableTableModel setCellRowSpan(int row, int column, int value);
 
-    void setHeaderValue(int column, Object value);
+    NutsMutableTableModel setHeaderValue(int column, Object value);
 
-    void setHeaderColSpan(int column, int value);
+    NutsMutableTableModel setHeaderColSpan(int column, int value);
 
 }

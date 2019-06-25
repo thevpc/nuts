@@ -453,7 +453,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
-        NutsVersionFilter javaVersionFilter = ws.version().parseFilter(requestedVersion);
+        NutsVersionFilter javaVersionFilter = ws.version().parse(requestedVersion).toFilter();
         NutsSdkLocation best = null;
         final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks("java")) {
@@ -509,7 +509,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
                 config.setCreateApiVersion(getApiId().getVersion().getValue());
             }
-            ws.json().set(config).print(file);
+            ws.json().value(config).print(file);
             configurationChanged = false;
             ok = true;
         }

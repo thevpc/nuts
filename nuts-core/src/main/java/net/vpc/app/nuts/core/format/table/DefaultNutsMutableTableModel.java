@@ -20,50 +20,57 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
     private final List<Row> rows = new ArrayList<>();
 
     @Override
-    public void newRow() {
+    public NutsMutableTableModel newRow() {
         rows.add(new Row());
+        return this;
     }
 
     @Override
-    public void clearHeader() {
+    public NutsMutableTableModel clearHeader() {
         header.cells.clear();
+        return this;
     }
 
     @Override
-    public void addHeaderCells(Object... values) {
+    public NutsMutableTableModel addHeaderCells(Object... values) {
         for (Object value : values) {
             addHeaderCell(value);
         }
+        return this;
     }
 
     @Override
-    public void addHeaderCell(Object value) {
+    public NutsMutableTableModel addHeaderCell(Object value) {
         DefaultCell c = new DefaultCell();
         c.value = value;
         header.cells.add(c);
+        return this;
     }
 
     @Override
-    public void addRow(Object... values) {
+    public NutsMutableTableModel addRow(Object... values) {
         newRow();
         addCells(values);
+        return this;
     }
 
     @Override
-    public void addCells(Object... values) {
+    public NutsMutableTableModel addCells(Object... values) {
         for (Object value : values) {
             addCell(value);
         }
+        return this;
     }
 
     @Override
-    public void addCell(Object value) {
+    public NutsMutableTableModel addCell(Object value) {
         if (rows.isEmpty()) {
             newRow();
         }
         DefaultCell c = new DefaultCell();
         c.value = value;
         rows.get(rows.size() - 1).cells.add(c);
+        return this;
     }
 
     @Override
@@ -106,28 +113,33 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
     }
 
     @Override
-    public void setCellValue(int row, int column, Object value) {
+    public NutsMutableTableModel setCellValue(int row, int column, Object value) {
         rows.get(row).cells.get(column).value = value;
+        return this;
     }
 
     @Override
-    public void setCellColSpan(int row, int column, int value) {
+    public NutsMutableTableModel setCellColSpan(int row, int column, int value) {
         rows.get(row).cells.get(column).colspan = value;
+        return this;
     }
 
     @Override
-    public void setCellRowSpan(int row, int column, int value) {
+    public NutsMutableTableModel setCellRowSpan(int row, int column, int value) {
         rows.get(row).cells.get(column).rowspan = value;
+        return this;
     }
 
     @Override
-    public void setHeaderValue(int column, Object value) {
+    public NutsMutableTableModel setHeaderValue(int column, Object value) {
         header.cells.get(column).value = value;
+        return this;
     }
 
     @Override
-    public void setHeaderColSpan(int column, int value) {
+    public NutsMutableTableModel setHeaderColSpan(int column, int value) {
         header.cells.get(column).colspan = value;
+        return this;
     }
 
     public static class Row {

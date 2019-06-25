@@ -66,7 +66,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
 
         } else {
-            PrintStream out = context.session().getTerminal().fout();
+            PrintStream out = context.session().out();
             if (cmdLine.next("add repo", "ar") != null) {
                 boolean proxy = false;
                 boolean pattern = false;
@@ -135,23 +135,24 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.next("remove repo", "rr") != null) {
                 String locationOrRepositoryName = cmdLine.required().nextNonOption(cmdLine.createName("repository")).getString();
                 if (cmdLine.isExecMode()) {
-                    ws.config().removeRepository(locationOrRepositoryName,new NutsRemoveOptions().session(context.getSession()));
+                    ws.config().removeRepository(locationOrRepositoryName, new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
 
             } else if (cmdLine.next("list repos", "lr") != null) {
                 if (cmdLine.isExecMode()) {
-                    NutsTableFormat t = ws.table()
-                            .setColumnsConfig("id", "enabled", "type", "location")
-                            .addHeaderCells("Id", "Enabled", "Type", "Location");
+                    NutsTableFormat t = ws.table();
+                    NutsMutableTableModel m = t.createModel();
+                    t.setModel(m);
+                    m.addHeaderCells("Id", "Enabled", "Type", "Location");
                     while (cmdLine.hasNext()) {
                         if (!t.configureFirst(cmdLine)) {
                             cmdLine.setCommandName("config list repos").unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : ws.config().getRepositories()) {
-                        t.addRow(
+                        m.addRow(
                                 "==" + repository.config().getName() + "==",
                                 repository.config().isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),
@@ -225,16 +226,17 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     NutsRepository[] linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : new NutsRepository[0];
                     out.printf("%s sub repositories.%n", linkRepositories.length);
-                    NutsTableFormat t = ws.table()
-                            .setColumnsConfig("id", "enabled", "type", "location")
-                            .addHeaderCells("Id", "Enabled", "Type", "Location");
+                    NutsTableFormat t = ws.table();
+                    NutsMutableTableModel m = t.createModel();
+                    t.setModel(m);
+                    m.addHeaderCells("Id", "Enabled", "Type", "Location");
                     while (cmdLine.hasNext()) {
                         if (!t.configureFirst(cmdLine)) {
                             cmdLine.setCommandName("config edit repo").unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : linkRepositories) {
-                        t.addRow(
+                        m.addRow(
                                 "==" + repository.config().getName() + "==",
                                 repository.config().isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),

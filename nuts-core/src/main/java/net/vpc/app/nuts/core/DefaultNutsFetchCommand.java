@@ -430,7 +430,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.json().set(map).print(f);
+                        ws.json().value(map).print(f);
                     } catch (Exception ex) {
                         //
                     }

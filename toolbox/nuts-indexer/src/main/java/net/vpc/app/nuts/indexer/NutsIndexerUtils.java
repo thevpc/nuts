@@ -49,7 +49,7 @@ public class NutsIndexerUtils {
 
     public static String mapToJson(Map<String, String> map, NutsWorkspace ws) {
         StringWriter s = new StringWriter();
-        ws.json().set(map).print(s);
+        ws.json().value(map).print(s);
         return s.toString();
     }
 

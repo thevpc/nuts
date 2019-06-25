@@ -394,7 +394,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                             descriptor = descriptor2;
                         } else {
                             if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                                ws.descriptor().set(descriptor).print(descFile);
+                                ws.descriptor().value(descriptor).print(descFile);
                             }
                         }
                         if (descriptor != null) {
@@ -502,7 +502,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         result.add(nid);
         if (getValidSession().isPlainTrace()) {
-            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.id().set(nid).format(), toRepository == null ? "<default-repo>" : toRepository);
+            getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.id().value(nid).format(), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 

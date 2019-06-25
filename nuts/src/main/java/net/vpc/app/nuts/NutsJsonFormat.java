@@ -30,7 +30,9 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -48,19 +50,29 @@ public interface NutsJsonFormat extends NutsFormat {
     NutsJsonFormat setCompact(boolean compact);
 
     /**
-     * @since 0.5.6
+     * @return @since 0.5.6
      */
     Object getValue();
 
     /**
+     * @param value
+     * @return
      * @since 0.5.6
      */
-    NutsJsonFormat set(Object value);
+    NutsJsonFormat value(Object value);
 
     /**
+     * @param value
+     * @return
      * @since 0.5.6
      */
     NutsJsonFormat setValue(Object value);
+
+    <T> T parse(URL url, Class<T> clazz);
+    
+    <T> T parse(InputStream inputStream, Class<T> clazz);
+
+    <T> T parse(byte[] bytes, Class<T> clazz);
 
     <T> T parse(Reader reader, Class<T> cls);
 
@@ -76,7 +88,8 @@ public interface NutsJsonFormat extends NutsFormat {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

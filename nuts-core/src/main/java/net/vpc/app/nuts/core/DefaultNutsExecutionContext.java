@@ -156,8 +156,13 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public NutsSessionTerminal getTerminal() {
-        return session.getTerminal();
+    public NutsWorkspace workspace() {
+        return getWorkspace();
+    }
+
+    @Override
+    public NutsSession session() {
+        return getSession();
     }
 
     @Override

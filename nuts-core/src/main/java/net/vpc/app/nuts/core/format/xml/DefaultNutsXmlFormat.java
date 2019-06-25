@@ -29,7 +29,17 @@
  */
 package net.vpc.app.nuts.core.format.xml;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +58,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsPrimitiveElement;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.NutsNamedElement;
+import net.vpc.app.nuts.NutsParseException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsXmlFormat;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
@@ -55,6 +66,8 @@ import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -82,6 +95,63 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
                 return fromXmlElement((org.w3c.dom.Element) o, NutsElement.class);
             }
         };
+    }
+
+    @Override
+    public <T> T parse(URL url, Class<T> clazz) {
+        try {
+            try (InputStream is = url.openStream()) {
+                return parse(is, clazz);
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+            }
+        } catch (IOException ex) {
+            throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+        }
+    }
+
+    @Override
+    public <T> T parse(InputStream inputStream, Class<T> clazz) {
+        return parse(new InputStreamReader(inputStream), clazz);
+    }
+
+    @Override
+    public <T> T parse(byte[] bytes, Class<T> clazz) {
+        return parse(new ByteArrayInputStream(bytes), clazz);
+    }
+
+    @Override
+    public <T> T parse(Path path, Class<T> cls) {
+        File file = path.toFile();
+        try (FileReader r = new FileReader(file)) {
+            return parse(r, cls);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public <T> T parse(File file, Class<T> cls) {
+        try (FileReader r = new FileReader(file)) {
+            return parse(r, cls);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public <T> T parse(Reader reader, Class<T> clazz) {
+        Document doc = null;
+        try {
+            doc = NutsXmlUtils.createDocumentBuilder(false).parse(new InputSource(reader));
+        } catch (SAXException | ParserConfigurationException ex) {
+            throw new UncheckedIOException(new IOException(ex));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return fromXmlElement(doc == null ? null : doc.getDocumentElement(), clazz);
     }
 
     public String getDefaulTagName() {
@@ -459,7 +529,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
     }
 
     @Override
-    public NutsXmlFormat set(Object value) {
+    public NutsXmlFormat value(Object value) {
         return setValue(value);
     }
 
@@ -477,6 +547,27 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         } catch (TransformerException ex) {
             throw new NutsException(getWorkspace(), ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public boolean isCompact() {
+        return compact;
+    }
+
+    @Override
+    public NutsXmlFormat compact() {
+        return compact(true);
+    }
+
+    @Override
+    public NutsXmlFormat compact(boolean compact) {
+        return setCompact(compact);
+    }
+
+    @Override
+    public NutsXmlFormat setCompact(boolean compact) {
+        this.compact = compact;
+        return this;
     }
 
 }

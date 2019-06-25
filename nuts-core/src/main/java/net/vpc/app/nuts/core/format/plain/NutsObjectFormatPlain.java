@@ -109,12 +109,12 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             case ARRAY: {
                 NutsObjectFormatTable table = new NutsObjectFormatTable(ws);
                 table.configure(true, "--no-header","--border=spaces");
-                table.set(value).print(w);
+                table.value(value).print(w);
                 break;
             }
             case OBJECT: {
                 NutsObjectFormatProps tree = new NutsObjectFormatProps(ws);
-                tree.set(value).print(w);
+                tree.value(value).print(w);
                 break;
             }
             default: {

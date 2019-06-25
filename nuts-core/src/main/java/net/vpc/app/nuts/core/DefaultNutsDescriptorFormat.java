@@ -55,7 +55,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         return this;
     }
 
-    public NutsDescriptorFormat set(NutsDescriptor desc) {
+    public NutsDescriptorFormat value(NutsDescriptor desc) {
         return setDescriptor(desc);
     }
 
@@ -66,14 +66,14 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public void print(Writer out) {
-        ws.json().compact(isCompact()).set(desc).print(out);
+        ws.json().compact(isCompact()).value(desc).print(out);
     }
 
     @Override
     public NutsDescriptor parse(URL url) {
         try {
-            try {
-                return parse(url.openStream(), true);
+            try (InputStream is = url.openStream()) {
+                return parse(is, true);
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {

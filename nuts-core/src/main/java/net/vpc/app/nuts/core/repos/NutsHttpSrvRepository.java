@@ -90,7 +90,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().descriptor().set(desc).print(new OutputStreamWriter(descStream));
+        getWorkspace().descriptor().value(desc).print(new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),

@@ -104,7 +104,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                context.setPrintOutObject(context.getWorkspace().json().set(inputDocument).format());
+                context.setPrintOutObject(context.getWorkspace().json().value(inputDocument).format());
             } else {
                 context.setPrintOutObject(inputDocument);
             }
@@ -135,7 +135,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                         }
                     }
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getWorkspace().json().set(resultDocument).format());
+                        context.setPrintlnOutObject(context.getWorkspace().json().value(resultDocument).format());
                     } else {
                         context.setPrintlnOutObject(resultDocument);
                     }
@@ -153,7 +153,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getWorkspace().json().set(result).format());
+                        context.setPrintlnOutObject(context.getWorkspace().json().value(result).format());
                     } else {
                         context.setPrintlnOutObject(result);
                     }

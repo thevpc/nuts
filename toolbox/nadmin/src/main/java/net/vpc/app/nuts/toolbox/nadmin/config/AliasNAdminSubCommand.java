@@ -56,7 +56,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                     ))
                             ).println();
                 } else {
-                    context.session().oout().println(r);
+                    context.workspace().object().session(context.session()).value(r).println();
                 }
             }
             return true;

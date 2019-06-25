@@ -71,7 +71,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
 //                return true;
 //            } else 
         if (cmdLine.next("list extension points", "lxp") != null) {
-            PrintStream out = context.session().getTerminal().fout();
+            PrintStream out = context.session().out();
             if (cmdLine.isExecMode()) {
                 for (Class extension : context.getWorkspace().extensions().getExtensionPoints()) {
                     out.printf("[[%s]]:%n", extension.getName());

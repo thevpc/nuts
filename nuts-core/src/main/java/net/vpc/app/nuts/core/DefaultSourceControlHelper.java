@@ -63,7 +63,7 @@ public class DefaultSourceControlHelper {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            ws.descriptor().set(d).print(file);
+            ws.descriptor().value(d).print(file);
             try {
                 CoreIOUtils.delete(folder);
             } catch (IOException ex) {
@@ -99,7 +99,7 @@ public class DefaultSourceControlHelper {
             NutsId newId = d.getId().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
 
-            ws.descriptor().set(d).print(file);
+            ws.descriptor().value(d).print(file);
 
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),

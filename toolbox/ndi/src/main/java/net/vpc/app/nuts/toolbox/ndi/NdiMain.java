@@ -119,7 +119,7 @@ public class NdiMain extends NutsApplication {
                     throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
                 }
                 if (context.getSession().isTrace()) {
-                    context.session().oout().println(result);
+                    context.workspace().object().session(context.session()).value(result).println();
                 }
             } else {
                 for (String id : idsToUninstall) {
@@ -176,7 +176,7 @@ public class NdiMain extends NutsApplication {
                 }
             }
             if (context.getSession().isPlainTrace()) {
-                context.session().oout().println(result);
+                context.workspace().object().session(context.session()).value(result).println();
             }
         }
     }

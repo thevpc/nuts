@@ -236,8 +236,8 @@ public class NdedMain extends NutsApplication {
             throw new NutsUserCancelException(context.getWorkspace());
         }
         NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor();
-        nutsDescriptorFormat.set(desc).print(file);
-        nutsDescriptorFormat.set(desc).print(out);
+        nutsDescriptorFormat.value(desc).print(file);
+        nutsDescriptorFormat.value(desc).print(out);
     }
 
     private static String getFilePath(File s) {

@@ -37,8 +37,6 @@ public interface NutsObjectFormat extends NutsFormat {
 
     Object getValue();
 
-    NutsObjectFormat set(Object obj);
-
     NutsObjectFormat setValue(Object obj);
 
     NutsObjectFormat value(Object obj);

@@ -375,7 +375,7 @@ public class CoreCommonUtils {
             return ws.io().getTerminalFormat().escapeText(((Date) o).toInstant().toString());
         }
         if (o instanceof NutsId) {
-            return ws.id().set((NutsId) o).format();
+            return ws.id().value((NutsId) o).format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

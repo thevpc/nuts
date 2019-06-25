@@ -45,7 +45,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         Path f = getConfigPath();
-        context.getWorkspace().json().set(config).print(f);
+        context.getWorkspace().json().value(config).print(f);
         return this;
     }
 
@@ -82,7 +82,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService write(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().json().set(getConfig()).print(new PrintWriter(out));
+        context.getWorkspace().json().value(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

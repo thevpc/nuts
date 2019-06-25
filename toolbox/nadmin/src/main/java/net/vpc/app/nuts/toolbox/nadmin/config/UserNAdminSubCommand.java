@@ -53,7 +53,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else {
-            PrintStream out = context.session().getTerminal().fout();
+            PrintStream out = context.session().out();
             if (cmdLine.next("list users", "lu") != null) {
                 NutsRepository repository = null;
                 if (editedRepo != null) {

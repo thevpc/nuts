@@ -643,7 +643,7 @@ public class NutsElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = session.workspace().json().set(value).format();
+            String v = session.workspace().json().value(value).format();
             if (u.contains(v)) {
                 return false;
             }

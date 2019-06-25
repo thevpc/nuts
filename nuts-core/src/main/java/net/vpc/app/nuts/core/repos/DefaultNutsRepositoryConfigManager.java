@@ -360,7 +360,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
                 config.setCreateApiVersion(repository.getWorkspace().config().getApiId().getVersion().getValue());
             }
-            repository.getWorkspace().json().set(config).print(file);
+            repository.getWorkspace().json().value(config).print(file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {

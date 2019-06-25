@@ -52,7 +52,7 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        context.getWorkspace().json().set(config).print(configFile);
+        context.getWorkspace().json().value(config).print(configFile);
     }
 
     public boolean load() {

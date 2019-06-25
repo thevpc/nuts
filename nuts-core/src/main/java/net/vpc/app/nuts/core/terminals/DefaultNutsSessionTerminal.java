@@ -36,12 +36,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public PrintStream fout() {
-        return getFormattedOut();
+        return fout(false);
     }
 
     @Override
     public PrintStream ferr() {
-        return getFormattedErr();
+        return ferr(false);
     }
 
     @Override
@@ -60,17 +60,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public PrintStream getFormattedOut() {
-        return getFormattedOut(false);
-    }
-
-    @Override
-    public PrintStream getFormattedErr() {
-        return getFormattedErr(false);
-    }
-
-    @Override
-    public PrintStream getFormattedOut(boolean forceNoColors) {
+    public PrintStream fout(boolean forceNoColors) {
         if (forceNoColors) {
             if (out_getFormatted_Force == null) {
                 out_getFormatted_Force = ws.io().createPrintStream(out(), NutsTerminalMode.FILTERED);
@@ -85,7 +75,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public PrintStream getFormattedErr(boolean forceNoColors) {
+    public PrintStream ferr(boolean forceNoColors) {
         if (forceNoColors) {
             if (err_getFormatted_Force == null) {
                 err_getFormatted_Force = ws.io().createPrintStream(err(), NutsTerminalMode.FILTERED);

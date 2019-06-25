@@ -58,9 +58,9 @@ public interface NutsTableFormat extends NutsFormat {
 
     NutsTableFormat setVisibleHeader(boolean visibleHeader);
 
-    NutsTableFormat setColumnsConfig(String... names);
-
-    NutsTableFormat setColumnConfigIndex(String name, int index);
+//    NutsTableFormat setColumnsConfig(String... names);
+//
+//    NutsTableFormat setColumnConfigIndex(String name, int index);
 
     NutsTableBordersFormat getBorder();
 
@@ -74,45 +74,31 @@ public interface NutsTableFormat extends NutsFormat {
 
     NutsTableFormat setCellFormat(NutsTableCellFormat formatter);
 
-    NutsTableFormat newRow();
-
-    NutsTableFormat clearHeader();
-
-    NutsTableFormat addHeaderCells(Object... values);
-
-    NutsTableFormat addHeaderCell(Object value);
-
-    NutsTableFormat addRow(Object... values);
-
-    NutsTableFormat addCells(Object... values);
-
-    NutsTableFormat addCell(Object value);
-
     NutsTableModel getModel();
+    
+    NutsMutableTableModel createModel();
 
     void setModel(NutsTableModel model);
 
     enum Separator {
-        FIRST_ROW_START('A'),
-        FIRST_ROW_LINE('B'),
-        FIRST_ROW_SEP('C'),
-        FIRST_ROW_END('D'),
-        ROW_START('E'),
-        ROW_SEP('F'),
-        ROW_END('G'),
-        INTER_ROW_START('H'),
-        INTER_ROW_LINE('I'),
-        INTER_ROW_SEP('J'),
-        INTER_ROW_END('K'),
-        LAST_ROW_START('L'),
-        LAST_ROW_LINE('M'),
-        LAST_ROW_SEP('N'),
-        LAST_ROW_END('O');
-        char c;
+        FIRST_ROW_START,
+        FIRST_ROW_LINE,
+        FIRST_ROW_SEP,
+        FIRST_ROW_END,
+        ROW_START,
+        ROW_SEP,
+        ROW_END,
+        MIDDLE_ROW_START,
+        MIDDLE_ROW_LINE,
+        MIDDLE_ROW_SEP,
+        MIDDLE_ROW_END,
+        LAST_ROW_START,
+        LAST_ROW_LINE,
+        LAST_ROW_SEP,
+        LAST_ROW_END;
         private final String id;
 
-        Separator(char c) {
-            this.c = c;
+        Separator() {
             this.id = name().toLowerCase().replace('_', '-');
         }
 

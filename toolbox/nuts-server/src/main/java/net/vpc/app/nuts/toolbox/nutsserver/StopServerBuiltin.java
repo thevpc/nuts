@@ -44,8 +44,6 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsJavaShell;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
@@ -63,16 +61,16 @@ class StopServerBuiltin implements NutsServer, Runnable {
     NutsWorkspace invokerWorkspace;
     boolean running;
     ServerSocket serverSocket = null;
-    NutsSessionTerminal terminal = null;
+    NutsSession session = null;
 
-    public StopServerBuiltin(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSessionTerminal terminal) {
+    public StopServerBuiltin(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSession session) {
         this.serverId = serverId;
         this.finalPort = finalPort;
         this.finalBacklog = finalBacklog;
         this.address = address;
         this.finalExecutor = finalExecutor;
         this.invokerWorkspace = invokerWorkspace;
-        this.terminal = terminal;
+        this.session = session;
     }
 
     @Override
@@ -140,13 +138,13 @@ class StopServerBuiltin implements NutsServer, Runnable {
                                 cli.runCommand(args);
                                 finalAccept.close();
                             } catch (IOException e) {
-                                terminal.ferr().printf("%s\n", e);
+                                session.err().printf("%s\n", e);
                             }
                         }
 
                     });
                 } catch (Exception ex) {
-                    terminal.ferr().printf("%s\n", ex);
+                    session.err().printf("%s\n", ex);
                 }
             }
         } finally {
@@ -185,8 +183,7 @@ class StopServerBuiltin implements NutsServer, Runnable {
         @Override
         protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
             if (context.getSession().isPlainTrace()) {
-                PrintStream out2 = context.getSession().terminal().fout();
-                out2.println("Stopping Server ...");
+                context.getSession().out().println("Stopping Server ...");
             }
             try {
                 socket.close();

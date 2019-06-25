@@ -50,51 +50,33 @@ public interface NutsVersionFormat extends NutsFormat {
 
     /**
      * return version set by {@link #setVersion(net.vpc.app.nuts.NutsVersion) }
+     *
      * @return version set by {@link #setVersion(net.vpc.app.nuts.NutsVersion) }
      */
     NutsVersion getVersion();
 
     /**
      * set version to print. if null, workspace version will be considered.
+     *
      * @param version version to print
      * @return {@code this} instance
      */
     NutsVersionFormat setVersion(NutsVersion version);
 
     /**
-     * return version interval set by {@link #setVersionInterval(net.vpc.app.nuts.NutsVersionInterval)}
-     * @return version interval set by {@link #setVersionInterval(net.vpc.app.nuts.NutsVersionInterval)}
-     */
-    NutsVersionInterval getVersionInterval();
-
-    /**
-     * set version interval to print. if null, workspace version will be considered.
-     * version will be reset to null.
-     * @param versionInterval versionInterval to print
-     * @return {@code this} instance
-     */
-    NutsVersionFormat setVersionInterval(NutsVersionInterval versionInterval);
-
-    /**
-     * print methods will display workspace version instead of user defined one.
-     * version and versionInterval will be reset to null.
-     * @return {@code this} instance
-     */
-    NutsVersionFormat setWorkspaceVersion();
-
-    /**
-     * return true if both version and version interval are null (default)
-     * @return true if both version and version interval are null (default) 
+     * return true if version is null (default). In such case, workspace version
+     * is considered.
+     *
+     * @return true if version is null (default)
      */
     boolean isWorkspaceVersion();
 
     /**
      * return version instance representing the {@code version} string
+     *
      * @param version string (may be null)
-     * @return version instance representing the {@code version} string 
+     * @return version instance representing the {@code version} string
      */
     NutsVersion parse(String version);
-
-    NutsVersionFilter parseFilter(String versionFilter);
 
 }

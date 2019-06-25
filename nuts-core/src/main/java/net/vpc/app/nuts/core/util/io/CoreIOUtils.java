@@ -91,7 +91,7 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static int execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static int execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -188,7 +188,7 @@ public class CoreIOUtils {
         } else {
             pdirectory = workspace.config().getWorkspaceLocation().resolve(directory);
         }
-        return execAndWait(workspace, args, envmap, pdirectory, terminal, showCommand, failFast);
+        return execAndWait(workspace, args, envmap, pdirectory, session.getTerminal(), showCommand, failFast);
     }
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
@@ -212,7 +212,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parseFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parse(requestedJavaVersion).toFilter();
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace.createSession())) {
                 bestJava = current;
             }
@@ -598,7 +598,7 @@ public class CoreIOUtils {
                 }
                 int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
                 if (buildNumber < 506) {
-                    
+
                 }
                 conf = ws.json().parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {

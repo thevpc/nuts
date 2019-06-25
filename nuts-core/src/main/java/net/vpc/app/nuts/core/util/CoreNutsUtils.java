@@ -518,17 +518,17 @@ public class CoreNutsUtils {
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
         NutsIdFormat idFormat = ws.id();
-        return idFormat.set(id).format();
+        return idFormat.value(id).format();
     }
 
     public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.id();
-        return idFormat.set(id.getId()).format();
+        return idFormat.value(id.getId()).format();
     }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.id();
-        return idFormat.set(id.getId()).toString();
+        return idFormat.value(id.getId()).toString();
     }
 
     public static Map<String, Object> traceJsonNutsDefinition(NutsWorkspace ws, NutsDefinition def) {
@@ -555,8 +555,8 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", ws.descriptor().set(def.getDescriptor()).format());
-            x.put("effective-descriptor", ws.descriptor().set(
+            x.put("descriptor", ws.descriptor().value(def.getDescriptor()).format());
+            x.put("effective-descriptor", ws.descriptor().value(
                     NutsWorkspaceUtils.getEffectiveDescriptor(ws, def)
             ).format());
         }

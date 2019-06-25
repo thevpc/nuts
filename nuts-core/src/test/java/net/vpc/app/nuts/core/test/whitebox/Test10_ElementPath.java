@@ -35,7 +35,7 @@ import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementBuilder;
 import net.vpc.app.nuts.NutsElementFormat;
-import net.vpc.app.nuts.NutsObjectPrintStream;
+import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import org.junit.Assert;
 import org.junit.Test;
@@ -85,9 +85,9 @@ public class Test10_ElementPath {
                                                         )
                                         )
                         ));
-        NutsObjectPrintStream ss = ws.createSession().json().oout();
-        ss.println(p);
-        String json = ss.format(p);
+        NutsObjectFormat ss = ws.object().session(ws.createSession().json());
+        ss.value(p).println();
+        String json = ss.format();
         Assert.assertEquals("[\n"
                 + "  {\n"
                 + "    \"first\": {\n"
@@ -259,8 +259,8 @@ public class Test10_ElementPath {
             System.out.println("=====================================");
             System.out.println("CHECKING : '" + tt.path+"'");
             List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
-            ss.println(filtered1);
-            Assert.assertEquals(tt.expected.get(0), ss.format(filtered1));
+            ss.value(filtered1).println();
+            Assert.assertEquals(tt.expected.get(0), ss.format());
         }
     }
 

@@ -9,7 +9,6 @@ import java.util.*;
 
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 
 /**
  *
@@ -22,15 +21,9 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     private final Properties extraProperties = new Properties();
     private boolean all;
     private NutsVersion version;
-    private NutsVersionInterval versionIntervall;
 
     public DefaultVersionFormat(NutsWorkspace ws) {
         super(ws, "version");
-    }
-
-    @Override
-    public NutsVersionFilter parseFilter(String versionFilter) {
-        return DefaultNutsVersionFilter.parse(versionFilter);
     }
 
     @Override
@@ -45,33 +38,13 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public NutsVersionFormat setVersion(NutsVersion version) {
-        this.versionIntervall = null;
         this.version = version;
         return this;
     }
 
     @Override
-    public NutsVersionInterval getVersionInterval() {
-        return versionIntervall;
-    }
-
-    @Override
-    public NutsVersionFormat setVersionInterval(NutsVersionInterval version) {
-        this.versionIntervall = version;
-        this.version = null;
-        return this;
-    }
-
-    @Override
-    public NutsVersionFormat setWorkspaceVersion() {
-        version = null;
-        versionIntervall = null;
-        return this;
-    }
-
-    @Override
     public boolean isWorkspaceVersion() {
-        return version == null && versionIntervall == null;
+        return version == null;
     }
 
     @Override
@@ -121,20 +94,15 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
                 PrintWriter pout = getValidPrintWriter(out);
                 NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
                 pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
-            } else if (getVersion() != null) {
+            } else {
                 PrintWriter pout = getValidPrintWriter(out);
                 pout.printf("%s", getVersion());
-            } else if (getVersionInterval() != null) {
-                PrintWriter pout = getValidPrintWriter(out);
-                pout.printf("%s", getVersionInterval());
             }
         } else {
             if (isWorkspaceVersion()) {
-                ws.object().session(getValidSession()).set(buildProps()).print(out);
-            } else if (getVersion() != null) {
-                ws.object().session(getValidSession()).set(getVersion()).print(out);
-            } else if (getVersionInterval() != null) {
-                ws.object().session(getValidSession()).set(getVersionInterval()).print(out);
+                ws.object().session(getValidSession()).value(buildProps()).print(out);
+            } else {
+                ws.object().session(getValidSession()).value(getVersion()).print(out);
             }
         }
     }

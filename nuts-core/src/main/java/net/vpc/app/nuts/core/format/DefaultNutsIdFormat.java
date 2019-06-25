@@ -253,7 +253,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat set(NutsId id) {
+    public NutsIdFormat value(NutsId id) {
         return setValue(id);
     }
 

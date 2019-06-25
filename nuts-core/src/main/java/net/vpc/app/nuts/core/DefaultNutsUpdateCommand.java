@@ -664,7 +664,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 //                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceComponent().setPackaging("jar")))
 //                    ).run();
 //            NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailable().getId()).getResultDescriptor();
-//            ws.descriptor().set(runtimeDesc).print(
+//            ws.descriptor().value(runtimeDesc).print(
 //                    ws.config().getStoreLocation(runtimeUpdate.getAvailable().getId(), bootstrapFolder)
 //                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailable().getId().setFaceDescriptor()))
 //            );

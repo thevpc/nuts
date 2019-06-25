@@ -58,7 +58,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException(invokerWorkspace, "Missing Workspace");
         }
-        NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
+        NutsSession session = invokerWorkspace.createSession();
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -91,10 +91,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        PrintStream out = terminal.fout();
+        PrintStream out = session.out();
         out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.config().getWorkspaceLocation());
-        StopServerBuiltin myNutsServer = new StopServerBuiltin(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
+        StopServerBuiltin myNutsServer = new StopServerBuiltin(serverId, port, backlog, address, executor, invokerWorkspace, session);
 
         executor.execute(myNutsServer);
         return myNutsServer;

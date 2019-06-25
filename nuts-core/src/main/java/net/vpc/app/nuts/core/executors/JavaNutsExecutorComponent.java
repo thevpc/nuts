@@ -172,7 +172,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 if (joptions.isJar()) {
                     xargs.add("-jar");
-                    xargs.add(ws.id().set(def.getId()).format());
+                    xargs.add(ws.id().value(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
@@ -188,7 +188,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 xargs.addAll(joptions.getApp());
                 args.addAll(joptions.getApp());
                 if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-                    PrintStream out = executionContext.getTerminal().fout();
+                    PrintStream out = executionContext.getSession().out();
                     out.println("==[nuts-exec]== ");
                     for (int i = 0; i < xargs.size(); i++) {
                         String xarg = xargs.get(i);
@@ -203,10 +203,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
 
                 String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-                CoreIOUtils.execAndWait(def, executionContext.getSession(), executionContext.getExecutorProperties(),
+                CoreIOUtils.execAndWait(def, 
+                        executionContext.getSession(), 
+                        executionContext.getExecutorProperties(),
                         args.toArray(new String[0]),
-                        osEnv, directory,
-                        executionContext.getTerminal(), joptions.isShowCommand(), true
+                        osEnv, directory, joptions.isShowCommand(), true
                 );
             }
         }

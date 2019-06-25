@@ -215,7 +215,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                 throw new UncheckedIOException(ex);
             }
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N uninstalled ##successfully##%n", ws.id().set(id).format());
+                out.printf("%N uninstalled ##successfully##%n", ws.id().value(id).format());
             }
             dws.fireOnUninstall(new DefaultNutsInstallEvent(def, session, erase));
         }

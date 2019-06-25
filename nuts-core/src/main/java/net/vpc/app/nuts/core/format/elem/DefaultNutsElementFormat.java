@@ -90,7 +90,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public void print(Writer out) {
-        getWorkspace().json().set(value).print(out);
+        getWorkspace().json().value(value).print(out);
     }
 
     @Override

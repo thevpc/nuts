@@ -102,14 +102,16 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             }
             case ARRAY: {
                 NutsTableFormat t = ws.table();
+                NutsMutableTableModel model = t.createModel();
+                t.setModel(model);
                 t.configure(true, getExtraConfigArray());
                 LinkedHashSet<String> columns = new LinkedHashSet<>();
                 resolveColumns(value, columns);
                 for (String column : columns) {
-                    t.addHeaderCell(column);
+                    model.addHeaderCell(column);
                 }
                 for (NutsElement elem : value.array().children()) {
-                    t.newRow();
+                    model.newRow();
                     switch (elem.type()) {
                         case OBJECT: {
                             Map<String, NutsElement> m = new HashMap<>();
@@ -119,9 +121,9 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
                             for (String column : columns) {
                                 NutsElement vv = m.get(column);
                                 if (vv != null) {
-                                    t.addCell(formatObject(vv));
+                                    model.addCell(formatObject(vv));
                                 } else {
-                                    t.addCell("");
+                                    model.addCell("");
                                 }
                             }
                             break;
@@ -129,9 +131,9 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
                         default: {
                             for (String column : columns) {
                                 if (column.equals("value")) {
-                                    t.addCell(formatObject(elem/*.primitive().getValue()*/));
+                                    model.addCell(formatObject(elem/*.primitive().getValue()*/));
                                 } else {
-                                    t.addCell("");
+                                    model.addCell("");
                                 }
                             }
                         }
@@ -156,6 +158,6 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
     }
 
     private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false,getValidSession());
+        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
     }
 }

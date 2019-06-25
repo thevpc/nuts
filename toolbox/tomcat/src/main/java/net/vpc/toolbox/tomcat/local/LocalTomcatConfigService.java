@@ -91,7 +91,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         Path f = getConfigPath();
-        context.workspace().json().set(config).print(f);
+        context.workspace().json().value(config).print(f);
         return this;
     }
 
@@ -170,19 +170,23 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         } else {
             switch (getStatus()) {
                 case RUNNING: {
-                    context.session().oout().println("running");
+                    object().value("running").println();
                     break;
                 }
                 case STOPPED: {
-                    context.session().oout().println("stopped");
+                    object().value("stopped").println();
                     break;
                 }
                 case OUT_OF_MEMORY: {
-                    context.session().oout().println("out-of-memory");
+                    object().value("out-of-memory").println();
                     break;
                 }
             }
         }
+    }
+
+    public NutsObjectFormat object() {
+        return context.workspace().object().session(context.session());
     }
 
     public String[] parseApps(String[] args) {
@@ -605,7 +609,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         result.put("base", getCatalinaBase());
         result.put("out", getOutLogFile());
         result.put("config", getConfig());
-        context.workspace().json().set(result).print(out);
+        context.workspace().json().value(result).print(out);
         return this;
     }
 

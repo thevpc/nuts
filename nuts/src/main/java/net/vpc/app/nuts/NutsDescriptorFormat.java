@@ -49,7 +49,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
     boolean isCompact();
 
     /**
-     * set compact flag.
+     * value compact flag.
      * When true, formatted Descriptor will compact JSON result.
      * @param compact compact value
      * @return {@code this} instance
@@ -57,14 +57,14 @@ public interface NutsDescriptorFormat extends NutsFormat {
     NutsDescriptorFormat compact(boolean compact);
 
     /**
-     * set compact flag to true.
+     * value compact flag to true.
      * When true, formatted Descriptor will compact JSON result.
      * @return {@code this} instance
      */
     NutsDescriptorFormat compact();
 
     /**
-     * set compact flag.
+     * value compact flag.
      * When true, formatted Descriptor will compact JSON result.
      * @param compact compact value
      * @return {@code this} instance
@@ -78,12 +78,12 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * @return {@code this} instance
      * @since 0.5.6
      */
-    NutsDescriptorFormat set(NutsDescriptor descriptor);
+    NutsDescriptorFormat value(NutsDescriptor descriptor);
 
     /**
      * parse descriptor.
      *
-     * @param url url to parse
+     * @param url URL to parse
      * @return parsed Descriptor
      * @since 0.5.6
      */

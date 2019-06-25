@@ -15,13 +15,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -37,7 +41,6 @@ import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
-import net.vpc.app.nuts.core.format.elem.NutsElementUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
@@ -93,7 +96,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
-    public NutsJsonFormat set(Object value) {
+    public NutsJsonFormat value(Object value) {
         return setValue(value);
     }
 
@@ -120,8 +123,33 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
-    public <T> T parse(Reader reader, Class<T> cls) {
-        return getGson(true).fromJson(reader, cls);
+    public <T> T parse(URL url, Class<T> clazz) {
+        try {
+            try (InputStream is = url.openStream()) {
+                return parse(is, clazz);
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+            }
+        } catch (IOException ex) {
+            throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+        }
+    }
+
+    @Override
+    public <T> T parse(InputStream inputStream, Class<T> clazz) {
+        return parse(new InputStreamReader(inputStream), clazz);
+    }
+
+    @Override
+    public <T> T parse(byte[] bytes, Class<T> clazz) {
+        return parse(new ByteArrayInputStream(bytes), clazz);
+    }
+
+    @Override
+    public <T> T parse(Reader reader, Class<T> clazz) {
+        return getGson(true).fromJson(reader, clazz);
     }
 
     @Override

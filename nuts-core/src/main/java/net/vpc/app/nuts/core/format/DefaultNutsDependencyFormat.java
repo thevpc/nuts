@@ -134,7 +134,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public NutsDependencyFormat set(NutsDependency id) {
+    public NutsDependencyFormat value(NutsDependency id) {
         return setValue(id);
     }
 

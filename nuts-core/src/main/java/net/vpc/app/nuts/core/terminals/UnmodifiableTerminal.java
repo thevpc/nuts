@@ -28,23 +28,13 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public PrintStream getFormattedOut() {
-        return base.getFormattedOut();
+    public PrintStream fout(boolean forceNoColors) {
+        return base.fout(forceNoColors);
     }
 
     @Override
-    public PrintStream getFormattedErr() {
-        return base.getFormattedErr();
-    }
-
-    @Override
-    public PrintStream getFormattedOut(boolean forceNoColors) {
-        return base.getFormattedOut(forceNoColors);
-    }
-
-    @Override
-    public PrintStream getFormattedErr(boolean forceNoColors) {
-        return base.getFormattedErr(forceNoColors);
+    public PrintStream ferr(boolean forceNoColors) {
+        return base.ferr(forceNoColors);
     }
 
     @Override

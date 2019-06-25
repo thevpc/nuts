@@ -169,9 +169,9 @@ public class NutsJavaShell extends JShell {
 
     @Override
     public void run(String[] args) {
-        NutsSessionTerminal terminal = context.getSession().getTerminal();
-        PrintStream out = terminal.fout();
-        PrintStream err = terminal.ferr();
+        NutsSession session = context.getSession();
+        PrintStream out = session.out();
+        PrintStream err = session.err();
         List<String> nonOptions = new ArrayList<>();
         boolean interactive = false;
         boolean perf = false;
@@ -229,7 +229,7 @@ public class NutsJavaShell extends JShell {
                 nonOptions.remove(0);
                 context.setArgs(nonOptions.toArray(new String[0]));
                 if (perf) {
-                    terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
+                    session.out().printf("**Nsh** loaded in [[%s]]\n",
                             Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                     );
                 }
@@ -237,7 +237,7 @@ public class NutsJavaShell extends JShell {
                 return;
             } else {
                 if (perf) {
-                    terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
+                    session.out().printf("**Nsh** loaded in [[%s]]\n",
                             Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                     );
                 }
@@ -247,7 +247,7 @@ public class NutsJavaShell extends JShell {
         }
         if (interactive) {
             if (perf) {
-                terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
+                session.out().printf("**Nsh** loaded in [[%s]]\n",
                         Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                 );
             }

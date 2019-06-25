@@ -319,7 +319,7 @@ public class NutsRepositoryFolderHelper {
         if (Files.exists(descFile)) {
             LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
         }
-        getWorkspace().descriptor().set(desc).print(descFile);
+        getWorkspace().descriptor().value(desc).print(descFile);
         getWorkspace().io().copy().session(session.getSession()).from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         return descFile;
     }

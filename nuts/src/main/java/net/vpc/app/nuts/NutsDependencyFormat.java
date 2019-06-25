@@ -75,19 +75,19 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependency getValue();
 
     /**
-     * set dependency to format
+     * value dependency to format
      * @param dependency dependency to format
      * @return {@code this} instance
      * @since 0.5.6
      */
-    NutsDependencyFormat set(NutsDependency dependency);
+    NutsDependencyFormat value(NutsDependency dependency);
 
     NutsDependencyBuilder builder();
 
     NutsDependency parse(String dependency);
 
     /**
-     * set dependency to format
+     * value dependency to format
      * @param dependency dependency to format
      * @return {@code this} instance
      * @since 0.5.6

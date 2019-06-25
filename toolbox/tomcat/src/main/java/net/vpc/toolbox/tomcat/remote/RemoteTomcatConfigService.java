@@ -62,7 +62,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.workspace().json().set(config).print(f);
+        context.workspace().json().value(config).print(f);
         return this;
     }
 
@@ -164,7 +164,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService write(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.workspace().json().set(getConfig()).print(new PrintWriter(out));
+        context.workspace().json().value(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

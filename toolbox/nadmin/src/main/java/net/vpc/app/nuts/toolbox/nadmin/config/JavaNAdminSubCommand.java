@@ -27,7 +27,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        PrintStream out = context.session().getTerminal().fout();
+        PrintStream out = context.session().out();
         NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.next("add java") != null) {
             if (cmdLine.next("--search") != null) {
@@ -83,9 +83,10 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("list java") != null) {
             NutsTableFormat t = context.getWorkspace().table()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
-                    .setVisibleHeader(true)
-                    .setColumnsConfig("name", "version", "path")
-                    .addHeaderCells("Name", "Version", "Path");
+                    .setVisibleHeader(true);
+            NutsMutableTableModel m = t.createModel();
+            t.setModel(m);
+            m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {
                 if (!t.configureFirst(cmdLine)) {
                     cmdLine.setCommandName("config list java").unexpectedArgument();
@@ -113,7 +114,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
                 for (NutsSdkLocation jloc : sdks) {
-                    t.addRow(jloc.getName(), jloc.getVersion(), jloc.getPath());
+                    m.addRow(jloc.getName(), jloc.getVersion(), jloc.getPath());
                 }
                 out.printf(t.toString());
             }

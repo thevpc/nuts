@@ -453,20 +453,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsTerminalMode getTerminalMode();
 
     /**
-     * Object Print Stream associated to out()
-     *
-     * @return Object Print Stream
-     */
-    NutsObjectPrintStream oout();
-
-    /**
-     * Object Print Stream associated to out()
-     *
-     * @return Object Print Stream
-     */
-    NutsObjectPrintStream oerr();
-
-    /**
      * return iterable output
      * @return iterable output
      */

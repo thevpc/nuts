@@ -44,13 +44,9 @@ public interface NutsSessionTerminal extends NutsSessionTerminalBase, NutsTermin
 
     PrintStream ferr();
 
-    PrintStream getFormattedOut();
+    PrintStream fout(boolean forceNoColors);
 
-    PrintStream getFormattedErr();
-
-    PrintStream getFormattedOut(boolean forceNoColors);
-
-    PrintStream getFormattedErr(boolean forceNoColors);
+    PrintStream ferr(boolean forceNoColors);
 
     void setIn(InputStream in);
 

@@ -22,7 +22,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.next("show location") != null) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
-                PrintStream out = session.getTerminal().fout();
+                PrintStream out = session.out();
                 out.printf("%s%n", context.getWorkspace().config().getWorkspaceLocation());
             }
             return true;
@@ -31,7 +31,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.next("show "+value.id()+"-location") != null) {
                 if (cmdLine.isExecMode()) {
                     NutsSession session = context.getSession();
-                    PrintStream out = session.getTerminal().fout();
+                    PrintStream out = session.out();
                     out.printf("%s%n", context.getWorkspace().config().getStoreLocation(value));
                 }
                 return true;

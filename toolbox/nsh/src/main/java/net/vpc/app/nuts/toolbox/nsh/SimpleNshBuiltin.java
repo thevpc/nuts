@@ -35,6 +35,7 @@ import java.util.Arrays;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsObjectFormat;
 
 /**
  *
@@ -146,17 +147,18 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         }
 
         public void printObject(Object any) {
+            NutsObjectFormat objstream = context.workspace().object().session(context.session()).value(any);
             if (err) {
                 if (errObjectNewLine) {
-                    context.getSession().oerr().println(any);
+                    objstream.println(context.session().err());
                 } else {
-                    context.getSession().oerr().print(any);
+                    objstream.print(context.session().err());
                 }
             } else {
                 if (outObjectNewLine) {
-                    context.getSession().oout().println(any);
+                    objstream.println();
                 } else {
-                    context.getSession().oout().print(any);
+                    objstream.print();
                 }
             }
         }

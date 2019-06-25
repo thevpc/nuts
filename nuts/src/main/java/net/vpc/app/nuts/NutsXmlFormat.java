@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.file.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,27 +44,75 @@ import org.w3c.dom.Element;
  */
 public interface NutsXmlFormat extends NutsFormat {
 
+    boolean isCompact();
+
+    NutsXmlFormat compact();
+
+    NutsXmlFormat compact(boolean compact);
+
+    NutsXmlFormat setCompact(boolean compact);
+
     Document toXmlDocument(Object value);
 
-    Element toXmlElement(Object value, Document document);
+    Element toXmlElement(Object value, Document xmlDocument);
 
-    <T> T fromXmlElement(Element element, Class<T> cls);
+    <T> T fromXmlElement(Element xmlElement, Class<T> clazz);
 
+    <T> T parse(URL url, Class<T> clazz);
+
+    <T> T parse(InputStream inputStream, Class<T> clazz);
+
+    <T> T parse(byte[] bytes, Class<T> clazz);
+
+    /**
+     * Parse Xml Content as given class type.
+     *
+     * @param <T> class type to parse to
+     * @param reader input content
+     * @param clazz type to parse to
+     * @return instance of type parsed to
+     */
+    <T> T parse(Reader reader, Class<T> clazz);
+
+    /**
+     * Parse Xml Content as given class type.
+     *
+     * @param <T> class type to parse to
+     * @param path input content
+     * @param clazz type to parse to
+     * @return instance of type parsed to
+     */
+    <T> T parse(Path path, Class<T> clazz);
+
+    /**
+     * Parse Xml Content as given class type.
+     *
+     * @param <T> class type to parse to
+     * @param file input content
+     * @param clazz type to parse to
+     * @return instance of type parsed to
+     */
+    <T> T parse(File file, Class<T> clazz);
+
+    @Override
     NutsSession getSession();
 
+    @Override
     NutsXmlFormat session(NutsSession session);
 
+    @Override
     NutsXmlFormat setSession(NutsSession session);
 
     Object getValue();
 
-    NutsXmlFormat set(Object value);
+    NutsXmlFormat value(Object value);
 
     NutsXmlFormat setValue(Object value);
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

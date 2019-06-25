@@ -22,14 +22,22 @@ import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     private NutsTableFormat table;
+    private NutsMutableTableModel model;
 
-    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.TABLE,options);
+    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer, NutsFetchDisplayOptions options) {
+        super(session, writer, NutsOutputFormat.TABLE, options);
+    }
+
+    public NutsMutableTableModel getTableModel(NutsWorkspace ws) {
+        getTable(ws);
+        return model;
     }
 
     public NutsTableFormat getTable(NutsWorkspace ws) {
         if (table == null) {
             table = ws.table();
+            model = table.createModel();
+            table.setModel(model);
         }
         return table;
     }
@@ -48,8 +56,11 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getTable(getWorkspace()).addHeaderCells(Arrays.stream(getDisplayOptions().getDisplayProperties())
-                .map(x -> CoreCommonUtils.getEnumString(x)).toArray());
+        getTableModel(getWorkspace())
+                .addHeaderCells(
+                        Arrays.stream(getDisplayOptions().getDisplayProperties())
+                                .map(x -> CoreCommonUtils.getEnumString(x)).toArray()
+                );
     }
 
     @Override
@@ -58,13 +69,13 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getTable(getWorkspace()).newRow().addCell(object);
+            getTableModel(getWorkspace()).newRow().addCell(object);
         }
         getWriter().flush();
     }
 
     public void formatElement(FormattableNutsId id, long index) {
-        getTable(getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
+        getTableModel(getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 
     @Override

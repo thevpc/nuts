@@ -34,7 +34,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     }
 
     protected void showDefaultHelp() {
-        session.getTerminal().fout().println(getHelpText());
+        session.out().println(getHelpText());
     }
 
     @Override

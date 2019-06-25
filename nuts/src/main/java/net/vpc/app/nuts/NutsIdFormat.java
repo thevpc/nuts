@@ -73,18 +73,19 @@ public interface NutsIdFormat extends NutsFormat {
      */
     NutsId getValue();
 
-    /**
-     * @param id
-     * @return
-     * @since 0.5.6
-     */
-    NutsIdFormat set(NutsId id);
 
     NutsIdBuilder builder();
 
     NutsId resolveId(Class clazz);
 
     NutsId[] resolveIds(Class clazz);
+
+    /**
+     * @param id
+     * @return
+     * @since 0.5.6
+     */
+    NutsIdFormat value(NutsId id);
 
     /**
      * @param id

@@ -234,13 +234,13 @@ public class PropsCommand extends AbstractNshBuiltin {
     }
 
     private void action_list(NshExecutionContext context, Options o) {
-        context.session().oout().print(getProperties(o, context));
+        context.workspace().object().session(context.session()).value(getProperties(o, context)).print();
     }
 
     private void action_get(NshExecutionContext context, Options o) {
         Properties p = getProperties(o, context);
         String v = p.getProperty(o.property);
-        context.session().oout().print(v == null ? "" : v);
+        context.workspace().object().session(context.session()).value(v == null ? "" : v).print();
     }
 
     private Properties getProperties(Options o, NshExecutionContext context) {

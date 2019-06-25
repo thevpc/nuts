@@ -108,7 +108,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.json().set(this.config).print(file);
+        this.defaultWorkspace.json().value(this.config).print(file);
     }
 
     @Override

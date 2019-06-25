@@ -53,7 +53,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().json().set(getConfig()).print(out);
+        context.getWorkspace().json().value(getConfig()).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {

@@ -48,13 +48,15 @@ public interface NutsExecutionContext {
 
     String[] getArguments();
 
+    NutsWorkspace workspace();
+
     NutsWorkspace getWorkspace();
 
     NutsExecutorDescriptor getExecutorDescriptor();
 
-    NutsSession getSession();
+    NutsSession session();
 
-    NutsSessionTerminal getTerminal();
+    NutsSession getSession();
 
     Properties getEnv();
 

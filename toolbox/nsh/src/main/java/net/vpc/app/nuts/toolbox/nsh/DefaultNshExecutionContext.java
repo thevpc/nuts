@@ -89,6 +89,11 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     }
 
     @Override
+    public NutsWorkspace workspace() {
+        return getWorkspace();
+    }
+
+    @Override
     public InputStream in() {
         return shellContext.in();
     }

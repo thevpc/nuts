@@ -60,7 +60,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().json().set(c).print(configFile);
+        appContext.getWorkspace().json().value(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -135,7 +135,9 @@ public class WorkspaceService {
                     appContext.session().out().printf("[[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                 }
             } else {
-                appContext.session().oout().println(result);
+                appContext.workspace().object()
+                        .session(appContext.session())
+                        .value(result).println();
             }
         }
     }
@@ -301,7 +303,9 @@ public class WorkspaceService {
                     appContext.session().out().printf("[[%s]] [%N] : %N - %N%n", p2.id, p2.status, p2.local, p2.remote);
                 }
             } else {
-                appContext.session().oout().println(ddd);
+                appContext.workspace().object()
+                        .session(appContext.session())
+                        .value(ddd).println();
             }
         }
     }

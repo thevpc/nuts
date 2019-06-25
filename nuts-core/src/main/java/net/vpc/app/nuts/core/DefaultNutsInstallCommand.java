@@ -305,7 +305,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                                     .map(x -> ws.id()
                                             .setOmitNamespace(true)
                                             .setOmitImportedGroup(false)
-                                            .set(ws.id().parse(x)).format())
+                                            .value(ws.id().parse(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -399,13 +399,13 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         }
         for (NutsDefinition def : defsToIgnore) {
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already installed%n", ws.id().set(def.getId()).format());
+                out.printf("%N already installed%n", ws.id().value(def.getId()).format());
             }
         }
         if (!defsToInstall.isEmpty() && ws.io().getTerminal().ask()
                 .forBoolean("The following ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be installed : "
                         + defsToInstall.stream()
-                                .map(x -> ws.id().setOmitImportedGroup(true).set(x.getId().getLongNameId()).format())
+                                .map(x -> ws.id().setOmitImportedGroup(true).value(x.getId().getLongNameId()).format())
                                 .collect(Collectors.joining(", "))
                         + "%nAccept"
                 )
@@ -418,7 +418,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());
             if (getValidSession().isPlainTrace()) {
-                out.printf("%N already ==installed==. Set as ##default##.%n", ws.id().set(def.getId()).format());
+                out.printf("%N already ==installed==. Set as ##default##.%n", ws.id().value(def.getId()).format());
             }
         }
         if (emptyCommand) {

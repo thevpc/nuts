@@ -187,11 +187,11 @@ public final class JavaExecutorOptions {
                         baseDetected = true;
                         if (!isExcludeBase()) {
                             classPath.add(nutsDefinition.getPath().toString());
-                            nutsPath.add(nutsIdFormat.set(nutsDefinition.getId()).format());
+                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                         }
                     } else {
                         classPath.add(nutsDefinition.getPath().toString());
-                        nutsPath.add(nutsIdFormat.set(nutsDefinition.getId()).format());
+                        nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                     }
                 }
             }
@@ -199,7 +199,7 @@ public final class JavaExecutorOptions {
                 if (path == null) {
                     throw new NutsIllegalArgumentException(getWorkspace(), "Missing Path for " + id);
                 }
-                nutsPath.add(0, nutsIdFormat.set(id).format());
+                nutsPath.add(0, nutsIdFormat.value(id).format());
                 classPath.add(0, path.toString());
             }
             for (String cp : classPath0) {

@@ -59,7 +59,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             throw new NutsIllegalArgumentException(ws, "which: missing commands");
         }
         for (String arg : this.args) {
-            PrintStream out = getSession().getTerminal().fout();
+            PrintStream out = getSession().out();
             try {
                 NutsExecutableInfo p = execCommand.copy().session(getSession()).clearCommand().configure(false, arg).which();
                 boolean showDesc = false;
@@ -69,7 +69,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         break;
                     }
                     case ALIAS: {
-                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.id().set(p.getId()).format(),
+                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.id().value(p.getId()).format(),
                                 ws.commandLine().setArgs(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
                         );
                         break;
@@ -78,7 +78,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.id().set(p.getId()).format(), p.getDescription());
+                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.id().value(p.getId()).format(), p.getDescription());
                         break;
                     }
                     case INTERNAL: {

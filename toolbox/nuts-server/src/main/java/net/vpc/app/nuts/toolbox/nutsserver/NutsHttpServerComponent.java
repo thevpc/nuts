@@ -65,6 +65,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         return (config == null || config instanceof NutsHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
+    @Override
     public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
         NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
         Map<String, NutsWorkspace> workspaces = httpConfig.getWorkspaces();
@@ -95,8 +96,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
-
+        NutsSession session=invokerWorkspace.createSession();
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
             port = NutsServerConstants.DEFAULT_HTTP_SERVER_PORT;
@@ -161,7 +161,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             if (LOG.isLoggable(Level.CONFIG)) {
                                 LOG.log(Level.CONFIG, "Failed to create HTTPS port");
                             }
-                            terminal.ferr().printf("**Failed to create HTTPS port**");
+                            session.err().printf("**Failed to create HTTPS port**");
                         }
                     }
                 });
@@ -171,17 +171,21 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
 
         server.createContext("/", new HttpHandler() {
+            @Override
             public void handle(final HttpExchange httpExchange) throws IOException {
 
                 facade.execute(new AbstractNutsHttpServletFacadeContext() {
+                    @Override
                     public URI getRequestURI() throws IOException {
                         return httpExchange.getRequestURI();
                     }
 
+                    @Override
                     public OutputStream getResponseBody() {
                         return httpExchange.getResponseBody();
                     }
 
+                    @Override
                     public void sendError(int code, String msg) throws IOException {
                         if (msg == null) {
                             msg = "Error";
@@ -191,6 +195,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                         httpExchange.getResponseBody().write(bytes);
                     }
 
+                    @Override
                     public void sendResponseHeaders(int code, long length) throws IOException {
                         httpExchange.sendResponseHeaders(code, length);
                     }
@@ -222,7 +227,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        PrintStream out = terminal.fout();
+        PrintStream out = session.out();
         out.printf("Nuts Http Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspaces: \n");
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {

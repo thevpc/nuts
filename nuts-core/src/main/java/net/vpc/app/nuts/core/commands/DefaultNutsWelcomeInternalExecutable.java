@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.commands;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -26,7 +25,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        getSession().getTerminal().fout().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getWelcomeText());
+        getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getWelcomeText());
     }
 
 }
