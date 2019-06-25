@@ -119,11 +119,15 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     public boolean isInt() {
         if (value == null) {
             return false;
-        }
-        if (value instanceof Number) {
-            return value.toString().indexOf('.') < 0;
-        }
-        if (value instanceof String) {
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer": {
+                    return true;
+                }
+            }
+        } else if (value instanceof String) {
             try {
                 Integer.parseInt(value.toString());
                 return true;
@@ -138,18 +142,22 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     public boolean isLong() {
         if (value == null) {
             return false;
-        }
-        if (value instanceof Number) {
-            if (value.toString().indexOf('.') > 0) {
-                return false;
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long": {
+                    return true;
+                }
             }
-            return true;
-        }
-        try {
-            Long.parseLong(value.toString());
-            return true;
-        } catch (Exception ex) {
-            //
+        } else if (value instanceof String) {
+            try {
+                Long.parseLong(value.toString());
+                return true;
+            } catch (Exception ex) {
+                //
+            }
         }
         return false;
     }
@@ -158,13 +166,44 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     public boolean isDouble() {
         if (value == null) {
             return false;
-        }
-        if (value instanceof Number) {
-            return true;
-        }
-        if (value instanceof String) {
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Float":
+                case "java.lang.Double": {
+                    return true;
+                }
+            }
+        } else if (value instanceof String) {
             try {
                 Double.parseDouble(value.toString());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isFloat() {
+        if (value == null) {
+            return false;
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Float": {
+                    return true;
+                }
+            }
+        } else if (value instanceof String) {
+            try {
+                Float.parseFloat(value.toString());
             } catch (Exception ex) {
                 //
             }
@@ -263,6 +302,28 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
+    public float getFloat() {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).floatValue();
+        }
+        if (value instanceof Date) {
+            return (float) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        try {
+            return Float.parseFloat(s);
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
+    @Override
     public Instant getDate() {
         if (value == null || value instanceof Boolean) {
             return Instant.MIN;
@@ -329,7 +390,8 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
                 return CoreStringUtils.dblQuote(getString());
             case BOOLEAN:
                 return String.valueOf(getBoolean());
-            case NUMBER:
+            case INTEGER:
+            case FLOAT:
                 return String.valueOf(getNumber());
             case DATE:
                 return CoreStringUtils.dblQuote(getDate().toString());

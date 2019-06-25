@@ -45,10 +45,11 @@ public class NutsFormatUtils {
         switch (value.type()) {
             case BOOLEAN:
             case DATE:
-            case NUMBER:
+            case INTEGER:
+            case FLOAT:
             case STRING:
             case NULL:
-            case UNKNWON: {
+            {
                 dest.put(prefix, stringValue(value.primitive().getValue()));
                 break;
             }

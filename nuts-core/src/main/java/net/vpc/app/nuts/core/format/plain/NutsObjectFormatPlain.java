@@ -88,18 +88,15 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 out.flush();
                 break;
             }
-            case NUMBER: {
+            case INTEGER: 
+            case FLOAT: 
+            {
                 out.print(value.primitive().getNumber());
                 out.flush();
                 break;
             }
             case DATE: {
                 out.print(ws.io().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
-                out.flush();
-                break;
-            }
-            case UNKNWON: {
-                out.print(value.toString());
                 out.flush();
                 break;
             }

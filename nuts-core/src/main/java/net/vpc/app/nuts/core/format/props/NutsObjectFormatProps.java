@@ -93,9 +93,9 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
             }
             case BOOLEAN:
             case DATE:
-            case NUMBER:
-            case STRING:
-            case UNKNWON: {
+            case INTEGER:
+            case FLOAT:
+            case STRING: {
                 String k = (CoreStringUtils.isBlank(prefix)) ? "value" : prefix;
                 map.put(k, stringValue(e.primitive().getValue()));
                 break;

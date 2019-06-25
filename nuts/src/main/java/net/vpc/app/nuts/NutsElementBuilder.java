@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.time.Instant;
 import java.util.Date;
-import net.vpc.app.nuts.NutsPrimitiveElement;
 
 /**
  *

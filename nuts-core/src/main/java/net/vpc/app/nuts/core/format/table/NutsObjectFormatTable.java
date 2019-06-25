@@ -88,9 +88,9 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             case BOOLEAN:
             case DATE:
             case STRING:
-            case NUMBER:
-            case NULL:
-            case UNKNWON: {
+            case INTEGER:
+            case FLOAT:
+            case NULL:{
                 List<NutsElement> a = new ArrayList<>();
                 a.add(value);
                 print(w, ws.element().toElement(a));

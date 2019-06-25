@@ -77,6 +77,13 @@ public interface NutsPrimitiveElement extends NutsElement {
     double getDouble();
 
     /**
+     * value as any java Float. Best effort is applied to convert to this type.
+     *
+     * @return value as java float
+     */
+    float getFloat();
+
+    /**
      * value as any java Integer. Best effort is applied to convert to this
      * type.
      *
@@ -104,6 +111,13 @@ public interface NutsPrimitiveElement extends NutsElement {
      * @return true if the value is or can be converted to double
      */
     boolean isDouble();
+
+    /**
+     * true if the value is or can be converted to float
+     *
+     * @return true if the value is or can be converted to double
+     */
+    boolean isFloat();
 
     /**
      * true if the value is or can be converted to int.

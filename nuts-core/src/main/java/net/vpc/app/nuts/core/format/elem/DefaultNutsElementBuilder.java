@@ -54,12 +54,12 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     public NutsObjectElementBuilder forObject() {
         return new DefaultNutsObjectElemenBuilder();
     }
-    
+
     @Override
     public NutsArrayElementBuilder forArray() {
         return new DefaultNutsArrayElementBuilder();
     }
-    
+
     @Override
     public NutsPrimitiveElement forNull() {
         return NULL;
@@ -78,7 +78,20 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
         if (s == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.NUMBER, s);
+        switch (s.getClass().getName()) {
+            case "java.lang.Byte":
+            case "java.lang.Short":
+            case "java.lang.Integer":
+            case "java.lang.Long":
+            case "java.math.BigInteger":
+                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, s);
+            case "java.lang.float":
+            case "java.lang.Double":
+            case "java.math.BigDecimal":
+                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, s);
+        }
+        // ???
+        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, s);
     }
 
     @Override

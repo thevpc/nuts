@@ -199,7 +199,9 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             case BOOLEAN: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getBoolean());
             }
-            case NUMBER: {
+            case INTEGER: 
+            case FLOAT: 
+            {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getNumber());
             }
             case STRING: {
@@ -231,11 +233,8 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 }
                 return a;
             }
-            case UNKNWON: {
-                return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
-            }
             default: {
-                throw new IllegalArgumentException("Unsupported");
+                throw new IllegalArgumentException("Unsupported "+o.type());
             }
         }
     }

@@ -265,7 +265,8 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         switch (elementType) {
             case BOOLEAN:
                 return xmlContext.builder().forBoolean(element.getTextContent());
-            case NUMBER:
+            case INTEGER:
+            case FLOAT:
                 return xmlContext.builder().forNumber(element.getTextContent());
             case DATE:
                 return xmlContext.builder().forDate(element.getTextContent());
@@ -290,7 +291,8 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
             case BOOLEAN: {
                 return String.valueOf(((NutsPrimitiveElement) o).getBoolean());
             }
-            case NUMBER: {
+            case INTEGER:
+            case FLOAT: {
                 return String.valueOf(((NutsPrimitiveElement) o).getNumber());
             }
             case STRING: {
@@ -412,7 +414,8 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
                 }
                 return null;
             }
-            case NUMBER: {
+            case INTEGER:
+            case FLOAT: {
                 String v = toXmlAttributeValue(elem.primitive());
                 if (v != null || !returnNull || !ignoreNullValue) {
                     Element e = doc.createElement(name);
@@ -488,13 +491,6 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
                     e.setAttribute(getTypeAttributeName(), "object");
                 }
                 return e;
-            }
-            case UNKNWON: {
-                Element a = doc.createElement(name);
-                a.setAttribute(getTypeAttributeName(), "unknown");
-//                a.setAttribute("jclass", ((NutsPrimitiveElement) o).getValue().toString());
-                a.setTextContent(String.valueOf(((NutsPrimitiveElement) elem).getString()));
-                return a;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported");

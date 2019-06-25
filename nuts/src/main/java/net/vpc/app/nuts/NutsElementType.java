@@ -35,13 +35,14 @@ package net.vpc.app.nuts;
  */
 public enum NutsElementType {
     NULL(true),
-    NUMBER(true),
+    INTEGER(true),
+    FLOAT(true),
     STRING(true),
     DATE(true),
     BOOLEAN(true),
     ARRAY(false),
-    OBJECT(false),
-    UNKNWON(false);
+    OBJECT(false)
+    ;
     private final boolean primitive;
     private final String id;
 
