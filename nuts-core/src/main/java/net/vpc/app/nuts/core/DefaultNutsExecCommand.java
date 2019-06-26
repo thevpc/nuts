@@ -29,6 +29,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             .setExecutor(new NutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
             .build();
 
+    private NutsDefinition commandDefinition;
     private List<String> command;
     private List<String> executorOptions;
     private Properties env;
@@ -78,6 +79,12 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     @Override
     public String[] getCommand() {
         return command == null ? new String[0] : command.toArray(new String[0]);
+    }
+
+    @Override
+    public NutsExecCommand command(NutsDefinition definition) {
+        this.commandDefinition = definition;
+        return this;
     }
 
     @Override
@@ -539,6 +546,9 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         NutsExecutableInfoExt exec = null;
         switch (executionType) {
             case SYSCALL: {
+                if (commandDefinition != null) {
+                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as syscall");
+                }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         getValidSession().copy().setTerminal(terminal),
                         this
@@ -547,7 +557,11 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             }
             case SPAWN:
             case EMBEDDED: {
-                exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getValidSession().copy().setTerminal(terminal));
+                if (commandDefinition != null) {
+                    return ws_exec0(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), env, directory, failFast, executionType, getValidSession());
+                } else {
+                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getValidSession().copy().setTerminal(terminal));
+                }
                 break;
             }
             default: {
@@ -700,7 +714,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
-        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
+        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, new DefaultNutsSupportLevelContext<>(ws, nutsDefinition));
         if (executorComponent != null) {
             return executorComponent;
         }
@@ -845,6 +859,38 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                 .failFast()
                 .scope(NutsDependencyScopePattern.RUN)
                 .getResultDefinition();
+        return ws_exec0(def, commandName, appArgs, executorOptions, env, dir, failFast, executionType, session);
+    }
+
+    protected NutsExecutableInfoExt ws_exec0(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
+//        NutsSession searchSession = session.copy().trace(false);
+//        NutsDefinition def = null;
+//        NutsId nid = ws.id().parse(commandName);
+//        List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+//                .defaultVersions()
+//                .installed().getResultIds().list();
+//        if (ff.isEmpty()) {
+//            //retest whithout checking it the parseVersion is default or not
+//            // this help recovering from "invalid default parseVersion" issue
+//            ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+//                    .installed().getResultIds().list();
+//        }
+//        if (ff.isEmpty()) {
+//            //now search online
+//            // this helps recovering from "invalid default parseVersion" issue
+//            ff = ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
+//                    .getResultIds().list();
+//        }
+//        if (ff.isEmpty()) {
+//            throw new NutsNotFoundException(ws, nid);
+//        } else if (ff.size() > 1) {
+//            throw new NutsTooManyElementsException(ws, nid.toString());
+//        }
+//        NutsId goodId = ff.get(0);
+//        def = ws.fetch().id(goodId).session(searchSession).setOptional(false).dependencies()
+//                .failFast()
+//                .scope(NutsDependencyScopePattern.RUN)
+//                .getResultDefinition();
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }
 

@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -140,12 +141,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class);
         for (Class extensionImpl : loadedExtensions) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
-                if (installExtensionComponentType(extensionPointType, extensionImpl)) {
+                if (registerType(extensionPointType, extensionImpl)) {
                     defaultWiredComponents.add(extensionPointType.getName(), ((Class<? extends NutsComponent>) extensionImpl).getName());
                 }
             }
         }
-        this.workspaceExtensionsClassLoader = getNutsURLClassLoader(new URL[0], bootClassLoader);
+        this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], bootClassLoader);
     }
 
 //    @Override
@@ -231,7 +232,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<Class> serviceLoader = getImplementationTypes(NutsComponent.class);
         for (Class extensionImpl : serviceLoader) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
-                if (installExtensionComponentType(extensionPointType, extensionImpl)) {
+                if (registerType(extensionPointType, extensionImpl)) {
                     workspaceExtension.getWiredComponents().add(extensionPointType.getName(), ((Class<? extends NutsComponent>) extensionImpl).getName());
                 }
             }
@@ -287,6 +288,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return false;
     }
 
+    @Override
     public boolean registerInstance(Class extensionPointType, Object extensionImpl) {
         if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName()) && !isRegisteredInstance(extensionPointType, extensionImpl)) {
             objectFactory.registerInstance(extensionPointType, extensionImpl);
@@ -309,14 +311,39 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public List<Class> resolveComponentTypes(Class o) {
         List<Class> a = new ArrayList<>();
         if (o != null) {
-            for (Class extensionPointType : SUPPORTED_EXTENSION_TYPES) {
-                if (extensionPointType.isAssignableFrom(o)) {
-                    a.add(extensionPointType);
+            HashSet<Class> v=new HashSet<>();
+            Stack<Class> s=new Stack<>();
+            s.push(o);
+            while(!s.isEmpty()){
+                Class c=s.pop();
+                v.add(c);
+                if(SUPPORTED_EXTENSION_TYPES.contains(c)){
+                    a.add(c);
+                }
+                for (Class aa : c.getInterfaces()) {
+                    if(!v.contains(aa)){
+                        s.push(aa);
+                    }
+                }
+                Class sc = c.getSuperclass();
+                if(sc!=null && !v.contains(sc)){
+                    s.push(sc);
                 }
             }
         }
         return a;
     }
+//    public List<Class> resolveComponentTypesOld(Class o) {
+//        List<Class> a = new ArrayList<>();
+//        if (o != null) {
+//            for (Class extensionPointType : SUPPORTED_EXTENSION_TYPES) {
+//                if (extensionPointType.isAssignableFrom(o)) {
+//                    a.add(extensionPointType);
+//                }
+//            }
+//        }
+//        return a;
+//    }
 
     public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType) {
         if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
@@ -329,7 +356,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     public NutsSessionTerminal createTerminal(Class ignoredClass) {
-        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, ws);
+        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, new DefaultNutsSupportLevelContext<>(ws,ignoredClass));
         if (termb == null) {
             throw new NutsExtensionMissingException(ws, NutsSessionTerminalBase.class, "TerminalBase");
         } else {
@@ -406,18 +433,17 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return new DefaultNutsServiceLoader<T, B>(serviceType, criteriaType, classLoader);
     }
 
-    @Override
-    public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria) {
+    public <T extends NutsComponent<V>,V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria){
         return objectFactory.createSupported(type, supportCriteria);
     }
 
     @Override
-    public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
+    public <T extends NutsComponent<V>,V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
         return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters);
     }
 
     @Override
-    public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria) {
+    public <T extends NutsComponent<V>,V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
         return objectFactory.createAllSupported(type, supportCriteria);
     }
 
@@ -553,8 +579,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private static class NutsURLClassLoaderKey {
 
-        private URL[] urls;
-        private ClassLoader parent;
+        private final URL[] urls;
+        private final ClassLoader parent;
 
         public NutsURLClassLoaderKey(URL[] urls, ClassLoader parent) {
             this.urls = urls;

@@ -54,7 +54,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsDefinition nutsDefinition) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
         return DEFAULT_SUPPORT;
     }
 

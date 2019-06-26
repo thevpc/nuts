@@ -44,7 +44,7 @@ import net.vpc.app.nuts.NutsNamedElement;
  */
 public class DefaultNutsObjectElemenBuilder extends AbstractNutsElement implements NutsObjectElementBuilder {
 
-    private Map<String, NutsElement> values = new LinkedHashMap<String, NutsElement>();
+    private final Map<String, NutsElement> values = new LinkedHashMap<String, NutsElement>();
 
     public DefaultNutsObjectElemenBuilder() {
         super(NutsElementType.OBJECT);
@@ -54,32 +54,38 @@ public class DefaultNutsObjectElemenBuilder extends AbstractNutsElement implemen
     public Collection<NutsNamedElement> children() {
         return values.entrySet().stream().map(x -> new DefaultNutsNamedElement(x.getKey(), x.getValue())).collect(Collectors.toList());
     }
-    
+
     @Override
-    public NutsElement get(String s){
+    public NutsElement get(String s) {
         return values.get(s);
     }
-    
+
     @Override
-    public NutsObjectElementBuilder set(String s,NutsElement e){
-        if(e==null){
-            e=DefaultNutsElementBuilder.NULL;
+    public NutsObjectElementBuilder set(String s, NutsElement e) {
+        if (e == null) {
+            throw new NullPointerException();
         }
         values.put(s, e);
         return this;
     }
-    
+
     @Override
     public int size() {
         return values.size();
     }
-    
+
     @Override
     public NutsObjectElementBuilder remove(String s) {
         values.remove(s);
         return this;
     }
-    
+
+    @Override
+    public NutsObjectElementBuilder clear() {
+        values.clear();
+        return this;
+    }
+
     @Override
     public String toString() {
         return "[" + children().stream().map(x -> "{"

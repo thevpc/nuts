@@ -27,54 +27,46 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.executors;
+package net.vpc.app.nuts.core.spi;
 
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsId;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Set;
+import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
- * Created by vpc on 1/7/17.
+ * Created by vpc on 1/5/17.
+ *
+ * @since 0.5.4
  */
-public class CustomNutsExecutorComponent implements NutsExecutorComponent {
+public interface NutsWorkspaceFactory {
 
-    public static final Logger LOG = Logger.getLogger(CustomNutsExecutorComponent.class.getName());
-    public NutsId id;
+    List<Class> discoverTypes(ClassLoader bootClassLoader);
 
-    public CustomNutsExecutorComponent(NutsId id) {
-        this.id = id;
-    }
+    List<Class> getImplementationTypes(Class type);
 
-    @Override
-    public NutsId getId() {
-        return id;
-    }
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
 
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        return NO_SUPPORT;
-    }
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
-    @Override
-    public void exec(NutsExecutionContext executionContext) {
-        List<String> args = new ArrayList<>();
-        args.add(id.toString());
-        args.addAll(Arrays.asList(executionContext.getArguments()));
-        executionContext.getWorkspace()
-                .exec()
-                .command(args)
-                .session(executionContext.getSession())
-                .env(executionContext.getEnv())
-                .directory(executionContext.getCwd())
-                .failFast(true)
-                .run();
-    }
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
+
+    <T> List<T> createAll(Class<T> type);
+
+    Set<Class> getExtensionPoints();
+
+    Set<Class> getExtensionTypes(Class extensionPoint);
+
+    List<Object> getExtensionObjects(Class extensionPoint);
+
+    boolean isRegisteredType(Class extensionPointType, String name);
+
+    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
+
+    <T> void registerInstance(Class<T> extensionPoint, T implementation);
+
+    void registerType(Class extensionPointType, Class extensionType);
+
+    boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
 }

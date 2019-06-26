@@ -71,18 +71,27 @@ public class DefaultNutsArrayElementBuilder extends AbstractNutsElement implemen
 
     @Override
     public NutsArrayElementBuilder set(int index, NutsElement e) {
+        if(e==null){
+            throw new NullPointerException();
+        }
         values.set(index, e);
         return this;
     }
 
     @Override
     public NutsArrayElementBuilder add(NutsElement e) {
+        if(e==null){
+            throw new NullPointerException();
+        }
         values.add(e);
         return this;
     }
 
     @Override
     public NutsArrayElementBuilder insert(int index, NutsElement e) {
+        if(e==null){
+            throw new NullPointerException();
+        }
         values.add(index, e);
         return this;
     }
@@ -94,7 +103,7 @@ public class DefaultNutsArrayElementBuilder extends AbstractNutsElement implemen
     }
 
     @Override
-    public NutsArrayElementBuilder clear(int index) {
+    public NutsArrayElementBuilder clear() {
         values.clear();
         return this;
     }

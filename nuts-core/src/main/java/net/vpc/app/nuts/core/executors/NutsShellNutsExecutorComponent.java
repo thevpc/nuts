@@ -55,10 +55,10 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsDefinition nutsDefinition) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
         if (nutsDefinition != null) {
-            if ("nsh".equals(nutsDefinition.getDescriptor().getPackaging())
-                    || "nuts".equals(nutsDefinition.getDescriptor().getPackaging())) {
+            if ("nsh".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())
+                    || "nuts".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT + 1;
             }
         }

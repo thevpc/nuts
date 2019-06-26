@@ -53,12 +53,12 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public int getSupportLevel(NutsRepositoryConfig criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsRepositoryConfig> criteria) {
         if (criteria == null) {
             return NO_SUPPORT;
         }
-        String repositoryType = criteria.getType();
-        String location = criteria.getLocation();
+        String repositoryType = criteria.getConstraints().getType();
+        String location = criteria.getConstraints().getLocation();
         if (!NutsConstants.RepoTypes.MAVEN.equals(repositoryType)) {
             return NO_SUPPORT;
         }

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import java.lang.reflect.Modifier;
 import net.vpc.app.nuts.*;
 
@@ -43,7 +44,7 @@ import net.vpc.app.nuts.core.util.common.ListMap;
 /**
  * Created by vpc on 1/5/17.
  */
-public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
+public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory, NutsBootWorkspaceFactory {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceFactory.class.getName());
 
@@ -55,11 +56,20 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     private NutsWorkspace workspace;
 
     public DefaultNutsWorkspaceFactory() {
-        initialize(null);
     }
 
     public DefaultNutsWorkspaceFactory(NutsWorkspace workspace) {
         this.workspace = workspace;
+    }
+
+    @Override
+    public int getBootSupportLevel(NutsWorkspaceOptions options) {
+        return NutsComponent.DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public NutsWorkspace createWorkspace(NutsWorkspaceOptions options) {
+        return new DefaultNutsWorkspace();
     }
 
     public final void initialize(NutsWorkspace ws) {
@@ -346,7 +356,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type);
             } catch (Exception e) {
-                LOG.log(Level.WARNING,"Unable to instantiate "+c+" for "+type+" : "+e.getMessage(),e);
+                LOG.log(Level.WARNING, "Unable to instantiate " + c + " for " + type + " : " + e.getMessage(), e);
             }
             if (obj != null) {
                 all.add(obj);
@@ -362,7 +372,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type, argTypes, args);
             } catch (Exception e) {
-                LOG.log(Level.WARNING,"Unable to instantiate "+c+" for "+type+" : "+e.getMessage(),e);
+                LOG.log(Level.WARNING, "Unable to instantiate " + c + " for " + type + " : " + e.getMessage(), e);
             }
             if (obj != null) {
                 all.add(obj);
@@ -376,8 +386,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] argTypes, Object[] args) {
-        List<T> list = createAll(type, argTypes, args);
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
+        List<T> list = createAll(type, constructorParameterTypes, constructorParameters);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
         for (T t : list) {
@@ -396,7 +406,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
         List<T> list = createAll(type);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
@@ -416,7 +426,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria) {
+    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
         List<T> list = createAll(type);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
             T t = iterator.next();
@@ -426,11 +436,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
         }
         return list;
-    }
-
-    @Override
-    public int getSupportLevel(NutsWorkspaceFactory criteria) {
-        return DEFAULT_SUPPORT;
     }
 
 }

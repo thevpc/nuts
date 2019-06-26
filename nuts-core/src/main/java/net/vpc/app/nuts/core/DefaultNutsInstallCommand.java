@@ -51,6 +51,7 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConfirmationMode;
+import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.core.util.NutsCollectionSearchResult;
 import net.vpc.app.nuts.NutsSearchResult;
 
@@ -303,9 +304,9 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                     .forBoolean("The following ==nuts== companion tools are going to be installed : "
                             + Arrays.stream(dws.getCompanionTools())
                                     .map(x -> ws.id()
-                                            .setOmitNamespace(true)
-                                            .setOmitImportedGroup(false)
-                                            .value(ws.id().parse(x)).format())
+                                    .setOmitNamespace(true)
+                                    .setOmitImportedGroup(false)
+                                    .value(ws.id().parse(x)).format())
                                     .collect(Collectors.joining(", "))
                             + "%nAccept"
                     )
@@ -322,25 +323,30 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
 //        e.addCommand("net.vpc.app.nuts.toolbox:ndi","install","-f");
                     for (String companionTool : companionTools) {
                         if (session.isForce() || !dws.isInstalled(ws.id().parseRequired(companionTool), false, session)) {
-                            NutsDefinition r = null;
-                            if (session.isTrace()) {
-                                if (companionCount == 0) {
-                                    if (session.isPlainTrace()) {
-                                        out.println("Installing Nuts companion tools...");
-                                    }
-                                }
-                                NutsId rId = ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
-                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
-                                String d = r.getDescriptor().getDescription();
+//                            NutsDefinition r = null;
+//                            if (session.isTrace()) {
+//                                if (companionCount == 0) {
+//                                    if (session.isPlainTrace()) {
+//                                        out.println("Installing Nuts companion tools...");
+//                                    }
+//                                }
+//                                NutsId rId = ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
+//                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
+//                                String d = r.getDescriptor().getDescription();
+//                                if (session.isPlainTrace()) {
+//                                    out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
+//                                }
+//                            } else {
+//                                NutsId rId = ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
+//                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
+//                            }
+                            if (companionCount == 0) {
                                 if (session.isPlainTrace()) {
-                                    out.printf("##\\### Installing ==%s== (%s)...%n", r.getId().getLongName(), d);
+                                    out.println("Installing Nuts companion tools...");
                                 }
-                            } else {
-                                NutsId rId = ws.search().session(searchSession).id(companionTool).latest().getResultIds().required();
-                                r = ws.fetch().session(searchSession).id(rId).failFast().getResultDefinition();
                             }
                             if (LOG.isLoggable(Level.CONFIG)) {
-                                LOG.log(Level.FINE, "Installing companion tool : {0}", r.getId().getLongName());
+                                LOG.log(Level.FINE, "Installing companion tool : {0}", companionTool);
                             }
                             NutsInstallCommand companionInstall = ws.install().id(companionTool)
                                     .setSession(session.copy().confirm(NutsConfirmationMode.YES));
@@ -381,8 +387,14 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                 throw new NutsNotFoundException(ws, id);
             }
             for (NutsId nid : allIds) {
+                //must load dependencies because will be run later!!
                 NutsDefinition def = ws.fetch().id(nid).session(searchSession)
-                        .installInformation().getResultDefinition();
+                        .installInformation()
+                        .setOptional(false)
+                        .dependencies()
+                        .scope(NutsDependencyScopePattern.RUN)
+                        .failFast()
+                        .getResultDefinition();
                 if (def != null && def.getPath() != null) {
                     boolean installed = def.getInstallation().isInstalled();
                     boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());

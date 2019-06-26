@@ -35,7 +35,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 
 import java.nio.file.Path;
-import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.io.UnzipOptions;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
@@ -46,9 +45,9 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
 public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
-    public int getSupportLevel(NutsDefinition nutsDefinition) {
-        if (nutsDefinition != null && nutsDefinition.getDescriptor() != null) {
-            if ("zip".equals(nutsDefinition.getDescriptor().getPackaging())) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
+        if (nutsDefinition != null && nutsDefinition.getConstraints().getDescriptor() != null) {
+            if ("zip".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT;
             }
         }

@@ -28,7 +28,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public int getSupportLevel(String authenticationAgent) {
+    public int getSupportLevel(NutsSupportLevelContext<String> authenticationAgent) {
         return DEFAULT_SUPPORT - 1;
     }
 

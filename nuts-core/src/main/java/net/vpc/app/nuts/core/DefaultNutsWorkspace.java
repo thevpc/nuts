@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.core.security.DefaultNutsWorkspaceSecurityManager;
 import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
@@ -172,8 +173,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             options = options.copy();
         }
 
-        NutsWorkspaceFactory newFactory = new DefaultNutsWorkspaceFactory();
-        NutsWorkspace nutsWorkspace = extensions().createSupported(NutsWorkspace.class, this);
+        DefaultNutsWorkspaceFactory newFactory = new DefaultNutsWorkspaceFactory();
+        NutsWorkspace nutsWorkspace = extensions().createSupported(NutsWorkspace.class, new DefaultNutsSupportLevelContext<>(this, options));
         if (nutsWorkspace == null) {
             throw new NutsExtensionMissingException(this, NutsWorkspace.class, "Workspace");
         }
@@ -191,11 +192,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public boolean initializeWorkspace(NutsWorkspaceFactory factory,
+    public boolean initializeWorkspace(NutsBootWorkspaceFactory factory,
             NutsBootConfig runningBootConfig, NutsBootConfig wsBootConfig,
             URL[] bootClassWorldURLs, ClassLoader bootClassLoader,
             NutsWorkspaceOptions options) {
-
+        NutsWorkspaceFactory bb=(NutsWorkspaceFactory)factory;
         if (options == null) {
             options = new NutsWorkspaceOptions();
         }
@@ -207,7 +208,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         installedRepository = new DefaultNutsInstalledRepository(this);
         ioManager = new DefaultNutsIOManager(this);
-        extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
+        extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bb);
         configManager = new DefaultNutsWorkspaceConfigManager(this);
         configManager.onInitializeWorkspace(options,
                 new DefaultNutsBootContext(this, runningBootConfig),
@@ -594,7 +595,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> criteria) {
         return DEFAULT_SUPPORT;
     }
 
@@ -605,7 +606,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         NutsWorkspaceArchetypeComponent instance = null;
         TreeSet<String> validValues = new TreeSet<>();
-        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, this)) {
+        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(this,archetype))) {
             if (archetype.equals(ac.getName())) {
                 instance = ac;
                 break;
@@ -651,7 +652,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             if (runnerFile == null) {
                 runnerFile = nutToInstall;
             }
-            NutsInstallerComponent best = extensions().createSupported(NutsInstallerComponent.class, runnerFile);
+            NutsInstallerComponent best = extensions().createSupported(NutsInstallerComponent.class, new DefaultNutsSupportLevelContext<NutsDefinition>(this, runnerFile));
             if (best != null) {
                 return best;
             }
@@ -1194,9 +1195,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //            return false;
 //        }
 //    }
-    
-    
-     @Override
+    @Override
     public NutsJsonFormat json() {
         return new DefaultNutsJsonFormat(this);
     }

@@ -6,13 +6,14 @@ import net.vpc.app.nuts.NutsServiceLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 
 public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements NutsServiceLoader<T, B> {
 
-    private ClassLoader classLoader;
-    private Class<T> serviceType;
-    private Class<B> criteriaType;
-    private ServiceLoader<T> loader;
+    private final ClassLoader classLoader;
+    private final Class<T> serviceType;
+    private final Class<B> criteriaType;
+    private final ServiceLoader<T> loader;
 
     public DefaultNutsServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -24,7 +25,7 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public List<T> loadAll(B criteria) {
+    public List<T> loadAll(NutsSupportLevelContext<B> criteria) {
         List<T> all = new ArrayList<>();
         for (T t : loader) {
             int p = t.getSupportLevel(criteria);
@@ -36,7 +37,7 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public T loadBest(B criteria) {
+    public T loadBest(NutsSupportLevelContext<B> criteria) {
         T best = null;
         int bestVal = NutsComponent.NO_SUPPORT;
         for (T t : loader) {

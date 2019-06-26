@@ -36,6 +36,7 @@ import net.vpc.app.nuts.NutsExecutionEntry;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
@@ -53,7 +54,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=install")
+                    .command(executionContext.getDefinition())
+                    .command("--nuts-exec-mode=install")
                     .addExecutorOptions("-Dnuts.export.debug").addCommand(executionContext.getArguments())
                     .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
                     .failFast()
@@ -101,8 +103,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsDefinition criteria) {
-        return 0;
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> criteria) {
+        return DEFAULT_SUPPORT;
     }
 
 }

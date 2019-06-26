@@ -35,6 +35,7 @@ import net.vpc.app.nuts.core.util.fprint.FPrint;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 
 import java.io.OutputStream;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 2/20/17.
@@ -54,7 +55,7 @@ public class NutsAnsiUnixStripperTermPrintStream extends FormattedPrintStream im
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<OutputStream> criteria) {
         return DEFAULT_SUPPORT + 2;
     }
 }

@@ -96,7 +96,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
                 optionsConfig.getName(), supportedMirroring,
                 options.getName(), repositoryType
         );
-        this.nutsIndexStoreClient = workspace.config().getIndexStoreClientFactory().createNutsIndexStoreClient(this);
+        this.nutsIndexStoreClient = workspace.config().getIndexStoreClientFactory().createIndexStoreClient(this);
 //        Path file = config().getStoreLocation().resolve(NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
 //        boolean found = false;
 //        if (Files.exists(file)) {

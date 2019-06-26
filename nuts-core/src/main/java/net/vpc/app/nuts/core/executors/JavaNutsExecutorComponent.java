@@ -61,9 +61,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsDefinition nutsDefinition) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
         if (nutsDefinition != null) {
-            if ("jar".equals(nutsDefinition.getDescriptor().getPackaging())) {
+            if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT + 1;
             }
         }

@@ -67,6 +67,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
+import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -638,7 +639,7 @@ public class CoreIOUtils {
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
-            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
+            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws,null));
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
                 NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, null, queryOptions);
@@ -1147,7 +1148,7 @@ public class CoreIOUtils {
 
     public static NutsHttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
         //        System.out.println("getHttpClientFacade "+url);
-        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, url);
+        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws,url));
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }

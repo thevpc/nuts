@@ -398,7 +398,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "--color": {
-                    //if the value is imediately attatched with '=' don't consider
+                    //if the value is not imediately attatched with '=' don't consider
                     a = cmdLine.next();
                     if (enabled) {
                         String v = a.getStringValue("");

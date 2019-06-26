@@ -15,9 +15,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.function.Function;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsHashCommand;
+import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
@@ -102,7 +102,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 
@@ -275,11 +275,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
-                HashMap<String, Object> m = new HashMap<>();
-                m.put("workspace", this);
-                m.put("out", out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
-                        m,
+                        new DefaultNutsSupportLevelContext<>(ws,out),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case FILTERED: {
@@ -289,12 +286,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 if (out instanceof NutsFormattedPrintStream) {
                     return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
                 }
-                //return new NutsDefaultFormattedPrintStream(out);
-                HashMap<String, Object> m = new HashMap<>();
-                m.put("workspace", this);
-                m.put("out", out);
-                return (PrintStream) ws.extensions().createSupported(NutsFormatFilteredPrintStream.class,
-                        m,
+                return (PrintStream) ws.extensions().createSupported(
+                        NutsFormatFilteredPrintStream.class,
+                        new DefaultNutsSupportLevelContext<>(ws,out),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case INHERITED: {

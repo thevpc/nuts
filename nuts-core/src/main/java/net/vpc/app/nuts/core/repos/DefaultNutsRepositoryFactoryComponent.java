@@ -39,9 +39,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
-    public int getSupportLevel(NutsRepositoryConfig criteria) {
-        String repositoryType = criteria.getType();
-        String location = criteria.getLocation();
+    public int getSupportLevel(NutsSupportLevelContext<NutsRepositoryConfig> criteria) {
+        String repositoryType = criteria.getConstraints().getType();
+        String location = criteria.getConstraints().getLocation();
         if (!NutsConstants.RepoTypes.NUTS.equals(repositoryType)
                 && !NutsConstants.RepoTypes.NUTS_SERVER.equals(repositoryType)) {
             return NO_SUPPORT;

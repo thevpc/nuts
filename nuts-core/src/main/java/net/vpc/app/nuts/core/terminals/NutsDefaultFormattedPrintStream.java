@@ -34,6 +34,7 @@ import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 
 import java.io.*;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.core.util.io.NullOutputStream;
 
 /**
@@ -69,7 +70,7 @@ public class NutsDefaultFormattedPrintStream extends FormattedPrintStream implem
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<OutputStream> criteria) {
         return DEFAULT_SUPPORT + 1;
     }
 

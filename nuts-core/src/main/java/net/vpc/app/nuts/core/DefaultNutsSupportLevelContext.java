@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,54 +27,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.executors;
+package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsId;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
- * Created by vpc on 1/7/17.
+ *
+ * @author vpc
  */
-public class CustomNutsExecutorComponent implements NutsExecutorComponent {
+public class DefaultNutsSupportLevelContext<T> implements NutsSupportLevelContext<T> {
 
-    public static final Logger LOG = Logger.getLogger(CustomNutsExecutorComponent.class.getName());
-    public NutsId id;
+    private NutsWorkspace ws;
+    private T constraints;
 
-    public CustomNutsExecutorComponent(NutsId id) {
-        this.id = id;
+    public DefaultNutsSupportLevelContext(NutsWorkspace ws, T constraints) {
+        this.ws = ws;
+        this.constraints = constraints;
     }
 
     @Override
-    public NutsId getId() {
-        return id;
+    public NutsWorkspace getWorkspace() {
+        return ws;
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        return NO_SUPPORT;
-    }
-
-    @Override
-    public void exec(NutsExecutionContext executionContext) {
-        List<String> args = new ArrayList<>();
-        args.add(id.toString());
-        args.addAll(Arrays.asList(executionContext.getArguments()));
-        executionContext.getWorkspace()
-                .exec()
-                .command(args)
-                .session(executionContext.getSession())
-                .env(executionContext.getEnv())
-                .directory(executionContext.getCwd())
-                .failFast(true)
-                .run();
+    public T getConstraints() {
+        return constraints;
     }
 
 }

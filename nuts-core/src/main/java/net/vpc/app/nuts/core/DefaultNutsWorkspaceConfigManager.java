@@ -94,7 +94,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         this.ws = ws;
         repositoryRegistryHelper = new NutsRepositoryRegistryHelper(ws);
         try {
-            indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, ws);
+            indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
         } catch (Exception ex) {
             //
         }
@@ -1112,9 +1112,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         authenticationAgent = CoreStringUtils.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
-            supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, "");
+            supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, new DefaultNutsSupportLevelContext<>(ws, ""));
         } else {
-            List<NutsAuthenticationAgent> agents = ws.extensions().createAllSupported(NutsAuthenticationAgent.class, "");
+            List<NutsAuthenticationAgent> agents = ws.extensions().createAllSupported(NutsAuthenticationAgent.class, new DefaultNutsSupportLevelContext<>(ws, authenticationAgent));
             for (NutsAuthenticationAgent agent : agents) {
                 if (agent.getId().equals(authenticationAgent)) {
                     supported = agent;
@@ -1509,7 +1509,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (CoreStringUtils.isBlank(repositoryType)) {
             repositoryType = NutsConstants.RepoTypes.NUTS;
         }
-        return ws.extensions().createAllSupported(NutsRepositoryFactoryComponent.class, new NutsRepositoryLocation().setType(repositoryType)).size() > 0;
+        return ws.extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
+                new DefaultNutsSupportLevelContext<>(ws, new NutsRepositoryConfig().setType(repositoryType))
+        ).size() > 0;
     }
 
     @Override
@@ -1647,7 +1649,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public Set<String> getAvailableArchetypes() {
         Set<String> set = new HashSet<>();
         set.add("default");
-        for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, ws)) {
+        for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(ws, null))) {
             set.add(extension.getName());
         }
         return set;
@@ -1712,12 +1714,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private static class DummyNutsIndexStoreClientFactory implements NutsIndexStoreClientFactory {
 
         @Override
-        public int getSupportLevel(NutsWorkspace criteria) {
-            return 0;
+        public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+            return DEFAULT_SUPPORT;
         }
 
         @Override
-        public NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository) {
+        public NutsIndexStoreClient createIndexStoreClient(NutsRepository repository) {
             return new DummyNutsIndexStoreClient();
         }
     }
@@ -1747,7 +1749,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (CoreStringUtils.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
-            NutsRepositoryFactoryComponent factory_ = ws.extensions().createSupported(NutsRepositoryFactoryComponent.class, conf);
+            NutsRepositoryFactoryComponent factory_ = ws.extensions().createSupported(NutsRepositoryFactoryComponent.class, 
+                    new DefaultNutsSupportLevelContext<>(ws, conf));
             if (factory_ != null) {
                 NutsRepository r = factory_.create(options, ws, parentRepository);
                 if (r != null) {

@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
@@ -57,7 +58,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

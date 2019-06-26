@@ -59,7 +59,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

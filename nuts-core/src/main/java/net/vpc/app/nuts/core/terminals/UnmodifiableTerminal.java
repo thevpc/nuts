@@ -5,9 +5,9 @@ import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsSession;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.NutsTerminalBase;
 
 public class UnmodifiableTerminal implements NutsSessionTerminal {
@@ -128,7 +128,7 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return base.getSupportLevel(criteria);
     }
 

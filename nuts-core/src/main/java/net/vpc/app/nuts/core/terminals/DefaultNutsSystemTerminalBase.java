@@ -80,8 +80,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
-        return 1;
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+        return DEFAULT_SUPPORT;
     }
 
 //    @Override
