@@ -13,6 +13,7 @@ import net.vpc.app.nuts.NutsCommandAliasConfig;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsRemoveOptions;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
@@ -98,7 +99,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

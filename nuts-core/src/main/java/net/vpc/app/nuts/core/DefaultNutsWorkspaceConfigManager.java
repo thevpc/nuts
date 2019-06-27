@@ -1274,12 +1274,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Map<String, String> q = id.getQueryMap();
         String f = CoreStringUtils.trim(q.get(NutsConstants.QueryKeys.FACE));
         switch (f) {
-            case "cache-eff-nuts": {
-                return ".cache-eff-nuts";
-            }
-            case "cache-info": {
-                return ".cache-info";
-            }
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;
             }
@@ -1296,6 +1290,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return getDefaultIdComponentExtension(q.get(NutsConstants.QueryKeys.PACKAGING));
             }
             default: {
+                if(f.equals("cache") || f.endsWith(".cache")){
+                    return "."+f;
+                }
                 if (CoreStringUtils.isBlank(f)) {
                     throw new NutsIllegalArgumentException(ws, "Missing face in " + id);
                 }

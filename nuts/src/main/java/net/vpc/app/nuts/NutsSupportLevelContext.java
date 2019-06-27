@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,42 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.List;
-import java.util.Set;
-
 /**
- * Created by vpc on 1/5/17.
  *
- * @since 0.5.4
+ * @author vpc
  */
-public interface NutsWorkspaceFactory extends NutsComponent<NutsWorkspaceFactory> {
+public interface NutsSupportLevelContext<T> {
 
-    List<Class> discoverTypes(ClassLoader bootClassLoader);
-    
-    List<Class> getImplementationTypes(Class type);
+    NutsWorkspace getWorkspace();
 
-    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria);
-
-    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
-
-    <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria);
-
-    <T> List<T> createAll(Class<T> type);
-
-    Set<Class> getExtensionPoints();
-
-    Set<Class> getExtensionTypes(Class extensionPoint);
-
-    List<Object> getExtensionObjects(Class extensionPoint);
-
-    boolean isRegisteredType(Class extensionPointType, String name);
-
-    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
-
-    <T> void registerInstance(Class<T> extensionPoint, T implementation);
-
-    void registerType(Class extensionPointType, Class extensionType);
-
-    boolean isRegisteredType(Class extensionPointType, Class extensionType);
-
+    T getConstraints();
 }

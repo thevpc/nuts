@@ -510,6 +510,10 @@ public class CoreNutsUtils {
                 tracePhaseString = "[START  ] ";
                 break;
             }
+            case CACHED: {
+                tracePhaseString = "[CACHED ] ";
+                break;
+            }
         }
         String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
         LOG.log(Level.FINEST, tracePhaseString + fetchString
@@ -605,6 +609,10 @@ public class CoreNutsUtils {
             }
             case START: {
                 tracePhaseString = "[START  ] ";
+                break;
+            }
+            case CACHED: {
+                tracePhaseString = "[CACHED ] ";
                 break;
             }
         }

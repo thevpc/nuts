@@ -34,7 +34,6 @@ import java.util.List;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.common.javashell.JShellBuiltin;
-import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**

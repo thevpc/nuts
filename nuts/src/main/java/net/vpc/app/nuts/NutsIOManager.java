@@ -37,7 +37,7 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsIOManager extends NutsComponent<Object> {
+public interface NutsIOManager extends NutsComponent<Object/* any object or null */> {
 
     NutsMonitorCommand monitor();
 

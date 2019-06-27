@@ -61,8 +61,9 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     private NutsHttpServletFacade facade;
 
     @Override
-    public int getSupportLevel(ServerConfig config) {
-        return (config == null || config instanceof NutsHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext<ServerConfig> config) {
+        ServerConfig c = config.getConstraints();
+        return (c == null || c instanceof NutsHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
     @Override

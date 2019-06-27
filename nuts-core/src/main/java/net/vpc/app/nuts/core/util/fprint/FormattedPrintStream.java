@@ -394,7 +394,7 @@ public class FormattedPrintStream extends PrintStream implements ExtendedFormatA
                 parser.take(raw);
                 consumeNodes(false);
             } catch (Exception ex) {
-                System.out.print("");
+                //
             }
         }
     }
@@ -451,7 +451,7 @@ public class FormattedPrintStream extends PrintStream implements ExtendedFormatA
         try {
             consumeNodes(true);
         } catch (Exception ex) {
-            System.out.print("");
+            //
         }
         super.flush();
     }

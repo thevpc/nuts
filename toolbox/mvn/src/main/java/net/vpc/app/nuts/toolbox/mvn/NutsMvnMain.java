@@ -74,7 +74,7 @@ public class NutsMvnMain extends NutsApplication {
                             defaultArgs.add(ar);
                         }
                     }
-                    int r = callMvn(o, Paths.get("."), defaultArgs.toArray(new String[0]));
+                    int r = callMvn(appContext, o, Paths.get("."), defaultArgs.toArray(new String[0]));
                     if (r == 0) {
                         return;
                     } else {
@@ -97,7 +97,7 @@ public class NutsMvnMain extends NutsApplication {
                         System.setProperty("repoUrl", repo);
                     }
                     Path dir = createTempPom(appContext.getWorkspace());
-                    int r = callMvn(o, dir, "dependency:get");
+                    int r = callMvn(appContext, o, dir, "dependency:get");
                     try {
                         delete(dir);
                     } catch (IOException ex) {
@@ -113,7 +113,7 @@ public class NutsMvnMain extends NutsApplication {
         }
     }
 
-    private static int callMvn(Options options, Path path, String... args) {
+    private static int callMvn(NutsApplicationContext appContext, Options options, Path path, String... args) {
         MavenCli cli = new MavenCli();
         if (options.json) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -122,21 +122,21 @@ public class NutsMvnMain extends NutsApplication {
                 int r = cli.doMain(args, path.toString(), out, out);
                 String s = new String(bos.toByteArray());
                 if (s.contains("BUILD SUCCESS")) {
-                    System.out.println("{'result':'success'}");
+                    appContext.session().out().println("{'result':'success'}");
                     return 0;
                 } else {
                     if (r == 0) {
                         r = 1;
                     }
-                    System.out.println("{'result':'error'}");
+                    appContext.session().out().println("{'result':'error'}");
                 }
                 return r;
             } catch (Exception ex) {
-                System.out.println("{'result':'error'}");
+                appContext.session().out().println("{'result':'error'}");
                 return 1;
             }
         } else {
-            return cli.doMain(args, path.toString(), System.out, System.err);
+            return cli.doMain(args, path.toString(), appContext.session().out(), appContext.session().err());
         }
     }
 

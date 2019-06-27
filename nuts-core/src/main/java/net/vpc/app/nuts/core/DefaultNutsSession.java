@@ -402,39 +402,43 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         String v = a.getStringValue("");
-                        NutsArgument bb = cmdLine.newArgument(v);
-                        Boolean b = bb.getBoolean(null);
-                        if (b != null) {
-                            if (b) {
-                                setTerminalMode(NutsTerminalMode.FORMATTED);
-
-                            } else {
-                                setTerminalMode(NutsTerminalMode.FILTERED);
-                            }
+                        if (v.isEmpty()) {
+                            setTerminalMode(NutsTerminalMode.FORMATTED);
                         } else {
-                            switch (v.toLowerCase()) {
-                                case "formatted": {
+                            NutsArgument bb = cmdLine.newArgument(v);
+                            Boolean b = bb.getBoolean(null);
+                            if (b != null) {
+                                if (b) {
                                     setTerminalMode(NutsTerminalMode.FORMATTED);
-                                    break;
-                                }
-                                case "filtered": {
+
+                                } else {
                                     setTerminalMode(NutsTerminalMode.FILTERED);
-                                    break;
                                 }
-                                case "h":
-                                case "inherited": {
-                                    setTerminalMode(NutsTerminalMode.INHERITED);
-                                    break;
-                                }
-                                case "s":
-                                case "auto":
-                                case "system": {
-                                    setTerminalMode(null);
-                                    break;
-                                }
-                                default: {
-                                    cmdLine.pushBack(a);
-                                    cmdLine.unexpectedArgument();
+                            } else {
+                                switch (v.toLowerCase()) {
+                                    case "formatted": {
+                                        setTerminalMode(NutsTerminalMode.FORMATTED);
+                                        break;
+                                    }
+                                    case "filtered": {
+                                        setTerminalMode(NutsTerminalMode.FILTERED);
+                                        break;
+                                    }
+                                    case "h":
+                                    case "inherited": {
+                                        setTerminalMode(NutsTerminalMode.INHERITED);
+                                        break;
+                                    }
+                                    case "s":
+                                    case "auto":
+                                    case "system": {
+                                        setTerminalMode(null);
+                                        break;
+                                    }
+                                    default: {
+                                        cmdLine.pushBack(a);
+                                        cmdLine.unexpectedArgument();
+                                    }
                                 }
                             }
                         }

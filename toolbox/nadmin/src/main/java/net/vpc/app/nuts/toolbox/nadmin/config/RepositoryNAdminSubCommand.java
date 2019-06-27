@@ -263,7 +263,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

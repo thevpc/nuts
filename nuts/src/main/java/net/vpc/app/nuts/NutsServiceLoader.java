@@ -40,7 +40,7 @@ import java.util.List;
  */
 public interface NutsServiceLoader<T extends NutsComponent<B>, B> {
 
-    List<T> loadAll(B criteria);
+    List<T> loadAll(NutsSupportLevelContext<B> criteria);
 
-    T loadBest(B criteria);
+    T loadBest(NutsSupportLevelContext<B> criteria);
 }

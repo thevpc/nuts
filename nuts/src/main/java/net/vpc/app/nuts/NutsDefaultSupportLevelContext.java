@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,29 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 /**
- *
+ * Default and dummy NutsSupportLevelContext implementation
  * @author vpc
- * @since 0.5.4
+ * @param <T> support level type
  */
-public interface NutsFormatFilteredPrintStream extends NutsComponent<OutputStream> {
+public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContext<T> {
 
-    PrintStream getUnformattedInstance();
+    private final NutsWorkspace ws;
+    private final T constraints;
+
+    public NutsDefaultSupportLevelContext(NutsWorkspace ws, T constraints) {
+        this.ws = ws;
+        this.constraints = constraints;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
+    @Override
+    public T getConstraints() {
+        return constraints;
+    }
+
 }

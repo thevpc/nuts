@@ -4,4 +4,5 @@ public enum TraceResult {
     START,
     SUCCESS,
     ERROR,
+    CACHED,
 }

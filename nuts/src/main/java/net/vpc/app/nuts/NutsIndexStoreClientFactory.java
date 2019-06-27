@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsIndexStoreClientFactory extends NutsComponent<NutsWorkspace> {
+public interface NutsIndexStoreClientFactory extends NutsComponent<Object/*any object or null*/> {
 
-    NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository);
+    NutsIndexStoreClient createIndexStoreClient(NutsRepository repository);
 }

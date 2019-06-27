@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * @author vpc
@@ -232,7 +233,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

@@ -193,57 +193,68 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         return this;
     }
 
+    protected DefaultNutsDefinition fetchDefinitionBase(NutsId id, NutsFetchCommand options) {
+        long startTime = System.currentTimeMillis();
+        DefaultNutsDefinition result = null;
+        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
+        Path cachePath = null;
+        {
+            cachePath = ws.config().getStoreLocation(id, NutsStoreLocation.CACHE)
+                    .resolve(ws.config().getDefaultIdFilename(id.setFace("def.cache")));
+            if (Files.isRegularFile(cachePath)) {
+                try {
+                    DefaultNutsDefinition d = ws.json().parse(cachePath, DefaultNutsDefinition.class);
+                    if (d != null) {
+                        if (LOG.isLoggable(Level.FINEST)) {
+                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.CACHED, "Fetch definition", startTime);
+                        }
+                        return d;
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }
+        }
+        if (LOG.isLoggable(Level.FINEST)) {
+            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.START, "Fetch definition", 0);
+        }
+        for (NutsFetchMode mode : nutsFetchModes) {
+            try {
+                result = fetchDescriptorAsDefinition(id, options, mode);
+                if (result != null) {
+                    break;
+                }
+            } catch (NutsNotFoundException | UncheckedIOException ex) {
+                //ignore
+            } catch (Exception ex) {
+                //ignore
+                if (LOG.isLoggable(Level.FINEST)) {
+                    CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch def", startTime);
+                }
+            }
+        }
+        if (result != null) {
+            try {
+                ws.json().value(result).print(cachePath);
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return result;
+    }
+
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
         long startTime = System.currentTimeMillis();
         NutsWorkspaceUtils.checkLongNameNutsId(ws, id);
         options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
-        if (LOG.isLoggable(Level.FINEST)) {
-            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.START, "Fetch component", 0);
-        }
+        NutsId effectiveId = null;
         DefaultNutsDefinition foundDefinition = null;
         try {
             //add env parameters to fetch adequate nuts
             id = NutsWorkspaceUtils.configureFetchEnv(ws, id);
-            NutsFetchMode modeForSuccessfulDescRetrieval = null;
-            //use
-            for (NutsFetchMode mode : nutsFetchModes) {
-                try {
-                    if (id.getGroup() == null) {
-                        Set<String> groups = ws.config().getImports();
-                        for (String group : groups) {
-                            try {
-                                foundDefinition = fetchDescriptorAsDefinition(id.setGroup(group), options, mode);
-                                if (foundDefinition != null) {
-                                    break;
-                                }
-                            } catch (NutsNotFoundException ex) {
-                                //not found
-                            }
-                        }
-                        if (foundDefinition != null) {
-                            modeForSuccessfulDescRetrieval = mode;
-                            break;
-                        }
-                        throw new NutsNotFoundException(ws, id);
-                    }
-                    foundDefinition = fetchDescriptorAsDefinition(id, options, mode);
-                    if (foundDefinition != null) {
-                        modeForSuccessfulDescRetrieval = mode;
-                        break;
-                    }
-                } catch (NutsNotFoundException ex) {
-                    //ignore
-                } catch (UncheckedIOException ex) {
-                    //ignore
-                } catch (Exception ex) {
-                    //ignore
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
-                    }
-                }
-            }
+            foundDefinition = fetchDefinitionBase(id, options);
             if (foundDefinition != null) {
                 if (options.isEffective()) {
                     try {
@@ -256,27 +267,83 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
                 if (foundDefinition != null) {
                     if (isDependenciesTree()) {
-                        foundDefinition.setDependencyTreeNodes(buildTreeNode(null,
-                                new DefaultNutsDependency(id),
-                                foundDefinition, new HashSet<NutsId>(), getSession().copy().trace(false),
-                                getScope().isEmpty() ? null : new NutsDependencyScopeFilter().addScopes(getScope())).getChildren());
+                        int hashId = getScope().hashCode() * 31 + (getOptional() == null ? 0 : getOptional().hashCode());
+                        if (effectiveId == null) {
+                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), ws.fetch().session(options.getSession()));
+                        }
+                        NutsDependencyTreeNode[] tree = null;
+                        Path cachePath = null;
+                        {
+                            cachePath = ws.config().getStoreLocation(effectiveId, NutsStoreLocation.CACHE)
+                                    .resolve(ws.config().getDefaultIdFilename(effectiveId.setFace(Integer.toHexString(hashId) + ".dep-tree.cache")));
+                            if (Files.isRegularFile(cachePath)) {
+                                try {
+                                    NutsDependencyTreeNode[] d = ws.json().parse(cachePath, NutsDependencyTreeNode[].class);
+                                    if (d != null) {
+                                        tree = d;
+                                    }
+                                } catch (Exception ex) {
+                                    //
+                                }
+                            }
+                        }
+                        if (tree == null) {
+                            NutsDependencyFilter scope = getScope().isEmpty() ? null : new NutsDependencyScopeFilter().addScopes(getScope());
+                            tree = buildTreeNode(null,
+                                    new DefaultNutsDependency(id),
+                                    foundDefinition, new HashSet<NutsId>(), getSession().copy().trace(false), scope).getChildren();
+                            try {
+                                ws.json().setValue(tree).print(cachePath);
+                            } catch (Exception ex) {
+                                //
+                            }
+                        }
+                        foundDefinition.setDependencyNodes(tree);
                     }
                     if (isDependencies()) {
-                        NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
-                        NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
-                                new NutsDependencyScopeFilter().addScopes(getScope()),
-                                getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
-                                null//getDependencyFilter()
-                        ));
-                        NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
-                        List<NutsId> ids = Arrays.asList(id);
-                        graph.push(ids, _dependencyFilter);
-                        NutsId[] pp = graph.collect(ids, ids);
-                        DefaultNutsDependency[] dd = new DefaultNutsDependency[pp.length];
-                        for (int i = 0; i < dd.length; i++) {
-                            dd[i] = new DefaultNutsDependency(pp[i]);
+                        int hashId = getScope().hashCode() * 31 + (getOptional() == null ? 0 : getOptional().hashCode());
+                        if (effectiveId == null) {
+                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), ws.fetch().session(options.getSession()));
                         }
-                        foundDefinition.setDependencies(dd);
+                        DefaultNutsDependency[] list = null;
+                        Path cachePath = null;
+                        {
+                            Path l = ws.config().getStoreLocation(effectiveId, NutsStoreLocation.CACHE);
+                            String nn = ws.config().getDefaultIdFilename(effectiveId.setFace(Integer.toHexString(hashId) + ".dep-list.cache"));
+                            cachePath = l.resolve(nn);
+                            if (Files.isRegularFile(cachePath)) {
+                                try {
+                                    DefaultNutsDependency[] d = ws.json().parse(cachePath, DefaultNutsDependency[].class);
+                                    if (d != null) {
+                                        list = d;
+                                    }
+                                } catch (Exception ex) {
+                                    //
+                                }
+                            }
+                        }
+                        if (list == null) {
+                            NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
+                            NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
+                                    new NutsDependencyScopeFilter().addScopes(getScope()),
+                                    getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
+                                    null//getDependencyFilter()
+                            ));
+                            NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
+                            List<NutsId> ids = Arrays.asList(id);
+                            graph.push(ids, _dependencyFilter);
+                            NutsId[] pp = graph.collect(ids, ids);
+                            list = new DefaultNutsDependency[pp.length];
+                            for (int i = 0; i < list.length; i++) {
+                                list[i] = new DefaultNutsDependency(pp[i]);
+                            }
+                            try {
+                                ws.json().setValue(list).print(cachePath);
+                            } catch (Exception ex) {
+                                //
+                            }
+                        }
+                        foundDefinition.setDependencies(list);
                     }
                     boolean includeContent = shouldIncludeContent(options);
                     if (includeContent || options.isInstallInformation()) {
@@ -285,7 +352,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         if (copyTo != null && Files.isDirectory(copyTo)) {
                             copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
                         }
-                        boolean escalateMode = false;
+//                        boolean escalateMode = false;
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
                                 NutsRepository repo = ws.config().getRepository(foundDefinition.getRepositoryUuid(), true);
@@ -300,18 +367,18 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                     break;
                                 }
                             } catch (NutsNotFoundException ex) {
-                                if (mode.ordinal() < modeForSuccessfulDescRetrieval.ordinal()) {
-                                    //ignore because actually there is more chance to find it in later modes!
-                                } else {
-                                    escalateMode = true;
-                                }
+//                                if (mode.ordinal() < modeForSuccessfulDescRetrieval.ordinal()) {
+//                                    //ignore because actually there is more chance to find it in later modes!
+//                                } else {
+//                                    escalateMode = true;
+//                                }
                             }
                         }
                         if (foundDefinition.getContent() == null || foundDefinition.getPath() == null) {
                             CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
                             foundDefinition = null;
-                        } else if (escalateMode) {
-                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
+//                        } else if (escalateMode) {
+//                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
                         }
                     }
                     if (foundDefinition != null && options.isInstallInformation()) {
@@ -326,30 +393,30 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
         } catch (NutsNotFoundException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch definition", startTime);
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch component", startTime);
+                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch definition", startTime);
             }
             throw ex;
         }
         if (foundDefinition != null) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime);
-            }
-            if (isInlineDependencies()) {
-                Set<NutsDependencyScope> s = getScope();
-                if (s == null || s.isEmpty()) {
-                    s = NutsDependencyScopePattern.RUN.expand();
-                }
-                ws.search().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
-                        .addScopes(s.toArray(new NutsDependencyScope[0]))
-                        .setOptional(getOptional())
-                        .main(false).inlineDependencies().getResultDefinitions();
-
-            }
+//            if (LOG.isLoggable(Level.FINEST)) {
+//                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.SUCCESS, "Fetch definition", startTime);
+//            }
+//            if (isInlineDependencies()) {
+//                Set<NutsDependencyScope> s = getScope();
+//                if (s == null || s.isEmpty()) {
+//                    s = NutsDependencyScopePattern.RUN.expand();
+//                }
+//                ws.search().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
+//                        .addScopes(s.toArray(new NutsDependencyScope[0]))
+//                        .setOptional(getOptional())
+//                        .main(false).inlineDependencies().getResultDefinitions();
+//
+//            }
             if (getValidSession().isTrace()) {
                 NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getValidSession())
                         .session(getValidSession());
@@ -404,12 +471,13 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isNutsApplication();
         if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
-            Path f = ws.config().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE).resolve(ws.config().getDefaultIdFilename(nutsDescriptor.getId().setFace("cache-info"))
-            );
+            Path cachePath = ws.config().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
+                    .resolve(ws.config().getDefaultIdFilename(nutsDescriptor.getId().setFace("info.cache"))
+                    );
             Map<String, String> map = null;
             try {
-                if (Files.isRegularFile(f)) {
-                    map = ws.json().parse(f, Map.class);
+                if (Files.isRegularFile(cachePath)) {
+                    map = ws.json().parse(cachePath, Map.class);
                 }
             } catch (Exception ex) {
                 //
@@ -430,7 +498,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.json().value(map).print(f);
+                        ws.json().value(map).print(cachePath);
                     } catch (Exception ex) {
                         //
                     }
@@ -551,31 +619,4 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         return false;
     }
 
-    private static class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
-
-        private final NutsDependency dependency;
-        private final NutsDependencyTreeNode[] children;
-        private final boolean partial;
-
-        public DefaultNutsDependencyTreeNode(NutsDependency dependency, NutsDependencyTreeNode[] children, boolean partial) {
-            this.dependency = dependency;
-            this.children = children;
-            this.partial = partial;
-        }
-
-        @Override
-        public NutsDependency getDependency() {
-            return dependency;
-        }
-
-        @Override
-        public NutsDependencyTreeNode[] getChildren() {
-            return children;
-        }
-
-        @Override
-        public boolean isPartial() {
-            return partial;
-        }
-    }
 }

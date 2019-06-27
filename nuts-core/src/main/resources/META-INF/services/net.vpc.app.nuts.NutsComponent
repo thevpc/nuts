@@ -1,5 +1,4 @@
 net.vpc.app.nuts.core.DefaultHttpTransportComponent
-net.vpc.app.nuts.core.DefaultNutsWorkspace
 
 net.vpc.app.nuts.core.repos.DefaultNutsRepositoryFactoryComponent
 

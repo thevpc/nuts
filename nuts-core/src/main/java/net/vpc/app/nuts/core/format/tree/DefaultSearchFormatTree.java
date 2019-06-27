@@ -109,7 +109,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 return Arrays.asList(object);
             } else if (o instanceof NutsDefinition) {
                 NutsDefinition d = (NutsDefinition) o;
-                NutsDependencyTreeNode[] z = d.getDependenciesNodes();
+                NutsDependencyTreeNode[] z = d.getDependencyNodes();
                 if (z != null) {
                     return Arrays.asList(z);
                 }

@@ -29,15 +29,15 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 /**
+ * Created by vpc on 1/5/17.
  *
- * @author vpc
  * @since 0.5.4
  */
-public interface NutsFormatFilteredPrintStream extends NutsComponent<OutputStream> {
+public interface NutsBootWorkspaceFactory {
 
-    PrintStream getUnformattedInstance();
+    int getBootSupportLevel(NutsWorkspaceOptions options);
+
+    NutsWorkspace createWorkspace(NutsWorkspaceOptions options);
+
 }

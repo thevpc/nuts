@@ -41,43 +41,59 @@ public class AnsiPrintStreamSupport extends PrintStream {
     }
 
     public static void installStdOut(Type type) {
-        PrintStream out = System.out;
+        PrintStream out = FPrint.out;
         if (out instanceof AnsiPrintStreamSupport) {
             AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
             ((MyOutputStream) pout.out).setType(type);
         } else {
-            System.setOut(new AnsiPrintStreamSupport(out, CLibrary.STDOUT_FILENO, type));
+            FPrint.out=(new AnsiPrintStreamSupport(System.out, CLibrary.STDOUT_FILENO, type));
         }
+//        PrintStream out = System.out;
+//        if (out instanceof AnsiPrintStreamSupport) {
+//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
+//            ((MyOutputStream) pout.out).setType(type);
+//        } else {
+//            System.setOut(new AnsiPrintStreamSupport(out, CLibrary.STDOUT_FILENO, type));
+//        }
     }
 
     public static void uninstallStdOut() {
-        PrintStream out = System.out;
-        if (out instanceof AnsiPrintStreamSupport) {
-            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-            System.setOut((PrintStream) ((MyOutputStream) pout.out).base);
-        } else {
-            //
-        }
+        FPrint.out=null;
+//        PrintStream out = System.out;
+//        if (out instanceof AnsiPrintStreamSupport) {
+//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
+//            System.setOut((PrintStream) ((MyOutputStream) pout.out).base);
+//        } else {
+//            //
+//        }
     }
 
     public static void installStdErr(Type type) {
-        PrintStream err = System.err;
+        PrintStream err = FPrint.err;
         if (err instanceof AnsiPrintStreamSupport) {
             AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) err;
             ((MyOutputStream) pout.out).setType(type);
         } else {
-            System.setErr(new AnsiPrintStreamSupport(System.err, CLibrary.STDERR_FILENO, type));
+            FPrint.err=(new AnsiPrintStreamSupport(System.err, CLibrary.STDERR_FILENO, type));
         }
+//        PrintStream err = System.err;
+//        if (err instanceof AnsiPrintStreamSupport) {
+//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) err;
+//            ((MyOutputStream) pout.out).setType(type);
+//        } else {
+//            System.setErr(new AnsiPrintStreamSupport(System.err, CLibrary.STDERR_FILENO, type));
+//        }
     }
 
     public static void uninstallStdErr() {
-        PrintStream out = System.err;
-        if (out instanceof AnsiPrintStreamSupport) {
-            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-            System.setErr((PrintStream) ((MyOutputStream) pout.out).base);
-        } else {
-            //
-        }
+        FPrint.err=null;
+//        PrintStream out = System.err;
+//        if (out instanceof AnsiPrintStreamSupport) {
+//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
+//            System.setErr((PrintStream) ((MyOutputStream) pout.out).base);
+//        } else {
+//            //
+//        }
     }
 
     public AnsiPrintStreamSupport(OutputStream out, int fileno, Type type) {

@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
  *
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsDependencyTreeNode {
+public interface NutsDependencyTreeNode extends Serializable{
 
     NutsDependency getDependency();
 

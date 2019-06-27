@@ -123,64 +123,66 @@ public class NutsWorkspaceOptionsFormat {
                         NutsStoreLocation folder = NutsStoreLocation.values()[j];
                         //config is exported!
                         if ((folder == NutsStoreLocation.CONFIG)) {
-                            fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments);
+                            fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments, false);
                         }
                     }
                 }
             }
-            fillOption("--boot-runtime", null, options.getBootRuntime(), arguments);
-            fillOption("--java", "-j", options.getBootJavaCommand(), arguments);
-            fillOption("--java-options", "-O", options.getBootJavaOptions(), arguments);
-            fillOption("--workspace", "-w", NutsUtilsLimited.isBlank(options.getWorkspace()) ? "" : NutsUtilsLimited.getAbsolutePath(options.getWorkspace()), arguments);
-            fillOption("--user", "-u", options.getUserName(), arguments);
-            fillOption("--password", "-p", options.getPassword(), arguments);
-            fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments);
-            fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments);
+            fillOption("--boot-runtime", null, options.getBootRuntime(), arguments, false);
+            fillOption("--java", "-j", options.getBootJavaCommand(), arguments, false);
+            fillOption("--java-options", "-O", options.getBootJavaOptions(), arguments, false);
+            fillOption("--workspace", "-w", NutsUtilsLimited.isBlank(options.getWorkspace()) ? "" : NutsUtilsLimited.getAbsolutePath(options.getWorkspace()), arguments, false);
+            fillOption("--user", "-u", options.getUserName(), arguments, false);
+            fillOption("--password", "-p", options.getPassword(), arguments, false);
+            fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments, false);
+            if (!(omitDefaults && options.getTerminalMode() == null)) {
+                fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
+            }
             if (options.getLogConfig() != null) {
                 if (options.getLogConfig().getLogLevel() != null) {
                     if (options.getLogConfig().getLogLevel() == Level.FINEST) {
                         if (options.getLogConfig().isDebug()) {
-                            fillOption("--debug", null, true, arguments);
+                            fillOption("--debug", null, true, arguments, false);
                         } else {
-                            fillOption("--verbose", null, true, arguments);
+                            fillOption("--verbose", null, true, arguments, false);
                         }
                     } else {
-                        fillOption("--log-" + options.getLogConfig().getLogLevel().toString().toLowerCase(), null, true, arguments);
+                        fillOption("--log-" + options.getLogConfig().getLogLevel().toString().toLowerCase(), null, true, arguments, false);
                     }
                 }
                 if (options.getLogConfig().getLogCount() > 0) {
-                    fillOption("--log-count", null, String.valueOf(options.getLogConfig().getLogCount()), arguments);
+                    fillOption("--log-count", null, String.valueOf(options.getLogConfig().getLogCount()), arguments, false);
                 }
-                fillOption("--log-size", null, options.getLogConfig().getLogSize(), arguments);
-                fillOption("--log-folder", null, options.getLogConfig().getLogFolder(), arguments);
-                fillOption("--log-name", null, options.getLogConfig().getLogName(), arguments);
-                fillOption("--log-inherited", null, options.getLogConfig().isLogInherited(), arguments);
+                fillOption("--log-size", null, options.getLogConfig().getLogSize(), arguments, false);
+                fillOption("--log-folder", null, options.getLogConfig().getLogFolder(), arguments, false);
+                fillOption("--log-name", null, options.getLogConfig().getLogName(), arguments, false);
+                fillOption("--log-inherited", null, options.getLogConfig().isLogInherited(), arguments, false);
             }
-            fillOption("--exclude-extension", null, options.getExcludedExtensions(), ";", arguments);
-            fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments);
-            fillOption("--repository", "-r", options.getTransientRepositories(), ";", arguments);
-            fillOption("--global", "-g", options.isGlobal(), arguments);
-            fillOption("--gui", null, options.isGui(), arguments);
-            fillOption("--read-only", "-R", options.isReadOnly(), arguments);
-            fillOption("--trace", "-t", options.isTrace(), arguments);
-            fillOption("--skip-install-companions", "-k", options.isSkipInstallCompanions(), arguments);
-            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments);
-            fillOption(options.getConfirm(), arguments);
-            fillOption(options.getOutputFormat(), arguments);
+            fillOption("--exclude-extension", null, options.getExcludedExtensions(), ";", arguments, false);
+            fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments, false);
+            fillOption("--repository", "-r", options.getTransientRepositories(), ";", arguments, false);
+            fillOption("--global", "-g", options.isGlobal(), arguments, false);
+            fillOption("--gui", null, options.isGui(), arguments, false);
+            fillOption("--read-only", "-R", options.isReadOnly(), arguments, false);
+            fillOption("--trace", "-t", options.isTrace(), arguments, false);
+            fillOption("--skip-install-companions", "-k", options.isSkipInstallCompanions(), arguments, false);
+            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments, false);
+            fillOption(options.getConfirm(), arguments, false);
+            fillOption(options.getOutputFormat(), arguments, false);
             for (String outputFormatOption : options.getOutputFormatOptions()) {
-                fillOption("--output-format-option", "-T", outputFormatOption, arguments);
+                fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
             }
         }
 
         if (createOptions || isImplicitAll()) {
-            fillOption("--name", null, NutsUtilsLimited.trim(options.getName()), arguments);
-            fillOption("--archetype", "-A", options.getArchetype(), arguments);
-            fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments);
-            fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments);
-            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments);
+            fillOption("--name", null, NutsUtilsLimited.trim(options.getName()), arguments, false);
+            fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
+            fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
+            fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
+            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
             String[] storeLocations = options.getStoreLocations();
             for (int i = 0; i < storeLocations.length; i++) {
-                fillOption("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location", null, storeLocations[i], arguments);
+                fillOption("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location", null, storeLocations[i], arguments, false);
             }
             String[] homeLocations = options.getHomeLocations();
             for (int i = 0; i < NutsOsFamily.values().length; i++) {
@@ -190,20 +192,22 @@ public class NutsWorkspaceOptionsFormat {
                     NutsStoreLocation folder = NutsStoreLocation.values()[j];
                     //config is exported!
                     if (!(folder == NutsStoreLocation.CONFIG)) {
-                        fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments);
+                        fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments, false);
                     }
                 }
             }
         }
 
         if (runtimeOptions || isImplicitAll()) {
-            fillOption(options.getOpenMode(), arguments);
-            fillOption(options.getExecutionType(), arguments);
+            if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_OR_CREATE))) {
+                fillOption(options.getOpenMode(), arguments, false);
+            }
+            fillOption(options.getExecutionType(), arguments, false);
             NutsBootCommand e = options.getBootCommand();
             if (e == null && options.getExecutorOptions().length > 0) {
                 e = NutsBootCommand.EXEC;
             }
-            fillOption(e, arguments);
+            fillOption(e, arguments, false);
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
@@ -231,38 +235,38 @@ public class NutsWorkspaceOptionsFormat {
         return this;
     }
 
-    private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments) {
+    private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
         if (values != null && values.length > 0) {
-            fillOption0(selectOptionName(longName, shortName), NutsUtilsLimited.join(sep, values), arguments);
+            fillOption0(selectOptionName(longName, shortName), NutsUtilsLimited.join(sep, values), arguments, forceSingle);
         }
     }
 
-    private void fillOption(String longName, String shortName, boolean value, List<String> arguments) {
+    private void fillOption(String longName, String shortName, boolean value, List<String> arguments, boolean forceSingle) {
         if (value) {
             arguments.add(selectOptionName(longName, shortName));
         }
     }
 
-    private void fillOption(String longName, String shortName, char[] value, List<String> arguments) {
+    private void fillOption(String longName, String shortName, char[] value, List<String> arguments, boolean forceSingle) {
         if (value != null && new String(value).isEmpty()) {
-            fillOption0(selectOptionName(longName, shortName), new String(value), arguments);
+            fillOption0(selectOptionName(longName, shortName), new String(value), arguments, forceSingle);
         }
     }
 
-    private void fillOption(String longName, String shortName, String value, List<String> arguments) {
+    private void fillOption(String longName, String shortName, String value, List<String> arguments, boolean forceSingle) {
         if (!NutsUtilsLimited.isBlank(value)) {
-            fillOption0(selectOptionName(longName, shortName), value, arguments);
+            fillOption0(selectOptionName(longName, shortName), value, arguments, forceSingle);
         }
     }
 
-    private void fillOption(String longName, String shortName, int value, List<String> arguments) {
+    private void fillOption(String longName, String shortName, int value, List<String> arguments, boolean forceSingle) {
         if (value > 0) {
-            fillOption0(selectOptionName(longName, shortName), String.valueOf(value), arguments);
+            fillOption0(selectOptionName(longName, shortName), String.valueOf(value), arguments, forceSingle);
         }
     }
 
-    private void fillOption(String longName, String shortName, Enum value, Class enumType, List<String> arguments) {
-        if (tryFillOptionShort(value, arguments)) {
+    private void fillOption(String longName, String shortName, Enum value, Class enumType, List<String> arguments, boolean forceSingle) {
+        if (tryFillOptionShort(value, arguments, forceSingle)) {
             return;
         }
         if (value != null) {
@@ -270,76 +274,76 @@ public class NutsWorkspaceOptionsFormat {
                 if (value instanceof NutsOsFamily) {
                     switch ((NutsOsFamily) value) {
                         case LINUX: {
-                            fillOption0(selectOptionName(longName, shortName), "l", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("l","linux"), arguments, forceSingle);
                             return;
                         }
                         case WINDOWS: {
-                            fillOption0(selectOptionName(longName, shortName), "w", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("w","windows"), arguments, forceSingle);
                             return;
                         }
                         case MACOS: {
-                            fillOption0(selectOptionName(longName, shortName), "m", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("m","macos"), arguments, forceSingle);
                             return;
                         }
                         case UNIX: {
-                            fillOption0(selectOptionName(longName, shortName), "u", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("u","unix"), arguments, forceSingle);
                             return;
                         }
                         case UNKNOWN: {
-                            fillOption0(selectOptionName(longName, shortName), "x", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("x","unknown"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsStoreLocationStrategy) {
                     switch ((NutsStoreLocationStrategy) value) {
                         case EXPLODED: {
-                            fillOption0(selectOptionName(longName, shortName), "e", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("e", "exploded"), arguments, forceSingle);
                             return;
                         }
                         case STANDALONE: {
-                            fillOption0(selectOptionName(longName, shortName), "s", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("s", "standalone"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            fillOption0(selectOptionName(longName, shortName), "n", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("n", "no"), arguments, forceSingle);
                             return;
                         }
                         case INHERITED: {
-                            fillOption0(selectOptionName(longName, shortName), "h", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("h", "inherited"), arguments, forceSingle);
                             return;
                         }
                         case FORMATTED: {
-                            fillOption0(selectOptionName(longName, shortName), "y", arguments);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("y", "yes"), arguments, forceSingle);
                             return;
                         }
                     }
                 }
             }
-            fillOption0(selectOptionName(longName, shortName), value.toString().toLowerCase(), arguments);
+            fillOption0(selectOptionName(longName, shortName), value.toString().toLowerCase(), arguments, forceSingle);
         } else if (enumType.equals(NutsTerminalMode.class)) {
-            fillOption0(selectOptionName(longName, shortName), "s", arguments);
+            fillOption0(selectOptionName(longName, shortName), shortOptions ? "s" : "system", arguments, forceSingle);
         }
     }
 
-    private boolean tryFillOptionShort(Enum value, List<String> arguments) {
+    private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
         if (value != null) {
             if (shortOptions) {
                 if (value instanceof NutsWorkspaceOpenMode) {
                     switch ((NutsWorkspaceOpenMode) value) {
                         case OPEN_EXISTING: {
-                            fillOption0("-o", "r", arguments);
+                            fillOption0("-o", "r", arguments, forceSingle);
                             return true;
                         }
                         case CREATE_NEW: {
-                            fillOption0("-p", "w", arguments);
+                            fillOption0("-p", "w", arguments, forceSingle);
                             return true;
                         }
                         case OPEN_OR_CREATE: {
                             if (!omitDefaults) {
-                                fillOption0("-o", "rw", arguments);
+                                fillOption0("-o", "rw", arguments, forceSingle);
                             }
                             return true;
                         }
@@ -385,15 +389,15 @@ public class NutsWorkspaceOptionsFormat {
                 if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            arguments.add("-L");
+                            arguments.add("-C");
                             return true;
                         }
                         case FORMATTED: {
-                            arguments.add("-F");
+                            arguments.add("-c");
                             return true;
                         }
                         case INHERITED: {
-                            arguments.add("-H");
+                            arguments.add("-c=h");
                             return true;
                         }
                     }
@@ -421,13 +425,20 @@ public class NutsWorkspaceOptionsFormat {
         return false;
     }
 
-    private void fillOption(Enum value, List<String> arguments) {
+    private void fillOption(Enum value, List<String> arguments, boolean forceSingle) {
         if (value != null) {
-            if (tryFillOptionShort(value, arguments)) {
+            if (tryFillOptionShort(value, arguments, forceSingle)) {
                 return;
             }
             arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
         }
+    }
+
+    private String selectOptionVal(String shortName, String longName) {
+        if (shortOptions) {
+            return shortName;
+        }
+        return longName;
     }
 
     private String selectOptionName(String longName, String shortName) {
@@ -437,8 +448,8 @@ public class NutsWorkspaceOptionsFormat {
         return longName;
     }
 
-    private void fillOption0(String name, String value, List<String> arguments) {
-        if (singleArgOptions) {
+    private void fillOption0(String name, String value, List<String> arguments, boolean forceSingle) {
+        if (singleArgOptions || forceSingle) {
             arguments.add(name + "=" + value);
         } else {
             arguments.add(name);

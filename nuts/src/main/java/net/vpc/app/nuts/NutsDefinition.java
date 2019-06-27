@@ -81,7 +81,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *
      * @return dependencies tree nodes
      */
-    NutsDependencyTreeNode[] getDependenciesNodes();
+    NutsDependencyTreeNode[] getDependencyNodes();
 
     @Override
     int compareTo(NutsDefinition other);

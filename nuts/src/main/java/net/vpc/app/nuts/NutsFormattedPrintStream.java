@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
@@ -36,7 +37,7 @@ import java.io.PrintStream;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsFormattedPrintStream extends NutsComponent<Object> {
+public interface NutsFormattedPrintStream extends NutsComponent<OutputStream> {
 
     PrintStream getUnformattedInstance();
 }

@@ -18,6 +18,7 @@ import java.net.Socket;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * @author vpc
@@ -97,7 +98,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

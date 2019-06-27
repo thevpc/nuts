@@ -15,6 +15,7 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * @author vpc
@@ -39,7 +40,7 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
     }
 

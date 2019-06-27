@@ -19,7 +19,7 @@ public class NAdminMain extends NutsApplication {
         context.getWorkspace().extensions().discoverTypes(Thread.currentThread().getContextClassLoader());
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    context.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, this)
+                    context.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, new NutsDefaultSupportLevelContext<>(context.getWorkspace(),this))
             );
         }
         Boolean autoSave = true;

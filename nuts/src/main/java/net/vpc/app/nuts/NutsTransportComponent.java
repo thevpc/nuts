@@ -37,7 +37,7 @@ import java.io.IOException;
  * @since 0.5.4
  */
 @NutsSingleton
-public interface NutsTransportComponent extends NutsComponent<String> {
+public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
 
     NutsHttpConnectionFacade open(String url) throws IOException;
 }

@@ -36,8 +36,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
+import net.vpc.app.nuts.core.DefaultNutsDependencyTreeNode;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.MutableNutsDependencyTreeNode;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
@@ -258,7 +260,8 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 .registerTypeHierarchyAdapter(NutsId.class, new NutsIdJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsVersion.class, new NutsVersionJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsDescriptor.class, new NutsDescriptorJsonAdapter())
-                .registerTypeHierarchyAdapter(NutsDependency.class, new NutsNutsDependencyJsonAdapter())
+                .registerTypeHierarchyAdapter(NutsDependency.class, new NutsDependencyJsonAdapter())
+                .registerTypeHierarchyAdapter(NutsDependencyTreeNode.class, new NutsDependencyTreeNodeJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsElement.class, new NutsElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter())
@@ -325,7 +328,25 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         }
     }
 
-    private static class NutsNutsDependencyJsonAdapter implements
+    private static class NutsDependencyTreeNodeJsonAdapter implements
+            com.google.gson.JsonSerializer<NutsDependencyTreeNode>,
+            com.google.gson.JsonDeserializer<NutsDependencyTreeNode> {
+
+        @Override
+        public NutsDependencyTreeNode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return context.deserialize(json, MutableNutsDependencyTreeNode.class);
+        }
+
+        @Override
+        public JsonElement serialize(NutsDependencyTreeNode src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src != null) {
+                return context.serialize(new MutableNutsDependencyTreeNode(src));
+            }
+            return context.serialize(src);
+        }
+    }
+
+    private static class NutsDependencyJsonAdapter implements
             com.google.gson.JsonSerializer<NutsDependency>,
             com.google.gson.JsonDeserializer<NutsDependency> {
 

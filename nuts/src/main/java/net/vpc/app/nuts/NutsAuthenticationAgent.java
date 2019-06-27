@@ -34,12 +34,16 @@ package net.vpc.app.nuts;
  * in external repository (password manager, kwallet, keypads,
  * gnome-keyring...). And Id of the stored password is then saved as plain text
  * in nuts config file.
- *
+ * Criteria type is a string representing authentication agent id
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsAuthenticationAgent extends NutsComponent<String> {
+public interface NutsAuthenticationAgent extends NutsComponent<String/* as authentication agent*/> {
 
+    /**
+     * agent id;
+     * @return agent id
+     */
     String getId();
 
     /**

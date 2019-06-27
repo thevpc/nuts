@@ -29,9 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsObjectElement;
-
 /**
  *
  * @author vpc
@@ -40,5 +37,7 @@ public interface NutsObjectElementBuilder extends NutsObjectElement {
 
     public NutsObjectElementBuilder set(String name, NutsElement e);
 
+    NutsObjectElementBuilder clear();
+    
     NutsObjectElementBuilder remove(String s);
 }

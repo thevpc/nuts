@@ -30,19 +30,60 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Array element Builder is a mutable NutsArrayElement that helps 
+ * manipulating arrays.
  * @author vpc
  */
 public interface NutsArrayElementBuilder extends NutsArrayElement{
 
-    NutsArrayElementBuilder add(NutsElement e);
+    /**
+     * add new element to the end of the array. 
+     * 
+     * @param element element to add, should no be null
+     * @return {@code this} instance
+     * @throws NullPointerException if {@code element==null}
+     */
+    NutsArrayElementBuilder add(NutsElement element);
 
-    NutsArrayElementBuilder clear(int index);
+    /**
+     * insert new element at the given index.
+     * 
+     * @param index index to insert into
+     * @param element element to add, should no be null
+     * @return {@code this} instance
+     * @throws NullPointerException if {@code element==null}
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index > size()})
+     */
+    NutsArrayElementBuilder insert(int index, NutsElement element);
 
-    NutsArrayElementBuilder insert(int index, NutsElement e);
+    /**
+     * update element at the given index.
+     * 
+     * @param index index to update
+     * @param element element to add, should no be null
+     * @return {@code this} instance
+     * @throws NullPointerException if {@code element==null}
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index >= size()})
+     */
+    NutsArrayElementBuilder set(int index, NutsElement element);
+    
+    /**
+     * remove all elements from this array.
+     * 
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder clear();
 
+    /**
+     * add new element to the end of the array. 
+     * 
+     * @param index index to remove
+     * @return {@code this} instance
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index > size()})
+     */
     NutsArrayElementBuilder remove(int index);
 
-    NutsArrayElementBuilder set(int index, NutsElement e);
-    
 }

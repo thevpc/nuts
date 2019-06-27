@@ -49,11 +49,11 @@ public interface NutsWorkspaceExtensionManager {
 
     <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
 
-    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
 
-    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
-    <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria);
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
 
@@ -75,7 +75,8 @@ public interface NutsWorkspaceExtensionManager {
 
     /**
      * reurn loaded extensions
-     * @return 
+     *
+     * @return
      */
     NutsId[] getExtensions();
 

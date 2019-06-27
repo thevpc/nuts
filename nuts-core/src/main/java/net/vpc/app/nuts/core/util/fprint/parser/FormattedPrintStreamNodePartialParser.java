@@ -546,11 +546,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         parent.consume(rejected, this);
     }
 
-    private void debug() {
-        for (ParseAction status : statusStack) {
-            System.out.println(status);
-        }
-    }
+//    private void debug() {
+//        for (ParseAction status : statusStack) {
+//            System.out.println(status);
+//        }
+//    }
 
     void applyStart(char c) {
         switch (c) {

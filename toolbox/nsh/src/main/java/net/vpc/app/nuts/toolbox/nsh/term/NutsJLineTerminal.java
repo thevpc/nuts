@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh.term;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.javashell.JShellInterruptException;
 import org.jline.reader.*;
 import org.jline.reader.impl.LineReaderImpl;
@@ -124,7 +123,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public int getSupportLevel(Object criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT + 1;
     }
 

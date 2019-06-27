@@ -427,42 +427,46 @@ public final class NutsArgumentsParser {
 
                     case "--color":
                     case "-c": {
-                        //if the value is imediately attatched with '=' don't consider
+                        //if the value is not imediately attatched with '=' don't consider
                         a = cmdLine.next();
                         if (enabled) {
                             String v = a.getStringValue("");
-                            Boolean b = NutsUtilsLimited.parseBoolean(v, null);
-                            if (b != null) {
-                                if (b) {
-                                    options.setTerminalMode(NutsTerminalMode.FORMATTED);
-
-                                } else {
-                                    options.setTerminalMode(NutsTerminalMode.FILTERED);
-                                }
+                            if (v.isEmpty()) {
+                                options.setTerminalMode(NutsTerminalMode.FORMATTED);
                             } else {
-                                switch (v.toLowerCase()) {
-                                    case "formatted": {
+                                Boolean b = NutsUtilsLimited.parseBoolean(v, null);
+                                if (b != null) {
+                                    if (b) {
                                         options.setTerminalMode(NutsTerminalMode.FORMATTED);
-                                        break;
-                                    }
-                                    case "filtered": {
+
+                                    } else {
                                         options.setTerminalMode(NutsTerminalMode.FILTERED);
-                                        break;
                                     }
-                                    case "h":
-                                    case "inherited": {
-                                        options.setTerminalMode(NutsTerminalMode.INHERITED);
-                                        break;
-                                    }
-                                    case "s":
-                                    case "auto":
-                                    case "system": {
-                                        options.setTerminalMode(null);
-                                        break;
-                                    }
-                                    default: {
-                                        cmdLine.pushBack(a);
-                                        cmdLine.unexpectedArgument();
+                                } else {
+                                    switch (v.toLowerCase()) {
+                                        case "formatted": {
+                                            options.setTerminalMode(NutsTerminalMode.FORMATTED);
+                                            break;
+                                        }
+                                        case "filtered": {
+                                            options.setTerminalMode(NutsTerminalMode.FILTERED);
+                                            break;
+                                        }
+                                        case "h":
+                                        case "inherited": {
+                                            options.setTerminalMode(NutsTerminalMode.INHERITED);
+                                            break;
+                                        }
+                                        case "s":
+                                        case "auto":
+                                        case "system": {
+                                            options.setTerminalMode(null);
+                                            break;
+                                        }
+                                        default: {
+                                            cmdLine.pushBack(a);
+                                            cmdLine.unexpectedArgument();
+                                        }
                                     }
                                 }
                             }

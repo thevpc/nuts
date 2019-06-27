@@ -30,16 +30,39 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Top Level extension Point in Nuts. 
+ * Extension mechanism in nuts is based on a factory thats select the best 
+ * implementation for a given predefined interface (named Extension Point).
+ * Such interfaces must extend this {@code NutsComponent} interface.
+ * Implementations must implement these extension points by providing their 
+ * best support level (when method {@link #getSupportLevel(net.vpc.app.nuts.NutsSupportLevelContext)} is invoked).
+ * Only implementations with positive support level are considered.
+ * Implementations with higher support level are selected first.
+ * 
  *
- * @param <T> component type
+ * @param <CriteriaType> support criteria type
  * @since 0.5.4
  */
-public interface NutsComponent<T> {
+public interface NutsComponent<CriteriaType> {
 
-    int DEFAULT_SUPPORT = 10;
+    /**
+     * minimum support level for user defined implementations.
+     */
     int CUSTOM_SUPPORT = 1000;
+    /**
+     * this is the default support level for runtime implementation (nuts-core).
+     */
+    int DEFAULT_SUPPORT = 10;
+    /**
+     * when getSupportLevel(...)==NO_SUPPORT the component is discarded.
+     */
     int NO_SUPPORT = -1;
 
-    int getSupportLevel(T criteria);
+    /**
+     * evaluate support level (who much this instance should be considered convenient, acceptable)
+     * for the given arguments (provided in context).
+     * @param context evaluation context
+     * @return support level value
+     */
+    int getSupportLevel(NutsSupportLevelContext<CriteriaType> context);
 }

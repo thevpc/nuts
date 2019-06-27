@@ -29,8 +29,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         setOutMode(terminalMode);
         setErrorMode(terminalMode);
         NutsIOManager ioManager = workspace.io();
-        this.out = ioManager.createPrintStream(System.out, NutsTerminalMode.FORMATTED);
-        this.err = ioManager.createPrintStream(System.err, NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+        this.out = ioManager.createPrintStream(FPrint.out(), NutsTerminalMode.FORMATTED);
+        this.err = ioManager.createPrintStream(FPrint.err(), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
         this.in = System.in;
         scanner = new Scanner(this.in);
 
@@ -100,7 +100,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = System.out;
+            out = FPrint.out();
         }
         out.printf(prompt, params);
         out.flush();
@@ -113,7 +113,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = System.out;
+            out = FPrint.out();
         }
         out.printf(prompt, params);
         return scanner.nextLine().toCharArray();

@@ -39,7 +39,7 @@ import java.net.URL;
  */
 public interface NutsWorkspaceSPI extends NutsWorkspace {
 
-    boolean initializeWorkspace(NutsWorkspaceFactory factory,
+    boolean initializeWorkspace(NutsBootWorkspaceFactory factory,
             NutsBootConfig runningBootConfig,
             NutsBootConfig userBootConfig,
             URL[] bootClassWorldURLs,

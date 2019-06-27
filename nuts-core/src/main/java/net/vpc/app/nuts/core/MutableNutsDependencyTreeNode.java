@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +27,58 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.util.Arrays;
+import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsDependencyTreeNode;
 
 /**
  *
  * @author vpc
- * @since 0.5.4
  */
-public interface NutsFormatFilteredPrintStream extends NutsComponent<OutputStream> {
+public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
 
-    PrintStream getUnformattedInstance();
+    public static final long serialVersionUID = 1L;
+    private NutsDependency dependency;
+    private NutsDependencyTreeNode[] children;
+    private boolean partial;
+
+    public MutableNutsDependencyTreeNode() {
+    }
+    
+    public MutableNutsDependencyTreeNode(NutsDependencyTreeNode n) {
+        this.dependency=n.getDependency();
+        NutsDependencyTreeNode[] ch = n.getChildren();
+        this.children=Arrays.copyOf(ch, ch.length);
+        this.partial=n.isPartial();
+    }
+    
+
+    public void setDependency(NutsDependency dependency) {
+        this.dependency = dependency;
+    }
+
+    public void setChildren(NutsDependencyTreeNode[] children) {
+        this.children = children;
+    }
+
+    public void setPartial(boolean partial) {
+        this.partial = partial;
+    }
+
+    @Override
+    public NutsDependency getDependency() {
+        return dependency;
+    }
+
+    @Override
+    public NutsDependencyTreeNode[] getChildren() {
+        return children;
+    }
+
+    @Override
+    public boolean isPartial() {
+        return partial;
+    }
 }

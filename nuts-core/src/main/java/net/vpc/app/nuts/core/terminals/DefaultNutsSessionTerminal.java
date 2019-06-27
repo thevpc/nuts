@@ -5,6 +5,7 @@ import net.vpc.app.nuts.core.DefaultNutsQuestion;
 
 import java.io.*;
 import java.util.Scanner;
+import net.vpc.app.nuts.core.util.fprint.FPrint;
 
 public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
@@ -159,7 +160,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             out = out();
         }
         if (out == null) {
-            out = System.out;
+            out = FPrint.out();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -205,7 +206,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             out = out();
         }
         if (out == null) {
-            out = System.out;
+            out = FPrint.out();
         }
 
         if (this.in == null && parent != null) {

@@ -93,12 +93,13 @@ public class NutsJavaShell extends JShell {
         context.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
+        NutsDefaultSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(getWorkspace(),this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
                 createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader())
-                .loadAll(this)) {
+                .loadAll(constraints)) {
             NshBuiltin old = (NshBuiltin) context.builtins().find(command.getName());
-            if (old != null && old.getSupportLevel(this) >= command.getSupportLevel(this)) {
+            if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
                 continue;
             }
             allCommand.add(command);

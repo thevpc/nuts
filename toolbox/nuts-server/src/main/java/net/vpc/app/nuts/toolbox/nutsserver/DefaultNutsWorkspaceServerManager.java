@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.vpc.app.nuts.NutsDefaultSupportLevelContext;
 
 /**
  *
@@ -56,7 +57,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
             serverConfig = new NutsHttpServerConfig();
         }
         NutsServerComponent server = ws.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
-                .loadBest(serverConfig);
+                .loadBest(new NutsDefaultSupportLevelContext<>(ws, serverConfig));
         if (server == null) {
             throw new NutsIllegalArgumentException(ws, "Not server extensions are registered.");
         }

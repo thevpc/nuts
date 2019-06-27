@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import net.vpc.app.nuts.core.DefaultNutsQuestion;
+import net.vpc.app.nuts.core.util.fprint.FPrint;
 
 public abstract class AbstractSystemTerminalAdapter implements NutsSystemTerminal {
 
@@ -131,7 +132,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (out == null) {
             return true;
         }
-        if (out == System.out) {
+        if (out == System.out || out==FPrint.out()) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {
@@ -145,7 +146,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (out == null) {
             return true;
         }
-        if (out == System.err) {
+        if (out == System.err || out==FPrint.err()) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {

@@ -74,6 +74,8 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     String[] getCommand();
 
+    NutsExecCommand command(NutsDefinition definition);
+    
     NutsExecCommand command(String... command);
 
     NutsExecCommand addCommand(String... command);

@@ -42,17 +42,20 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsDescriptor descriptor;
     private NutsDescriptor effectiveDescriptor;
     private NutsContent content;
-    private NutsInstallInfo install;
+    private NutsInstallInfo installation;
     private String repositoryUuid;
     private String repositoryName;
-    private NutsDependencyTreeNode[] dependencyTreeNodes;
-    private NutsDependency[] dependenciesArray;
+    private NutsDependencyTreeNode[] dependencyNodes;
+    private NutsDependency[] dependencies;
+
+    public DefaultNutsDefinition() {
+    }
 
     public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
-        this.install = install;
+        this.installation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
     }
@@ -62,7 +65,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.descriptor = other.getDescriptor();
             this.content = other.getContent();
             this.id = other.getId();
-            this.install = other.getInstallation();
+            this.installation = other.getInstallation();
             this.repositoryUuid = other.getRepositoryUuid();
             this.repositoryName = other.getRepositoryName();
             this.effectiveDescriptor = other.getEffectiveDescriptor();
@@ -187,30 +190,31 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     public void setInstallation(NutsInstallInfo install) {
-        this.install = install;
+        this.installation = install;
     }
 
     @Override
     public NutsInstallInfo getInstallation() {
-        return install;
+        return installation;
     }
 
     @Override
-    public NutsDependencyTreeNode[] getDependenciesNodes() {
-        return dependencyTreeNodes;
+    public NutsDependencyTreeNode[] getDependencyNodes() {
+        return dependencyNodes;
     }
 
-    public void setDependencyTreeNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
-        this.dependencyTreeNodes = dependencyTreeNode;
+    public void setDependencyNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
+        this.dependencyNodes = dependencyTreeNode;
     }
 
-    public void setDependencies(NutsDependency[] dependenciesArray) {
-        this.dependenciesArray = dependenciesArray;
+    public void setDependencies(NutsDependency[] dependencies) {
+        this.dependencies = dependencies;
     }
 
     @Override
     public NutsDependency[] getDependencies() {
-        return this.dependenciesArray;
+        return this.dependencies;
     }
+    
 
 }

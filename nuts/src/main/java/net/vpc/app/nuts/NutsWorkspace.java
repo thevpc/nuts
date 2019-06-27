@@ -37,7 +37,7 @@ import java.util.Map;
  * @since 0.5.4
  */
 @NutsPrototype
-public interface NutsWorkspace extends NutsComponent<Object> {
+public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     /**
      * Workspace identifier, guaranteed to be unique cross machines

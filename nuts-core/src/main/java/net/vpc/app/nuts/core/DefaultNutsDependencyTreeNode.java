@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +27,40 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsDependencyTreeNode;
 
 /**
  *
  * @author vpc
- * @since 0.5.4
  */
-public interface NutsFormatFilteredPrintStream extends NutsComponent<OutputStream> {
+public class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
 
-    PrintStream getUnformattedInstance();
+    public static final long serialVersionUID = 1L;
+    private final NutsDependency dependency;
+    private final NutsDependencyTreeNode[] children;
+    private final boolean partial;
+
+    public DefaultNutsDependencyTreeNode(NutsDependency dependency, NutsDependencyTreeNode[] children, boolean partial) {
+        this.dependency = dependency;
+        this.children = children;
+        this.partial = partial;
+    }
+
+    @Override
+    public NutsDependency getDependency() {
+        return dependency;
+    }
+
+    @Override
+    public NutsDependencyTreeNode[] getChildren() {
+        return children;
+    }
+
+    @Override
+    public boolean isPartial() {
+        return partial;
+    }
 }

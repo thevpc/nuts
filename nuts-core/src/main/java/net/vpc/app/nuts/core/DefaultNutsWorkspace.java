@@ -196,7 +196,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             NutsBootConfig runningBootConfig, NutsBootConfig wsBootConfig,
             URL[] bootClassWorldURLs, ClassLoader bootClassLoader,
             NutsWorkspaceOptions options) {
-        NutsWorkspaceFactory bb=(NutsWorkspaceFactory)factory;
+        NutsWorkspaceFactory bb = (NutsWorkspaceFactory) factory;
         if (options == null) {
             options = new NutsWorkspaceOptions();
         }
@@ -502,10 +502,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
+        Path eff = null;
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
             Path l = config().getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
-            String nn = config().getDefaultIdFilename(descriptor.getId().setFace("cache-eff-nuts"));
-            Path eff = l.resolve(nn);
+            String nn = config().getDefaultIdFilename(descriptor.getId().setFace("eff-nuts.cache"));
+            eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
                 try {
                     NutsDescriptor d = descriptor().parse(eff);
@@ -520,9 +521,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             //System.out.println("Why");
         }
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
-        Path l = config().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
-        String nn = config().getDefaultIdFilename(effectiveDescriptor.getId().setFace("cache-eff-nuts"));
-        Path eff = l.resolve(nn);
+        if (eff == null) {
+            Path l = config().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
+            String nn = config().getDefaultIdFilename(effectiveDescriptor.getId().setFace("cache-eff-nuts"));
+            eff = l.resolve(nn);
+        }
         try {
             descriptor().value(effectiveDescriptor).print(eff);
         } catch (Exception ex) {
@@ -606,7 +609,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         NutsWorkspaceArchetypeComponent instance = null;
         TreeSet<String> validValues = new TreeSet<>();
-        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(this,archetype))) {
+        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(this, archetype))) {
             if (archetype.equals(ac.getName())) {
                 instance = ac;
                 break;

@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
  *
  * @author vpc
  * @since 0.5.3
  */
-public interface NutsDependency {
+public interface NutsDependency extends Serializable{
 
     boolean isOptional();
 

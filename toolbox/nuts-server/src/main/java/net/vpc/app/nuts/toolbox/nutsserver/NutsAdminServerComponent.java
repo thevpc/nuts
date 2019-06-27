@@ -49,8 +49,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
     private static final Logger LOG = Logger.getLogger(NutsAdminServerComponent.class.getName());
 
     @Override
-    public int getSupportLevel(ServerConfig config) {
-        return (config == null || config instanceof AdminServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext<ServerConfig> config) {
+        ServerConfig c = config.getConstraints();
+        return (c == null || c instanceof AdminServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
     public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {

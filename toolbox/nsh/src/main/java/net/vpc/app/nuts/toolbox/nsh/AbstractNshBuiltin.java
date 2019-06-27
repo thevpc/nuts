@@ -41,6 +41,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 1/7/17.
@@ -73,7 +75,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     @Override
-    public int getSupportLevel(NutsJavaShell param) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsJavaShell> param) {
         return supportLevel;
     }
 
@@ -130,7 +132,17 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
             }
             NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
-                    .loadBest(this);
+                    .loadBest(new NutsSupportLevelContext<NshBuiltin>() {
+                        @Override
+                        public NutsWorkspace getWorkspace() {
+                            return getWorkspace();
+                        }
+
+                        @Override
+                        public NshBuiltin getConstraints() {
+                            return AbstractNshBuiltin.this;
+                        }
+                    });
             if (best != null) {
                 best.autoComplete(this, context);
             } else {

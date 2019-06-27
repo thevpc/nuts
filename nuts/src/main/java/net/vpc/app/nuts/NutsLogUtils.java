@@ -41,8 +41,7 @@ import java.util.logging.Formatter;
 /**
  * Log util helper
  *
- * @author thevpc
- * creation-date 9/16/12 10:00 PM
+ * @author thevpc creation-date 9/16/12 10:00 PM
  * @since 0.5.4
  */
 public final class NutsLogUtils {
@@ -301,8 +300,12 @@ public final class NutsLogUtils {
         @Override
         public String format(LogRecord record) {
             StringBuilder sb = new StringBuilder();
+            String date = Instant.ofEpochMilli(record.getMillis()).toString().replace(":", "");
 
-            sb.append(Instant.ofEpochMilli(record.getMillis()).toString().replace(":", ""));
+            sb.append(date);
+            for (int i = 22 - date.length()-1; i >= 0; i--) {
+                sb.append(' ');
+            }
             if (verboseLog) {
                 sb.append(" ");
                 int len = sb.length() + 4;

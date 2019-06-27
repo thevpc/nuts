@@ -43,7 +43,7 @@ import net.vpc.app.nuts.core.util.NutsDependencyScopes;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsDependency implements NutsDependency {
-
+    public static final long serialVersionUID = 1L;
     private final String namespace;
     private final String group;
     private final String name;

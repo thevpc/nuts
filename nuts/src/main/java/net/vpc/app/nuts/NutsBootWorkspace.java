@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -127,6 +128,7 @@ public class NutsBootWorkspace {
         this.bootId = NutsIdLimited.parse(NutsConstants.Ids.NUTS_API + "#" + actualVersion);
         newInstanceRequirements = 0;
         NutsLogUtils.bootstrap(options.getLogConfig());
+        LOG.log(Level.CONFIG, "Start Nuts : {0}", Instant.ofEpochMilli(creationTime).toString());
         LOG.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.format().getBootCommandLine());
         LOG.log(Level.CONFIG, "Open Nuts Workspace (compact) : {0}", options.format().compact().getBootCommandLine());
         runningBootConfig = new NutsBootConfig(options);
@@ -202,7 +204,7 @@ public class NutsBootWorkspace {
         ));
         File file = NutsUtilsLimited.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + requiredBootVersion,
                 repos.toArray(new String[0]),
-                runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)+ File.separator + NutsConstants.Folders.BOOT
+                runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT
         );
         if (file == null) {
             errors.append("Unable to load ").append(bootId).append("\n");
@@ -283,7 +285,7 @@ public class NutsBootWorkspace {
             throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load ClassPath");
         }
 
-        String workspaceBootLibFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)+ File.separator + NutsConstants.Folders.BOOT;
+        String workspaceBootLibFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT;
         NutsIdLimited bootRuntime;
         if (NutsUtilsLimited.isBlank(info.runningBootConfig.getRuntimeId())) {
             bootRuntime = NutsIdLimited.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.runningBootConfig.getRuntimeId());
@@ -318,22 +320,31 @@ public class NutsBootWorkspace {
             allExtensionFiles.put(id.toString(), f);
         }
         info.bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
-        LOG.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : {1}", new Object[]{info.bootClassWorldURLs.length, Arrays.asList(info.bootClassWorldURLs)});
+        LOG.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : ", new Object[]{info.bootClassWorldURLs.length});
         if (LOG.isLoggable(Level.CONFIG)) {
             for (URL bootClassWorldURL : info.bootClassWorldURLs) {
                 LOG.log(Level.CONFIG, "\t {0}", new Object[]{NutsUtilsLimited.formatURL(bootClassWorldURL)});
             }
         }
         info.workspaceClassLoader = info.bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(info.bootClassWorldURLs, getContextClassLoader());
+        ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, info.workspaceClassLoader);
 
-        ServiceLoader<NutsWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceFactory.class, info.workspaceClassLoader);
-
-        NutsWorkspaceFactory factoryInstance = null;
-        for (NutsWorkspaceFactory a : serviceLoader) {
-            a.discoverTypes(info.workspaceClassLoader);
+        List<NutsBootWorkspaceFactory> factories = new ArrayList<>(5);
+        for (NutsBootWorkspaceFactory a : serviceLoader) {
+            factories.add(a);
+        }
+        factories.sort(new NutsBootWorkspaceFactoryComparator(options));
+        NutsBootWorkspaceFactory factoryInstance = null;
+        for (NutsBootWorkspaceFactory a : factories) {
             factoryInstance = a;
-            info.nutsWorkspace = a.createSupported(NutsWorkspace.class, this);
-            break;
+            try {
+                info.nutsWorkspace = a.createWorkspace(options);
+            } catch (Exception ex) {
+                LOG.log(Level.SEVERE, "Unable to create workspace using factory " + a, ex);
+            }
+            if (info.nutsWorkspace != null) {
+                break;
+            }
         }
         if (info.nutsWorkspace == null) {
             //should never happen
@@ -344,15 +355,18 @@ public class NutsBootWorkspace {
             LOG.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(info.bootClassWorldURLs));
             throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load Workspace Component from ClassPath : " + Arrays.asList(info.bootClassWorldURLs));
         }
+        LOG.log(Level.FINE, "Initialize Workspace");
         ((NutsWorkspaceSPI) info.nutsWorkspace).initializeWorkspace(factoryInstance, info.runningBootConfig, info.userBootConfig,
                 info.bootClassWorldURLs,
                 info.workspaceClassLoader, options.copy());
         if (recover) {
 //            info.nutsWorkspace.getConfigManager().setBootConfig(new NutsBootConfig());
             if (!info.nutsWorkspace.config().isReadOnly()) {
+                LOG.log(Level.SEVERE, "Save Workspace");
                 info.nutsWorkspace.config().save();
             }
         }
+        LOG.log(Level.FINE, "End Initialize Workspace");
     }
 
     public void run() {
@@ -422,7 +436,7 @@ public class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
             LOG.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocationStrategy(), runningBootConfig.getStoreLocationStrategy()));
             LOG.log(Level.CONFIG, "\t nuts-repos-store-strategy      : {0}", NutsUtilsLimited.formatLogValue(options.getRepositoryStoreLocationStrategy(), runningBootConfig.getRepositoryStoreLocationStrategy()));
-            LOG.log(Level.CONFIG, "\t nuts-store-layout              : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocationLayout(), runningBootConfig.getStoreLocationLayout()==null?"system":runningBootConfig.getStoreLocationLayout().id()));
+            LOG.log(Level.CONFIG, "\t nuts-store-layout              : {0}", NutsUtilsLimited.formatLogValue(options.getStoreLocationLayout(), runningBootConfig.getStoreLocationLayout() == null ? "system" : runningBootConfig.getStoreLocationLayout().id()));
             LOG.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
             LOG.log(Level.CONFIG, "\t option-trace                   : {0}", options.isTrace());
             LOG.log(Level.CONFIG, "\t inherited                      : {0}", options.isInherited());
@@ -1077,11 +1091,11 @@ public class NutsBootWorkspace {
     public void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         System.err.printf("Unable to bootstrap Nuts. : %s%n", extraMessage);
         System.err.printf("Here after current environment info:%n");
-        System.err.printf("  nuts-boot-api-version            : %s%n", NutsUtilsLimited.nvl(actualBootConfig.getApiVersion() ,"<?> Not Found!"));
-        System.err.printf("  nuts-boot-runtime                : %s%n", NutsUtilsLimited.nvl(actualBootConfig.getRuntimeId() ,"<?> Not Found!"));
-        System.err.printf("  nuts-workspace-api-version       : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getApiVersion(),"<?> Not Found!"));
-        System.err.printf("  nuts-workspace-runtime           : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getRuntimeId(),"<?> Not Found!"));
-        System.err.printf("  workspace-location               : %s%n", NutsUtilsLimited.nvl(workspace ,"<default-location>"));
+        System.err.printf("  nuts-boot-api-version            : %s%n", NutsUtilsLimited.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
+        System.err.printf("  nuts-boot-runtime                : %s%n", NutsUtilsLimited.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
+        System.err.printf("  nuts-workspace-api-version       : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getApiVersion(), "<?> Not Found!"));
+        System.err.printf("  nuts-workspace-runtime           : %s%n", NutsUtilsLimited.nvl(workspaceConfig.getRuntimeId(), "<?> Not Found!"));
+        System.err.printf("  workspace-location               : %s%n", NutsUtilsLimited.nvl(workspace, "<default-location>"));
         System.err.printf("  nuts-store-apps                  : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.APPS));
         System.err.printf("  nuts-store-config                : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.CONFIG));
         System.err.printf("  nuts-store-var                   : %s%n", workspaceConfig.getStoreLocation(NutsStoreLocation.VAR));
@@ -1181,7 +1195,7 @@ public class NutsBootWorkspace {
             config.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
             for (NutsStoreLocation folder : NutsStoreLocation.values()) {
                 config.setStoreLocation(folder, lastConfigLoaded.getStoreLocation(folder));
-                config.setHomeLocation(null, folder,lastConfigLoaded.getHomeLocation(null,folder));
+                config.setHomeLocation(null, folder, lastConfigLoaded.getHomeLocation(null, folder));
             }
             for (NutsOsFamily layout : NutsOsFamily.values()) {
                 for (NutsStoreLocation loc : NutsStoreLocation.values()) {
@@ -1329,13 +1343,13 @@ public class NutsBootWorkspace {
         return null;
     }
 
+    static class NutsBootClassLoader extends URLClassLoader {
 
-    static class NutsBootClassLoader extends URLClassLoader{
         NutsBootClassLoader(URL[] urls, ClassLoader parent) {
             super(urls, parent);
         }
     }
-    
+
     private static class OpenWorkspaceData {
 
         NutsBootConfig userBootConfig = null;
@@ -1343,5 +1357,39 @@ public class NutsBootWorkspace {
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
         NutsWorkspace nutsWorkspace = null;
+    }
+
+    private static class BootSupportLevelContext implements NutsSupportLevelContext<NutsWorkspaceOptions> {
+
+        private NutsWorkspaceOptions options;
+
+        public BootSupportLevelContext(NutsWorkspaceOptions options) {
+            this.options = options;
+        }
+
+        @Override
+        public NutsWorkspace getWorkspace() {
+            return null;
+        }
+
+        @Override
+        public NutsWorkspaceOptions getConstraints() {
+            return options;
+        }
+    }
+
+    private static class NutsBootWorkspaceFactoryComparator implements Comparator<NutsBootWorkspaceFactory> {
+
+        private NutsWorkspaceOptions options;
+
+        public NutsBootWorkspaceFactoryComparator(NutsWorkspaceOptions options) {
+            this.options = options;
+        }
+
+        @Override
+        public int compare(NutsBootWorkspaceFactory o1, NutsBootWorkspaceFactory o2) {
+            //sort by reverse order!
+            return Integer.compare(o2.getBootSupportLevel(options), o1.getBootSupportLevel(options));
+        }
     }
 }

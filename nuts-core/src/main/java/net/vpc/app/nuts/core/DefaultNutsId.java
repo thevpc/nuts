@@ -43,7 +43,7 @@ import java.util.function.Function;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsId implements NutsId {
-
+    public static final long serialVersionUID = 1L;
     private final String namespace;
     private final String group;
     private final String name;
