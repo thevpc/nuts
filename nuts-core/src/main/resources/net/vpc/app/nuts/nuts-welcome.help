@@ -1,6 +1,6 @@
 #!include</net/vpc/app/nuts/command/includes/standard-header.help>
 
 ##SYNOPSIS:##
-==nuts== \[**options**\]... {{\<command\>}} \<args\> ...
+==nuts== \[**<options>**\]... {{\<command\>}} \<args\> ...
 
 For Help, type ==nuts== {{help}}

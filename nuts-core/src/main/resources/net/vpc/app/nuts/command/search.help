@@ -1,7 +1,7 @@
 search for components/==nuts==
 
 ##SYNOPSYS##:
-==nuts== {{search}}  \[**options**\]... \<ids\> ...  <args> ...
+==nuts== {{search}}  \[**<options>**\]... \<ids\> ...  <args> ...
        search for \<ids\> 
        **--lenient** : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default [[no]]
        **--all-versions** : return all versions of the same ids. if [[no]] will always return the ==latest== one. default [[yes]]
