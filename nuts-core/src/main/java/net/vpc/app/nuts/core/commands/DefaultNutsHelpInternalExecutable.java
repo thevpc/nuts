@@ -80,7 +80,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {
-                            getSession().getTerminal().ferr().println(arg + " : Not found");
+                            getSession().getTerminal().err().println(arg + " : Not found");
                         }
                     }
                 }

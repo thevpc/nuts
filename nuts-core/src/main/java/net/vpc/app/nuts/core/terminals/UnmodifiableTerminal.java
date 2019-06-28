@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.NutsTerminalBase;
+import net.vpc.app.nuts.NutsTerminalMode;
 
 public class UnmodifiableTerminal implements NutsSessionTerminal {
 
@@ -25,26 +26,6 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     @Override
     public NutsTerminalBase getParent() {
         return base.getParent();
-    }
-
-    @Override
-    public PrintStream fout(boolean forceNoColors) {
-        return base.fout(forceNoColors);
-    }
-
-    @Override
-    public PrintStream ferr(boolean forceNoColors) {
-        return base.ferr(forceNoColors);
-    }
-
-    @Override
-    public PrintStream fout() {
-        return base.fout();
-    }
-
-    @Override
-    public PrintStream ferr() {
-        return base.ferr();
     }
 
     @Override
@@ -75,6 +56,17 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     @Override
     public void setErr(PrintStream out) {
 
+    }
+
+    @Override
+    public NutsSessionTerminal setTerminalMode(NutsTerminalMode mode) {
+        //
+        return this;
+    }
+
+    @Override
+    public NutsTerminalMode getTerminalMode() {
+        return base.getTerminalMode();
     }
 
     @Override

@@ -153,12 +153,12 @@ public final class JavaExecutorOptions {
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().ferr().printf("Ignored main-class=%s. running jar!%n", getMainClass());
+                    session.getTerminal().err().printf("Ignored main-class=%s. running jar!%n", getMainClass());
                 }
             }
             if (!classPath0.isEmpty()) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().ferr().printf("Ignored class-path=%s. running jar!%n", classPath0);
+                    session.getTerminal().err().printf("Ignored class-path=%s. running jar!%n", classPath0);
                 }
             }
             if (this.excludeBase) {

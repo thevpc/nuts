@@ -122,7 +122,7 @@ public class NutsServerMain extends NutsApplication {
                 }
                 if (cmdLine.isExecMode()) {
                     if (servers.isEmpty()) {
-                        context.session().terminal().ferr().printf("No Server config found.\n");
+                        context.session().terminal().err().printf("No Server config found.\n");
                         throw new NutsExecutionException(context.getWorkspace(), "No Server config found", 1);
                     }
                     Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();

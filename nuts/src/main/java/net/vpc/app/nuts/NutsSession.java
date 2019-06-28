@@ -208,7 +208,8 @@ public interface NutsSession extends NutsConfigurable {
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of      {@link #setIterableFormat(net.vpc.app.nuts.NutsIterableFormat)
+     * {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)}. If none of
+     * null null     {@link #setIterableFormat(net.vpc.app.nuts.NutsIterableFormat)
      * } or {@link #setOutputFormat(net.vpc.app.nuts.NutsOutputFormat)} has been
      * called (or called with null values) {@link NutsOutputFormat#PLAIN} should
      * be returned.
@@ -311,8 +312,7 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession removeListener(NutsListener listener);
 
     /**
-     * return registered listeners for the given type.
-     * Supported types are :
+     * return registered listeners for the given type. Supported types are :
      * <ul>
      * <li>{@link NutsWorkspaceListener}</li>
      * <li>{@link NutsInstallListener}</li>
@@ -328,12 +328,14 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * return all registered listeners.
+     *
      * @return all registered listeners.
      */
     NutsListener[] getListeners();
 
     /**
      * set session terminal
+     *
      * @param terminal session terminal
      * @return {@code this} instance
      */
@@ -341,6 +343,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * set session property
+     *
      * @param key property key
      * @param value property value
      * @return {@code this} instance
@@ -349,6 +352,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * add session properties
+     *
      * @param properties properties
      * @return {@code this} instance
      */
@@ -356,12 +360,14 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * return defined properties
+     *
      * @return defined properties
      */
     Map<String, Object> getProperties();
 
     /**
      * return property value or null
+     *
      * @param key property key
      * @return return property value or null
      */
@@ -376,6 +382,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * set confirm mode.
+     *
      * @param confirm confirm type.
      * @return {@code this} instance
      */
@@ -383,6 +390,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * set confirm mode.
+     *
      * @param confirm confirm type.
      * @return {@code this} instance
      */
@@ -390,6 +398,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * set output format options (clear and add)
+     *
      * @param options output format options.
      * @return {@code this} instance
      */
@@ -397,6 +406,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * add output format options
+     *
      * @param options output format options.
      * @return {@code this} instance
      */
@@ -404,16 +414,10 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * output format options
+     *
      * @return output format options
      */
     String[] getOutputFormatOptions();
-
-    /**
-     * change terminal mode
-     *
-     * @param mode mode
-     */
-    void setTerminalMode(NutsTerminalMode mode);
 
     /**
      * current output stream
@@ -423,14 +427,6 @@ public interface NutsSession extends NutsConfigurable {
     PrintStream out();
 
     /**
-     * update output stream
-     *
-     * @param out new value
-     * @return {@code this} instance
-     */
-    NutsSession setOut(PrintStream out);
-
-    /**
      * current error stream
      *
      * @return current error stream
@@ -438,34 +434,22 @@ public interface NutsSession extends NutsConfigurable {
     PrintStream err();
 
     /**
-     * update error stream
-     *
-     * @param err new value
-     * @return {@code this} instance
-     */
-    NutsSession setErr(PrintStream err);
-
-    /**
-     * terminal mode
-     *
-     * @return terminal mode
-     */
-    NutsTerminalMode getTerminalMode();
-
-    /**
      * return iterable output
+     *
      * @return iterable output
      */
     NutsIterableOutput getIterableOutput();
 
     /**
      * return iterable output format
+     *
      * @return iterable output format
      */
     NutsIterableFormat getIterableFormat();
 
     /**
      * set iterable output format
+     *
      * @param value iterable output format
      * @return {@code this} instance
      */
@@ -473,6 +457,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * set iterable output format
+     *
      * @param value iterable output format
      * @return {@code this} instance
      */

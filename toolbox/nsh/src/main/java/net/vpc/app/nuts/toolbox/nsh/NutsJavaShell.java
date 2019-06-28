@@ -220,7 +220,7 @@ public class NutsJavaShell extends JShell {
             return;
         }
         if (appContext != null) {
-            context.getSession().setTerminalMode(appContext.session().getTerminalMode());
+            context.getSession().getTerminal().setTerminalMode(appContext.session().getTerminal().getTerminalMode());
 //            context.setVerbose(appContext.isVerbose());
         }
         context.setSession(context.getSession());
@@ -279,7 +279,7 @@ public class NutsJavaShell extends JShell {
             try {
                 line = terminal.readLine(prompt);
             } catch (JShellInterruptException ex) {
-                terminal.ferr().printf("@@Exit Shell@@: ==%s==\n", ex.getMessage());
+                terminal.err().printf("@@Exit Shell@@: ==%s==\n", ex.getMessage());
                 break;
             }
             if (line == null) {
@@ -456,7 +456,7 @@ public class NutsJavaShell extends JShell {
 
         @Override
         public void onErrorImpl(String message, Throwable th, JShellContext context) {
-            ((NutsShellContext) context).getSession().getTerminal().ferr().printf("@@%s@@\n", message);
+            ((NutsShellContext) context).getSession().getTerminal().err().printf("@@%s@@\n", message);
         }
 
     }

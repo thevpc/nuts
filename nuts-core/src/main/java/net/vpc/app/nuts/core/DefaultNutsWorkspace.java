@@ -109,7 +109,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(io().getTerminal());
+        nutsSession.setTerminal(io().createTerminal(io().getSystemTerminal()));
         return nutsSession;
     }
 

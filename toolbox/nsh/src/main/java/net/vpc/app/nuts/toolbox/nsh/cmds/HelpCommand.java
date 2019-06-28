@@ -68,7 +68,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 showColors = true;
             } else if (cmdLine.next("--code") != null) {
                 code = true;
-                context.session().setTerminalMode(NutsTerminalMode.FILTERED);
+                context.session().getTerminal().setTerminalMode(NutsTerminalMode.FILTERED);
             } else if (cmdLine.peek().isOption()) {
                 if (cmdLine.isExecMode()) {
                     throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
