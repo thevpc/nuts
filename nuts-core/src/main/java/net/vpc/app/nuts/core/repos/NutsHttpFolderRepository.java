@@ -223,11 +223,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         String versionFilesUrl = artifactUrl + "/" + s;
                         String[] versionFiles = FilesFoldersApi.getFiles(versionFilesUrl, session.getSession());
                         boolean validVersion = false;
+                        if(versionFiles!=null){
                         for (String v : versionFiles) {
                             if ("nuts.properties".equals(v)) {
                                 validVersion = true;
                                 break;
                             }
+                        }
                         }
                         if (validVersion) {
                             NutsId id2 = id.builder().setVersion(s).build();

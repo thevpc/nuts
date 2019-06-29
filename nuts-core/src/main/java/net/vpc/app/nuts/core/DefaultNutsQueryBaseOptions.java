@@ -39,12 +39,12 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private NutsFetchStrategy fetchStrategy = null;
     private Boolean optional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
-    private boolean content = true;
+    private boolean content = false;
     private boolean inlineDependencies = false;
     private boolean dependencies = false;
     private boolean dependenciesTree = false;
     private boolean effective = false;
-    private boolean installInfo = true;
+    private boolean installInfo = false;
     private Path location = null;
     private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
