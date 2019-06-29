@@ -29,23 +29,25 @@
  */
 package net.vpc.app.nuts.core.terminals;
 
-import net.vpc.app.nuts.NutsFormatFilteredPrintStream;
+import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 
 import java.io.OutputStream;
 import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsTerminalMode;
+import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsAnsiUnixStripperTermPrintStream extends FormattedPrintStream implements NutsFormatFilteredPrintStream, NutsOutputStreamTransparentAdapter {
+public class NutsPrintStreamFormattedUnixAnsi extends FormattedPrintStream implements NutsFormattedPrintStream, NutsOutputStreamTransparentAdapter {
 
     private OutputStream out;
 
-    public NutsAnsiUnixStripperTermPrintStream(OutputStream out) {
-        super(out, FPrint.RENDERER_ANSI_STRIPPER);
+    public NutsPrintStreamFormattedUnixAnsi(OutputStream out) {
+        super(out, FPrint.RENDERER_ANSI);
         this.out = out;
     }
 
@@ -58,4 +60,19 @@ public class NutsAnsiUnixStripperTermPrintStream extends FormattedPrintStream im
     public int getSupportLevel(NutsSupportLevelContext<OutputStream> criteria) {
         return DEFAULT_SUPPORT + 2;
     }
+
+    @Override
+    public NutsTerminalMode getBaseMode() {
+        return NutsTerminalMode.INHERITED;
+    }
+
+    @Override
+    public NutsTerminalMode getMode() {
+        return NutsTerminalMode.FORMATTED;
+    }
+    
+    public NutsPrintStreamExt filter(){
+        return new NutsPrintStreamFiltered(this);
+    }
+
 }

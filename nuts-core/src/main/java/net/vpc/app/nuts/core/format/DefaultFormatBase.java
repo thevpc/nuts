@@ -63,22 +63,22 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print() {
-        print(ws.io().getTerminal());
+        print(getValidSession().getTerminal());
     }
 
     @Override
     public void println() {
-        println(ws.io().getTerminal());
+        println(getValidSession().getTerminal());
     }
 
     @Override
     public void print(NutsTerminal terminal) {
-        print(terminal.out());
+        print(terminal==null?getValidSession().getTerminal().out():terminal.out());
     }
 
     @Override
     public void println(NutsTerminal terminal) {
-        println(terminal.out());
+        println(terminal==null?getValidSession().getTerminal().out():terminal.out());
     }
 
     @Override
@@ -146,6 +146,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         return format();
     }
 
+    @Override
     public abstract void print(Writer out);
 
 }

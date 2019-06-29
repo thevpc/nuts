@@ -197,6 +197,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     protected void copyFrom(DefaultNutsSessionTerminal other) {
         this.ws = other.ws;
         this.parent = other.parent;
+        this.mode = other.mode;
         this.out.setBase(other.out.base);;
         this.err.setBase(other.err.base);;
         this.in = other.in;
@@ -227,6 +228,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     protected static class OutInfo {
         PrintStream base;
+        PrintStream baseOld;
         PrintStream formatted;
         PrintStream filtered;
         boolean typeOut;
@@ -278,7 +280,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             if (b == null) {
                 return null;
             }
-            if (formatted == null) {
+            if (formatted == null || baseOld!=b) {
+                baseOld=b;
                 formatted = session.ws.io().createPrintStream(b, NutsTerminalMode.FORMATTED);
             }
             return formatted;
@@ -289,7 +292,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             if (b == null) {
                 return null;
             }
-            if (filtered == null) {
+            if (filtered == null || baseOld!=b) {
+                baseOld=b;
                 filtered = session.ws.io().createPrintStream(b, NutsTerminalMode.FILTERED);
             }
             return filtered;

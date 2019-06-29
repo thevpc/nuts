@@ -12,7 +12,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -25,7 +24,9 @@ import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.terminals.UnmodifiableTerminal;
+import net.vpc.app.nuts.core.util.NutsUnexpectedEnumException;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -228,7 +229,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public PrintStream nullPrintStream() {
-        return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.INHERITED);
+        return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED);
     }
 
     @Override
@@ -262,45 +263,134 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         if (mode == NutsTerminalMode.FORMATTED) {
             if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
-                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
+                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode each time
                 mode = NutsTerminalMode.FILTERED;
             }
         }
-        switch (mode) {
-            case FORMATTED: {
-                if (out instanceof NutsFormattedPrintStream) {
-                    return ((PrintStream) out);
+
+        if (out == null) {
+            return null;
+        }
+        if (out instanceof NutsPrintStreamExt) {
+            NutsPrintStreamExt a = (NutsPrintStreamExt) out;
+            NutsTerminalMode am = a.getMode();
+            switch (mode) {
+                case FORMATTED: {
+                    switch (am) {
+                        case FORMATTED: {
+                            return (PrintStream) a;
+                        }
+                        case FILTERED: {
+                            return a.basePrintStream();
+                        }
+                        case INHERITED: {
+                            return (PrintStream) ws.extensions().createSupported(
+                                    NutsFormattedPrintStream.class,
+                                    new DefaultNutsSupportLevelContext<>(ws, out),
+                                    new Class[]{OutputStream.class}, new Object[]{out});
+                        }
+                        default: {
+                            throw new NutsUnexpectedEnumException(ws, am);
+                        }
+                    }
                 }
-                if (out instanceof NutsFormatFilteredPrintStream) {
-                    return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
+                case FILTERED: {
+                    switch (am) {
+                        case FORMATTED: {
+                            return a.basePrintStream();
+                        }
+                        case FILTERED: {
+                            return (PrintStream) a;
+                        }
+                        case INHERITED: {
+                            return (PrintStream) a;
+                        }
+                        default: {
+                            throw new NutsUnexpectedEnumException(ws, am);
+                        }
+                    }
                 }
-                //return new NutsDefaultFormattedPrintStream(out);
-                return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
-                        new DefaultNutsSupportLevelContext<>(ws,out),
-                        new Class[]{OutputStream.class}, new Object[]{out});
+                default: {
+                    throw new NutsUnexpectedEnumException(ws, mode);
+                }
             }
-            case FILTERED: {
-                if (out instanceof NutsFormatFilteredPrintStream) {
-                    return ((PrintStream) out);
+        } else if (out instanceof NutsFormattedPrintStream) {
+            NutsFormattedPrintStream a = (NutsFormattedPrintStream) out;
+            switch (mode) {
+                case FORMATTED: {
+                    return (PrintStream) a;
                 }
-                if (out instanceof NutsFormattedPrintStream) {
-                    return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
+                case FILTERED: {
+                    return a.getUnformattedInstance();
                 }
-                return (PrintStream) ws.extensions().createSupported(
-                        NutsFormatFilteredPrintStream.class,
-                        new DefaultNutsSupportLevelContext<>(ws,out),
-                        new Class[]{OutputStream.class}, new Object[]{out});
+                default: {
+                    throw new NutsUnexpectedEnumException(ws, mode);
+                }
             }
-            case INHERITED: {
-                if (out instanceof PrintStream) {
+        } else {
+            switch (mode) {
+                case FORMATTED: {
+                    return (PrintStream) ws.extensions().createSupported(
+                            NutsFormattedPrintStream.class,
+                            new DefaultNutsSupportLevelContext<>(ws, out),
+                            new Class[]{OutputStream.class}, new Object[]{out});
+                }
+                case FILTERED: {
                     return (PrintStream) out;
                 }
-                return new PrintStream(out);
+                default: {
+                    throw new NutsUnexpectedEnumException(ws, mode);
+                }
             }
         }
-        throw new NutsUnsupportedArgumentException(ws, "Unsupported NutsTerminalMode " + mode);
     }
 
+//    @Override
+//    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode) {
+//        if (mode == null) {
+//            mode = NutsTerminalMode.INHERITED;
+//        }
+//        if (mode == NutsTerminalMode.FORMATTED) {
+//            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
+//                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
+//                mode = NutsTerminalMode.FILTERED;
+//            }
+//        }
+//        switch (mode) {
+//            case FORMATTED: {
+//                if (out instanceof NutsFormattedPrintStream) {
+//                    return ((PrintStream) out);
+//                }
+//                if (out instanceof NutsFormatFilteredPrintStream) {
+//                    return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
+//                }
+//                //return new NutsDefaultFormattedPrintStream(out);
+//                return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
+//                        new DefaultNutsSupportLevelContext<>(ws,out),
+//                        new Class[]{OutputStream.class}, new Object[]{out});
+//            }
+//            case FILTERED: {
+//                if (out instanceof NutsFormatFilteredPrintStream) {
+//                    return ((PrintStream) out);
+//                }
+//                if (out instanceof NutsFormattedPrintStream) {
+//                    return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
+//                }
+//                return (PrintStream) ws.extensions().createSupported(
+//                        NutsFormatFilteredPrintStream.class,
+//                        new DefaultNutsSupportLevelContext<>(ws,out),
+//                        new Class[]{OutputStream.class}, new Object[]{out});
+//            }
+//            case INHERITED: {
+//                if (out instanceof PrintStream) {
+//                    return (PrintStream) out;
+//                }
+//                return new PrintStream(out);
+//            }
+//        }
+//        throw new NutsUnsupportedArgumentException(ws, "Unsupported NutsTerminalMode " + mode);
+//    }
+//
     @Override
     public NutsSessionTerminal createTerminal() {
         return createTerminal(null);

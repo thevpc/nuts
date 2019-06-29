@@ -14,8 +14,9 @@ import net.vpc.app.nuts.core.util.fprint.parser.TextNodeCommand;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodeList;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodePlain;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodeStyled;
+import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
-public class FormattedPrintStream extends PrintStream implements ExtendedFormatAware {
+public abstract class FormattedPrintStream extends PrintStream implements NutsPrintStreamExt {
 
     private boolean formatEnabled = true;
     private FormattedPrintStreamParser parser;
@@ -23,117 +24,117 @@ public class FormattedPrintStream extends PrintStream implements ExtendedFormatA
     private byte[] buffer = new byte[1024];
     private int bufferSize = 0;
     private boolean enableBuffering = false;
+    private OutputStream base;
+    private PrintStream ps;
 //    private FormattedPrintStreamNodePartialParser partialParser = new FormattedPrintStreamNodePartialParser();
 
     public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
         super(out);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
         super(out, autoFlush);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush, String encoding, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws UnsupportedEncodingException {
         super(out, autoFlush, encoding);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
-    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
-        super(fileName);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
-        super(fileName, csn);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
-        super(file);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
-        super(file, csn);
-        init(renderer, parser);
-    }
-
+//    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
+//        super(fileName);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(fileName, csn);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
+//        super(file);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(file, csn);
+//        init(renderer, parser);
+//    }
     //////////////////////////////////////////
     public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer) {
         super(out);
-        init(renderer, null);
+        init(renderer, null, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush, FormattedPrintStreamRenderer renderer) {
         super(out, autoFlush);
-        init(renderer, null);
+        init(renderer, null, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush, String encoding, FormattedPrintStreamRenderer renderer) throws UnsupportedEncodingException {
         super(out, autoFlush, encoding);
-        init(renderer, null);
+        init(renderer, null, out);
     }
 
-    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer) throws FileNotFoundException {
-        super(fileName);
-        init(renderer, null);
-    }
-
-    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer) throws FileNotFoundException, UnsupportedEncodingException {
-        super(fileName, csn);
-        init(renderer, null);
-    }
-
-    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer) throws FileNotFoundException {
-        super(file);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer) throws FileNotFoundException, UnsupportedEncodingException {
-        super(file, csn);
-        init(renderer, parser);
-    }
-
+//    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer) throws FileNotFoundException {
+//        super(fileName);
+//        init(renderer, null);
+//    }
+//
+//    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(fileName, csn);
+//        init(renderer, null);
+//    }
+//
+//    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer) throws FileNotFoundException {
+//        super(file);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(file, csn);
+//        init(renderer, parser);
+//    }
     //////////////////////////////////////////
     public FormattedPrintStream(OutputStream out) {
         super(out);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush) {
         super(out, autoFlush);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
     public FormattedPrintStream(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
         super(out, autoFlush, encoding);
-        init(renderer, parser);
+        init(renderer, parser, out);
     }
 
-    public FormattedPrintStream(String fileName) throws FileNotFoundException {
-        super(fileName);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(String fileName, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-        super(fileName, csn);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(File file) throws FileNotFoundException {
-        super(file);
-        init(renderer, parser);
-    }
-
-    public FormattedPrintStream(File file, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-        super(file, csn);
-        init(renderer, parser);
-    }
+//    public FormattedPrintStream(String fileName) throws FileNotFoundException {
+//        super(fileName);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(String fileName, String csn) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(fileName, csn);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(File file) throws FileNotFoundException {
+//        super(file);
+//        init(renderer, parser);
+//    }
+//
+//    public FormattedPrintStream(File file, String csn) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(file, csn);
+//        init(renderer, parser);
+//    }
     //////////////////////////////////////////
-
-    private void init(FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
+    private void init(FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser, OutputStream base) {
+        this.base = base;
         setParser(parser);
         setRenderer(renderer);
     }
@@ -454,6 +455,23 @@ public class FormattedPrintStream extends PrintStream implements ExtendedFormatA
             //
         }
         super.flush();
+    }
+
+    @Override
+    public PrintStream basePrintStream() {
+        OutputStream b = baseOutputStream();
+        if (b instanceof PrintStream) {
+            return (PrintStream) b;
+        }
+        if (ps == null) {
+            ps = new PrintStream(b);
+        }
+        return ps;
+    }
+
+    @Override
+    public OutputStream baseOutputStream() {
+        return base;
     }
 
 }

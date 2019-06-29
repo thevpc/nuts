@@ -29,33 +29,64 @@
  */
 package net.vpc.app.nuts.core.terminals;
 
+import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
-import net.vpc.app.nuts.core.util.fprint.FPrint;
-import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 
-import java.io.OutputStream;
+import java.io.*;
 import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsTerminalMode;
+import net.vpc.app.nuts.core.util.io.NullOutputStream;
+import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsAnsiUnixTermPrintStream extends FormattedPrintStream implements NutsFormattedPrintStream, NutsOutputStreamTransparentAdapter {
+public class NutsPrintStreamFormattedNull extends FormattedPrintStream implements NutsFormattedPrintStream, NutsOutputStreamTransparentAdapter {
 
-    private OutputStream out;
+    private final OutputStream base;
 
-    public NutsAnsiUnixTermPrintStream(OutputStream out) {
-        super(out, FPrint.RENDERER_ANSI);
-        this.out = out;
+    public NutsPrintStreamFormattedNull() {
+        super(NullOutputStream.INSTANCE);
+        base = NullOutputStream.INSTANCE;
+    }
+
+    public NutsPrintStreamFormattedNull(OutputStream out) {
+        super(out);
+        base = out;
+    }
+
+    public NutsPrintStreamFormattedNull(OutputStream out, boolean autoFlush) {
+        super(out, autoFlush);
+        base = out;
+    }
+
+    public NutsPrintStreamFormattedNull(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
+        super(out, autoFlush, encoding);
+        base = out;
     }
 
     @Override
     public OutputStream baseOutputStream() {
-        return out;
+        return base;
+    }
+
+    @Override
+    public NutsTerminalMode getBaseMode() {
+        return NutsTerminalMode.INHERITED;
+    }
+
+    @Override
+    public NutsTerminalMode getMode() {
+        return NutsTerminalMode.FORMATTED;
     }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<OutputStream> criteria) {
-        return DEFAULT_SUPPORT + 2;
+        return DEFAULT_SUPPORT + 1;
+    }
+
+    public NutsPrintStreamExt filter() {
+        return new NutsPrintStreamFiltered(this);
     }
 }

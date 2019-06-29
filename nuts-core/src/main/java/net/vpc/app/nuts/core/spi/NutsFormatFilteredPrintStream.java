@@ -27,16 +27,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core.spi;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsComponent;
 
 /**
  *
  * @author vpc
  * @since 0.5.4
  */
+@Deprecated
 public interface NutsFormatFilteredPrintStream extends NutsComponent<OutputStream> {
 
     PrintStream getUnformattedInstance();

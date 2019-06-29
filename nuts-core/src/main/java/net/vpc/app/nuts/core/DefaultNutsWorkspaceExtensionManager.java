@@ -5,9 +5,10 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsFormatFilteredPrintStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
+import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedNull;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -34,9 +35,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceExtensionManager.class.getName());
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
-            Arrays.asList(
-                    //order is important!!because autowiring should follow this very order
-                    NutsDefaultFormattedPrintStream.class,
+            Arrays.asList(//order is important!!because autowiring should follow this very order
+                    NutsPrintStreamFormattedNull.class,
                     NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
                     NutsFormatFilteredPrintStream.class,
