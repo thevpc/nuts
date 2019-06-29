@@ -8,12 +8,13 @@ import java.io.PrintStream;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsTerminalBase;
 import net.vpc.app.nuts.NutsTerminalMode;
 
-public class UnmodifiableTerminal implements NutsSessionTerminal {
+public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
-    private NutsSessionTerminal base;
+    private final NutsSessionTerminal base;
 
     public UnmodifiableTerminal(NutsSessionTerminal base) {
         this.base = base;
@@ -25,22 +26,22 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
 
     @Override
     public NutsTerminalBase getParent() {
-        return base.getParent();
+        return getBase().getParent();
     }
 
     @Override
     public PrintStream out() {
-        return base.out();
+        return getBase().out();
     }
 
     @Override
     public PrintStream err() {
-        return base.err();
+        return getBase().err();
     }
 
     @Override
     public InputStream in() {
-        return base.in();
+        return getBase().in();
     }
 
     @Override
@@ -59,19 +60,34 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public NutsSessionTerminal setTerminalMode(NutsTerminalMode mode) {
+    public NutsSessionTerminal setMode(NutsTerminalMode mode) {
         //
         return this;
     }
 
     @Override
-    public NutsTerminalMode getTerminalMode() {
-        return base.getTerminalMode();
+    public NutsTerminalMode getOutMode() {
+        return getBase().getOutMode();
+    }
+
+    @Override
+    public NutsTerminalMode getErrMode() {
+        return getBase().getErrMode();
+    }
+
+    @Override
+    public NutsTerminal setOutMode(NutsTerminalMode mode) {
+        return this;
+    }
+
+    @Override
+    public NutsTerminal setErrMode(NutsTerminalMode mode) {
+        return this;
     }
 
     @Override
     public NutsSessionTerminal copy() {
-        return base.copy();
+        return getBase().copy();
     }
 
     @Override
@@ -81,51 +97,56 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
 
     @Override
     public String readLine(String promptFormat, Object... params) {
-        return base.readLine(promptFormat, params);
+        return getBase().readLine(promptFormat, params);
     }
 
     @Override
     public char[] readPassword(String prompt, Object... params) {
-        return base.readPassword(prompt, params);
+        return getBase().readPassword(prompt, params);
     }
 
     @Override
     public String readLine(PrintStream out, String promptFormat, Object... params) {
-        return base.readLine(out, promptFormat, params);
+        return getBase().readLine(out, promptFormat, params);
     }
 
     @Override
     public char[] readPassword(PrintStream out, String prompt, Object... params) {
-        return base.readPassword(out, prompt, params);
+        return getBase().readPassword(out, prompt, params);
     }
 
     @Override
     public InputStream getIn() {
-        return base.getIn();
+        return getBase().getIn();
     }
 
     @Override
     public PrintStream getOut() {
-        return base.getOut();
+        return getBase().getOut();
     }
 
     @Override
     public PrintStream getErr() {
-        return base.getErr();
+        return getBase().getErr();
     }
 
     @Override
     public <T> NutsQuestion<T> ask() {
-        return base.ask();
+        return getBase().ask();
     }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return base.getSupportLevel(criteria);
+        return getBase().getSupportLevel(criteria);
     }
 
     @Override
     public void uninstall() {
 
     }
+
+    public NutsSessionTerminal getBase() {
+        return base;
+    }
+
 }

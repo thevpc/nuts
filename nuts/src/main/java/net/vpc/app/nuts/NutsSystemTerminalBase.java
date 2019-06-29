@@ -37,11 +37,4 @@ package net.vpc.app.nuts;
 @NutsPrototype
 public interface NutsSystemTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
 
-    void setOutMode(NutsTerminalMode mode);
-
-    NutsTerminalMode getOutMode();
-
-    void setErrorMode(NutsTerminalMode mode);
-
-    NutsTerminalMode getErrorMode();
 }

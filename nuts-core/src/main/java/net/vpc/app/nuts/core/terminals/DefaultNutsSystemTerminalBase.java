@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
-    private static Logger LOG = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
     private Scanner scanner;
     private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
     private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
@@ -27,13 +27,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             terminalMode = NutsTerminalMode.FORMATTED;
         }
         setOutMode(terminalMode);
-        setErrorMode(terminalMode);
+        setErrMode(terminalMode);
         NutsIOManager ioManager = workspace.io();
         this.out = ioManager.createPrintStream(FPrint.out(), NutsTerminalMode.FORMATTED);
         this.err = ioManager.createPrintStream(FPrint.err(), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
         this.in = System.in;
-        scanner = new Scanner(this.in);
-
+        this.scanner = new Scanner(this.in);
     }
 
     private AnsiPrintStreamSupport.Type convertMode(NutsTerminalMode outMode) {
@@ -57,25 +56,27 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     @Override
-    public void setOutMode(NutsTerminalMode mode) {
+    public NutsSystemTerminalBase setOutMode(NutsTerminalMode mode) {
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
         LOG.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
         FPrint.installStdOut(convertMode(this.outMode = mode));
+        return this;
     }
 
     @Override
-    public void setErrorMode(NutsTerminalMode mode) {
+    public NutsSystemTerminalBase setErrMode(NutsTerminalMode mode) {
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
         LOG.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
         FPrint.installStdErr(convertMode(this.errMode = mode));
+        return this;
     }
 
     @Override
-    public NutsTerminalMode getErrorMode() {
+    public NutsTerminalMode getErrMode() {
         return errMode;
     }
 

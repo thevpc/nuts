@@ -39,6 +39,14 @@ import java.io.PrintStream;
  */
 public interface NutsTerminalBase extends NutsComponent<Object> {
 
+    NutsTerminalBase setOutMode(NutsTerminalMode mode);
+
+    NutsTerminalMode getOutMode();
+
+    NutsTerminalBase setErrMode(NutsTerminalMode mode);
+
+    NutsTerminalMode getErrMode();
+
     void install(NutsWorkspace workspace);
 
     String readLine(PrintStream out, String prompt, Object... params);

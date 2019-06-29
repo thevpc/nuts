@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import net.vpc.app.nuts.core.DefaultNutsQuestion;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
-public abstract class AbstractSystemTerminalAdapter implements NutsSystemTerminal {
+public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
 
     private NutsWorkspace ws;
 
@@ -23,9 +23,10 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     public void uninstall() {
         getParent().uninstall();
     }
+    
 
     @Override
-    public void setMode(NutsTerminalMode mode) {
+    public NutsSystemTerminal setMode(NutsTerminalMode mode) {
         if (mode == null) {
 //            throw new NullPointerException();
         }
@@ -34,14 +35,15 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
             ((NutsSystemTerminal) p).setMode(mode);
         } else {
             p.setOutMode(mode);
-            p.setErrorMode(mode);
+            p.setErrMode(mode);
         }
+        return this;
     }
 
     @Override
-    public void setOutMode(NutsTerminalMode mode) {
+    public NutsSystemTerminal setOutMode(NutsTerminalMode mode) {
         getParent().setOutMode(mode);
-
+        return this;
     }
 
     @Override
@@ -50,13 +52,14 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     }
 
     @Override
-    public void setErrorMode(NutsTerminalMode mode) {
-        getParent().setErrorMode(mode);
+    public NutsSystemTerminal setErrMode(NutsTerminalMode mode) {
+        getParent().setErrMode(mode);
+        return this;
     }
 
     @Override
-    public NutsTerminalMode getErrorMode() {
-        return getParent().getErrorMode();
+    public NutsTerminalMode getErrMode() {
+        return getParent().getErrMode();
     }
 
     @Override

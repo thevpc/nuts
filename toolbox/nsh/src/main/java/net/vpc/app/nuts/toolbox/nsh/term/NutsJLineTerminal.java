@@ -37,12 +37,15 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by vpc on 2/20/17.
  */
 public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
+    private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
     private PrintStream out;
@@ -56,8 +59,9 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public void setOutMode(NutsTerminalMode mode) {
+    public NutsTerminalBase setOutMode(NutsTerminalMode mode) {
         this.outMode = mode;
+        return this;
     }
 
     @Override
@@ -66,15 +70,17 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public void setErrorMode(NutsTerminalMode mode) {
+    public NutsTerminalBase setErrMode(NutsTerminalMode mode) {
         this.errMode = mode;
+        return this;
     }
 
     @Override
-    public NutsTerminalMode getErrorMode() {
+    public NutsTerminalMode getErrMode() {
         return errMode;
     }
 
+    @Override
     public void install(NutsWorkspace workspace) {
         this.workspace = workspace;
         TerminalBuilder builder = TerminalBuilder.builder();
@@ -117,8 +123,8 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     public void uninstall() {
         try {
             reader.getTerminal().close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Error closing terminal", ex);
         }
     }
 

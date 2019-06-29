@@ -345,52 +345,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
     }
 
-//    @Override
-//    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode) {
-//        if (mode == null) {
-//            mode = NutsTerminalMode.INHERITED;
-//        }
-//        if (mode == NutsTerminalMode.FORMATTED) {
-//            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
-//                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
-//                mode = NutsTerminalMode.FILTERED;
-//            }
-//        }
-//        switch (mode) {
-//            case FORMATTED: {
-//                if (out instanceof NutsFormattedPrintStream) {
-//                    return ((PrintStream) out);
-//                }
-//                if (out instanceof NutsFormatFilteredPrintStream) {
-//                    return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
-//                }
-//                //return new NutsDefaultFormattedPrintStream(out);
-//                return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
-//                        new DefaultNutsSupportLevelContext<>(ws,out),
-//                        new Class[]{OutputStream.class}, new Object[]{out});
-//            }
-//            case FILTERED: {
-//                if (out instanceof NutsFormatFilteredPrintStream) {
-//                    return ((PrintStream) out);
-//                }
-//                if (out instanceof NutsFormattedPrintStream) {
-//                    return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
-//                }
-//                return (PrintStream) ws.extensions().createSupported(
-//                        NutsFormatFilteredPrintStream.class,
-//                        new DefaultNutsSupportLevelContext<>(ws,out),
-//                        new Class[]{OutputStream.class}, new Object[]{out});
-//            }
-//            case INHERITED: {
-//                if (out instanceof PrintStream) {
-//                    return (PrintStream) out;
-//                }
-//                return new PrintStream(out);
-//            }
-//        }
-//        throw new NutsUnsupportedArgumentException(ws, "Unsupported NutsTerminalMode " + mode);
-//    }
-//
     @Override
     public NutsSessionTerminal createTerminal() {
         return createTerminal(null);

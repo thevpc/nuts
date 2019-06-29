@@ -93,7 +93,7 @@ public class NutsJavaShell extends JShell {
         context.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
-        NutsDefaultSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(getWorkspace(),this);
+        NutsDefaultSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(getWorkspace(), this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
                 createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader())
@@ -119,8 +119,8 @@ public class NutsJavaShell extends JShell {
         }
         getWorkspace().userProperties().put(JShellHistory.class.getName(), getHistory());
     }
-    
-    public NutsWorkspace getWorkspace(){
+
+    public NutsWorkspace getWorkspace() {
         return this.appContext.getWorkspace();
     }
 
@@ -220,8 +220,8 @@ public class NutsJavaShell extends JShell {
             return;
         }
         if (appContext != null) {
-            context.getSession().getTerminal().setTerminalMode(appContext.session().getTerminal().getTerminalMode());
-//            context.setVerbose(appContext.isVerbose());
+            context.getSession().getTerminal().setOutMode(appContext.session().getTerminal().getOutMode());
+            context.getSession().getTerminal().setErrMode(appContext.session().getTerminal().getErrMode());
         }
         context.setSession(context.getSession());
         if (nonOptions.size() > 0) {

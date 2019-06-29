@@ -397,36 +397,36 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     if (enabled) {
                         String v = a.getStringValue("");
                         if (v.isEmpty()) {
-                            getTerminal().setTerminalMode(NutsTerminalMode.FORMATTED);
+                            getTerminal().setMode(NutsTerminalMode.FORMATTED);
                         } else {
                             NutsArgument bb = cmdLine.newArgument(v);
                             Boolean b = bb.getBoolean(null);
                             if (b != null) {
                                 if (b) {
-                                    getTerminal().setTerminalMode(NutsTerminalMode.FORMATTED);
+                                    getTerminal().setMode(NutsTerminalMode.FORMATTED);
 
                                 } else {
-                                    getTerminal().setTerminalMode(NutsTerminalMode.FILTERED);
+                                    getTerminal().setMode(NutsTerminalMode.FILTERED);
                                 }
                             } else {
                                 switch (v.toLowerCase()) {
                                     case "formatted": {
-                                        getTerminal().setTerminalMode(NutsTerminalMode.FORMATTED);
+                                        getTerminal().setMode(NutsTerminalMode.FORMATTED);
                                         break;
                                     }
                                     case "filtered": {
-                                        getTerminal().setTerminalMode(NutsTerminalMode.FILTERED);
+                                        getTerminal().setMode(NutsTerminalMode.FILTERED);
                                         break;
                                     }
                                     case "h":
                                     case "inherited": {
-                                        getTerminal().setTerminalMode(NutsTerminalMode.INHERITED);
+                                        getTerminal().setMode(NutsTerminalMode.INHERITED);
                                         break;
                                     }
                                     case "s":
                                     case "auto":
                                     case "system": {
-                                        getTerminal().setTerminalMode(null);
+                                        getTerminal().setMode(null);
                                         break;
                                     }
                                     default: {
@@ -443,7 +443,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--no-color": {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
-                        getTerminal().setTerminalMode(NutsTerminalMode.FILTERED);
+                        getTerminal().setMode(NutsTerminalMode.FILTERED);
                     }
                     return true;
                 }

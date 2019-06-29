@@ -144,7 +144,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
 
     public JShellExecutionContext createCommandContext(JShellBuiltin command) {
         DefaultNshExecutionContext c = new DefaultNshExecutionContext(this, (NshBuiltin) command);
-//        c.setTerminalMode(getTerminalMode());
+//        c.setMode(getTerminalMode());
 //        c.setVerbose(isVerbose());
         return c;
     }

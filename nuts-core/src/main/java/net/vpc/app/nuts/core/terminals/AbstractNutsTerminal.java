@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2019 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,23 +27,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core.terminals;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import net.vpc.app.nuts.NutsTerminal;
 
 /**
  *
  * @author vpc
- * @since 0.5.4
  */
-public interface NutsSystemTerminal extends NutsSystemTerminalBase, NutsTerminal {
-
-//    void setMode(NutsTerminalMode mode);
-
-    boolean isStandardOutputStream(OutputStream out);
-
-    boolean isStandardErrorStream(OutputStream out);
-
-    boolean isStandardInputStream(InputStream in);
+public abstract class AbstractNutsTerminal implements NutsTerminal{
+    
 }

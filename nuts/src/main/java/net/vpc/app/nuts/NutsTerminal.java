@@ -39,6 +39,26 @@ import java.io.PrintStream;
  */
 public interface NutsTerminal extends NutsTerminalBase {
 
+    /**
+     * change terminal mode
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
+    NutsTerminal setMode(NutsTerminalMode mode);
+
+    @Override
+    NutsTerminal setOutMode(NutsTerminalMode mode);
+
+    @Override
+    NutsTerminalMode getOutMode();
+
+    @Override
+    NutsTerminal setErrMode(NutsTerminalMode mode);
+
+    @Override
+    NutsTerminalMode getErrMode();
+
     String readLine(String promptFormat, Object... params);
 
     char[] readPassword(String prompt, Object... params);

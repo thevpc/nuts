@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.Scanner;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
-public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
+public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
     protected NutsWorkspace ws;
     protected final OutInfo out = new OutInfo(true);
@@ -15,7 +15,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     protected InputStream in;
     protected BufferedReader inReader;
     protected NutsTerminalBase parent;
-    protected NutsTerminalMode mode = NutsTerminalMode.FORMATTED;
+    protected NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
+    protected NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
 
     @Override
     public void install(NutsWorkspace workspace) {
@@ -35,17 +36,40 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
-    public NutsSessionTerminal setTerminalMode(NutsTerminalMode mode) {
+    public NutsTerminal setOutMode(NutsTerminalMode mode) {
         if (mode == null) {
             mode = NutsTerminalMode.INHERITED;
         }
-        this.mode = mode;
+        this.outMode = mode;
         return this;
     }
 
     @Override
-    public NutsTerminalMode getTerminalMode() {
-        return mode;
+    public NutsTerminal setErrMode(NutsTerminalMode mode) {
+        if (mode == null) {
+            mode = NutsTerminalMode.INHERITED;
+        }
+        this.errMode = mode;
+        return this;
+    }
+
+    @Override
+    public NutsTerminalMode getOutMode() {
+        return this.outMode;
+    }
+
+    @Override
+    public NutsTerminalMode getErrMode() {
+        return this.errMode;
+    }
+
+    @Override
+    public NutsSessionTerminal setMode(NutsTerminalMode mode) {
+        if (mode == null) {
+            mode = NutsTerminalMode.INHERITED;
+        }
+        this.outMode = mode;
+        return this;
     }
 
     @Override
@@ -76,12 +100,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public PrintStream getOut() {
-        return this.out.curr(mode);
+        return this.out.curr(outMode);
     }
 
     @Override
     public PrintStream getErr() {
-        return this.err.curr(mode);
+        return this.err.curr(errMode);
     }
 
     @Override
@@ -197,7 +221,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     protected void copyFrom(DefaultNutsSessionTerminal other) {
         this.ws = other.ws;
         this.parent = other.parent;
-        this.mode = other.mode;
+        this.outMode = other.outMode;
+        this.errMode = other.errMode;
         this.out.setBase(other.out.base);;
         this.err.setBase(other.err.base);;
         this.in = other.in;
@@ -227,6 +252,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     protected static class OutInfo {
+
         PrintStream base;
         PrintStream baseOld;
         PrintStream formatted;
@@ -251,7 +277,6 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 //            }
 //            return currMode;
 //        }
-
         void setBase(PrintStream b) {
             if (this.base != b) {
                 this.base = b;
@@ -280,8 +305,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             if (b == null) {
                 return null;
             }
-            if (formatted == null || baseOld!=b) {
-                baseOld=b;
+            if (formatted == null || baseOld != b) {
+                baseOld = b;
                 formatted = session.ws.io().createPrintStream(b, NutsTerminalMode.FORMATTED);
             }
             return formatted;
@@ -292,8 +317,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             if (b == null) {
                 return null;
             }
-            if (filtered == null || baseOld!=b) {
-                baseOld=b;
+            if (filtered == null || baseOld != b) {
+                baseOld = b;
                 filtered = session.ws.io().createPrintStream(b, NutsTerminalMode.FILTERED);
             }
             return filtered;
