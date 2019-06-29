@@ -39,6 +39,15 @@ public class CoalesceIterator<T> implements Iterator<T> {
         size++;
     }
 
+    public int size() {
+        return children.size();
+    }
+    
+    public Iterator<T>[] getChildren() {
+        return children.toArray(new Iterator[0]);
+    }
+
+    @Override
     public boolean hasNext() {
         while (!children.isEmpty()) {
             if (children.peek().hasNext()) {

@@ -37,7 +37,6 @@ import net.vpc.app.nuts.core.util.*;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +47,7 @@ import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 
@@ -129,7 +129,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             ret = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
         } catch (UncheckedIOException e) {
-            return Collections.emptyIterator();
+            return IteratorUtils.emptyIterator();
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
         NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,

@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 
 /**
@@ -65,7 +66,9 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
 
     @Override
     public NutsFetchDescriptorRepositoryCommand run() {
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
+        NutsWorkspace ws = getRepo().getWorkspace();
+        NutsWorkspaceUtils.checkLongNameNutsId(ws,id);
+        NutsWorkspaceUtils.checkSession(ws, getSession());
         getRepo().security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getQueryMap();
         queryMap.remove(NutsConstants.QueryKeys.OPTIONAL);
@@ -81,7 +84,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
             if (DefaultNutsVersion.isBlank(versionString)) {
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), null, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
+                    throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
@@ -92,13 +95,13 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends NutsRepositoryC
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getQueryMap(), new NutsPatternIdFilter(id), null);
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), filter, getSession());
                 if (a == null) {
-                    throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
+                    throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
             }
             if (d == null) {
-                throw new NutsNotFoundException(getRepo().getWorkspace(), id.getLongNameId());
+                throw new NutsNotFoundException(ws, id.getLongNameId());
             }
             if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(LOG, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime);

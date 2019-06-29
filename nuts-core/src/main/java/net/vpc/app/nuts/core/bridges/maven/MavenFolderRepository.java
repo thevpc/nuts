@@ -135,12 +135,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            return null;
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            return null;
-        }
+        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
         Path groupFolder = getLocationAsPath().resolve(id.getGroup().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getName());
     }
@@ -164,7 +159,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                         return Collections.singletonList(id.setNamespace(config().getName())).iterator();
                     }
                 }
-//                return Collections.emptyIterator();
+//                return IteratorUtils.emptyIterator();
                 return null;
             }
             try {
@@ -178,7 +173,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
         }
 //        if (namedNutIdIterator == null) {
-//            return Collections.emptyIterator();
+//            return IteratorUtils.emptyIterator();
 //        }
         return namedNutIdIterator;
 
@@ -211,7 +206,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
-            return null;//Collections.emptyIterator();
+            return null;//IteratorUtils.emptyIterator();
         }
         return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
@@ -245,7 +240,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
             return IteratorUtils.concat(list);
         }
-//        return Collections.emptyIterator();
+//        return IteratorUtils.emptyIterator();
         return null;
     }
 

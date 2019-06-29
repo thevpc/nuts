@@ -117,62 +117,66 @@ public class NutsRepositoryFolderHelper {
         }
         String idFilename = getIdFilename(id);
         Path goodFile = null;
-        String alt = id.getAlternative();
-        String goodAlt = null;
         Path versionFolder = getLocalVersionFolder(id);
-        if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
-            goodFile = versionFolder.resolve(idFilename);
-            if (Files.exists(goodFile)) {
-                return getWorkspace().descriptor().parse(goodFile);
-            }
-        } else if (!CoreStringUtils.isBlank(alt)) {
-            goodAlt = alt.trim();
-            goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
-            if (Files.exists(goodFile)) {
-                return getWorkspace().descriptor().parse(goodFile).setAlternative(goodAlt);
-            }
-        } else {
-            //should test all files
-            NutsDescriptor best = null;
-            if (Files.isDirectory(versionFolder)) {
-                try (final DirectoryStream<Path> subFolders = Files.newDirectoryStream(versionFolder)) {
-                    for (Path subFolder : subFolders) {
-                        if (Files.isDirectory(subFolder)) {
-                            NutsDescriptor choice = null;
-                            try {
-                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id, session.getSession()).setAlternative(subFolder.getFileName().toString());
-                            } catch (Exception ex) {
-                                //
-                            }
-                            if (choice != null) {
-                                if (best == null || CoreNutsUtils.NUTS_DESC_ENV_SPEC_COMPARATOR.compare(best, choice) < 0) {
-                                    best = choice;
-                                }
-                            }
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            goodFile = versionFolder.resolve(idFilename);
-            if (Files.exists(goodFile)) {
-                NutsDescriptor c = null;
-                try {
-                    c = getWorkspace().descriptor().parse(goodFile).setAlternative("");
-                } catch (Exception ex) {
-                    //
-                }
-                if (c != null) {
-                    if (best == null || CoreNutsUtils.NUTS_DESC_ENV_SPEC_COMPARATOR.compare(best, c) < 0) {
-                        best = c;
-                    }
-                }
-            }
-            if (best != null) {
-                return best;
-            }
+        goodFile = versionFolder.resolve(idFilename);
+        if (Files.exists(goodFile)) {
+            return getWorkspace().descriptor().parse(goodFile);
         }
+//        String alt = id.getAlternative();
+//        String goodAlt = null;
+//        if (CoreNutsUtils.isDefaultAlternative(alt)) {
+//            goodFile = versionFolder.resolve(idFilename);
+//            if (Files.exists(goodFile)) {
+//                return getWorkspace().descriptor().parse(goodFile);
+//            }
+//        } else if (!CoreStringUtils.isBlank(alt)) {
+//            goodAlt = alt.trim();
+//            goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
+//            if (Files.exists(goodFile)) {
+//                return getWorkspace().descriptor().parse(goodFile).setAlternative(goodAlt);
+//            }
+//        } else {
+//            //should test all files
+//            NutsDescriptor best = null;
+//            if (Files.isDirectory(versionFolder)) {
+//                try (final DirectoryStream<Path> subFolders = Files.newDirectoryStream(versionFolder)) {
+//                    for (Path subFolder : subFolders) {
+//                        if (Files.isDirectory(subFolder)) {
+//                            NutsDescriptor choice = null;
+//                            try {
+//                                choice = loadMatchingDescriptor(subFolder.resolve(idFilename), id, session.getSession()).setAlternative(subFolder.getFileName().toString());
+//                            } catch (Exception ex) {
+//                                //
+//                            }
+//                            if (choice != null) {
+//                                if (best == null || CoreNutsUtils.NUTS_DESC_ENV_SPEC_COMPARATOR.compare(best, choice) < 0) {
+//                                    best = choice;
+//                                }
+//                            }
+//                        }
+//                    }
+//                } catch (IOException ex) {
+//                    throw new UncheckedIOException(ex);
+//                }
+//            }
+//            goodFile = versionFolder.resolve(idFilename);
+//            if (Files.exists(goodFile)) {
+//                NutsDescriptor c = null;
+//                try {
+//                    c = getWorkspace().descriptor().parse(goodFile).setAlternative("");
+//                } catch (Exception ex) {
+//                    //
+//                }
+//                if (c != null) {
+//                    if (best == null || CoreNutsUtils.NUTS_DESC_ENV_SPEC_COMPARATOR.compare(best, c) < 0) {
+//                        best = c;
+//                    }
+//                }
+//            }
+//            if (best != null) {
+//                return best;
+//            }
+//        }
         return null;
     }
 
@@ -194,12 +198,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            return null;
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            return null;
-        }
+        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(), id);
         Path groupFolder = getStoreLocation().resolve(id.getGroup().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getName());
     }
@@ -239,7 +238,7 @@ public class NutsRepositoryFolderHelper {
             folder = rootPath.resolve(folder);
         }
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
-            //            return Collections.emptyIterator();
+            //            return IteratorUtils.emptyIterator();
             return null;
         }
         return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {

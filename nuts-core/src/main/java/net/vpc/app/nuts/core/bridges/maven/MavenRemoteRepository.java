@@ -176,7 +176,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return Collections.emptyIterator();
+            return IteratorUtils.emptyIterator();
         }
         if (id.getVersion().isSingleValue()) {
             return findSingleVersionImpl(id, idFilter, session);
@@ -250,7 +250,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             try {
                 metadataStream = helper.openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(), id, ex);
+                return null;
             }
             MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
@@ -271,12 +271,16 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     );
                 }
             }
+        } catch (UncheckedIOException ex) {
+            //unable to access
+            return null;
         } finally {
             if (metadataStream != null) {
                 try {
                     metadataStream.close();
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+//                    throw new UncheckedIOException(e);
+                    return null;
                 }
             }
         }
@@ -307,7 +311,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     public Iterator<NutsId> findVersionsImplFilesFolders(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return Collections.emptyIterator();
+            return IteratorUtils.emptyIterator();
         }
         if (id.getVersion().isSingleValue()) {
             return findSingleVersionImpl(id, idFilter, session);
@@ -381,7 +385,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 //                    final InputStream is = getWorkspace().io().monitorInputStream(s.open(), session);
 //                    return MavenUtils.createArchetypeCatalogIterator(is, filter, true);
 //                } catch (UncheckedIOException ex) {
-//                    return Collections.emptyIterator();
+//                    return IteratorUtils.emptyIterator();
 //                }
 //            }
             case UNSUPPORTED: {

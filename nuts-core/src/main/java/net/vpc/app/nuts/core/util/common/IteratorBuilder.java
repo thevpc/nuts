@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core.util.common;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +22,9 @@ public class IteratorBuilder<T> {
     private final Iterator<T> it;
 
     private IteratorBuilder(Iterator<T> it) {
+        if(it==null){
+            it=IteratorUtils.emptyIterator();
+        }
         this.it = it;
     }
 
@@ -53,7 +55,7 @@ public class IteratorBuilder<T> {
     }
 
     public static <T> IteratorBuilder<T> ofArray(T... t) {
-        return of(t == null ? Collections.<T>emptyIterator() : Arrays.asList(t).iterator());
+        return of(t == null ? IteratorUtils.<T>emptyIterator() : Arrays.asList(t).iterator());
     }
 
     public static IteratorBuilder<File> ofFileList(File file) {

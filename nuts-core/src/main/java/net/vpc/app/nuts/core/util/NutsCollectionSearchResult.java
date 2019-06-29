@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.AbstractNutsSearchResult;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  *
@@ -88,7 +89,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
     public Iterator<T> iterator() {
         switch (type) {
             case 'n':
-                return Collections.emptyIterator();
+                return IteratorUtils.emptyIterator();
             case 'i':
                 return (Iterator<T>) o;
             case 'l':

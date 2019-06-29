@@ -35,12 +35,14 @@ import net.vpc.app.nuts.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -110,8 +112,11 @@ public class NutsCachedRepository extends AbstractNutsRepository {
             Iterator<NutsId> p = null;
             try {
                 p = searchImpl2(filter, session);
+            } catch (NutsNotFoundException ex) {
+                //ignore....
             } catch (Exception ex) {
                 //ignore....
+                LOG.log(Level.SEVERE, "Search lateset versions error : " + ex.toString(), ex);
             }
             if (p != null) {
                 li.add(p);
@@ -202,13 +207,16 @@ public class NutsCachedRepository extends AbstractNutsRepository {
             if (p != null) {
                 all.add(p);
             }
+        } catch (NutsNotFoundException ex) {
+            //ignore error
         } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Search versions error : " + ex.toString(), ex);
             //ignore....
         }
         Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).unique(NutsId::getLongName).build();
 
         if (namedNutIdIterator == null) {
-            namedNutIdIterator = Collections.emptyIterator();
+            namedNutIdIterator = IteratorUtils.emptyIterator();
         }
         return mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, session);
 
@@ -230,7 +238,10 @@ public class NutsCachedRepository extends AbstractNutsRepository {
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
+            } catch (NutsNotFoundException ex) {
+                //ignore
             } catch (Exception ex) {
+                LOG.log(Level.SEVERE, "Search lateset versions error : " + ex.toString(), ex);
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, session);

@@ -413,6 +413,11 @@ public class CoreNutsUtils {
         return child;
     }
 
+    public static boolean isDefaultAlternative(String s1) {
+        s1 = CoreStringUtils.trim(s1);
+        return s1.isEmpty() || s1.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE);
+    }
+    
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
@@ -714,6 +719,26 @@ public class CoreNutsUtils {
             return a;
         } catch (Exception ex) {
             return -1;
+        }
+    }
+
+    public static void checkId_GN(NutsId id) {
+        if (id == null) {
+            throw new NutsElementNotFoundException(null, "Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsElementNotFoundException(null, "Missing group for " + id);
+        }
+    }
+    public static void checkId_GNV(NutsId id) {
+        if (id == null) {
+            throw new NutsElementNotFoundException(null, "Missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getGroup())) {
+            throw new NutsElementNotFoundException(null, "Missing group for " + id);
+        }
+        if (CoreStringUtils.isBlank(id.getName())) {
+            throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
         }
     }
 }

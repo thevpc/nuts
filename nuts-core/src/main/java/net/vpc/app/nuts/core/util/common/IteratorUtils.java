@@ -13,8 +13,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -25,17 +28,7 @@ import java.util.function.Predicate;
 public class IteratorUtils {
 
     public static final NonNullFilter NON_NULL = new NonNullFilter();
-
-    public static class NonNullFilter<T> implements Predicate<T> {
-
-        public NonNullFilter() {
-        }
-
-        @Override
-        public boolean test(T value) {
-            return value != null;
-        }
-    }
+    private static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator<>();
 
     public static FileDepthFirstIterator dsf(File file) {
         return new FileDepthFirstIterator(file);
@@ -53,20 +46,25 @@ public class IteratorUtils {
         return new ErrorHandlerIterator(ErrorHandlerIteratorType.POSPONE, t);
     }
 
+    public static <T> boolean isNullOrEmpty(Iterator<T> t) {
+        return t == null || t == EMPTY_ITERATOR;
+    }
+
+    public static <T> Iterator<T> emptyIterator() {
+        return EMPTY_ITERATOR;
+    }
+
     public static <T> Iterator<T> nonNull(Iterator<T> t) {
         return filter(t, NON_NULL);
     }
 
     public static <T> Iterator<T> concat(List<Iterator<T>> all) {
         if (all == null || all.isEmpty()) {
-            return Collections.emptyIterator();
-        }
-        if (all.size() == 1) {
-            return all.get(0);
+            return IteratorUtils.emptyIterator();
         }
         QueueIterator<T> t = new QueueIterator<>();
         for (Iterator<T> it : all) {
-            if (it != null) {
+            if (!isNullOrEmpty(it)) {
                 if (it instanceof QueueIterator) {
                     QueueIterator tt = (QueueIterator) it;
                     for (Iterator it1 : tt.getChildren()) {
@@ -77,10 +75,40 @@ public class IteratorUtils {
                 }
             }
         }
+        int tsize = t.size();
+        if (tsize == 0) {
+            return IteratorUtils.emptyIterator();
+        }
+        if (tsize == 1) {
+            return t.getChildren()[0];
+        }
+        return t;
+    }
+
+    public static <T> Iterator<T> coalesce(List<Iterator<T>> all) {
+        if (all == null || all.isEmpty()) {
+            return IteratorUtils.emptyIterator();
+        }
+        CoalesceIterator<T> t = new CoalesceIterator<>();
+        for (Iterator<T> it : all) {
+            if (!isNullOrEmpty(it)) {
+                t.add(it);
+            }
+        }
+        int tsize = t.size();
+        if (tsize == 0) {
+            return IteratorUtils.emptyIterator();
+        }
+        if (tsize == 1) {
+            return t.getChildren()[0];
+        }
         return t;
     }
 
     public static <T> Iterator<T> filter(Iterator<T> from, Predicate<T> filter) {
+        if (from == null) {
+            return emptyIterator();
+        }
         if (filter == null) {
             return from;
         }
@@ -88,26 +116,16 @@ public class IteratorUtils {
     }
 
     public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter) {
+        if (isNullOrEmpty(from)) {
+            return emptyIterator();
+        }
         return new ConvertedIterator<>(from, converter);
     }
 
-    public static <T> Iterator<T> coalesce(List<Iterator<T>> all) {
-        if (all == null || all.isEmpty()) {
-            return Collections.emptyIterator();
-        }
-        if (all.size() == 1) {
-            return all.get(0);
-        }
-        CoalesceIterator<T> t = new CoalesceIterator<>();
-        for (Iterator<T> it : all) {
-            if (it != null) {
-                t.add(it);
-            }
-        }
-        return t;
-    }
-
     public static <T> List<T> toList(Iterator<T> it) {
+        if (isNullOrEmpty(it)) {
+            return Collections.emptyList();
+        }
         List<T> a = new ArrayList<T>();
         while (it.hasNext()) {
             a.add(it.next());
@@ -116,6 +134,9 @@ public class IteratorUtils {
     }
 
     public static <T> Set<T> toSet(Iterator<T> it) {
+        if (isNullOrEmpty(it)) {
+            return Collections.emptySet();
+        }
         LinkedHashSet<T> a = new LinkedHashSet<T>();
         while (it.hasNext()) {
             a.add(it.next());
@@ -124,6 +145,9 @@ public class IteratorUtils {
     }
 
     public static <T> Set<T> toTreeSet(Iterator<T> it, Comparator<T> c) {
+        if (isNullOrEmpty(it)) {
+            return Collections.emptySet();
+        }
         TreeSet<T> a = new TreeSet<T>(c);
         while (it.hasNext()) {
             a.add(it.next());
@@ -132,15 +156,18 @@ public class IteratorUtils {
     }
 
     public static <T> Iterator<T> sort(Iterator<T> it, Comparator<T> c, boolean removeDuplicates) {
+        if (isNullOrEmpty(it)) {
+            return emptyIterator();
+        }
         return new Iterator<T>() {
             Iterator<T> base = null;
 
             public Iterator<T> getBase() {
                 if (base == null) {
                     if (removeDuplicates) {
-                        base = toTreeSet(base, c).iterator();
+                        base = toTreeSet(it, c).iterator();
                     } else {
-                        List<T> a = toList(base);
+                        List<T> a = toList(it);
                         a.sort(c);
                         base = a.iterator();
                     }
@@ -161,6 +188,9 @@ public class IteratorUtils {
     }
 
     public static <T> Iterator<T> unique(Iterator<T> it) {
+        if (isNullOrEmpty(it)) {
+            return emptyIterator();
+        }
         Predicate<T> filter = new Predicate<T>() {
             HashSet<T> visited = new HashSet<>();
 
@@ -177,6 +207,9 @@ public class IteratorUtils {
     }
 
     public static <F, T> Iterator<F> unique(Iterator<F> it, final Function<F, T> converter) {
+        if (isNullOrEmpty(it)) {
+            return emptyIterator();
+        }
         Predicate<F> filter = new Predicate<F>() {
             HashSet<T> visited = new HashSet<>();
 
@@ -191,5 +224,39 @@ public class IteratorUtils {
             }
         };
         return new FilteredIterator<>(it, filter);
+    }
+
+    private static class EmptyIterator<E> implements Iterator<E> {
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public E next() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super E> action) {
+            Objects.requireNonNull(action);
+        }
+    }
+
+    public static class NonNullFilter<T> implements Predicate<T> {
+
+        public NonNullFilter() {
+        }
+
+        @Override
+        public boolean test(T value) {
+            return value != null;
+        }
     }
 }

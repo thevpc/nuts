@@ -38,8 +38,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +57,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
 
@@ -230,7 +229,7 @@ public class DefaultNutsInstalledRepository {
 
     protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
-            return Collections.emptyIterator();
+            return IteratorUtils.emptyIterator();
         }
         return new FolderNutIdIterator(ws, "installed", folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
@@ -291,7 +290,7 @@ public class DefaultNutsInstalledRepository {
                             .nonNull().iterator();
                 }
                 //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
-                return Collections.emptyIterator();
+                return IteratorUtils.emptyIterator();
             }
         };
     }

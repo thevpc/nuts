@@ -42,7 +42,11 @@ public class FilteredIterator<T> implements Iterator<T> {
     private T last;
 
     public FilteredIterator(Iterator<T> base, Predicate<T> filter) {
-        this.base = base;
+        if (base == null) {
+            this.base = IteratorUtils.emptyIterator();
+        } else {
+            this.base = base;
+        }
         this.filter = filter;
     }
 

@@ -30,6 +30,7 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.core.DefaultNutsContentEvent;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  *
@@ -115,13 +116,14 @@ public class NutsRepositoryMirroringHelper {
                     //ignore
                 }
                 if (nutsDescriptor != null) {
-                    String a = nutsDescriptor.getAlternative();
                     Path goodFile = null;
-                    if (CoreStringUtils.isBlank(a) || a.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE)) {
-                        goodFile = versionFolder.resolve(idFilename);
-                    } else {
-                        goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
-                    }
+                    goodFile = versionFolder.resolve(idFilename);
+//                    String a = nutsDescriptor.getAlternative();
+//                    if (CoreNutsUtils.isDefaultAlternative(a)) {
+//                        goodFile = versionFolder.resolve(idFilename);
+//                    } else {
+//                        goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
+//                    }
                     getWorkspace().descriptor().value(nutsDescriptor).print(goodFile);
                     return nutsDescriptor;
                 }

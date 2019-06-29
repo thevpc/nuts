@@ -6,6 +6,8 @@
 package net.vpc.app.nuts.core.util.common;
 
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,6 +15,7 @@ import java.util.Iterator;
  */
 public class ErrorHandlerIterator<T> implements Iterator<T> {
 
+    private static Logger LOG = Logger.getLogger(ErrorHandlerIterator.class.getName());
     private ErrorHandlerIteratorType type;
     private Iterator<T> other;
     private RuntimeException ex;
@@ -29,6 +32,7 @@ public class ErrorHandlerIterator<T> implements Iterator<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
+            LOG.log(Level.SEVERE, "Error evaluating Iterator 'hasNext()' : " + ex.toString(), ex);
             switch (type) {
                 case IGNORE: {
                     // do nothing

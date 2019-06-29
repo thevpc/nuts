@@ -9,6 +9,7 @@ import java.util.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
 
@@ -139,7 +140,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         }
         Iterator<Object> children = tree.getChildren(o).iterator();
         if (children == null) {
-            children = Collections.emptyIterator();
+            children = IteratorUtils.emptyIterator();
         }
         Object last = null;
         if (children.hasNext()) {

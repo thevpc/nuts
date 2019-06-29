@@ -65,6 +65,7 @@ import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -107,12 +108,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            return null;
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            return null;
-        }
+        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
         Path groupFolder = getStoreLocation().resolve(id.getGroup().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getName());
     }
@@ -134,7 +130,7 @@ public class MavenRepositoryFolderHelper {
     public Iterator<NutsId> searchInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         folder = rootPath.resolve(folder);
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
-            //            return Collections.emptyIterator();
+            //            return IteratorUtils.emptyIterator();
             return null;
         }
         return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {

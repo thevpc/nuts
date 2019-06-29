@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +20,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.NutsSearchVersionsRepositoryCommand;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  *
@@ -85,7 +85,7 @@ public class DefaultNutsSeachVersionsRepositoryCommand extends NutsRepositoryCom
             }
             Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getSession());
             if (rr == null) {
-                rr = Collections.emptyIterator();
+                rr = IteratorUtils.emptyIterator();
             }
             result = rr;
             return this;

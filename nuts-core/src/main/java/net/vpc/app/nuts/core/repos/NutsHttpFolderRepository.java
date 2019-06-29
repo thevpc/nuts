@@ -47,7 +47,6 @@ import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -72,9 +71,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
         @Override
         public boolean isDescFile(String pathname) {
-            return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
-                    || pathname.endsWith("/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)
-                    || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
+            return isDescFile0(pathname);
         }
 
         @Override
@@ -86,6 +83,12 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
         }
     };
+
+    private boolean isDescFile0(String pathname) {
+        return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                || pathname.endsWith("/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
+    }
 
     public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
@@ -211,21 +214,34 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = FilesFoldersApi.getFolders(CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId), session.getSession());
+            String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
+            String[] all = FilesFoldersApi.getFolders(artifactUrl, session.getSession());
             List<NutsId> n = new ArrayList<>();
             if (all != null) {
                 for (String s : all) {
                     if (!DefaultNutsVersion.isBlank(s)) {
-                        NutsId id2 = id.builder().setVersion(s).build();
-                        if (idFilter == null || idFilter.accept(id2, session.getSession())) {
-                            n.add(id2);
+                        String versionFilesUrl = artifactUrl + "/" + s;
+                        String[] versionFiles = FilesFoldersApi.getFiles(versionFilesUrl, session.getSession());
+                        boolean validVersion = false;
+                        for (String v : versionFiles) {
+                            if ("nuts.properties".equals(v)) {
+                                validVersion = true;
+                                break;
+                            }
+                        }
+                        if (validVersion) {
+                            NutsId id2 = id.builder().setVersion(s).build();
+                            if (idFilter == null || idFilter.accept(id2, session.getSession())) {
+                                n.add(id2);
+                            }
                         }
                     }
                 }
             }
             return n.iterator();
         } catch (Exception ex) {
-//            return Collections.emptyIterator();
+            LOG.log(Level.SEVERE, "Error Find Versions : " + ex.toString(), ex);
+//            return IteratorUtils.emptyIterator();
             return null;
         }
 

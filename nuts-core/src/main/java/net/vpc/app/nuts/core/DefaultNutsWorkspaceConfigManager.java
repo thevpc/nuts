@@ -1197,15 +1197,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public String getDefaultIdBasedir(NutsId id) {
-        if (id == null) {
-            throw new NutsElementNotFoundException(null, "Missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
-            throw new NutsElementNotFoundException(null, "Missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getName())) {
-            throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
-        }
+        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
