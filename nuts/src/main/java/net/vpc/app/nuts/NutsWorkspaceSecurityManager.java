@@ -80,12 +80,22 @@ public interface NutsWorkspaceSecurityManager {
 
     boolean switchSecureMode(char[] adminPassword);
 
+    /**
+     * return true if current user has admin privileges
+     *
+     * @return true if current user has admin privileges
+     */
     boolean isAdmin();
 
     NutsWorkspaceSecurityManager setAuthenticationAgent(String authenticationAgent);
 
     NutsAuthenticationAgent getAuthenticationAgent(String id);
 
+    /**
+     * return true if workspace is running secure mode
+     *
+     * @return true if workspace is running secure mode
+     */
     boolean isSecure();
 
     /**
@@ -126,7 +136,8 @@ public interface NutsWorkspaceSecurityManager {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetreive when true {@link #getCredentials(char[])} can be invoked over {@code credentialId}
+     * @param allowRetreive when true {@link #getCredentials(char[])} can be
+     * invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @return credentials-id
      */

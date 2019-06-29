@@ -32,14 +32,29 @@ package net.vpc.app.nuts;
 import java.net.URL;
 
 /**
- * Private API
+ * Service provider Interface for NutsWorkspace. 
+ * NutsWorkspace implementations should also implement 
+ * this interface that will be called at the very instance 
+ * creation.
  *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsWorkspaceSPI extends NutsWorkspace {
 
-    boolean initializeWorkspace(NutsBootWorkspaceFactory factory,
+    /**
+     * initialize and open workspace then return true if the workspace is newly created.
+     * 
+     * @param factory bootstrap factory
+     * @param runningBootConfig effective/running config
+     * @param userBootConfig user defined config
+     * @param bootClassWorldURLs bootstrap classpath jars used for loading nuts runtime
+     * @param workspaceClassLoader bootstrap class loader used for loading nuts runtime
+     * @param options bootstrap options
+     * @return true if the workspace is newly created
+     */
+    boolean initializeWorkspace(
+            NutsBootWorkspaceFactory factory,
             NutsBootConfig runningBootConfig,
             NutsBootConfig userBootConfig,
             URL[] bootClassWorldURLs,
