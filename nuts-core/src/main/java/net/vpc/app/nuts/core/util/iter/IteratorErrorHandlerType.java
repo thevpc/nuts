@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 /**
  *
  * @author vpc
  */
-public enum ErrorHandlerIteratorType {
+public enum IteratorErrorHandlerType {
     /**
      * error detected in hasNext will be re-thrown in next (hasNext will return
      * true)

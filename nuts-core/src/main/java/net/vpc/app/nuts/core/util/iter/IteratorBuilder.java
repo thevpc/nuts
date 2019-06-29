@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 import java.io.File;
 import java.util.Arrays;
@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.FileDepthFirstIterator;
+import net.vpc.app.nuts.core.util.common.LazyIterator;
 
 /**
  *
@@ -115,16 +118,16 @@ public class IteratorBuilder<T> {
         }
     }
 
-    public IteratorBuilder<T> safe(ErrorHandlerIteratorType type) {
+    public IteratorBuilder<T> safe(IteratorErrorHandlerType type) {
         return new IteratorBuilder<>(new ErrorHandlerIterator(type, it));
     }
 
     public IteratorBuilder<T> safeIgnore() {
-        return safe(ErrorHandlerIteratorType.IGNORE);
+        return safe(IteratorErrorHandlerType.IGNORE);
     }
 
     public IteratorBuilder<T> safePospone() {
-        return safe(ErrorHandlerIteratorType.POSPONE);
+        return safe(IteratorErrorHandlerType.POSPONE);
     }
 
     public IteratorBuilder<T> nonNull() {

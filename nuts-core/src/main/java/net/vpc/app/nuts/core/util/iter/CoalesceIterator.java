@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  *

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 public class ErrorHandlerIterator<T> implements Iterator<T> {
 
     private static Logger LOG = Logger.getLogger(ErrorHandlerIterator.class.getName());
-    private ErrorHandlerIteratorType type;
+    private IteratorErrorHandlerType type;
     private Iterator<T> other;
     private RuntimeException ex;
 
-    public ErrorHandlerIterator(ErrorHandlerIteratorType type, Iterator<T> other) {
+    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> other) {
         this.other = other;
         this.type = type;
     }

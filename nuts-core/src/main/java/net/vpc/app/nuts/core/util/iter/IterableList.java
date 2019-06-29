@@ -27,69 +27,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class QueueIterator<T> implements Iterator<T> {
+public class IterableList<T> implements Iterable<T> {
 
-    private Queue<Iterator<T>> children = new LinkedList<Iterator<T>>();
-    private int size;
+    private List<Iterable<T>> children = new ArrayList<Iterable<T>>();
 
-    public void addNonNull(Iterator<T> child) {
-        if (child != null) {
-            add(child);
-        }
-    }
-
-    public void addNonEmpty(Iterator<T> child) {
-        child = CoreCommonUtils.nullifyIfEmpty(child);
-        if (child != null) {
-            add(child);
-        }
-    }
-
-    public void add(Iterator<T> child) {
-        if (child == null) {
-            throw new NullPointerException();
-        }
+    public void add(Iterable<T> child) {
         children.add(child);
-        size++;
     }
 
     @Override
-    public boolean hasNext() {
-        while (!children.isEmpty()) {
-            if (children.peek().hasNext()) {
-                return true;
-            }
-            children.poll();
-            size--;
+    public Iterator<T> iterator() {
+        QueueIterator<T> li = new QueueIterator<T>();
+        for (Iterable<T> child : children) {
+            li.add(child.iterator());
         }
-        return false;
+        return li;
     }
-
-    @Override
-    public T next() {
-        return children.peek().next();
-    }
-
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public void remove() {
-        children.peek().remove();
-    }
-
-    public Iterator<T>[] getChildren() {
-        return children.toArray(new Iterator[0]);
-    }
-
 }

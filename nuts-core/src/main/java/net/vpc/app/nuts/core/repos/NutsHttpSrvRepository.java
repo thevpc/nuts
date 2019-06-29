@@ -44,10 +44,10 @@ import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 

@@ -46,7 +46,7 @@ import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.util.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;

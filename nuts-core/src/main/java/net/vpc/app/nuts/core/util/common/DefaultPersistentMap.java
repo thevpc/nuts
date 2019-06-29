@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.core.util.iter.PushBackIterator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

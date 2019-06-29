@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.AbstractNutsSearchResult;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
  *

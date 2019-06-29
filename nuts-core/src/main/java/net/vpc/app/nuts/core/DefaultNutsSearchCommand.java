@@ -63,8 +63,8 @@ import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
  * @author vpc

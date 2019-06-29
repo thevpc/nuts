@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsArrayElement;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 
 /**
  *

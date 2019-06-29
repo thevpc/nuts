@@ -27,46 +27,49 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 import java.util.Iterator;
-import java.util.function.Predicate;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by vpc on 1/9/17.
+ *
+ * @param <F>
+ * @param <T>
  */
-public class FilteredIterator<T> implements Iterator<T> {
+public class ConvertedToListIterator<F, T> implements Iterator<T> {
 
-    private Iterator<T> base;
-    private Predicate<T> filter;
-    private T last;
+    private final Iterator<F> base;
+    private final Function<F, List<T>> converter;
+    private final LinkedList<T> current = new LinkedList<>();
 
-    public FilteredIterator(Iterator<T> base, Predicate<T> filter) {
-        if (base == null) {
-            this.base = IteratorUtils.emptyIterator();
-        } else {
-            this.base = base;
-        }
-        this.filter = filter;
+    public ConvertedToListIterator(Iterator<F> base, Function<F, List<T>> converter) {
+        this.base = base;
+        this.converter = converter;
     }
 
     @Override
     public boolean hasNext() {
-        while (true) {
-            if (base.hasNext()) {
-                last = base.next();
-                if (filter.test(last)) {
-                    return true;
-                }
-            } else {
-                return false;
+        if (!current.isEmpty()) {
+            return true;
+        }
+        while (base.hasNext()) {
+            F f = base.next();
+            List<T> c = converter.apply(f);
+            current.addAll(c);
+            if (!current.isEmpty()) {
+                return true;
             }
         }
+        return false;
     }
 
     @Override
     public T next() {
-        return last;
+        return current.poll();
     }
 
     @Override

@@ -56,8 +56,8 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
 

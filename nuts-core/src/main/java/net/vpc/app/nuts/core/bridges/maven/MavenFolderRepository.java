@@ -50,7 +50,7 @@ import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.repos.NutsCachedRepository;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.

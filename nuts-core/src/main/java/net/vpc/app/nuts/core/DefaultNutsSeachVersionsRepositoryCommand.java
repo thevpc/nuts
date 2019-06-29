@@ -17,10 +17,10 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.NutsSearchVersionsRepositoryCommand;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
  *

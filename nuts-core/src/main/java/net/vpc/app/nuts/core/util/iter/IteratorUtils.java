@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import net.vpc.app.nuts.core.util.common.FileDepthFirstIterator;
 
 /**
  *
@@ -34,16 +35,16 @@ public class IteratorUtils {
         return new FileDepthFirstIterator(file);
     }
 
-    public static <T> Iterator<T> safe(ErrorHandlerIteratorType type, Iterator<T> t) {
+    public static <T> Iterator<T> safe(IteratorErrorHandlerType type, Iterator<T> t) {
         return new ErrorHandlerIterator(type, t);
     }
 
     public static <T> Iterator<T> safeIgnore(Iterator<T> t) {
-        return new ErrorHandlerIterator(ErrorHandlerIteratorType.IGNORE, t);
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t);
     }
 
     public static <T> Iterator<T> safePospone(Iterator<T> t) {
-        return new ErrorHandlerIterator(ErrorHandlerIteratorType.POSPONE, t);
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSPONE, t);
     }
 
     public static <T> boolean isNullOrEmpty(Iterator<T> t) {

@@ -41,8 +41,8 @@ import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
-import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
+import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.

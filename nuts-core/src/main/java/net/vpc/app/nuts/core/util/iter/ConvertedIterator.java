@@ -27,29 +27,39 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util.common;
+package net.vpc.app.nuts.core.util.iter;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.function.Function;
 
 /**
- * Created by vpc on 1/7/17.
+ * Created by vpc on 1/9/17.
+ *
+ * @param <F>
+ * @param <T>
  */
-public class IterableList<T> implements Iterable<T> {
+public class ConvertedIterator<F, T> implements Iterator<T> {
 
-    private List<Iterable<T>> children = new ArrayList<Iterable<T>>();
+    private final Iterator<F> base;
+    private final Function<F, T> converter;
 
-    public void add(Iterable<T> child) {
-        children.add(child);
+    public ConvertedIterator(Iterator<F> base, Function<F, T> converter) {
+        this.base = base;
+        this.converter = converter;
     }
 
     @Override
-    public Iterator<T> iterator() {
-        QueueIterator<T> li = new QueueIterator<T>();
-        for (Iterable<T> child : children) {
-            li.add(child.iterator());
-        }
-        return li;
+    public boolean hasNext() {
+        return base.hasNext();
+    }
+
+    @Override
+    public T next() {
+        return converter.apply(base.next());
+    }
+
+    @Override
+    public void remove() {
+        base.remove();
     }
 }
