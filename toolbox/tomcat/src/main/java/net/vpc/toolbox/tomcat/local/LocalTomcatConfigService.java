@@ -15,6 +15,21 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import net.vpc.toolbox.tomcat.util.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
@@ -821,6 +836,112 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NutsApplicationContext getContext() {
         return context;
+    }
+
+    public Integer getShutdownPort() {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (Files.exists(serverXml)) {
+                Document doc = docBuilder.parse(serverXml.toFile());
+                Element root = doc.getDocumentElement();
+                String port = root.getAttribute("port");
+                return port == null ? null : Integer.parseInt(port);
+            }
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
+            //
+        }
+        //
+        return null;
+    }
+
+    public Integer getConnectorPort(String protocol, final boolean redirect) {
+        if (protocol == null) {
+            protocol = "HTTP/1.1";
+        }
+        final String _protocol = protocol;
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (Files.exists(serverXml)) {
+                Document doc = docBuilder.parse(serverXml.toFile());
+                Element root = doc.getDocumentElement();
+                String port = XmlUtils.streamElements(root.getChildNodes())
+                        .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
+                        .flatMap(x -> XmlUtils.streamElements(x.getChildNodes()))
+                        .filter(x -> "Connector".equalsIgnoreCase(x.getTagName()) && _protocol.equals(x.getAttribute("protocol")))
+                        .map(x -> x.getAttribute(redirect ? "redirectPort" : "port"))
+                        .distinct().findAny().get();
+                return port == null ? null : Integer.parseInt(port);
+            }
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
+            //
+        }
+        //
+        return null;
+    }
+
+    public void setConnectorPort(String protocol, final boolean redirect, int port) {
+        if (protocol == null) {
+            protocol = "HTTP/1.1";
+        }
+        final String _protocol = protocol;
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (Files.exists(serverXml)) {
+                Document doc = docBuilder.parse(serverXml.toFile());
+                Element root = doc.getDocumentElement();
+                Element elem = XmlUtils.streamElements(root.getChildNodes())
+                        .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
+                        .flatMap(x -> XmlUtils.streamElements(x.getChildNodes()))
+                        .filter(x -> "Connector".equalsIgnoreCase(x.getTagName()) && _protocol.equals(x.getAttribute("protocol")))
+                        .findAny().get();
+                if (elem != null) {
+                    String p = elem.getAttribute(redirect ? "redirectPort" : "port");
+                    if (String.valueOf(port).equals(p)) {
+                        return;
+                    }
+                    elem.setAttribute(redirect ? "redirectPort" : "port", String.valueOf(port));
+                    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                    Transformer transformer = transformerFactory.newTransformer();
+                    DOMSource domSource = new DOMSource(doc);
+                    StreamResult streamResult = new StreamResult(serverXml.toFile());
+                    transformer.transform(domSource, streamResult);
+                    return;
+                }
+                throw new IllegalArgumentException("Not Found Connector");
+            }
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
+            //
+        }
+    }
+
+    public void setShutdownPort(int port) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (Files.exists(serverXml)) {
+                Document doc = docBuilder.parse(serverXml.toFile());
+                Element root = doc.getDocumentElement();
+                String p = root.getAttribute("port");
+                if (String.valueOf(port).equals(p)) {
+                    return;
+                }
+                root.setAttribute("port", String.valueOf(port));
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource domSource = new DOMSource(doc);
+                StreamResult streamResult = new StreamResult(serverXml.toFile());
+                transformer.transform(domSource, streamResult);
+            }
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
+            //
+        }
     }
 
 }

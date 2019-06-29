@@ -71,6 +71,7 @@ public class RemoteTomcat {
                 }
             }
         }
+        throw new NutsExecutionException(context.getWorkspace(), "Missing tomcat action. Type: nuts tomcat --help", 1);
     }
 
     public void list(NutsCommandLine args) {

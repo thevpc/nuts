@@ -87,12 +87,19 @@ public class LocalTomcat {
                     case "show-log":
                         showLog(cmdLine);
                         return;
+                    case "get-port":
+                    case "show-port":
+                        showPort(cmdLine);
+                        return;
+                    case "set-port":
+                        setPort(cmdLine);
+                        return;
                     default:
                         throw new NutsExecutionException(context.getWorkspace(), "Unsupported action " + a.getString(), 1);
                 }
             }
         }
-        throw new NutsExecutionException(context.getWorkspace(), "Missing tomcat command. Type help", 1);
+        throw new NutsExecutionException(context.getWorkspace(), "Missing tomcat action. Type: nuts tomcat --help", 1);
     }
 
     public void list(NutsCommandLine args) {
@@ -460,23 +467,102 @@ public class LocalTomcat {
         }
     }
 
+    public void showPort(NutsCommandLine args) {
+        args.setCommandName("tomcat --local show-port");
+        LocalTomcatServiceBase s = null;
+        NutsArgument a;
+        boolean redirect = false;
+        boolean shutdown = false;
+        boolean ajp = false;
+        while (args.hasNext()) {
+            if (context.configureFirst(args)) {
+                //
+            } else if (s == null && (s = readBaseServiceArg(args)) != null) {
+                //good
+            } else if ((a = args.nextBoolean("--redirect")) != null) {
+                redirect = a.getBooleanValue();
+            } else if ((a = args.nextBoolean("--shutdown")) != null) {
+                shutdown = a.getBooleanValue();
+            } else if ((a = args.nextBoolean("--ajp")) != null) {
+                ajp = a.getBooleanValue();
+            } else {
+                args.unexpectedArgument();
+            }
+        }
+        if (s == null) {
+            s = loadServiceBase("");
+        }
+        LocalTomcatConfigService c = toLocalTomcatConfigService(s);
+        Integer port = null;
+        if (shutdown) {
+            port = c.getShutdownPort();
+        } else if (ajp) {
+            port = c.getConnectorPort("AJP/1.3", redirect);
+        } else {
+            port = c.getConnectorPort("HTTP/1.1", redirect);
+        }
+        context.workspace().object().session(context.session())
+                .value(port)
+                .println();
+    }
+
+    public void setPort(NutsCommandLine args) {
+        args.setCommandName("tomcat --local get-port");
+        LocalTomcatServiceBase s = null;
+        NutsArgument a;
+        boolean redirect = false;
+        boolean shutdown = false;
+        boolean ajp = false;
+        Integer port = null;
+        while (args.hasNext()) {
+            if (context.configureFirst(args)) {
+                //
+            } else if (s == null && (s = readBaseServiceArg(args)) != null) {
+                //good
+            } else if ((a = args.nextBoolean("--redirect")) != null) {
+                redirect = a.getBooleanValue();
+            } else if ((a = args.nextBoolean("--shutdown")) != null) {
+                shutdown = a.getBooleanValue();
+            } else if ((a = args.nextBoolean("--ajp")) != null) {
+                ajp = a.getBooleanValue();
+            } else if (port == null && args.peek().isInt()) {
+                port = args.next().getInt();
+            } else {
+                args.unexpectedArgument();
+            }
+        }
+        if (s == null) {
+            s = loadServiceBase("");
+        }
+        LocalTomcatConfigService c = toLocalTomcatConfigService(s);
+        if (shutdown) {
+            if (port == null) {
+                port = 8005;
+            }
+            c.showOutLog(c.getShutdownPort());
+        } else if (ajp) {
+            if (port == null) {
+                port = redirect ? 8443 : 8009;
+            }
+            c.setConnectorPort("AJP/1.3", redirect, port);
+        } else {
+            if (port == null) {
+                port = redirect ? 8080 : 8443;
+            }
+            c.setConnectorPort("HTTP/1.1", redirect, port);
+        }
+    }
+
     public void showLog(NutsCommandLine args) {
         LocalTomcatServiceBase s = null;
-        boolean processed = false;
         boolean path = false;
         int count = -1;
         NutsArgument a;
         while (args.hasNext()) {
             if (context.configureFirst(args)) {
                 //
-            } else if ((s = readBaseServiceArg(args)) != null) {
-                LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-                if (path) {
-                    getContext().session().out().printf("%s\n", c.getOutLogFile());
-                } else {
-                    c.showOutLog(count);
-                }
-                processed = true;
+            } else if (s == null && (s = readBaseServiceArg(args)) != null) {
+                //good
             } else if ((a = args.nextString("--path")) != null) {
                 path = true;
             } else if (args.peek().isOption() && TomcatUtils.isPositiveInt(args.peek().getString().substring(1))) {
@@ -485,13 +571,14 @@ public class LocalTomcat {
                 args.setCommandName("tomcat --local show-log").unexpectedArgument();
             }
         }
-        if (!processed) {
-            LocalTomcatConfigService c = loadTomcatConfig("");
-            if (path) {
-                getContext().session().out().printf("%s\n", c.getOutLogFile());
-            } else {
-                c.showOutLog(count);
-            }
+        if (s == null) {
+            args.required();
+        }
+        LocalTomcatConfigService c = toLocalTomcatConfigService(s);
+        if (path) {
+            getContext().session().out().printf("%s\n", c.getOutLogFile());
+        } else {
+            c.showOutLog(count);
         }
     }
 
@@ -688,7 +775,9 @@ public class LocalTomcat {
             return (loadApp(a.getStringValue()));
         } else if ((a = args.nextString("--domain")) != null) {
             return (loadDomain(a.getStringValue()));
-        } else if (args.hasNext() && args.peek().isOption()) {
+        } else if ((a = args.nextString("-c", "--conf")) != null) {
+            return (loadServiceBase(a.getStringValue()));
+        } else if (args.hasNext() && args.peek().isOption() && args.peek().isDouble()) {
             return null;
         } else {
             return (loadServiceBase(args.next().getString()));
