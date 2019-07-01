@@ -35,12 +35,12 @@ public class Test02_LoadTest {
         NutsWorkspace w1 = Nuts.openWorkspace(new String[]{
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
         NutsWorkspace w2 = Nuts.openWorkspace(new String[]{
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
     }
 

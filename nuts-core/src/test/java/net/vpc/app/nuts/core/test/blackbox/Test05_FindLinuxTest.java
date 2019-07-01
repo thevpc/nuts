@@ -47,7 +47,7 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "minimal",
             "--yes",
-            //            "--skip-install-companions",
+            //            "--skip-companions",
             "--verbose"
         });
     }
@@ -64,7 +64,7 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "minimal",
             "--yes",
-            "--skip-install-companions", //            "--verbose"
+            "--skip-companions", //            "--verbose"
         });
 
         NutsSearchResult<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
@@ -84,7 +84,7 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions",});
+            "--skip-companions",});
 
         int count = 0;
         NutsSearchResult<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
@@ -103,7 +103,7 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions",});
+            "--skip-companions",});
 
         List<NutsId> result1 = ws.search().latest().id("nuts-core").getResultIds().list();
         List<NutsId> result2 = ws.search().latest(false).id("nuts-core").getResultIds().list();
@@ -124,7 +124,7 @@ public class Test05_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions",});
+            "--skip-companions",});
 
         List<NutsId> result1 = ws.search().configure(false, "nuts-core").getResultIds().list();
         List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-core").getResultIds().list();

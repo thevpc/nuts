@@ -141,7 +141,7 @@ public class NutsCachedRepository extends AbstractNutsRepository {
         }
         NutsContent c = null;
         if (cache.isWriteEnabled()) {
-            Path cachePath = cache.getIdLocalFile(id);
+            Path cachePath = cache.getLongNameIdLocalFile(id);
             c = fetchContentImpl2(id, descriptor, cachePath, session);
             if (c != null) {
                 //already deployed because fetchContentImpl2 is run against cachePath

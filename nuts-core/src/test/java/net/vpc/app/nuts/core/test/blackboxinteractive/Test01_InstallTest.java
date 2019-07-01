@@ -42,7 +42,7 @@ public class Test01_InstallTest {
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,
 ////            "--standalone",
-////            "--skip-install-companions",
+////            "--skip-companions",
 //            "netbeans-launcher"
 //        );
     }

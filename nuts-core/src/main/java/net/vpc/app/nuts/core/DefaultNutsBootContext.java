@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.core;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -87,15 +86,15 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     public DefaultNutsBootContext build(Path workspaceLocation) {
-        if(storeLocationStrategy==null){
-            storeLocationStrategy=NutsStoreLocationStrategy.EXPLODED;
+        if (storeLocationStrategy == null) {
+            storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        if(repositoryStoreLocationStrategy==null){
-            repositoryStoreLocationStrategy=NutsStoreLocationStrategy.EXPLODED;
+        if (repositoryStoreLocationStrategy == null) {
+            repositoryStoreLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
         Path[] homes = new Path[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            String ss=NutsPlatformUtils.resolveHomeFolder(getStoreLocationLayout(), type, homeLocations,isGlobal(), getName());
+            String ss = NutsPlatformUtils.resolveHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
             if (CoreStringUtils.isBlank(ss)) {
                 throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
             }
@@ -106,7 +105,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
             String typeId = location.id();
             switch (location) {
                 default: {
-                String typeLocation = storeLocations.get(typeId);
+                    String typeLocation = storeLocations.get(typeId);
                     if (CoreStringUtils.isBlank(typeLocation)) {
                         switch (storeLocationStrategy) {
                             case STANDALONE: {
@@ -136,15 +135,20 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         }
         this.storeLocations.clear();
         this.storeLocations.putAll(storeLocations);
+        if(bootAPI==null){
+            bootAPI=CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+        }
         return this;
     }
-    
+
     public DefaultNutsBootContext merge(NutsWorkspaceConfig c) {
         if (c.getName() != null) {
             this.name = c.getName();
         }
 //        this.uuid = c.getUuid();
-//        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+        if (c.getBootApiVersion() != null) {
+            this.bootAPI = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getBootApiVersion());
+        }
         if (c.getBootRuntime() != null) {
             this.bootRuntime = c.getBootRuntime().contains("#")
                     ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
@@ -291,10 +295,5 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     @Override
     public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
-    }
-
-    @Override
-    public Path getNutsJar() {
-        return ws.fetch().id(bootAPI).getResultPath();
     }
 }

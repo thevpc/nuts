@@ -1301,7 +1301,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsWorkspaceConfig _config = Files.isRegularFile(file) ? parseConfigForAnyVersion(file) : null;
         if (_config != null) {
             setRunningContext(new DefaultNutsBootContext(ws)
-                    .merge(getStoredConfig())
+                    .merge(_config)
                     .mergeRuntime(options())
                     .build(getWorkspaceLocation())
             );

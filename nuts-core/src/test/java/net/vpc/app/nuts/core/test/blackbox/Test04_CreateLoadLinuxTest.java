@@ -57,7 +57,7 @@ public class Test04_CreateLoadLinuxTest {
             "--system-lib-home", new File(base, "system.lib").getPath(),
             "--system-run-home", new File(base, "system.run").getPath(),
             //            "--verbose", 
-            "--skip-install-companions",
+            "--skip-companions",
             "--yes",
             "info"
         });

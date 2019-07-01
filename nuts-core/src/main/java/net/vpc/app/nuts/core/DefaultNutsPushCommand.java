@@ -254,7 +254,7 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(ws, "Invalid Version " + id.getVersion());
             }
-            NutsDefinition file = ws.fetch().id(id).setSession(session).setTransitive(false).getResultDefinition();
+            NutsDefinition file = ws.fetch().id(id).setSession(session).content().setTransitive(false).getResultDefinition();
             if (file == null) {
                 throw new NutsIllegalArgumentException(ws, "Nothing to push");
             }

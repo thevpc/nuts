@@ -73,7 +73,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     protected NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        Path cacheContent = cache.getIdLocalFile(id);
+        Path cacheContent = cache.getLongNameIdLocalFile(id);
         if (session.isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository mirror : repo.config().getMirrors()) {
                 try {
@@ -105,7 +105,7 @@ public class NutsRepositoryMirroringHelper {
 
     protected NutsDescriptor fetchDescriptorImplInMirrors(NutsId id, NutsRepositorySession session) {
         String idFilename = getIdFilename(id);
-        Path versionFolder = cache.getLocalVersionFolder(id);
+        Path versionFolder = cache.getLongNameIdLocalFolder(id);
         if (session.isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository remote : repo.config().getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
@@ -222,7 +222,7 @@ public class NutsRepositoryMirroringHelper {
                                     .setSession(session.getSession())
                                     .setTransitive(session.isTransitive())
                                     .setIndexed(session.isIndexed())).setFaceDescriptor();
-                    Path localNutFile = cache.getIdLocalFile(id2);
+                    Path localNutFile = cache.getLongNameIdLocalFile(id2);
                     getWorkspace().descriptor().value(nutsDescriptor).print(localNutFile);
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                         bestId = id2;

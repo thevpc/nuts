@@ -861,8 +861,12 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
             throw new NutsTooManyElementsException(ws, nid.toString());
         }
         NutsId goodId = ff.get(0);
-        def = ws.fetch().id(goodId).session(searchSession).setOptional(false).dependencies()
+        def = ws.fetch().id(goodId)
+                .session(searchSession)
+                .setOptional(false).dependencies()
                 .failFast()
+                .content()
+                .installInformation()
                 .scope(NutsDependencyScopePattern.RUN)
                 .getResultDefinition();
         return ws_exec0(def, commandName, appArgs, executorOptions, env, dir, failFast, executionType, session);

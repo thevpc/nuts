@@ -249,7 +249,7 @@ Java         Version: **${java.version} (${java.vm.name})**
             **--temp-location** <path>
             **--cache-location** <path>
 
- **--skip-install-companions**
+ **--skip-companions** or **-k**
        skip installing companion tools.
  
 ##NUTS OPEN EXPORTED OPTIONS:##

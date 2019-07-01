@@ -755,6 +755,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     runnerFile = fetch().id(installerDescriptor.getId()).setSession(session)
                             .setTransitive(false)
                             .setOptional(false)
+                            .content()
                             .dependencies()
                             .setInstallInformation(true)
                             .getResultDefinition();
@@ -1007,9 +1008,14 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
             if (!config().isReadOnly()) {
                 try (PrintStream o = new PrintStream(config().getWorkspaceLocation().resolve(fileName + ".error").toFile())) {
+                    o.println("workspace.path:");
+                    o.println(configManager.getWorkspaceLocation());
                     o.println("workspace.options:");
                     o.println(configManager.getOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
-                    o.println();
+                    for (NutsStoreLocation location : NutsStoreLocation.values()) {
+                        o.println("location." + location.id() + ":");
+                        o.println(configManager.getStoreLocation(location));
+                    }
                     o.println("java.class.path:");
                     o.println(System.getProperty("java.class.path"));
                     o.println();

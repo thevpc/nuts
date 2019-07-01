@@ -42,7 +42,7 @@ public class Test07_AppTypeTest {
                 "--workspace", workpacePath + "-update",
                 "--standalone",
                 "--yes",
-                "--skip-install-companions"
+                "--skip-companions"
         );
         NutsDefinition u = uws.search().id("netbeans-launcher").getResultDefinitions().required();
         System.out.println(u.getDescriptor().isExecutable() ? "executable" : "non-executable");

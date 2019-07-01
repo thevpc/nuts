@@ -40,24 +40,30 @@ import net.vpc.app.nuts.NutsId;
  * @author vpc
  */
 public class NutsExtensionListHelper {
-    
+
     private List<NutsId> initial = new ArrayList<>();
     private List<NutsId> list = new ArrayList<>();
 
     public NutsExtensionListHelper(List<NutsId> old) {
-        this.list.addAll(old);
+        if (old != null) {
+            for (NutsId a : old) {
+                if (a != null) {
+                    this.list.add(a);
+                }
+            }
+        }
     }
 
     public NutsExtensionListHelper save() {
-        initial=new ArrayList<>(list);
+        initial = new ArrayList<>(list);
         compress();
         return this;
     }
-    
+
     public boolean hasChanged() {
         return !initial.equals(list);
     }
-    
+
     public NutsExtensionListHelper copy() {
         return new NutsExtensionListHelper(list);
     }
@@ -122,5 +128,5 @@ public class NutsExtensionListHelper {
     public List<NutsId> getIds() {
         return new ArrayList<>(list);
     }
-    
+
 }

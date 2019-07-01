@@ -45,7 +45,7 @@ public class Test06_CacheURL {
             "--archetype", "minimal",
             //            "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
         NutsSession session = ws.createSession();
         final String url = "http://repo.maven.apache.org/maven2/archetype-catalog.xml";

@@ -100,6 +100,4 @@ public interface NutsBootContext {
     String getJavaOptions();
 
     boolean isGlobal();
-
-    Path getNutsJar();
 }

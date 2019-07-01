@@ -328,7 +328,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         }
         if (ids.size() > 0) {
             for (NutsId nutsId : ws.search().setSession(getSession().copy().trace(false)).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
-                NutsDefinition fetched = ws.fetch().id(nutsId).setSession(getSession()).getResultDefinition();
+                NutsDefinition fetched = ws.fetch().content().id(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getPath() != null) {
                     runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
                 }

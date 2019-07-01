@@ -44,7 +44,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/local/"+ws.config().getRepositories()[0].uuid(), 
@@ -63,7 +63,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
     }
 
@@ -79,7 +79,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
     }
 
@@ -96,7 +96,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
         org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
                 ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
@@ -120,7 +120,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
     }
 
@@ -136,7 +136,7 @@ public class Test01_CreateTest {
             "--archetype", "minimal",
             "--verbose",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
     }
 

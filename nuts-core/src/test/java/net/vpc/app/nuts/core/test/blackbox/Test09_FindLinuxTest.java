@@ -43,7 +43,7 @@ public class Test09_FindLinuxTest {
             "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
             "--archetype", "default",
             "--yes",
-            "--skip-install-companions"
+            "--skip-companions"
         });
 
         List<NutsId> def = ws.search().id("nuts").setOptional(false).latest().failFast(false)

@@ -152,7 +152,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--gui", null, options.isGui(), arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), arguments, false);
             fillOption("--trace", "-t", options.isTrace(), arguments, false);
-            fillOption("--skip-install-companions", "-k", options.isSkipInstallCompanions(), arguments, false);
+            fillOption("--skip-companions", "-k", options.isSkipInstallCompanions(), arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments, false);
             fillOption(options.getConfirm(), arguments, false);
             fillOption(options.getOutputFormat(), arguments, false);

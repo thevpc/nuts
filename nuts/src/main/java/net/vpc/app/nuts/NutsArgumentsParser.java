@@ -381,7 +381,7 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--skip-install-companions":
+                    case "--skip-companions":
                     case "-k": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {

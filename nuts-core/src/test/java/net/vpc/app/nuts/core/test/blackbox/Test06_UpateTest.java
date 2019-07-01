@@ -47,8 +47,9 @@ public class Test06_UpateTest {
                 "--workspace", workpacePath + "-update",
                 "--archetype", "minimal",
                 "--standalone",
+                "--standalone-repositories",
                 "--yes",
-                "--skip-install-companions"
+                "--skip-companions"
         );
         NutsRepository updateRepo1 = uws.config().getRepository("local", false);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
@@ -58,8 +59,9 @@ public class Test06_UpateTest {
         NutsWorkspace nws = Nuts.openWorkspace(
                 "--workspace", workpacePath,
                 "--standalone",
+                "--standalone-repositories",
                 "--yes",
-                "--skip-install-companions"
+                "--skip-companions"
         );
         nws.config().addRepository(new NutsCreateRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
@@ -68,8 +70,8 @@ public class Test06_UpateTest {
         System.out.println("\n------------------------------------------");
 
         NutsRepository r = nws.config().getRepository("temp", false);
-        NutsDefinition api = nws.fetch().nutsApi().getResultDefinition();
-        NutsDefinition rt = nws.fetch().nutsRuntime().getResultDefinition();
+        NutsDefinition api = nws.fetch().content().nutsApi().getResultDefinition();
+        NutsDefinition rt = nws.fetch().content().nutsRuntime().getResultDefinition();
 
         NutsVersion apiv2 = api.getId().getVersion().inc(3, 10);
         NutsVersion rtv2 = rt.getId().getVersion().inc(3, 10);

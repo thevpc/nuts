@@ -633,7 +633,7 @@ public class CoreIOUtils {
     }
 
     public static PrintStream resolveOut(NutsSession session) {
-        return (session == null || session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
+        return (session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
     }
 
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
