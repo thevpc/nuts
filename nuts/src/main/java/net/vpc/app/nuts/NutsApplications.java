@@ -30,6 +30,8 @@
 package net.vpc.app.nuts;
 
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Helper class for Nuts Applications
@@ -39,7 +41,8 @@ import java.io.PrintStream;
  */
 public class NutsApplications {
 
-    
+    private static final Logger LOG = Logger.getLogger(NutsApplications.class.getName());
+
     private NutsApplications() {
     }
 
@@ -92,6 +95,8 @@ public class NutsApplications {
                 ws = ((NutsSecurityException) ex).getWorkspace();
             }
         }
+        LOG.log(Level.SEVERE, m);
+        LOG.log(Level.SEVERE, ex.getMessage(), ex);
         if (out == null && ws != null) {
             try {
                 out = ws.io().getSystemTerminal().getOut();
@@ -123,9 +128,14 @@ public class NutsApplications {
         if (lifeCycle == null) {
             throw new NullPointerException("Null Application");
         }
+        boolean inherited = false;
         if (ws == null) {
+            inherited = true;
             ws = Nuts.openInheritedWorkspace(args);
         }
+        LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
+            inherited ? "(inherited)" : "",
+            lifeCycle, ws.commandLine().setArgs(args).toString()});
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
@@ -133,9 +143,8 @@ public class NutsApplications {
         }
         switch (applicationContext.getMode()) {
             /**
-             * both RUN and AUTO_COMPLETE
-             * executes the save branch. 
-             * Later applicationContext.isExecMode()
+             * both RUN and AUTO_COMPLETE executes the save branch. Later
+             * applicationContext.isExecMode()
              */
             case RUN:
             case AUTO_COMPLETE: {

@@ -16,6 +16,7 @@ import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
@@ -30,7 +31,8 @@ public class FilesFoldersApi {
         String[] foldersFileContent = null;
         try {
             foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
+            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), baseUrl)
+                    .stream().map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
         } catch (UncheckedIOException ex) {
             //
         }
@@ -43,7 +45,8 @@ public class FilesFoldersApi {
         String[] foldersFileContent = null;
         try {
             foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
+            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), baseUrl)
+                    .stream().map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
         } catch (UncheckedIOException ex) {
             //
         }

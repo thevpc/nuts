@@ -865,6 +865,7 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
                 .session(searchSession)
                 .setOptional(false).dependencies()
                 .failFast()
+                .effective()
                 .content()
                 .installInformation()
                 .scope(NutsDependencyScopePattern.RUN)

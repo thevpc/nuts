@@ -129,32 +129,7 @@ public abstract class NutsApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     public void run(NutsWorkspace ws, String[] args) {
-        NutsApplications.runApplication(args, ws, new NutsApplicationLifeCycle() {
-            @Override
-            public void onRunApplication(NutsApplicationContext applicationContext) {
-                NutsApplication.this.run(applicationContext);
-            }
-
-            @Override
-            public void onInstallApplication(NutsApplicationContext applicationContext) {
-                NutsApplication.this.onInstallApplication(applicationContext);
-            }
-
-            @Override
-            public void onUpdateApplication(NutsApplicationContext applicationContext) {
-                NutsApplication.this.onUpdateApplication(applicationContext);
-            }
-
-            @Override
-            public void onUninstallApplication(NutsApplicationContext applicationContext) {
-                NutsApplication.this.onUninstallApplication(applicationContext);
-            }
-
-            @Override
-            public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
-                return NutsApplication.this.createApplicationContext(ws, args, startTimeMillis);
-            }
-        });
+        NutsApplications.runApplication(args, ws, new NutsApplicationLifeCycleImpl(this));
     }
 
     /**
@@ -189,5 +164,49 @@ public abstract class NutsApplication {
     }
 
     public abstract void run(NutsApplicationContext applicationContext);
+
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
+
+    private static class NutsApplicationLifeCycleImpl implements NutsApplicationLifeCycle {
+
+        private final NutsApplication app;
+
+        public NutsApplicationLifeCycleImpl(NutsApplication app) {
+            this.app = app;
+        }
+
+        @Override
+        public void onRunApplication(NutsApplicationContext applicationContext) {
+            app.run(applicationContext);
+        }
+
+        @Override
+        public void onInstallApplication(NutsApplicationContext applicationContext) {
+            app.onInstallApplication(applicationContext);
+        }
+
+        @Override
+        public void onUpdateApplication(NutsApplicationContext applicationContext) {
+            app.onUpdateApplication(applicationContext);
+        }
+
+        @Override
+        public void onUninstallApplication(NutsApplicationContext applicationContext) {
+            app.onUninstallApplication(applicationContext);
+        }
+
+        @Override
+        public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
+            return app.createApplicationContext(ws, args, startTimeMillis);
+        }
+
+        @Override
+        public String toString() {
+            return app.toString();
+        }
+    }
 
 }

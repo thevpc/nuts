@@ -178,7 +178,7 @@ public class TestCommand extends AbstractNshBuiltin {
         NutsCommandLine commandLine = context.getWorkspace().commandLine().setArgs(args)
                 .setCommandName("test");
         if (commandLine.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), 1);
+            throw new NutsExecutionException(context.getWorkspace(),"result=" + 1, 1);
         }
         if (args.length > 0) {
             Stack<String> operators = new Stack<>();
