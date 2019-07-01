@@ -1,115 +1,221 @@
 package net.vpc.app.nuts.core;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public final class DefaultNutsBootContext implements NutsBootContext {
 
-    private final String uuid;
-    private final String name;
-    private final String workspace;
-    private final NutsId bootAPI;
-    private final NutsId bootRuntime;
-    private final String bootRuntimeDependencies;
-    private final String bootExtensionDependencies;
-    private final String bootRepositories;
-    private final String bootJavaCommand;
-    private final String bootJavaOptions;
-    private final NutsStoreLocationStrategy storeLocationStrategy;
-    private final NutsStoreLocationStrategy repositoryStoreLocationStrategy;
-    private final NutsOsFamily storeLocationLayout;
-    private final String[] storeLocations;
-    private final String[] defaultHomeLocations;
-    private final String[] homeLocations;
-    private final boolean global;
-    private final boolean gui;
+    private String name;
+    private NutsId bootAPI;
+    private NutsId bootRuntime;
+    private String bootRuntimeDependencies;
+    private String bootExtensionDependencies;
+    private String bootRepositories;
+    private String bootJavaCommand;
+    private String bootJavaOptions;
+    private NutsStoreLocationStrategy storeLocationStrategy;
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
+    private NutsOsFamily storeLocationLayout;
+    private final Map<String, String> storeLocations = new HashMap<>();
+    private final Map<String, String> homeLocations = new HashMap<>();
+    private boolean global;
     private final NutsWorkspace ws;
 
-    public DefaultNutsBootContext(NutsWorkspace ws, String uuid, String name, String workspace, NutsId bootAPI, NutsId bootRuntime,
-            String bootRuntimeDependencies, String bootExtensionDependencies,String bootRepositories, String bootJavaCommand, String bootJavaOptions,
-            String[] locations, 
-            String[] dhlocations, 
-            String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
-            NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
-            boolean global, boolean gui
-    ) {
+    public DefaultNutsBootContext(NutsWorkspace ws) {
         this.ws = ws;
-        this.uuid = uuid;
-        this.name = name;
-        this.workspace = workspace;
-        this.bootAPI = bootAPI;
-        this.bootRuntime = bootRuntime;
-        this.bootRuntimeDependencies = bootRuntimeDependencies;
-        this.bootExtensionDependencies = bootExtensionDependencies;
-        this.bootRepositories = bootRepositories;
-        this.bootJavaCommand = bootJavaCommand;
-        this.bootJavaOptions = bootJavaOptions;
-        this.storeLocationStrategy = storeLocationStrategy;
-        this.storeLocationLayout = storeLocationLayout;
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        
-        if (locations.length != NutsStoreLocation.values().length) {
-            throw new NutsIllegalArgumentException(ws, "Invalid locations count");
-        }
-        storeLocations = new String[NutsStoreLocation.values().length];
-        for (int i = 0; i < storeLocations.length; i++) {
-            this.storeLocations[i] = locations[i];
-        }
-        
-        if (dhlocations.length != NutsStoreLocation.values().length) {
-            throw new NutsIllegalArgumentException(ws, "Invalid default home locations count");
-        }
-        defaultHomeLocations = new String[NutsStoreLocation.values().length];
-        for (int i = 0; i < defaultHomeLocations.length; i++) {
-            this.defaultHomeLocations[i] = dhlocations[i];
-        }
-        
-        if (homeLocations.length != NutsStoreLocation.values().length * NutsOsFamily.values().length) {
-            throw new NutsIllegalArgumentException(ws, "Invalid home locations count");
-        }
-        this.homeLocations = new String[NutsStoreLocation.values().length * NutsOsFamily.values().length];
-        for (int i = 0; i < homeLocations.length; i++) {
-            this.homeLocations[i] = homeLocations[i];
-        }
-        this.global = global;
-        this.gui = gui;
     }
 
-    public DefaultNutsBootContext(NutsWorkspace ws, NutsBootConfig c) {
-        this.ws = ws;
-        this.workspace = c.getWorkspace();
+    public DefaultNutsBootContext merge(NutsWorkspaceOptions c) {
+        if (c.getName() != null) {
+            this.name = c.getName();
+        }
+//        this.uuid = c.getUuid();
+//        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+        if (c.getBootRuntime() != null) {
+            this.bootRuntime = c.getBootRuntime().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        }
+//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
+//        this.bootExtensionDependencies = c.getExtensionDependencies();
+//        this.bootRepositories = c.getRepositories();
+        if (c.getBootJavaCommand() != null) {
+            this.bootJavaCommand = c.getBootJavaCommand();
+        }
+        if (c.getBootJavaOptions() != null) {
+            this.bootJavaOptions = c.getBootJavaOptions();
+        }
+        if (c.getStoreLocationStrategy() != null) {
+            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        }
+        if (c.getRepositoryStoreLocationStrategy() != null) {
+            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        }
+        if (c.getStoreLocationLayout() != null) {
+            this.storeLocationLayout = c.getStoreLocationLayout();
+        }
+        this.storeLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
+        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
+        this.global |= c.isGlobal();
+        return this;
+    }
+
+    public DefaultNutsBootContext mergeRuntime(NutsWorkspaceOptions c) {
+        if (c.getBootRuntime() != null) {
+            this.bootRuntime = c.getBootRuntime().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        }
+//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
+//        this.bootExtensionDependencies = c.getExtensionDependencies();
+//        this.bootRepositories = c.getRepositories();
+        if (c.getBootJavaCommand() != null) {
+            this.bootJavaCommand = c.getBootJavaCommand();
+        }
+        if (c.getBootJavaOptions() != null) {
+            this.bootJavaOptions = c.getBootJavaOptions();
+        }
+        return this;
+    }
+
+    public DefaultNutsBootContext build(Path workspaceLocation) {
+        if(storeLocationStrategy==null){
+            storeLocationStrategy=NutsStoreLocationStrategy.EXPLODED;
+        }
+        if(repositoryStoreLocationStrategy==null){
+            repositoryStoreLocationStrategy=NutsStoreLocationStrategy.EXPLODED;
+        }
+        Path[] homes = new Path[NutsStoreLocation.values().length];
+        for (NutsStoreLocation type : NutsStoreLocation.values()) {
+            String ss=NutsPlatformUtils.resolveHomeFolder(getStoreLocationLayout(), type, homeLocations,isGlobal(), getName());
+            if (CoreStringUtils.isBlank(ss)) {
+                throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
+            }
+            homes[type.ordinal()] = Paths.get(ss);
+        }
+        Map<String, String> storeLocations = getStoreLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(getStoreLocations());
+        for (NutsStoreLocation location : NutsStoreLocation.values()) {
+            String typeId = location.id();
+            switch (location) {
+                default: {
+                String typeLocation = storeLocations.get(typeId);
+                    if (CoreStringUtils.isBlank(typeLocation)) {
+                        switch (storeLocationStrategy) {
+                            case STANDALONE: {
+                                storeLocations.put(typeId, workspaceLocation.resolve(location.id()).toString());
+                                break;
+                            }
+                            case EXPLODED: {
+                                storeLocations.put(typeId, homes[location.ordinal()].toString());
+                                break;
+                            }
+                        }
+                    } else if (!CoreIOUtils.isAbsolutePath(typeLocation)) {
+                        switch (storeLocationStrategy) {
+                            case STANDALONE: {
+                                storeLocations.put(typeId, workspaceLocation.resolve(location.id()).toString());
+                                break;
+                            }
+                            case EXPLODED: {
+                                storeLocations.put(typeId, homes[location.ordinal()].resolve(typeLocation).toString());
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        this.storeLocations.clear();
+        this.storeLocations.putAll(storeLocations);
+        return this;
+    }
+    
+    public DefaultNutsBootContext merge(NutsWorkspaceConfig c) {
+        if (c.getName() != null) {
+            this.name = c.getName();
+        }
+//        this.uuid = c.getUuid();
+//        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+        if (c.getBootRuntime() != null) {
+            this.bootRuntime = c.getBootRuntime().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        }
+//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
+//        this.bootExtensionDependencies = c.getExtensionDependencies();
+//        this.bootRepositories = c.getRepositories();
+        if (c.getBootJavaCommand() != null) {
+            this.bootJavaCommand = c.getBootJavaCommand();
+        }
+        this.bootJavaOptions = c.getBootJavaOptions();
+        if (c.getStoreLocationStrategy() != null) {
+            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        }
+        if (c.getRepositoryStoreLocationStrategy() != null) {
+            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        }
+        if (c.getStoreLocationLayout() != null) {
+            this.storeLocationLayout = c.getStoreLocationLayout();
+        }
+        this.storeLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
+        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
+        this.global |= c.isGlobal();
+//        this.gui |= c.isGui();
+        return this;
+    }
+
+    public DefaultNutsBootContext merge(NutsBootConfig c) {
         this.name = c.getName();
-        this.uuid = c.getUuid();
-        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
-        this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
-                ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
-                : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
-        this.bootRuntimeDependencies = c.getRuntimeDependencies();
-        this.bootExtensionDependencies = c.getExtensionDependencies();
-        this.bootRepositories = c.getRepositories();
-        this.bootJavaCommand = c.getJavaCommand();
-        this.bootJavaOptions = c.getJavaOptions();
-        this.storeLocationStrategy = c.getStoreLocationStrategy();
-        this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
-        this.storeLocationLayout = c.getStoreLocationLayout();
-        this.storeLocations = c.getStoreLocations();
-        this.defaultHomeLocations = c.getDefaultHomeLocations();
-        this.homeLocations = c.getHomeLocations();
-        this.global = c.isGlobal();
-        this.gui = c.isGui();
+        if (c.getApiVersion() != null) {
+            this.bootAPI = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+        }
+        if (c.getRuntimeId() != null) {
+            this.bootRuntime = c.getRuntimeId().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
+        }
+        if (c.getRuntimeDependencies() != null) {
+            this.bootRuntimeDependencies = c.getRuntimeDependencies();
+        }
+        if (c.getExtensionDependencies() != null) {
+            this.bootExtensionDependencies = c.getExtensionDependencies();
+        }
+        if (c.getRepositories() != null) {
+            this.bootRepositories = c.getRepositories();
+        }
+        if (c.getJavaCommand() != null) {
+            this.bootJavaCommand = c.getJavaCommand();
+        }
+        if (c.getJavaOptions() != null) {
+            this.bootJavaOptions = c.getJavaOptions();
+        }
+        if (c.getStoreLocationStrategy() != null) {
+            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        }
+        if (c.getRepositoryStoreLocationStrategy() != null) {
+            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        }
+        if (c.getStoreLocationLayout() != null) {
+            this.storeLocationLayout = c.getStoreLocationLayout();
+        }
+        this.storeLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
+        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
+        this.global |= c.isGlobal();
+        return this;
     }
 
     @Override
     public String getExtensionDependencies() {
         return bootExtensionDependencies;
-    }
-    
-
-    @Override
-    public String getUuid() {
-        return uuid;
     }
 
     @Override
@@ -120,11 +226,6 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     @Override
     public boolean isGlobal() {
         return this.global;
-    }
-
-    @Override
-    public boolean isGui() {
-        return this.gui;
     }
 
     @Override
@@ -158,11 +259,6 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     @Override
-    public String getWorkspace() {
-        return workspace;
-    }
-
-    @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
@@ -173,32 +269,23 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     @Override
+    public Map<String, String> getStoreLocations() {
+        return new LinkedHashMap<>(storeLocations);
+    }
+
+    @Override
+    public Map<String, String> getHomeLocations() {
+        return new LinkedHashMap<>(homeLocations);
+    }
+
+    @Override
     public String getStoreLocation(NutsStoreLocation folderType) {
-        return storeLocations[folderType.ordinal()];
-    }
-
-    @Override
-    public String[] getStoreLocations() {
-        return Arrays.copyOf(storeLocations, storeLocations.length);
-    }
-
-    @Override
-    public String[] getHomeLocations() {
-        return Arrays.copyOf(homeLocations, homeLocations.length);
-    }
-    
-    @Override
-    public String[] getDefaultHomeLocations() {
-        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
+        return new NutsStoreLocationsMap(storeLocations).get(folderType);
     }
 
     @Override
     public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
-        if (layout == null) {
-            return this.defaultHomeLocations[folderType.ordinal()];
-        } else {
-            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()];
-        }
+        return new NutsHomeLocationsMap(homeLocations).get(layout, folderType);
     }
 
     @Override
@@ -209,33 +296,5 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     @Override
     public Path getNutsJar() {
         return ws.fetch().id(bootAPI).getResultPath();
-//        try {
-//            NutsId baseId = ws.id().parseRequiredId(NutsConstants.Ids.NUTS_API);
-//            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
-//            URL resource = Nuts.class.getResource(urlPath);
-//            if (resource != null) {
-//                URL runtimeURL = CoreIOUtils.resolveURLFromResource(Nuts.class, urlPath);
-//                return CoreIOUtils.resolveLocalPathFromURL(runtimeURL);
-//            }
-//        } catch (Exception e) {
-//            //e.printStackTrace();
-//        }
-//        // This will happen when running app from  nuts dev project so that classes folder is considered as
-//        // binary class path instead of a single jar file.
-//        // In that case we will gather nuts from maven .m2 repository
-//        PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
-//        if (m != null) {
-//            Path f = ws.io().path(System.getProperty("user.home"), ".m2", "repository", m.getGroupId().replace('.', '/'), m.getArtifactId(), m.getVersion(),
-//                    ws.config().getDefaultIdFilename(
-//                            ws.idBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
-//                                    .setFaceComponent()
-//                                    .setPackaging("jar")
-//                                    .build()
-//                    ));
-//            if (Files.exists(f)) {
-//                return f;
-//            }
-//        }
-//        return null;
     }
 }

@@ -34,13 +34,18 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsRepositoryAmbiguousException extends NutsElementAlreadyDefinedException {
+public abstract class NutsExtensionException extends NutsException {
 
-    public NutsRepositoryAmbiguousException(NutsWorkspace workspace, String s) {
-        super(workspace, s);
+    private final String id;
+
+    public NutsExtensionException(NutsWorkspace workspace, String id, String message, Throwable ex) {
+        super(workspace,
+                PrivateNutsUtils.isBlank(message)
+                ? ("extension " + (id == null ? "<null>" : id) + " has encountred problem") : message, ex);
+        this.id = id;
     }
 
-    public NutsRepositoryAmbiguousException(NutsWorkspace workspace) {
-        super(workspace, "Too many repositories match criteria");
+    public String getId() {
+        return id;
     }
 }

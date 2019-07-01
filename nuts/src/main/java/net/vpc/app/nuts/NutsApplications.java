@@ -57,7 +57,7 @@ public class NutsApplications {
             return 0;
         }
         int errorCode = 204;
-        boolean showTrace = NutsUtilsLimited.getSysBoolNutsProperty("debug", false);
+        boolean showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
 
         if (!showTrace && args != null) {
             for (String arg : args) {

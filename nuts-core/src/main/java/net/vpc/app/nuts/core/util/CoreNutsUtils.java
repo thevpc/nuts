@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import java.io.File;
+import java.io.IOException;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -417,7 +419,7 @@ public class CoreNutsUtils {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE);
     }
-    
+
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
@@ -482,17 +484,14 @@ public class CoreNutsUtils {
     }
 
     public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
-        bconfig.setStoreLocations(nonNullIfEmpty(wconfig.getStoreLocations(), NutsStoreLocation.values().length));
-        bconfig.setDefaultHomeLocations(nonNullIfEmpty(wconfig.getDefaultHomeLocations(), NutsStoreLocation.values().length));
-        bconfig.setHomeLocations(nonNullIfEmpty(wconfig.getHomeLocations(), NutsStoreLocation.values().length * NutsOsFamily.values().length));
+        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
+        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());
     }
 
-    public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
-        wconfig.setStoreLocations(nullIfEmpty(wconfig.getStoreLocations(), NutsStoreLocation.values().length));
-        wconfig.setDefaultHomeLocations(nullIfEmpty(wconfig.getDefaultHomeLocations(), NutsStoreLocation.values().length));
-        wconfig.setHomeLocations(nullIfEmpty(wconfig.getHomeLocations(), NutsStoreLocation.values().length * NutsOsFamily.values().length));
-    }
-
+//    public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
+//        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
+//        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
+//    }
     public static void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
         String timeMessage = "";
         if (startTime != 0) {
@@ -550,12 +549,12 @@ public class CoreNutsUtils {
             x.put("cached", def.getContent().isCached());
             x.put("temporary", def.getContent().isTemporary());
         }
-        if (def.getInstallation() != null) {
-            if (def.getInstallation().getInstallFolder() != null) {
-                x.put("install-folder", def.getInstallation().getInstallFolder().toString());
+        if (def.getInstallInformation() != null) {
+            if (def.getInstallInformation().getInstallFolder() != null) {
+                x.put("install-folder", def.getInstallInformation().getInstallFolder().toString());
             }
-            x.put("installed", def.getInstallation().isInstalled());
-            x.put("just-installed", def.getInstallation().isJustInstalled());
+            x.put("installed", def.getInstallInformation().isInstalled());
+            x.put("just-installed", def.getInstallInformation().isJustInstalled());
         }
         if (def.getRepositoryName() != null) {
             x.put("repository-name", def.getRepositoryName());
@@ -672,7 +671,15 @@ public class CoreNutsUtils {
         return pattern.getLongName().equals(id.getLongName());
     }
 
-    public static String[] nullIfEmpty(String[] a, int size) {
+    public static String[] nullArray_Locations(String[] a) {
+        return nullArray(a, NutsStoreLocation.values().length);
+    }
+
+    public static String[] nullArray_LocationsAndOses(String[] a) {
+        return nullArray(a, NutsStoreLocation.values().length * NutsOsFamily.values().length);
+    }
+
+    public static String[] nullArray(String[] a, int size) {
         if (a == null) {
             return null;
         }
@@ -698,7 +705,15 @@ public class CoreNutsUtils {
         return (a == null || a.length <= index) ? null : a[index];
     }
 
-    public static String[] nonNullIfEmpty(String[] a, int size) {
+    public static String[] nonNullArray_Locations(String[] a) {
+        return nonNullArray(a, NutsStoreLocation.values().length);
+    }
+
+    public static String[] nonNullArray_LocationsAndOses(String[] a) {
+        return nonNullArray(a, NutsStoreLocation.values().length * NutsOsFamily.values().length);
+    }
+
+    public static String[] nonNullArray(String[] a, int size) {
         if (a == null) {
             return new String[size];
         }
@@ -730,6 +745,7 @@ public class CoreNutsUtils {
             throw new NutsElementNotFoundException(null, "Missing group for " + id);
         }
     }
+
     public static void checkId_GNV(NutsId id) {
         if (id == null) {
             throw new NutsElementNotFoundException(null, "Missing id");
@@ -741,4 +757,42 @@ public class CoreNutsUtils {
             throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
         }
     }
+
+    public static boolean isValidWorkspaceName(String workspace) {
+        if (CoreStringUtils.isBlank(workspace)) {
+            return true;
+        }
+        String workspaceName = workspace.trim();
+        if (workspaceName.matches("[^/\\\\]+")
+                && !workspaceName.equals(".")
+                && !workspaceName.equals("..")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String resolveValidWorkspaceName(String workspace) {
+        if (CoreStringUtils.isBlank(workspace)) {
+            return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+        }
+        String workspaceName = workspace.trim();
+        if (workspaceName.matches("[^/\\\\]+")
+                && !workspaceName.equals(".")
+                && !workspaceName.equals("..")) {
+            return workspaceName;
+        } else {
+            String p = null;
+            try {
+                p = new File(workspaceName).getCanonicalFile().getName();
+            } catch (IOException ex) {
+                p = new File(workspaceName).getAbsoluteFile().getName();
+            }
+            if (p.isEmpty() || p.equals(".") || p.equals("..")) {
+                return "unknown";
+            }
+            return p;
+        }
+    }
+
 }

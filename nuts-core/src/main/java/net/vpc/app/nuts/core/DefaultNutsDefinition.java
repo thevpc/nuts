@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
 import java.util.Objects;
+import javax.swing.JOptionPane;
 import net.vpc.app.nuts.*;
 
 /**
@@ -40,22 +41,24 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     private NutsId id;
     private NutsDescriptor descriptor;
-    private NutsDescriptor effectiveDescriptor;
-    private NutsContent content;
-    private NutsInstallInfo installation;
     private String repositoryUuid;
     private String repositoryName;
+
+    //optional 
+    private NutsContent content;
+    private NutsInstallInformation installInformation;
     private NutsDependencyTreeNode[] dependencyNodes;
     private NutsDependency[] dependencies;
+    private NutsDescriptor effectiveDescriptor;
 
     public DefaultNutsDefinition() {
     }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
-        this.installation = install;
+        this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
     }
@@ -63,13 +66,41 @@ public class DefaultNutsDefinition implements NutsDefinition {
     public DefaultNutsDefinition(NutsDefinition other) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
-            this.content = other.getContent();
             this.id = other.getId();
-            this.installation = other.getInstallation();
             this.repositoryUuid = other.getRepositoryUuid();
             this.repositoryName = other.getRepositoryName();
-            this.effectiveDescriptor = other.getEffectiveDescriptor();
+
+            this.content = !other.isSetContent() ? null : other.getContent();
+            this.installInformation = !other.isSetInstallInformation() ? null : other.getInstallInformation();
+            this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
+            this.dependencyNodes = !other.isSetDependencyNodes() ? null : other.getDependencyNodes();
+            this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
         }
+    }
+
+    @Override
+    public boolean isSetContent() {
+        return content != null;
+    }
+
+    @Override
+    public boolean isSetInstallInformation() {
+        return installInformation != null;
+    }
+
+    @Override
+    public boolean isSetDependencyNodes() {
+        return dependencyNodes != null;
+    }
+
+    @Override
+    public boolean isSetDependencies() {
+        return dependencies != null;
+    }
+
+    @Override
+    public boolean isSetEffectiveDescriptor() {
+        return effectiveDescriptor != null;
     }
 
     @Override
@@ -99,10 +130,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return descriptor;
     }
 
-    public Path getFile() {
-        return content == null ? null : content.getPath();
-    }
-
     @Override
     public String toString() {
         return "Definition{"
@@ -117,12 +144,47 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public Path getPath() {
-        return content == null ? null : content.getPath();
+        return getContent().getPath();
     }
 
     @Override
     public NutsContent getContent() {
+        if (!isSetContent()) {
+            throw new NutsException(null, "Unable to get content. You need to call search.content(...) first.");
+        }
         return content;
+    }
+
+    @Override
+    public NutsDescriptor getEffectiveDescriptor() {
+        if (!isSetEffectiveDescriptor()) {
+            throw new NutsException(null, "Unable to get effectiveDescriptor. You need to call search.effective(...) first.");
+        }
+        return effectiveDescriptor;
+    }
+
+    @Override
+    public NutsInstallInformation getInstallInformation() {
+        if (!isSetInstallInformation()) {
+            throw new NutsException(null, "Unable to get content. You need to call search.installInformation(...) first.");
+        }
+        return installInformation;
+    }
+
+    @Override
+    public NutsDependencyTreeNode[] getDependencyNodes() {
+        if (!isSetDependencyNodes()) {
+            throw new NutsException(null, "Unable to get dependencyNodes. You need to call search.dependencyNodes(...) first.");
+        }
+        return dependencyNodes;
+    }
+
+    @Override
+    public NutsDependency[] getDependencies() {
+        if (!isSetDependencies()) {
+            throw new NutsException(null, "Unable to get dependencies. You need to call search.dependencies(...) first.");
+        }
+        return this.dependencies;
     }
 
     public void setContent(NutsContent content) {
@@ -131,11 +193,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     public void setDescriptor(NutsDescriptor descriptor) {
         this.descriptor = descriptor;
-    }
-
-    @Override
-    public NutsDescriptor getEffectiveDescriptor() {
-        return effectiveDescriptor;
     }
 
     @Override
@@ -189,18 +246,8 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.effectiveDescriptor = effectiveDescriptor;
     }
 
-    public void setInstallation(NutsInstallInfo install) {
-        this.installation = install;
-    }
-
-    @Override
-    public NutsInstallInfo getInstallation() {
-        return installation;
-    }
-
-    @Override
-    public NutsDependencyTreeNode[] getDependencyNodes() {
-        return dependencyNodes;
+    public void setInstallInformation(NutsInstallInformation install) {
+        this.installInformation = install;
     }
 
     public void setDependencyNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
@@ -211,10 +258,5 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.dependencies = dependencies;
     }
 
-    @Override
-    public NutsDependency[] getDependencies() {
-        return this.dependencies;
-    }
-    
 
 }

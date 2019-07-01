@@ -29,26 +29,56 @@
  */
 package net.vpc.app.nuts;
 
-import java.nio.file.Path;
-import java.time.Instant;
-
 /**
+ * Created by vpc on 1/15/17.
  *
- * @author vpc
- * @since 0.5.5
+ * @since 0.5.4
  */
-public interface NutsInstallInfo {
+public class NutsInstallException extends NutsInstallationException {
 
-    boolean isInstalled();
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     */
+    public NutsInstallException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
+    }
 
-    Instant getInstallDate();
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     */
+    public NutsInstallException(NutsWorkspace workspace, String id) {
+        this(workspace, id, null, null);
+    }
 
-    boolean isDefaultVersion();
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsInstallException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+        this(workspace, id == null ? null : id.toString(), msg, ex);
+    }
 
-    Path getInstallFolder();
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsInstallException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Unable to install " + (id == null ? "<null>" : id) : msg, ex);
+    }
 
-    boolean isJustInstalled();
-
-    String getInstallUser();
-
+    
 }

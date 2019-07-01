@@ -30,29 +30,21 @@
 package net.vpc.app.nuts;
 
 /**
+ * Created by vpc on 1/15/17.
  *
- * @author vpc
  * @since 0.5.4
  */
-public class NutsElementAlreadyDefinedException extends NutsException {
+public class NutsExtensionNotFoundException extends NutsExtensionException {
 
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace) {
-        super(workspace);
+    private final Class missingType;
+
+    public NutsExtensionNotFoundException(NutsWorkspace workspace, Class missingType, String extensionName) {
+        super(workspace, null, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.", null);
+        this.missingType = missingType;
     }
 
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public Class getMissingType() {
+        return missingType;
     }
 
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
-    }
-
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
-    }
-
-    public NutsElementAlreadyDefinedException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
-    }
 }

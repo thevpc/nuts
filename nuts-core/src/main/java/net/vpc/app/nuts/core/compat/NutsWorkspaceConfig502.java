@@ -660,44 +660,40 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         c.setBootRuntimeDependencies(bootRuntimeDependencies);
         c.setCommandFactories(commandFactories);
 //         c.setCreateApiVersion(createApiVersion);
-        c.setDefaultHomeLocations(new String[]{
-            programsSystemHome,
-            configSystemHome,
-            varSystemHome,
-            libSystemHome,
-            logsSystemHome,
-            tempSystemHome,
-            cacheSystemHome,
-            null //run
-        });
-        c.setStoreLocations(new String[]{
-            programsStoreLocation,
-            configStoreLocation,
-            varStoreLocation,
-            libStoreLocation,
-            logsStoreLocation,
-            tempStoreLocation,
-            cacheStoreLocation,
-            null //run
-        });
-        c.setHomeLocations(new String[]{
-            programsWindowsHome,
-            configWindowsHome,
-            varWindowsHome,
-            libWindowsHome,
-            logsWindowsHome,
-            tempWindowsHome,
-            cacheWindowsHome,
-            null, //run
-            programsLinuxHome,
-            configLinuxHome,
-            varLinuxHome,
-            libLinuxHome,
-            logsLinuxHome,
-            tempLinuxHome,
-            cacheLinuxHome,
-            null, //run
-        });
+        Map<String,String> storeLocations=new LinkedHashMap<>();
+        storeLocations.put("apps", programsStoreLocation);
+        storeLocations.put("config", configStoreLocation);
+        storeLocations.put("var", varStoreLocation);
+        storeLocations.put("lib", libStoreLocation);
+        storeLocations.put("log", logsStoreLocation);
+        storeLocations.put("temp", tempStoreLocation);
+        storeLocations.put("cache", cacheStoreLocation);
+        
+        Map<String,String> homeLocations=new LinkedHashMap<>();
+        homeLocations.put("system:apps", programsSystemHome);
+        homeLocations.put("system:config", configSystemHome);
+        homeLocations.put("system:var", varSystemHome);
+        homeLocations.put("system:lib", libSystemHome);
+        homeLocations.put("system:log", logsSystemHome);
+        homeLocations.put("system:temp", tempSystemHome);
+        homeLocations.put("system:cache", cacheSystemHome);
+        
+        homeLocations.put("windows:apps", programsWindowsHome);
+        homeLocations.put("windows:config", configWindowsHome);
+        homeLocations.put("windows:var", varWindowsHome);
+        homeLocations.put("windows:lib", libWindowsHome);
+        homeLocations.put("windows:log", logsWindowsHome);
+        homeLocations.put("windows:temp", tempWindowsHome);
+        homeLocations.put("windows:cache", cacheWindowsHome);
+        
+        homeLocations.put("linux:apps", programsWindowsHome);
+        homeLocations.put("linux:config", configWindowsHome);
+        homeLocations.put("linux:var", varWindowsHome);
+        homeLocations.put("linux:lib", libWindowsHome);
+        homeLocations.put("linux:log", logsWindowsHome);
+        homeLocations.put("linux:temp", tempWindowsHome);
+        homeLocations.put("linux:cache", cacheWindowsHome);
+        
         c.setGlobal(global);
         c.setEnv(env);
         c.setExtensions(extensions);

@@ -12,6 +12,7 @@ import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallEvent;
+import net.vpc.app.nuts.NutsInstallListener;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -80,6 +81,10 @@ public interface NutsWorkspaceExt {
 
     void fireOnRemoveRepository(NutsWorkspaceEvent event);
 
+    void fireOnInstall(NutsInstallEvent event);
+
+    void fireOnUpdate(NutsInstallEvent event) ;
+    
     void fireOnUninstall(NutsInstallEvent event);
     
     public void deployBoot(NutsSession session, NutsId def,boolean withDependencies);

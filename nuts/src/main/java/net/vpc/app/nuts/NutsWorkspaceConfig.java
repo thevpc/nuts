@@ -76,10 +76,8 @@ public final class NutsWorkspaceConfig implements Serializable {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file eventhough no json library is available
     // via simple regexp
-    private String[] storeLocations = null;
-    private String[] homeLocations = null;
-
-    private String[] defaultHomeLocations = null;
+    private Map<String, String> storeLocations = null;
+    private Map<String, String> homeLocations = null;
 
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -251,30 +249,21 @@ public final class NutsWorkspaceConfig implements Serializable {
         return commandFactories;
     }
 
-    public NutsWorkspaceConfig setStoreLocations(String[] storeLocations) {
+    public NutsWorkspaceConfig setStoreLocations(Map<String, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
 
-    public String[] getStoreLocations() {
+    public Map<String, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public String[] getHomeLocations() {
+    public Map<String, String> getHomeLocations() {
         return homeLocations;
     }
 
-    public NutsWorkspaceConfig setHomeLocations(String[] homeLocations) {
+    public NutsWorkspaceConfig setHomeLocations(Map<String, String> homeLocations) {
         this.homeLocations = homeLocations;
-        return this;
-    }
-
-    public String[] getDefaultHomeLocations() {
-        return defaultHomeLocations;
-    }
-
-    public NutsWorkspaceConfig setDefaultHomeLocations(String[] defaultHomeLocations) {
-        this.defaultHomeLocations = defaultHomeLocations;
         return this;
     }
 

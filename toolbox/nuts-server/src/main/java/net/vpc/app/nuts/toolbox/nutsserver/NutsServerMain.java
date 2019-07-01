@@ -138,7 +138,7 @@ public class NutsServerMain extends NutsApplication {
                             } else {
                                 nutsWorkspace = allWorkspaces.get(entry.getValue());
                                 if (nutsWorkspace == null) {
-                                    nutsWorkspace = context.getWorkspace().openWorkspace(
+                                    nutsWorkspace = Nuts.openWorkspace(
                                             new NutsWorkspaceOptions()
                                                     .setWorkspace(entry.getValue())
                                                     .setOpenMode(autocreate ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)

@@ -99,7 +99,7 @@ public class LinuxNdi implements SystemNdi {
         NutsId b = context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
-                .id(b).setOptional(false).latest().getResultDefinitions().required();
+                .id(b).setOptional(false).latest().content().getResultDefinitions().required();
         Path ff = getScriptFile("nuts");
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {

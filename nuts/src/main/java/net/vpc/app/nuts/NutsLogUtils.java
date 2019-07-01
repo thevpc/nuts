@@ -46,12 +46,12 @@ import java.util.logging.Formatter;
  */
 public final class NutsLogUtils {
 
-    private static boolean verboseLog = NutsUtilsLimited.getSysBoolNutsProperty("log.verbose", false);
+    private static boolean verboseLog = PrivateNutsUtils.getSysBoolNutsProperty("log.verbose", false);
     public static final Formatter LOG_FORMATTER = new LogFormatter();
     public static final Filter NUTS_LOG_FILTER = new Filter() {
         @Override
         public boolean isLoggable(LogRecord record) {
-            String loggerName = record == null ? "" : NutsUtilsLimited.trim(record.getLoggerName());
+            String loggerName = record == null ? "" : PrivateNutsUtils.trim(record.getLoggerName());
             return loggerName.startsWith("net.vpc.app.nuts");
         }
     };
@@ -89,10 +89,10 @@ public final class NutsLogUtils {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (name == null || NutsUtilsLimited.isBlank(name)) {
+        if (name == null || PrivateNutsUtils.isBlank(name)) {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
-        if (folder == null || NutsUtilsLimited.isBlank(folder)) {
+        if (folder == null || PrivateNutsUtils.isBlank(folder)) {
             folder = defaultLogFolder;
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);

@@ -39,7 +39,7 @@ import java.util.NoSuchElementException;
  * @author vpc
  * @since 0.5.5
  */
-class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument {
+class PrivateNutsArgument extends PrivateNutsTokenFilter implements NutsArgument {
 
     /**
      * equal character
@@ -52,7 +52,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
      * @param expression expression
      * @param eq equals
      */
-    public NutsArgumentLimited(String expression, char eq) {
+    public PrivateNutsArgument(String expression, char eq) {
         super(expression);
         this.eq = eq;
     }
@@ -112,21 +112,21 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
                 }
                 case '!': {
                     sb.append(p.substring(i + 1));
-                    return new NutsArgumentLimited(sb.toString(), eq);
+                    return new PrivateNutsArgument(sb.toString(), eq);
                 }
                 case '/': {
                     if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
                         sb.append(p.substring(i + 2));
-                        return new NutsArgumentLimited(sb.toString(), eq);
+                        return new PrivateNutsArgument(sb.toString(), eq);
                     }
                 }
                 default: {
-                    return new NutsArgumentLimited(p, eq);
+                    return new PrivateNutsArgument(p, eq);
                 }
             }
             i++;
         }
-        return new NutsArgumentLimited(p, eq);
+        return new PrivateNutsArgument(p, eq);
     }
 
     @Override
@@ -136,9 +136,9 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
         }
         int x = expression.indexOf(eq);
         if (x >= 0) {
-            return new NutsArgumentLimited(expression.substring(x + 1), eq);
+            return new PrivateNutsArgument(expression.substring(x + 1), eq);
         }
-        return new NutsArgumentLimited(null, eq);
+        return new PrivateNutsArgument(null, eq);
     }
 
     @Override
@@ -241,7 +241,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public int getInt() {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             throw new NumberFormatException("Missing value");
         }
         return Integer.parseInt(expression);
@@ -249,7 +249,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public int getInt(int defaultValue) {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             return defaultValue;
         }
         try {
@@ -274,7 +274,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public long getLong() {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             throw new NumberFormatException("Missing value");
         }
         return Long.parseLong(expression);
@@ -282,7 +282,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public long getLong(long defaultValue) {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             return defaultValue;
         }
         try {
@@ -307,7 +307,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public double getDouble() {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             throw new NumberFormatException("Missing value");
         }
         return Double.parseDouble(expression);
@@ -315,7 +315,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public double getDouble(double defaultValue) {
-        if (NutsUtilsLimited.isBlank(expression)) {
+        if (PrivateNutsUtils.isBlank(expression)) {
             return defaultValue;
         }
         try {
@@ -327,7 +327,7 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public boolean getBoolean() {
-        Boolean b = NutsUtilsLimited.parseBoolean(expression, false);
+        Boolean b = PrivateNutsUtils.parseBoolean(expression, false);
         if (isNegated()) {
             return !b;
         }
@@ -336,12 +336,12 @@ class NutsArgumentLimited extends NutsTokenFilterLimited implements NutsArgument
 
     @Override
     public boolean isBoolean() {
-        return NutsUtilsLimited.parseBoolean(expression, null) != null;
+        return PrivateNutsUtils.parseBoolean(expression, null) != null;
     }
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        return NutsUtilsLimited.parseBoolean(expression, defaultValue);
+        return PrivateNutsUtils.parseBoolean(expression, defaultValue);
     }
 
     @Override

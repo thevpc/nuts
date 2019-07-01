@@ -44,11 +44,11 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.common.ClassMap;
 import org.w3c.dom.Node;
 import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsInstallInfo;
 import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.json.NutsElementFactoryJsonElement;
 import net.vpc.app.nuts.core.format.xml.NutsElementFactoryXmlDocument;
+import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
@@ -258,7 +258,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     x.put("cached", content.isCached());
                     x.put("temporary", content.isTemporary());
                 }
-                NutsInstallInfo installation = def.getInstallation();
+                NutsInstallInformation installation = def.getInstallInformation();
                 if (installation != null) {
                     if (installation.getInstallFolder() != null) {
                         x.put("install-folder", installation.getInstallFolder().toString());

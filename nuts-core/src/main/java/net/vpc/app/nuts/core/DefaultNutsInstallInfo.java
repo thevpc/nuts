@@ -32,14 +32,14 @@ package net.vpc.app.nuts.core;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Date;
-import net.vpc.app.nuts.NutsInstallInfo;
+import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
  * @author vpc
  * @since 0.5.5
  */
-public class DefaultNutsInstallInfo implements NutsInstallInfo {
+public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     private final boolean installed;
     private boolean justInstalled;

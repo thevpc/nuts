@@ -58,7 +58,7 @@ public class Test03_CreateLayoutLinuxTest {
             "--yes", "--trace",
             "info"
         });
-        
+
         Nuts.runWorkspace(new String[]{
             "--system-apps-home", new File(base, "system.apps").getPath(),
             "--system-config-home", new File(base, "system.config").getPath(),
@@ -75,7 +75,7 @@ public class Test03_CreateLayoutLinuxTest {
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "system.config/default-workspace/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "system.config/default-workspace/" + NutsConstants.Folders.ID + "/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -87,7 +87,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(base, "system.cache/default-workspace/"+NutsConstants.Folders.ID), x -> x.isDirectory()).size()
+                listNamesSet(new File(base, "system.cache/default-workspace/" + NutsConstants.Folders.ID), x -> x.isDirectory()).size()
         );
 //        for (String f : TestUtils.NUTS_STD_FOLDERS) {
 //            Assert.assertFalse(new File(f).exists());
@@ -98,7 +98,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-    @Test
+//    @Test
     public void customLayout_use_standalone() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
@@ -106,13 +106,13 @@ public class Test03_CreateLayoutLinuxTest {
         System.out.println("Deleting " + base);
         CoreIOUtils.delete(base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--reset","--debug","--workspace", base.getPath(), "--standalone", "--yes", "info"});
+        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--reset", "--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info"});
         Path c = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
         System.out.println(c);
         System.out.println(new File(base, "config").getPath());
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(base, "/config/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "/config/" + NutsConstants.Folders.ID + "/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -124,7 +124,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 createNamesSet("com", "net", "org"),
-                listNamesSet(new File(base, "cache/"+NutsConstants.Folders.ID), x -> x.isDirectory())
+                listNamesSet(new File(base, "cache/" + NutsConstants.Folders.ID), x -> x.isDirectory())
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
             Assert.assertFalse(f + " should not exist", new File(f).exists());
@@ -135,14 +135,14 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
     }
 
-    @Test
+//    @Test
     public void customLayout_use_standard() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
         Nuts.runWorkspace(new String[]{"--verbose", "--yes", "info"});
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nsh"),
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/"+NutsConstants.Folders.ID+"/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/" + NutsConstants.Folders.ID + "/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 NSH_BUILTINS,
@@ -154,7 +154,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assert.assertEquals(
                 3,
-                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/"+NutsConstants.Folders.ID), x -> x.isDirectory()).size()
+                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/" + NutsConstants.Folders.ID), x -> x.isDirectory()).size()
         );
 //        Assert.assertEquals(
 //                false,
@@ -164,14 +164,12 @@ public class Test03_CreateLayoutLinuxTest {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            TestUtils.STASH.saveIfExists(new File(f));
-        }
+        TestUtils.stashLinuxFolders();
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        TestUtils.STASH.restoreAll();
+        TestUtils.unstashLinuxFolders();
     }
 
     @Before

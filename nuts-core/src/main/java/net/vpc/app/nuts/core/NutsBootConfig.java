@@ -27,10 +27,18 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import net.vpc.app.nuts.NutsBootContext;
+import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsOsFamily;
+import net.vpc.app.nuts.NutsStoreLocationStrategy;
+import net.vpc.app.nuts.NutsUnexpectedException;
+import net.vpc.app.nuts.NutsWorkspaceOptions;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Nuts Boot editable configuration object
@@ -39,11 +47,6 @@ import java.util.Arrays;
  * @since 0.5.4
  */
 public final class NutsBootConfig implements Cloneable, Serializable {
-
-    /**
-     * workspace uuid
-     */
-    private String uuid;
 
     /**
      * workspace name
@@ -112,20 +115,14 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     private boolean global;
 
     /**
-     * when true enable Desktop GUI components if available
-     */
-    private boolean gui;
-
-    /**
      * workspace store locations
      */
-    private String[] storeLocations = new String[NutsStoreLocation.values().length];
+    private Map<String, String> storeLocations;
     /**
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
      */
-    private String[] homeLocations = new String[NutsStoreLocation.values().length * NutsOsFamily.values().length];
-    private String[] defaultHomeLocations = new String[NutsStoreLocation.values().length];
+    private Map<String, String> homeLocations;
 
     public NutsBootConfig() {
     }
@@ -137,21 +134,18 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.setStoreLocationStrategy(options.getStoreLocationStrategy());
             this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
             this.setStoreLocationLayout(options.getStoreLocationLayout());
-            this.storeLocations = options.getStoreLocations();
-            this.homeLocations = options.getHomeLocations();
-            this.defaultHomeLocations = options.getDefaultHomeLocations();
+            this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
+            this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
             this.setRuntimeId(options.getBootRuntime());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getRepositories());
             this.global = options.isGlobal();
-            this.gui = options.isGui();
             this.runtimeId = options.getBootRuntime();
         }
     }
 
     public NutsBootConfig(NutsBootContext context) {
         if (context != null) {
-            this.uuid = context.getUuid();
             this.name = context.getName();
             this.apiVersion = context.getApiId().getVersion().getValue();
             this.runtimeId = context.getRuntimeId().getLongName();
@@ -160,19 +154,17 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.repositories = context.getRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
-            this.storeLocations = context.getStoreLocations();
-            this.homeLocations = context.getHomeLocations();
+            this.storeLocations = new LinkedHashMap<>(context.getStoreLocations());
+            this.homeLocations = new LinkedHashMap<>(context.getHomeLocations());
             this.storeLocationStrategy = context.getStoreLocationStrategy();
             this.repositoryStoreLocationStrategy = context.getRepositoryStoreLocationStrategy();
             this.storeLocationLayout = context.getStoreLocationLayout();
             this.global = context.isGlobal();
-            this.gui = context.isGui();
         }
     }
 
     public NutsBootConfig(NutsBootConfig other) {
         if (other != null) {
-            this.uuid = other.getUuid();
             this.name = other.getName();
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
@@ -181,12 +173,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.repositories = other.getRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
-            this.storeLocations = Arrays.copyOf(other.storeLocations, other.storeLocations.length);
-            this.homeLocations = Arrays.copyOf(other.homeLocations, other.homeLocations.length);
+            this.storeLocations = other.storeLocations == null ? null : new LinkedHashMap<>(other.storeLocations);
+            this.homeLocations = other.homeLocations == null ? null : new LinkedHashMap<>(other.homeLocations);
             this.storeLocationStrategy = other.getStoreLocationStrategy();
             this.storeLocationLayout = other.getStoreLocationLayout();
             this.global = other.isGlobal();
-            this.gui = other.isGui();
         }
     }
 
@@ -196,14 +187,6 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public String getApiVersion() {
@@ -276,8 +259,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     public NutsBootConfig copy() {
         try {
             NutsBootConfig p = (NutsBootConfig) clone();
-            p.storeLocations = p.storeLocations == null ? null : Arrays.copyOf(p.storeLocations, p.storeLocations.length);
-            p.homeLocations = p.homeLocations == null ? null : Arrays.copyOf(p.homeLocations, p.homeLocations.length);
+            p.storeLocations = p.storeLocations == null ? null : new LinkedHashMap<>(p.storeLocations);
+            p.homeLocations = p.homeLocations == null ? null : new LinkedHashMap<>(p.homeLocations);
 
             return p;
         } catch (CloneNotSupportedException e) {
@@ -307,48 +290,38 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return storeLocationLayout;
     }
 
-    public NutsBootConfig setStoreLocation(NutsStoreLocation folder, String value) {
-        this.storeLocations[folder.ordinal()] = value;
-        return this;
-    }
-
-    public String getStoreLocation(NutsStoreLocation folder) {
-        return this.storeLocations[folder.ordinal()];
-    }
-
-    public void setDefaultHomeLocations(String[] defaultHomeLocations) {
-        this.defaultHomeLocations = defaultHomeLocations;
-    }
-
-    public void setStoreLocations(String[] storeLocations) {
+//    public NutsBootConfig setStoreLocation(NutsStoreLocation folder, String value) {
+//        this.storeLocations[folder.ordinal()] = value;
+//        return this;
+//    }
+//
+//    public String getStoreLocation(NutsStoreLocation folder) {
+//        return this.storeLocations[folder.ordinal()];
+//    }
+    public void setStoreLocations(Map<String, String> storeLocations) {
         this.storeLocations = storeLocations;
     }
 
-    public void setHomeLocations(String[] homeLocations) {
+    public void setHomeLocations(Map<String, String> homeLocations) {
         this.homeLocations = homeLocations;
     }
 
-    public String[] getStoreLocation() {
-        return this.storeLocations;
-    }
-
-    public NutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
-        if (layout == null) {
-            this.defaultHomeLocations[folder.ordinal()] = value;
-        } else {
-            this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
-        }
-        return this;
-    }
-
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
-        if (layout == null) {
-            return this.defaultHomeLocations[folder.ordinal()];
-        } else {
-            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
-        }
-    }
-
+//    public NutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
+//        if (layout == null) {
+//            this.defaultHomeLocations[folder.ordinal()] = value;
+//        } else {
+//            this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+//        }
+//        return this;
+//    }
+//
+//    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
+//        if (layout == null) {
+//            return this.defaultHomeLocations[folder.ordinal()];
+//        } else {
+//            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
+//        }
+//    }
     public NutsBootConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
@@ -363,92 +336,77 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String[] getStoreLocations() {
-        return Arrays.copyOf(storeLocations, storeLocations.length);
+    public Map<String, String> getStoreLocations() {
+        return storeLocations;
     }
 
-    public String[] getHomeLocations() {
-        return Arrays.copyOf(homeLocations, homeLocations.length);
-    }
-
-    public String[] getDefaultHomeLocations() {
-        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
+    public Map<String, String> getHomeLocations() {
+        return homeLocations;
     }
 
     public boolean isGlobal() {
         return global;
     }
 
-    public boolean isGui() {
-        return gui;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!NutsUtilsLimited.isBlank(apiVersion)) {
+        if (!CoreStringUtils.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(runtimeId)) {
+        if (!CoreStringUtils.isBlank(runtimeId)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(runtimeDependencies)) {
+        if (!CoreStringUtils.isBlank(runtimeDependencies)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(repositories)) {
+        if (!CoreStringUtils.isBlank(repositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("repositories='").append(repositories).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(javaCommand)) {
+        if (!CoreStringUtils.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(javaOptions)) {
+        if (!CoreStringUtils.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!NutsUtilsLimited.isBlank(workspace)) {
+        if (!CoreStringUtils.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("workspace='").append(workspace).append('\'');
         }
-        for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            String s = getStoreLocation(value);
-            if (!NutsUtilsLimited.isBlank(s)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append(value.name().toLowerCase()).append("StoreLocation='").append(s).append('\'');
+        if (storeLocations != null && !storeLocations.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
             }
-        }
-        for (NutsOsFamily value : NutsOsFamily.values()) {
-            for (NutsStoreLocation value1 : NutsStoreLocation.values()) {
-                String s = getHomeLocation(value, value1);
-                if (!NutsUtilsLimited.isBlank(s)) {
-                    if (sb.length() > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(value1.name().toLowerCase()).append(NutsUtilsLimited.capitalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
-                }
-            }
-        }
+            sb.append("storeLocations=").append(storeLocations);
 
+        }
+        if (homeLocations != null && !homeLocations.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("homeLocations=").append(homeLocations);
+
+        }
         if (storeLocationStrategy != null) {
             if (sb.length() > 0) {
                 sb.append(", ");

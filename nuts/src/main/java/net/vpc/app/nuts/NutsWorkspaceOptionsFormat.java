@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -108,30 +109,16 @@ public class NutsWorkspaceOptionsFormat {
     }
 
     public String getBootCommandLine() {
-        return NutsUtilsLimited.escapeArguments(getBootCommand());
+        return PrivateNutsUtils.escapeArguments(getBootCommand());
     }
 
     public String[] getBootCommand() {
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
-            String[] homeLocations = options.getHomeLocations();
-            for (int i = 0; i < NutsOsFamily.values().length; i++) {
-                for (int j = 0; j < NutsStoreLocation.values().length; j++) {
-                    String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    if (!NutsUtilsLimited.isBlank(s)) {
-                        NutsOsFamily layout = NutsOsFamily.values()[i];
-                        NutsStoreLocation folder = NutsStoreLocation.values()[j];
-                        //config is exported!
-                        if ((folder == NutsStoreLocation.CONFIG)) {
-                            fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments, false);
-                        }
-                    }
-                }
-            }
             fillOption("--boot-runtime", null, options.getBootRuntime(), arguments, false);
             fillOption("--java", "-j", options.getBootJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getBootJavaOptions(), arguments, false);
-            fillOption("--workspace", "-w", NutsUtilsLimited.isBlank(options.getWorkspace()) ? "" : NutsUtilsLimited.getAbsolutePath(options.getWorkspace()), arguments, false);
+            fillOption("--workspace", "-w", PrivateNutsUtils.isBlank(options.getWorkspace()) ? "" : PrivateNutsUtils.getAbsolutePath(options.getWorkspace()), arguments, false);
             fillOption("--user", "-u", options.getUserName(), arguments, false);
             fillOption("--password", "-p", options.getPassword(), arguments, false);
             fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments, false);
@@ -175,24 +162,33 @@ public class NutsWorkspaceOptionsFormat {
         }
 
         if (createOptions || isImplicitAll()) {
-            fillOption("--name", null, NutsUtilsLimited.trim(options.getName()), arguments, false);
+            fillOption("--name", null, PrivateNutsUtils.trim(options.getName()), arguments, false);
             fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
             fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
             fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
             fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
-            String[] storeLocations = options.getStoreLocations();
-            for (int i = 0; i < storeLocations.length; i++) {
-                fillOption("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location", null, storeLocations[i], arguments, false);
+            Map<String, String> storeLocations = options.getStoreLocations();
+            for (NutsStoreLocation location : NutsStoreLocation.values()) {
+                String s = storeLocations.get(location.id());
+                if (!PrivateNutsUtils.isBlank(s)) {
+                    fillOption("--" + location.id() + "-location", null, s, arguments, false);
+                }
             }
-            String[] homeLocations = options.getHomeLocations();
-            for (int i = 0; i < NutsOsFamily.values().length; i++) {
-                for (int j = 0; j < NutsStoreLocation.values().length; j++) {
-                    String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    NutsOsFamily layout = NutsOsFamily.values()[i];
-                    NutsStoreLocation folder = NutsStoreLocation.values()[j];
-                    //config is exported!
-                    if (!(folder == NutsStoreLocation.CONFIG)) {
-                        fillOption("--" + layout.name().toLowerCase() + "-" + folder.name().toLowerCase() + "-home", null, s, arguments, false);
+
+            Map<String, String> homeLocations = options.getHomeLocations();
+            if (homeLocations != null) {
+                for (NutsStoreLocation location : NutsStoreLocation.values()) {
+                    String s = homeLocations.get(NutsWorkspaceOptions.createHomeLocationKey(null, location));
+                    if (!PrivateNutsUtils.isBlank(s)) {
+                        fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
+                    }
+                }
+                for (NutsOsFamily osFamily : NutsOsFamily.values()) {
+                    for (NutsStoreLocation location : NutsStoreLocation.values()) {
+                        String s = homeLocations.get(NutsWorkspaceOptions.createHomeLocationKey(osFamily, location));
+                        if (!PrivateNutsUtils.isBlank(s)) {
+                            fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
+                        }
                     }
                 }
             }
@@ -237,7 +233,7 @@ public class NutsWorkspaceOptionsFormat {
 
     private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
         if (values != null && values.length > 0) {
-            fillOption0(selectOptionName(longName, shortName), NutsUtilsLimited.join(sep, values), arguments, forceSingle);
+            fillOption0(selectOptionName(longName, shortName), PrivateNutsUtils.join(sep, values), arguments, forceSingle);
         }
     }
 
@@ -254,7 +250,7 @@ public class NutsWorkspaceOptionsFormat {
     }
 
     private void fillOption(String longName, String shortName, String value, List<String> arguments, boolean forceSingle) {
-        if (!NutsUtilsLimited.isBlank(value)) {
+        if (!PrivateNutsUtils.isBlank(value)) {
             fillOption0(selectOptionName(longName, shortName), value, arguments, forceSingle);
         }
     }
@@ -274,23 +270,23 @@ public class NutsWorkspaceOptionsFormat {
                 if (value instanceof NutsOsFamily) {
                     switch ((NutsOsFamily) value) {
                         case LINUX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("l","linux"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("l", "linux"), arguments, forceSingle);
                             return;
                         }
                         case WINDOWS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("w","windows"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("w", "windows"), arguments, forceSingle);
                             return;
                         }
                         case MACOS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("m","macos"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("m", "macos"), arguments, forceSingle);
                             return;
                         }
                         case UNIX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("u","unix"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("u", "unix"), arguments, forceSingle);
                             return;
                         }
                         case UNKNOWN: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("x","unknown"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("x", "unknown"), arguments, forceSingle);
                             return;
                         }
                     }
@@ -455,6 +451,11 @@ public class NutsWorkspaceOptionsFormat {
             arguments.add(name);
             arguments.add(value);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getBootCommandLine();
     }
 
 }

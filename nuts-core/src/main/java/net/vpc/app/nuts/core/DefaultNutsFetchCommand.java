@@ -382,11 +382,11 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         }
                     }
                     if (foundDefinition != null && options.isInstallInformation()) {
-                        NutsInstallInfo ii = dws.getInstalledRepository().getInstallInfo(id);
+                        NutsInstallInformation ii = dws.getInstalledRepository().getInstallInfo(id);
                         if (ii != null) {
-                            foundDefinition.setInstallation(ii);
+                            foundDefinition.setInstallInformation(ii);
                         } else {
-                            foundDefinition.setInstallation(DefaultNutsWorkspace.NOT_INSTALLED);
+                            foundDefinition.setInstallInformation(DefaultNutsWorkspace.NOT_INSTALLED);
                         }
                     }
                 }

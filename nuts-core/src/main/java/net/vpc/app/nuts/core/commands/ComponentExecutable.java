@@ -30,6 +30,12 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.COMPONENT);
         this.def = def;
+        //all these information areavailable, an exception would be thrown if not!
+        def.getContent();
+        def.getDependencies();
+        def.getEffectiveDescriptor();
+        def.getInstallInformation();
+        
         this.commandName = commandName;
         this.appArgs = appArgs;
         this.executorOptions = executorOptions;
@@ -48,7 +54,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public void execute() {
-        if (!def.getInstallation().isInstalled()) {
+        if (!def.getInstallInformation().isInstalled()) {
             session.getWorkspace().security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
 //            if (session.getTerminal().ask()
 //                    .forBoolean("%N is not yet installed. Continue",

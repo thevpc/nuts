@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import org.junit.After;
@@ -34,8 +35,9 @@ public class Test01_InstallTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-
-        System.out.println(Nuts.openWorkspace("-y").exec().command("ls").which());
+        NutsWorkspace ws = Nuts.openWorkspace("-y","-w="+wsPath,"--standalone","--embedded");
+        System.out.println(ws.config().getWorkspaceLocation());
+        System.out.println(ws.exec().embedded().command("ls").which());
 
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,

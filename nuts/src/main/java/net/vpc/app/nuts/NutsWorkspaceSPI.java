@@ -32,9 +32,8 @@ package net.vpc.app.nuts;
 import java.net.URL;
 
 /**
- * Service provider Interface for NutsWorkspace. 
- * NutsWorkspace implementations should also implement 
- * this interface that will be called at the very instance 
+ * Service provider Interface for NutsWorkspace. NutsWorkspace implementations
+ * should also implement this interface that will be called at the very instance
  * creation.
  *
  * @author vpc
@@ -43,22 +42,30 @@ import java.net.URL;
 public interface NutsWorkspaceSPI extends NutsWorkspace {
 
     /**
-     * initialize and open workspace then return true if the workspace is newly created.
-     * 
+     * initialize and open workspace then return true if the workspace is newly
+     * created.
+     *
+     * @param workspaceLocation workspaceLocation
+     * @param apiVersion apiVersion
+     * @param runtimeId runtimeId
      * @param factory bootstrap factory
-     * @param runningBootConfig effective/running config
-     * @param userBootConfig user defined config
-     * @param bootClassWorldURLs bootstrap classpath jars used for loading nuts runtime
-     * @param workspaceClassLoader bootstrap class loader used for loading nuts runtime
+     * @param bootClassWorldURLs bootstrap classpath jars used for loading nuts
+     * runtime
+     * @param workspaceClassLoader bootstrap class loader used for loading nuts
+     * runtime
      * @param options bootstrap options
+     * @param runtimeDependencies runtimeDependencies
+     * @param repositories repositories
      * @return true if the workspace is newly created
      */
     boolean initializeWorkspace(
+            String workspaceLocation,
+            String apiVersion,
+            String runtimeId,
+            String runtimeDependencies,
+            String repositories,
+            NutsWorkspaceOptions options,
             NutsBootWorkspaceFactory factory,
-            NutsBootConfig runningBootConfig,
-            NutsBootConfig userBootConfig,
             URL[] bootClassWorldURLs,
-            ClassLoader workspaceClassLoader,
-            NutsWorkspaceOptions options
-    );
+            ClassLoader workspaceClassLoader);
 }

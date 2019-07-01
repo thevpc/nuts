@@ -15,13 +15,10 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -160,7 +157,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isBlank(h)) {
             NutsDefinition f = getCatalinaNutsDefinition();
-            return f.getInstallation().getInstallFolder();
+            return f.getInstallInformation().getInstallFolder();
         } else {
             return getContext().getWorkspace().io().path(h);
         }
@@ -342,7 +339,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsDefinition r = context.getWorkspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
                     .installInformation().session(context.getSession())
                     .getResultDefinitions().first();
-            if (r != null && r.getInstallation().isInstalled()) {
+            if (r != null && r.getInstallInformation().isInstalled()) {
                 return r;
             } else {
                 catalinaNutsDefinition = context.getWorkspace()
@@ -352,7 +349,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
                                 if (context.session().isPlainOut()) {
-                                    context.session().out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), event.getDefinition().getInstallation().getInstallFolder());
+                                    context.session().out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
                                 }
                             }
                         })).run().getResult().required();

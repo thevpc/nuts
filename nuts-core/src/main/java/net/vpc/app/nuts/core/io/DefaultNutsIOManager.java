@@ -54,7 +54,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "home.run":
                     return ws.config().getHomeLocation(NutsStoreLocation.RUN).toString();
                 case "workspace":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
+                    return ws.config().getWorkspaceLocation().toString();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
@@ -78,15 +78,21 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "nuts.boot.id":
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().toString();
                 case "nuts.workspace-boot.version":
-                    return ws.config().getContext(NutsBootContextType.BOOT).getApiId().getVersion().toString();
+                    return Nuts.getVersion();
                 case "nuts.workspace-boot.id":
-                    return ws.config().getContext(NutsBootContextType.BOOT).getApiId().toString();
-                case "nuts.workspace-runtime.version":
-                    return ws.config().getContext(NutsBootContextType.BOOT).getRuntimeId().getVersion().toString();
-                case "nuts.workspace-runtime.id":
-                    return ws.config().getContext(NutsBootContextType.BOOT).getRuntimeId().toString();
-                case "nuts.workspace-location":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
+                    return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
+                case "nuts.workspace-runtime.version": {
+                    String rt = ws.config().getOptions().getBootRuntime();
+                    return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
+                            ? rt.substring(rt.indexOf("#")+1)
+                            : rt;
+                }
+                case "nuts.workspace-runtime.id":{
+                    String rt = ws.config().getOptions().getBootRuntime();
+                    return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
+                            ? rt
+                            : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);
+                }
             }
             String v = System.getProperty(from);
             if (v != null) {
@@ -362,7 +368,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
-            throw new NutsExtensionMissingException(ws, NutsSessionTerminal.class, "Terminal");
+            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "Terminal");
         }
         try {
             NutsSessionTerminal term = null;
@@ -493,7 +499,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsIOManager setSystemTerminal(NutsSystemTerminalBase term) {
         if (term == null) {
-            throw new NutsExtensionMissingException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
+            throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
         NutsSystemTerminal syst;
         if ((term instanceof NutsSystemTerminal)) {

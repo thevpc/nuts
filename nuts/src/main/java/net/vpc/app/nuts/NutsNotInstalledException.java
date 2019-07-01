@@ -30,41 +30,25 @@
 package net.vpc.app.nuts;
 
 /**
+ * Created by vpc on 1/15/17.
  *
- * @author vpc
- * @since 0.5.5
+ * @since 0.5.4
  */
-class NutsTokenFilterLimited implements NutsTokenFilter {
+public class NutsNotInstalledException extends NutsInstallationException {
 
-    protected String expression;
-
-    public NutsTokenFilterLimited(String expression) {
-        this.expression = expression;
+    public NutsNotInstalledException(NutsWorkspace workspace, NutsId nuts) {
+        this(workspace, nuts == null ? null : nuts.toString());
     }
 
-    @Override
-    public boolean isNull() {
-        return expression == null;
+    public NutsNotInstalledException(NutsWorkspace workspace, String nuts) {
+        this(workspace, nuts, null, null);
     }
 
-    @Override
-    public boolean isBlank() {
-        return expression == null || expression.trim().isEmpty();
+    public NutsNotInstalledException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
+        this(workspace, nuts == null ? null : nuts.toString(), msg, ex);
     }
 
-    @Override
-    public boolean like(String pattern) {
-        throw new UnsupportedOperationException("Unsupported Operation");
+    public NutsNotInstalledException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
+        super(workspace, nuts, PrivateNutsUtils.isBlank(msg) ? "Not installed " + (nuts == null ? "<null>" : nuts) : msg, ex);
     }
-
-    @Override
-    public boolean matches(String pattern) {
-        throw new UnsupportedOperationException("Unsupported Operation");
-    }
-
-    @Override
-    public boolean contains(String substring) {
-        return NutsUtilsLimited.trim(expression).contains(NutsUtilsLimited.trim(substring));
-    }
-
 }

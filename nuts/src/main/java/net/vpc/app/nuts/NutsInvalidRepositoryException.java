@@ -34,16 +34,10 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsInvalidRepositoryException extends NutsIllegalArgumentException {
-
-    private final String repository;
+public class NutsInvalidRepositoryException extends NutsRepositoryException {
 
     public NutsInvalidRepositoryException(NutsWorkspace workspace, String repository, String message) {
-        super(workspace, "Invalid repository " + (repository == null ? "<null>" : repository) + " : " + message);
-        this.repository = repository;
+        super(workspace, repository, "Invalid repository " + (repository == null ? "<null>" : repository) + " : " + message, null);
     }
 
-    public String getRepository() {
-        return repository;
-    }
 }

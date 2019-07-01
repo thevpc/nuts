@@ -953,6 +953,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
 
     @Override
     public NutsSearchResult<String> getResultPaths() {
+        content();
         IteratorBuilder<String> a = IteratorBuilder.of(getResultDefinitions(false).iterator())
                 .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().toString())
                 .filter(x -> !CoreStringUtils.isBlank(x));

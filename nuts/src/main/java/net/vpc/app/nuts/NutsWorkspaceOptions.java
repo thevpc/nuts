@@ -32,7 +32,10 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vpc on 1/23/17.
@@ -40,6 +43,10 @@ import java.util.List;
  * @since 0.5.4
  */
 public final class NutsWorkspaceOptions implements Serializable, Cloneable {
+
+    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
+        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
+    }
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -65,7 +72,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private String workspace = null;
-    
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -122,7 +129,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private NutsTerminalMode terminalMode = null;
-    
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -186,7 +193,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean inherited= false;
+    private boolean inherited = false;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -203,15 +210,13 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private String[] storeLocations = new String[NutsStoreLocation.values().length];
+    private Map<String, String> storeLocations = new HashMap<>();
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private String[] homeLocations = new String[NutsOsFamily.values().length * NutsStoreLocation.values().length];
-
-    private String[] defaultHomeLocations = new String[NutsStoreLocation.values().length];
+    private Map<String, String> homeLocations = new HashMap<>();
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -341,14 +346,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         this.inherited = inherited;
         return this;
     }
-    
 
     public NutsWorkspaceOptions copy() {
         try {
             NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
-            t.storeLocations = Arrays.copyOf(storeLocations, storeLocations.length);
-            t.homeLocations = Arrays.copyOf(homeLocations, homeLocations.length);
-            t.defaultHomeLocations = Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
+            t.storeLocations = new LinkedHashMap<>(storeLocations);
+            t.homeLocations = new LinkedHashMap<>(homeLocations);
             t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
             t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
             t.setTransientRepositories(t.getTransientRepositories() == null ? null : Arrays.copyOf(t.getTransientRepositories(), t.getTransientRepositories().length));
@@ -516,26 +519,29 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     }
 
     public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations[folder.ordinal()];
+        return storeLocations.get(folder.id());
     }
 
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
-        if (layout == null) {
-            return defaultHomeLocations[folder.ordinal()];
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
+        String key = createHomeLocationKey(layout, location);
+        return homeLocations.get(key);
+    }
+
+    public NutsWorkspaceOptions setStoreLocation(NutsStoreLocation location, String value) {
+        if (PrivateNutsUtils.isBlank(value)) {
+            storeLocations.remove(location.id());
+        } else {
+            storeLocations.put(location.id(), value);
         }
-        return homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
-    }
-
-    public NutsWorkspaceOptions setStoreLocation(NutsStoreLocation folder, String value) {
-        storeLocations[folder.ordinal()] = value;
         return this;
     }
 
-    public NutsWorkspaceOptions setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
-        if (layout == null) {
-            defaultHomeLocations[folder.ordinal()] = value;
+    public NutsWorkspaceOptions setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
+        String key = createHomeLocationKey(layout, location);
+        if (PrivateNutsUtils.isBlank(value)) {
+            homeLocations.remove(key);
         } else {
-            homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
+            homeLocations.put(key, value);
         }
         return this;
     }
@@ -585,16 +591,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String[] getStoreLocations() {
-        return Arrays.copyOf(storeLocations, storeLocations.length);
+    public Map<String, String> getStoreLocations() {
+        return new LinkedHashMap<>(storeLocations);
     }
 
-    public String[] getHomeLocations() {
-        return Arrays.copyOf(homeLocations, homeLocations.length);
-    }
-
-    public String[] getDefaultHomeLocations() {
-        return Arrays.copyOf(defaultHomeLocations, defaultHomeLocations.length);
+    public Map<String, String> getHomeLocations() {
+        return new LinkedHashMap<>(homeLocations);
     }
 
     public NutsWorkspaceOptions addOutputFormatOptions(String... options) {

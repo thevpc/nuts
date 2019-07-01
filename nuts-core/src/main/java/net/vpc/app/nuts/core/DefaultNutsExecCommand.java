@@ -84,6 +84,12 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     @Override
     public NutsExecCommand command(NutsDefinition definition) {
         this.commandDefinition = definition;
+        if (this.commandDefinition != null) {
+            this.commandDefinition.getContent();
+            this.commandDefinition.getDependencies();
+            this.commandDefinition.getEffectiveDescriptor();
+            this.commandDefinition.getInstallInformation();
+        }
         return this;
     }
 

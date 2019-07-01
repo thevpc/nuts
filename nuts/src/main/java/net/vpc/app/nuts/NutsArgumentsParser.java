@@ -75,7 +75,7 @@ public final class NutsArgumentsParser {
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdLine = new NutsCommandLineLimited(bootArguments)
+        NutsCommandLine cmdLine = new PrivateNutsCommandLine(bootArguments)
                 .setCommandName("nuts");
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
@@ -161,7 +161,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setBootJavaCommand(NutsUtilsLimited.resolveJavaCommand(v));
+                            options.setBootJavaCommand(PrivateNutsUtils.resolveJavaCommand(v));
                         }
                         break;
                     }
@@ -434,7 +434,7 @@ public final class NutsArgumentsParser {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(NutsTerminalMode.FORMATTED);
                             } else {
-                                Boolean b = NutsUtilsLimited.parseBoolean(v, null);
+                                Boolean b = PrivateNutsUtils.parseBoolean(v, null);
                                 if (b != null) {
                                     if (b) {
                                         options.setTerminalMode(NutsTerminalMode.FORMATTED);
@@ -794,7 +794,6 @@ public final class NutsArgumentsParser {
         }
 
         options.setLogConfig(logConfig);
-        //NutsUtilsLimited.split(bootArguments[i], " ,;")
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         options.setTransientRepositories(tempRepositories.toArray(new String[0]));

@@ -6,28 +6,19 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsBootConfig;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
 import net.vpc.app.nuts.NutsConstants;
@@ -56,9 +47,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsSearchCommand;
-import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
-import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
  *
@@ -638,23 +627,24 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         if (getValidSession().isAsk() && !accept) {
             throw new NutsUserCancelException(ws);
         }
+        NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
 //        NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
         if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
             NutsWorkspaceUtils.checkReadOnly(ws);
 
-            NutsBootConfig bc = ws.config().getBootConfig();
+            NutsBootConfig bc = wcfg.getBootConfig();
             bc.setApiVersion(apiUpdate.getAvailable().getId().getVersion().toString());
-            ws.config().setBootConfig(bc);
+            wcfg.setBootConfig(bc);
             NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), apiUpdate.getAvailable().getId(),false);
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
         if (runtimeUpdate.isUpdateAvailable() && !runtimeUpdate.isUpdateApplied()) {
-            NutsBootConfig bc = ws.config().getBootConfig();
+            NutsBootConfig bc = wcfg.getBootConfig();
             bc.setRuntimeId(runtimeUpdate.getAvailable().getId().getLongName());
             bc.setRuntimeDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
             NutsWorkspaceUtils.checkReadOnly(ws);
-            ws.config().setBootConfig(bc);
+            wcfg.setBootConfig(bc);
             NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), runtimeUpdate.getAvailable().getId(),true);
 
 //            ws.io().copy()
@@ -718,7 +708,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
             traceSingleUpdate(runtimeUpdate);
         }
         boolean extensionsChanged = false;
-        NutsWorkspaceConfigManagerExt xcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
+        NutsWorkspaceConfigManagerExt xcfg = wcfg;
         NutsExtensionListHelper h = new NutsExtensionListHelper(xcfg.getStoredConfig().getExtensions())
                 .save();
         for (NutsUpdateResult extension : result.getExtensions()) {

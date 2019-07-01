@@ -53,7 +53,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *
      * @return install info
      */
-    NutsInstallInfo getInstallation();
+    NutsInstallInformation getInstallInformation();
 
     /**
      *
@@ -90,4 +90,14 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     String getRepositoryName();
 
+    
+    boolean isSetContent();
+    
+    boolean isSetInstallInformation();
+    
+    boolean isSetDependencyNodes();
+    
+    boolean isSetDependencies();
+
+    boolean isSetEffectiveDescriptor();
 }

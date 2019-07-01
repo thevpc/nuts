@@ -47,7 +47,8 @@ public class Test01_CreateTest {
             "--skip-install-companions"
         });
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(wsPath + "/config/" + NutsConstants.Folders.REPOSITORIES + "/local/cache", ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/local/"+ws.config().getRepositories()[0].uuid(), 
+                ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
     }
 
     @Test

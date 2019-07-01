@@ -180,7 +180,7 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                     .setInstallInformation(true).getResultDefinitions().list();
             for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
                 NutsDefinition resultDefinition = it.next();
-                if (!resultDefinition.getInstallation().isInstalled()) {
+                if (!resultDefinition.getInstallInformation().isInstalled()) {
                     it.remove();
                 }
             }

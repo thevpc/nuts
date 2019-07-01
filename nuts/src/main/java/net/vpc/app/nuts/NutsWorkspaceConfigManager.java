@@ -62,20 +62,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
 //    Path getBootNutsJar();
 //
-    /**
-     * return a copy of workspace boot configuration
-     *
-     * @return a copy of workspace boot configuration
-     */
-    NutsBootConfig getBootConfig();
 
-    /**
-     * update workspace boot configuration
-     *
-     * @param other
-     */
-    void setBootConfig(NutsBootConfig other);
-
+    
     boolean isValidWorkspaceFolder();
 
     Path getWorkspaceLocation();

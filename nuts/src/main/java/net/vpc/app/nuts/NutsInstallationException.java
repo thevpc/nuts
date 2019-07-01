@@ -29,37 +29,46 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-
 /**
+ * Created by vpc on 1/15/17.
  *
- * @author vpc
  * @since 0.5.4
  */
-public class NutsMissingElementsException extends NutsException {
+public abstract class NutsInstallationException extends NutsException {
 
-    public NutsMissingElementsException(NutsWorkspace workspace) {
-        this(workspace, "Missing Element");
+    private final String id;
+
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsInstallationException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+        super(workspace, PrivateNutsUtils.isBlank(msg) ? "Unable to install " + (id == null ? "<null>" : id) : msg,ex);
+        this.id = id;
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsInstallationException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+        this(workspace, id == null ? null : id.toString(), msg, ex);
     }
 
-    public NutsMissingElementsException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    /**
+     * nuts id
+     *
+     * @return nuts id
+     */
+    public String getId() {
+        return id;
     }
-
-    public NutsMissingElementsException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
-    }
-
-    public NutsMissingElementsException(NutsWorkspace workspace, IOException cause) {
-        super(workspace, cause);
-    }
-
-    public NutsMissingElementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
-    }
-
 }

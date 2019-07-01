@@ -42,11 +42,11 @@ import java.util.Map;
  *
  * @author vpc
  */
-class NutsJsonParserLimited {
+class PrivateNutsJsonParser {
 
     private StreamTokenizer st;
 
-    public NutsJsonParserLimited(Reader r) {
+    public PrivateNutsJsonParser(Reader r) {
         st = new StreamTokenizer(r);
         st.ordinaryChar('/');
     }

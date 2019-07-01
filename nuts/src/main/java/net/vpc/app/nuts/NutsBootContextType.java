@@ -39,10 +39,6 @@ package net.vpc.app.nuts;
  */
 public enum NutsBootContextType {
     /**
-     * Boot-Time requested configuration
-     */
-    BOOT,
-    /**
      * Run-time used configuration
      */
     RUNTIME,

@@ -391,12 +391,15 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
                 NutsDefinition def = ws.fetch().id(nid).session(searchSession)
                         .installInformation()
                         .setOptional(false)
+                        .content()
+                        .installInformation()
+                        .effective()
                         .dependencies()
                         .scope(NutsDependencyScopePattern.RUN)
                         .failFast()
                         .getResultDefinition();
                 if (def != null && def.getPath() != null) {
-                    boolean installed = def.getInstallation().isInstalled();
+                    boolean installed = def.getInstallInformation().isInstalled();
                     boolean defVer = NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(def.getId());
                     if (!installed || getValidSession().isForce()) {
                         defsToInstall.add(def);

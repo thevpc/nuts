@@ -42,7 +42,6 @@ import net.vpc.app.nuts.NutsDependencyTreeNode;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionEntry;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsInstallInfo;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
@@ -51,6 +50,7 @@ import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
@@ -222,14 +222,14 @@ public class FormattableNutsId {
                 return "@@missing-platform@@";
             }
             case INSTALL_DATE: {
-                if (def != null && def.getInstallation() != null) {
-                    return stringValue(def.getInstallation().getInstallDate());
+                if (def != null && def.getInstallInformation() != null) {
+                    return stringValue(def.getInstallInformation().getInstallDate());
                 }
                 return "    -  -     :  :  .   ";
             }
             case INSTALL_USER: {
-                if (def != null && def.getInstallation() != null) {
-                    return stringValue(def.getInstallation().getInstallUser());
+                if (def != null && def.getInstallInformation() != null) {
+                    return stringValue(def.getInstallInformation().getInstallUser());
                 }
                 return "@@nobody@@";
             }
@@ -306,7 +306,7 @@ public class FormattableNutsId {
             DefaultNutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
             this.i = rr.isInstalled(id);
             this.d = rr.isDefaultVersion(id);
-            NutsInstallInfo iif = rr.getInstallInfo(id);
+            NutsInstallInformation iif = rr.getInstallInfo(id);
             this.dte = iif == null ? null : iif.getInstallDate();
             this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;

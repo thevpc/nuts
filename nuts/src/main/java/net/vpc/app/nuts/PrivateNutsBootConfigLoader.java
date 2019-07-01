@@ -29,9 +29,12 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
 import java.io.StringReader;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import static net.vpc.app.nuts.NutsBootWorkspace.LOG;
 
 /**
  * JSON Config Best Effort Loader
@@ -39,17 +42,38 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.6
  */
-class NutsBootConfigLoaderLimited {
+class PrivateNutsBootConfigLoader {
 
-    static NutsBootConfig loadBootConfigJSON(String json) {
-        NutsJsonParserLimited parser = new NutsJsonParserLimited(new StringReader(json));
+    static PrivateNutsBootConfig loadBootConfig(String workspaceLocation) {
+        File versionFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        try {
+            if (versionFile.isFile()) {
+                String json = PrivateNutsUtils.readStringFromFile(versionFile).trim();
+                if (json.length() > 0) {
+                    if (LOG.isLoggable(Level.FINEST)) {
+                        LOG.log(Level.FINEST, "Loading Workspace Config {0}", versionFile.getPath());
+                    }
+                    return loadBootConfigJSON(json);
+                }
+            }
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "Previous Workspace Config not found at {0}", versionFile.getPath());
+            }
+        } catch (Exception ex) {
+            LOG.log(Level.CONFIG, "Unable to load nuts version file " + versionFile + ".\n", ex);
+        }
+        return null;
+    }
+
+    private static PrivateNutsBootConfig loadBootConfigJSON(String json) {
+        PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        NutsBootConfig c = new NutsBootConfig();
+        PrivateNutsBootConfig c = new PrivateNutsBootConfig();
         String createApiVersion = (String) jsonObject.get("createApiVersion");
         if (createApiVersion == null) {
             createApiVersion = "0.5.6";
         }
-        int buildNumber = getNutsApiVersionOrdinalNumber(createApiVersion);
+        int buildNumber = getApiVersionOrdinalNumber(createApiVersion);
         if (buildNumber < 506) {
             loadConfigVersion502(c, jsonObject);
         } else {
@@ -58,7 +82,7 @@ class NutsBootConfigLoaderLimited {
         return c;
     }
 
-    private static int getNutsApiVersionOrdinalNumber(String s) {
+    private static int getApiVersionOrdinalNumber(String s) {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
@@ -77,7 +101,7 @@ class NutsBootConfigLoaderLimited {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion506(NutsBootConfig config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion506(PrivateNutsBootConfig config, Map<String, Object> jsonObject) {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -87,18 +111,8 @@ class NutsBootConfigLoaderLimited {
         config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
-        List<String> sl = (List<String>) jsonObject.get("storeLocations");
-        if (sl != null) {
-            config.setStoreLocations(sl.toArray(new String[0]));
-        }
-        List<String> hl = (List<String>) jsonObject.get("homeLocations");
-        if (hl != null) {
-            config.setHomeLocations(hl.toArray(new String[0]));
-        }
-        List<String> dhl = (List<String>) jsonObject.get("defaultHomeLocations");
-        if (dhl != null) {
-            config.setDefaultHomeLocations(dhl.toArray(new String[0]));
-        }
+        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
+        config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
         String s = (String) jsonObject.get("storeLocationStrategy");
         if (s != null && s.length() > 0) {
             config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
@@ -120,7 +134,7 @@ class NutsBootConfigLoaderLimited {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(NutsBootConfig config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion502(PrivateNutsBootConfig config, Map<String, Object> jsonObject) {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -130,18 +144,20 @@ class NutsBootConfigLoaderLimited {
         config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
+        Map<String, String> storeLocations = new LinkedHashMap<>();
+        Map<String, String> homeLocations = new LinkedHashMap<>();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             String folderName502 = folder.name();
-            if(folder==NutsStoreLocation.APPS){
-                folderName502="programs";
+            if (folder == NutsStoreLocation.APPS) {
+                folderName502 = "programs";
             }
             String k = folderName502.toLowerCase() + "StoreLocation";
             String v = (String) jsonObject.get(k);
-            config.setStoreLocation(folder, v);
+            storeLocations.put(folder.id(), v);
 
             k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
-            config.setHomeLocation(null, folder, v);
+            homeLocations.put(NutsWorkspaceOptions.createHomeLocationKey(null, folder), v);
             for (NutsOsFamily layout : NutsOsFamily.values()) {
                 switch (layout) {
                     case LINUX: {
@@ -169,9 +185,11 @@ class NutsBootConfigLoaderLimited {
                     }
                 }
                 v = (String) jsonObject.get(k);
-                config.setHomeLocation(layout, folder, v);
+                homeLocations.put(NutsWorkspaceOptions.createHomeLocationKey(layout, folder), v);
             }
         }
+        config.setHomeLocations(homeLocations);
+        config.setStoreLocations(storeLocations);
         String s = (String) jsonObject.get("storeLocationStrategy");
         if (s != null && s.length() > 0) {
             config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));

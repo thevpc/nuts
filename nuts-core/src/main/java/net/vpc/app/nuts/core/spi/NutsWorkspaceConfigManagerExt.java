@@ -4,7 +4,7 @@ import net.vpc.app.nuts.*;
 
 import java.net.URL;
 import java.nio.file.Path;
-import net.vpc.app.nuts.core.DefaultNutsBootContext;
+import net.vpc.app.nuts.core.NutsBootConfig;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
@@ -14,7 +14,9 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setStartCreateTimeMillis(long currentTimeMillis);
 
-    void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
+    void onInitializeWorkspace(Path workspaceLocation,NutsWorkspaceOptions options, URL[] bootClassWorldURLs, ClassLoader classLoader);
+    
+    void setRunningContext(NutsBootContext runningContext);
 
     void setConfig(NutsWorkspaceConfig config, NutsSession session);
 
@@ -58,4 +60,18 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
 //    NutsRepository wireRepository(NutsRepository repository);
     void setExcludedRepositories(String[] excludedRepositories);
+
+    /**
+     * update workspace boot configuration
+     *
+     * @param other
+     */
+    void setBootConfig(NutsBootConfig other);
+
+    /**
+     * return a copy of workspace boot configuration
+     *
+     * @return a copy of workspace boot configuration
+     */
+    NutsBootConfig getBootConfig();
 }

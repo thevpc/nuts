@@ -61,7 +61,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
-        Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
+        Path storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArguments();
 

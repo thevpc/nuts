@@ -146,14 +146,12 @@ public class Test04_CreateLoadLinuxTest {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-            TestUtils.STASH.saveIfExists(new File(f));
-        }
+        TestUtils.stashLinuxFolders();
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        TestUtils.STASH.restoreAll();
+        TestUtils.unstashLinuxFolders();
     }
 
     @Before

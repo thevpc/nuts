@@ -200,7 +200,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
-            throw new NutsWorkspaceExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
+            throw new NutsExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
         LOG.log(Level.FINE, "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
@@ -358,7 +358,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public NutsSessionTerminal createTerminal(Class ignoredClass) {
         NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, new DefaultNutsSupportLevelContext<>(ws,ignoredClass));
         if (termb == null) {
-            throw new NutsExtensionMissingException(ws, NutsSessionTerminalBase.class, "TerminalBase");
+            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminalBase.class, "TerminalBase");
         } else {
             if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
                 return null;

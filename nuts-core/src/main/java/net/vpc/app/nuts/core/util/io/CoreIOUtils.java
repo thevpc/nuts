@@ -96,7 +96,7 @@ public class CoreIOUtils {
         NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
-        Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
+        Path storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -1979,5 +1979,13 @@ public class CoreIOUtils {
             }
         }
         return newLineString;
+    }
+
+    public static boolean isAbsolutePath(String location) {
+        return new File(location).isAbsolute();
+    }
+
+    public static String getAbsolutePath(String path) {
+        return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 }

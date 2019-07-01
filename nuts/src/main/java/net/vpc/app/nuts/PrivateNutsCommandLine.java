@@ -80,20 +80,20 @@ import java.util.*;
  * @author vpc
  * @since 0.5.5
  */
-class NutsCommandLineLimited implements NutsCommandLine {
+class PrivateNutsCommandLine implements NutsCommandLine {
 
     private static final String NOT_SUPPORTED = "This a minimal implementation of NutsCommand used to bootstrap. This Method is not supported.";
-    private LinkedList<String> args = new LinkedList<>();
-    private List<NutsArgument> lookahead = new ArrayList<>();
+    private final LinkedList<String> args = new LinkedList<>();
+    private final List<NutsArgument> lookahead = new ArrayList<>();
     private boolean expandSimpleOptions = false;
-    private Set<String> specialSimpleOptions = new HashSet<>();
+    private final Set<String> specialSimpleOptions = new HashSet<>();
     private String commandName;
     private int wordIndex = 0;
     private NutsCommandAutoComplete autoComplete;
-    private char eq = '=';
+    private final char eq = '=';
     //Constructors
 
-    NutsCommandLineLimited(String[] args) {
+    PrivateNutsCommandLine(String[] args) {
         if (args != null) {
             this.args.addAll(Arrays.asList(args));
         }
@@ -312,7 +312,7 @@ class NutsCommandLineLimited implements NutsCommandLine {
             }
         }
         for (String nameSeq : names) {
-            String[] nameSeqArray = NutsUtilsLimited.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = PrivateNutsUtils.split(nameSeq, " ").toArray(new String[0]);
             if (isAutoCompleteMode()) {
                 for (int i = 0; i < nameSeqArray.length; i++) {
                     if (getWordIndex() == autoComplete.getCurrentWordIndex() + i) {
@@ -594,7 +594,7 @@ class NutsCommandLineLimited implements NutsCommandLine {
 
     @Override
     public String toString() {
-        return NutsUtilsLimited.escapeArguments(toArray());
+        return PrivateNutsUtils.escapeArguments(toArray());
     }
 
     @Override
@@ -678,7 +678,7 @@ class NutsCommandLineLimited implements NutsCommandLine {
 
     @Override
     public NutsArgument newArgument(String s) {
-        return new NutsArgumentLimited(s, eq);
+        return new PrivateNutsArgument(s, eq);
     }
 
     @Override
@@ -688,7 +688,7 @@ class NutsCommandLineLimited implements NutsCommandLine {
 
     protected void throwError(String message) {
         StringBuilder m = new StringBuilder();
-        if (!NutsUtilsLimited.isBlank(commandName)) {
+        if (!PrivateNutsUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);

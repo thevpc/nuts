@@ -34,17 +34,49 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsExtensionMissingException extends NutsElementNotFoundException {
+public class NutsUninstallException extends NutsInstallationException {
 
-    private final Class missingType;
-
-    public NutsExtensionMissingException(NutsWorkspace workspace, Class missingType, String extensionName) {
-        super(workspace, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.");
-        this.missingType = missingType;
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     */
+    public NutsUninstallException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
     }
 
-    public Class getMissingType() {
-        return missingType;
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     */
+    public NutsUninstallException(NutsWorkspace workspace, String id) {
+        this(workspace, id, null, null);
     }
 
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsUninstallException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+        this(workspace, id == null ? null : id.toString(), msg, ex);
+    }
+
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsUninstallException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
+    }
 }

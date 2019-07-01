@@ -34,16 +34,10 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsRepositoryNotFoundException extends NutsElementNotFoundException {
-
-    private final String repository;
+public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 
     public NutsRepositoryNotFoundException(NutsWorkspace workspace, String repository) {
-        super(workspace, "No such repository " + (repository == null ? "<null>" : repository));
-        this.repository = repository;
+        super(workspace, repository, "No such repository " + (repository == null ? "<null>" : repository), null);
     }
 
-    public String getRepository() {
-        return repository;
-    }
 }

@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -133,6 +135,25 @@ public class TestUtils {
 
     public static StackTraceElement getCallerStackTraceElement() {
         return getCallerStackTraceElement0(3);
+    }
+
+    public static void unstashLinuxFolders(){
+        try {
+            STASH.restoreAll();
+        } catch (IOException ex) {
+            Logger.getLogger(TestUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void stashLinuxFolders() throws IOException {
+        for (String string : NUTS_STD_FOLDERS) {
+            File[] c = new File(string).listFiles();
+            if (c != null) {
+                for (File file : c) {
+                    STASH.saveIfExists(file);
+                }
+            }
+        }
     }
 
     public static void resetLinuxFolders() throws IOException {

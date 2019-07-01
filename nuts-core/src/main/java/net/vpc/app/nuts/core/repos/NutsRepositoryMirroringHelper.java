@@ -9,14 +9,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.vpc.app.nuts.NutsConstants;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryAmbiguousException;
+import net.vpc.app.nuts.NutsPushException;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -30,7 +30,6 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.core.DefaultNutsContentEvent;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  *
@@ -178,7 +177,11 @@ public class NutsRepositoryMirroringHelper {
             if (all.isEmpty()) {
                 throw new NutsRepositoryNotFoundException(repo.getWorkspace(), "Not Repo for pushing " + id);
             } else if (all.size() > 1) {
-                throw new NutsRepositoryAmbiguousException(repo.getWorkspace(), "Unable to perform push. Two Repositories provides the same nuts " + id);
+                throw new NutsPushException(repo.getWorkspace(), id,
+                        "Unable to perform push for " + id + ". Alteast Two Repositories ("
+                        + all.stream().map(x -> x.config().name()).collect(Collectors.joining(","))
+                        + ") provides the same nuts " + id
+                );
             }
             repo = all.get(0);
         } else {

@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsExecutorNotFoundException extends NutsElementNotFoundException {
+public class NutsExecutorNotFoundException extends NutsException {
 
     private final String id;
 
@@ -53,16 +53,13 @@ public class NutsExecutorNotFoundException extends NutsElementNotFoundException 
 
     public NutsExecutorNotFoundException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
         super(
-                workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
+                workspace, PrivateNutsUtils.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }
 
     public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
-        super(
-                workspace, NutsUtilsLimited.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts.toString()) : msg,
-                ex);
-        this.id = nuts == null ? null : nuts.toString();
+        this(workspace, nuts == null ? null : nuts.toString(),msg,ex);
     }
 
     public String getId() {

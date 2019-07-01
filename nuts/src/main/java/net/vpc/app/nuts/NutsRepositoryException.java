@@ -30,55 +30,22 @@
 package net.vpc.app.nuts;
 
 /**
- * Exception fired in {@link NutsWorkspace#deploy()} method if the package is
- * already deployed Created by vpc on 1/15/17.
+ * Created by vpc on 1/15/17.
  *
  * @since 0.5.4
  */
-public class NutsAlreadyDeployedException extends NutsInstallationException {
+public abstract class NutsRepositoryException extends NutsException {
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    private final String repository;
+
+    public NutsRepositoryException(NutsWorkspace workspace, String repository, String message, Throwable ex) {
+        super(workspace,
+                PrivateNutsUtils.isBlank(message)
+                ? ("Repository " + (repository == null ? "<null>" : repository) + " has encountred problem") : message, ex);
+        this.repository = repository;
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public String getRepository() {
+        return repository;
     }
-
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
-    }
-
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already deployed " + (id == null ? "<null>" : id) : msg, ex);
-    }
-
 }

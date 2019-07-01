@@ -35,9 +35,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsAlreadyInstalledException extends NutsElementNotFoundException {
-
-    private final String id;
+public class NutsAlreadyInstalledException extends NutsInstallationException {
 
     /**
      * Custom Constructor
@@ -50,13 +48,25 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
     }
 
     /**
+     * Custom Constructor
      *
      * @param workspace workspace
-     * @param id id
+     * @param id nuts id
      */
     public NutsAlreadyInstalledException(NutsWorkspace workspace, String id) {
-        super(workspace, "Already Installed nuts " + (id == null ? "<null>" : id));
-        this.id = id;
+        this(workspace, id, null, null);
+    }
+
+    /**
+     * Custom Constructor
+     *
+     * @param workspace workspace
+     * @param id nuts id
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+        this(workspace, id == null ? null : id.toString(), msg, ex);
     }
 
     /**
@@ -68,16 +78,7 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
      * @param ex exception
      */
     public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, NutsUtilsLimited.isBlank(msg) ? "Already installed nuts " + (id == null ? "<null>" : id) : msg, ex);
-        this.id = id;
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already installed " + (id == null ? "<null>" : id) : msg, ex);
     }
 
-    /**
-     * nuts id
-     *
-     * @return nuts id
-     */
-    public String getId() {
-        return id;
-    }
 }

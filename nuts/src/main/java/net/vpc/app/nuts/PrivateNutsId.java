@@ -37,19 +37,19 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-final class NutsIdLimited {
+final class PrivateNutsId {
 
     private final String groupId;
     private final String artifactId;
     private final String version;
 
-    public NutsIdLimited(String groupId, String artifactId, String version) {
+    public PrivateNutsId(String groupId, String artifactId, String version) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
     }
 
-    static NutsIdLimited parse(String id) {
+    static PrivateNutsId parse(String id) {
         int dots = id.indexOf(':');
         if (dots > 0) {
             int dash = id.indexOf('#', dots + 1);
@@ -58,9 +58,9 @@ final class NutsIdLimited {
                 dash = id.indexOf(':', dots + 1);
             }
             if (dash >= 0) {
-                return new NutsIdLimited(id.substring(0, dots), id.substring(dots + 1, dash), id.substring(dash + 1));
+                return new PrivateNutsId(id.substring(0, dots), id.substring(dots + 1, dash), id.substring(dash + 1));
             }
-            return new NutsIdLimited(id.substring(0, dots), id.substring(dots + 1), NutsConstants.Versions.LATEST);
+            return new PrivateNutsId(id.substring(0, dots), id.substring(dots + 1), NutsConstants.Versions.LATEST);
         }
         throw new NutsParseException(null, "Unable to parse " + id);
     }
@@ -105,7 +105,7 @@ final class NutsIdLimited {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsIdLimited other = (NutsIdLimited) obj;
+        final PrivateNutsId other = (PrivateNutsId) obj;
         if (!Objects.equals(this.groupId, other.groupId)) {
             return false;
         }

@@ -38,7 +38,7 @@ import java.io.IOException;
  */
 public class NutsException extends RuntimeException {
 
-    private NutsWorkspace workspace;
+    private final NutsWorkspace workspace;
 
     public NutsException(NutsWorkspace workspace) {
         this.workspace = workspace;

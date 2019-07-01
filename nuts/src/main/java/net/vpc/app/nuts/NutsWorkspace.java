@@ -53,15 +53,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      */
     String uuid();
 
-    /**
-     * Open a new workspace with the provided options. When options is null, it
-     * i considered as a new empty instance of the options class.
-     *
-     * @param options creation options
-     * @return a new instance of workspace
-     */
-    NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
-
     //COMMANDS
     NutsSearchCommand search();
 

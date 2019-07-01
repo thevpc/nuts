@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Nuts read-only configuration
@@ -39,11 +40,7 @@ import java.nio.file.Path;
  */
 public interface NutsBootContext {
 
-    String getUuid();
-
     String getName();
-
-    String getWorkspace();
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
@@ -62,7 +59,7 @@ public interface NutsBootContext {
      *
      * @return array of available locations
      */
-    String[] getStoreLocations();
+    Map<String,String> getStoreLocations();
 
     /**
      * all store locations ordered according NutsStoreFolder and then
@@ -82,13 +79,11 @@ public interface NutsBootContext {
      *
      * @return array of available home locations
      */
-    String[] getHomeLocations();
-
-    String[] getDefaultHomeLocations();
+    Map<String,String> getHomeLocations();
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType);
+    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
 
     NutsId getApiId();
 
@@ -105,8 +100,6 @@ public interface NutsBootContext {
     String getJavaOptions();
 
     boolean isGlobal();
-
-    boolean isGui();
 
     Path getNutsJar();
 }

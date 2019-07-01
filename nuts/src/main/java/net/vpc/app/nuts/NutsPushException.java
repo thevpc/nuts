@@ -34,28 +34,37 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-public class NutsWorkspaceExtensionAlreadyRegisteredException extends NutsElementAlreadyDefinedException {
+public class NutsPushException extends NutsException {
 
     private final String id;
-    private final String installed;
 
-    public NutsWorkspaceExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed) {
-        super(workspace, "Extension Already registered " + (id == null ? "<null>" + " as " + installed : id));
-        this.id = id;
-        this.installed = installed;
+    public NutsPushException(NutsWorkspace workspace, String id) {
+        this(workspace, id, null, null);
     }
 
-    public NutsWorkspaceExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed, Throwable err) {
-        super(workspace, "Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, err);
-        this.id = id;
-        this.installed = installed;
+    public NutsPushException(NutsWorkspace workspace, String id, String message) {
+        this(workspace, id, message, null);
     }
 
-    public String getInstalled() {
-        return installed;
+    public NutsPushException(NutsWorkspace workspace, String id, String message, Throwable th) {
+        super(workspace, message == null ? ("Unable to push " + id) : message, th);
+        this.id = id == null ? "<null>" : id;
+    }
+
+    public NutsPushException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id, null, null);
+    }
+
+    public NutsPushException(NutsWorkspace workspace, NutsId id, String message) {
+        this(workspace, id, message, null);
+    }
+
+    public NutsPushException(NutsWorkspace workspace, NutsId id, String message, Throwable th) {
+        this(workspace, id == null ? null : id.toString(), message, th);
     }
 
     public String getId() {
         return id;
     }
+
 }

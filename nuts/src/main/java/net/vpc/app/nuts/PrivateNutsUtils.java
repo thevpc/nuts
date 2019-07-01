@@ -56,9 +56,9 @@ import java.util.regex.Pattern;
  *
  * @since 0.5.4
  */
-final class NutsUtilsLimited {
+final class PrivateNutsUtils {
 
-    private static final Logger LOG = Logger.getLogger(NutsUtilsLimited.class.getName());
+    private static final Logger LOG = Logger.getLogger(PrivateNutsUtils.class.getName());
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
     public static boolean isValidWorkspaceName(String workspace) {
@@ -369,7 +369,7 @@ final class NutsUtilsLimited {
         String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
         String str = null;
         try {
-            str = NutsUtilsLimited.readStringFromURL(new URL(mvnUrl));
+            str = PrivateNutsUtils.readStringFromURL(new URL(mvnUrl));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -445,24 +445,24 @@ final class NutsUtilsLimited {
         return split(repositories, "\n;", true);
     }
 
-    public static NutsBootConfig createNutsBootConfig(Properties properties) {
+    public static PrivateNutsBootConfig createNutsBootConfig(Properties properties) {
         String id = properties.getProperty("project.id");
         String version = properties.getProperty("project.version");
         String dependencies = properties.getProperty("project.dependencies.compile");
-        if (NutsUtilsLimited.isBlank(id)) {
+        if (PrivateNutsUtils.isBlank(id)) {
             throw new NutsIllegalArgumentException(null, "Missing id");
         }
-        if (NutsUtilsLimited.isBlank(version)) {
+        if (PrivateNutsUtils.isBlank(version)) {
             throw new NutsIllegalArgumentException(null, "Missing version");
         }
-        if (NutsUtilsLimited.isBlank(dependencies)) {
+        if (PrivateNutsUtils.isBlank(dependencies)) {
             throw new NutsIllegalArgumentException(null, "Missing dependencies");
         }
         String repositories = properties.getProperty("project.repositories");
         if (repositories == null) {
             repositories = "";
         }
-        return new NutsBootConfig()
+        return new PrivateNutsBootConfig()
                 .setRuntimeId(id + "#" + version)
                 .setRuntimeDependencies(dependencies)
                 .setRepositories(repositories);
@@ -533,7 +533,7 @@ final class NutsUtilsLimited {
         String exe = NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
-            if (NutsUtilsLimited.isBlank(javaHome) || "null".equals(javaHome)) {
+            if (PrivateNutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
                 //this may happen is using a precompiled image (such as with graalvm)
                 return exe;
             }
@@ -572,9 +572,9 @@ final class NutsUtilsLimited {
                             if (cacheFile.getParentFile() != null) {
                                 cacheFile.getParentFile().mkdirs();
                             }
-                            NutsUtilsLimited.copy(furl, cacheFile);
+                            PrivateNutsUtils.copy(furl, cacheFile);
                         } else {
-                            NutsUtilsLimited.copy(url, cacheFile);
+                            PrivateNutsUtils.copy(url, cacheFile);
                         }
                         cachedFile = true;
                         documentStream = new FileInputStream(cacheFile);
@@ -631,7 +631,7 @@ final class NutsUtilsLimited {
                             }
                             //this is maven dependency, using "compile"
                             if (scope.isEmpty() || scope.equals("compile")) {
-                                deps.add(new NutsIdLimited(
+                                deps.add(new PrivateNutsId(
                                         groupId, artifactId, version
                                 ).toString());
                             }
@@ -706,7 +706,7 @@ final class NutsUtilsLimited {
                             }
                         }
                     }
-                    NutsUtilsLimited.deleteAndConfirm(child, force, refForceAll, term, session);
+                    PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session);
                     count++;
                 }
             }
@@ -728,7 +728,7 @@ final class NutsUtilsLimited {
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll[0] = true;
-                } else if (new NutsArgumentLimited(line, '=').getBoolean()) {
+                } else if (new PrivateNutsArgument(line, '=').getBoolean()) {
                     //ok
                 } else {
                     throw new NutsUserCancelException(null);
@@ -770,7 +770,7 @@ final class NutsUtilsLimited {
             return true;
         }
         String javaHome = System.getProperty("java.home");
-        if (NutsUtilsLimited.isBlank(javaHome) || "null".equals(javaHome)) {
+        if (PrivateNutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
             return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
         }
         String jh = javaHome.replace("\\", "/");
@@ -820,8 +820,8 @@ final class NutsUtilsLimited {
     }
     
     public static String formatLogValue(Object unresolved, Object resolved) {
-        String a = NutsUtilsLimited.desc(unresolved);
-        String b = NutsUtilsLimited.desc(resolved);
+        String a = PrivateNutsUtils.desc(unresolved);
+        String b = PrivateNutsUtils.desc(resolved);
         if (a.equals(b)) {
             return a;
         } else {

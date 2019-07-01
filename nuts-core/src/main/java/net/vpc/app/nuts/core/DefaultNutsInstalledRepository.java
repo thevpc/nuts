@@ -46,8 +46,8 @@ import java.util.function.Function;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsInstallInfo;
 import net.vpc.app.nuts.NutsNotInstallableException;
+import net.vpc.app.nuts.NutsNotInstalledException;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsVersion;
@@ -60,6 +60,7 @@ import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
+import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
@@ -211,7 +212,7 @@ public class DefaultNutsInstalledRepository {
         return null;
     }
 
-    public NutsInstallInfo getInstallInfo(NutsId id) {
+    public NutsInstallInformation getInstallInfo(NutsId id) {
         InstallInfoConfig ii = getInstallInfoConfig(id);
         if (ii != null) {
             return new DefaultNutsInstallInfo(true, isDefaultVersion(id),
@@ -318,10 +319,17 @@ public class DefaultNutsInstalledRepository {
 
     public void uninstall(NutsId id) {
         NutsWorkspaceUtils.checkReadOnly(ws);
-        remove(id, NUTS_INSTALL_FILE);
+        if(!contains(id, NUTS_INSTALL_FILE)){
+            throw new NutsNotInstalledException(ws, id);
+        }
+        try {
+            remove(id, NUTS_INSTALL_FILE);
+        } catch (Exception ex) {
+            throw new NutsNotInstalledException(ws, id);
+        }
     }
 
-    public NutsInstallInfo install(NutsId id) {
+    public NutsInstallInformation install(NutsId id) {
         Instant now = Instant.now();
         String user = ws.security().getCurrentLogin();
         NutsWorkspaceUtils.checkReadOnly(ws);
@@ -357,7 +365,8 @@ public class DefaultNutsInstalledRepository {
 
     public void remove(NutsId id, String name) {
         try {
-            Files.delete(getPath(id, name));
+            Path path = getPath(id, name);
+            Files.delete(path);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

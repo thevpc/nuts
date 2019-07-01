@@ -30,55 +30,41 @@
 package net.vpc.app.nuts;
 
 /**
- * Exception fired in {@link NutsWorkspace#deploy()} method if the package is
- * already deployed Created by vpc on 1/15/17.
  *
- * @since 0.5.4
+ * @author vpc
+ * @since 0.5.5
  */
-public class NutsAlreadyDeployedException extends NutsInstallationException {
+class PrivateNutsTokenFilter implements NutsTokenFilter {
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    protected String expression;
+
+    public PrivateNutsTokenFilter(String expression) {
+        this.expression = expression;
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    @Override
+    public boolean isNull() {
+        return expression == null;
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    @Override
+    public boolean isBlank() {
+        return expression == null || expression.trim().isEmpty();
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param workspace workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already deployed " + (id == null ? "<null>" : id) : msg, ex);
+    @Override
+    public boolean like(String pattern) {
+        throw new UnsupportedOperationException("Unsupported Operation");
+    }
+
+    @Override
+    public boolean matches(String pattern) {
+        throw new UnsupportedOperationException("Unsupported Operation");
+    }
+
+    @Override
+    public boolean contains(String substring) {
+        return PrivateNutsUtils.trim(expression).contains(PrivateNutsUtils.trim(substring));
     }
 
 }

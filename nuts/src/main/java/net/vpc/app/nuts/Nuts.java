@@ -45,7 +45,7 @@ public class Nuts {
 
     static {
         try {
-            version = NutsUtilsLimited.loadURLProperties(
+            version = PrivateNutsUtils.loadURLProperties(
                     Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
                     null, false).getProperty("project.version", "0.0.0");
         } catch (Exception ex) {
@@ -92,12 +92,12 @@ public class Nuts {
     public static NutsWorkspace openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot;
-        String d = NutsUtilsLimited.trim(
-                NutsUtilsLimited.trim(System.getProperty("nuts.boot.args"))
-                + " " + NutsUtilsLimited.trim(System.getProperty("nuts.args"))
+        String d = PrivateNutsUtils.trim(
+                PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
+                + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
-        if (!NutsUtilsLimited.isBlank(d)) {
-            boot = new NutsBootWorkspace(NutsUtilsLimited.parseCommandLine(d));
+        if (!PrivateNutsUtils.isBlank(d)) {
+            boot = new NutsBootWorkspace(PrivateNutsUtils.parseCommandLine(d));
             boot.getOptions().setApplicationArguments(args);
         } else {
             NutsWorkspaceOptions t = new NutsWorkspaceOptions();
