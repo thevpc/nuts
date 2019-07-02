@@ -2,7 +2,7 @@
       install ==nuts== package \<nuts-component\>
        <args> ...        : provide arguments to pass to installer
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/command/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== install **--help**

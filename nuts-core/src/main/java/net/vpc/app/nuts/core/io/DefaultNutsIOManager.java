@@ -58,38 +58,38 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CONFIG);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.CONFIG);
                 case "lib":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LIB);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.LIB);
                 case "apps":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.APPS);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.APPS);
                 case "cache":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CACHE);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.CACHE);
                 case "run":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.RUN);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.RUN);
                 case "temp":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.TEMP);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.TEMP);
                 case "log":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LOG);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.LOG);
                 case "var":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.VAR);
+                    return ws.config().current().getStoreLocation(NutsStoreLocation.VAR);
                 case "nuts.boot.version":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString();
+                    return ws.config().current().getApiId().getVersion().toString();
                 case "nuts.boot.id":
-                    return ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().toString();
+                    return ws.config().current().getApiId().toString();
                 case "nuts.workspace-boot.version":
                     return Nuts.getVersion();
                 case "nuts.workspace-boot.id":
                     return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
                 case "nuts.workspace-runtime.version": {
                     String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
-                            ? rt.substring(rt.indexOf("#")+1)
+                    return rt == null ? ws.config().current().getRuntimeId().getVersion().toString() : rt.contains("#")
+                            ? rt.substring(rt.indexOf("#") + 1)
                             : rt;
                 }
-                case "nuts.workspace-runtime.id":{
+                case "nuts.workspace-runtime.id": {
                     String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
+                    return rt == null ? ws.config().current().getRuntimeId().getVersion().toString() : rt.contains("#")
                             ? rt
                             : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);
                 }
@@ -179,53 +179,83 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String loadHelpString(String resource, Class cls, String defaultValue) {
-        String help = loadHelp(resource, cls, false);
-        if (help == null) {
-            help = defaultValue;//"no help found";
-        }
-        help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
-        return help;
+    public String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue) {
+        return loadHelp(resourcePath, classLoader, false, true, defaultValue);
     }
 
-    private String loadHelp(String urlPath, Class clazz, boolean err) {
-        return loadHelp(urlPath, clazz, err, 36);
+    @Override
+    public String loadFormattedString(Reader is, ClassLoader classLoader) {
+        return loadHelp(is, classLoader, true, 36, true);
     }
 
-    private String loadHelp(String urlPath, Class clazz, boolean err, int depth) {
+    private String loadHelp(String urlPath, ClassLoader clazz, boolean err, boolean vars, String defaultValue) {
+        return loadHelp(urlPath, clazz, err, 36, vars, defaultValue);
+    }
+
+    private String loadHelp(String urlPath, ClassLoader classLoader, boolean err, int depth, boolean vars, String defaultValue) {
         if (depth <= 0) {
             throw new IllegalArgumentException("Unable to load " + urlPath + ". Too many recursions");
         }
-        URL resource = clazz.getResource(urlPath);
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (urlPath.startsWith("/")) {
+            urlPath = urlPath.substring(1);
+        }
+        URL resource = classLoader.getResource(urlPath);
         if (resource == null) {
             if (err) {
                 return "@@Not Found resource " + terminalFormat().escapeText(urlPath) + "@@";
             }
-            return null;
+            if (defaultValue == null) {
+                return null;
+            }
+            try (Reader is = new StringReader(defaultValue)) {
+                return loadHelp(is, classLoader, err, depth, vars);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
-        String s;
-        try (InputStream is = resource.openStream()) {
-            s = CoreIOUtils.loadString(is, true);
+        try (Reader is = new InputStreamReader(resource.openStream())) {
+            return loadHelp(is, classLoader, true, depth, vars);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        StringTokenizer st = new StringTokenizer(s, "\n\r", true);
+    }
+
+    private String loadHelp(Reader is, ClassLoader classLoader, boolean err, int depth, boolean vars) {
+        return processHelp(CoreIOUtils.loadString(is, true), classLoader, err, depth, vars);
+    }
+
+    private String processHelp(String s, ClassLoader classLoader, boolean err, int depth, boolean vars) {
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
         StringBuilder sb = new StringBuilder();
-        while (st.hasMoreElements()) {
-            String e = st.nextToken();
-            if (e.length() > 0) {
-                if (e.charAt(0) == '\n' || e.charAt(0) == '\r') {
-                    sb.append(e);
-                } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
-                    e = e.trim();
-                    e = e.substring("#!include<".length(), e.length() - 1);
-                    sb.append(loadHelp(e, clazz, true, depth - 1));
-                } else {
-                    sb.append(e);
+        if (s != null) {
+            StringTokenizer st = new StringTokenizer(s, "\n\r", true);
+            while (st.hasMoreElements()) {
+                String e = st.nextToken();
+                if (e.length() > 0) {
+                    if (e.charAt(0) == '\n' || e.charAt(0) == '\r') {
+                        sb.append(e);
+                    } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
+                        e = e.trim();
+                        e = e.substring("#!include<".length(), e.length() - 1);
+                        sb.append(loadHelp(e, classLoader, err, depth - 1, false, "@@NOT FOUND\\<" + terminalFormat().escapeText(e) + "\\>@@"));
+                    } else {
+                        sb.append(e);
+                    }
                 }
             }
         }
-        return sb.toString();
+        String help = sb.toString();
+        if (vars) {
+            if (help != null) {
+                help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
+            }
+        }
+        return help;
     }
 
     @Override

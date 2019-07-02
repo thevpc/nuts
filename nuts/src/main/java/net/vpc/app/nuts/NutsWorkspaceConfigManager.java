@@ -48,13 +48,14 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String getUuid();
 
+    NutsWorkspaceStoredConfig stored();
+
     /**
-     * context information for the context type
+     * read only configuration that is currently used.
      *
-     * @param contextType
-     * @return
+     * @return read only configuration that is currently used.
      */
-    NutsBootContext getContext(NutsBootContextType contextType);
+    NutsWorkspaceCurrentConfig current();
 
     ClassLoader getBootClassLoader();
 
@@ -62,9 +63,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
 //    Path getBootNutsJar();
 //
-
-    
-    boolean isValidWorkspaceFolder();
 
     Path getWorkspaceLocation();
 
@@ -130,14 +128,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceOptions getOptions();
 
-    char[] decryptString(char[] input);
-
-    byte[] decryptString(byte[] input);
-
-    char[] encryptString(char[] input);
-
-    byte[] encryptString(byte[] input);
-
     void addCommandAliasFactory(NutsCommandAliasFactoryConfig commandFactory, NutsAddOptions options);
 
     boolean removeCommandAliasFactory(String name, NutsRemoveOptions options);
@@ -166,31 +156,17 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setStoreLocationLayout(NutsOsFamily layout);
 
-    NutsOsFamily getStoreLocationLayout();
-
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
     Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
     Path getStoreLocation(NutsId id, Path path);
 
-    NutsOsFamily getPlatformOsFamily();
-
-    NutsId getPlatformOs();
-
-    NutsId getPlatformOsDist();
-
-    NutsId getPlatformArch();
-
-    String getPlatformOsHome(NutsStoreLocation location);
-
     long getCreationStartTimeMillis();
 
     long getCreationFinishTimeMillis();
 
     long getCreationTimeMillis();
-
-    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 
     String getDefaultIdFilename(NutsId id);
 
@@ -205,10 +181,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsWorkspaceListManager createWorkspaceListManager(String name);
 
     void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
-
-    NutsId getApiId();
-
-    NutsId getRuntimeId();
 
     boolean isSupportedRepositoryType(String repositoryType);
 
@@ -242,7 +214,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 
-    boolean isGlobal();
+//    boolean isGlobal();
 
     String getDefaultIdComponentExtension(String packaging);
 

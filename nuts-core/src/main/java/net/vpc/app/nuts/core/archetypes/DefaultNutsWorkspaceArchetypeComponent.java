@@ -81,6 +81,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 NutsConstants.Rights.SAVE_WORKSPACE,
                 NutsConstants.Rights.SAVE_REPOSITORY
         ).remoteIdentity("contributor")
+                .remoteIdentity("contributor")
                 .run();
     }
 }

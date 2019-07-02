@@ -43,7 +43,7 @@ public class NutsRepositoryConfig implements Serializable {
     /**
      * Api version having created the config
      */
-    private String createApiVersion = null;
+    private String configVersion = null;
     private String uuid;
     private String name;
     private String type;
@@ -159,12 +159,12 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public String getCreateApiVersion() {
-        return createApiVersion;
+    public String getConfigVersion() {
+        return configVersion;
     }
 
-    public void setCreateApiVersion(String createApiVersion) {
-        this.createApiVersion = createApiVersion;
+    public void setConfigVersion(String configVersion) {
+        this.configVersion = configVersion;
     }
 
     public String[] getStoreLocations() {
@@ -178,7 +178,7 @@ public class NutsRepositoryConfig implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.createApiVersion);
+        hash = 53 * hash + Objects.hashCode(this.configVersion);
         hash = 53 * hash + Objects.hashCode(this.uuid);
         hash = 53 * hash + Objects.hashCode(this.name);
         hash = 53 * hash + Objects.hashCode(this.type);
@@ -209,7 +209,7 @@ public class NutsRepositoryConfig implements Serializable {
         if (this.indexEnabled != other.indexEnabled) {
             return false;
         }
-        if (!Objects.equals(this.createApiVersion, other.createApiVersion)) {
+        if (!Objects.equals(this.configVersion, other.configVersion)) {
             return false;
         }
         if (!Objects.equals(this.uuid, other.uuid)) {
@@ -250,7 +250,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "createApiVersion=" + createApiVersion + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + storeLocations + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + "configVersion=" + configVersion + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + storeLocations + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
 }

@@ -4,7 +4,7 @@
 ==nuts== **-v**
       show version
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{version}} **--help**

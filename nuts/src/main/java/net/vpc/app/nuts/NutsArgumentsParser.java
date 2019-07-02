@@ -55,7 +55,7 @@ public final class NutsArgumentsParser {
      * @return newly created and filled options instance
      */
     public static NutsWorkspaceOptions parseNutsArguments(String[] bootArguments) {
-        NutsWorkspaceOptions o = new NutsWorkspaceOptions();
+        NutsDefaultWorkspaceOptions o = new NutsDefaultWorkspaceOptions();
         parseNutsArguments(bootArguments, o);
         return o;
     }
@@ -67,7 +67,7 @@ public final class NutsArgumentsParser {
      * @param bootArguments input arguments to parse
      * @param options options instance to fill
      */
-    public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptions options) {
+    public static void parseNutsArguments(String[] bootArguments, NutsDefaultWorkspaceOptions options) {
         List<String> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();

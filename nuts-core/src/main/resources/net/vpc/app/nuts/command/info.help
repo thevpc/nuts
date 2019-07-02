@@ -4,7 +4,7 @@
        **--fancy** : show paths variables in multi rows
        **--add** \<key\>=\<value\>: add extra  key=value to info list
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{info}} **--help**

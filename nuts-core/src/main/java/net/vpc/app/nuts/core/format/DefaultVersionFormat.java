@@ -92,7 +92,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (getValidSession().isPlainOut() && !all) {
             if (isWorkspaceVersion()) {
                 PrintWriter pout = getValidPrintWriter(out);
-                NutsBootContext rtcontext = ws.config().getContext(NutsBootContextType.RUNTIME);
+                NutsWorkspaceCurrentConfig rtcontext = ws.config().current();
                 pout.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
             } else {
                 PrintWriter pout = getValidPrintWriter(out);
@@ -110,7 +110,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     public Map<String, String> buildProps() {
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
         NutsWorkspaceConfigManager configManager = ws.config();
-        NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
+        NutsWorkspaceCurrentConfig rtcontext = configManager.current();
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
@@ -119,7 +119,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         props.put("nuts-runtime-version", rtcontext.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
+            props.put("os-version", ws.config().current().getPlatformOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.getProperty(extraKey));

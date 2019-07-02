@@ -133,12 +133,12 @@ public class SshCommand extends AbstractNshBuiltin {
                         }
                     }
                     if (!nutsCommandFound) {
-                        Path from = ws.search().id(ws.config().getApiId()).getResultDefinitions().required().getPath();
+                        Path from = ws.search().id(ws.config().current().getApiId()).getResultDefinitions().required().getPath();
                         if (from == null) {
                             throw new NutsExecutionException(context.getWorkspace(), "Unable to resolve Nuts Jar File", 2);
                         } else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
-                            String bootApiFileName = "nuts-" + ws.config().getApiId() + ".jar";
+                            String bootApiFileName = "nuts-" + ws.config().current().getApiId() + ".jar";
                             sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {

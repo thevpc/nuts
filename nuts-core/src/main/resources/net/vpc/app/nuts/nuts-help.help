@@ -1,4 +1,4 @@
-#!include</net/vpc/app/nuts/command/includes/standard-header.help>
+#!include</net/vpc/app/nuts/includes/standard-header.help>
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
 and non Java world. It helps discovering, downloading, assembling and executing  remote components (packages) in
@@ -479,7 +479,7 @@ Java         Version: **${java.version} (${java.vm.name})**
  **-** <args>...
    run a nut\'s shell (nsh) command with the remaining arguments
 
-#!include</net/vpc/app/nuts/command/includes/standard-options-format.help>
+#!include</net/vpc/app/nuts/includes/standard-options-format.help>
 
 ##EXAMPLES:##
         ==nuts== {{help}}

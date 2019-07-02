@@ -29,31 +29,57 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
+
 /**
- * Define type of NutsBootContext instance to get using 
- * {@link NutsWorkspaceConfigManager#getContext(net.vpc.app.nuts.NutsBootContextType) }
- * call.
+ * Nuts read-only configuration
  *
  * @author vpc
  * @since 0.5.4
  */
-public enum NutsBootContextType {
-    /**
-     * Run-time used configuration
-     */
-    RUNTIME,
-    /**
-     * Run-time configuration (may be different from Boot time as configuration
-     * changes)
-     */
-    CONFIG;
-    private final String id;
+public interface NutsWorkspaceStoredConfig {
 
-    NutsBootContextType() {
-        this.id = name().toLowerCase().replace('_', '-');
-    }
+    String getName();
 
-    public String id() {
-        return id;
-    }
+    NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
+
+    NutsOsFamily getStoreLocationLayout();
+
+    /**
+     * all home locations key/value map where keys are in the form "location"
+     * and values are absolute paths.
+     *
+     * @return home locations mapping
+     */
+    Map<String, String> getStoreLocations();
+
+    /**
+     * all home locations key/value map where keys are in the form
+     * "osfamily:location" and values are absolute paths.
+     *
+     * @return home locations mapping
+     */
+    Map<String, String> getHomeLocations();
+
+    String getStoreLocation(NutsStoreLocation folderType);
+
+    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+
+    NutsId getApiId();
+
+    NutsId getRuntimeId();
+
+    String getRuntimeDependencies();
+
+    String getExtensionDependencies();
+
+    String getBootRepositories();
+
+    String getJavaCommand();
+
+    String getJavaOptions();
+
+    boolean isGlobal();
 }

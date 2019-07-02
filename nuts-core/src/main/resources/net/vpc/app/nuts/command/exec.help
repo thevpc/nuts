@@ -14,7 +14,7 @@
  **--native**  or **--syscall** or **-n**
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{exec}} **--help**

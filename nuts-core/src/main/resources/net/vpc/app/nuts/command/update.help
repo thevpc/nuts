@@ -13,7 +13,7 @@
             : force updates to the provided \<version\> (may be a downgrade)
        <args> ...        : provide arguments to pass to updater
             
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##SYNOPSIS:##
 ==nuts== ##update## id1 ...

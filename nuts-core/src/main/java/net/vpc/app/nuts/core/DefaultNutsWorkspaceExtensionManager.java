@@ -85,15 +85,15 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
 //    @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString(), session);
+        return findWorkspaceExtensions(ws.config().current().getApiId().getVersion().toString(), session);
     }
 
   //  @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString();
+            version = ws.config().current().getApiId().getVersion().toString();
         }
-        NutsId id = ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().setVersion(version);
+        NutsId id = ws.config().current().getApiId().setVersion(version);
         return findExtensions(id, "extensions", session);
     }
 

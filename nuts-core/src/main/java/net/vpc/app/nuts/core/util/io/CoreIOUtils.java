@@ -593,9 +593,9 @@ public class CoreIOUtils {
 
             try {
                 Map<String, Object> a_config0 = ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), Map.class);
-                String version = (String) a_config0.get("createApiVersion");
+                String version = (String) a_config0.get("configVersion");
                 if (version == null) {
-                    version = "0.5.6";
+                    version = ws.config().current().getApiVersion();
                 }
                 int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
                 if (buildNumber < 506) {
@@ -639,7 +639,7 @@ public class CoreIOUtils {
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
-            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws,null));
+            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws, null));
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
                 NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, null, queryOptions);
@@ -674,7 +674,18 @@ public class CoreIOUtils {
     }
 
     /**
-     * copy le flux d'entree dans le lux de sortie
+     * copy input to output
+     *
+     * @param in entree
+     * @param out sortie
+     * @throws IOException when IO error
+     */
+    public static void copy(Reader in, Writer out) throws IOException {
+        copy(in, out, DEFAULT_BUFFER_SIZE);
+    }
+
+    /**
+     * copy input to output
      *
      * @param in entree
      * @param out sortie
@@ -702,6 +713,24 @@ public class CoreIOUtils {
 
     }
 
+    /**
+     * copy input stream to output stream using the buffer size in bytes
+     *
+     * @param in entree
+     * @param out sortie
+     * @param bufferSize
+     * @throws IOException when IO error
+     */
+    public static void copy(Reader in, Writer out, int bufferSize) throws IOException {
+        char[] buffer = new char[bufferSize];
+        int len;
+
+        while ((len = in.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+        }
+
+    }
+
     public static String loadString(InputStream is, boolean close) {
         try {
             try {
@@ -715,6 +744,37 @@ public class CoreIOUtils {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    public static String loadString(Reader is, boolean close) {
+        try {
+            try {
+                char[] bytes = loadCharArray(is);
+                return new String(bytes);
+            } finally {
+                if (is != null && close) {
+                    is.close();
+                }
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static char[] loadCharArray(Reader r) throws IOException {
+        CharArrayWriter out = null;
+
+        try {
+            out = new CharArrayWriter();
+            copy(r, out);
+            out.flush();
+            return out.toCharArray();
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+
     }
 
     public static byte[] loadByteArray(InputStream r) throws IOException {
@@ -1148,7 +1208,7 @@ public class CoreIOUtils {
 
     public static NutsHttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
         //        System.out.println("getHttpClientFacade "+url);
-        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws,url));
+        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws, url));
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
@@ -1617,7 +1677,7 @@ public class CoreIOUtils {
     }
 
     public static InputSource getCachedUrlWithSHA1(NutsWorkspace ws, String path, NutsSession session) {
-        final Path cacheBasePath = ws.config().getStoreLocation(ws.config().getRuntimeId(), NutsStoreLocation.CACHE);
+        final Path cacheBasePath = ws.config().getStoreLocation(ws.config().current().getRuntimeId(), NutsStoreLocation.CACHE);
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
         ws.io().copy()
@@ -1674,7 +1734,7 @@ public class CoreIOUtils {
         PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
         if (m == null) {
             m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.config().getStoreLocation(
-                    ws.config().getRuntimeId(),
+                    ws.config().current().getRuntimeId(),
                     NutsStoreLocation.CACHE
             ).resolve("urls-db").toFile());
             ws.userProperties().put(k, m);

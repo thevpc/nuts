@@ -7,7 +7,7 @@
        **-r** or **--runtime** : check updates for workspace\'s runtime component (minor workspace update)
        **-A** or **--api** : check updates for workspace\'s api (major workspace update)
             
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{check-updates}} **--help**

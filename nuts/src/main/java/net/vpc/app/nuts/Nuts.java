@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * it's main class for creating and opening nuts workspaces.
  *
  * Created by vpc on 1/5/17.
+ *
  * @since 0.1.0
  */
 public class Nuts {
@@ -92,23 +93,20 @@ public class Nuts {
     public static NutsWorkspace openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot;
-        String d = PrivateNutsUtils.trim(
+        String nutsWorkspaceOptions = PrivateNutsUtils.trim(
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
                 + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
-        if (!PrivateNutsUtils.isBlank(d)) {
-            boot = new NutsBootWorkspace(PrivateNutsUtils.parseCommandLine(d));
+        if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
+            boot = new NutsBootWorkspace(PrivateNutsUtils.parseCommandLine(nutsWorkspaceOptions));
             boot.getOptions().setApplicationArguments(args);
         } else {
-            NutsWorkspaceOptions t = new NutsWorkspaceOptions();
+            NutsDefaultWorkspaceOptions t = new NutsDefaultWorkspaceOptions();
             t.setApplicationArguments(args);
             boot = new NutsBootWorkspace(t);
-        }
-        if (boot.hasUnsatisfiedRequirements()) {
-            throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version " + boot.getOptions().getApiVersion());
+            boot.getOptions().setInherited(true);
         }
         boot.getOptions().setCreationTime(startTime);
-        boot.getOptions().setInherited(true);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 
@@ -119,15 +117,7 @@ public class Nuts {
      * @return new NutsWorkspace instance
      */
     public static NutsWorkspace openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
-        long startTime = System.currentTimeMillis();
-        NutsBootWorkspace boot = new NutsBootWorkspace(args);
-        if (boot.hasUnsatisfiedRequirements()) {
-            throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version : " + boot.getRequirementsHelpString(true));
-        }
-        if (boot.getOptions().getCreationTime() == 0) {
-            boot.getOptions().setCreationTime(startTime);
-        }
-        return boot.openWorkspace();
+        return new NutsBootWorkspace(args).openWorkspace();
     }
 
     /**
@@ -146,12 +136,6 @@ public class Nuts {
      * @return new NutsWorkspace instance
      */
     public static NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
-        if (options == null) {
-            options = new NutsWorkspaceOptions();
-        }
-        if (options.getCreationTime() == 0) {
-            options.setCreationTime(System.currentTimeMillis());
-        }
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
@@ -165,8 +149,7 @@ public class Nuts {
      */
     public static void runWorkspace(String... args) throws NutsExecutionException {
         //long startTime = System.currentTimeMillis();
-        NutsBootWorkspace boot = new NutsBootWorkspace(args);
-        boot.run();
+        new NutsBootWorkspace(args).run();
     }
 
 }

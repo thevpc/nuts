@@ -59,7 +59,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                     String ws = cmdLine.required().nextNonOption(cmdLine.createName("NewWorkspaceName")).getString();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = Nuts.openWorkspace(
-                                new NutsWorkspaceOptions()
+                                new NutsDefaultWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setOpenMode(ignoreIdFound ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.CREATE_NEW)
@@ -126,7 +126,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                     processed = true;
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = Nuts.openWorkspace(
-                                new NutsWorkspaceOptions()
+                                new NutsDefaultWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setReadOnly(!save)

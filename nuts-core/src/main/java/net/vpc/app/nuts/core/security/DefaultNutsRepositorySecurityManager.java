@@ -15,6 +15,7 @@ import net.vpc.app.nuts.core.DefaultNutsRemoveUserCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateUserCommand;
 import net.vpc.app.nuts.core.repos.DefaultNutsRepositoryConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -133,7 +134,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
             id = ((DefaultNutsRepositoryConfigManager) repo.config())
                     .getStoredConfig().getAuthenticationAgent();
         }
-        NutsAuthenticationAgent a = repo.getWorkspace().config().createAuthenticationAgent(id);
+        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(id);
         return a;
     }
 
@@ -142,7 +143,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
         DefaultNutsRepositoryConfigManager cc = (DefaultNutsRepositoryConfigManager) repo.config();
 
-        if (repo.getWorkspace().config().createAuthenticationAgent(authenticationAgent) == null) {
+        if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent) == null) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Unsupported Authentication Agent " + authenticationAgent);
         }
 

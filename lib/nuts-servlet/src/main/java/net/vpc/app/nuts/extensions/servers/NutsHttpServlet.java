@@ -73,7 +73,7 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
         NutsWorkspace workspace = Nuts.openWorkspace(
-                new NutsWorkspaceOptions()
+                new NutsDefaultWorkspaceOptions()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
                         .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
@@ -93,7 +93,7 @@ public class NutsHttpServlet extends HttpServlet {
             }
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
-                ws = Nuts.openWorkspace(new NutsWorkspaceOptions()
+                ws = Nuts.openWorkspace(new NutsDefaultWorkspaceOptions()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(location)
                         .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)

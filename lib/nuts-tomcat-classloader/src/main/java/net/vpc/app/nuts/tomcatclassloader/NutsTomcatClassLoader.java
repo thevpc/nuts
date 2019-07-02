@@ -141,7 +141,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         if (nutsWorkspace == null) {
             nutsWorkspace
                     = Nuts.openWorkspace(
-                            new NutsWorkspaceOptions()
+                            new NutsDefaultWorkspaceOptions()
                                     .setRuntimeId(getWorkspaceBootRuntime())
                                     .setClassLoaderProvider(new NutsSingletonClassLoaderProvider(getParent()))
                                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)

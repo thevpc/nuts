@@ -96,7 +96,7 @@ public class LinuxNdi implements SystemNdi {
     }
 
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
-        NutsId b = context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getApiId();
+        NutsId b = context.getWorkspace().config().current().getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
                 .id(b).setOptional(false).latest().content().getResultDefinitions().required();
@@ -228,10 +228,10 @@ public class LinuxNdi implements SystemNdi {
         goodNdiRc.append("# This file aims to prepare bash environment against current nuts\n");
         goodNdiRc.append("# workspace installation.\n");
         goodNdiRc.append("#\n");
-        goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().getApiId().getVersion().getValue()).append("'\n");
+        goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().current().getApiId().getVersion().getValue()).append("'\n");
         goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
-                .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
+                .id(context.getWorkspace().config().current().getApiId()).getResultPaths().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("[[ \":$PATH:\" != *\":" + appsFolder + ":\"* ]] && PATH=\"" + appsFolder + ":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");

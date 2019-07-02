@@ -9,7 +9,7 @@ deploys a new file to the given repository
 
 deploys an id from registered repository to another
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
 
