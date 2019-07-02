@@ -32,13 +32,13 @@ package net.vpc.app.nuts.core;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsStoreLocationStrategy;
 import net.vpc.app.nuts.NutsUnexpectedException;
 import net.vpc.app.nuts.NutsWorkspaceOptions;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsWorkspaceCurrentConfig;
 
 /**
  * Nuts Boot editable configuration object
@@ -144,7 +144,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         }
     }
 
-    public NutsBootConfig(NutsBootContext context) {
+    public NutsBootConfig(NutsWorkspaceCurrentConfig context) {
         if (context != null) {
             this.name = context.getName();
             this.apiVersion = context.getApiId().getVersion().getValue();

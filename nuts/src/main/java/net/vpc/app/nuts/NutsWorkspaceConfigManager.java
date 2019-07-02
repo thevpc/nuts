@@ -33,6 +33,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -48,13 +49,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String getUuid();
 
-    /**
-     * context information for the context type
-     *
-     * @param contextType
-     * @return
-     */
-    NutsBootContext getContext(NutsBootContextType contextType);
+    NutsWorkspaceStoredConfig stored();
 
     ClassLoader getBootClassLoader();
 
@@ -62,10 +57,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
 //    Path getBootNutsJar();
 //
-
-    
-    boolean isValidWorkspaceFolder();
-
     Path getWorkspaceLocation();
 
     boolean isReadOnly();
@@ -130,14 +121,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceOptions getOptions();
 
-    char[] decryptString(char[] input);
-
-    byte[] decryptString(byte[] input);
-
-    char[] encryptString(char[] input);
-
-    byte[] encryptString(byte[] input);
-
     void addCommandAliasFactory(NutsCommandAliasFactoryConfig commandFactory, NutsAddOptions options);
 
     boolean removeCommandAliasFactory(String name, NutsRemoveOptions options);
@@ -160,37 +143,17 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
 
-    NutsStoreLocationStrategy getStoreLocationStrategy();
-
-    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
-
     void setStoreLocationLayout(NutsOsFamily layout);
-
-    NutsOsFamily getStoreLocationLayout();
 
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
     Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
-
-    Path getStoreLocation(NutsId id, Path path);
-
-    NutsOsFamily getPlatformOsFamily();
-
-    NutsId getPlatformOs();
-
-    NutsId getPlatformOsDist();
-
-    NutsId getPlatformArch();
-
-    String getPlatformOsHome(NutsStoreLocation location);
 
     long getCreationStartTimeMillis();
 
     long getCreationFinishTimeMillis();
 
     long getCreationTimeMillis();
-
-    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 
     String getDefaultIdFilename(NutsId id);
 
@@ -205,10 +168,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsWorkspaceListManager createWorkspaceListManager(String name);
 
     void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
-
-    NutsId getApiId();
-
-    NutsId getRuntimeId();
 
     boolean isSupportedRepositoryType(String repositoryType);
 
@@ -242,10 +201,58 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 
-    boolean isGlobal();
-
+//    boolean isGlobal();
     String getDefaultIdComponentExtension(String packaging);
 
     String getDefaultIdExtension(NutsId id);
 
+    NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
+
+    NutsOsFamily getStoreLocationLayout();
+
+    /**
+     * all home locations key/value map where keys are in the form "location"
+     * and values are absolute paths.
+     *
+     * @return home locations mapping
+     */
+    Map<String, String> getStoreLocations();
+
+    /**
+     * all home locations key/value map where keys are in the form
+     * "osfamily:location" and values are absolute paths.
+     *
+     * @return home locations mapping
+     */
+    Map<String, String> getHomeLocations();
+
+    Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+
+    String getApiVersion();
+
+    NutsId getApiId();
+
+    NutsId getRuntimeId();
+
+    String getRuntimeDependencies();
+
+    String getExtensionDependencies();
+
+    String getBootRepositories();
+
+    String getJavaCommand();
+
+    String getJavaOptions();
+
+    boolean isGlobal();
+
+    NutsOsFamily getPlatformOsFamily();
+
+    NutsId getPlatformOs();
+
+    NutsId getPlatformOsDist();
+
+    NutsId getPlatformArch();
 }

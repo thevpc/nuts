@@ -63,7 +63,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         this.enabled = enabled;
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
-        setConfig(config, session,false);
+        setConfig(config, session, false);
     }
 
     @Override
@@ -352,13 +352,14 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 created = true;
             }
             CoreIOUtils.mkdirs(getStoreLocation());
+            config.setConfigVersion(repository.getWorkspace().config().current().getApiId().getVersion().getValue());
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
-                config.setCreateApiVersion(repository.getWorkspace().config().getApiId().getVersion().getValue());
+            if (CoreStringUtils.isBlank(config.getConfigVersion())) {
+                config.setConfigVersion(repository.getWorkspace().config().current().getApiId().getVersion().getValue());
             }
             repository.getWorkspace().json().value(config).print(file);
             configurationChanged = false;

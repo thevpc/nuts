@@ -178,14 +178,14 @@ public class NutsWorkspaceOptionsFormat {
             Map<String, String> homeLocations = options.getHomeLocations();
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                    String s = homeLocations.get(NutsWorkspaceOptions.createHomeLocationKey(null, location));
+                    String s = homeLocations.get(NutsDefaultWorkspaceOptions.createHomeLocationKey(null, location));
                     if (!PrivateNutsUtils.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        String s = homeLocations.get(NutsWorkspaceOptions.createHomeLocationKey(osFamily, location));
+                        String s = homeLocations.get(NutsDefaultWorkspaceOptions.createHomeLocationKey(osFamily, location));
                         if (!PrivateNutsUtils.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }

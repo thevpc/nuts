@@ -47,7 +47,9 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     String expandPath(String path, String baseFolder);
 
-    String loadHelpString(String resource, Class cls, String defaultValue);
+    String loadFormattedString(Reader reader, ClassLoader classLoader);
+
+    String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue);
 
     NutsHashCommand hash();
 
@@ -96,7 +98,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     NutsIOManager setTerminal(NutsSessionTerminal terminal);
 
     /**
-     * parseExecutionEntries
+     * parse Execution Entries
      *
      * @param file jar file
      * @return execution entries (class names with main method)

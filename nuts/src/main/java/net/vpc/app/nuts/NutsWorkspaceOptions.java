@@ -30,11 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,616 +37,90 @@ import java.util.Map;
  *
  * @since 0.5.4
  */
-public final class NutsWorkspaceOptions implements Serializable, Cloneable {
-
-    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
-    }
-
-    /**
-     * nuts api version to boot
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String apiVersion = null;
-
-    /**
-     * nuts runtime id (or version) to boot
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String runtimeId;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String javaCommand;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String javaOptions;
-
-    /**
-     * workspace folder location path
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String workspace = null;
-
-    /**
-     * user friendly workspace name
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String name = null;
-
-    /**
-     * if true, do not install nuts companion tools upon workspace creation
-     * option-type : exported (inherited in child workspaces)
-     */
-    private boolean skipCompanions;
-
-    /**
-     * if true, do not run welcome when no application arguments were resolved.
-     * defaults to false option-type : exported (inherited in child workspaces)
-     *
-     * @since 0.5.5
-     */
-    private boolean skipWelcome;
-
-    /**
-     * if true consider global/system repository
-     *
-     * option-type : exported (inherited in child workspaces)
-     */
-    private boolean global;
-
-    /**
-     * if true consider GUI/Swing mode
-     *
-     * option-type : exported (inherited in child workspaces)
-     */
-    private boolean gui;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String[] excludedExtensions;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String[] excludedRepositories;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String[] transientRepositories;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String userName = null;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private char[] password = null;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private NutsTerminalMode terminalMode = null;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private boolean readOnly = false;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private boolean trace = false;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private NutsLogConfig logConfig;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private NutsConfirmationMode confirm = null;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private NutsOutputFormat outputFormat = null;
-
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private final List<String> outputFormatOptions = new ArrayList<>();
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private String[] applicationArguments;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private NutsWorkspaceOpenMode openMode = NutsWorkspaceOpenMode.OPEN_OR_CREATE;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private long creationTime;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private NutsClassLoaderProvider classLoaderProvider;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private String[] executorOptions;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private boolean recover = false;
-    
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private boolean reset = false;
-    
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private boolean debug = false;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private boolean inherited = false;
-
-    /**
-     * option-type : runtime (available only for the current workspace instance)
-     */
-    private NutsExecutionType executionType;
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private String archetype;
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private Map<String, String> storeLocations = new HashMap<>();
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private Map<String, String> homeLocations = new HashMap<>();
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private NutsOsFamily storeLocationLayout = null;
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private NutsStoreLocationStrategy storeLocationStrategy = null;
-
-    /**
-     * option-type : create (used when creating new workspace. will not be
-     * exported nor promoted to runtime)
-     */
-    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
-
-    public void parse(String[] args) {
-        NutsArgumentsParser.parseNutsArguments(args, this);
-    }
-
-    public NutsWorkspaceOptions() {
-    }
-
-    @SuppressWarnings("LeakingThisInConstructor")
-    public NutsWorkspaceOptions(String[] args) {
-        NutsArgumentsParser.parseNutsArguments(args, this);
-    }
-
-    public String getWorkspace() {
-        return workspace;
-    }
-
-    public NutsWorkspaceOptions setWorkspace(String workspace) {
-        this.workspace = workspace;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public NutsWorkspaceOptions setName(String workspaceName) {
-        this.name = workspaceName;
-        return this;
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public NutsWorkspaceOptions setGlobal(boolean global) {
-        this.global = global;
-        return this;
-    }
-
-    public boolean isGui() {
-        return gui;
-    }
-
-    public NutsWorkspaceOptions setGui(boolean gui) {
-        this.gui = gui;
-        return this;
-    }
-
-    public String getArchetype() {
-        return archetype;
-    }
-
-    public NutsWorkspaceOptions setArchetype(String archetype) {
-        this.archetype = archetype;
-        return this;
-    }
-
-    public String[] getExcludedExtensions() {
-        return excludedExtensions;
-    }
-
-    public NutsWorkspaceOptions setExcludedExtensions(String[] excludedExtensions) {
-        this.excludedExtensions = excludedExtensions;
-        return this;
-    }
-
-    public String[] getExcludedRepositories() {
-        return excludedRepositories;
-    }
-
-    public NutsWorkspaceOptions setExcludedRepositories(String[] excludedRepositories) {
-        this.excludedRepositories = excludedRepositories;
-        return this;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public NutsWorkspaceOptions setLogin(String login) {
-        this.userName = login;
-        return this;
-    }
-
-    public char[] getPassword() {
-        return password;
-    }
-
-    public NutsWorkspaceOptions setPassword(char[] password) {
-        this.password = password;
-        return this;
-    }
-
-    public NutsExecutionType getExecutionType() {
-        return executionType;
-    }
-
-    public NutsWorkspaceOptions setExecutionType(NutsExecutionType executionType) {
-        this.executionType = executionType;
-        return this;
-    }
-
-    public boolean isInherited() {
-        return inherited;
-    }
-
-    NutsWorkspaceOptions setInherited(boolean inherited) {
-        this.inherited = inherited;
-        return this;
-    }
-
-    public NutsWorkspaceOptions copy() {
-        try {
-            NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
-            t.storeLocations = new LinkedHashMap<>(storeLocations);
-            t.homeLocations = new LinkedHashMap<>(homeLocations);
-            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
-            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
-            t.setTransientRepositories(t.getTransientRepositories() == null ? null : Arrays.copyOf(t.getTransientRepositories(), t.getTransientRepositories().length));
-            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
-            return t;
-        } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(null, "Should never Happen", e);
-        }
-    }
-
-    public NutsTerminalMode getTerminalMode() {
-        return terminalMode;
-    }
-
-    public void setTerminalMode(NutsTerminalMode terminalMode) {
-        this.terminalMode = terminalMode;
-    }
-
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    public NutsWorkspaceOptions setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    public NutsWorkspaceOptions setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-        return this;
-    }
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public NutsWorkspaceOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    public String getRuntimeId() {
-        return runtimeId;
-    }
-
-    public NutsWorkspaceOptions setRuntimeId(String runtimeId) {
-        this.runtimeId = runtimeId;
-        return this;
-    }
-
-    public NutsClassLoaderProvider getClassLoaderProvider() {
-        return classLoaderProvider;
-    }
-
-    public NutsWorkspaceOptions setClassLoaderProvider(NutsClassLoaderProvider provider) {
-        this.classLoaderProvider = provider;
-        return this;
-    }
-
-    public NutsWorkspaceOptionsFormat format() {
-        return new NutsWorkspaceOptionsFormat(this);
-    }
-
-    public String[] getApplicationArguments() {
-        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
-    }
-
-    public NutsWorkspaceOptions setApplicationArguments(String[] applicationArguments) {
-        this.applicationArguments = applicationArguments;
-        return this;
-    }
-
-    public String getJavaCommand() {
-        return javaCommand;
-    }
-
-    public NutsWorkspaceOptions setJavaCommand(String javaCommand) {
-        this.javaCommand = javaCommand;
-        return this;
-    }
-
-    public String getJavaOptions() {
-        return javaOptions;
-    }
-
-    public NutsWorkspaceOptions setJavaOptions(String javaOptions) {
-        this.javaOptions = javaOptions;
-        return this;
-    }
-
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : executorOptions;
-    }
-
-    public NutsWorkspaceOptions setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
-        return this;
-    }
-
-    public boolean isRecover() {
-        return recover;
-    }
-
-    public NutsWorkspaceOptions setRecover(boolean recover) {
-        this.recover = recover;
-        return this;
-    }
-
-    public boolean isReset() {
-        return reset;
-    }
-
-    public NutsWorkspaceOptions setReset(boolean reset) {
-        this.reset = reset;
-        return this;
-    }
-
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public NutsWorkspaceOptions setDebug(boolean debug) {
-        this.debug = debug;
-        return this;
-    }
-
-
-    public String[] getTransientRepositories() {
-        return transientRepositories == null ? new String[0] : transientRepositories;
-    }
-
-    public NutsWorkspaceOptions setTransientRepositories(String[] transientRepositories) {
-        this.transientRepositories = transientRepositories;
-        return this;
-    }
-
-    public NutsLogConfig getLogConfig() {
-        return logConfig;
-    }
-
-    public NutsWorkspaceOptions setLogConfig(NutsLogConfig logConfig) {
-        this.logConfig = logConfig;
-        return this;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public NutsWorkspaceOptions setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public NutsOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
-    }
-
-    public NutsWorkspaceOptions setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
-        return this;
-    }
-
-    public NutsStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
-    }
-
-    public NutsWorkspaceOptions setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
-        return this;
-    }
-
-    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
-    }
-
-    public NutsWorkspaceOptions setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        return this;
-    }
-
-    public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations.get(folder.id());
-    }
-
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
-        String key = createHomeLocationKey(layout, location);
-        return homeLocations.get(key);
-    }
-
-    public NutsWorkspaceOptions setStoreLocation(NutsStoreLocation location, String value) {
-        if (PrivateNutsUtils.isBlank(value)) {
-            storeLocations.remove(location.id());
-        } else {
-            storeLocations.put(location.id(), value);
-        }
-        return this;
-    }
-
-    public NutsWorkspaceOptions setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
-        String key = createHomeLocationKey(layout, location);
-        if (PrivateNutsUtils.isBlank(value)) {
-            homeLocations.remove(key);
-        } else {
-            homeLocations.put(key, value);
-        }
-        return this;
-    }
-
-    public boolean isSkipCompanions() {
-        return skipCompanions;
-    }
-
-    public NutsWorkspaceOptions setSkipCompanions(boolean skipInstallCompanions) {
-        this.skipCompanions = skipInstallCompanions;
-        return this;
-    }
-
-    public boolean isSkipWelcome() {
-        return skipWelcome;
-    }
-
-    public NutsWorkspaceOptions setSkipWelcome(boolean skipWelcome) {
-        this.skipWelcome = skipWelcome;
-        return this;
-    }
-
-    public NutsWorkspaceOpenMode getOpenMode() {
-        return openMode;
-    }
-
-    public NutsWorkspaceOptions setOpenMode(NutsWorkspaceOpenMode openMode) {
-        this.openMode = openMode;
-        return this;
-    }
-
-    public NutsConfirmationMode getConfirm() {
-        return confirm;
-    }
-
-    public NutsWorkspaceOptions setConfirm(NutsConfirmationMode confirm) {
-        this.confirm = confirm;
-        return this;
-    }
-
-    public NutsOutputFormat getOutputFormat() {
-        return outputFormat;
-    }
-
-    public NutsWorkspaceOptions setOutputFormat(NutsOutputFormat outputFormat) {
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    public Map<String, String> getStoreLocations() {
-        return new LinkedHashMap<>(storeLocations);
-    }
-
-    public Map<String, String> getHomeLocations() {
-        return new LinkedHashMap<>(homeLocations);
-    }
-
-    public NutsWorkspaceOptions addOutputFormatOptions(String... options) {
-        if (options != null) {
-            outputFormatOptions.addAll(Arrays.asList(options));
-        }
-        return this;
-    }
-
-    public NutsWorkspaceOptions setOutputFormatOptions(String... options) {
-        outputFormatOptions.clear();
-        return addOutputFormatOptions(options);
-    }
-
-    public String[] getOutputFormatOptions() {
-        return outputFormatOptions.toArray(new String[0]);
-    }
-
-    @Override
-    public String toString() {
-        return format().getBootCommandLine();
-    }
+public interface NutsWorkspaceOptions extends Serializable {
+
+   NutsDefaultWorkspaceOptions copy();
+
+    NutsWorkspaceOptionsFormat format();
+
+    String getApiVersion();
+
+    String[] getApplicationArguments();
+
+    String getArchetype();
+
+    NutsClassLoaderProvider getClassLoaderProvider();
+
+    NutsConfirmationMode getConfirm();
+
+    long getCreationTime();
+
+    String[] getExcludedExtensions();
+
+    String[] getExcludedRepositories();
+
+    NutsExecutionType getExecutionType();
+
+    String[] getExecutorOptions();
+
+    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+
+    Map<String, String> getHomeLocations();
+
+    String getJavaCommand();
+
+    String getJavaOptions();
+
+    NutsLogConfig getLogConfig();
+
+    String getName();
+
+    NutsWorkspaceOpenMode getOpenMode();
+
+    NutsOutputFormat getOutputFormat();
+
+    String[] getOutputFormatOptions();
+
+    char[] getPassword();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
+
+    String getRuntimeId();
+
+    String getStoreLocation(NutsStoreLocation folder);
+
+    NutsOsFamily getStoreLocationLayout();
+
+    NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    Map<String, String> getStoreLocations();
+
+    NutsTerminalMode getTerminalMode();
+
+    String[] getTransientRepositories();
+
+    String getUserName();
+
+    String getWorkspace();
+
+    boolean isDebug();
+
+    boolean isGlobal();
+
+    boolean isGui();
+
+    boolean isInherited();
+
+    boolean isReadOnly();
+
+    boolean isRecover();
+
+    boolean isReset();
+
+    boolean isSkipCompanions();
+
+    boolean isSkipWelcome();
+
+    boolean isTrace();
 
 }

@@ -39,9 +39,9 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String getHelpText() {
-        return getSession().getWorkspace().io().loadHelpString(
+        return getSession().getWorkspace().io().loadFormattedString(
                 "/net/vpc/app/nuts/command/" + name + ".help",
-                getClass(), "no help found for "+name);
+                getClass().getClassLoader(), "no help found for " + name);
     }
 
 }

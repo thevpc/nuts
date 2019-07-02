@@ -349,7 +349,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             name = NutsWorkspaceConfigManagerExt.of(ws.config())
                     .getStoredConfig().getAuthenticationAgent();
         }
-        NutsAuthenticationAgent a = ws.config().createAuthenticationAgent(name);
+        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(ws.config()).createAuthenticationAgent(name);
         return a;
     }
 

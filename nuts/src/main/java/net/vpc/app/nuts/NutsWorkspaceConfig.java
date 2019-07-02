@@ -49,7 +49,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     /**
      * Api version having created the config
      */
-    private String createApiVersion = null;
+    private String configVersion = null;
 
     /**
      * boot component Id in long format (as defined in
@@ -85,6 +85,17 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
+    /**
+     * ';' separated list of component Ids in long format (as defined in
+     * {@link NutsId#getLongName()}) that defines ALL dependencies needed (no
+     * further dependency computation should be performed) to load and execute a
+     * valid extensions. These components should be either cached in boot cache
+     * folder or accessible from
+     * {@link NutsWorkspaceConfig#getBootRepositories()}
+     *
+     * @see NutsId#getLongNameId()
+     */
+    private String extensionDependencies = null;
     private List<NutsCommandAliasFactoryConfig> commandFactories;
     private Properties env = new Properties();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
@@ -191,12 +202,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getCreateApiVersion() {
-        return createApiVersion;
+    public String getConfigVersion() {
+        return configVersion;
     }
 
-    public NutsWorkspaceConfig setCreateApiVersion(String createApiVersion) {
-        this.createApiVersion = createApiVersion;
+    public NutsWorkspaceConfig setConfigVersion(String configVersion) {
+        this.configVersion = configVersion;
         return this;
     }
 
@@ -215,6 +226,15 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setRuntimeDependencies(String runtimeDependencies) {
         this.runtimeDependencies = runtimeDependencies;
+        return this;
+    }
+
+    public String getExtensionDependencies() {
+        return extensionDependencies;
+    }
+
+    public NutsWorkspaceConfig setExtensionDependencies(String runtimeDependencies) {
+        this.extensionDependencies = runtimeDependencies;
         return this;
     }
 

@@ -59,7 +59,7 @@ public class NutsPlatformUtils {
         return NutsOsFamily.UNKNOWN;
     }
 
-    public static String getPlatformOsGlobalHome(NutsStoreLocation location, String id) {
+    public static String getPlatformGlobalHomeFolder(NutsStoreLocation location, String workspaceName) {
         switch (location) {
             case APPS: {
                 switch (getPlatformOsFamily()) {
@@ -67,14 +67,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/opt/nuts/apps/" + id;
+                        return "/opt/nuts/apps/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -85,14 +85,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/opt/nuts/lib/" + id;
+                        return "/opt/nuts/lib/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -103,14 +103,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/etc/opt/nuts/" + id;
+                        return "/etc/opt/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -121,14 +121,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/var/log/nuts/" + id;
+                        return "/var/log/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -139,14 +139,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/var/cache/nuts/" + id;
+                        return "/var/cache/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -157,14 +157,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/var/opt/nuts/" + id;
+                        return "/var/opt/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -175,14 +175,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/tmp/nuts/global/" + id;
+                        return "/tmp/nuts/global/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\windows\\TEMP";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -193,14 +193,14 @@ public class NutsPlatformUtils {
                     case MACOS:
                     case UNIX:
                     case UNKNOWN: {
-                        return "/tmp/run/nuts/global/" + id;
+                        return "/tmp/run/nuts/global/" + workspaceName;
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
                         if (PrivateNutsUtils.isBlank(pf)) {
                             pf = "C:\\windows\\TEMP";
                         }
-                        return pf + "\\nuts\\run" + PrivateNutsUtils.syspath(id);
+                        return pf + "\\nuts\\run" + PrivateNutsUtils.syspath(workspaceName);
                     }
                 }
                 break;
@@ -223,7 +223,7 @@ public class NutsPlatformUtils {
      * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
      */
-    public static String resolveHomeFolder(
+    public static String getPlatformHomeFolder(
             NutsOsFamily storeLocationLayout,
             NutsStoreLocation folderType,
             Map<String, String> homeLocations,
@@ -250,18 +250,17 @@ public class NutsPlatformUtils {
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        String key = NutsWorkspaceOptions.createHomeLocationKey(storeLocationLayout, folderType);
+        String key = NutsDefaultWorkspaceOptions.createHomeLocationKey(storeLocationLayout, folderType);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        key = NutsWorkspaceOptions.createHomeLocationKey(null, folderType);
+        key = NutsDefaultWorkspaceOptions.createHomeLocationKey(null, folderType);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
-        }
-        if (global) {
-            return getPlatformOsGlobalHome(folderType, workspaceName);
+        } else if (global) {
+            return getPlatformGlobalHomeFolder(folderType, workspaceName);
         } else {
             switch (folderType) {
                 case VAR:

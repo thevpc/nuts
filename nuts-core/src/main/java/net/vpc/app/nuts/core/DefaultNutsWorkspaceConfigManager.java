@@ -31,10 +31,8 @@ package net.vpc.app.nuts.core;
 
 import java.io.ByteArrayInputStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
-import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
@@ -51,7 +49,6 @@ import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import net.vpc.app.nuts.core.compat.NutsWorkspaceConfig502;
 import net.vpc.app.nuts.core.repos.NutsRepositoryRegistryHelper;
 import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
@@ -65,7 +62,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
 
     private final DefaultNutsWorkspace ws;
-    private NutsBootContext runningContext;
+    private NutsWorkspaceCurrentConfig currentConfig;
+    private NutsWorkspaceStoredConfig storedConfig = new NutsWorkspaceStoredConfigImpl();
     private ClassLoader bootClassLoader;
     private URL[] bootClassWorldURLs;
     protected NutsWorkspaceConfig config = new NutsWorkspaceConfig();
@@ -74,11 +72,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private boolean configurationChanged = false;
     private Path workspaceLocation;
     private NutsWorkspaceOptions options;
-    private NutsId platformOs;
-    private NutsOsFamily platformOsFamily;
-    private NutsId platformArch;
-    private NutsId platformOsdist;
-    private String[] platformOsPath = new String[NutsStoreLocation.values().length];
+    private Path[] platformOsPath = new Path[NutsStoreLocation.values().length];
     private long startCreateTime;
     private long endCreateTime;
     private final Map<String, List<NutsSdkLocation>> configSdks = new LinkedHashMap<>();
@@ -86,7 +80,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
 
     private NutsIndexStoreClientFactory indexStoreClientFactory;
-    private boolean global;
     private Set<String> cachedImports;
     private Set<String> excludedRepositoriesSet = new HashSet<>();
 
@@ -134,7 +127,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             config.setUuid(UUID.randomUUID().toString());
             fire = true;
         }
-        this.global = config.isGlobal();
         configSdks.clear();
         if (config.getSdk() != null) {
             for (NutsSdkLocation sdk : config.getSdk()) {
@@ -164,35 +156,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
-//    @Override
-//    public NutsBootContext getRunningContext() {
-//        return runningBootConfig;
-//    }
     @Override
-    public NutsBootContext getContext(NutsBootContextType contextType) {
-        if (contextType == null) {
-            contextType = NutsBootContextType.RUNTIME;
-        }
-        switch (contextType) {
-            case RUNTIME: {
-                return runningContext;
-            }
-            case CONFIG: {
-                return new DefaultNutsBootContext(ws).merge(config).build(getWorkspaceLocation());
-            }
-
-        }
-        throw new NutsUnsupportedArgumentException(ws, "" + contextType);
+    public NutsWorkspaceCurrentConfig current() {
+        return currentConfig;
     }
 
     @Override
-    public NutsBootConfig getBootConfig() {
-        return new NutsBootConfig()
-                .setApiVersion(config.getApiVersion())
-                .setRuntimeId(config.getRuntimeId())
-                .setRepositories(config.getBootRepositories())
-                .setJavaCommand(config.getJavaCommand())
-                .setJavaOptions(config.getJavaOptions());
+    public NutsWorkspaceStoredConfig stored() {
+        return storedConfig;
     }
 
     @Override
@@ -327,9 +298,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByName(String sdkType, String locationName) {
+    public NutsSdkLocation findSdkByName(String type, String locationName) {
+        type = toValidSdkName(type);
         if (locationName != null) {
-            List<NutsSdkLocation> list = getSdk().get(sdkType);
+            List<NutsSdkLocation> list = getSdk().get(type);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
                     if (location.getName().equals(locationName)) {
@@ -342,12 +314,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByPath(String sdkType, Path path) {
+    public NutsSdkLocation findSdkByPath(String type, Path path) {
+        type = toValidSdkName(type);
         if (path != null) {
-            List<NutsSdkLocation> list = getSdk().get(sdkType);
+            List<NutsSdkLocation> list = getSdk().get(type);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
-                    if (location.getPath().equals(path)) {
+                    if (location.getPath() != null && location.getPath().equals(path.toString())) {
                         return location;
                     }
                 }
@@ -357,9 +330,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByVersion(String sdkType, String version) {
+    public NutsSdkLocation findSdkByVersion(String type, String version) {
+        type = toValidSdkName(type);
         if (version != null) {
-            List<NutsSdkLocation> list = getSdk().get(sdkType);
+            List<NutsSdkLocation> list = getSdk().get(type);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
                     if (location.getVersion().equals(version)) {
@@ -390,9 +364,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location) {
+    public NutsSdkLocation findSdk(String type, NutsSdkLocation location) {
+        type = toValidSdkName(type);
         if (location != null) {
-            List<NutsSdkLocation> list = getSdk().get(sdkType);
+            List<NutsSdkLocation> list = getSdk().get(type);
             if (list != null) {
                 for (NutsSdkLocation location2 : list) {
                     if (location2.equals(location)) {
@@ -410,37 +385,37 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return s.toArray(new String[0]);
     }
 
-    @Override
-    public void setBootConfig(NutsBootConfig other) {
-        if (other == null) {
-            other = new NutsBootConfig();
-        }
-        if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
-            NutsSession searchSession = ws.createSession().trace(false);
-            other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
-                    .scope(NutsDependencyScopePattern.RUN)
-                    .inlineDependencies()
-                    .duplicates(false)
-                    .getResultDefinitions().stream()
-                    .map(x -> x.getId().getLongName())
-                    .collect(Collectors.joining(";"))
-            );
-        } else {
-            other.setRuntimeDependencies("");
-        }
-        config.setApiVersion(other.getApiVersion());
-        config.setRuntimeId(other.getRuntimeId());
-        config.setRuntimeDependencies(other.getRuntimeDependencies());
-        config.setBootRepositories(other.getBootRepositories());
-        fireConfigurationChanged();
-    }
-
+//    @Override
+//    public void setBootConfig(NutsBootConfig other) {
+//        if (other == null) {
+//            other = new NutsBootConfig();
+//        }
+//        if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
+//            NutsSession searchSession = ws.createSession().trace(false);
+//            other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
+//                    .scope(NutsDependencyScopePattern.RUN)
+//                    .inlineDependencies()
+//                    .duplicates(false)
+//                    .getResultDefinitions().stream()
+//                    .map(x -> x.getId().getLongName())
+//                    .collect(Collectors.joining(";"))
+//            );
+//        } else {
+//            other.setRuntimeDependencies("");
+//        }
+//        config.setApiVersion(other.getApiVersion());
+//        config.setRuntimeId(other.getRuntimeId());
+//        config.setRuntimeDependencies(other.getRuntimeDependencies());
+//        config.setBootRepositories(other.getBootRepositories());
+//        fireConfigurationChanged();
+//    }
     @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
+        type = toValidSdkName(type);
         NutsVersionFilter javaVersionFilter = ws.version().parse(requestedVersion).toFilter();
         NutsSdkLocation best = null;
         final NutsSession session = ws.createSession();
-        for (NutsSdkLocation jdk : getSdks("java")) {
+        for (NutsSdkLocation jdk : getSdks(type)) {
             String currVersion = jdk.getVersion();
             if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion), session)) {
                 if (best == null || DefaultNutsVersion.compareVersions(best.getVersion(), currVersion) < 0) {
@@ -451,8 +426,18 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return best;
     }
 
+    private String toValidSdkName(String type) {
+        if (CoreStringUtils.isBlank(type)) {
+            type = "java";
+        } else {
+            type = CoreStringUtils.trim(type);
+        }
+        return type;
+    }
+
     @Override
     public NutsSdkLocation[] getSdks(String type) {
+        type = toValidSdkName(type);
         List<NutsSdkLocation> list = getSdk().get(type);
         if (list == null) {
             return new NutsSdkLocation[0];
@@ -482,6 +467,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || (!isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.checkReadOnly(ws);
             ws.security().checkAllowed(NutsConstants.Rights.SAVE_WORKSPACE, "save");
+            config.setConfigVersion(Nuts.getVersion());
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
             config.setRepositories(new ArrayList<>(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs())));
             List<NutsSdkLocation> plainSdks = new ArrayList<>();
@@ -490,8 +476,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             config.setSdk(plainSdks);
             Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-            if (CoreStringUtils.isBlank(config.getCreateApiVersion())) {
-                config.setCreateApiVersion(getApiId().getVersion().getValue());
+            if (CoreStringUtils.isBlank(config.getConfigVersion())) {
+                config.setConfigVersion(current().getApiId().getVersion().getValue());
             }
             ws.json().value(config).print(file);
             configurationChanged = false;
@@ -520,7 +506,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public void onInitializeWorkspace(
             Path workspaceLocation,
-            NutsWorkspaceOptions options, 
+            NutsWorkspaceOptions options,
             URL[] bootClassWorldURLs, ClassLoader bootClassLoader) {
         this.workspaceLocation = workspaceLocation;
         this.options = options;
@@ -529,10 +515,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void setRunningContext(NutsBootContext runningContext) {
-        this.runningContext = runningContext;
+    public void setCurrentConfig(NutsWorkspaceCurrentConfig currentConfig) {
+        this.currentConfig = currentConfig;
     }
-    
 
     public String getBootClassWorldString() {
         StringBuilder sb = new StringBuilder();
@@ -590,7 +575,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public String toString() {
         String s1 = "NULL";
         String s2 = "NULL";
-        NutsBootContext c = getContext(NutsBootContextType.RUNTIME);
+        NutsWorkspaceCurrentConfig c = current();
         if (c != null) {
             s1 = String.valueOf(c.getApiId());
             s2 = String.valueOf(c.getRuntimeId());
@@ -598,7 +583,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return "NutsWorkspaceConfig{"
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
-                + ", workspace=" + ((runningContext == null) ? "NULL" : ("'" + getWorkspaceLocation()+ '\''))
+                + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'" + getWorkspaceLocation() + '\''))
                 + '}';
     }
 
@@ -753,40 +738,39 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return options.copy();
     }
 
-    @Override
-    public char[] decryptString(char[] input) {
-        if (input == null || input.length == 0) {
-            return new char[0];
-        }
-        return CoreIOUtils.bytesToChars(decryptString(CoreIOUtils.charsToBytes(input)));
-    }
-
-    @Override
-    public char[] encryptString(char[] input) {
-        if (input == null || input.length == 0) {
-            return new char[0];
-        }
-        return CoreIOUtils.bytesToChars(encryptString(CoreIOUtils.charsToBytes(input)));
-    }
-
-    @Override
-    public byte[] decryptString(byte[] input) {
-        if (input == null || input.length == 0) {
-            return new byte[0];
-        }
-        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        return CoreSecurityUtils.httpDecrypt(input, passphrase);
-    }
-
-    @Override
-    public byte[] encryptString(byte[] input) {
-        if (input == null || input.length == 0) {
-            return new byte[0];
-        }
-        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        return CoreSecurityUtils.httpEncrypt(input, passphrase);
-    }
-
+//    @Override
+//    public char[] decryptString(char[] input) {
+//        if (input == null || input.length == 0) {
+//            return new char[0];
+//        }
+//        return CoreIOUtils.bytesToChars(decryptString(CoreIOUtils.charsToBytes(input)));
+//    }
+//
+//    @Override
+//    public char[] encryptString(char[] input) {
+//        if (input == null || input.length == 0) {
+//            return new char[0];
+//        }
+//        return CoreIOUtils.bytesToChars(encryptString(CoreIOUtils.charsToBytes(input)));
+//    }
+//
+//    @Override
+//    public byte[] decryptString(byte[] input) {
+//        if (input == null || input.length == 0) {
+//            return new byte[0];
+//        }
+//        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
+//        return CoreSecurityUtils.httpDecrypt(input, passphrase);
+//    }
+//
+//    @Override
+//    public byte[] encryptString(byte[] input) {
+//        if (input == null || input.length == 0) {
+//            return new byte[0];
+//        }
+//        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
+//        return CoreSecurityUtils.httpEncrypt(input, passphrase);
+//    }
     @Override
     public NutsWorkspaceCommandAlias findCommandAlias(String name) {
         NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, ws);
@@ -983,21 +967,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public Path getHomeLocation(NutsStoreLocation folderType) {
-        return ws.io().path(NutsPlatformUtils.resolveHomeFolder(
-                runningContext.getStoreLocationLayout(),
-                folderType, runningContext.getHomeLocations(),
-                runningContext.isGlobal(),
-                runningContext.getName()
-        ));
-    }
-
-    @Override
     public Path getStoreLocation(NutsStoreLocation folderType) {
         if (folderType == null) {
             folderType = NutsStoreLocation.APPS;
         }
-        return ws.io().path(runningContext.getStoreLocation(folderType));
+        return ws.io().path(currentConfig.getStoreLocation(folderType));
     }
 
     @Override
@@ -1026,46 +1000,23 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsId getPlatformOs() {
-        if (platformOs == null) {
-            platformOs = ws.id().parse(CorePlatformUtils.getPlatformOs());
-        }
-        return platformOs;
+    public Path getHomeLocation(NutsStoreLocation folderType) {
+        return ws.io().path(NutsPlatformUtils.getPlatformHomeFolder(currentConfig.getStoreLocationLayout(),
+                folderType, currentConfig.getHomeLocations(),
+                currentConfig.isGlobal(),
+                currentConfig.getName()
+        ));
     }
 
-    @Override
-    public NutsId getPlatformOsDist() {
-        if (platformOsdist == null) {
-            platformOsdist = ws.id().parse(CorePlatformUtils.getPlatformOsDist());
-        }
-        return platformOsdist;
-    }
-
-    @Override
-    public String getPlatformOsHome(NutsStoreLocation location) {
-        int ordinal = location.ordinal();
-        String s = platformOsPath[ordinal];
-        if (s == null) {
-            platformOsPath[ordinal] = s = NutsPlatformUtils.getPlatformOsGlobalHome(location, runningContext.getName());
-        }
-        return s;
-    }
-
-    @Override
-    public NutsId getPlatformArch() {
-        if (platformArch == null) {
-            platformArch = ws.id().parse(CorePlatformUtils.getPlatformArch());
-        }
-        return platformArch;
-    }
-
-    @Override
-    public NutsOsFamily getPlatformOsFamily() {
-        if (platformOsFamily == null) {
-            platformOsFamily = NutsPlatformUtils.getPlatformOsFamily();
-        }
-        return platformOsFamily;
-    }
+//    @Override
+//    public Path getPlatformHome(NutsStoreLocation location) {
+//        int ordinal = location.ordinal();
+//        Path s = platformOsPath[ordinal];
+//        if (s == null) {
+//            platformOsPath[ordinal] = s = ws.io().path(NutsPlatformUtils.getPlatformGlobalHomeFolder(location, currentConfig.getName()));
+//        }
+//        return s;
+//    }
 
     @Override
     public long getCreationStartTimeMillis() {
@@ -1162,12 +1113,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         fireConfigurationChanged();
     }
 
-    @Override
-    public NutsOsFamily getStoreLocationLayout() {
-        NutsOsFamily s = config.getStoreLocationLayout();
-        return s == null ? NutsOsFamily.values()[0] : s;
-    }
-
+//    @Override
+//    public NutsOsFamily getStoreLocationLayout() {
+//        return config.getStoreLocationLayout();
+//    }
+//
     @Override
     public NutsWorkspace getWorkspace() {
         return ws;
@@ -1300,7 +1250,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Path file = getConfigFile();
         NutsWorkspaceConfig _config = Files.isRegularFile(file) ? parseConfigForAnyVersion(file) : null;
         if (_config != null) {
-            setRunningContext(new DefaultNutsBootContext(ws)
+            setCurrentConfig(new DefaultNutsWorkspaceCurrentConfig(ws)
                     .merge(_config)
                     .mergeRuntime(options())
                     .build(getWorkspaceLocation())
@@ -1322,9 +1272,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         try {
             Map<String, Object> a_config0 = ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), Map.class);
-            String version = (String) a_config0.get("createApiVersion");
+            String version = (String) a_config0.get("configVersion");
             if (version == null) {
-                version = "0.5.6";
+                version = (String) a_config0.get("createApiVersion");
+                if (version == null) {
+                    version = Nuts.getVersion();
+                }
             }
             int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
             if (buildNumber < 506) {
@@ -1394,20 +1347,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return new DefaultNutsWorkspaceListManager(ws, name);
     }
 
-    @Override
-    public boolean isGlobal() {
-        return config.isGlobal();
-    }
-
-    @Override
-    public NutsId getApiId() {
-        return ws.id().parse(getBootConfig().getApiId());
-    }
-
-    @Override
-    public NutsId getRuntimeId() {
-        return ws.id().parse(getBootConfig().getRuntimeId());
-    }
+//    @Override
+//    public boolean isGlobal() {
+//        return config.isGlobal();
+//    }
 
     @Override
     public NutsIndexStoreClientFactory getIndexStoreClientFactory() {
@@ -1741,6 +1684,97 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsWorkspaceConfig getStoredConfig() {
         return config;
+    }
+
+    private class NutsWorkspaceStoredConfigImpl implements NutsWorkspaceStoredConfig {
+
+        public NutsWorkspaceStoredConfigImpl() {
+        }
+
+        @Override
+        public String getName() {
+            return getStoredConfig().getName();
+        }
+
+        @Override
+        public NutsStoreLocationStrategy getStoreLocationStrategy() {
+            return getStoredConfig().getStoreLocationStrategy();
+        }
+
+        @Override
+        public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+            return getStoredConfig().getStoreLocationStrategy();
+        }
+
+        @Override
+        public NutsOsFamily getStoreLocationLayout() {
+            return getStoredConfig().getStoreLocationLayout();
+        }
+
+        @Override
+        public Map<String, String> getStoreLocations() {
+            return getStoredConfig().getStoreLocations();
+        }
+
+        @Override
+        public String getStoreLocation(NutsStoreLocation folderType) {
+            return new NutsStoreLocationsMap(getStoredConfig().getStoreLocations()).get(folderType);
+        }
+
+        @Override
+        public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
+            return new NutsHomeLocationsMap(getStoredConfig().getHomeLocations()).get(layout, folderType);
+        }
+
+        @Override
+        public Map<String, String> getHomeLocations() {
+            return getStoredConfig().getHomeLocations();
+        }
+
+        @Override
+        public NutsId getApiId() {
+            String v = getStoredConfig().getApiVersion();
+            return v == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + v);
+        }
+
+        @Override
+        public NutsId getRuntimeId() {
+            String v = getStoredConfig().getRuntimeId();
+            return v == null ? null : v.contains("#")
+                    ? CoreNutsUtils.parseNutsId(v)
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + v);
+        }
+
+        @Override
+        public String getRuntimeDependencies() {
+            return getStoredConfig().getRuntimeDependencies();
+        }
+
+        @Override
+        public String getExtensionDependencies() {
+            return getStoredConfig().getExtensionDependencies();
+        }
+
+        @Override
+        public String getBootRepositories() {
+            return getStoredConfig().getBootRepositories();
+        }
+
+        @Override
+        public String getJavaCommand() {
+            return getStoredConfig().getJavaCommand();
+        }
+
+        @Override
+        public String getJavaOptions() {
+            return getStoredConfig().getJavaOptions();
+        }
+
+        @Override
+        public boolean isGlobal() {
+            return getStoredConfig().isGlobal();
+        }
+
     }
 
 }

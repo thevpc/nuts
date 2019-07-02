@@ -651,7 +651,7 @@ public final class NutsWorkspaceConfig502 implements Serializable {
 
     public NutsWorkspaceConfig toWorkspaceConfig() {
         NutsWorkspaceConfig c = new NutsWorkspaceConfig();
-        c.setCreateApiVersion(createApiVersion);
+        c.setConfigVersion(createApiVersion);
         c.setAuthenticationAgent(authenticationAgent);
         c.setApiVersion(bootApiVersion);
         c.setJavaCommand(bootJavaCommand);
@@ -660,7 +660,7 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         c.setRuntimeId(bootRuntime);
         c.setRuntimeDependencies(bootRuntimeDependencies);
         c.setCommandFactories(commandFactories);
-//         c.setCreateApiVersion(createApiVersion);
+//         c.setConfigVersion(createApiVersion);
         Map<String, String> storeLocations = new LinkedHashMap<>();
         storeLocations.put("apps", programsStoreLocation);
         storeLocations.put("config", configStoreLocation);

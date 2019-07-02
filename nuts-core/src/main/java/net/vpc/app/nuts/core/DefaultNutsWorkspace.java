@@ -67,6 +67,7 @@ import net.vpc.app.nuts.core.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.core.format.table.DefaultTableFormat;
 import net.vpc.app.nuts.core.format.tree.DefaultTreeFormat;
 import net.vpc.app.nuts.core.format.xml.DefaultNutsXmlFormat;
+import net.vpc.app.nuts.core.security.ReadOnlyNutsWorkspaceOptions;
 
 /**
  * Created by vpc on 1/6/17.
@@ -168,7 +169,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     @Override
     public boolean initializeWorkspace(String workspaceLocation, String apiVersion, String runtimeId, String runtimeDependencies, String repositories, NutsWorkspaceOptions options, NutsBootWorkspaceFactory factory, URL[] bootClassWorldURLs, ClassLoader bootClassLoader) {
         if (options == null) {
-            options = new NutsWorkspaceOptions();
+            options = new ReadOnlyNutsWorkspaceOptions(new NutsDefaultWorkspaceOptions());
+        } else {
+            options = new ReadOnlyNutsWorkspaceOptions(options.copy());
         }
         if (options.getCreationTime() == 0) {
             configManager.setStartCreateTimeMillis(System.currentTimeMillis());
@@ -195,7 +198,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 bootClassLoader == null ? Thread.currentThread().getContextClassLoader() : bootClassLoader);
         configManager.setExcludedRepositories(options.getExcludedRepositories());
         extensionManager.setExcludedExtensions(options.getExcludedExtensions());
-        boolean exists = config().isValidWorkspaceFolder();
+        boolean exists = NutsWorkspaceConfigManagerExt.of(config()).isValidWorkspaceFolder();
         NutsWorkspaceOpenMode openMode = options.getOpenMode();
         if (openMode != null) {
             switch (openMode) {
@@ -253,13 +256,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 }
                 config.setName(CoreNutsUtils.resolveValidWorkspaceName(options.getWorkspace()));
 
-                configManager.setRunningContext(new DefaultNutsBootContext(this).merge(config).build(config().getWorkspaceLocation()));
+                configManager.setCurrentConfig(new DefaultNutsWorkspaceCurrentConfig(this).merge(config).build(config().getWorkspaceLocation()));
                 configManager.setConfig(config, session);
                 initializeWorkspace(options.getArchetype(), session);
                 if (!config().isReadOnly()) {
                     config().save();
                 }
-                String nutsVersion = config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString();
+                String nutsVersion = config().current().getRuntimeId().getVersion().toString();
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.log(Level.CONFIG, "nuts workspace v{0} created.", new Object[]{nutsVersion});
                 }
@@ -447,21 +450,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //        return config;
 //    }
     public void reconfigurePostInstall(NutsSession session) {
-        String nutsVersion = config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString();
+        String nutsVersion = config().current().getRuntimeId().getVersion().toString();
         session = NutsWorkspaceUtils.validateSession(this, session);
         if (!config().options().isSkipCompanions()) {
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
+
                 StringBuilder version = new StringBuilder(nutsVersion);
                 CoreStringUtils.fillString(' ', 25 - version.length(), version);
+                out.println(io().loadFormattedString("/net/vpc/app/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
                 out.println("{{/------------------------------------------------------------------------------\\\\}}");
-                out.println("{{|}}==      _   _\\_      _\\_        ==                                                  {{|}}");
-                out.println("{{|}}==     / | / /_  _\\_/ /_\\_\\_\\_\\_\\_  == ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
-                out.println("{{|}}==    /  |/ / / / / _\\_/ _\\_\\_/  == <<The Open Source Package Manager for __Java__ (TM)>>    {{|}}");
-                out.println("{{|}}==   / /|  / /_/ / /_\\(_\\_  \\)   == <<and other __things__>> ... by ==vpc==                      {{|}}");
-                out.println("{{|}}==  /_/ |_/\\\\_\\_\\_\\_/\\\\_\\_/_\\_\\_\\_/==     __http://github.com/thevpc/nuts__                    {{|}}");
-                out.println("{{|}}      version [[" + version + "]]                                       {{|}}");
-                out.println("{{|------------------------------------------------------------------------------|}}");
                 out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
@@ -513,7 +511,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     public boolean requiresCoreExtension() {
         boolean coreFound = false;
         for (NutsId ext : extensions().getExtensions()) {
-            if (ext.equalsSimpleName(config().getContext(NutsBootContextType.RUNTIME).getRuntimeId())) {
+            if (ext.equalsSimpleName(config().current().getRuntimeId())) {
                 coreFound = true;
                 break;
             }
@@ -1112,7 +1110,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
-            return io().loadHelpString(urlPath, clazz, "no help found");
+            return io().loadFormattedString(urlPath, getClass().getClassLoader(), "no help found");
         }
         return null;
     }
@@ -1124,12 +1122,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public String getHelpText() {
-        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
+        return this.io().loadFormattedString("/net/vpc/app/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
     }
 
     @Override
     public String getWelcomeText() {
-        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-welcome.help", getClass(), "no welcome found");
+        return this.io().loadFormattedString("/net/vpc/app/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
     }
 
     @Override
@@ -1139,7 +1137,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
     @Override
     public String getLicenseText() {
-        return this.io().loadHelpString("/net/vpc/app/nuts/nuts-license.help", getClass(), "no license found");
+        return this.io().loadFormattedString("/net/vpc/app/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
     }
 
     @Override

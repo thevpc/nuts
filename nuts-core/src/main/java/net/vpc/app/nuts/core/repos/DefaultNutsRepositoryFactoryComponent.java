@@ -84,7 +84,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
 
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
-        if (!workspace.config().isGlobal()) {
+        if (!workspace.config().current().isGlobal()) {
             
             return new NutsRepositoryDefinition[]{
                 new NutsRepositoryDefinition()
@@ -92,7 +92,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
                 .setName("system")
                 .setLocation(
                 CoreIOUtils.getNativePath(
-                        NutsPlatformUtils.resolveHomeFolder(null, 
+                        NutsPlatformUtils.getPlatformHomeFolder(null, 
                                 NutsStoreLocation.CONFIG, null, 
                                 true, 
                                 NutsConstants.Names.DEFAULT_WORKSPACE_NAME)

@@ -31,7 +31,7 @@ public class NutsWorkspaceUtils {
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
         String[] conf = {};
-        switch (ws.config().getPlatformOsFamily()) {
+        switch (ws.config().current().getPlatformOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -153,10 +153,10 @@ public class NutsWorkspaceUtils {
     public static NutsId configureFetchEnv(NutsWorkspace ws, NutsId id) {
         Map<String, String> qm = id.getQueryMap();
         if (qm.get(NutsConstants.QueryKeys.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.config().getPlatformArch().toString());
-            qm.put("os", ws.config().getPlatformOs().toString());
-            if (ws.config().getPlatformOsDist() != null) {
-                qm.put("osdist", ws.config().getPlatformOsDist().toString());
+            qm.put("arch", ws.config().current().getPlatformArch().toString());
+            qm.put("os", ws.config().current().getPlatformOs().toString());
+            if (ws.config().current().getPlatformOsDist() != null) {
+                qm.put("osdist", ws.config().current().getPlatformOsDist().toString());
             }
             return id.setQuery(qm);
         }

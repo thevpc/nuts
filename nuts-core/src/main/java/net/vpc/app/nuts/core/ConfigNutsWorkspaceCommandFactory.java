@@ -33,7 +33,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public Path getStoreLocation() {
-        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.APPS);
+        return configManager.getStoreLocation(configManager.current().getApiId(), NutsStoreLocation.APPS);
     }
 
     @Override

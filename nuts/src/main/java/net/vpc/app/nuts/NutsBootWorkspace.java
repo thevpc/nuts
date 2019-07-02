@@ -69,7 +69,7 @@ public final class NutsBootWorkspace {
     private static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
     public static final Logger LOG = Logger.getLogger(NutsBootWorkspace.class.getName());
     private final long creationTime = System.currentTimeMillis();
-    private NutsWorkspaceOptions options;
+    private NutsDefaultWorkspaceOptions options;
     private String runtimeId;
     private String actualVersion;
     private NutsClassLoaderProvider contextClassLoaderProvider;
@@ -122,13 +122,15 @@ public final class NutsBootWorkspace {
 
     public NutsBootWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
-            options = new NutsWorkspaceOptions();
+            options = new NutsDefaultWorkspaceOptions();
         }
         if (options.getCreationTime() == 0) {
-            options.setCreationTime(creationTime);
+            NutsDefaultWorkspaceOptions copy = options.copy();
+            copy.setCreationTime(creationTime);
+            options = copy;
         }
         actualVersion = Nuts.getVersion();
-        this.options = options;
+        this.options = (options instanceof NutsDefaultWorkspaceOptions) ? ((NutsDefaultWorkspaceOptions) options) : options.copy();
         this.bootId = PrivateNutsId.parse(NutsConstants.Ids.NUTS_API + "#" + actualVersion);
         newInstanceRequirements = 0;
         NutsLogUtils.bootstrap(options.getLogConfig());
@@ -259,7 +261,7 @@ public final class NutsBootWorkspace {
         return cmd.toArray(new String[0]);
     }
 
-    public NutsWorkspaceOptions getOptions() {
+    public NutsDefaultWorkspaceOptions getOptions() {
         return options;
     }
 
@@ -300,6 +302,7 @@ public final class NutsBootWorkspace {
         String[] repositories = PrivateNutsUtils.splitUrlStrings(info.cfg.getBootRepositories()).toArray(new String[0]);
         File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
         if (f == null || !f.isFile()) {
+            f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
             throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load " + bootRuntime + ". Unable to resolve file "
                     + (f == null ? getFileName(bootRuntime, "jar") : f.getPath())
             );
@@ -410,8 +413,8 @@ public final class NutsBootWorkspace {
     }
 
     public NutsWorkspace openWorkspace() {
-        if (options.getCreationTime() == 0) {
-            options.setCreationTime(System.currentTimeMillis());
+        if (hasUnsatisfiedRequirements()) {
+            throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version : " + getRequirementsHelpString(true));
         }
         if (options.isReset()) {
             deleteStoreLocations(null, true, true, NutsStoreLocation.values());
@@ -732,7 +735,7 @@ public final class NutsBootWorkspace {
     }
 
     protected String getHome(NutsStoreLocation storeFolder) {
-        return NutsPlatformUtils.resolveHomeFolder(
+        return NutsPlatformUtils.getPlatformHomeFolder(
                 runningBootConfig.getStoreLocationLayout(),
                 storeFolder,
                 runningBootConfig.getHomeLocations(),
@@ -1182,7 +1185,7 @@ public final class NutsBootWorkspace {
         for (int i = 0; i < maxDepth; i++) {
             lastConfigPath
                     = PrivateNutsUtils.isValidWorkspaceName(ws)
-                    ? NutsPlatformUtils.resolveHomeFolder(
+                    ? NutsPlatformUtils.getPlatformHomeFolder(
                             null, null, null,
                             config.isGlobal(),
                             PrivateNutsUtils.resolveValidWorkspaceName(ws)
@@ -1235,7 +1238,7 @@ public final class NutsBootWorkspace {
         String workspace = config.getWorkspace();
         String[] homes = new String[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            homes[type.ordinal()] = NutsPlatformUtils.resolveHomeFolder(config.getStoreLocationLayout(), type, homeLocations,
+            homes[type.ordinal()] = NutsPlatformUtils.getPlatformHomeFolder(config.getStoreLocationLayout(), type, homeLocations,
                     config.isGlobal(), config.getName());
             if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
                 throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());

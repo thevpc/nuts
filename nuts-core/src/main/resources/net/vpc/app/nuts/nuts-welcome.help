@@ -1,4 +1,4 @@
-#!include</net/vpc/app/nuts/command/includes/standard-header.help>
+#!include</net/vpc/app/nuts/includes/standard-header.help>
 
 ##SYNOPSIS:##
 ==nuts== \[**<options>**\]... {{\<command\>}} \<args\> ...

@@ -35,6 +35,7 @@ import net.vpc.common.util.ListMap;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import net.vpc.app.nuts.NutsWorkspaceSecurityManager;
 
 /**
  * Created by vpc on 1/24/17.
@@ -47,6 +48,7 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -57,9 +59,9 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userLogin = parameters.getOne("ul");
         String userPasswordS = parameters.getOne("up");
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
-        NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-        userLogin = new String(configManager.decryptString(userLogin == null ? null : userLogin.getBytes()));
-        userPassword = configManager.decryptString(userPassword);
+        NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
+        userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
+        userPassword = userPassword==null?null:secu.getCredentials(userPassword);
         if (!StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;
             try {

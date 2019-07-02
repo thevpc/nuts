@@ -4,7 +4,6 @@ import net.vpc.app.nuts.*;
 
 import java.net.URL;
 import java.nio.file.Path;
-import net.vpc.app.nuts.core.NutsBootConfig;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
@@ -16,7 +15,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void onInitializeWorkspace(Path workspaceLocation,NutsWorkspaceOptions options, URL[] bootClassWorldURLs, ClassLoader classLoader);
     
-    void setRunningContext(NutsBootContext runningContext);
+    void setCurrentConfig(NutsWorkspaceCurrentConfig runningContext);
 
     void setConfig(NutsWorkspaceConfig config, NutsSession session);
 
@@ -58,20 +57,17 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     Path getRepositoriesRoot();
 
-//    NutsRepository wireRepository(NutsRepository repository);
     void setExcludedRepositories(String[] excludedRepositories);
 
-    /**
-     * update workspace boot configuration
-     *
-     * @param other
-     */
-    void setBootConfig(NutsBootConfig other);
+    boolean isValidWorkspaceFolder();
 
-    /**
-     * return a copy of workspace boot configuration
-     *
-     * @return a copy of workspace boot configuration
-     */
-    NutsBootConfig getBootConfig();
+    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
+
+//    char[] decryptString(char[] input);
+//
+//    byte[] decryptString(byte[] input);
+//
+//    char[] encryptString(char[] input);
+//
+//    byte[] encryptString(byte[] input);
 }

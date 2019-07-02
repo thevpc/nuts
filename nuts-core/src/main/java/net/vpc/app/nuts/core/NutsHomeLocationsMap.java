@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.vpc.app.nuts.NutsDefaultWorkspaceOptions;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsWorkspaceOptions;
@@ -51,7 +52,7 @@ public class NutsHomeLocationsMap {
     public String get(NutsOsFamily osFamily, NutsStoreLocation location) {
         if (locations != null) {
             if (location != null) {
-                return locations.get(NutsWorkspaceOptions.createHomeLocationKey(osFamily, location));
+                return locations.get(NutsDefaultWorkspaceOptions.createHomeLocationKey(osFamily, location));
             }
         }
         return null;
@@ -101,14 +102,14 @@ public class NutsHomeLocationsMap {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = get(null, location);
                 if (!CoreStringUtils.isBlank(v)) {
-                    map.put(NutsWorkspaceOptions.createHomeLocationKey(null, location), v);
+                    map.put(NutsDefaultWorkspaceOptions.createHomeLocationKey(null, location), v);
                 }
             }
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     String v = get(osFamily, location);
                     if (!CoreStringUtils.isBlank(v)) {
-                        map.put(NutsWorkspaceOptions.createHomeLocationKey(osFamily, location), v);
+                        map.put(NutsDefaultWorkspaceOptions.createHomeLocationKey(osFamily, location), v);
                     }
                 }
             }

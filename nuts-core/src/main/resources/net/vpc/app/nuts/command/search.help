@@ -105,7 +105,7 @@ search for components/==nuts==
        **--highlight-optional**        : when formatting id, highlight optional
        **--highlight-scope**           : when formatting id, highlight scope
 
-#!include</net/vpc/app/nuts/command/includes/standard-command.help>
+#!include</net/vpc/app/nuts/includes/standard-command.help>
 
 ##EXAMPLES##:
         ==nuts== {{search}} **--help**

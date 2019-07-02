@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -38,7 +37,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsBootContext {
+public interface NutsWorkspaceStoredConfig {
 
     String getName();
 
@@ -49,37 +48,20 @@ public interface NutsBootContext {
     NutsOsFamily getStoreLocationLayout();
 
     /**
-     * all store locations ordered according NutsStoreFolder constant
-     * definitions example of order is :
-     * <pre>
-     *  APPS
-     *  CONFIG
-     *  ....
-     * </pre>
+     * all home locations key/value map where keys are in the form "location"
+     * and values are absolute paths.
      *
-     * @return array of available locations
+     * @return home locations mapping
      */
-    Map<String,String> getStoreLocations();
+    Map<String, String> getStoreLocations();
 
     /**
-     * all store locations ordered according NutsStoreFolder and then
-     * NutsStoreLocationLayout constant definitions. Note that
-     * NutsStoreLocationLayout. example of order is :
-     * <pre>
-     *  SYSTEM  APPS
-     *  SYSTEM  CONFIG
-     *  ....
-     *  WINDOWS APPS
-     *  WINDOWS CONFIG
-     *  ....
-     *  LINUX   APPS
-     *  LINUX   CONFIG
-     *  ....
-     * </pre>
+     * all home locations key/value map where keys are in the form
+     * "osfamily:location" and values are absolute paths.
      *
-     * @return array of available home locations
+     * @return home locations mapping
      */
-    Map<String,String> getHomeLocations();
+    Map<String, String> getHomeLocations();
 
     String getStoreLocation(NutsStoreLocation folderType);
 

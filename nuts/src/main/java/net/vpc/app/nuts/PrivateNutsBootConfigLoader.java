@@ -69,11 +69,14 @@ class PrivateNutsBootConfigLoader {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         PrivateNutsBootConfig c = new PrivateNutsBootConfig();
-        String createApiVersion = (String) jsonObject.get("createApiVersion");
-        if (createApiVersion == null) {
-            createApiVersion = "0.5.6";
+        String configVersion = (String) jsonObject.get("configVersion");
+        if (configVersion == null) {
+            configVersion = (String) jsonObject.get("createApiVersion");
+            if (configVersion == null) {
+                configVersion = Nuts.getVersion();
+            }
         }
-        int buildNumber = getApiVersionOrdinalNumber(createApiVersion);
+        int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber < 506) {
             loadConfigVersion502(c, jsonObject);
         } else {
@@ -157,7 +160,7 @@ class PrivateNutsBootConfigLoader {
 
             k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
-            homeLocations.put(NutsWorkspaceOptions.createHomeLocationKey(null, folder), v);
+            homeLocations.put(NutsDefaultWorkspaceOptions.createHomeLocationKey(null, folder), v);
             for (NutsOsFamily layout : NutsOsFamily.values()) {
                 switch (layout) {
                     case LINUX: {
@@ -185,7 +188,7 @@ class PrivateNutsBootConfigLoader {
                     }
                 }
                 v = (String) jsonObject.get(k);
-                homeLocations.put(NutsWorkspaceOptions.createHomeLocationKey(layout, folder), v);
+                homeLocations.put(NutsDefaultWorkspaceOptions.createHomeLocationKey(layout, folder), v);
             }
         }
         config.setHomeLocations(homeLocations);
