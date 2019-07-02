@@ -498,8 +498,20 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
+                    case "--debug": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            logConfig = new NutsLogConfig();
+                            options.setDebug(a.getBooleanValue());
+                            if (options.isDebug()) {
+                                cmdLine.pushBack(a);
+                                parseLogLevel(logConfig, cmdLine, enabled);
+                            }
+                        }
+                        break;
+                    }
+
                     case "--verbose":
-                    case "--debug":
                     case "--log-finest":
                     case "--log-finer":
                     case "--log-fine":
@@ -719,7 +731,6 @@ public final class NutsArgumentsParser {
                     case "--version": {
                         cmdLine.skip();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.EXEC);
                             applicationArguments.add("version");
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                             cmdLine.skipAll();
@@ -733,7 +744,8 @@ public final class NutsArgumentsParser {
                     case "--reset": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.RESET);
+                            options.setReset(true);
+                            options.setRecover(false);
                         } else {
                             cmdLine.skipAll();
                         }
@@ -743,7 +755,8 @@ public final class NutsArgumentsParser {
                     case "--recover": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.RECOVER);
+                            options.setReset(false);
+                            options.setRecover(true);
                         }
                         break;
                     }
@@ -751,7 +764,6 @@ public final class NutsArgumentsParser {
                     case "--exec": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.EXEC);
                             while ((a = cmdLine.next()) != null) {
                                 if (a.isOption()) {
                                     executorOptions.add(a.getString());
@@ -771,7 +783,6 @@ public final class NutsArgumentsParser {
                     case "-h": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setBootCommand(NutsBootCommand.EXEC);
                             applicationArguments.add("help");
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                             cmdLine.skipAll();
@@ -798,7 +809,7 @@ public final class NutsArgumentsParser {
         options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         options.setTransientRepositories(tempRepositories.toArray(new String[0]));
         //error only if not asking for help
-        if (!(options.getBootCommand() == NutsBootCommand.EXEC && applicationArguments.size() > 0 && applicationArguments.get(0).equals("help"))) {
+        if (!(applicationArguments.size() > 0 && applicationArguments.get(0).equals("help"))) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
                 for (String s : showError) {

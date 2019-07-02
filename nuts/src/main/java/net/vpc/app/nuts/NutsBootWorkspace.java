@@ -362,7 +362,7 @@ public final class NutsBootWorkspace {
         ((NutsWorkspaceSPI) info.nutsWorkspace).initializeWorkspace(info.cfg.getWorkspace(),
                 info.cfg.getApiVersion(),
                 info.cfg.getRuntimeId(), info.cfg.getRuntimeDependencies(), info.cfg.getRepositories(),
-                options, factoryInstance, 
+                options, factoryInstance,
                 info.bootClassWorldURLs,
                 info.workspaceClassLoader);
         if (recover) {
@@ -390,7 +390,11 @@ public final class NutsBootWorkspace {
             }
             int x = 204;
             try {
-                runWorkspaceCommand(null, "Cannot start workspace to run command " + getOptions().getBootCommand() + ". Try --clean or --reset to help recovering :" + ex.toString());
+                String extra = getOptions().isReset() ? ""
+                        : getOptions().isRecover()
+                        ? ". You may need to use --reset (ATTENTION: this will delete all your nuts configuration. Use it at your own risk)"
+                        : ". Try --recover to run in fail safe mode";
+                runWorkspaceCommand(null, "Cannot open workspace" + extra + " :" + ex.toString());
             } catch (Exception ex2) {
                 LOG.log(Level.SEVERE, "runWorkspaceCommand failed : " + ex2.toString(), ex2);
             }
@@ -409,20 +413,15 @@ public final class NutsBootWorkspace {
         if (options.getCreationTime() == 0) {
             options.setCreationTime(System.currentTimeMillis());
         }
-        switch (this.getOptions().getBootCommand()) {
-            case RECOVER: {
-                deleteStoreLocations(null, true, false, NutsStoreLocation.CACHE, NutsStoreLocation.TEMP);
-                break;
-            }
-            case RESET: {
-                deleteStoreLocations(null, true, true, NutsStoreLocation.values());
-                break;
-            }
+        if (options.isReset()) {
+            deleteStoreLocations(null, true, true, NutsStoreLocation.values());
+        } else if (options.isRecover()) {
+            deleteStoreLocations(null, true, false, NutsStoreLocation.CACHE, NutsStoreLocation.TEMP);
         }
         //if recover or reset mode with -K option (SkipWelcome)
         //as long as there are no applications to run, wil exit before creating workspace
         if (options.getApplicationArguments().length == 0 && options.isSkipWelcome()
-                && (options.getBootCommand() == NutsBootCommand.RECOVER || options.getBootCommand() == NutsBootCommand.RESET)) {
+                && (options.isRecover() || options.isReset())) {
             throw new NutsExecutionException(null, 0);
         }
         if (LOG.isLoggable(Level.CONFIG)) {
@@ -469,17 +468,20 @@ public final class NutsBootWorkspace {
                 }
             }
             try {
-                openWorkspaceAttempt(info, options.getBootCommand() == NutsBootCommand.RECOVER);
+                openWorkspaceAttempt(info, options.isRecover() && !options.isReset());
             } catch (NutsException ex) {
                 throw ex;
             } catch (Throwable ex) {
-                if (options.getBootCommand() == NutsBootCommand.RECOVER) {
+                if (options.isReset() || options.isRecover()) {
                     throw ex;
                 }
                 info = new OpenWorkspaceData();
                 try {
                     openWorkspaceAttempt(info, true);
                 } catch (Throwable ex2) {
+                    LOG.log(Level.SEVERE, "Unable to open workspace");
+                    LOG.log(Level.SEVERE, "First  Attempt result in error : " + ex.toString(), ex);
+                    LOG.log(Level.SEVERE, "Second Attempt result in error : " + ex2.toString(), ex2);
                     throw ex;
                 }
             }
@@ -976,10 +978,20 @@ public final class NutsBootWorkspace {
         return currentContextClassLoaderProvider.getContextClassLoader();
     }
 
+    private String getWorkspaceRunModeString() {
+        if (this.getOptions().isReset()) {
+            return "reset";
+        } else if (this.getOptions().isRecover()) {
+            return "recover";
+        } else {
+            return "exec";
+        }
+    }
+
     private void runWorkspaceCommand(NutsWorkspace workspace, String message) {
         NutsWorkspaceOptions o = this.getOptions();
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
+            LOG.log(Level.CONFIG, "Running workspace in {0} mode", getWorkspaceRunModeString());
         }
         if (workspace == null && o.getApplicationArguments().length > 0) {
             switch (o.getApplicationArguments()[0]) {
@@ -998,7 +1010,7 @@ public final class NutsBootWorkspace {
         }
         if (workspace == null) {
             fallbackInstallActionUnavailable(message);
-            throw new NutsExecutionException(null, "Workspace boot command not available : " + o.getBootCommand(), 1);
+            throw new NutsExecutionException(null, "Workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString(), 1);
         }
         if (o.getApplicationArguments().length == 0) {
             if (o.isSkipWelcome()) {
@@ -1091,7 +1103,7 @@ public final class NutsBootWorkspace {
         }
     }
 
-    public void showError(PrivateNutsBootConfig actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
+    private void showError(PrivateNutsBootConfig actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         Map<String, String> rbc_locations = actualBootConfig.getStoreLocations();
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
@@ -1140,9 +1152,16 @@ public final class NutsBootWorkspace {
         System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
         System.err.printf("");
         System.err.printf("If the problem persists you may want to get more debug info by adding '--debug' argument.%n");
-        System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' argument.%n");
-        System.err.printf("Here is the proper command : %n");
-        System.err.printf("  java -jar nuts.jar --debug --recover [...]%n");
+        if (!options.isReset() && !options.isRecover()) {
+            System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' argument.%n");
+            System.err.printf("Here is the proper command : %n");
+            System.err.printf("  java -jar nuts.jar --debug --recover [...]%n");
+        } else if (!options.isReset() && options.isRecover()) {
+            System.err.printf("You may also enable full reset mode to ignore existing confguration with '--reset' argument.%n");
+            System.err.printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
+            System.err.printf("Here is the proper command : %n");
+            System.err.printf("  java -jar nuts.jar --debug --reset [...]%n");
+        }
         System.err.printf("Now exiting Nuts, Bye!%n");
     }
 

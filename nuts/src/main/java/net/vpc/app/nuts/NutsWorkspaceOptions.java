@@ -188,7 +188,17 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsBootCommand bootCommand = NutsBootCommand.EXEC;
+    private boolean recover = false;
+    
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private boolean reset = false;
+    
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private boolean debug = false;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -455,14 +465,33 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsBootCommand getBootCommand() {
-        return bootCommand;
+    public boolean isRecover() {
+        return recover;
     }
 
-    public NutsWorkspaceOptions setBootCommand(NutsBootCommand bootCommand) {
-        this.bootCommand = bootCommand;
+    public NutsWorkspaceOptions setRecover(boolean recover) {
+        this.recover = recover;
         return this;
     }
+
+    public boolean isReset() {
+        return reset;
+    }
+
+    public NutsWorkspaceOptions setReset(boolean reset) {
+        this.reset = reset;
+        return this;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public NutsWorkspaceOptions setDebug(boolean debug) {
+        this.debug = debug;
+        return this;
+    }
+
 
     public String[] getTransientRepositories() {
         return transientRepositories == null ? new String[0] : transientRepositories;

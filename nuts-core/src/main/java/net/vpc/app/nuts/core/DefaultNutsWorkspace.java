@@ -275,8 +275,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     workspaceListener.onCreateWorkspace(workspaceCreatedEvent);
                 }
             } else {
-                if (options.getBootCommand() == NutsBootCommand.RECOVER) {
-                    //should re
+                if (options.isRecover()) {
                     configManager.setBootApiVersion(cfg.getApiVersion());
                     configManager.setBootRuntime(cfg.getRuntimeId());
                     configManager.setBootRuntimeDependencies(cfg.getRuntimeDependencies());

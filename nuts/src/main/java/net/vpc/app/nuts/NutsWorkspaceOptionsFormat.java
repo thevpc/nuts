@@ -199,11 +199,11 @@ public class NutsWorkspaceOptionsFormat {
                 fillOption(options.getOpenMode(), arguments, false);
             }
             fillOption(options.getExecutionType(), arguments, false);
-            NutsBootCommand e = options.getBootCommand();
-            if (e == null && options.getExecutorOptions().length > 0) {
-                e = NutsBootCommand.EXEC;
+            fillOption("--reset", "-Z", options.isReset(), arguments, false);
+            fillOption("--debug", "-z", options.isRecover(), arguments, false);
+            if (!omitDefaults || options.getExecutorOptions().length > 0) {
+                arguments.add(selectOptionName("--exec", "-e"));
             }
-            fillOption(e, arguments, false);
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
@@ -394,24 +394,6 @@ public class NutsWorkspaceOptionsFormat {
                         }
                         case INHERITED: {
                             arguments.add("-c=h");
-                            return true;
-                        }
-                    }
-                }
-                if (value instanceof NutsBootCommand) {
-                    switch ((NutsBootCommand) value) {
-                        case EXEC: {
-                            if (!omitDefaults || options.getExecutorOptions().length > 0) {
-                                arguments.add("-e");
-                            }
-                            return true;
-                        }
-                        case RECOVER: {
-                            arguments.add("-z");
-                            return true;
-                        }
-                        case RESET: {
-                            arguments.add("-Z");
                             return true;
                         }
                     }
