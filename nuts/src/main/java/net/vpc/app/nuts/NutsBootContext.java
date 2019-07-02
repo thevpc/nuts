@@ -93,7 +93,7 @@ public interface NutsBootContext {
 
     String getExtensionDependencies();
 
-    String getRepositories();
+    String getBootRepositories();
 
     String getJavaCommand();
 

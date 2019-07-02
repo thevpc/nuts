@@ -231,12 +231,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 NutsWorkspaceConfig config = new NutsWorkspaceConfig();
                 //load from config with resolution applied
                 config.setUuid(UUID.randomUUID().toString());
-                config.setBootApiVersion(apiVersion);
-                config.setBootRuntime(runtimeId);
-                config.setBootRuntimeDependencies(runtimeDependencies);
+                config.setApiVersion(apiVersion);
+                config.setRuntimeId(runtimeId);
+                config.setRuntimeDependencies(runtimeDependencies);
                 config.setBootRepositories(repositories);
-                config.setBootJavaCommand(options.getBootJavaCommand());
-                config.setBootJavaOptions(options.getBootJavaOptions());
+                config.setJavaCommand(options.getJavaCommand());
+                config.setJavaOptions(options.getJavaOptions());
                 config.setStoreLocationStrategy(options.getStoreLocationStrategy());
                 config.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
                 config.setStoreLocationLayout(options.getStoreLocationLayout());
@@ -279,7 +279,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     configManager.setBootApiVersion(cfg.getApiVersion());
                     configManager.setBootRuntime(cfg.getRuntimeId());
                     configManager.setBootRuntimeDependencies(cfg.getRuntimeDependencies());
-                    configManager.setBootRepositories(cfg.getRepositories());
+                    configManager.setBootRepositories(cfg.getBootRepositories());
                     if (!config().isReadOnly()) {
                         config().save();
                     }
@@ -373,7 +373,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //            config.setRuntimeId(lastConfigLoaded.getRuntimeId());
 //            config.setRuntimeDependencies(lastConfigLoaded.getRuntimeDependencies());
 //            config.setExtensionDependencies(lastConfigLoaded.getExtensionDependencies());
-//            config.setRepositories(lastConfigLoaded.getRepositories());
+//            config.setRepositories(lastConfigLoaded.getBootRepositories());
 //            config.setJavaCommand(lastConfigLoaded.getJavaCommand());
 //            config.setJavaOptions(lastConfigLoaded.getJavaOptions());
 //            config.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
@@ -449,7 +449,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     public void reconfigurePostInstall(NutsSession session) {
         String nutsVersion = config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString();
         session = NutsWorkspaceUtils.validateSession(this, session);
-        if (!config().options().isSkipInstallCompanions()) {
+        if (!config().options().isSkipCompanions()) {
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
                 StringBuilder version = new StringBuilder(nutsVersion);

@@ -651,16 +651,17 @@ public final class NutsWorkspaceConfig502 implements Serializable {
 
     public NutsWorkspaceConfig toWorkspaceConfig() {
         NutsWorkspaceConfig c = new NutsWorkspaceConfig();
+        c.setCreateApiVersion(createApiVersion);
         c.setAuthenticationAgent(authenticationAgent);
-        c.setBootApiVersion(bootApiVersion);
-        c.setBootJavaCommand(bootJavaCommand);
-        c.setBootJavaOptions(bootJavaOptions);
+        c.setApiVersion(bootApiVersion);
+        c.setJavaCommand(bootJavaCommand);
+        c.setJavaOptions(bootJavaOptions);
         c.setBootRepositories(bootRepositories);
-        c.setBootRuntime(bootRuntime);
-        c.setBootRuntimeDependencies(bootRuntimeDependencies);
+        c.setRuntimeId(bootRuntime);
+        c.setRuntimeDependencies(bootRuntimeDependencies);
         c.setCommandFactories(commandFactories);
 //         c.setCreateApiVersion(createApiVersion);
-        Map<String,String> storeLocations=new LinkedHashMap<>();
+        Map<String, String> storeLocations = new LinkedHashMap<>();
         storeLocations.put("apps", programsStoreLocation);
         storeLocations.put("config", configStoreLocation);
         storeLocations.put("var", varStoreLocation);
@@ -668,8 +669,8 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         storeLocations.put("log", logsStoreLocation);
         storeLocations.put("temp", tempStoreLocation);
         storeLocations.put("cache", cacheStoreLocation);
-        
-        Map<String,String> homeLocations=new LinkedHashMap<>();
+
+        Map<String, String> homeLocations = new LinkedHashMap<>();
         homeLocations.put("system:apps", programsSystemHome);
         homeLocations.put("system:config", configSystemHome);
         homeLocations.put("system:var", varSystemHome);
@@ -677,7 +678,7 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         homeLocations.put("system:log", logsSystemHome);
         homeLocations.put("system:temp", tempSystemHome);
         homeLocations.put("system:cache", cacheSystemHome);
-        
+
         homeLocations.put("windows:apps", programsWindowsHome);
         homeLocations.put("windows:config", configWindowsHome);
         homeLocations.put("windows:var", varWindowsHome);
@@ -685,7 +686,7 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         homeLocations.put("windows:log", logsWindowsHome);
         homeLocations.put("windows:temp", tempWindowsHome);
         homeLocations.put("windows:cache", cacheWindowsHome);
-        
+
         homeLocations.put("linux:apps", programsWindowsHome);
         homeLocations.put("linux:config", configWindowsHome);
         homeLocations.put("linux:var", varWindowsHome);
@@ -693,7 +694,7 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         homeLocations.put("linux:log", logsWindowsHome);
         homeLocations.put("linux:temp", tempWindowsHome);
         homeLocations.put("linux:cache", cacheWindowsHome);
-        
+
         c.setGlobal(global);
         c.setEnv(env);
         c.setExtensions(extensions);
@@ -701,8 +702,8 @@ public final class NutsWorkspaceConfig502 implements Serializable {
         c.setRepositories(repositories);
         c.setSdk(sdk);
         c.setSecure(secure);
-        c.setStoreLocationLayout("windows".equalsIgnoreCase(storeLocationLayout)?NutsOsFamily.WINDOWS
-                :"linux".equals(storeLocationLayout)?NutsOsFamily.LINUX:null);
+        c.setStoreLocationLayout("windows".equalsIgnoreCase(storeLocationLayout) ? NutsOsFamily.WINDOWS
+                : "linux".equals(storeLocationLayout) ? NutsOsFamily.LINUX : null);
         c.setStoreLocationStrategy(storeLocationStrategy);
         c.setUsers(users);
         c.setUuid(uuid);

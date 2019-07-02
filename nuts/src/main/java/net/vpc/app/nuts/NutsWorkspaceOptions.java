@@ -49,39 +49,44 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     }
 
     /**
+     * nuts api version to boot
      * option-type : exported (inherited in child workspaces)
      */
-    private String requiredBootVersion = null;
+    private String apiVersion = null;
+
+    /**
+     * nuts runtime id (or version) to boot
+     * option-type : exported (inherited in child workspaces)
+     */
+    private String runtimeId;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String bootRuntime;
+    private String javaCommand;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String bootJavaCommand;
+    private String javaOptions;
 
     /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String bootJavaOptions;
-
-    /**
+     * workspace folder location path
      * option-type : exported (inherited in child workspaces)
      */
     private String workspace = null;
 
     /**
+     * user friendly workspace name
      * option-type : exported (inherited in child workspaces)
      */
     private String name = null;
 
     /**
+     * if true, do not install nuts companion tools upon workspace creation
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean skipInstallCompanions;
+    private boolean skipCompanions;
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -407,12 +412,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getBootRuntime() {
-        return bootRuntime;
+    public String getRuntimeId() {
+        return runtimeId;
     }
 
-    public NutsWorkspaceOptions setBootRuntime(String bootRuntime) {
-        this.bootRuntime = bootRuntime;
+    public NutsWorkspaceOptions setRuntimeId(String runtimeId) {
+        this.runtimeId = runtimeId;
         return this;
     }
 
@@ -438,21 +443,21 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getBootJavaCommand() {
-        return bootJavaCommand;
+    public String getJavaCommand() {
+        return javaCommand;
     }
 
-    public NutsWorkspaceOptions setBootJavaCommand(String bootJavaCommand) {
-        this.bootJavaCommand = bootJavaCommand;
+    public NutsWorkspaceOptions setJavaCommand(String javaCommand) {
+        this.javaCommand = javaCommand;
         return this;
     }
 
-    public String getBootJavaOptions() {
-        return bootJavaOptions;
+    public String getJavaOptions() {
+        return javaOptions;
     }
 
-    public NutsWorkspaceOptions setBootJavaOptions(String bootJavaOptions) {
-        this.bootJavaOptions = bootJavaOptions;
+    public NutsWorkspaceOptions setJavaOptions(String javaOptions) {
+        this.javaOptions = javaOptions;
         return this;
     }
 
@@ -511,12 +516,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getRequiredBootVersion() {
-        return requiredBootVersion;
+    public String getApiVersion() {
+        return apiVersion;
     }
 
-    public NutsWorkspaceOptions setRequiredBootVersion(String requiredBootVersion) {
-        this.requiredBootVersion = requiredBootVersion;
+    public NutsWorkspaceOptions setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
         return this;
     }
 
@@ -575,12 +580,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public boolean isSkipInstallCompanions() {
-        return skipInstallCompanions;
+    public boolean isSkipCompanions() {
+        return skipCompanions;
     }
 
-    public NutsWorkspaceOptions setSkipInstallCompanions(boolean skipInstallCompanions) {
-        this.skipInstallCompanions = skipInstallCompanions;
+    public NutsWorkspaceOptions setSkipCompanions(boolean skipInstallCompanions) {
+        this.skipCompanions = skipInstallCompanions;
         return this;
     }
 

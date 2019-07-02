@@ -465,7 +465,7 @@ final class PrivateNutsUtils {
         return new PrivateNutsBootConfig()
                 .setRuntimeId(id + "#" + version)
                 .setRuntimeDependencies(dependencies)
-                .setRepositories(repositories);
+                .setBootRepositories(repositories);
     }
 
     public static int parseFileSize(String s) {

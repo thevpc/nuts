@@ -44,7 +44,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private boolean global;
     private String name = null;
     private String workspace = null;
-    private String bootApiVersion = null;
+    private String apiVersion = null;
 
     /**
      * Api version having created the config
@@ -57,7 +57,7 @@ public final class NutsWorkspaceConfig implements Serializable {
      *
      * @see NutsId#getLongNameId()
      */
-    private String bootRuntime = null;
+    private String runtimeId = null;
 
     /**
      * ';' separated list of component Ids in long format (as defined in
@@ -68,10 +68,10 @@ public final class NutsWorkspaceConfig implements Serializable {
      *
      * @see NutsId#getLongNameId()
      */
-    private String bootRuntimeDependencies = null;
+    private String runtimeDependencies = null;
     private String bootRepositories = null;
-    private String bootJavaCommand = null;
-    private String bootJavaOptions = null;
+    private String javaCommand = null;
+    private String javaOptions = null;
 
     // folder types and layout types are exploded so that it is easier
     // to extract from json file eventhough no json library is available
@@ -182,12 +182,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getBootApiVersion() {
-        return bootApiVersion;
+    public String getApiVersion() {
+        return apiVersion;
     }
 
-    public NutsWorkspaceConfig setBootApiVersion(String bootApiVersion) {
-        this.bootApiVersion = bootApiVersion;
+    public NutsWorkspaceConfig setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
         return this;
     }
 
@@ -200,21 +200,21 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getBootRuntime() {
-        return bootRuntime;
+    public String getRuntimeId() {
+        return runtimeId;
     }
 
-    public NutsWorkspaceConfig setBootRuntime(String bootRuntime) {
-        this.bootRuntime = bootRuntime;
+    public NutsWorkspaceConfig setRuntimeId(String runtimeId) {
+        this.runtimeId = runtimeId;
         return this;
     }
 
-    public String getBootRuntimeDependencies() {
-        return bootRuntimeDependencies;
+    public String getRuntimeDependencies() {
+        return runtimeDependencies;
     }
 
-    public NutsWorkspaceConfig setBootRuntimeDependencies(String bootRuntimeDependencies) {
-        this.bootRuntimeDependencies = bootRuntimeDependencies;
+    public NutsWorkspaceConfig setRuntimeDependencies(String runtimeDependencies) {
+        this.runtimeDependencies = runtimeDependencies;
         return this;
     }
 
@@ -227,21 +227,21 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public String getBootJavaCommand() {
-        return bootJavaCommand;
+    public String getJavaCommand() {
+        return javaCommand;
     }
 
-    public NutsWorkspaceConfig setBootJavaCommand(String bootJavaCommand) {
-        this.bootJavaCommand = bootJavaCommand;
+    public NutsWorkspaceConfig setJavaCommand(String javaCommand) {
+        this.javaCommand = javaCommand;
         return this;
     }
 
-    public String getBootJavaOptions() {
-        return bootJavaOptions;
+    public String getJavaOptions() {
+        return javaOptions;
     }
 
-    public NutsWorkspaceConfig setBootJavaOptions(String bootJavaOptions) {
-        this.bootJavaOptions = bootJavaOptions;
+    public NutsWorkspaceConfig setJavaOptions(String javaOptions) {
+        this.javaOptions = javaOptions;
         return this;
     }
 

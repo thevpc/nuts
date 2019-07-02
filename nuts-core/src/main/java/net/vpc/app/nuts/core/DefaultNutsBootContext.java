@@ -38,19 +38,19 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         }
 //        this.uuid = c.getUuid();
 //        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
-        if (c.getBootRuntime() != null) {
-            this.bootRuntime = c.getBootRuntime().contains("#")
-                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
-                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        if (c.getRuntimeId() != null) {
+            this.bootRuntime = c.getRuntimeId().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getRepositories();
-        if (c.getBootJavaCommand() != null) {
-            this.bootJavaCommand = c.getBootJavaCommand();
+//        this.bootRepositories = c.getBootRepositories();
+        if (c.getJavaCommand() != null) {
+            this.bootJavaCommand = c.getJavaCommand();
         }
-        if (c.getBootJavaOptions() != null) {
-            this.bootJavaOptions = c.getBootJavaOptions();
+        if (c.getJavaOptions() != null) {
+            this.bootJavaOptions = c.getJavaOptions();
         }
         if (c.getStoreLocationStrategy() != null) {
             this.storeLocationStrategy = c.getStoreLocationStrategy();
@@ -68,19 +68,19 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     public DefaultNutsBootContext mergeRuntime(NutsWorkspaceOptions c) {
-        if (c.getBootRuntime() != null) {
-            this.bootRuntime = c.getBootRuntime().contains("#")
-                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
-                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        if (c.getRuntimeId() != null) {
+            this.bootRuntime = c.getRuntimeId().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getRepositories();
-        if (c.getBootJavaCommand() != null) {
-            this.bootJavaCommand = c.getBootJavaCommand();
+//        this.bootRepositories = c.getBootRepositories();
+        if (c.getJavaCommand() != null) {
+            this.bootJavaCommand = c.getJavaCommand();
         }
-        if (c.getBootJavaOptions() != null) {
-            this.bootJavaOptions = c.getBootJavaOptions();
+        if (c.getJavaOptions() != null) {
+            this.bootJavaOptions = c.getJavaOptions();
         }
         return this;
     }
@@ -146,21 +146,21 @@ public final class DefaultNutsBootContext implements NutsBootContext {
             this.name = c.getName();
         }
 //        this.uuid = c.getUuid();
-        if (c.getBootApiVersion() != null) {
-            this.bootAPI = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getBootApiVersion());
+        if (c.getApiVersion() != null) {
+            this.bootAPI = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         }
-        if (c.getBootRuntime() != null) {
-            this.bootRuntime = c.getBootRuntime().contains("#")
-                    ? CoreNutsUtils.parseNutsId(c.getBootRuntime())
-                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getBootRuntime());
+        if (c.getRuntimeId() != null) {
+            this.bootRuntime = c.getRuntimeId().contains("#")
+                    ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
+                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getRepositories();
-        if (c.getBootJavaCommand() != null) {
-            this.bootJavaCommand = c.getBootJavaCommand();
+//        this.bootRepositories = c.getBootRepositories();
+        if (c.getJavaCommand() != null) {
+            this.bootJavaCommand = c.getJavaCommand();
         }
-        this.bootJavaOptions = c.getBootJavaOptions();
+        this.bootJavaOptions = c.getJavaOptions();
         if (c.getStoreLocationStrategy() != null) {
             this.storeLocationStrategy = c.getStoreLocationStrategy();
         }
@@ -193,8 +193,8 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         if (c.getExtensionDependencies() != null) {
             this.bootExtensionDependencies = c.getExtensionDependencies();
         }
-        if (c.getRepositories() != null) {
-            this.bootRepositories = c.getRepositories();
+        if (c.getBootRepositories() != null) {
+            this.bootRepositories = c.getBootRepositories();
         }
         if (c.getJavaCommand() != null) {
             this.bootJavaCommand = c.getJavaCommand();
@@ -248,7 +248,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     @Override
-    public String getRepositories() {
+    public String getBootRepositories() {
         return bootRepositories;
     }
 

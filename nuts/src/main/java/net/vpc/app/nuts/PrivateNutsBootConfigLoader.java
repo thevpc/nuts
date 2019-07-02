@@ -105,12 +105,12 @@ class PrivateNutsBootConfigLoader {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setApiVersion((String) jsonObject.get("bootApiVersion"));
-        config.setRuntimeId((String) jsonObject.get("bootRuntime"));
-        config.setRepositories((String) jsonObject.get("bootRepositories"));
-        config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
-        config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
-        config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
+        config.setApiVersion((String) jsonObject.get("apiVersion"));
+        config.setRuntimeId((String) jsonObject.get("runtimeId"));
+        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
+        config.setRuntimeDependencies((String) jsonObject.get("runtimeDependencies"));
+        config.setJavaCommand((String) jsonObject.get("javaCommand"));
+        config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
         config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
         String s = (String) jsonObject.get("storeLocationStrategy");
@@ -140,7 +140,7 @@ class PrivateNutsBootConfigLoader {
         config.setWorkspace((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("bootApiVersion"));
         config.setRuntimeId((String) jsonObject.get("bootRuntime"));
-        config.setRepositories((String) jsonObject.get("bootRepositories"));
+        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
         config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));

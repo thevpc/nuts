@@ -188,11 +188,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsBootConfig getBootConfig() {
         return new NutsBootConfig()
-                .setApiVersion(config.getBootApiVersion())
-                .setRuntimeId(config.getBootRuntime())
+                .setApiVersion(config.getApiVersion())
+                .setRuntimeId(config.getRuntimeId())
                 .setRepositories(config.getBootRepositories())
-                .setJavaCommand(config.getBootJavaCommand())
-                .setJavaOptions(config.getBootJavaOptions());
+                .setJavaCommand(config.getJavaCommand())
+                .setJavaOptions(config.getJavaOptions());
     }
 
     @Override
@@ -428,10 +428,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         } else {
             other.setRuntimeDependencies("");
         }
-        config.setBootApiVersion(other.getApiVersion());
-        config.setBootRuntime(other.getRuntimeId());
-        config.setBootRuntimeDependencies(other.getRuntimeDependencies());
-        config.setBootRepositories(other.getRepositories());
+        config.setApiVersion(other.getApiVersion());
+        config.setRuntimeId(other.getRuntimeId());
+        config.setRuntimeDependencies(other.getRuntimeDependencies());
+        config.setBootRepositories(other.getBootRepositories());
         fireConfigurationChanged();
     }
 
@@ -1359,24 +1359,24 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void setBootApiVersion(String value) {
-        if (!Objects.equals(value, config.getBootApiVersion())) {
-            config.setBootApiVersion(value);
+        if (!Objects.equals(value, config.getApiVersion())) {
+            config.setApiVersion(value);
             fireConfigurationChanged();
         }
     }
 
     @Override
     public void setBootRuntime(String value) {
-        if (!Objects.equals(value, config.getBootRuntime())) {
-            config.setBootRuntime(value);
+        if (!Objects.equals(value, config.getRuntimeId())) {
+            config.setRuntimeId(value);
             fireConfigurationChanged();
         }
     }
 
     @Override
     public void setBootRuntimeDependencies(String value) {
-        if (!Objects.equals(value, config.getBootRuntimeDependencies())) {
-            config.setBootRuntimeDependencies(value);
+        if (!Objects.equals(value, config.getRuntimeDependencies())) {
+            config.setRuntimeDependencies(value);
             fireConfigurationChanged();
         }
     }

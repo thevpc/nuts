@@ -82,13 +82,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "nuts.workspace-boot.id":
                     return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
                 case "nuts.workspace-runtime.version": {
-                    String rt = ws.config().getOptions().getBootRuntime();
+                    String rt = ws.config().getOptions().getRuntimeId();
                     return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
                             ? rt.substring(rt.indexOf("#")+1)
                             : rt;
                 }
                 case "nuts.workspace-runtime.id":{
-                    String rt = ws.config().getOptions().getBootRuntime();
+                    String rt = ws.config().getOptions().getRuntimeId();
                     return rt == null ? ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString() : rt.contains("#")
                             ? rt
                             : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);

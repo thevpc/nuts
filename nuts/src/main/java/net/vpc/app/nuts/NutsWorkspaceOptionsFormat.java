@@ -115,13 +115,13 @@ public class NutsWorkspaceOptionsFormat {
     public String[] getBootCommand() {
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
-            fillOption("--boot-runtime", null, options.getBootRuntime(), arguments, false);
-            fillOption("--java", "-j", options.getBootJavaCommand(), arguments, false);
-            fillOption("--java-options", "-O", options.getBootJavaOptions(), arguments, false);
+            fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
+            fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
+            fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             fillOption("--workspace", "-w", PrivateNutsUtils.isBlank(options.getWorkspace()) ? "" : PrivateNutsUtils.getAbsolutePath(options.getWorkspace()), arguments, false);
             fillOption("--user", "-u", options.getUserName(), arguments, false);
             fillOption("--password", "-p", options.getPassword(), arguments, false);
-            fillOption("--boot-version", "-V", options.getRequiredBootVersion(), arguments, false);
+            fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
             if (!(omitDefaults && options.getTerminalMode() == null)) {
                 fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
             }
@@ -152,7 +152,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption("--gui", null, options.isGui(), arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), arguments, false);
             fillOption("--trace", "-t", options.isTrace(), arguments, false);
-            fillOption("--skip-companions", "-k", options.isSkipInstallCompanions(), arguments, false);
+            fillOption("--skip-companions", "-k", options.isSkipCompanions(), arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments, false);
             fillOption(options.getConfirm(), arguments, false);
             fillOption(options.getOutputFormat(), arguments, false);

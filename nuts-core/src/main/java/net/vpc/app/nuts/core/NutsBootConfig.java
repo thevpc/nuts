@@ -79,9 +79,9 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     private String extensionDependencies;
 
     /**
-     * repositories list (; separated) where to look for runtime dependencies
+     * bootRepositories list (; separated) where to look for runtime dependencies
      */
-    private String repositories;
+    private String bootRepositories;
 
     /**
      * java executable command to run nuts binaries
@@ -99,7 +99,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     private NutsStoreLocationStrategy storeLocationStrategy;
 
     /**
-     * workspace repositories store location strategy
+     * workspace bootRepositories store location strategy
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
 
@@ -136,11 +136,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
             this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-            this.setRuntimeId(options.getBootRuntime());
+            this.setRuntimeId(options.getRuntimeId());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
-//            this.setRepositories(options.getRepositories());
+//            this.setRepositories(options.getBootRepositories());
             this.global = options.isGlobal();
-            this.runtimeId = options.getBootRuntime();
+            this.runtimeId = options.getRuntimeId();
         }
     }
 
@@ -151,7 +151,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.runtimeId = context.getRuntimeId().getLongName();
             this.runtimeDependencies = context.getRuntimeDependencies();
             this.extensionDependencies = context.getExtensionDependencies();
-            this.repositories = context.getRepositories();
+            this.bootRepositories = context.getBootRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
             this.storeLocations = new LinkedHashMap<>(context.getStoreLocations());
@@ -170,7 +170,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.runtimeId = other.getRuntimeId();
             this.runtimeDependencies = other.getRuntimeDependencies();
             this.extensionDependencies = other.getExtensionDependencies();
-            this.repositories = other.getRepositories();
+            this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
             this.storeLocations = other.storeLocations == null ? null : new LinkedHashMap<>(other.storeLocations);
@@ -247,12 +247,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String getRepositories() {
-        return repositories;
+    public String getBootRepositories() {
+        return bootRepositories;
     }
 
     public NutsBootConfig setRepositories(String repositories) {
-        this.repositories = repositories;
+        this.bootRepositories = repositories;
         return this;
     }
 
@@ -369,11 +369,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
         }
-        if (!CoreStringUtils.isBlank(repositories)) {
+        if (!CoreStringUtils.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("repositories='").append(repositories).append('\'');
+            sb.append("repositories='").append(bootRepositories).append('\'');
         }
         if (!CoreStringUtils.isBlank(javaCommand)) {
             if (sb.length() > 0) {

@@ -377,6 +377,7 @@ public class NutsRepositoryConfig502 implements Serializable {
 
     public NutsRepositoryConfig toRepositoryConfig() {
         NutsRepositoryConfig c = new NutsRepositoryConfig();
+//        c.setCreateApiVersion(createApiVersion);
         c.setAuthenticationAgent(authenticationAgent);
         c.setEnv(env);
         c.setGroups(groups);

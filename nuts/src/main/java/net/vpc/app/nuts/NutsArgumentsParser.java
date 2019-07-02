@@ -128,7 +128,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setRequiredBootVersion(v);
+                            options.setApiVersion(v);
                         }
                         break;
                     }
@@ -141,7 +141,7 @@ public final class NutsArgumentsParser {
                             } else {
                                 br = NutsConstants.Ids.NUTS_RUNTIME + "#" + br;
                             }
-                            options.setBootRuntime(br);
+                            options.setRuntimeId(br);
                         }
                         break;
                     }
@@ -151,7 +151,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setBootJavaCommand(v);
+                            options.setJavaCommand(v);
                         }
                         break;
                     }
@@ -161,7 +161,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setBootJavaCommand(PrivateNutsUtils.resolveJavaCommand(v));
+                            options.setJavaCommand(PrivateNutsUtils.resolveJavaCommand(v));
                         }
                         break;
                     }
@@ -171,7 +171,7 @@ public final class NutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setBootJavaOptions(v);
+                            options.setJavaOptions(v);
                         }
                         break;
                     }
@@ -385,7 +385,7 @@ public final class NutsArgumentsParser {
                     case "-k": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setSkipInstallCompanions(a.getBooleanValue());
+                            options.setSkipCompanions(a.getBooleanValue());
                         }
                         break;
                     }
