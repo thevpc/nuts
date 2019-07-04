@@ -112,7 +112,7 @@ public class CoreIOUtils {
         map.put("nuts.id", id.getLongName());
         map.put("nuts.id.version", id.getVersion().getValue());
         map.put("nuts.id.name", id.getName());
-        map.put("nuts.id.simpleName", id.getSimpleName());
+        map.put("nuts.id.simpleName", id.getShortName());
         map.put("nuts.id.group", id.getGroup());
         map.put("nuts.file", nutMainFile.getPath().toString());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
@@ -579,45 +579,6 @@ public class CoreIOUtils {
             }
         }
         return sb.toString();
-    }
-
-    public static NutsRepositoryConfig loadNutsRepositoryConfig(Path file, NutsWorkspace ws) {
-        NutsRepositoryConfig conf = null;
-        if (Files.isRegularFile(file)) {
-            byte[] bytes;
-            try {
-                bytes = Files.readAllBytes(file);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-
-            try {
-                Map<String, Object> a_config0 = ws.json().parse(new InputStreamReader(new ByteArrayInputStream(bytes)), Map.class);
-                String version = (String) a_config0.get("configVersion");
-                if (version == null) {
-                    version = ws.config().current().getApiVersion();
-                }
-                int buildNumber = CoreNutsUtils.getNutsApiVersionOrdinalNumber(version);
-                if (buildNumber < 506) {
-
-                }
-                conf = ws.json().parse(file, NutsRepositoryConfig.class);
-            } catch (RuntimeException ex) {
-                LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
-                if (!ws.config().isReadOnly()) {
-                    Path newfile = file.getParent().resolve("nuts-repository-" + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()) + ".json");
-                    LOG.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.toString());
-                    try {
-                        Files.move(file, newfile);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException("Unable to load and re-create config file " + file.toString() + " : " + e.toString(), new IOException(ex));
-                    }
-                } else {
-                    throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
-                }
-            }
-        }
-        return conf;
     }
 
     public static String resolveJavaCommand(String javaHome) {
@@ -1677,7 +1638,7 @@ public class CoreIOUtils {
     }
 
     public static InputSource getCachedUrlWithSHA1(NutsWorkspace ws, String path, NutsSession session) {
-        final Path cacheBasePath = ws.config().getStoreLocation(ws.config().current().getRuntimeId(), NutsStoreLocation.CACHE);
+        final Path cacheBasePath = ws.config().getStoreLocation(ws.config().getRuntimeId(), NutsStoreLocation.CACHE);
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
         ws.io().copy()
@@ -1734,7 +1695,7 @@ public class CoreIOUtils {
         PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
         if (m == null) {
             m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.config().getStoreLocation(
-                    ws.config().current().getRuntimeId(),
+                    ws.config().getRuntimeId(),
                     NutsStoreLocation.CACHE
             ).resolve("urls-db").toFile());
             ws.userProperties().put(k, m);
@@ -2047,5 +2008,18 @@ public class CoreIOUtils {
 
     public static String getAbsolutePath(String path) {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
+    }
+
+    public static void copyFolder(Path src, Path dest) throws IOException {
+        Files.walk(src)
+                .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
+    }
+
+    private static void copy(Path source, Path dest) {
+        try {
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }

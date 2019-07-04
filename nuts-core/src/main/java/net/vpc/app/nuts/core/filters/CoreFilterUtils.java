@@ -147,9 +147,9 @@ public class CoreFilterUtils {
     public static List<NutsExtensionInfo> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInfo> base) {
         LinkedHashMap<String, NutsExtensionInfo> valid = new LinkedHashMap<>();
         for (NutsExtensionInfo n : base) {
-            NutsExtensionInfo old = valid.get(n.getId().getSimpleName());
+            NutsExtensionInfo old = valid.get(n.getId().getShortName());
             if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
-                valid.put(n.getId().getSimpleName(), n);
+                valid.put(n.getId().getShortName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -158,9 +158,9 @@ public class CoreFilterUtils {
     public static List<NutsId> filterNutsIdByLatestVersion(List<NutsId> base) {
         LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
         for (NutsId n : base) {
-            NutsId old = valid.get(n.getSimpleName());
+            NutsId old = valid.get(n.getShortName());
             if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
-                valid.put(n.getSimpleName(), n);
+                valid.put(n.getShortName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -271,7 +271,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
-                if (y.getSimpleName().equals("java")) {
+                if (y.getShortName().equals("java")) {
                     //should accept any platform !!!
                     return true;
                 }

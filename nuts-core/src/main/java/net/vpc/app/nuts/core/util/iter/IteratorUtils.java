@@ -29,6 +29,7 @@ import net.vpc.app.nuts.core.util.common.FileDepthFirstIterator;
 public class IteratorUtils {
 
     public static final NonNullFilter NON_NULL = new NonNullFilter();
+    public static final NonBlankFilter NON_BLANK = new NonBlankFilter();
     private static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator<>();
 
     public static FileDepthFirstIterator dsf(File file) {
@@ -258,6 +259,17 @@ public class IteratorUtils {
         @Override
         public boolean test(T value) {
             return value != null;
+        }
+    }
+
+    public static class NonBlankFilter implements Predicate<String> {
+
+        public NonBlankFilter() {
+        }
+
+        @Override
+        public boolean test(String value) {
+            return value != null && value.trim().length() > 0;
         }
     }
 }

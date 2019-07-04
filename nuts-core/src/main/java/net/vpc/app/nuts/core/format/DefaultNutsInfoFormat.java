@@ -148,19 +148,18 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private LinkedHashMap<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         LinkedHashMap<String, Object> props = new LinkedHashMap<>();
-        NutsWorkspaceConfigManager configManager = ws.config();
+        NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.config().getOptions();
-        NutsWorkspaceCurrentConfig rt = configManager.current();
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
 
         props.put("name", stringValue(rt.getName()));
-        props.put("nuts-api-version", stringValue(rt.getApiId().getVersion().toString()));
-        props.put("nuts-api-id", stringValue(rt.getApiId().toString()));
-        props.put("nuts-runtime-id", stringValue(rt.getRuntimeId().toString()));
-        URL[] cl = configManager.getBootClassWorldURLs();
+        props.put("nuts-api-version", stringValue(rt.getApiVersion()));
+        props.put("nuts-api-id", stringValue(rt.getApiId().getLongName()));
+        props.put("nuts-runtime-id", stringValue(rt.getRuntimeId().getLongName()));
+        URL[] cl = rt.getBootClassWorldURLs();
         List<String> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -177,14 +176,14 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
 
         props.put("nuts-runtime-path", stringValue(CoreStringUtils.join(";", runtimeClassPath)));
-        props.put("nuts-workspace-id", stringValue(configManager.getUuid()));
+        props.put("nuts-workspace-id", stringValue(rt.getUuid()));
         props.put("nuts-store-layout", stringValue(rt.getStoreLocationLayout()));
         props.put("nuts-store-strategy", stringValue(rt.getStoreLocationStrategy()));
         props.put("nuts-repo-store-strategy", stringValue(rt.getRepositoryStoreLocationStrategy()));
         props.put("nuts-global", options.isGlobal());
-        props.put("nuts-workspace", stringValue(configManager.getWorkspaceLocation().toString()));
+        props.put("nuts-workspace", stringValue(rt.getWorkspaceLocation().toString()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
+            props.put("nuts-workspace-" + folderType.name().toLowerCase(), rt.getStoreLocation(folderType).toString());
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure()));
@@ -201,12 +200,12 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("java-executable", CoreIOUtils.resolveJavaCommand(null));
         props.put("java-classpath", System.getProperty("java.class.path"));
         props.put("java-library-path", System.getProperty("java.library.path"));
-        props.put("os-name", ws.config().current().getPlatformOs().toString());
-        props.put("os-family", stringValue(ws.config().current().getPlatformOsFamily()));
-        if (ws.config().current().getPlatformOsDist() != null) {
-            props.put("os-dist", ws.config().current().getPlatformOsDist().toString());
+        props.put("os-name", ws.config().getPlatformOs().toString());
+        props.put("os-family", stringValue(ws.config().getPlatformOsFamily()));
+        if (ws.config().getPlatformOsDist() != null) {
+            props.put("os-dist", ws.config().getPlatformOsDist().toString());
         }
-        props.put("os-arch", ws.config().current().getPlatformArch().toString());
+        props.put("os-arch", ws.config().getPlatformArch().toString());
         props.put("user-name", System.getProperty("user.name"));
         props.put("user-home", System.getProperty("user.home"));
         props.put("user-dir", System.getProperty("user.dir"));

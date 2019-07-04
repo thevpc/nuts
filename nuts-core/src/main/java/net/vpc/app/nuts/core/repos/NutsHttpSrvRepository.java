@@ -133,7 +133,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
         NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
-                new NutsPatternIdFilter(id.getSimpleNameId())
+                new NutsPatternIdFilter(id.getShortNameId())
         ).simplify();
         if (filter2 != null) {
             it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session.getSession())).iterator();

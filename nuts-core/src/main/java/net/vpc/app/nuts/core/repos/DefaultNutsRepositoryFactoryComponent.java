@@ -84,7 +84,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
 
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
-        if (!workspace.config().current().isGlobal()) {
+        if (!workspace.config().isGlobal()) {
             
             return new NutsRepositoryDefinition[]{
                 new NutsRepositoryDefinition()

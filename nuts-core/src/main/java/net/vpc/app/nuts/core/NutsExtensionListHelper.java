@@ -71,7 +71,7 @@ public class NutsExtensionListHelper {
     public NutsExtensionListHelper compress() {
         LinkedHashMap<String, NutsId> m = new LinkedHashMap<>();
         for (NutsId id : list) {
-            m.put(id.getSimpleName(), id.getLongNameId());
+            m.put(id.getShortName(), id.getLongNameId());
         }
         list.clear();
         list.addAll(m.values());
@@ -81,7 +81,7 @@ public class NutsExtensionListHelper {
     public NutsExtensionListHelper add(NutsId id) {
         for (int i = 0; i < list.size(); i++) {
             NutsId a = list.get(i);
-            if (a.getSimpleName().equals(id.getSimpleName())) {
+            if (a.getShortName().equals(id.getShortName())) {
                 list.set(i, id);
                 return this;
             }
@@ -92,7 +92,7 @@ public class NutsExtensionListHelper {
     public NutsExtensionListHelper remove(NutsId id) {
         for (int i = 0; i < list.size(); i++) {
             NutsId a = list.get(i);
-            if (a.getSimpleName().equals(id.getSimpleName())) {
+            if (a.getShortName().equals(id.getShortName())) {
                 list.remove(i);
                 return this;
             }

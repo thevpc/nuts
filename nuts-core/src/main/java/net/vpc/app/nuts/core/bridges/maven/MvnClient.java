@@ -20,7 +20,7 @@ public class MvnClient {
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {
-        if (id.getSimpleName().equals(NET_VPC_APP_NUTS_MVN)) {
+        if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
         NutsSession searchSession = session.copy().trace(false);

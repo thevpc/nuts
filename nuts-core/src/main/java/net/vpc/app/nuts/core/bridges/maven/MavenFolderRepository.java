@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
+import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
@@ -165,7 +166,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             try {
                 namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id),
                         new NutsIdFilterAnd(idFilter,
-                                new NutsPatternIdFilter(id.getSimpleNameId())
+                                new NutsPatternIdFilter(id.getShortNameId())
                         ),
                         Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {

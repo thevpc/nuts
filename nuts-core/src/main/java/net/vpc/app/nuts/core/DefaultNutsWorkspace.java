@@ -29,6 +29,10 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.config.NutsBootConfig;
+import net.vpc.app.nuts.core.repos.DefaultNutsInstalledRepository;
+import net.vpc.app.nuts.core.config.DefaultNutsWorkspaceCurrentConfig;
+import net.vpc.app.nuts.core.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.core.security.DefaultNutsWorkspaceSecurityManager;
 import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
@@ -226,7 +230,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 
         initializing = true;
         try {
-            if (!reloadWorkspace(session, options.getExcludedExtensions(), null)) {
+            if (!loadWorkspace(session, options.getExcludedExtensions(), null)) {
                 //workspace wasn't loaded. Create new configuration...
                 NutsWorkspaceUtils.checkReadOnly(this);
                 LOG.log(Level.CONFIG, "Workspace not found. Creating new one at {0}", config().getWorkspaceLocation());
@@ -262,7 +266,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 if (!config().isReadOnly()) {
                     config().save();
                 }
-                String nutsVersion = config().current().getRuntimeId().getVersion().toString();
+                String nutsVersion = config().getRuntimeId().getVersion().toString();
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.log(Level.CONFIG, "nuts workspace v{0} created.", new Object[]{nutsVersion});
                 }
@@ -450,7 +454,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //        return config;
 //    }
     public void reconfigurePostInstall(NutsSession session) {
-        String nutsVersion = config().current().getRuntimeId().getVersion().toString();
+        String nutsVersion = config().getRuntimeId().getVersion().toString();
         session = NutsWorkspaceUtils.validateSession(this, session);
         if (!config().options().isSkipCompanions()) {
             if (session.isPlainTrace()) {
@@ -511,7 +515,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     public boolean requiresCoreExtension() {
         boolean coreFound = false;
         for (NutsId ext : extensions().getExtensions()) {
-            if (ext.equalsSimpleName(config().current().getRuntimeId())) {
+            if (ext.equalsSimpleName(config().getRuntimeId())) {
                 coreFound = true;
                 break;
             }
@@ -660,7 +664,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     || CoreStringUtils.isBlank(d.getOptional())) {
                 NutsDependency standardDependencyOk = null;
                 for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
-                    if (standardDependency.getSimpleName().equals(d.getId().getSimpleName())) {
+                    if (standardDependency.getSimpleName().equals(d.getId().getShortName())) {
                         standardDependencyOk = standardDependency;
                         break;
                     }
@@ -736,7 +740,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
 //        try {
 //            addWorkspaceExtension(NutsConstants.NUTS_ID_BOOT_RUNTIME, session);
 //        } catch (Exception ex) {
-//            log.log(Level.SEVERE, "Unable to load Nuts-core. The tool is running in minimal mode.");
+//            log.log(Level.SEVERE, "Unable to loadWorkspace Nuts-core. The tool is running in minimal mode.");
 //        }
     }
 
@@ -995,44 +999,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         throw new NutsElementNotFoundException(this, "Unable to resolve command name for " + id.toString());
     }
 
-    protected boolean reloadWorkspace(NutsSession session, String[] excludedExtensions, String[] excludedRepositories) {
+    protected boolean loadWorkspace(NutsSession session, String[] excludedExtensions, String[] excludedRepositories) {
         session = NutsWorkspaceUtils.validateSession(this, session);
-        boolean loadedConfig = false;
-        try {
-            loadedConfig = configManager.load(session);
-        } catch (Exception ex) {
-            String fileName = "nuts-workspace-" + Instant.now().toString();
-            LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
-            if (!config().isReadOnly()) {
-                try (PrintStream o = new PrintStream(config().getWorkspaceLocation().resolve(fileName + ".error").toFile())) {
-                    o.println("workspace.path:");
-                    o.println(configManager.getWorkspaceLocation());
-                    o.println("workspace.options:");
-                    o.println(configManager.getOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
-                    for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        o.println("location." + location.id() + ":");
-                        o.println(configManager.getStoreLocation(location));
-                    }
-                    o.println("java.class.path:");
-                    o.println(System.getProperty("java.class.path"));
-                    o.println();
-                    ex.printStackTrace(o);
-                } catch (Exception ex2) {
-                    //ignore
-                }
-                Path newfile = config().getWorkspaceLocation().resolve(fileName
-                        + ".json");
-                LOG.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile);
-                try {
-                    Files.move(configManager.getConfigFile(), newfile);
-                } catch (IOException e) {
-                    throw new UncheckedIOException("Unable to load and re-create config file " + configManager.getConfigFile() + " : " + e.toString(), new IOException(ex));
-                }
-            } else {
-                throw new UncheckedIOException("Unable to load config file " + configManager.getConfigFile(), new IOException(ex));
-            }
-        }
-        if (loadedConfig) {
+        if (configManager.loadWorkspace(session)) {
             //extensions already wired... this is needless!
             for (NutsId extensionId : extensions().getExtensions()) {
                 if (extensionManager.isExcludedExtension(extensionId)) {
@@ -1047,7 +1016,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                     session.setTerminal(sessionCopy.getTerminal());
                 }
             }
-
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Users.ADMIN);
             if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
@@ -1055,7 +1023,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
                 }
                 security().updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray()).session(session).run();
             }
-            for (NutsCommandAliasFactoryConfig commandFactory : configManager.getCommandFactories()) {
+            for (NutsCommandAliasFactoryConfig commandFactory : config().getCommandFactories()) {
                 try {
                     config().addCommandAliasFactory(commandFactory, new NutsAddOptions().session(session));
                 } catch (Exception e) {
@@ -1072,6 +1040,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         }
         return false;
     }
+
+    
 
 //    @Override
 //    public List<NutsRepository> getEnabledRepositories(Nuts upportedAction fmode, NutsId nutsId, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
@@ -1234,17 +1204,17 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             Path bootstrapFolder = cfg.getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
             NutsId id2 = def.getId();
             this.io().copy().session(session).from(def.getPath())
-                    .to(cfg.getStoreLocation(id2, bootstrapFolder)
+                    .to(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))
                             .resolve(cfg.getDefaultIdFilename(id2.setFaceComponent().setPackaging("jar")))
                     ).run();
             this.descriptor().value(this.fetch().id(id2).getResultDescriptor())
-                    .print(cfg.getStoreLocation(id2, bootstrapFolder)
+                    .print(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))
                             .resolve(cfg.getDefaultIdFilename(id2.setFaceDescriptor())));
 
             Map<String, String> pr = new LinkedHashMap<>();
             pr.put("file.updated.date", Instant.now().toString());
-            pr.put("project.id", def.getId().getSimpleNameId().toString());
-            pr.put("project.name", def.getId().getSimpleNameId().toString());
+            pr.put("project.id", def.getId().getShortNameId().toString());
+            pr.put("project.name", def.getId().getShortNameId().toString());
             pr.put("project.version", def.getId().getVersion().toString());
             pr.put("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
 //            pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
@@ -1263,7 +1233,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
             );
 
             try (Writer writer = Files.newBufferedWriter(
-                    this.config().getStoreLocation(def.getId().getLongNameId(), bootstrapFolder)
+                    bootstrapFolder.resolve(this.config().getDefaultIdBasedir(def.getId().getLongNameId()))
                             .resolve("nuts.properties")
             )) {
                 CoreIOUtils.storeProperties(pr, writer, false);

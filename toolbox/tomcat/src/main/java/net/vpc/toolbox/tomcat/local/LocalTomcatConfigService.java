@@ -227,7 +227,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.getWorkspace().config().current().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = context.getWorkspace().config().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);

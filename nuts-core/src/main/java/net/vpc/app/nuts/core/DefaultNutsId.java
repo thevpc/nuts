@@ -513,7 +513,7 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId getSimpleNameId() {
+    public NutsId getShortNameId() {
         return new DefaultNutsId(null, group, name, (NutsVersion) null, "");
     }
 
@@ -523,7 +523,7 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public String getSimpleName() {
+    public String getShortName() {
         if (CoreStringUtils.isBlank(group)) {
             return CoreStringUtils.trim(name);
         }
@@ -532,7 +532,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getLongName() {
-        String s = getSimpleName();
+        String s = getShortName();
         NutsVersion v = getVersion();
         if (v.isBlank()) {
             return s;

@@ -192,7 +192,6 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 throw new NutsIllegalArgumentException(repository.getWorkspace(), "Unsupported strategy type " + getStoreLocation());
             }
         }
-
     }
 
     @Override
@@ -352,14 +351,14 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
                 created = true;
             }
             CoreIOUtils.mkdirs(getStoreLocation());
-            config.setConfigVersion(repository.getWorkspace().config().current().getApiId().getVersion().getValue());
+            config.setConfigVersion(repository.getWorkspace().config().getApiVersion());
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
             if (CoreStringUtils.isBlank(config.getConfigVersion())) {
-                config.setConfigVersion(repository.getWorkspace().config().current().getApiId().getVersion().getValue());
+                config.setConfigVersion(repository.getWorkspace().config().getApiVersion());
             }
             repository.getWorkspace().json().value(config).print(file);
             configurationChanged = false;

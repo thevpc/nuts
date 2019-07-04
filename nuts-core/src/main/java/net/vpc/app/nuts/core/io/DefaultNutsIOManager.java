@@ -58,38 +58,38 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.CONFIG);
+                    return ws.config().getStoreLocation(NutsStoreLocation.CONFIG).toString();
                 case "lib":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.LIB);
+                    return ws.config().getStoreLocation(NutsStoreLocation.LIB).toString();
                 case "apps":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.APPS);
+                    return ws.config().getStoreLocation(NutsStoreLocation.APPS).toString();
                 case "cache":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.CACHE);
+                    return ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString();
                 case "run":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.RUN);
+                    return ws.config().getStoreLocation(NutsStoreLocation.RUN).toString();
                 case "temp":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.TEMP);
+                    return ws.config().getStoreLocation(NutsStoreLocation.TEMP).toString();
                 case "log":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.LOG);
+                    return ws.config().getStoreLocation(NutsStoreLocation.LOG).toString();
                 case "var":
-                    return ws.config().current().getStoreLocation(NutsStoreLocation.VAR);
+                    return ws.config().getStoreLocation(NutsStoreLocation.VAR).toString();
                 case "nuts.boot.version":
-                    return ws.config().current().getApiId().getVersion().toString();
+                    return ws.config().getApiVersion();
                 case "nuts.boot.id":
-                    return ws.config().current().getApiId().toString();
+                    return ws.config().getApiId().toString();
                 case "nuts.workspace-boot.version":
                     return Nuts.getVersion();
                 case "nuts.workspace-boot.id":
                     return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
                 case "nuts.workspace-runtime.version": {
                     String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.config().current().getRuntimeId().getVersion().toString() : rt.contains("#")
+                    return rt == null ? ws.config().getRuntimeId().getVersion().toString() : rt.contains("#")
                             ? rt.substring(rt.indexOf("#") + 1)
                             : rt;
                 }
                 case "nuts.workspace-runtime.id": {
                     String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.config().current().getRuntimeId().getVersion().toString() : rt.contains("#")
+                    return rt == null ? ws.config().getRuntimeId().getVersion().toString() : rt.contains("#")
                             ? rt
                             : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);
                 }

@@ -19,7 +19,7 @@ public class NutsIndexerUtils {
         if (m == null) {
             m = ws.config()
                     .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class)
-                            .getSimpleNameId(),
+                            .getShortNameId(),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.userProperties().put(k, m);
         }

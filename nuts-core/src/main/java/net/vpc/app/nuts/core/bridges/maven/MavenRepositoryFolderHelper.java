@@ -61,7 +61,7 @@ import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.FolderNutIdIterator;
+import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;

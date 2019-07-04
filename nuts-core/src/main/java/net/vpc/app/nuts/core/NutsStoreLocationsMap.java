@@ -55,11 +55,12 @@ public class NutsStoreLocationsMap {
         return null;
     }
 
-    public void set(Map<String, String> locations) {
+    public NutsStoreLocationsMap set(Map<String, String> locations) {
         set(new NutsStoreLocationsMap(locations));
+        return this;
     }
 
-    public void set(NutsStoreLocationsMap other) {
+    public NutsStoreLocationsMap set(NutsStoreLocationsMap other) {
         if (other != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = other.get(location);
@@ -68,9 +69,10 @@ public class NutsStoreLocationsMap {
                 }
             }
         }
+        return this;
     }
 
-    public void set(NutsStoreLocation location, String value) {
+    public NutsStoreLocationsMap set(NutsStoreLocation location, String value) {
         if (location != null) {
             if (CoreStringUtils.isBlank(value)) {
                 if (locations != null) {
@@ -83,6 +85,7 @@ public class NutsStoreLocationsMap {
                 locations.put(location.id(), value);
             }
         }
+        return this;
     }
 
     public Map<String, String> toMap() {

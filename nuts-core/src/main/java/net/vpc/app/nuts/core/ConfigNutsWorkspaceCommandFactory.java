@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
-class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
+public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     private NutsWorkspaceConfigManager configManager;
     private NutsWorkspaceConfigManagerExt configManagerExt;
@@ -33,7 +33,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public Path getStoreLocation() {
-        return configManager.getStoreLocation(configManager.current().getApiId(), NutsStoreLocation.APPS);
+        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.APPS);
     }
 
     @Override

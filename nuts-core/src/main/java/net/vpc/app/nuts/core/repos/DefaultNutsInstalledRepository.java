@@ -27,7 +27,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.repos;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,13 +54,14 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.FolderNutIdIterator;
+import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
 import net.vpc.app.nuts.NutsInstallInformation;
+import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 
 /**
  *
@@ -153,7 +154,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public String getDefaultVersion(NutsId id) {
-        NutsId baseVersion = id.getSimpleNameId();
+        NutsId baseVersion = id.getShortNameId();
         synchronized (cachedDefaultVersions) {
             String p = cachedDefaultVersions.get(baseVersion);
             if (p != null) {
@@ -176,7 +177,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void setDefaultVersion(NutsId id) {
-        NutsId baseVersion = id.getSimpleNameId();
+        NutsId baseVersion = id.getShortNameId();
         String version = id.getVersion().getValue();
         Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         if (CoreStringUtils.isBlank(version)) {
@@ -288,7 +289,7 @@ public class DefaultNutsInstalledRepository {
                                 }
 
                             })
-                            .nonNull().iterator();
+                            .notNull().iterator();
                 }
                 //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
                 return IteratorUtils.emptyIterator();

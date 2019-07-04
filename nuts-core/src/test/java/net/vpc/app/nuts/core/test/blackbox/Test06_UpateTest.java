@@ -89,7 +89,7 @@ public class Test06_UpateTest {
                 .setDescriptor(
                         rt.getDescriptor().setId(rt.getId().setVersion(rtv2))
                                 .replaceDependency(
-                                        x -> x.getSimpleName().equals(api.getId().getSimpleName()),
+                                        x -> x.getSimpleName().equals(api.getId().getShortName()),
                                         x -> x.setVersion(apiv2)
                                 )
                 )
@@ -108,15 +108,15 @@ public class Test06_UpateTest {
                 uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
 
-        System.out.println(uws.search().id(api.getId().getSimpleNameId()).getResultIds().list());
-        System.out.println(uws.search().id(rt.getId().getSimpleNameId()).getResultIds().list());
-        Assert.assertEquals(1, uws.search().id(api.getId().getSimpleNameId()).getResultIds().list().size());
-        Assert.assertEquals(1, uws.search().id(rt.getId().getSimpleNameId()).getResultIds().list().size());
+        System.out.println(uws.search().id(api.getId().getShortNameId()).getResultIds().list());
+        System.out.println(uws.search().id(rt.getId().getShortNameId()).getResultIds().list());
+        Assert.assertEquals(1, uws.search().id(api.getId().getShortNameId()).getResultIds().list().size());
+        Assert.assertEquals(1, uws.search().id(rt.getId().getShortNameId()).getResultIds().list().size());
         System.out.println("========================");
-        System.out.println(nws.search().id(api.getId().getSimpleNameId()).setRepository("temp").getResultIds().list());
-        System.out.println(nws.search().id(rt.getId().getSimpleNameId()).setRepository("temp").getResultIds().list());
-        System.out.println(nws.search().id(api.getId().getSimpleNameId()).getResultIds().list());
-        System.out.println(nws.search().id(rt.getId().getSimpleNameId()).getResultIds().list());
+        System.out.println(nws.search().id(api.getId().getShortNameId()).setRepository("temp").getResultIds().list());
+        System.out.println(nws.search().id(rt.getId().getShortNameId()).setRepository("temp").getResultIds().list());
+        System.out.println(nws.search().id(api.getId().getShortNameId()).getResultIds().list());
+        System.out.println(nws.search().id(rt.getId().getShortNameId()).getResultIds().list());
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().all().checkUpdates();

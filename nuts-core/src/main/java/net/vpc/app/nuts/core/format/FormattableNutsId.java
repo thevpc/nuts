@@ -46,7 +46,7 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.DefaultNutsInstalledRepository;
+import net.vpc.app.nuts.core.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -299,7 +299,7 @@ public class FormattableNutsId {
         }
     }
 
-    public void buildLong() {
+    public FormattableNutsId buildLong() {
         if (!built) {
             built = true;
             NutsWorkspace ws = session.getWorkspace();
@@ -346,8 +346,8 @@ public class FormattableNutsId {
                 this.executableApp = desc.isNutsApplication();
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
-            this.status_e = def.getId().getSimpleName().equals(NutsConstants.Ids.NUTS_API) ? 'a'
-                    : def.getId().getSimpleName().equals(NutsConstants.Ids.NUTS_RUNTIME) ? 'r'
+            this.status_e = def.getId().getShortName().equals(NutsConstants.Ids.NUTS_API) ? 'a'
+                    : def.getId().getShortName().equals(NutsConstants.Ids.NUTS_RUNTIME) ? 'r'
                     : extension != null && extension ? 'e'
                             : '-';
             this.status_i = buildComponentAppStatus();
@@ -421,7 +421,7 @@ public class FormattableNutsId {
 //                }
 //            }   
         }
-
+        return this;
     }
 
     private char buildComponentAppStatus() {
@@ -433,6 +433,13 @@ public class FormattableNutsId {
             return "**" + status_f + status_e + status_i + status_s + "**";
         }
         return "**" + status_f + status_e + status_i + "**";
+    }
+
+    public String getStatusString() {
+        if (dep != null) {
+            return ""+status_f + status_e + status_i + status_s;
+        }
+        return ""+status_f + status_e + status_i;
     }
 
     private String keywordArr1(String[] any) {

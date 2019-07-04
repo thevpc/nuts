@@ -27,54 +27,59 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util;
+package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.*;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 2/21/17.
  */
-class FilesFoldersApiIdIterator implements Iterator<NutsId> {
+public class FolderNutIdIterator implements Iterator<NutsId> {
 
     private final String repository;
+    private NutsId last;
+
+    private static class PathAndDepth {
+
+        private Path path;
+        private int depth;
+
+        public PathAndDepth(Path path, int depth) {
+            this.path = path;
+            this.depth = depth;
+        }
+
+    }
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
     private final NutsRepositorySession session;
     private final NutsWorkspace workspace;
-    private final FilesFoldersApi.IteratorModel model;
-    private final int maxDepth;
-    private NutsId last;
+    private final FolderNutIdIteratorModel model;
     private long visitedFoldersCount;
     private long visitedFilesCount;
-    private String rootUrl;
+    private int maxDepth;
 
-    public FilesFoldersApiIdIterator(NutsWorkspace workspace, String repository, String rootUrl, String basePath, NutsIdFilter filter, NutsRepositorySession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
+    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, int maxDepth) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
         this.workspace = workspace;
         this.model = model;
         this.maxDepth = maxDepth;
-        if (rootUrl == null) {
+        if (folder == null) {
             throw new NullPointerException("Could not iterate over null folder");
         }
-        if (rootUrl.endsWith("/") && !rootUrl.endsWith("//")) {
-            rootUrl = rootUrl.substring(0, rootUrl.length() - 1);
-        }
-        this.rootUrl = rootUrl;
-        String startUrl = rootUrl;
-        if (basePath != null && basePath.length() > 0 && !basePath.equals("/")) {
-            if (!startUrl.endsWith("/") && !basePath.startsWith("/")) {
-                startUrl += "/";
-            }
-            startUrl += basePath;
-        }
-        stack.push(new PathAndDepth(startUrl, true, 0));
+        stack.push(new PathAndDepth(folder, 0));
     }
 
     @Override
@@ -82,32 +87,38 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
-            if (file.folder) {
-                String[] childrenFolders = FilesFoldersApi.getFolders(file.path, session.getSession());
-                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session.getSession());
+            if (Files.isDirectory(file.path)) {
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
-                if (deep && childrenFolders != null) {
-                    for (String child : childrenFolders) {
-                        if (file.depth < maxDepth) {
-                            stack.push(new PathAndDepth(file.path + "/" + child, true, file.depth + 1));
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.path, new DirectoryStream.Filter<Path>() {
+                    @Override
+                    public boolean accept(Path pathname) throws IOException {
+                        try {
+                            return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
+                        } catch (Exception e) {
+                            //ignore
+                            return false;
                         }
                     }
-                }
-                if (childrenFiles != null) {
-                    for (String child : childrenFiles) {
-                        if (model.isDescFile(child)) {
-                            stack.push(new PathAndDepth(file.path + "/" + child, false, file.depth));
+                })) {
+
+                    for (Path item : stream) {
+                        if (Files.isDirectory(item)) {
+                            if (file.depth < maxDepth) {
+                                stack.push(new PathAndDepth(item, file.depth + 1));
+                            }
+                        } else {
+                            stack.push(new PathAndDepth(item, file.depth));
                         }
                     }
+                } catch (IOException ex) {
+                    //
                 }
             } else {
                 visitedFilesCount++;
                 NutsDescriptor t = null;
                 try {
-                    t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().source(file.path).session(session.getSession()).create(),
-                            session);
+                    t = model.parseDescriptor(file.path, session);
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -115,7 +126,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession().copy().trace(false));
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }
@@ -156,17 +167,12 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         return visitedFilesCount;
     }
 
-    private static class PathAndDepth {
+    public interface FolderNutIdIteratorModel {
 
-        private String path;
-        private int depth;
-        private boolean folder;
+        void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException;
 
-        public PathAndDepth(String path, boolean folder, int depth) {
-            this.path = path;
-            this.folder = folder;
-            this.depth = depth;
-        }
+        boolean isDescFile(Path pathname);
 
+        NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException;
     }
 }

@@ -58,6 +58,12 @@ public class NutsFetchDisplayOptions {
         return displays.toArray(new NutsDisplayProperty[0]);
     }
 
+    public void addDisplay(String[] columns) {
+        if (columns != null) {
+            addDisplay(parseNutsDisplayProperty(Arrays.stream(columns).collect(Collectors.joining(","))));
+        }
+    }
+
     public void setDisplay(NutsDisplayProperty display) {
         if (display == null) {
             setDisplay(new NutsDisplayProperty[0]);
@@ -67,9 +73,12 @@ public class NutsFetchDisplayOptions {
     }
 
     public void setDisplay(NutsDisplayProperty[] display) {
-        if (display == null) {
-            displays.clear();
-        } else {
+        displays.clear();
+        addDisplay(display);
+    }
+
+    public void addDisplay(NutsDisplayProperty[] display) {
+        if (display != null) {
             for (NutsDisplayProperty t : display) {
                 if (t != null) {
                     displays.add(t);
@@ -126,7 +135,7 @@ public class NutsFetchDisplayOptions {
         }
         switch (a.getStringKey()) {
             case "-l":
-            case "--long":{
+            case "--long": {
                 setDisplayLong(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
@@ -173,7 +182,11 @@ public class NutsFetchDisplayOptions {
     }
 
     public static NutsDisplayProperty[] parseNutsDisplayProperty(NutsCommandLine commandLine) {
-        String[] dispNames = commandLine.nextString().getStringValue().split("[,|; ]");
+        return parseNutsDisplayProperty(commandLine.nextString().getStringValue());
+    }
+
+    public static NutsDisplayProperty[] parseNutsDisplayProperty(String str) {
+        String[] dispNames = (str == null ? "" : str).split("[,|; ]");
         //first pass, check is ALL is visited. In that case will be replaced by all non visited types
         Set<NutsDisplayProperty> visited = new HashSet<NutsDisplayProperty>();
         for (int i = 0; i < dispNames.length; i++) {

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
+public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     private int priority = 10;
     private String factoryId;

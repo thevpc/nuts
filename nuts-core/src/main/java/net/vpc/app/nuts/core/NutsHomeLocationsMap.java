@@ -34,7 +34,6 @@ import java.util.Map;
 import net.vpc.app.nuts.NutsDefaultWorkspaceOptions;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsWorkspaceOptions;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -58,11 +57,11 @@ public class NutsHomeLocationsMap {
         return null;
     }
 
-    public void set(Map<String, String> locations) {
-        set(new NutsHomeLocationsMap(locations));
+    public NutsHomeLocationsMap set(Map<String, String> locations) {
+        return set(new NutsHomeLocationsMap(locations));
     }
 
-    public void set(NutsHomeLocationsMap other) {
+    public NutsHomeLocationsMap set(NutsHomeLocationsMap other) {
         if (other != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = other.get(null, location);
@@ -79,9 +78,10 @@ public class NutsHomeLocationsMap {
                 }
             }
         }
+        return this;
     }
 
-    public void set(NutsOsFamily osFamily, NutsStoreLocation location, String value) {
+    public NutsHomeLocationsMap set(NutsOsFamily osFamily, NutsStoreLocation location, String value) {
         if (location != null) {
             if (CoreStringUtils.isBlank(value)) {
                 if (locations != null) {
@@ -94,6 +94,7 @@ public class NutsHomeLocationsMap {
                 locations.put(location.id(), value);
             }
         }
+        return this;
     }
 
     public Map<String, String> toMap() {

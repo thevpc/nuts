@@ -37,6 +37,7 @@ public enum NutsDisplayProperty {
     STATUS,
     INSTALL_DATE,
     INSTALL_USER,
+    INSTALL_FOLDER,
     ID,
     NAME,
     ARCH,

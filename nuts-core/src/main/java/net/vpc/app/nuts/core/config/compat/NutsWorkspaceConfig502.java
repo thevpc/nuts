@@ -27,7 +27,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.compat;
+package net.vpc.app.nuts.core.config.compat;
 
 import java.io.Serializable;
 import java.util.*;

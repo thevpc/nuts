@@ -483,10 +483,10 @@ public class CoreNutsUtils {
         return o;
     }
 
-    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
-        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
-        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());
-    }
+//    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
+//        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
+//        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());
+//    }
 
 //    public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
 //        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
@@ -666,7 +666,7 @@ public class CoreNutsUtils {
             return false;
         }
         if (pattern.getVersion().isBlank()) {
-            return pattern.getSimpleName().equals(id.getSimpleName());
+            return pattern.getShortName().equals(id.getShortName());
         }
         return pattern.getLongName().equals(id.getLongName());
     }
@@ -725,7 +725,7 @@ public class CoreNutsUtils {
         return aa;
     }
 
-    public static int getNutsApiVersionOrdinalNumber(String s) {
+    public static int getApiVersionOrdinalNumber(String s) {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
@@ -795,4 +795,5 @@ public class CoreNutsUtils {
         }
     }
 
+    
 }

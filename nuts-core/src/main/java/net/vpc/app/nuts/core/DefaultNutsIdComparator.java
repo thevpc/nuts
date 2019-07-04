@@ -10,7 +10,7 @@ public class DefaultNutsIdComparator implements Comparator<NutsId> {
 
     @Override
     public int compare(NutsId o1, NutsId o2) {
-        int x = o1.getSimpleName().compareTo(o2.getSimpleName());
+        int x = o1.getShortName().compareTo(o2.getShortName());
         if (x != 0) {
             return x;
         }

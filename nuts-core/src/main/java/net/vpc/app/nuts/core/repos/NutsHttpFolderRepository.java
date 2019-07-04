@@ -47,7 +47,7 @@ import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.util.FilesFoldersApi;
+import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -271,7 +271,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             return ret.iterator();
         } else {
             NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
-                    new NutsPatternIdFilter(id.getSimpleNameId())
+                    new NutsPatternIdFilter(id.getShortNameId())
             ).simplify();
             switch (versionApi) {
                 case DEFAULT:

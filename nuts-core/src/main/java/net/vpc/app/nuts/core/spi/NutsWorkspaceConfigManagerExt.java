@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 
 import java.net.URL;
 import java.nio.file.Path;
+import net.vpc.app.nuts.core.config.DefaultNutsWorkspaceCurrentConfig;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
@@ -15,7 +16,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void onInitializeWorkspace(Path workspaceLocation,NutsWorkspaceOptions options, URL[] bootClassWorldURLs, ClassLoader classLoader);
     
-    void setCurrentConfig(NutsWorkspaceCurrentConfig runningContext);
+    void setCurrentConfig(DefaultNutsWorkspaceCurrentConfig runningContext);
 
     void setConfig(NutsWorkspaceConfig config, NutsSession session);
 
@@ -25,7 +26,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     Path getConfigFile();
 
-    boolean load(NutsSession session);
+    boolean loadWorkspace(NutsSession session);
 
     void setBootApiVersion(String value);
 

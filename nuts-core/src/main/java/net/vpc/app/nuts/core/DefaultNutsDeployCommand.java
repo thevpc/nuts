@@ -428,10 +428,10 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
 
                     NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(getValidSession()));
                     for (String os : descriptor.getOs()) {
-                        CorePlatformUtils.checkSupportedOs(ws.id().parseRequired(os).getSimpleName());
+                        CorePlatformUtils.checkSupportedOs(ws.id().parseRequired(os).getShortName());
                     }
                     for (String arch : descriptor.getArch()) {
-                        CorePlatformUtils.checkSupportedArch(ws.id().parseRequired(arch).getSimpleName());
+                        CorePlatformUtils.checkSupportedArch(ws.id().parseRequired(arch).getShortName());
                     }
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;

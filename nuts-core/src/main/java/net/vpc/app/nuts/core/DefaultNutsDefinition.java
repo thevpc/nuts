@@ -166,7 +166,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsInstallInformation getInstallInformation() {
         if (!isSetInstallInformation()) {
-            throw new NutsException(null, "Unable to get content. You need to call search.installInformation(...) first.");
+            throw new NutsException(null, "Unable to get install information. You need to call search.installInformation(...) first.");
         }
         return installInformation;
     }

@@ -34,7 +34,7 @@ public class NutsIdExt implements Comparable<NutsIdExt> {
 
     @Override
     public int compareTo(NutsIdExt o) {
-        int x = this.id.getSimpleName().compareTo(o.id.getSimpleName());
+        int x = this.id.getShortName().compareTo(o.id.getShortName());
         if (x != 0) {
             return x;
         }

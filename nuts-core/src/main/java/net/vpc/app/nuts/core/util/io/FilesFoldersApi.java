@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.util;
+package net.vpc.app.nuts.core.util.io;
 
 import java.io.IOException;
 import java.io.InputStream;

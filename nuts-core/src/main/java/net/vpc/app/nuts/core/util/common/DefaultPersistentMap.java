@@ -70,7 +70,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
                         .map(
                                 (File x) -> (Map.Entry<K, V>) resolve(x)
                         )
-                        .nonNull()
+                        .notNull()
                         .iterator();
             }
 
@@ -96,7 +96,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
                         .map(
                                 (File x) -> (Map.Entry<K, V>) resolve(x)
                         )
-                        .nonNull()
+                        .notNull()
                         .map(x -> x.getKey())
                         .iterator();
             }

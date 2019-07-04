@@ -60,13 +60,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private final NutsWorkspace ws;
     private final NutsWorkspaceFactory objectFactory;
 
-    protected DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceFactory objectFactory) {
+    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceFactory objectFactory) {
         this.ws = ws;
         this.objectFactory = objectFactory;
     }
 
     public boolean isExcludedExtension(NutsId excluded) {
-        return this.exclusions.contains(excluded.getSimpleName());
+        return this.exclusions.contains(excluded.getShortName());
     }
 
     public void setExcludedExtensions(String[] excluded) {
@@ -76,7 +76,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 if (e != null && !e.trim().isEmpty()) {
                     NutsId ee = ws.id().parse(e);
                     if (ee != null) {
-                        this.exclusions.add(ee.getSimpleName());
+                        this.exclusions.add(ee.getShortName());
                     }
                 }
             }
@@ -85,15 +85,15 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
 //    @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.config().current().getApiId().getVersion().toString(), session);
+        return findWorkspaceExtensions(ws.config().getApiVersion(), session);
     }
 
   //  @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.config().current().getApiId().getVersion().toString();
+            version = ws.config().getApiVersion();
         }
-        NutsId id = ws.config().current().getApiId().setVersion(version);
+        NutsId id = ws.config().getApiId().setVersion(version);
         return findExtensions(id, "extensions", session);
     }
 

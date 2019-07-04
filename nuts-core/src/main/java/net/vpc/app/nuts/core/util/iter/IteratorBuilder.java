@@ -25,8 +25,8 @@ public class IteratorBuilder<T> {
     private final Iterator<T> it;
 
     private IteratorBuilder(Iterator<T> it) {
-        if(it==null){
-            it=IteratorUtils.emptyIterator();
+        if (it == null) {
+            it = IteratorUtils.emptyIterator();
         }
         this.it = it;
     }
@@ -130,8 +130,12 @@ public class IteratorBuilder<T> {
         return safe(IteratorErrorHandlerType.POSPONE);
     }
 
-    public IteratorBuilder<T> nonNull() {
+    public IteratorBuilder<T> notNull() {
         return filter(IteratorUtils.NON_NULL);
+    }
+
+    public IteratorBuilder<String> notBlank() {
+        return ((IteratorBuilder<String>) this).filter(IteratorUtils.NON_BLANK);
     }
 
     public Iterator<T> iterator() {

@@ -62,22 +62,27 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
         return runtime;
     }
 
+    @Override
     public NutsId getId() {
         return id;
     }
 
+    @Override
     public NutsDefinition getLocal() {
         return local;
     }
 
+    @Override
     public NutsDefinition getAvailable() {
         return available;
     }
 
+    @Override
     public NutsId[] getDependencies() {
         return dependencies;
     }
 
+    @Override
     public boolean isUpdateApplied() {
         return updateApplied;
     }
@@ -86,6 +91,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
         this.updateApplied = updateApplied;
     }
 
+    @Override
     public boolean isUpdateForced() {
         return updateForced;
     }
@@ -94,6 +100,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
         this.updateForced = updateForced;
     }
 
+    @Override
     public boolean isUpdateAvailable() {
         return updateAvailable;
     }

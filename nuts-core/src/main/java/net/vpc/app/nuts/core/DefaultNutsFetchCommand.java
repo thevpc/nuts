@@ -49,12 +49,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     @Override
     public NutsFetchCommand nutsApi() {
-        return setId(ws.config().current().getApiId());
+        return setId(ws.config().getApiId());
     }
 
     @Override
     public NutsFetchCommand nutsRuntime() {
-        return setId(ws.config().current().getRuntimeId());
+        return setId(ws.config().getRuntimeId());
     }
 
     @Override

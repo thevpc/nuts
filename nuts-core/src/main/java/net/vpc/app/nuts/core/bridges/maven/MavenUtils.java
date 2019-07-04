@@ -295,14 +295,14 @@ public class MavenUtils {
                                 throw new NutsNotFoundException(null, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
                             }
                         }
-                        done.add(pid.getSimpleName());
+                        done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
                             thisId.apply(new MapStringMapper(d.getProperties()));
                         } else {
                             break;
                         }
                         for (NutsId nutsId : d.getParents()) {
-                            if (!done.contains(nutsId.getSimpleName())) {
+                            if (!done.contains(nutsId.getShortName())) {
                                 todo.push(nutsId);
                             }
                         }

@@ -103,7 +103,7 @@ public class DefaultNutsDependency implements NutsDependency {
         if (exclusions.length > 0) {
             TreeSet<String> ex = new TreeSet<>();
             for (NutsId exclusion : exclusions) {
-                ex.add(exclusion.getSimpleName());
+                ex.add(exclusion.getShortName());
             }
             m.put("exclusions", CoreStringUtils.join(",", ex));
         }

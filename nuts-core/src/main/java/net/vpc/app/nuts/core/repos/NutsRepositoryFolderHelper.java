@@ -36,7 +36,7 @@ import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.FolderNutIdIterator;
+import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
@@ -221,7 +221,7 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         NutsIdFilter filter2 = new NutsIdFilterAnd(filter,
-                new NutsPatternIdFilter(id.getSimpleNameId())
+                new NutsPatternIdFilter(id.getShortNameId())
         );
         return findInFolder(getLocalGroupAndArtifactFile(id), filter2,
                 deep ? Integer.MAX_VALUE : 1,

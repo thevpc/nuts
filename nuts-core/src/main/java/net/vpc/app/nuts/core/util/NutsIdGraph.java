@@ -403,7 +403,7 @@ public class NutsIdGraph {
         private Map<String, SimpleNutsIdInfo> snutsIds = new HashMap<>();
 
         SimpleNutsIdInfo getSimpleNutsIdInfo(NutsId id, boolean create) {
-            String ii = id.getSimpleName();
+            String ii = id.getShortName();
             SimpleNutsIdInfo p = snutsIds.get(ii);
             if (p == null) {
                 if (create) {
@@ -494,7 +494,7 @@ public class NutsIdGraph {
         }
 
         public String getSimpleName() {
-            return id.getSimpleName();
+            return id.getShortName();
         }
 
         public NutsId getLongNameId() {
@@ -524,7 +524,7 @@ public class NutsIdGraph {
         }
 
         public int compareTo(NutsIdNode other) {
-            if (other.id.getSimpleName().equals(this.id.getSimpleName())) {
+            if (other.id.getShortName().equals(this.id.getShortName())) {
                 NutsId id1 = this.id;
                 NutsId id2 = other.id;
                 if (id1.getVersion().isBlank()) {

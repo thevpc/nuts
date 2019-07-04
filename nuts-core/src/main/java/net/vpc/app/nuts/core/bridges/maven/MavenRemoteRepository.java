@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
-import net.vpc.app.nuts.core.util.FilesFoldersApi;
+import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
@@ -152,7 +152,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             return ret.iterator();
         }
         NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
-                new NutsPatternIdFilter(id.getSimpleNameId())
+                new NutsPatternIdFilter(id.getShortNameId())
         ).simplify();
         switch (versionApi) {
             case DEFAULT:

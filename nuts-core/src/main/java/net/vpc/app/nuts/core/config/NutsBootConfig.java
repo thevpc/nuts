@@ -27,7 +27,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.config;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -38,7 +38,6 @@ import net.vpc.app.nuts.NutsStoreLocationStrategy;
 import net.vpc.app.nuts.NutsUnexpectedException;
 import net.vpc.app.nuts.NutsWorkspaceOptions;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsWorkspaceCurrentConfig;
 
 /**
  * Nuts Boot editable configuration object
@@ -144,10 +143,10 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         }
     }
 
-    public NutsBootConfig(NutsWorkspaceCurrentConfig context) {
+    public NutsBootConfig(DefaultNutsWorkspaceCurrentConfig context) {
         if (context != null) {
             this.name = context.getName();
-            this.apiVersion = context.getApiId().getVersion().getValue();
+            this.apiVersion = context.getApiVersion();
             this.runtimeId = context.getRuntimeId().getLongName();
             this.runtimeDependencies = context.getRuntimeDependencies();
             this.extensionDependencies = context.getExtensionDependencies();

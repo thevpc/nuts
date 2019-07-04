@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -151,14 +152,16 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setApp(boolean enable);
 
     /**
-     * set nuts app filter. nuts app (implementing NutsApplication) only are retrieved.
+     * set nuts app filter. nuts app (implementing NutsApplication) only are
+     * retrieved.
      *
      * @return {@code this} instance
      */
     NutsSearchCommand nutsApp();
 
     /**
-     * set nuts app filter. if true nuts app (implementing NutsApplication) only are retrieved.
+     * set nuts app filter. if true nuts app (implementing NutsApplication) only
+     * are retrieved.
      *
      * @param enable ap filter
      * @return {@code this} instance
@@ -166,7 +169,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand nutsApp(boolean enable);
 
     /**
-     * set nuts app filter. if true nuts app (implementing NutsApplication) only are retrieved.
+     * set nuts app filter. if true nuts app (implementing NutsApplication) only
+     * are retrieved.
      *
      * @param enable ap filter
      * @return {@code this} instance
@@ -175,18 +179,21 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * app filter
+     *
      * @return app filter
      */
     boolean isApp();
 
     /**
      * nuts app filter
+     *
      * @return nuts app filter
      */
     boolean isNutsApp();
 
     /**
      * lib filter
+     *
      * @return lib filter
      */
     boolean isLib();
@@ -273,6 +280,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * remove all javascript filters
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand clearScripts();
@@ -385,8 +393,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setIdFilter(String filter);
 
     /**
-     * set armed (true) fail safe mode. null replaces
-     * NutsNotFoundException.
+     * set armed (true) fail safe mode. null replaces NutsNotFoundException.
      *
      * @return {@code this} instance
      */
@@ -489,7 +496,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-
     /**
      * set fetch strategy.
      *
@@ -664,12 +670,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * default version only
+     *
      * @return @since v0.5.5
      */
     NutsSearchCommand defaultVersions();
 
     /**
      * default version only filter
+     *
      * @param enable if non null apply filter
      * @since v0.5.5
      * @return {@code this} instance
@@ -678,6 +686,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * default version only filter
+     *
      * @param enable if non null apply filter
      * @since v0.5.5
      * @return {@code this} instance
@@ -686,6 +695,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * retrieve optional only
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand optional();
@@ -709,8 +719,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setOptional(Boolean enable);
 
     /**
-     * set index filter.if null index is removed. if false do not consider index. 
-     * if true, consider index.
+     * set index filter.if null index is removed. if false do not consider
+     * index. if true, consider index.
      *
      * @param enable index filter.
      * @return {@code this} instance
@@ -719,13 +729,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * set index filter to true.
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand indexed();
 
     /**
-     * set index filter.if null index is removed. if false do not consider index. 
-     * if true, consider index.
+     * set index filter.if null index is removed. if false do not consider
+     * index. if true, consider index.
      *
      * @param enable index filter.
      * @return {@code this} instance
@@ -734,12 +745,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable inlined dependencies list retrieval
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand inlineDependencies();
 
     /**
      * enable/disable inlined dependencies list retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -747,6 +760,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable inlined dependencies list retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -754,12 +768,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable dependencies list retrieval
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand dependencies();
 
     /**
      * enable/disable dependencies list retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -767,6 +783,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable dependencies list retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -774,12 +791,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable dependencies tree retrieval
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand dependenciesTree();
 
     /**
      * enable/disable dependencies tree retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -787,6 +806,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable dependencies tree retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -794,6 +814,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable effective descriptor evaluation
+     *
      * @param enable if true evaluation is enabled.
      * @return {@code this} instance
      */
@@ -801,6 +822,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable effective descriptor evaluation
+     *
      * @param enable if true evaluation is enabled.
      * @return {@code this} instance
      */
@@ -808,18 +830,21 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable effective descriptor evaluation
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand effective();
 
     /**
      * enable retrieval from cache
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand cached();
 
     /**
      * enable/disable retrieval from cache
+     *
      * @param enable if true cache is enabled.
      * @return {@code this} instance
      */
@@ -827,6 +852,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable retrieval from cache
+     *
      * @param enable if true cache is enabled.
      * @return {@code this} instance
      */
@@ -834,12 +860,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable retrieval of content info
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand content();
 
     /**
      * enable/disable retrieval of content info
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -847,6 +875,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable retrieval of content info
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -854,12 +883,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable retrieval of installation info
+     *
      * @return {@code this} instance
      */
     NutsSearchCommand installInformation();
 
     /**
      * enable/disable retrieval of installation info
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -867,6 +898,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * enable/disable retrieval of installation info
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -964,7 +996,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
@@ -989,6 +1022,23 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchResult<String> getResultPaths();
 
+    /**
+     * return result as content path names
+     *
+     * @return result as content path names
+     */
+    NutsSearchResult<String> getResultPathNames();
+
+    NutsSearchResult<Instant> getResultInstallDates();
+
+    NutsSearchResult<String> getResultInstallUsers();
+
+    NutsSearchResult<Path> getResultInstallFolders();
+
+    NutsSearchResult<Path> getResultStoreLocations(NutsStoreLocation location);
+    
+    NutsSearchResult<String[]> getResultStrings(String[] columns);
+    
     /**
      * return result as component names
      *

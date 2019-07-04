@@ -137,7 +137,7 @@ public class FileVersionMain extends NutsApplication {
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
                     if (nameFormat) {
-                        pp.setProperty(entry.getKey(), o.getId().getSimpleName());
+                        pp.setProperty(entry.getKey(), o.getId().getShortName());
                     } else if (idFormat) {
                         pp.setProperty(entry.getKey(), o.getId().toString());
                     } else if (longFormat) {
@@ -172,7 +172,7 @@ public class FileVersionMain extends NutsApplication {
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("[[%s]]%n", descriptor.getId().getSimpleName());
+                            out.printf("[[%s]]%n", descriptor.getId().getShortName());
                         } else if (idFormat) {
                             out.printf("[[%s]]%n", descriptor.getId());
                         } else if (longFormat) {

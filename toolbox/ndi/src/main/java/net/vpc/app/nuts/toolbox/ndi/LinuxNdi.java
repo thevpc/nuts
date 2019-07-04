@@ -26,7 +26,7 @@ public class LinuxNdi implements SystemNdi {
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
         NutsId nid = context.getWorkspace().id().parse(options.getId());
-        if ("nuts".equals(nid.getSimpleName()) || "net.vpc.app.nut:nuts".equals(nid.getSimpleName())) {
+        if ("nuts".equals(nid.getShortName()) || "net.vpc.app.nut:nuts".equals(nid.getShortName())) {
             return createBootScript(options.isForceBoot() || options.getSession().isForce(), options.getSession().isTrace());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>();
@@ -36,7 +36,7 @@ public class LinuxNdi implements SystemNdi {
                 fetched = context.getWorkspace().search()
                         .session(context.getSession().copy().trace(false))
                         .id(options.getId()).latest().getResultDefinitions().required();
-                nid = fetched.getId().getSimpleNameId();
+                nid = fetched.getId().getShortNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
 //            if (options.isFetch()) {
@@ -96,7 +96,7 @@ public class LinuxNdi implements SystemNdi {
     }
 
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
-        NutsId b = context.getWorkspace().config().current().getApiId();
+        NutsId b = context.getWorkspace().config().getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
                 .id(b).setOptional(false).latest().content().getResultDefinitions().required();
@@ -228,10 +228,10 @@ public class LinuxNdi implements SystemNdi {
         goodNdiRc.append("# This file aims to prepare bash environment against current nuts\n");
         goodNdiRc.append("# workspace installation.\n");
         goodNdiRc.append("#\n");
-        goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().current().getApiId().getVersion().getValue()).append("'\n");
+        goodNdiRc.append("NUTS_VERSION='").append(context.getWorkspace().config().getApiVersion()).append("'\n");
         goodNdiRc.append("NUTS_JAR='").append(context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
-                .id(context.getWorkspace().config().current().getApiId()).getResultPaths().required()).append("'\n");
+                .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("[[ \":$PATH:\" != *\":" + appsFolder + ":\"* ]] && PATH=\"" + appsFolder + ":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");

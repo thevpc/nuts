@@ -144,7 +144,7 @@ public interface NutsId extends NutsTokenFilter, Serializable {
      *
      * @return group and name
      */
-    String getSimpleName();
+    String getShortName();
 
     /**
      * return a new instance of NutsId defining only group and name ignoring
@@ -152,7 +152,7 @@ public interface NutsId extends NutsTokenFilter, Serializable {
      *
      * @return group and name only Id instance
      */
-    NutsId getSimpleNameId();
+    NutsId getShortNameId();
 
     /**
      * return a new instance of NutsId defining only group, name and version,
