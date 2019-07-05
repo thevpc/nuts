@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core.format;
 
 import java.io.PrintStream;
 import java.util.Iterator;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsIterableOutput;

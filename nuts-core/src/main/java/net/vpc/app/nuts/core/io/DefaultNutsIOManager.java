@@ -103,9 +103,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
     };
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
+    private WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
+        workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
     }
 
     @Override
@@ -389,12 +391,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsSessionTerminal createTerminal(NutsTerminalBase parent) {
         if (parent == null) {
-            parent = new AbstractSystemTerminalAdapter() {
-                @Override
-                public NutsSystemTerminalBase getParent() {
-                    return ws.io().getSystemTerminal();
-                }
-            };
+            parent = workspaceSystemTerminalAdapter;
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
@@ -636,5 +633,19 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];
+    }
+
+    private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
+
+        private NutsWorkspace workspace;
+
+        public WorkspaceSystemTerminalAdapter(NutsWorkspace workspace) {
+            this.workspace = workspace;
+        }
+
+        @Override
+        public NutsSystemTerminalBase getParent() {
+            return workspace.io().getSystemTerminal();
+        }
     }
 }

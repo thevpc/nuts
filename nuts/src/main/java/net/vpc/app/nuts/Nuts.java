@@ -104,8 +104,8 @@ public class Nuts {
             NutsDefaultWorkspaceOptions t = new NutsDefaultWorkspaceOptions();
             t.setApplicationArguments(args);
             boot = new NutsBootWorkspace(t);
-            boot.getOptions().setInherited(true);
         }
+        boot.getOptions().setInherited(true);
         boot.getOptions().setCreationTime(startTime);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }

@@ -95,8 +95,16 @@ public class NutsApplications {
                 ws = ((NutsSecurityException) ex).getWorkspace();
             }
         }
-        LOG.log(Level.SEVERE, m);
-        LOG.log(Level.SEVERE, ex.getMessage(), ex);
+        if (ws != null) {
+            try {
+                showTrace = ws.config().getOptions().isDebug();
+            } catch (Exception ex2) {
+                //
+            }
+        }
+//        if (showTrace) {
+//            LOG.log(Level.SEVERE, m, ex);
+//        }
         if (out == null && ws != null) {
             try {
                 out = ws.io().getSystemTerminal().getOut();

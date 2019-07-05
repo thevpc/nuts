@@ -37,7 +37,7 @@ package net.vpc.app.nuts;
  */
 public enum NutsArgumentType {
     /**
-     * argument that accepts no value.
+     * argument that may or may not accept value.
      */
     ANY,
     /**
@@ -52,6 +52,7 @@ public enum NutsArgumentType {
      * options (--!option) that will be interpreted as (--option=false).
      */
     BOOLEAN;
+    
     private final String id;
 
     NutsArgumentType() {

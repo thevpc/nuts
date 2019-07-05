@@ -40,7 +40,7 @@ import java.io.PrintStream;
 public interface NutsTerminal extends NutsTerminalBase {
 
     /**
-     * change terminal mode
+     * change terminal mode for both out and err
      *
      * @param mode mode
      * @return {@code this} instance

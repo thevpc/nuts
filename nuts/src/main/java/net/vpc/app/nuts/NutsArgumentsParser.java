@@ -815,7 +815,7 @@ public final class NutsArgumentsParser {
                 for (String s : showError) {
                     errorMessage.append(s).append("\n");
                 }
-                errorMessage.append("Try 'nuts --help' for more information.\n");
+                errorMessage.append("Try 'nuts --help' for more information.");
                 throw new NutsIllegalArgumentException(null, errorMessage.toString());
             }
         }

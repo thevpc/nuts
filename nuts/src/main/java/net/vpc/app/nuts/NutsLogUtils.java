@@ -82,6 +82,7 @@ public final class NutsLogUtils {
         boolean inheritLog = config.isLogInherited();
 
         Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
+        boolean acceptConsole=false;
         boolean loggedToFile = false;
         boolean loggedToConsole = false;
         String rootPackage = "net.vpc.app.nuts";
@@ -159,7 +160,7 @@ public final class NutsLogUtils {
             Handler handler;
             boolean consoleAdded = false;
             try {
-                if (!consoleOnly) {
+                if (!consoleOnly && acceptConsole) {
                     handler = new NutsLogFileHandler(pattern, maxSize * MEGA, count, true);
                     rootLogger.addHandler(handler);
                 }
