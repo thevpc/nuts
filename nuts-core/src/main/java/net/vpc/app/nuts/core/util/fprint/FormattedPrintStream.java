@@ -237,7 +237,7 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
         if (node instanceof TextNodePlain) {
             TextNodePlain p = (TextNodePlain) node;
             writeRaw(TextFormats.list(formats), p.getValue());
-        } else if (node instanceof TextNodeList) {
+            } else if (node instanceof TextNodeList) {
             TextNodeList s = (TextNodeList) node;
             for (TextNode n : s) {
                 print(formats, n);

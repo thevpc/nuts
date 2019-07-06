@@ -171,7 +171,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
     }
 
     @Override
-    public boolean initializeWorkspace(String workspaceLocation, String apiVersion, String runtimeId, String runtimeDependencies, String repositories, NutsWorkspaceOptions options, NutsBootWorkspaceFactory factory, URL[] bootClassWorldURLs, ClassLoader bootClassLoader) {
+    public boolean initializeWorkspace(String workspaceLocation, String apiVersion, String runtimeId, 
+            String runtimeDependencies, 
+            String extensionDependencies, 
+            String repositories, NutsWorkspaceOptions options, NutsBootWorkspaceFactory factory, URL[] bootClassWorldURLs, ClassLoader bootClassLoader) {
         if (options == null) {
             options = new ReadOnlyNutsWorkspaceOptions(new NutsDefaultWorkspaceOptions());
         } else {
@@ -186,7 +189,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceSPI, Nu
         cfg.setApiVersion(apiVersion);
         cfg.setRuntimeId(runtimeId);
         cfg.setRuntimeDependencies(runtimeDependencies);
-
+        cfg.setExtensionDependencies(extensionDependencies);
         NutsWorkspaceFactory bb = (NutsWorkspaceFactory) factory;
         if (factory instanceof DefaultNutsWorkspaceFactory) {
             ((DefaultNutsWorkspaceFactory) factory).initialize(this);

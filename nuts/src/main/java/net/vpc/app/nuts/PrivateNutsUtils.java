@@ -464,7 +464,7 @@ final class PrivateNutsUtils {
         }
         return new PrivateNutsBootConfig()
                 .setRuntimeId(id + "#" + version)
-                .setRuntimeDependencies(dependencies)
+                .setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split(dependencies, ";", false)))
                 .setBootRepositories(repositories);
     }
 
@@ -810,15 +810,15 @@ final class PrivateNutsUtils {
         return s.replace('/', File.separatorChar);
     }
 
-    public static String nvl(Object ...all) {
+    public static String nvl(Object... all) {
         for (Object object : all) {
-            if(object!=null){
+            if (object != null) {
                 return desc(object);
             }
         }
         return desc(null);
     }
-    
+
     public static String formatLogValue(Object unresolved, Object resolved) {
         String a = PrivateNutsUtils.desc(unresolved);
         String b = PrivateNutsUtils.desc(resolved);

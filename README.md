@@ -60,7 +60,7 @@ It should show a result like this (nuts-api-version/nuts-impl-version)
 ```
 
 # Troubleshooting
-Whenever installation of running fails, it is more likely there is a mis-configuration or invalid libraries that are used. 
+Whenever installation or running fails, it is more likely that there is a misconfiguration or invalid libraries that are used. 
 see [troubleshooting documentation](docs/troubleshooting.md) for more details
 
 

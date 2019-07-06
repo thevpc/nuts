@@ -18,6 +18,7 @@
     </properties>
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>https</word>
+        <word>misconfiguration</word>
         <word>uninstall</word>
         <word>urls</word>
     </spellchecker-wordlist>

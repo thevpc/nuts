@@ -31,7 +31,9 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import static net.vpc.app.nuts.NutsBootWorkspace.LOG;
@@ -111,7 +113,8 @@ class PrivateNutsBootConfigLoader {
         config.setApiVersion((String) jsonObject.get("apiVersion"));
         config.setRuntimeId((String) jsonObject.get("runtimeId"));
         config.setBootRepositories((String) jsonObject.get("bootRepositories"));
-        config.setRuntimeDependencies((String) jsonObject.get("runtimeDependencies"));
+        config.setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("runtimeDependencies"), ";", true)));
+        config.setExtensionDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("extensionDependencies"), ";", true)));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
@@ -144,7 +147,7 @@ class PrivateNutsBootConfigLoader {
         config.setApiVersion((String) jsonObject.get("bootApiVersion"));
         config.setRuntimeId((String) jsonObject.get("bootRuntime"));
         config.setBootRepositories((String) jsonObject.get("bootRepositories"));
-        config.setRuntimeDependencies((String) jsonObject.get("bootRuntimeDependencies"));
+        config.setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("bootRuntimeDependencies"), ";", true)));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
         Map<String, String> storeLocations = new LinkedHashMap<>();

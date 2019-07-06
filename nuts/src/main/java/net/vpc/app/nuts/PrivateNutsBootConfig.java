@@ -31,7 +31,10 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Nuts Boot editable configuration object
@@ -69,15 +72,21 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
     /**
      * runtime component dependencies id list (; separated)
      */
-    private String runtimeDependencies;
+    private LinkedHashSet<String> runtimeDependencies = new LinkedHashSet<>();
 
     /**
      *
      */
-    private String extensionDependencies;
+    private LinkedHashSet<String> extensionDependencies = new LinkedHashSet<>();
 
     /**
-     * bootRepositories list (; separated) where to look for runtime dependencies
+     *
+     */
+    private LinkedHashSet<String> extensions = new LinkedHashSet<>();
+
+    /**
+     * bootRepositories list (; separated) where to look for runtime
+     * dependencies
      */
     private String bootRepositories;
 
@@ -120,12 +129,12 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
     /**
      * workspace store locations
      */
-    private Map<String,String> storeLocations;
+    private Map<String, String> storeLocations;
     /**
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
      */
-    private Map<String,String> homeLocations;
+    private Map<String, String> homeLocations;
 
     public PrivateNutsBootConfig() {
     }
@@ -154,13 +163,13 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
             this.name = other.getName();
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
-            this.runtimeDependencies = other.getRuntimeDependencies();
-            this.extensionDependencies = other.getExtensionDependencies();
+            this.runtimeDependencies = new LinkedHashSet<>(other.getRuntimeDependencies());
+            this.extensionDependencies = new LinkedHashSet<>(other.getExtensionDependencies());
             this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
-            this.storeLocations = other.storeLocations==null?null:new LinkedHashMap<>(other.storeLocations);
-            this.homeLocations = other.homeLocations==null?null:new LinkedHashMap<>(other.homeLocations);
+            this.storeLocations = other.storeLocations == null ? null : new LinkedHashMap<>(other.storeLocations);
+            this.homeLocations = other.homeLocations == null ? null : new LinkedHashMap<>(other.homeLocations);
             this.storeLocationStrategy = other.getStoreLocationStrategy();
             this.storeLocationLayout = other.getStoreLocationLayout();
             this.global = other.isGlobal();
@@ -206,21 +215,21 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String getRuntimeDependencies() {
+    public Set<String> getRuntimeDependencies() {
         return runtimeDependencies;
     }
 
-    public PrivateNutsBootConfig setRuntimeDependencies(String runtimeDependencies) {
-        this.runtimeDependencies = runtimeDependencies;
+    public PrivateNutsBootConfig setRuntimeDependencies(Set<String> runtimeDependencies) {
+        this.runtimeDependencies = runtimeDependencies==null?new LinkedHashSet<>():new LinkedHashSet<>(runtimeDependencies);
         return this;
     }
 
-    public String getExtensionDependencies() {
+    public Set<String> getExtensionDependencies() {
         return extensionDependencies;
     }
 
-    public PrivateNutsBootConfig setExtensionDependencies(String extensionDependencies) {
-        this.extensionDependencies = extensionDependencies;
+    public PrivateNutsBootConfig setExtensionDependencies(Set<String> extensionDependencies) {
+        this.extensionDependencies = extensionDependencies==null?new LinkedHashSet<>():new LinkedHashSet<>(extensionDependencies);
         return this;
     }
 
@@ -293,15 +302,13 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
 //    public String getStoreLocation(NutsStoreLocation folder) {
 //        return this.storeLocations[folder.ordinal()];
 //    }
-
-    public void setStoreLocations(Map<String,String> storeLocations) {
+    public void setStoreLocations(Map<String, String> storeLocations) {
         this.storeLocations = storeLocations;
     }
 
-    public void setHomeLocations(Map<String,String> homeLocations) {
+    public void setHomeLocations(Map<String, String> homeLocations) {
         this.homeLocations = homeLocations;
     }
-
 
 //    public PrivateNutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
 //        if (layout == null) {
@@ -319,7 +326,6 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
 //            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
 //        }
 //    }
-
     public PrivateNutsBootConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
@@ -334,11 +340,11 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public Map<String,String> getStoreLocations() {
+    public Map<String, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public Map<String,String> getHomeLocations() {
+    public Map<String, String> getHomeLocations() {
         return homeLocations;
     }
 
@@ -365,7 +371,7 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!PrivateNutsUtils.isBlank(runtimeDependencies)) {
+        if (!runtimeDependencies.isEmpty()) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -395,19 +401,19 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("workspace='").append(workspace).append('\'');
         }
-        if(storeLocations!=null && !storeLocations.isEmpty()){
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("storeLocations=").append(storeLocations);
-            
+        if (storeLocations != null && !storeLocations.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("storeLocations=").append(storeLocations);
+
         }
-        if(homeLocations!=null && !homeLocations.isEmpty()){
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("homeLocations=").append(homeLocations);
-            
+        if (homeLocations != null && !homeLocations.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("homeLocations=").append(homeLocations);
+
         }
         if (storeLocationStrategy != null) {
             if (sb.length() > 0) {
@@ -435,5 +441,13 @@ final class PrivateNutsBootConfig implements Cloneable, Serializable {
         }
         sb.append('}');
         return sb.toString();
+    }
+
+    public Set<String> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(Set<String> extensions) {
+        this.extensions = extensions==null?new LinkedHashSet<>():new LinkedHashSet<>(extensions);
     }
 }

@@ -55,6 +55,7 @@ public interface NutsWorkspaceSPI extends NutsWorkspace {
      * runtime
      * @param options bootstrap options
      * @param runtimeDependencies runtimeDependencies
+     * @param extensionDependencies extensionDependencies
      * @param repositories repositories
      * @return true if the workspace is newly created
      */
@@ -63,6 +64,7 @@ public interface NutsWorkspaceSPI extends NutsWorkspace {
             String apiVersion,
             String runtimeId,
             String runtimeDependencies,
+            String extensionDependencies,
             String repositories,
             NutsWorkspaceOptions options,
             NutsBootWorkspaceFactory factory,

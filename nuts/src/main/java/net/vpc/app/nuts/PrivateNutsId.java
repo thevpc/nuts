@@ -85,6 +85,14 @@ final class PrivateNutsId {
         return artifactId;
     }
 
+    public String getShortName() {
+        return groupId + ":" + artifactId;
+    }
+
+    public String getLongName() {
+        return groupId + ":" + artifactId + "#" + version;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;

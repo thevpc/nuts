@@ -43,6 +43,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.DocumentBuilder;
@@ -265,30 +266,237 @@ public final class NutsBootWorkspace {
         return options;
     }
 
+    private static class DepsAndRepos {
+
+        LinkedHashSet<String> deps = new LinkedHashSet<>();
+        LinkedHashSet<String> repos = new LinkedHashSet<>();
+    }
+
+    private DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
+        DepsAndRepos depsAndRepos = null;
+        if (!NO_M2) {
+            File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
+            if (mavenNutsCorePom.isFile()) {
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath());
+            }
+        }
+        if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
+            for (String baseUrl : new String[]{
+                NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
+                NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
+            }) {
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
+                if (!depsAndRepos.deps.isEmpty()) {
+                    break;
+                }
+            }
+        }
+        return depsAndRepos;
+    }
+
+    private DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
+        DepsAndRepos depsAndRepos = new DepsAndRepos();
+//        String repositories = null;
+//        String dependencies = null;
+        InputStream xml = null;
+        try {
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+                xml = new URL(url).openStream();
+            } else {
+                File file = new File(url);
+                if (file.isFile()) {
+                    xml = Files.newInputStream(file.toPath());
+                } else {
+                    return depsAndRepos;
+                }
+            }
+//            List<String> dependenciesList = new ArrayList<>();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xml);
+            Element c = doc.getDocumentElement();
+            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
+                    Element c2 = (Element) c.getChildNodes().item(i);
+                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
+                            Element c3 = (Element) c2.getChildNodes().item(j);
+                            String groupId = null;
+                            String artifactId = null;
+                            String version = null;
+                            String scope = null;
+                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                if (c3.getChildNodes().item(k) instanceof Element) {
+                                    Element c4 = (Element) c3.getChildNodes().item(k);
+                                    switch (c4.getNodeName()) {
+                                        case "groupId": {
+                                            groupId = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "artifactId": {
+                                            artifactId = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "version": {
+                                            version = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "scope": {
+                                            scope = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (PrivateNutsUtils.isBlank(groupId)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
+                            } else if (groupId.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
+                            }
+                            if (PrivateNutsUtils.isBlank(artifactId)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                            } else if (artifactId.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
+                            }
+                            if (PrivateNutsUtils.isBlank(version)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                            } else if (version.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                            }
+                            //this is maven dependency, using "compile"
+                            if (PrivateNutsUtils.isBlank(scope) || scope.equals("compile")) {
+                                depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
+                            } else if (version.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                            }
+                        }
+                    }
+                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
+                    Element c2 = (Element) c.getChildNodes().item(i);
+                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                        if (c2.getChildNodes().item(j) instanceof Element) {
+                            Element c3 = (Element) c2.getChildNodes().item(j);
+                            switch (c3.getNodeName()) {
+                                case "nuts-runtime-repositories": {
+                                    String t = c3.getTextContent().trim();
+                                    if (t.length() > 0) {
+                                        depsAndRepos.deps.addAll(PrivateNutsUtils.split(t, ";", true));
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            //ignore
+        } finally {
+            if (xml != null) {
+                try {
+                    xml.close();
+                } catch (IOException ex) {
+                    //ignore
+                }
+            }
+        }
+
+        return depsAndRepos;
+    }
+
     private void openWorkspaceAttempt(OpenWorkspaceData info, boolean recover) {
         LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
-        info.cfg = runningBootConfig.copy();
+        PrivateNutsBootConfig recipient = runningBootConfig.copy();
+        info.cfg = recipient;
         if (recover) {
             if (!PrivateNutsUtils.isBlank(info.cfg.getRuntimeId())
-                    && !PrivateNutsUtils.isBlank(info.cfg.getRuntimeDependencies())) {
+                    && !info.cfg.getRuntimeDependencies().isEmpty()) {
                 LOG.log(Level.CONFIG, "[RECOV. ] Invalidating old  runtime.");
             }
             info.cfg.setRuntimeId(null);
             info.cfg.setRuntimeDependencies(null);
         }
-        if (!PrivateNutsUtils.isBlank(info.cfg.getApiVersion()) && !PrivateNutsUtils.isBlank(info.cfg.getRuntimeId()) && !PrivateNutsUtils.isBlank(info.cfg.getRuntimeDependencies())) {
-            //Ok
+
+        if (!PrivateNutsUtils.isBlank(recipient.getApiVersion()) && !actualVersion.equals(recipient.getApiVersion())) {
+            LOG.log(Level.CONFIG, "Nuts Workspace version {0} does not match runtime version {1}. Resolving best dependencies.", new Object[]{recipient.getApiVersion(), actualVersion});
+            recipient.setApiVersion(actualVersion);
+            recipient.setRuntimeId(null);
+            recipient.setRuntimeDependencies(null);
         } else {
-            info.cfg = buildBootConfig(info.cfg, recover);
+            recipient.setApiVersion(actualVersion);
         }
-        if (info.cfg != null && !actualVersion.equals(info.cfg.getApiVersion())) {
-            LOG.log(Level.CONFIG, "Nuts Workspace version {0} does not match runtime version {1}. Resolving best dependencies.", new Object[]{info.cfg.getApiVersion(), actualVersion});
-            info.cfg = buildBootConfig(info.cfg, recover);
+        PrivateNutsId apiId = PrivateNutsUtils.isBlank(recipient.getApiVersion()) ? bootId : new PrivateNutsId(bootId.getGroupId(), bootId.getArtifactId(), recipient.getApiVersion());
+        String bootAPIPropertiesPath = '/' + getPathFile(apiId, apiId.getArtifactId() + ".properties");
+
+        String runtimeId = recipient.getRuntimeId();
+        if (PrivateNutsUtils.isBlank(runtimeId)) {
+            runtimeId = resolveLatestRuntimeId(apiId.getVersion());
+        }
+        if (PrivateNutsUtils.isBlank(runtimeId)) {
+            runtimeId = NutsConstants.Ids.NUTS_RUNTIME + "#" + apiId.getVersion() + ".0";
+            LOG.log(Level.CONFIG, "[ERROR  ] Failed to load latest runtime id. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
+        }
+        PrivateNutsId _runtimeId = PrivateNutsId.parse(runtimeId);
+        recipient.setRuntimeId(runtimeId);
+        String runtimeVersion = _runtimeId.getVersion();
+
+        //resolve runtime dependencies plus boot repositories
+        if (recipient.getRuntimeDependencies().isEmpty()) {
+            try {
+                String urlPath = "net/vpc/app/nuts/nuts-core/" + runtimeVersion + "/nuts-core-" + runtimeVersion + ".pom";
+                DepsAndRepos depsAndRepos = loadDependenciesAndRepositoriesFromPomPath(urlPath);
+                recipient.setRuntimeDependencies(depsAndRepos.deps);
+                recipient.setBootRepositories(depsAndRepos.repos.stream().collect(Collectors.joining(";")) + ";" + recipient.getBootRepositories());
+            } catch (Exception ex) {
+                //
+            }
         }
 
-        if (info.cfg == null) {
-            throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load ClassPath");
+        recipient.setBootRepositories(
+                PrivateNutsUtils.join(";",
+                        PrivateNutsUtils.splitAndRemoveDuplicates(recipient.getBootRepositories(), PrivateNutsUtils.join(";",
+                                new String[]{
+                                    NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL,
+                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
+                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
+
+                                }
+                        )))
+        );
+
+        LinkedHashSet<String> excludedDeps = new LinkedHashSet<>();
+        if (options.getExcludedExtensions() != null) {
+            for (String excludedExtension : options.getExcludedExtensions()) {
+                excludedDeps.add(PrivateNutsId.parse(excludedExtension).getShortName());
+            }
         }
+        Set<String> visitedDeps = new HashSet<>();
+        for (String r : recipient.getRuntimeDependencies()) {
+            visitedDeps.add(PrivateNutsId.parse(r).getShortName());
+        }
+        LinkedHashMap<String, PrivateNutsId> deps = new LinkedHashMap<>();
+        for (String extension : recipient.getExtensions()) {
+            PrivateNutsId id = PrivateNutsId.parse(extension);
+            if (!excludedDeps.contains(id.getShortName())) {
+                String urlPath = id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + id.getArtifactId() + "-" + runtimeVersion + ".pom";
+                DepsAndRepos depsAndRepos = loadDependenciesAndRepositoriesFromPomPath(urlPath);
+                for (String dep : depsAndRepos.deps) {
+                    PrivateNutsId did = PrivateNutsId.parse(dep);
+                    String shortName = did.getShortName();
+                    if (!visitedDeps.contains(shortName)) {
+                        PrivateNutsId old = deps.get(shortName);
+                        if (old == null || old.getVersion().equals(did.getVersion())) {
+                            //ignore
+                        } else {
+                            //always override!!
+                            deps.put(shortName, did);
+                        }
+                    }
+                }
+            }
+        }
+        recipient.setExtensionDependencies(new LinkedHashSet<>(deps.values().stream().map(PrivateNutsId::getLongName).collect(Collectors.toList())));
 
         String workspaceBootLibFolder = getRunningStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT;
         PrivateNutsId bootRuntime;
@@ -302,14 +510,13 @@ public final class NutsBootWorkspace {
         String[] repositories = PrivateNutsUtils.splitUrlStrings(info.cfg.getBootRepositories()).toArray(new String[0]);
         File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
         if (f == null || !f.isFile()) {
-            f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
             throw new NutsInvalidWorkspaceException(null, this.runningBootConfig.getWorkspace(), "Unable to load " + bootRuntime + ". Unable to resolve file "
                     + (f == null ? getFileName(bootRuntime, "jar") : f.getPath())
             );
         }
 
         allExtensionFiles.put(info.cfg.getRuntimeId(), f);
-        for (String idStr : PrivateNutsUtils.split(info.cfg.getRuntimeDependencies(), "\n\t ;,")) {
+        for (String idStr : info.cfg.getRuntimeDependencies()) {
             PrivateNutsId id = PrivateNutsId.parse(idStr);
             f = getBootFile(id, getFileName(id, "jar"), repositories, workspaceBootLibFolder, !recover);
             if (f == null) {
@@ -317,7 +524,7 @@ public final class NutsBootWorkspace {
             }
             allExtensionFiles.put(id.toString(), f);
         }
-        for (String idStr : PrivateNutsUtils.split(info.cfg.getExtensionDependencies(), "\n\t ;,")) {
+        for (String idStr : info.cfg.getExtensionDependencies()) {
             PrivateNutsId id = PrivateNutsId.parse(idStr);
             f = getBootFile(id, getFileName(id, "jar"), repositories, workspaceBootLibFolder, !recover);
             if (f == null) {
@@ -364,12 +571,14 @@ public final class NutsBootWorkspace {
         LOG.log(Level.FINE, "Initialize Workspace");
         ((NutsWorkspaceSPI) info.nutsWorkspace).initializeWorkspace(info.cfg.getWorkspace(),
                 info.cfg.getApiVersion(),
-                info.cfg.getRuntimeId(), info.cfg.getRuntimeDependencies(), info.cfg.getBootRepositories(),
+                info.cfg.getRuntimeId(),
+                info.cfg.getRuntimeDependencies().stream().collect(Collectors.joining(";")),
+                info.cfg.getExtensionDependencies().stream().collect(Collectors.joining(";")),
+                info.cfg.getBootRepositories(),
                 options, factoryInstance,
                 info.bootClassWorldURLs,
                 info.workspaceClassLoader);
         if (recover) {
-//            info.nutsWorkspace.getConfigManager().setBootConfig(new PrivateNutsBootConfig());
             if (!info.nutsWorkspace.config().isReadOnly()) {
                 LOG.log(Level.CONFIG, "Save Workspace");
                 info.nutsWorkspace.config().save();
@@ -393,10 +602,14 @@ public final class NutsBootWorkspace {
             }
             int x = 204;
             try {
-                String extra = getOptions().isReset() ? ""
-                        : getOptions().isRecover()
-                        ? ". You may need to use --reset (ATTENTION: this will delete all your nuts configuration. Use it at your own risk)"
-                        : ". Try --recover to run in fail safe mode";
+                String extra = "";
+                if (getOptions().isReset()) {
+                    //
+                } else if (getOptions().isRecover()) {
+                    extra = ". You may need to use --reset (ATTENTION: this will delete all your nuts configuration. Use it at your own risk)";
+                } else {
+                    extra = ". Try --recover to run in fail safe mode";
+                }
                 runWorkspaceCommand(null, "Cannot open workspace" + extra + " :" + ex.toString());
             } catch (Exception ex2) {
                 LOG.log(Level.SEVERE, "runWorkspaceCommand failed : " + ex2.toString(), ex2);
@@ -433,6 +646,9 @@ public final class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "\t nuts-uuid                      : {0}", PrivateNutsUtils.desc(runningBootConfig.getUuid()));
             LOG.log(Level.CONFIG, "\t nuts-name                      : {0}", PrivateNutsUtils.desc(runningBootConfig.getName()));
             LOG.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
+            LOG.log(Level.CONFIG, "\t nuts-boot-repositories         : {0}", PrivateNutsUtils.desc(runningBootConfig.getBootRepositories()));
+            LOG.log(Level.CONFIG, "\t nuts-runtime-dependencies      : {0}", PrivateNutsUtils.desc(runningBootConfig.getRuntimeDependencies()));
+            LOG.log(Level.CONFIG, "\t nuts-extension-dependencies    : {0}", PrivateNutsUtils.desc(runningBootConfig.getExtensionDependencies()));
             LOG.log(Level.CONFIG, "\t nuts-workspace                 : {0}", PrivateNutsUtils.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
             LOG.log(Level.CONFIG, "\t nuts-store-apps                : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.APPS), getRunningStoreLocation(NutsStoreLocation.APPS)));
             LOG.log(Level.CONFIG, "\t nuts-store-config              : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), getRunningStoreLocation(NutsStoreLocation.CONFIG)));
@@ -599,139 +815,6 @@ public final class NutsBootWorkspace {
             return null;
         }
         return NutsConstants.Ids.NUTS_RUNTIME + "#" + bestVersion;
-    }
-
-    private PrivateNutsBootConfig buildBootConfig(PrivateNutsBootConfig bootConfig0, boolean recover) {
-        PrivateNutsId apiId = PrivateNutsUtils.isBlank(bootConfig0.getApiVersion()) ? bootId : new PrivateNutsId(bootId.getGroupId(), bootId.getArtifactId(), bootConfig0.getApiVersion());
-        String bootAPIPropertiesPath = '/' + getPathFile(apiId, apiId.getArtifactId() + ".properties");
-        PrivateNutsBootConfig recipient = bootConfig0.copy();
-        recipient.setApiVersion(apiId.getVersion());
-        String runtimeId = bootConfig0.getRuntimeId();
-        if (PrivateNutsUtils.isBlank(runtimeId)) {
-            runtimeId = resolveLatestRuntimeId(apiId.getVersion());
-        }
-        if (PrivateNutsUtils.isBlank(runtimeId)) {
-            runtimeId = NutsConstants.Ids.NUTS_RUNTIME + "#" + apiId.getVersion() + ".0";
-            LOG.log(Level.CONFIG, "[ERROR  ] Failed to load latest runtime id. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
-        }
-        PrivateNutsId _runtimeId = PrivateNutsId.parse(runtimeId);
-        recipient.setRuntimeId(runtimeId);
-        String runtimeVersion = _runtimeId.getVersion();
-        List<String> dependencies = new ArrayList<>();
-        try {
-            InputStream xml = null;
-            String urlPath = "net/vpc/app/nuts/nuts-core/" + runtimeVersion + "/nuts-core-" + runtimeVersion + ".pom";
-            if (!NO_M2) {
-                File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
-                if (mavenNutsCorePom.isFile()) {
-                    xml = Files.newInputStream(mavenNutsCorePom.toPath());
-                }
-            }
-            if (xml == null) {
-                xml = new URL("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master/" + urlPath).openStream();
-            }
-            DocumentBuilderFactory factory
-                    = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xml);
-            Element c = doc.getDocumentElement();
-            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            String groupId = null;
-                            String artifactId = null;
-                            String version = null;
-                            String scope = null;
-                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                if (c3.getChildNodes().item(k) instanceof Element) {
-                                    Element c4 = (Element) c3.getChildNodes().item(k);
-                                    switch (c4.getNodeName()) {
-                                        case "groupId": {
-                                            groupId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            artifactId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "version": {
-                                            version = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "scope": {
-                                            scope = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            if (PrivateNutsUtils.isBlank(groupId)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
-                            } else if (groupId.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
-                            }
-                            if (PrivateNutsUtils.isBlank(artifactId)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
-                            } else if (artifactId.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
-                            }
-                            if (PrivateNutsUtils.isBlank(version)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
-                            }
-                            //this is maven dependency, using "compile"
-                            if (PrivateNutsUtils.isBlank(scope) || scope.equals("compile")) {
-                                dependencies.add(groupId + ":" + artifactId + "#" + version);
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
-                            }
-                        }
-                    }
-                    recipient.setRuntimeDependencies(PrivateNutsUtils.join(";", dependencies.toArray(new String[0])));
-                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            switch (c3.getNodeName()) {
-                                case "nuts-runtime-repositories": {
-                                    String t = c3.getTextContent().trim();
-                                    String e = recipient.getBootRepositories();
-                                    if (t.length() > 0) {
-                                        if (PrivateNutsUtils.isBlank(e)) {
-                                            e = t;
-                                        } else {
-                                            e = t + ";" + e;
-                                        }
-                                        recipient.setBootRepositories(e);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            //
-        }
-
-        recipient.setBootRepositories(
-                PrivateNutsUtils.join(";",
-                        PrivateNutsUtils.splitAndRemoveDuplicates(recipient.getBootRepositories(), PrivateNutsUtils.join(";",
-                                new String[]{
-                                    NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL,
-                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-
-                                }
-                        )))
-        );
-        return recipient;
     }
 
     protected String getHome(NutsStoreLocation storeFolder) {
@@ -1115,6 +1198,7 @@ public final class NutsBootWorkspace {
         System.err.printf("Here after current environment info:%n");
         System.err.printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
         System.err.printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
+        System.err.printf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
         System.err.printf("  workspace-location               : %s%n", PrivateNutsUtils.nvl(workspace, "<default-location>"));
         System.err.printf("  nuts-store-apps                  : %s%n", rbc_locations.get(NutsStoreLocation.APPS.id()));
         System.err.printf("  nuts-store-config                : %s%n", rbc_locations.get(NutsStoreLocation.CONFIG.id()));

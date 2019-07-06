@@ -109,11 +109,11 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         boolean extraInfo = false;
         NutsQuestionParser<T> p = this.getParser();
         if (p == null) {
-            p = new DefaultNutsResponseParser<T>(ws, this.getValueType());
+            p = new DefaultNutsResponseParser<>(ws, this.getValueType());
         }
         NutsQuestionFormat<T> ff = this.getFormat();
         if (ff == null) {
-            ff = new DefaultNutsQuestionFormat<T>(ws);
+            ff = new DefaultNutsQuestionFormat<>(ws);
         }
         Object[] _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {
@@ -178,7 +178,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 }
             }
             if (password) {
-                char[] v = null;
+                char[] v;
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
@@ -201,7 +201,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                 }
             } else {
-                String v = null;
+                String v;
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
