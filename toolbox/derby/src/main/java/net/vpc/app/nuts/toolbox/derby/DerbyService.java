@@ -77,7 +77,7 @@ public class DerbyService {
         NutsWorkspace ws = appContext.getWorkspace();
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
-            NutsId best = ws.search().addId("org.apache.derby:derbynet").duplicates(false).latest().getResultIds().singleton();
+            NutsId best = ws.search().addId("org.apache.derby:derbynet").distinct().latest().getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }
 

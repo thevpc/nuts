@@ -143,13 +143,14 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
                 switch (mode) {
                     case INSTALLED:
                     case LOCAL: {
-                        if (config().getSpeed() < SPEED_FAST) {
+                        if (config().getSpeed() < SPEED_FASTER) {
+                            //slower than local, reject
                             return 0;
                         }
                         break;
                     }
                     case REMOTE: {
-                        if (config().getSpeed() >= SPEED_FAST) {
+                        if (config().getSpeed() >= SPEED_FASTER) {
                             return 0;
                         }
                         break;
@@ -165,13 +166,13 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
                 switch (mode) {
                     case INSTALLED:
                     case LOCAL: {
-                        if (config().getSpeed() < SPEED_FAST) {
+                        if (config().getSpeed() < SPEED_FASTER) {
                             return 0;
                         }
                         break;
                     }
                     case REMOTE: {
-                        if (config().getSpeed() >= SPEED_FAST) {
+                        if (config().getSpeed() >= SPEED_FASTER) {
                             return 0;
                         }
                         break;
@@ -454,4 +455,21 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
             }
         };
     }
+
+    @Override
+    public String repositoryType() {
+        return getRepositoryType();
+    }
+
+    @Override
+    public NutsWorkspace workspace() {
+        return getWorkspace();
+    }
+
+    @Override
+    public NutsRepository parentRepository() {
+        return getParentRepository();
+    }
+    
+    
 }

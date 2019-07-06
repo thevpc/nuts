@@ -47,8 +47,8 @@ public interface NutsArgument extends NutsTokenFilter {
     boolean isOption();
 
     /**
-     * true if the argument do not start with '-' or '+' or is blank.
-     * this is equivalent to {@code !isOption()}.
+     * true if the argument do not start with '-' or '+' or is blank. this is
+     * equivalent to {@code !isOption()}.
      *
      * @return true if the argument do not start with '-' or '+'
      */
@@ -110,8 +110,7 @@ public interface NutsArgument extends NutsTokenFilter {
     int getInt() throws NumberFormatException;
 
     /**
-     * parse number and return integer or {@code defaultValue} 
-     * if not parsable.
+     * parse number and return integer or {@code defaultValue} if not parsable.
      *
      * @param defaultValue defaultValue
      * @return parsed integer or {@code defaultValue} if not parsable
@@ -134,8 +133,7 @@ public interface NutsArgument extends NutsTokenFilter {
     long getLong();
 
     /**
-     * parse number and return long or {@code defaultValue} 
-     * if not parsable.
+     * parse number and return long or {@code defaultValue} if not parsable.
      *
      * @param defaultValue defaultValue
      * @return parsed integer or {@code defaultValue} if not parsable
@@ -158,8 +156,7 @@ public interface NutsArgument extends NutsTokenFilter {
     double getDouble();
 
     /**
-     * parse number and return double or {@code defaultValue} 
-     * if not parsable.
+     * parse number and return double or {@code defaultValue} if not parsable.
      *
      * @param defaultValue defaultValue
      * @return parsed integer or {@code defaultValue} if not parsable
@@ -167,8 +164,8 @@ public interface NutsArgument extends NutsTokenFilter {
     double getDouble(double defaultValue);
 
     /**
-     * parse boolean.
-     * equivalent to {@code getBoolean(false)}
+     * parse boolean. equivalent to {@code getBoolean(false)}
+     *
      * @return parsed boolean
      */
     boolean getBoolean();
@@ -191,6 +188,7 @@ public interface NutsArgument extends NutsTokenFilter {
      *
      * "true|enable|enabled|yes|always|y|on|ok|t" are considered 'true'.
      * "false|disable|disabled|no|none|never|n|off|ko" are considered 'false'.
+     *
      * @param defaultValue default value
      * @return boolean value of the current argument
      */
@@ -232,8 +230,8 @@ public interface NutsArgument extends NutsTokenFilter {
     /**
      * return new instance (never null) of the value part of the argument (after
      * =). However Argument's value may be null (
-     * {@code getArgumentValue().getString() == null} Here example of
-     * getArgumentValue result of some arguments
+     * {@code getArgumentValue().getString() == null}). Here are some examples of
+     * getArgumentValue() result for some common arguments
      * <ul>
      * <li>Argument("key").getArgumentValue() ==&gt; Argument(null) </li>
      * <li>Argument("key=value").getArgumentValue() ==&gt; Argument("value")
@@ -247,23 +245,26 @@ public interface NutsArgument extends NutsTokenFilter {
      * Argument("value") </li>
      * </ul>
      *
-     * @return new instance (never null) of the value part of the argument (after =)
+     * @return new instance (never null) of the value part of the argument
+     * (after =)
      */
     NutsArgument getArgumentValue();
 
     /**
-     * /**
+     *
      * return key part (never null) of the argument. The key does not include
      * neither ! nor // or = argument parts as they are parsed separately. Here
-     * example of getArgumentKey result of some arguments
+     * are some examples of getStringKey() result for some common arguments
      * <ul>
-     * <li>Argument("key").getArgumentKey() ==&gt; Argument("key") </li>
-     * <li>Argument("key=value").getArgumentKey() ==&gt; Argument("key") </li>
-     * <li>Argument("--key=value").getArgumentKey() ==&gt; Argument("--key")
+     * <li>Argument("key").getArgumentKey() ==&gt; "key" </li>
+     * <li>Argument("key=value").getArgumentKey() ==&gt; "key" </li>
+     * <li>Argument("--key=value").getArgumentKey() ==&gt; "--key"
      * </li>
-     * <li>Argument("--!key=value").getArgumentKey() ==&gt; Argument("--key")
+     * <li>Argument("--!key=value").getArgumentKey() ==&gt; "--key"
      * </li>
-     * <li>Argument("--!//key=value").getArgumentKey() ==&gt; Argument("--key")
+     * <li>Argument("--!//key=value").getArgumentKey() ==&gt; "--key"
+     * </li>
+     * <li>Argument("--//!key=value").getArgumentKey() ==&gt; "--key"
      * </li>
      * </ul>
      * equivalent to {@code getArgumentKey().getString()}

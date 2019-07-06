@@ -74,15 +74,15 @@ import net.vpc.app.nuts.core.util.iter.IteratorUtils;
  */
 public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSearchCommand> implements NutsSearchCommand {
 
-    private Comparator<NutsId> idComparator;
+    private Comparator comparator;
     private NutsDependencyFilter dependencyFilter;
     private NutsDescriptorFilter descriptorFilter;
     private NutsIdFilter idFilter;
     private NutsRepositoryFilter repositoryFilter;
     private boolean latest = false;
-    private boolean includeDuplicatedVersions = true;
+    private boolean distinct = false;
     private boolean includeMain = true;
-    private boolean sort = false;
+    private boolean sorted = false;
     private final List<String> arch = new ArrayList<>();
     private final List<NutsId> ids = new ArrayList<>();
     private final List<String> scripts = new ArrayList<>();
@@ -349,14 +349,14 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         super.copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) other);
         if (other != null) {
             NutsSearchCommand o = other;
-            this.idComparator = o.getSortIdComparator();
+            this.comparator = o.getComparator();
             this.dependencyFilter = o.getDependencyFilter();
             this.descriptorFilter = o.getDescriptorFilter();
             this.idFilter = o.getIdFilter();
             this.latest = o.isLatest();
-            this.includeDuplicatedVersions = o.isDuplicates();
+            this.distinct(o.isDistinct());
             this.includeMain = o.isMain();
-            this.sort = o.isSort();
+            this.sorted = o.isSorted();
             this.arch.clear();
             this.arch.addAll(Arrays.asList(o.getArch()));
             this.ids.clear();
@@ -371,30 +371,30 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     @Override
-    public boolean isSort() {
-        return sort;
+    public boolean isSorted() {
+        return sorted;
     }
 
     @Override
     public NutsSearchCommand sort() {
-        return setSort(true);
+        return setSorted(true);
     }
 
     @Override
-    public NutsSearchCommand sort(Comparator<NutsId> comparator) {
-        this.idComparator = comparator;
-        this.sort = true;
+    public NutsSearchCommand sort(Comparator comparator) {
+        this.comparator = comparator;
+        this.sorted = true;
         return this;
     }
 
     @Override
     public NutsSearchCommand sort(boolean sort) {
-        return setSort(sort);
+        return setSorted(sort);
     }
 
     @Override
-    public NutsSearchCommand setSort(boolean sort) {
-        this.sort = sort;
+    public NutsSearchCommand setSorted(boolean sort) {
+        this.sorted = sort;
         return this;
     }
 
@@ -785,7 +785,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
 
     @Override
     public NutsSearchResult<NutsId> getResultIds() {
-        return getResultIdsBase(getValidSession().isTrace(), sort);
+        return getResultIdsBase(getValidSession().isTrace(), sorted);
     }
 
     private NutsSearchResult<NutsDefinition> getResultDefinitionsBase(boolean trace, boolean sort, boolean content, boolean install, boolean effective) {
@@ -794,7 +794,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
 
     @Override
     public NutsSearchResult<NutsDefinition> getResultDefinitions() {
-        return getResultDefinitionsBase(getValidSession().isTrace(), sort, isContent(), isInstallInformation(), isEffective());
+        return getResultDefinitionsBase(getValidSession().isTrace(), sorted, isContent(), isInstallInformation(), isEffective());
     }
 
     private String resolveFindIdBase() {
@@ -820,13 +820,13 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     private NutsCollectionSearchResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean trace) {
-        if (!isLatest() && includeDuplicatedVersions) {
+        if (!isLatest() && !isDistinct()) {
             return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(), applyTraceDecoratorIterOfNutsId(curr, trace));
             //nothind
-        } else if (!isLatest() && !includeDuplicatedVersions) {
+        } else if (!isLatest() && isDistinct()) {
             return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(),
-                    applyTraceDecoratorIterOfNutsId(IteratorBuilder.of(curr).unique((NutsId nutsId) -> nutsId.getLongNameId().setAlternative(nutsId.getAlternative()).toString()).iterator(), trace));
-        } else if (isLatest() && !includeDuplicatedVersions) {
+                    applyTraceDecoratorIterOfNutsId(IteratorBuilder.of(curr).distinct((NutsId nutsId) -> nutsId.getLongNameId().setAlternative(nutsId.getAlternative()).toString()).iterator(), trace));
+        } else if (isLatest() && isDistinct()) {
             Map<String, NutsId> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
                 NutsId nutsId = curr.next();
@@ -837,7 +837,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                 }
             }
             return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(), applyTraceDecoratorCollectionOfNutsId(visited.values(), trace));
-        } else if (isLatest() && includeDuplicatedVersions) {
+        } else if (isLatest() && !isDistinct()) {
             Map<String, List<NutsId>> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
                 NutsId nutsId = curr.next();
@@ -865,7 +865,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         if (base0 == null) {
             return new NutsCollectionSearchResult<NutsId>(ws, resolveFindIdBase());
         }
-        if (!isLatest() && includeDuplicatedVersions && !sort && !isInlineDependencies()) {
+        if (!isLatest() && !isDistinct() && !sort && !isInlineDependencies()) {
             return new NutsCollectionSearchResult<NutsId>(ws, resolveFindIdBase(), applyTraceDecoratorIterOfNutsId(base0, trace));
         }
         NutsCollectionSearchResult<NutsId> a = applyVersionFlagFilters(base0, false);
@@ -912,7 +912,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
         }
         if (sort) {
             List<NutsId> listToSort = applyVersionFlagFilters(curr, false).list();
-            listToSort.sort(idComparator == null ? DefaultNutsIdComparator.INSTANCE : idComparator);
+            listToSort.sort(comparator);
             return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(), applyTraceDecoratorListOfNutsId(listToSort, trace));
         } else {
             return applyVersionFlagFilters(curr, trace);
@@ -946,8 +946,8 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     private <T> NutsSearchResult<T> postProcessResult(IteratorBuilder<T> a) {
-        if (isSort()) {
-            a = a.sort(null, !isDuplicates());
+        if (isSorted()) {
+            a = a.sort(null, isDistinct());
         }
         if (getValidSession().isTrace()) {
             a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getValidSession(), getDisplayOptions()));
@@ -1089,29 +1089,29 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
     }
 
     @Override
-    public boolean isDuplicates() {
-        return includeDuplicatedVersions;
+    public boolean isDistinct() {
+        return distinct;
     }
 
     @Override
-    public NutsSearchCommand duplicates() {
-        return duplicates(true);
+    public NutsSearchCommand distinct() {
+        return distinct(true);
     }
 
     @Override
-    public NutsSearchCommand duplicates(boolean includeDuplicateVersions) {
-        return setDuplicateVersions(includeDuplicateVersions);
+    public NutsSearchCommand distinct(boolean distinct) {
+        return setDistinct(distinct);
     }
 
     @Override
-    public NutsSearchCommand setDuplicateVersions(boolean includeDuplicateVersion) {
-        this.includeDuplicatedVersions = includeDuplicateVersion;
+    public NutsSearchCommand setDistinct(boolean distinct) {
+        this.distinct = distinct;
         return this;
     }
 
     @Override
-    public Comparator<NutsId> getSortIdComparator() {
-        return idComparator;
+    public Comparator getComparator() {
+        return comparator;
     }
 
     @Override
@@ -1473,7 +1473,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                     }
                 }
             }
-            r = getResultDefinitionsBase(getValidSession().isTrace(), isSort(), _content, _installInformation, _effective);
+            r = getResultDefinitionsBase(getValidSession().isTrace(), isSorted(), _content, _installInformation, _effective);
         }
         for (Object any : r) {
             //just iterator over
@@ -1499,8 +1499,8 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                 this.latest();
                 return true;
             }
-            case "--single": {
-                this.duplicates(!cmdLine.nextBoolean().getBooleanValue());
+            case "--distinct": {
+                this.distinct(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--default":
@@ -1509,7 +1509,7 @@ public class DefaultNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSe
                 return true;
             }
             case "--duplicates": {
-                this.duplicates(cmdLine.nextBoolean().getBooleanValue());
+                this.distinct(!cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-s":

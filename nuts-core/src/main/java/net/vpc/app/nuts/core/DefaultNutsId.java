@@ -644,4 +644,14 @@ public class DefaultNutsId implements NutsId {
         return new NutsPatternIdFilter(this);
     }
 
+    @Override
+    public int compareTo(NutsId o2) {
+        int x = this.getShortName().compareTo(o2.getShortName());
+        if (x != 0) {
+            return x;
+        }
+        //latests versions first
+        x = this.getVersion().compareTo(o2.getVersion());
+        return -x;
+    }
 }

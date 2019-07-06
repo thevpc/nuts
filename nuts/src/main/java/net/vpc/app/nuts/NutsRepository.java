@@ -36,54 +36,172 @@ package net.vpc.app.nuts;
  */
 public interface NutsRepository {
 
-    int SPEED_FASTEST = 100000;
-    int SPEED_FASTER = 10000;
-    int SPEED_FAST = 1000;
-    int SPEED_SLOW = 100;
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * in memory repositories (and hence fastest) repositories.
+     */
+    int SPEED_FASTEST = 1000000;
+    
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * local file system repositories (and hence faster) repositories.
+     */
+    int SPEED_FASTER = 100000;
+
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * local network repositories (and hence fast) repositories.
+     */
+    int SPEED_FAST = 10000;
+
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * remote network repositories (and hence slow) repositories.
+     */
+    int SPEED_SLOW = 1000;
+
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * remote network repositories with limited known bandwidth
+     * (and hence slower) repositories.
+     */
+    int SPEED_SLOWER = 100;
+
+    /**
+     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
+     * remote network repositories with very limited known bandwidth
+     * (and hence slowest) repositories.
+     */
     int SPEED_SLOWEST = 10;
 
+    /**
+     * return repository type
+     * @return repository type
+     */
+    String repositoryType();
+
+    /**
+     * return repository type
+     * @return repository type
+     */
     String getRepositoryType();
 
+    /**
+     * return repository unique identifier
+     * @return repository unique identifier
+     */
     String getUuid();
 
+    /**
+     * return repository unique identifier
+     * @return repository unique identifier
+     */
     String uuid();
 
+    /**
+     * return parent workspace
+     * @return parent workspace
+     */
     NutsWorkspace getWorkspace();
 
+    /**
+     * return parent workspace
+     * @return parent workspace
+     */
+    NutsWorkspace workspace();
+
+    /**
+     * return parent repository or null
+     * @return parent repository or null
+     */
     NutsRepository getParentRepository();
 
+    /**
+     * return parent repository or null
+     * @return parent repository or null
+     */
+    NutsRepository parentRepository();
+
+    /**
+     * return repository configuration manager
+     * @return repository configuration manager
+     */
     NutsRepositoryConfigManager config();
 
+    /**
+     * return repository security manager
+     * @return repository security manager
+     */
     NutsRepositorySecurityManager security();
 
+    /**
+     * create deploy command
+     * @return deploy command
+     */
     NutsDeployRepositoryCommand deploy();
 
+    /**
+     * create undeploy command
+     * @return undeploy command
+     */
     NutsRepositoryUndeployCommand undeploy();
 
+    /**
+     * create push command
+     * @return push command
+     */
     NutsPushRepositoryCommand push();
 
+    /**
+     * create fetchDescriptor command
+     * @return fetchDescriptor command
+     */
     NutsFetchDescriptorRepositoryCommand fetchDescriptor();
 
+    /**
+     * create fetchContent command
+     * @return fetchContent command
+     */
     NutsFetchContentRepositoryCommand fetchContent();
 
+    /**
+     * create search command
+     * @return search command
+     */
     NutsSearchRepositoryCommand search();
 
+    /**
+     * create searchVersions command
+     * @return searchVersions command
+     */
     NutsSearchVersionsRepositoryCommand searchVersions();
 
     /**
-     * @param listener
+     * create update statistics command
+     *
+     * @return update statistics command
+     */
+    NutsUpdateRepositoryStatisticsCommand updateStatistics();
+
+    /**
+     * remove repository listener
+     *
+     * @param listener listener
      */
     void removeRepositoryListener(NutsRepositoryListener listener);
 
     /**
-     * @param listener
+     * add repository listener
+     *
+     * @param listener listener
      */
     void addRepositoryListener(NutsRepositoryListener listener);
 
     /**
-     * @return
+     * Repository Listeners
+     *
+     * @return Repository Listeners
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
-    NutsUpdateRepositoryStatisticsCommand updateStatistics();
 }

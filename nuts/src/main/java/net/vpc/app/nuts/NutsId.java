@@ -38,7 +38,7 @@ import java.util.function.Function;
  * @author vpc
  * @since 0.1.0
  */
-public interface NutsId extends NutsTokenFilter, Serializable {
+public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId> {
 
     boolean equalsSimpleName(NutsId other);
 

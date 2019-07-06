@@ -145,7 +145,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                     .repositories(getRepository())
                     .setTransitive(isTransitive())
                     .setFetchStratery(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
-                    .duplicates(false)
+                    .distinct()
                     .failFast()
                     .getResultDefinitions().required();
             NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);

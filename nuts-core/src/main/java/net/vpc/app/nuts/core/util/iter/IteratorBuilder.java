@@ -110,11 +110,11 @@ public class IteratorBuilder<T> {
         return new IteratorBuilder<>(IteratorUtils.sort(it, t, true));
     }
 
-    public <V> IteratorBuilder<T> unique(Function<T, V> t) {
+    public <V> IteratorBuilder<T> distinct(Function<T, V> t) {
         if (t == null) {
-            return new IteratorBuilder<>(IteratorUtils.unique(it));
+            return new IteratorBuilder<>(IteratorUtils.distinct(it));
         } else {
-            return new IteratorBuilder<>(IteratorUtils.unique(it, t));
+            return new IteratorBuilder<>(IteratorUtils.distinct(it, t));
         }
     }
 

@@ -189,7 +189,7 @@ public class IteratorUtils {
         };
     }
 
-    public static <T> Iterator<T> unique(Iterator<T> it) {
+    public static <T> Iterator<T> distinct(Iterator<T> it) {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
         }
@@ -208,7 +208,7 @@ public class IteratorUtils {
         return new FilteredIterator<>(it, filter);
     }
 
-    public static <F, T> Iterator<F> unique(Iterator<F> it, final Function<F, T> converter) {
+    public static <F, T> Iterator<F> distinct(Iterator<F> it, final Function<F, T> converter) {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
         }

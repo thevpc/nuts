@@ -43,7 +43,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     public static final Logger LOG = Logger.getLogger(NutsFolderRepository.class.getName());
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FAST, true, NutsConstants.RepoTypes.NUTS);
+        super(options, workspace, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
         extensions.put("src", "-src.zip");
     }
 

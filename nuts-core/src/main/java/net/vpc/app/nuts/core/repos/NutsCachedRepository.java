@@ -122,7 +122,7 @@ public class NutsCachedRepository extends AbstractNutsRepository {
                 li.add(p);
             }
         }
-        return mirroring.search(IteratorBuilder.ofList(li).unique(NutsId::getLongName).build(), filter, session);
+        return mirroring.search(IteratorBuilder.ofList(li).distinct(NutsId::getLongName).build(), filter, session);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class NutsCachedRepository extends AbstractNutsRepository {
             LOG.log(Level.SEVERE, "Search versions error : " + ex.toString(), ex);
             //ignore....
         }
-        Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).unique(NutsId::getLongName).build();
+        Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(NutsId::getLongName).build();
 
         if (namedNutIdIterator == null) {
             namedNutIdIterator = IteratorUtils.emptyIterator();

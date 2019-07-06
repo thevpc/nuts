@@ -349,7 +349,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsSearchCommand sort(boolean sort);
 
-    NutsSearchCommand setSort(boolean sort);
+    NutsSearchCommand setSorted(boolean sort);
 
     /**
      * latest version only
@@ -419,11 +419,17 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsSearchCommand sort(Comparator<NutsId> comparator);
 
-    NutsSearchCommand duplicates();
+//    NutsSearchCommand duplicates();
+//
+//    NutsSearchCommand duplicates(boolean includeDuplicates);
+//
+//    NutsSearchCommand setDuplicateVersions(boolean includeDuplicateVersions);
 
-    NutsSearchCommand duplicates(boolean includeDuplicates);
+    NutsSearchCommand distinct();
 
-    NutsSearchCommand setDuplicateVersions(boolean includeDuplicateVersions);
+    NutsSearchCommand distinct(boolean distinct);
+
+    NutsSearchCommand setDistinct(boolean distinct);
 
     NutsSearchCommand copyFrom(NutsSearchCommand other);
 
@@ -442,7 +448,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     NutsId[] getIds();
 
-    boolean isSort();
+    boolean isSorted();
 
     NutsDependencyFilter getDependencyFilter();
 
@@ -465,10 +471,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     boolean isFailFast();
 
-    Comparator<NutsId> getSortIdComparator();
+    Comparator getComparator();
 
-    boolean isDuplicates();
-
+    boolean isDistinct();
+    
     boolean isMain();
 
     boolean isLatest();

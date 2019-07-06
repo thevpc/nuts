@@ -144,7 +144,7 @@ public final class JavaExecutorOptions {
                             .transitive()
                             .scope(NutsDependencyScopePattern.RUN)
                             .optional(false)
-                            .duplicates(false)
+                            .distinct()
                             .content()
                             .installInformation()
                             .dependencies()
