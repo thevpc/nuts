@@ -2,7 +2,7 @@
 
 ##SYNOPSIS:##
 
-==worky== {{scan}} \[{{-i}}|{{--interactive}}\]]]  <path>
+==worky== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>
     scan for maven projetcs
 
 ==worky== {{status}} <id>
@@ -10,7 +10,7 @@
     Options
         **-c** | **--commitable** | **--changed** 
             consider changed projects
-        **-n** | **--new** 
+        **-w** | **--new** 
             consider new projects
         **-o** | **--old** 
             consider old projects

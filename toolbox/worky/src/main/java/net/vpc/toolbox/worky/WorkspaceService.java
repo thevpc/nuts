@@ -129,7 +129,7 @@ public class WorkspaceService {
                     result.add(config);
                 }
             }
-            result.sort((x,y)->x.getId().compareTo(y.getId()));
+            result.sort((x, y) -> x.getId().compareTo(y.getId()));
             if (appContext.session().isPlainOut()) {
                 for (ProjectConfig p2 : result) {
                     appContext.session().out().printf("[[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
@@ -182,7 +182,7 @@ public class WorkspaceService {
                 //consumed
             } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
                 commitable = a.getBooleanValue();
-            } else if ((a = cmd.nextBoolean("-n", "--new")) != null) {
+            } else if ((a = cmd.nextBoolean("-w", "--new")) != null) {
                 newP = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-o", "--old")) != null) {
                 old = a.getBooleanValue();
@@ -210,7 +210,7 @@ public class WorkspaceService {
         List<DataRow> ddd = new ArrayList<>();
 
         List<ProjectService> all = findProjectServices();
-        all.sort((x,y)->x.getConfig().getId().compareTo(y.getConfig().getId()));
+        all.sort((x, y) -> x.getConfig().getId().compareTo(y.getConfig().getId()));
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
             if (!matches(projectService.getConfig().getId(), filters)) {
@@ -300,7 +300,39 @@ public class WorkspaceService {
         if (!ddd.isEmpty() || !appContext.session().isPlainOut()) {
             if (appContext.session().isPlainOut()) {
                 for (DataRow p2 : ddd) {
-                    appContext.session().out().printf("[[%s]] [%N] : %N - %N%n", p2.id, p2.status, p2.local, p2.remote);
+                    String status = p2.status;
+                    NutsTerminalFormat tf = appContext.workspace().io().terminalFormat();
+                    int len = tf.textLength(status);
+                    while (len < 10) {
+                        status += " ";
+                        len++;
+                    }
+                    switch (tf.filterText(p2.status)) {
+                        case "new": {
+                            appContext.session().out().printf("\\[%N\\] %s : %N%n", status, p2.id, p2.local);
+                            break;
+                        }
+                        case "commitable": {
+                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            break;
+                        }
+                        case "old": {
+                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            break;
+                        }
+                        case "invalid": {
+                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            break;
+                        }
+                        case "uptodate": {
+                            appContext.session().out().printf("\\[%N\\] %s : %N%n", status, p2.id, p2.local);
+                            break;
+                        }
+                        default: {
+                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            break;
+                        }
+                    }
                 }
             } else {
                 appContext.workspace().object()

@@ -5,7 +5,8 @@ search for components/==nuts==
        search for \<ids\> 
        **--lenient** : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default [[no]]
        **--all-versions** : return all versions of the same ids. if [[no]] will always return the ==latest== one. default [[yes]]
-       **--duplicate** or **--duplicate-versions** : return the same version from distinct repositories if found. default [[yes]]
+       **--duplicates** : return the same version from distinct repositories if found. default [[yes]]
+       **--distinct**   : remove duplicates . default [[false]]
        **-L** or **--latest** or **--latest-versions** : return latest version of each searched id. equivalent to **--all-versions**=[[no]]
        **-S** or **--single** or **--single-versions** : return one instance of each version even if found in distinct repositories. equivalent to **--duplicate**=[[no]]
        **-s** or **--sort** : sort result. default [[no]]
