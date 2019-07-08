@@ -1,7 +1,7 @@
 show who is logged in
 
 ##SYNOPSIS:##
-##whoami## [ options ]
+==whoami== [ options ]
 
 shows who is logged in
 

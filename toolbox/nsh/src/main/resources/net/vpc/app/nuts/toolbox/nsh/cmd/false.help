@@ -1,12 +1,12 @@
 return 1 (false/error value)
 
 ##SYNOPSIS:##
-##false##
+==false==
 return 1 (false/error value)
 
 ##EXAMPLES##:
 
-##false##
+==false==
     return 1 (false/error value)
 
 

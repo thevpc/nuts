@@ -1,10 +1,10 @@
 run builtin nsh command
 
 ##SYNOPSIS:##
-##builtin## <command> {{args...}}
+==builtin== <command> {{args...}}
 run builtin nsh command
 
 ##EXAMPLES##:
 
-##builtin## ls
+==builtin== ls
     runs nsh builtin ls command

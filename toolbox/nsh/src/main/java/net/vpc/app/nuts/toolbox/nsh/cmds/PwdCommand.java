@@ -58,6 +58,6 @@ public class PwdCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         //Options options=context.getOptions();
-        context.setPrintOutObject(context.getRootContext().getCwd());
+        context.setPrintlnOutObject(context.getRootContext().getCwd());
     }
 }

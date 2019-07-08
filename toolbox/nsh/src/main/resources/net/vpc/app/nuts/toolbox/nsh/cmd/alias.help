@@ -1,13 +1,13 @@
 define or display aliases
 
 ##SYNOPSIS:##
-##alias## [alias-name[=string]...]
+==alias== [alias-name[=string]...]
 
 define or display aliases
 
 ##EXAMPLES##:
 
-##alias## 
+==alias== 
     display all aliases
 
 

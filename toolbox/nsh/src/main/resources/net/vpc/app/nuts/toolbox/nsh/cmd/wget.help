@@ -1,13 +1,13 @@
 non-interactive network downloader
 
 ##SYNOPSIS:##
-wget## [<OPTION>...] <PARAMS> ...
+wget== [<OPTION>...] <PARAMS> ...
 
 non-interactive network downloader
 
 ##EXAMPLES##:
 
-##wget## www.google.com
+==wget== www.google.com
    download file
 
 

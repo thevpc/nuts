@@ -1,10 +1,10 @@
 display a description of command type
 
 ##SYNOPSIS:##
-##type## <command-name> ...
+==type== <command-name> ...
 display a description of command type
 
 ##EXAMPLES##:
 
-##type## ls
+==type== ls
     show command type

@@ -1,10 +1,10 @@
 delete variables
 
 ##SYNOPSIS:##
-##unset## <varname> ...
+==unset== <varname> ...
 delete variables
 
 ##EXAMPLES##:
 
-##unset## elemName
+==unset== elemName
     delete var elemName

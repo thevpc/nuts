@@ -1,13 +1,13 @@
 parse file version
 
 ##SYNOPSIS:##
-##file-version## [<OPTION>...] <PARAMS> ...
+==file-version== [<OPTION>...] <PARAMS> ...
 
 parse file version (war, jar and exe supported)
 
 ##EXAMPLES##:
 
-##file-version## app.war
+==file-version== app.war
    parse file version
 
 

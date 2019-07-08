@@ -91,7 +91,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 if (commandNames.isEmpty()) {
                     String helpText = context.getWorkspace().io().loadFormattedString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class.getClassLoader(), "no help found");
                     context.out().println(ss.apply(helpText));
-                    context.out().println(ss.apply("@@AVAILABLE COMMANDS ARE:@@"));
+                    context.out().println(ss.apply("##AVAILABLE COMMANDS ARE:##"));
                     JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                     Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                         @Override
@@ -108,9 +108,9 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                     for (JShellBuiltin cmd : commands) {
                         if (code) {
-                            context.out().printf("\\#\\#%s\\#\\# : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
+                            context.out().printf("\\=\\=%s\\=\\= : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
-                            context.out().printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), max));
+                            context.out().printf("==%s== : ", StringUtils.alignLeft(cmd.getName(), max));
                         }
                         context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                     }
@@ -122,9 +122,9 @@ public class HelpCommand extends AbstractNshBuiltin {
                         } else {
                             String help = command1.getHelp();
                             if (code) {
-                                context.out().printf("\\=\\=Command\\=\\= %s\f", ss.apply(commandName));
+                                context.out().printf("\\=\\=COMMAND\\=\\= : %s\f", ss.apply(commandName));
                             } else {
-                                context.out().printf("==Command== %s\f", ss.apply(commandName));
+                                context.out().printf("==COMMAND== : %s\f", ss.apply(commandName));
                             }
                             context.out().println(ss.apply(help));
                         }

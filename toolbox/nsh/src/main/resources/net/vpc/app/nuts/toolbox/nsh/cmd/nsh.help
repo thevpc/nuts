@@ -1,7 +1,7 @@
 Nuts Shell (GNU Bourne-Again SHell like)
 
 ##SYNOPSIS:##
-##nsh## [<OPTION>...] <PARAMS> ...
+==nsh== [<OPTION>...] <PARAMS> ...
 
  nsh  is  an  sh-compatible  command language interpreter that executes commands read from the standard input or from a file
 

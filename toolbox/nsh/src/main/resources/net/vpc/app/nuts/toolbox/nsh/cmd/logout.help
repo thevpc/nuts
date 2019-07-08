@@ -1,14 +1,14 @@
 log out from current workspace
 
 ##SYNOPSIS:##
-##logout##
+==logout==
 
 log out (to anonymous)
 
 
 ##EXAMPLES##:
 
-##logout##
+==logout==
    log out to anonymous
 
 

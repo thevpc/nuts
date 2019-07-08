@@ -1,13 +1,13 @@
 print lines matching a pattern
 
 ##SYNOPSIS:##
-##grep## [<OPTION>...] <PATTERN> <FILE>...
+==grep== [<OPTION>...] <PATTERN> <FILE>...
 
 print lines matching a pattern
 
 ##EXAMPLES##:
 
-##grep## -r toto log.txt
+==grep== -r toto log.txt
    print all lines containing toto
 
 

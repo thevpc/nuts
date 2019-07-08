@@ -1,32 +1,32 @@
-display or the command history list
+display the command history list
 
 ##SYNOPSIS:##
-##history## [<OPTION>...]
+==history== [<OPTION>...]
 
-    ##history## -c | --clear
-    ##history##
+    ==history== -c | --clear
+    ==history==
         clear history
 
-    ##history## <N>
+    ==history== <N>
         display max N rows
 
-    ##history## -d | --delete <N>
-    ##history## --delete <N>
+    ==history== -d | --delete <N>
+    ==history== --delete <N>
         delete row N
 
-    ##history## -D | --remove-duplicates
+    ==history== -D | --remove-duplicates
         remove duplicates
 
-    ##history## -w | --write [<FILE>]
+    ==history== -w | --write [<FILE>]
         store to file. If no path defined, will store to default path
 
-    ##history## -r | --read [<FILE>]
+    ==history== -r | --read [<FILE>]
         read from file and append to file. If no path defined, will reload from default path (no append)s
 
 
 ##EXAMPLES##:
 
-##history## 20
+==history== 20
    list last 200 commands from history
 
 

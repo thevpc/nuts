@@ -53,17 +53,17 @@ public class NutsJavaShell extends JShell {
     private NutsId appId = null;
 
     public NutsJavaShell(NutsApplicationContext appContext) {
-        this(appContext, null, null,null, null);
+        this(appContext, null, null, null, null);
     }
 
     public NutsJavaShell(NutsWorkspace workspace) {
-        this(null, workspace, null,null, null);
+        this(null, workspace, null, null, null);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId) {
         this(null, workspace, session, appId, null);
     }
-    
+
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName) {
         this(null, workspace, session, appId, serviceName);
     }
@@ -88,8 +88,11 @@ public class NutsJavaShell extends JShell {
         if (this.appId == null) {
             this.appId = getWorkspace().id().resolveId(NutsJavaShell.class);
         }
+        if (this.appId == null) {
+            throw new IllegalArgumentException("Unable to resolve application id");
+        }
         if ((serviceName == null || serviceName.trim().isEmpty())) {
-            serviceName = appId.getName();
+            serviceName = this.appId.getName();
         }
         NutsShellContext _nrootContext = getRootNutsShellContext();
         JShellContext _rootContext = getRootContext();
@@ -116,7 +119,7 @@ public class NutsJavaShell extends JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = ws.config().getStoreLocation(appId,
+            histFile = ws.config().getStoreLocation(this.appId,
                     NutsStoreLocation.VAR).resolve(serviceName + ".history").toFile();
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {

@@ -1,7 +1,7 @@
 display a line of text
 
 ##SYNOPSIS:##
-##echo## [-n|-p] <messages>
+==echo== [-n|-p] <messages>
 
 display a line of text
 
@@ -11,7 +11,7 @@ options :
 
 ##EXAMPLES##:
 
-##echo## ==hello==
+==echo== ==hello==
    displays hello with bold format
 
 

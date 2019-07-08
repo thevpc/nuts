@@ -1,7 +1,7 @@
 change file mode bits
 
 ##SYNOPSIS:##
-##chmod## [OPTION]... [MODE]... <FILE>...
+==chmod== [OPTION]... [MODE]... <FILE>...
 
 change file mode bits
 
@@ -11,7 +11,7 @@ change file mode bits
 
 ##EXAMPLES##:
 
-##chmod## -R a+x /another/path
+==chmod== -R a+x /another/path
    changes folder mode recursively to 'executable'
 
 

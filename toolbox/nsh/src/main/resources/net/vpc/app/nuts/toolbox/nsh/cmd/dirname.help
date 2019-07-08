@@ -1,16 +1,16 @@
 strip last component from file name
 
 ##SYNOPSIS:##
-##dirname## path
+==dirname== path
 strip last component from file name
 
 ##EXAMPLES##:
 
-##dirname## /usr/bin/
+==dirname== /usr/bin/
     "/usr"
 
-##dirname## dir1/str dir2/str
+==dirname== dir1/str dir2/str
     "dir1" followed by "dir2"
 
-##dirname## stdio.h
+==dirname== stdio.h
     "."

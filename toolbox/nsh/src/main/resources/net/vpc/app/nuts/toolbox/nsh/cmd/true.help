@@ -1,12 +1,12 @@
 return 0 (true/no error value)
 
 ##SYNOPSIS:##
-##true##
+==true==
 return 0 (true/no error value)
 
 ##EXAMPLES##:
 
-##true##
+==true==
     return 0 (true/no error value)
 
 

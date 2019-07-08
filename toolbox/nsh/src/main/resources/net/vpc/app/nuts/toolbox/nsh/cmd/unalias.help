@@ -1,13 +1,13 @@
 remove existing aliases
 
 ##SYNOPSIS:##
-##unalias## [alias-name...]
+==unalias== [alias-name...]
 
 remove existing aliases
 
 ##EXAMPLES##:
 
-##unalias## ll
+==unalias== ll
     remove ll alias
 
 

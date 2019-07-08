@@ -1,12 +1,12 @@
 print working directory
 
 ##SYNOPSIS:##
-##pwd##
+==pwd==
 
 prints working directory
 ##EXAMPLES##:
 
-##pwd##
+==pwd==
    prints working directory
 
 

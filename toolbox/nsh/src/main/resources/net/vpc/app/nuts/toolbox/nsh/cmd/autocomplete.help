@@ -1,11 +1,11 @@
 auto complete command
 
 ##SYNOPSIS:##
-##autocomplete## command args ...
+==autocomplete== command args ...
 auto complete command
 
 ##EXAMPLES##:
 
-##autocomplete## ls -l []
+==autocomplete== ls **-l** []
     auto complete ls -l command (at the cursor [] location)
 

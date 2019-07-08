@@ -1,7 +1,7 @@
 OpenSSH SSH client (remote login program)
 
 ##SYNOPSIS:##
-##ssh## [<OPTION>...] <PARAMS> ...
+==ssh== [<OPTION>...] <PARAMS> ...
 
 OpenSSH SSH client (remote login program)
 

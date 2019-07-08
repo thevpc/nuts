@@ -1,7 +1,7 @@
 print system information
 
 ##SYNOPSIS:##
-##uname## \[**<options>**\]
+==uname== \[**<options>**\]
 
 print system information
 
@@ -13,7 +13,7 @@ print system information
 
 ##EXAMPLES##:
 
-##uname## -a
+==uname== -a
    print system information
 
 

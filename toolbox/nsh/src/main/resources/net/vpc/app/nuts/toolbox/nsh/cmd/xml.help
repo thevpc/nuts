@@ -1,12 +1,12 @@
 manipulate and query xml input
 
 ##SYNOPSIS:##
-##alias## [--file] <file> [--xpath {{query}}]
+==xml== [**--file** <file>] [**--xpath** <query>]
 search in xpath compatible pattern in input file. If no file is defined, consider standard input
 
 ##EXAMPLES##:
 
-##xml## --xpath /item/path -f file.xml
+==xml== **--xpath** /item/path **-f** file.xml
     search in xpath compatible pattern file.xml
 
 
