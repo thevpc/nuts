@@ -144,6 +144,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         String readLine = null;
         try {
             out.printf(prompt, params);
+            out.flush();
             readLine = reader.readLine("");
         } catch (UserInterruptException e) {
             throw new JShellInterruptException();
@@ -165,6 +166,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             out = System.out;
         }
         out.printf(prompt, params);
+        out.flush();
         return reader.readLine("", '*').toCharArray();
     }
 

@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -47,7 +48,7 @@ public class NutsWorkspaceOptionsFormat {
     private boolean shortOptions;
     private boolean singleArgOptions;
     private boolean omitDefaults;
-    private NutsWorkspaceOptions options;
+    private final NutsWorkspaceOptions options;
 
     public NutsWorkspaceOptionsFormat(NutsWorkspaceOptions options) {
         this.options = options;
@@ -109,7 +110,7 @@ public class NutsWorkspaceOptionsFormat {
     }
 
     public String getBootCommandLine() {
-        return PrivateNutsUtils.escapeArguments(getBootCommand());
+        return PrivateNutsCommandLine.escapeArguments(getBootCommand());
     }
 
     public String[] getBootCommand() {
@@ -233,7 +234,7 @@ public class NutsWorkspaceOptionsFormat {
 
     private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
         if (values != null && values.length > 0) {
-            fillOption0(selectOptionName(longName, shortName), PrivateNutsUtils.join(sep, values), arguments, forceSingle);
+            fillOption0(selectOptionName(longName, shortName), Arrays.stream(values).collect(Collectors.joining(sep)), arguments, forceSingle);
         }
     }
 

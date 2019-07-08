@@ -50,6 +50,15 @@ class PrivateNutsArgument extends PrivateNutsTokenFilter implements NutsArgument
      * Constructor
      *
      * @param expression expression
+     */
+    public PrivateNutsArgument(String expression) {
+        this(expression,'=');
+    }
+    
+    /**
+     * Constructor
+     *
+     * @param expression expression
      * @param eq equals
      */
     public PrivateNutsArgument(String expression, char eq) {

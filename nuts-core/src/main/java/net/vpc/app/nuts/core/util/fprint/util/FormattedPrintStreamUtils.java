@@ -47,8 +47,15 @@ public class FormattedPrintStreamUtils {
                 String g = m.group();
 
                 if (g.endsWith("N")) {
-                    //no escape...
-                    sb.append(arg);
+                    //escape %
+                    char[] s=String.valueOf(arg).toCharArray();
+                    for (int j = 0; j < s.length; j++) {
+                        char c = s[j];
+                        if(c=='%'){
+                            sb.append('\\');
+                        }
+                        sb.append(c);
+                    }
                 } else {
                     sb.append(escapeText(format0(locale, g, arg)));
                 }

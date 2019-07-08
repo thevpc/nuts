@@ -236,7 +236,7 @@ public final class NutsBootWorkspace {
         }
         cmd.add(jc);
         boolean showCommand = false;
-        for (String c : PrivateNutsUtils.parseCommandLine(options.getJavaOptions())) {
+        for (String c : PrivateNutsCommandLine.parseCommandLineArray(options.getJavaOptions())) {
             if (!c.isEmpty()) {
                 if (c.equals("--show-command")) {
                     showCommand = true;
@@ -452,19 +452,21 @@ public final class NutsBootWorkspace {
                 //
             }
         }
-
+        LinkedHashSet<String> bootRepositories = new LinkedHashSet<>();
+        if (recipient.getBootRepositories() != null) {
+            for (String v : recipient.getBootRepositories().split(";")) {
+                v = v.trim();
+                if (v.length() > 0) {
+                    bootRepositories.add(v);
+                }
+            }
+        }
+        bootRepositories.add(NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL);
+        bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+        bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
         recipient.setBootRepositories(
-                PrivateNutsUtils.join(";",
-                        PrivateNutsUtils.splitAndRemoveDuplicates(recipient.getBootRepositories(), PrivateNutsUtils.join(";",
-                                new String[]{
-                                    NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL,
-                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-
-                                }
-                        )))
+                bootRepositories.stream().collect(Collectors.joining(";"))
         );
-
         LinkedHashSet<String> excludedDeps = new LinkedHashSet<>();
         if (options.getExcludedExtensions() != null) {
             for (String excludedExtension : options.getExcludedExtensions()) {

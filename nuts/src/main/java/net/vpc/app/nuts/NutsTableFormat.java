@@ -78,7 +78,7 @@ public interface NutsTableFormat extends NutsFormat {
     
     NutsMutableTableModel createModel();
 
-    void setModel(NutsTableModel model);
+    NutsTableFormat setModel(NutsTableModel model);
 
     enum Separator {
         FIRST_ROW_START,

@@ -35,6 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsExecutionType;
@@ -160,7 +162,7 @@ public class EnvCommand extends SimpleNshBuiltin {
         if (options.sort) {
             context.getSession().addOutputFormatOptions("--sort");
         }
-        LinkedHashMap<String, String> env = new LinkedHashMap<>();
+        SortedMap<String, String> env = new TreeMap<>();
         if (!options.ignoreEnvironment) {
             env.putAll((Map) context.getGlobalContext().vars().getAll());
         }

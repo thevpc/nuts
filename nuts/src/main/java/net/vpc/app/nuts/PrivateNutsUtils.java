@@ -29,13 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -137,39 +130,6 @@ final class PrivateNutsUtils {
         return result;
     }
 
-    public static String join(String sep, String[] items) {
-        return join(sep, Arrays.asList(items));
-    }
-
-    public static String join(String sep, Collection<String> items) {
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> i = items.iterator();
-        if (i.hasNext()) {
-            sb.append(i.next());
-        }
-        while (i.hasNext()) {
-            sb.append(sep);
-            sb.append(i.next());
-        }
-        return sb.toString();
-    }
-
-    public static String[] splitAndRemoveDuplicates(String... possibilities) {
-        LinkedHashSet<String> allValid = new LinkedHashSet<>();
-        for (String v : possibilities) {
-            if (!isBlank(v)) {
-                v = v.trim();
-                for (String v0 : v.split(";")) {
-                    v0 = v0.trim();
-                    if (!allValid.contains(v0)) {
-                        allValid.add(v0);
-                    }
-                }
-            }
-        }
-        return allValid.toArray(new String[0]);
-    }
-
     public static String getAbsolutePath(String path) {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
@@ -190,29 +150,6 @@ final class PrivateNutsUtils {
 
     public static boolean isAbsolutePath(String location) {
         return new File(location).isAbsolute();
-    }
-
-    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
-        byte[] bytes = new byte[10240];
-        int count;
-        long all = 0;
-        try {
-            try {
-                while ((count = from.read(bytes)) > 0) {
-                    to.write(bytes, 0, count);
-                    all += count;
-                }
-                return all;
-            } finally {
-                if (closeInput) {
-                    from.close();
-                }
-            }
-        } finally {
-            if (closeOutput) {
-                to.close();
-            }
-        }
     }
 
     public static boolean storeProperties(Properties p, File file) {
@@ -541,149 +478,6 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static String[] parseDependenciesFromMaven(URL url, File cacheFile, boolean useCache, boolean cacheRemoteOnly) {
-
-        long startTime = System.currentTimeMillis();
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        dbFactory.setExpandEntityReferences(false);
-        DocumentBuilder dBuilder = null;
-        List<String> deps = new ArrayList<>();
-        InputStream documentStream = null;
-        boolean enabledCache = true;
-        boolean loadedCache = false;
-        boolean cachedFile = false;
-        boolean cacheFileOverridden = false;
-        if (useCache && cacheFile != null && cacheFile.isFile()) {
-            try {
-                documentStream = new FileInputStream(cacheFile);
-                enabledCache = false;
-                loadedCache = true;
-            } catch (FileNotFoundException e) {
-                //
-            }
-        }
-        try {
-            if (enabledCache) {
-                if (cacheFile != null) {
-                    cacheFileOverridden = cacheFile.isFile();
-                    File furl = toFile(url);
-                    if (!cacheRemoteOnly || furl != null) {
-                        if (furl != null) {
-                            if (cacheFile.getParentFile() != null) {
-                                cacheFile.getParentFile().mkdirs();
-                            }
-                            PrivateNutsUtils.copy(furl, cacheFile);
-                        } else {
-                            PrivateNutsUtils.copy(url, cacheFile);
-                        }
-                        cachedFile = true;
-                        documentStream = new FileInputStream(cacheFile);
-                    }
-                }
-            }
-            dBuilder = dbFactory.newDocumentBuilder();
-            if (documentStream == null) {
-                documentStream = url.openStream();
-            }
-            if (documentStream == null) {
-                return null;
-            }
-            Document doc = dBuilder.parse(documentStream);
-            //optional, but recommended
-            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-            doc.getDocumentElement().normalize();
-            NodeList properties = doc.getDocumentElement().getElementsByTagName("properties");
-            NodeList rootChildList = doc.getDocumentElement().getChildNodes();
-            for (int i = 0; i < rootChildList.getLength(); i++) {
-                Element dependencies = toElement(rootChildList.item(i), "dependencies");
-                if (dependencies != null) {
-                    NodeList dependenciesChildList = dependencies.getChildNodes();
-                    for (int j = 0; j < dependenciesChildList.getLength(); j++) {
-                        Element dependency = toElement(dependenciesChildList.item(j), "dependency");
-                        if (dependency != null) {
-                            NodeList dependencyChildList = dependency.getChildNodes();
-                            String groupId = "";
-                            String artifactId = "";
-                            String version = "";
-                            String scope = "";
-                            for (int k = 0; k < dependencyChildList.getLength(); k++) {
-                                Element c = toElement(dependencyChildList.item(k));
-                                if (c != null) {
-                                    switch (c.getTagName()) {
-                                        case "groupId": {
-                                            groupId = c.getTextContent() == null ? "" : c.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            artifactId = c.getTextContent() == null ? "" : c.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "version": {
-                                            version = c.getTextContent() == null ? "" : c.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "scope": {
-                                            scope = c.getTextContent() == null ? "" : c.getTextContent().trim();
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            //this is maven dependency, using "compile"
-                            if (scope.isEmpty() || scope.equals("compile")) {
-                                deps.add(new PrivateNutsId(
-                                        groupId, artifactId, version
-                                ).toString());
-                            }
-                        }
-                    }
-                }
-            }
-            long time = System.currentTimeMillis() - startTime;
-            if (loadedCache) {
-                LOG.log(Level.CONFIG, "[SUCCESS] Loaded cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-            } else if (cachedFile) {
-                if (cacheFileOverridden) {
-                    LOG.log(Level.CONFIG, "[RECOV. ] Cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-                } else {
-                    LOG.log(Level.CONFIG, "[CACHED ] Cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-                }
-            } else {
-                LOG.log(Level.CONFIG, "[SUCCESS] Loaded pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-            }
-            return deps.toArray(new String[0]);
-        } catch (Exception e) {
-            long time = System.currentTimeMillis() - startTime;
-            LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-            return null;
-        } finally {
-            if (documentStream != null) {
-                try {
-                    documentStream.close();
-                } catch (IOException e) {
-                    //
-                }
-            }
-        }
-
-    }
-
-    private static Element toElement(Node n) {
-        if (n instanceof Element) {
-            return (Element) n;
-        }
-        return null;
-    }
-
-    private static Element toElement(Node n, String name) {
-        if (n instanceof Element) {
-            if (((Element) n).getTagName().equals(name)) {
-                return (Element) n;
-            }
-        }
-        return null;
-    }
-
     public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
         return deleteAndConfirmAll(folders, force, new boolean[1], header, term, session);
     }
@@ -706,8 +500,9 @@ final class PrivateNutsUtils {
                             }
                         }
                     }
-                    PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session);
-                    count++;
+                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session)) {
+                        count++;
+                    }
                 }
             }
         }
@@ -717,21 +512,21 @@ final class PrivateNutsUtils {
     private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll, NutsTerminal term, NutsSession session) {
         if (directory.exists()) {
             if (!force && !refForceAll[0]) {
-                String line = null;
+                String line;
                 if (term != null) {
-                    line = term.ask().forString("Do you confirm deleting %s [y/n/a] ? : ", directory).session(session).getValue();
+                    line = term.ask().forString("Do you confirm deleting %s [y/n/c/a] ? : ", directory).session(session).getValue();
                 } else {
                     Scanner s = new Scanner(System.in);
-                    System.out.printf("Do you confirm deleting %s [y/n/a] ? : ", directory);
+                    System.out.printf("Do you confirm deleting %s [y/n/c/a] ? : ", directory);
                     System.out.flush();
                     line = s.nextLine();
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll[0] = true;
-                } else if (new PrivateNutsArgument(line, '=').getBoolean()) {
-                    //ok
-                } else {
+                } else if ("c".equalsIgnoreCase(line)) {
                     throw new NutsUserCancelException(null);
+                } else if (!PrivateNutsUtils.parseBoolean(line, false)) {
+                    return false;
                 }
             }
             Path directoryPath = Paths.get(directory.getPath());
@@ -756,6 +551,7 @@ final class PrivateNutsUtils {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
+            return true;
         }
         return false;
     }
@@ -855,6 +651,29 @@ final class PrivateNutsUtils {
             }
         }
         return null;
+    }
+
+    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
+        byte[] bytes = new byte[10240];
+        int count;
+        long all = 0;
+        try {
+            try {
+                while ((count = from.read(bytes)) > 0) {
+                    to.write(bytes, 0, count);
+                    all += count;
+                }
+                return all;
+            } finally {
+                if (closeInput) {
+                    from.close();
+                }
+            }
+        } finally {
+            if (closeOutput) {
+                to.close();
+            }
+        }
     }
 
     public static void copy(File ff, File to) throws IOException {
@@ -972,207 +791,4 @@ final class PrivateNutsUtils {
         return 0;
     }
 
-    public static String escapeArgument(String arg) {
-        StringBuilder sb = new StringBuilder();
-        if (arg != null) {
-            for (char c : arg.toCharArray()) {
-                switch (c) {
-                    case '\\':
-                        sb.append('\\');
-                        break;
-                    case '\'':
-                        sb.append("\\'");
-                        break;
-                    case '"':
-                        sb.append("\\\"");
-                        break;
-                    case '\n':
-                        sb.append("\\n");
-                        break;
-                    case '\t':
-                        sb.append("\\t");
-                        break;
-                    case '\r':
-                        sb.append("\\r");
-                    case '\f':
-                        sb.append("\\f");
-                        break;
-                    default:
-                        sb.append(c);
-                        break;
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String escapeArguments(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (i > 0) {
-                sb.append(" ");
-            }
-            sb.append(escapeArgument(arg));
-        }
-        return sb.toString();
-    }
-
-    public static String[] parseCommandLine(String commandLineString) {
-        if (commandLineString == null) {
-            return new String[0];
-        }
-        List<String> args = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        final int START = 0;
-        final int IN_WORD = 1;
-        final int IN_QUOTED_WORD = 2;
-        final int IN_DBQUOTED_WORD = 3;
-        int status = START;
-        char[] charArray = commandLineString.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
-            switch (status) {
-                case START: {
-                    switch (c) {
-                        case ' ': {
-                            //ignore
-                            break;
-                        }
-                        case '\'': {
-                            status = IN_QUOTED_WORD;
-                            //ignore
-                            break;
-                        }
-                        case '"': {
-                            status = IN_DBQUOTED_WORD;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            status = IN_WORD;
-                            i++;
-                            sb.append(charArray[i]);
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            status = IN_WORD;
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_WORD: {
-                    switch (c) {
-                        case ' ': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            break;
-                        }
-                        case '\'': {
-                            throw new NutsParseException(null, "Illegal char " + c);
-                        }
-                        case '"': {
-                            throw new NutsParseException(null, "Illegal char " + c);
-                        }
-                        case '\\': {
-                            i++;
-                            sb.append(charArray[i]);
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_QUOTED_WORD: {
-                    switch (c) {
-                        case '\'': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i = readEscaped(charArray, i + 1, sb);
-                            //ignore
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            //ignore
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_DBQUOTED_WORD: {
-                    switch (c) {
-                        case '"': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i = readEscaped(charArray, i + 1, sb);
-                            //ignore
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            //ignore
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        switch (status) {
-            case START: {
-                break;
-            }
-            case IN_WORD: {
-                args.add(sb.toString());
-                sb.delete(0, sb.length());
-                break;
-            }
-            case IN_QUOTED_WORD: {
-                throw new NutsParseException(null, "Expected '");
-            }
-        }
-        return args.toArray(new String[0]);
-    }
-
-    public static int readEscaped(char[] charArray, int i, StringBuilder sb) {
-        char c = charArray[i];
-        switch (c) {
-            case 'n': {
-                sb.append('\n');
-                break;
-            }
-            case 't': {
-                sb.append('\t');
-                break;
-            }
-            case 'r': {
-                sb.append('\r');
-                break;
-            }
-            case 'f': {
-                sb.append('\f');
-                break;
-            }
-            default: {
-                sb.append(c);
-            }
-        }
-        return i;
-    }
 }

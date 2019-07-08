@@ -850,11 +850,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public void setModel(NutsTableModel model) {
+    public NutsTableFormat setModel(NutsTableModel model) {
         if (model == null) {
             model = new DefaultNutsMutableTableModel();
         }
         this.model = model;
+        return this;
     }
 
     public static class Pos {
