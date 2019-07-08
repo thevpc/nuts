@@ -27,6 +27,6 @@ display the command history list
 ##EXAMPLES##:
 
 ==history== 20
-   list last 200 commands from history
+   list last 20 commands from history
 
 
