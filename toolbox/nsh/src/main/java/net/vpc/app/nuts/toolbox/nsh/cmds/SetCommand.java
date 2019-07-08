@@ -78,7 +78,7 @@ public class SetCommand extends SimpleNshBuiltin {
             for (Map.Entry<Object, Object> entry : context.getExecutionContext().vars().getAll().entrySet()) {
                 results.add(entry.getKey() + "=" + entry.getValue());
             }
-            for (JShellFunction function : context.getGlobalContext().functions().getAll()) {
+            for (JShellFunction function : context.getRootContext().functions().getAll()) {
                 results.add(function.getDefinition());
             }
             context.setPrintlnOutObject(results);

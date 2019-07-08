@@ -27,37 +27,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh.cmds;
+package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.common.javashell.JShellContext;
+import net.vpc.common.javashell.JShellExternalExecutor;
 
 /**
- * Created by vpc on 1/7/17.
+ *
+ * @author vpc
  */
-public class PwdCommand extends SimpleNshBuiltin {
-
-    public PwdCommand() {
-        super("pwd", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-    }
-
+public class NutsExternalExecutor implements JShellExternalExecutor {
+    
     @Override
-    protected Object createOptions() {
-        return new Options();
+    public void execExternalCommand(String[] command, JShellContext context) {
+        NutsShellContext jc = (NutsShellContext) context;
+        jc.getWorkspace().exec().command(command).failFast().executionType(jc.getWorkspace().config().options().getExecutionType()).run();
     }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        return false;
-    }
-
-    @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        //Options options=context.getOptions();
-        context.setPrintOutObject(context.getRootContext().getCwd());
-    }
+    
 }

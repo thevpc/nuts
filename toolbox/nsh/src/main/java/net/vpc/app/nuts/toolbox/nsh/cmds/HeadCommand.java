@@ -73,7 +73,7 @@ public class HeadCommand extends SimpleNshBuiltin {
             return true;
         } else if (!a.isOption()) {
             String path = commandLine.next().getString();
-            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            File file = new File(context.getRootContext().getAbsolutePath(path));
             options.files.add(file.getPath());
             return true;
         }

@@ -122,21 +122,24 @@ class StopServerBuiltin implements NutsServer, Runnable {
                             String[] args = {NutsConstants.Ids.NUTS_SHELL};
                             NutsJavaShell cli = null;
                             try {
-                                PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
-                                NutsSession session = invokerWorkspace.createSession();
-                                final NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
-                                terminal.setIn(finalAccept.getInputStream());
-                                terminal.setOut(eout);
-                                terminal.setErr(eout);
-                                session.setTerminal(terminal);
-                                cli = new NutsJavaShell(invokerWorkspace, session);
-                                //                                    cli.uninstallCommand("server");
-                                cli.getGlobalContext().builtins().unset("connect");
-                                cli.setServiceName(serverId);
-                                cli.getGlobalContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
-                                cli.runCommand(args);
-                                finalAccept.close();
+                                try {
+                                    PrintStream out = new PrintStream(finalAccept.getOutputStream());
+                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+                                    NutsSession session = invokerWorkspace.createSession();
+                                    final NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
+                                    terminal.setIn(finalAccept.getInputStream());
+                                    terminal.setOut(eout);
+                                    terminal.setErr(eout);
+                                    session.setTerminal(terminal);
+                                    cli = new NutsJavaShell(invokerWorkspace, session,
+                                            invokerWorkspace.id().resolveId(StopServerBuiltin.class),
+                                            serverId);
+                                    cli.getRootContext().builtins().unset("connect");
+                                    cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
+                                    cli.executeCommand(args);
+                                } finally {
+                                    finalAccept.close();
+                                }
                             } catch (IOException e) {
                                 session.err().printf("%s\n", e);
                             }

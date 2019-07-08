@@ -102,7 +102,7 @@ public class JsonCommand extends SimpleNshBuiltin {
 //        }
 
         if (options.queries.isEmpty()) {
-            NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
+            NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
                 context.setPrintOutObject(context.getWorkspace().json().value(inputDocument).format());
             } else {
@@ -111,7 +111,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         } else {
             switch (options.queryType) {
                 case "xpath": {
-                    Document inputDocument = readJsonConvertXml(options.input, context.getGlobalContext());
+                    Document inputDocument = readJsonConvertXml(options.input, context.getRootContext());
                     XPath xPath = XPathFactory.newInstance().newXPath();
                     DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                     Document resultDocument;
@@ -142,7 +142,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     break;
                 }
                 case "jpath": {
-                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getGlobalContext());
+                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
                     List<NutsElement> all = new ArrayList<>();
                     for (String query : options.queries) {
                         all.addAll(context.getWorkspace().element()

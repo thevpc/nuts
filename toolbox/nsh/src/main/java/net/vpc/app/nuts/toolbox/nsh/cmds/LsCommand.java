@@ -59,6 +59,7 @@ public class LsCommand extends SimpleNshBuiltin {
 
     private static class Options {
 
+        boolean a = false;
         boolean d = false;
         boolean l = false;
         boolean h = false;
@@ -124,6 +125,9 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if ((a = commandLine.nextBoolean("-l", "--list")) != null) {
             options.l = a.getBooleanValue();
             return true;
+        } else if ((a = commandLine.nextBoolean("-a", "--all")) != null) {
+            options.a = a.getBooleanValue();
+            return true;
         } else if ((a = commandLine.nextBoolean("-h")) != null) {
             options.h = a.getBooleanValue();
             return true;
@@ -141,19 +145,19 @@ public class LsCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
-        success.workingDir = context.getGlobalContext().getAbsolutePath(".");
+        success.workingDir = context.getRootContext().getAbsolutePath(".");
         ResultError errors = null;
         int exitCode = 0;
         if (options.paths.isEmpty()) {
             options.paths.add(".");
         }
         for (String path : options.paths) {
-            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            File file = new File(context.getRootContext().getAbsolutePath(path));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
                     errors = new ResultError();
-                    errors.workingDir = context.getGlobalContext().getAbsolutePath(".");
+                    errors.workingDir = context.getRootContext().getAbsolutePath(".");
                 }
                 errors.result.put(path, "cannot access '" + file + "': No such file or directory");
             } else {
@@ -168,7 +172,10 @@ public class LsCommand extends SimpleNshBuiltin {
                         Arrays.sort(children, FILE_SORTER);
                         g.children = new ArrayList<>();
                         for (File ch : children) {
-                            g.children.add(build(ch));
+                            ResultItem b = build(ch);
+                            if (options.a || !b.hidden) {
+                                g.children.add(b);
+                            }
                         }
                     }
                 }

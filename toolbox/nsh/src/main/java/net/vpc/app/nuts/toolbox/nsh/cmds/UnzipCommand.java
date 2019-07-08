@@ -96,7 +96,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
             commandLine.required();
         }
         for (String path : options.files) {
-            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            File file = new File(context.getRootContext().getAbsolutePath(path));
             try {
                 if (options.l) {
                     ZipUtils.visitZipFile(file, null, new InputStreamVisitor() {
@@ -109,9 +109,9 @@ public class UnzipCommand extends SimpleNshBuiltin {
                 } else {
                     String dir = options.dir;
                     if (StringUtils.isBlank(dir)) {
-                        dir = context.getGlobalContext().getCwd();
+                        dir = context.getRootContext().getCwd();
                     }
-                    dir = context.getGlobalContext().getAbsolutePath(dir);
+                    dir = context.getRootContext().getAbsolutePath(dir);
                     ZipUtils.unzip(file.getPath(), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
                 }
             } catch (UncheckedIOException ex) {

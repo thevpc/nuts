@@ -71,7 +71,7 @@ public class CdCommand extends SimpleNshBuiltin {
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");
         }
-        context.getGlobalContext().setCwd(options.dirname);
+        context.getRootContext().setCwd(options.dirname);
         context.setPrintlnOutObject("");
     }
 }

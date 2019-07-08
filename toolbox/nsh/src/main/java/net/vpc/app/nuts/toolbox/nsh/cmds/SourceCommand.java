@@ -82,8 +82,8 @@ public class SourceCommand extends SimpleNshBuiltin {
                     }
                 }
                 if (!new File(file).isFile()) {
-                    if (new File(context.getGlobalContext().getCwd(), file).isFile()) {
-                        file = new File(context.getGlobalContext().getCwd(), file).getPath();
+                    if (new File(context.getRootContext().getCwd(), file).isFile()) {
+                        file = new File(context.getRootContext().getCwd(), file).getPath();
                     }
                 }
                 if (!new File(file).isFile()) {
@@ -92,7 +92,7 @@ public class SourceCommand extends SimpleNshBuiltin {
                 goodFiles.add(file);
             }
         }
-        JShellContext c2 = context.getShell().createContext(context.getGlobalContext());
+        JShellContext c2 = context.getShell().createContext(context.getRootContext());
         c2.setArgs(context.getArgs());
         int a = 0;
         for (String goodFile : goodFiles) {

@@ -27,37 +27,45 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh.cmds;
+package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.common.javashell.JShellContext;
+import net.vpc.common.javashell.JShellErrorHandler;
+import net.vpc.common.javashell.JShellException;
+import net.vpc.common.javashell.JShellQuitException;
+import net.vpc.common.strings.StringUtils;
 
 /**
- * Created by vpc on 1/7/17.
+ *
+ * @author vpc
  */
-public class PwdCommand extends SimpleNshBuiltin {
-
-    public PwdCommand() {
-        super("pwd", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
+public class NutsErrorHandler implements JShellErrorHandler {
+    
+    @Override
+    public boolean isRequireExit(Throwable th) {
+        return th instanceof JShellQuitException;
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
+    public int errorToCode(Throwable th) {
+        if (th instanceof NutsExecutionException) {
+            return ((NutsExecutionException) th).getExitCode();
+        }
+        if (th instanceof JShellException) {
+            return ((NutsExecutionException) th).getExitCode();
+        }
+        return 1;
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        return false;
+    public String errorToMessage(Throwable th) {
+        return StringUtils.exceptionToString(th);
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        //Options options=context.getOptions();
-        context.setPrintOutObject(context.getRootContext().getCwd());
+    public void onErrorImpl(String message, Throwable th, JShellContext context) {
+        ((NutsShellContext) context).getSession().getTerminal().err().printf("@@%s@@\n", message);
     }
+    
 }

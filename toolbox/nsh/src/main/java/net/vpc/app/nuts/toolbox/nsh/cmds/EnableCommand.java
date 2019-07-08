@@ -114,14 +114,14 @@ public class EnableCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
-            for (JShellBuiltin command : context.getGlobalContext().builtins().getAll()) {
+            for (JShellBuiltin command : context.getRootContext().builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
             context.setPrintlnOutObject(context);
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
-                JShellBuiltin c = context.getGlobalContext().builtins().find(name);
+                JShellBuiltin c = context.getRootContext().builtins().find(name);
                 if (c == null) {
                     nobuiltin.add(name);
                 } else {

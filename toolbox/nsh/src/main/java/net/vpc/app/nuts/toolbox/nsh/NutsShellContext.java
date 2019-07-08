@@ -40,10 +40,6 @@ import net.vpc.common.javashell.JShellContext;
  */
 public interface NutsShellContext extends JShellContext {
 
-    String getServiceName();
-
-    NutsShellContext setServiceName(String serviceName);
-
     NutsSession getSession();
 
     NutsShellContext setSession(NutsSession session);
@@ -56,7 +52,5 @@ public interface NutsShellContext extends JShellContext {
     NutsCommandAutoComplete getAutoComplete();
 
     void setAutoComplete(NutsCommandAutoComplete value);
-
-    NutsShellContext copy();
 
 }

@@ -82,7 +82,7 @@ public class CatCommand extends SimpleNshBuiltin {
             return true;
         } else if (!commandLine.peek().isOption()) {
             String path = commandLine.next().getString();
-            File file = new File(context.getGlobalContext().getAbsolutePath(path));
+            File file = new File(context.getRootContext().getAbsolutePath(path));
             options.files.add(file);
             return true;
         }

@@ -73,7 +73,7 @@ public class ShowerrCommand extends SimpleNshBuiltin {
 
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        context.setPrintOutObject(context.getGlobalContext().getLastResult());
+        context.setPrintOutObject(context.getRootContext().getLastResult());
     }
 
     @Override

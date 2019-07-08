@@ -81,19 +81,7 @@ public class CommandCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
-            JShellBuiltin a = context.getGlobalContext().builtins().find(options.commandName);
-            if (a != null) {
-                a.exec(options.args.toArray(new String[0]), context.getExecutionContext());
-            } else {
-                context.getWorkspace()
-                        .exec()
-                        .command(options.commandName)
-                        .command(options.args)
-                        .setDirectory(context.getGlobalContext().getCwd())
-                        .setEnv(context.getExecutionContext().vars().getExported())
-                        .run()
-                        .failFast();
-            }
+            context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getRootContext());
         }
     }
 

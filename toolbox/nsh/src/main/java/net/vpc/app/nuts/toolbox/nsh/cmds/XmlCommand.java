@@ -101,7 +101,7 @@ public class XmlCommand extends SimpleNshBuiltin {
 
         Document doc = null;
         if (options.input != null) {
-            File file = new File(context.getGlobalContext().getAbsolutePath(options.input));
+            File file = new File(context.getRootContext().getAbsolutePath(options.input));
             if (file.isFile()) {
                 try {
                     doc = dBuilder.parse(file);

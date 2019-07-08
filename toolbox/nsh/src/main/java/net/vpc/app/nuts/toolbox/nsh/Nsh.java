@@ -34,7 +34,7 @@ public class Nsh extends NutsApplication {
         }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         try {
-            c.run(args);
+            c.executeShell(args);
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (JShellException ex) {
@@ -79,7 +79,7 @@ public class Nsh extends NutsApplication {
 //                        .setParameters(parameters)
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        JShellBuiltin[] commands = c.getGlobalContext().builtins().getAll();
+        JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = applicationContext.getSession().copy();

@@ -27,37 +27,39 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh.cmds;
+package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import java.io.File;
+import net.vpc.app.nuts.NutsExecutableInfo;
+import net.vpc.common.javashell.JShellCommandType;
+import net.vpc.common.javashell.JShellCommandTypeResolver;
+import net.vpc.common.javashell.JShellContext;
 
 /**
- * Created by vpc on 1/7/17.
+ *
+ * @author vpc
  */
-public class PwdCommand extends SimpleNshBuiltin {
-
-    public PwdCommand() {
-        super("pwd", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-    }
+class NutsCommandTypeResolver implements JShellCommandTypeResolver {
 
     @Override
-    protected Object createOptions() {
-        return new Options();
+    public JShellCommandType type(String item, JShellContext context) {
+        NutsShellContext ncontext=(NutsShellContext)context;
+        String a = context.aliases().get(item);
+        if (a != null) {
+            return new JShellCommandType(item, "shell alias", a, item + " is aliased to " + a);
+        }
+        String path = item;
+        if (!item.startsWith("/")) {
+            path = context.getCwd() + "/" + item;
+        }
+        final NutsExecutableInfo w = ncontext.getWorkspace().exec().command(item).which();
+        if (w != null) {
+            return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
+        }
+        if (new File(path).isFile()) {
+            return new JShellCommandType(item, "path", path, item + " is " + path);
+        }
+        return null;
     }
 
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        return false;
-    }
-
-    @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        //Options options=context.getOptions();
-        context.setPrintOutObject(context.getRootContext().getCwd());
-    }
 }

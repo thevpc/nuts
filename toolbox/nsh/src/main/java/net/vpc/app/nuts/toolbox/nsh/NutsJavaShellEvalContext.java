@@ -44,7 +44,6 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
 
     private NutsShellContext shellContext;
     private NutsWorkspace workspace;
-    private String serviceName;
     private NutsSession session;
 //    private NutsSessionTerminal terminal;
     private NutsCommandAutoComplete autoComplete;
@@ -63,7 +62,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         super(parentContext);
 //        if (parentContext instanceof NutsJavaShellEvalContext) {
         NutsJavaShellEvalContext parentContext1 = (NutsJavaShellEvalContext) parentContext;
-        this.shellContext = parentContext1.shellContext.copy();
+        this.shellContext = (NutsShellContext)parentContext1.shellContext.copy();
         this.shellContext.getUserProperties().put(JShellContext.class.getName(), this);
         this.workspace = parentContext1.workspace;
         this.session = (this.workspace == null ? null : this.workspace.createSession());
@@ -92,7 +91,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
                 vars().export(entry.getKey(), entry.getValue());
             }
-            setBuiltins(new NutsJavaShell.NutsBuiltinManager());
+            setBuiltins(new NutsBuiltinManager());
             JShellAliasManager a = aliases();
             a.set(".", "source");
             a.set("[", "test");
@@ -149,7 +148,8 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         return c;
     }
 
-    protected void copyFrom(JShellContext other) {
+    @Override
+    public void copyFrom(JShellContext other) {
         super.copyFrom(other);
         if (other instanceof NutsJavaShellEvalContext) {
             NutsJavaShellEvalContext o = (NutsJavaShellEvalContext) other;
@@ -160,21 +160,11 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         }
     }
 
+    @Override
     public NutsShellContext copy() {
         NutsJavaShellEvalContext c = new NutsJavaShellEvalContext();
         c.copyFrom(this);
         return c;
-    }
-
-    @Override
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    @Override
-    public NutsShellContext setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-        return this;
     }
 
     @Override
@@ -218,6 +208,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         return getSession().getTerminal().getErr();
     }
 
+    @Override
     public List<AutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         JShellBuiltin command = this.builtins().find(commandName);
         NutsCommandAutoComplete autoComplete = new NutsCommandAutoCompleteBase() {

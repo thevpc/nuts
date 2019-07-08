@@ -164,7 +164,7 @@ public class EnvCommand extends SimpleNshBuiltin {
         }
         SortedMap<String, String> env = new TreeMap<>();
         if (!options.ignoreEnvironment) {
-            env.putAll((Map) context.getGlobalContext().vars().getAll());
+            env.putAll((Map) context.getRootContext().vars().getAll());
         }
         for (String v : options.unsetVers) {
             env.remove(v);

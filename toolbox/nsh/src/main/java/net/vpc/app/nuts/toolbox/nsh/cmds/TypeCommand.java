@@ -91,7 +91,7 @@ public class TypeCommand extends SimpleNshBuiltin {
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JShellBuiltin ic = context.getGlobalContext().builtins().find(cmd);
+            JShellBuiltin ic = context.getRootContext().builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -99,7 +99,7 @@ public class TypeCommand extends SimpleNshBuiltin {
                         cmd + " is a shell builtin"
                 ));
             } else {
-                String alias = context.getGlobalContext().aliases().get(cmd);
+                String alias = context.getRootContext().aliases().get(cmd);
                 if (alias != null) {
                     result.add(new ResultItem(
                             cmd,
@@ -107,7 +107,7 @@ public class TypeCommand extends SimpleNshBuiltin {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getGlobalContext());
+                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getRootContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,

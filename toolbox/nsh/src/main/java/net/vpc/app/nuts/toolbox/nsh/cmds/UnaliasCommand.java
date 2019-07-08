@@ -77,12 +77,12 @@ public class UnaliasCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.all) {
-            for (String k : context.getGlobalContext().aliases().getAll()) {
-                context.getGlobalContext().aliases().set(k, null);
+            for (String k : context.getRootContext().aliases().getAll()) {
+                context.getRootContext().aliases().set(k, null);
             }
         } else {
             for (String k : options.list) {
-                context.getGlobalContext().aliases().set(k, null);
+                context.getRootContext().aliases().set(k, null);
             }
         }
     }

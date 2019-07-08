@@ -188,7 +188,7 @@ public class ChmodCommand extends SimpleNshBuiltin {
             }
         } else if (!a.isOption()) {
             commandLine.skip();
-            options.files.add(new File(context.getGlobalContext().getAbsolutePath(s)));
+            options.files.add(new File(context.getRootContext().getAbsolutePath(s)));
             return true;
         }
         return false;

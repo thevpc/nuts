@@ -74,7 +74,7 @@ public class RmCommand extends SimpleNshBuiltin {
             options.R = a.getBooleanValue();
             return true;
         } else if (commandLine.peek().isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getGlobalContext().getCwd()));
+            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getRootContext().getCwd()));
             return true;
         }
         return false;

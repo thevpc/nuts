@@ -100,17 +100,17 @@ public class AliasCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
-            for (String k : context.getGlobalContext().aliases().getAll()) {
+            for (String k : context.getRootContext().aliases().getAll()) {
                 options.show.add(k);
             }
         }
         for (Map.Entry<String, String> entry : options.add.entrySet()) {
-            context.getGlobalContext().aliases().set(entry.getKey(), entry.getValue());
+            context.getRootContext().aliases().set(entry.getKey(), entry.getValue());
         }
         List<ResultItem> outRes = new ArrayList<>();
         List<ResultItem> errRes = new ArrayList<>();
         for (String a : options.show) {
-            final String v = context.getGlobalContext().aliases().get(a);
+            final String v = context.getRootContext().aliases().get(a);
             if (v == null) {
                 errRes.add(new ResultItem(a, v));
             } else {

@@ -80,11 +80,11 @@ public class UnsetCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {
-                context.getGlobalContext().functions().unset(k);
+                context.getRootContext().functions().unset(k);
             }
         } else {
             for (String k : options.list) {
-                context.getGlobalContext().aliases().set(k, null);
+                context.getRootContext().aliases().set(k, null);
             }
         }
     }
