@@ -40,8 +40,16 @@ import net.vpc.app.nuts.NutsCommandLine;
  */
 public class NutsConfigurableHelper {
 
-    public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] cmdLine, String commandName) {
-        c.configure(skipUnsupported, ws.commandLine().setArgs(cmdLine).setCommandName(commandName));
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
+    public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] args, String commandName) {
+        c.configure(skipUnsupported, ws.commandLine().setArguments(args).setCommandName(commandName));
         return (T) c;
     }
 

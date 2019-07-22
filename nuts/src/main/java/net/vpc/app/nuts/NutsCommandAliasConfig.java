@@ -37,6 +37,7 @@ import java.io.Serializable;
  * @since 0.5.4
  */
 public class NutsCommandAliasConfig implements Serializable{
+    private static final long serialVersionUID = 1;
 
     /**
      * alias definition
@@ -73,66 +74,129 @@ public class NutsCommandAliasConfig implements Serializable{
      */
     private String helpText;
 
+    /**
+     * alias definition
+     * @return alias definition
+     */
     public NutsId getOwner() {
         return owner;
     }
 
-    public NutsCommandAliasConfig setOwner(NutsId owner) {
-        this.owner = owner;
+    /**
+     * alias definition
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setOwner(NutsId value) {
+        this.owner = value;
         return this;
     }
 
+    /**
+     * alias factory id
+     * @return alias factory id
+     */
     public String getFactoryId() {
         return factoryId;
     }
 
-    public NutsCommandAliasConfig setFactoryId(String factoryId) {
-        this.factoryId = factoryId;
+    /**
+     * alias factory id
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setFactoryId(String value) {
+        this.factoryId = value;
         return this;
     }
 
+    /**
+     * alias command arguments
+     * @return alias command arguments
+     */
     public String[] getCommand() {
         return command;
     }
 
-    public NutsCommandAliasConfig setCommand(String... command) {
-        this.command = command;
+    /**
+     * alias command arguments
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setCommand(String... value) {
+        this.command = value;
         return this;
     }
 
+    /**
+     * alias name
+     * @return alias name
+     */
     public String getName() {
         return name;
     }
 
-    public NutsCommandAliasConfig setName(String name) {
-        this.name = name;
+    /**
+     * alias name
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setName(String value) {
+        this.name = value;
         return this;
     }
 
+    /**
+     * alias command execution options
+     * @return alias command execution options
+     */
     public String[] getExecutorOptions() {
         return executorOptions;
     }
 
-    public NutsCommandAliasConfig setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
+    /**
+     * alias command execution options
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setExecutorOptions(String[] value) {
+        this.executorOptions = value;
         return this;
     }
 
+    /**
+     * alias help command (command to display help)
+     * @return alias help command (command to display help)
+     */
     public String[] getHelpCommand() {
         return helpCommand;
     }
 
-    public NutsCommandAliasConfig setHelpCommand(String... helpCommand) {
-        this.helpCommand = helpCommand;
+    /**
+     * alias help command (command to display help)
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setHelpCommand(String... value) {
+        this.helpCommand = value;
         return this;
     }
 
+    /**
+     * alias help text (meaningful if helpCommand is not defined)
+     * @return alias help text (meaningful if helpCommand is not defined)
+     */
     public String getHelpText() {
         return helpText;
     }
 
-    public NutsCommandAliasConfig setHelpText(String helpText) {
-        this.helpText = helpText;
+    /**
+     * alias help text (meaningful if helpCommand is not defined)
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasConfig setHelpText(String value) {
+        this.helpText = value;
         return this;
     }
 

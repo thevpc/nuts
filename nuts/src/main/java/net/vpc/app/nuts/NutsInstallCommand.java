@@ -83,28 +83,48 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
     NutsInstallCommand defaultVersion(boolean defaultVersion);
 
     /**
-     *
+     * set default version flag. when true, the installed version will be defined as default
      * @param defaultVersion when true, the installed version will be defined as
      * default
-     * @return
+     * @return {@code this} instance
      */
     NutsInstallCommand setDefaultVersion(boolean defaultVersion);
 
     boolean isDefaultVersion();
 
-    boolean isIncludeCompanions();
+    boolean isCompanions();
 
-    NutsInstallCommand includeCompanions();
+    NutsInstallCommand companions();
 
-    NutsInstallCommand includeCompanions(boolean includecompanions);
+    NutsInstallCommand companions(boolean value);
 
-    NutsInstallCommand setIncludeCompanions(boolean includecompanions);
+    NutsInstallCommand setCompanions(boolean value);
+
+    boolean isInstalled();
+
+    NutsInstallCommand installed();
+
+    NutsInstallCommand installed(boolean value);
+
+    NutsInstallCommand setInstalled(boolean value);
 
     NutsSearchResult<NutsDefinition> getResult();
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsInstallCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsInstallCommand setSession(NutsSession session);
 

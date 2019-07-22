@@ -55,21 +55,19 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     URL[] getBootClassWorldURLs();
 
-//    Path getBootNutsJar();
-//
     Path getWorkspaceLocation();
 
     boolean isReadOnly();
 
-    void setEnv(String property, String value);
+    void setEnv(String property, String value, NutsUpdateOptions options);
 
-    void addImports(String... importExpression);
+    void addImports(String[] importExpression, NutsAddOptions options);
 
-    void removeAllImports();
+    void removeAllImports(NutsRemoveOptions options);
 
-    void removeImports(String... importExpression);
+    void removeImports(String[] importExpression, NutsRemoveOptions options);
 
-    void setImports(String[] imports);
+    void setImports(String[] imports, NutsUpdateOptions options);
 
     Set<String> getImports();
 
@@ -78,13 +76,14 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
      * was detected in config file
      *
      * @param force when true, save will always be performed
-     * @return
+     * @param session session
+     * @return true if the save action was applied
      */
-    boolean save(boolean force);
+    boolean save(boolean force, NutsSession session);
 
-    void save();
+    void save(NutsSession session);
 
-    void setLogLevel(Level levek);
+    void setLogLevel(Level levek, NutsUpdateOptions options);
 
     String[] getSdkTypes();
 
@@ -111,8 +110,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     /**
      * verify if the path is a valid a
      *
-     * @param sdkType
-     * @param path
+     * @param sdkType sdk type
+     * @param path sdk path
      * @return null if not a valid jdk path
      */
     NutsSdkLocation resolveSdkLocation(String sdkType, Path path);
@@ -139,11 +138,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     Path getStoreLocation(NutsStoreLocation folderType);
 
-    void setStoreLocation(NutsStoreLocation folderType, String location);
+    void setStoreLocation(NutsStoreLocation folderType, String location, NutsUpdateOptions options);
 
-    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
+    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy, NutsUpdateOptions options);
 
-    void setStoreLocationLayout(NutsOsFamily layout);
+    void setStoreLocationLayout(NutsOsFamily layout, NutsUpdateOptions options);
 
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
@@ -167,7 +166,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceListManager createWorkspaceListManager(String name);
 
-    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
+    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
 
     boolean isSupportedRepositoryType(String repositoryType);
 
@@ -175,9 +174,13 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository addRepository(NutsCreateRepositoryOptions options);
 
+    NutsRepository findRepositoryById(String repositoryIdOrName, boolean transitive);
+
+    NutsRepository findRepositoryByName(String repositoryIdOrName, boolean transitive);
+
     /**
      *
-     * @param repositoryIdOrName
+     * @param repositoryIdOrName repository id or name
      * @param transitive if true find into repositories mirrors
      * @return null if not found
      */
@@ -236,10 +239,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsId getRuntimeId();
 
-    String getRuntimeDependencies();
-
-    String getExtensionDependencies();
-
     String getBootRepositories();
 
     String getJavaCommand();
@@ -255,4 +254,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsId getPlatformOsDist();
 
     NutsId getPlatformArch();
+
+
 }

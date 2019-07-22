@@ -218,8 +218,8 @@ public class NutsPlatformUtils {
      *
      * @param folderType folder type to resolve home for
      * @param storeLocationLayout location layout to resolve home for
-     * @param homeLocations
-     * @param global
+     * @param homeLocations workspace home locations
+     * @param global global workspace
      * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
      */

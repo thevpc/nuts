@@ -63,7 +63,7 @@ public class LocalMysqlConfigService {
     }
 
     private Path getServerConfigPath() {
-        return context.getConfigFolder().resolve(getName() + SERVER_CONFIG_EXT);
+        return context.getSharedConfigFolder().resolve(getName() + SERVER_CONFIG_EXT);
     }
 
     public String[] parseApps(String[] args) {

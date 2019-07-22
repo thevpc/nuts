@@ -109,7 +109,7 @@ public class NutsRepositoryRef implements Serializable {
         return deployOrder;
     }
 
-    public NutsRepositoryRef setDeployPriority(int deployPriority) {
+    public NutsRepositoryRef setDeployOrder(int deployPriority) {
         this.deployOrder = deployPriority;
         return this;
     }

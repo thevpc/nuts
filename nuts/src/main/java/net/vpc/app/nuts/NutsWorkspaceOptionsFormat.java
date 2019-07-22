@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,8 @@ import java.util.stream.Collectors;
  *
  * @author vpc
  */
-public class NutsWorkspaceOptionsFormat {
+public class NutsWorkspaceOptionsFormat implements Serializable {
+    private static final long serialVersionUID = 1;
 
     private boolean exportedOptions;
     private boolean runtimeOptions;
@@ -129,11 +131,7 @@ public class NutsWorkspaceOptionsFormat {
             if (options.getLogConfig() != null) {
                 if (options.getLogConfig().getLogLevel() != null) {
                     if (options.getLogConfig().getLogLevel() == Level.FINEST) {
-                        if (options.getLogConfig().isDebug()) {
-                            fillOption("--debug", null, true, arguments, false);
-                        } else {
-                            fillOption("--verbose", null, true, arguments, false);
-                        }
+                        fillOption("--verbose", null, true, arguments, false);
                     } else {
                         fillOption("--log-" + options.getLogConfig().getLogLevel().toString().toLowerCase(), null, true, arguments, false);
                     }
@@ -202,6 +200,7 @@ public class NutsWorkspaceOptionsFormat {
             fillOption(options.getExecutionType(), arguments, false);
             fillOption("--reset", "-Z", options.isReset(), arguments, false);
             fillOption("--debug", "-z", options.isRecover(), arguments, false);
+            fillOption("--dry", "-D", options.isDry(), arguments, false);
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }

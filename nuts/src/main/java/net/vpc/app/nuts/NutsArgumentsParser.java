@@ -498,15 +498,20 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
+                    case "--dry":
+                    case "-D":
+                        {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setDry(a.getBooleanValue());
+                        }
+                        break;
+                    }
+
                     case "--debug": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            logConfig = new NutsLogConfig();
                             options.setDebug(a.getBooleanValue());
-                            if (options.isDebug()) {
-                                cmdLine.pushBack(a);
-                                parseLogLevel(logConfig, cmdLine, enabled);
-                            }
                         }
                         break;
                     }
@@ -608,7 +613,6 @@ public final class NutsArgumentsParser {
                             options.addOutputFormatOptions(a.getString(""));
                         }
                         break;
-                    case "--force":
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextBoolean();
@@ -869,7 +873,6 @@ public final class NutsArgumentsParser {
                 break;
             }
             case "--verbose":
-            case "--debug":
             case "--log-finest":
             case "--log-finer":
             case "--log-fine":
@@ -896,11 +899,6 @@ public final class NutsArgumentsParser {
                     switch (id.toLowerCase()) {
                         case "verbose": {
                             logConfig.setLogLevel(Level.FINEST);
-                            break;
-                        }
-                        case "debug": {
-                            logConfig.setLogLevel(Level.FINEST);
-                            logConfig.setDebug(true);
                             break;
                         }
                         case "finest": {

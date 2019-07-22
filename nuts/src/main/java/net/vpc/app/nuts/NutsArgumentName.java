@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ import java.util.List;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsArgumentName {
+public interface NutsArgumentName extends Serializable {
 
     /**
      * argument name

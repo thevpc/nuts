@@ -29,11 +29,11 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
@@ -42,20 +42,18 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class ArchitectureNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-
     public ArchitectureNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+        super(workspace,name);
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsDefaultArgumentCandidate("\"linux x86\""));
-        all.add(new NutsDefaultArgumentCandidate("\"linux x64\""));
-        all.add(new NutsDefaultArgumentCandidate("\"win x86\""));
-        all.add(new NutsDefaultArgumentCandidate("\"win x64\""));
+        NutsCommandLine c = getWorkspace().commandLine();
+        all.add(c.createCandidate("\"linux x86\""));
+        all.add(c.createCandidate("\"linux x64\""));
+        all.add(c.createCandidate("\"win x86\""));
+        all.add(c.createCandidate("\"win x64\""));
         return all;
     }
 

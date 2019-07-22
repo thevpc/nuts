@@ -24,6 +24,7 @@ import net.vpc.app.nuts.NutsWorkspaceCommand;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
+import net.vpc.app.nuts.core.wscommands.NutsWorkspaceCommandBase;
 
 /**
  *
@@ -55,7 +56,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    protected T copyFromDefaultNutsQueryBaseOptions(DefaultNutsQueryBaseOptions other) {
+    public T copyFromDefaultNutsQueryBaseOptions(DefaultNutsQueryBaseOptions other) {
         if (other != null) {
             super.copyFromWorkspaceCommandBase(other);
             this.optional = other.getOptional();

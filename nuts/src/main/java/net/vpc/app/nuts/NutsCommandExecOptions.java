@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
@@ -36,7 +37,8 @@ import java.util.Properties;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCommandExecOptions {
+public class NutsCommandExecOptions implements Serializable {
+    private static final long serialVersionUID = 1;
 
     /**
      * execution options
@@ -54,7 +56,7 @@ public class NutsCommandExecOptions {
     private String directory;
 
     /**
-     * when fail fast,non zero exit value will raise NutsExcutionException
+     * when fail fast,non zero exit value will raise NutsExecutionException
      */
     private boolean failFast;
     
@@ -63,46 +65,91 @@ public class NutsCommandExecOptions {
      */
     private NutsExecutionType executionType;
 
+    /**
+     * execution options
+     * @return execution options
+     */
     public String[] getExecutorOptions() {
         return executorOptions;
     }
 
+    /**
+     * execution options
+     * @param executorOptions new value
+     * @return {@code this} instance
+     */
     public NutsCommandExecOptions setExecutorOptions(String[] executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
 
+    /**
+     * execution environment variables
+     * @return execution environment variables
+     */
     public Properties getEnv() {
         return env;
     }
 
+    /**
+     * execution environment variables
+     * @param env new value
+     * @return {@code this} instance
+     */
     public NutsCommandExecOptions setEnv(Properties env) {
         this.env = env;
         return this;
     }
 
+    /**
+     * execution directory
+     * @return execution directory
+     */
     public String getDirectory() {
         return directory;
     }
 
+    /**
+     * execution directory
+     * @param directory new value
+     * @return {@code this} instance
+     */
     public NutsCommandExecOptions setDirectory(String directory) {
         this.directory = directory;
         return this;
     }
 
+    /**
+     * when fail fast,non zero exit value will raise NutsExecutionException
+     * @return when fail fast,non zero exit value will raise NutsExecutionException
+     */
     public boolean isFailFast() {
         return failFast;
     }
 
+    /**
+     * when fail fast,non zero exit value will raise NutsExecutionException
+     * @param failFast new value
+     * @return {@code this} instance
+     */
     public NutsCommandExecOptions setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
 
+    /**
+     * execution type
+     * @return execution type
+     */
     public NutsExecutionType getExecutionType() {
         return executionType;
     }
 
+    /**
+     * execution type
+     * @param executionType new value
+     * @return {@code this} instance
+     */
     public NutsCommandExecOptions setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
         return this;

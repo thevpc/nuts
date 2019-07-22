@@ -31,8 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -44,8 +42,8 @@ public final class NutsUserConfig implements Serializable {
     private static transient final long serialVersionUID = 1;
     private String user;
     private String credentials;
-    private Set<String> groups = new HashSet<>();
-    private Set<String> rights = new HashSet<>();
+    private String[] groups;
+    private String[] permissions;
     private String remoteIdentity;
     private String remoteCredentials;
 
@@ -57,15 +55,15 @@ public final class NutsUserConfig implements Serializable {
         this.credentials = other.getCredentials();
         this.remoteIdentity = other.getRemoteIdentity();
         this.remoteCredentials = other.getRemoteCredentials();
-        this.groups.addAll(Arrays.asList(other.getGroups()));
-        this.rights.addAll(Arrays.asList(other.getRights()));
+        this.groups=other.getGroups()==null?null:Arrays.copyOf(other.getGroups(),other.getGroups().length);
+        this.permissions =other.getPermissions()==null?null:Arrays.copyOf(other.getPermissions(),other.getPermissions().length);
     }
 
-    public NutsUserConfig(String user, String credentials, String[] groups, String[] rights) {
+    public NutsUserConfig(String user, String credentials, String[] groups, String[] permissions) {
         this.user = (user);
         this.credentials = (credentials);
         setGroups(groups);
-        setRights(rights);
+        setPermissions(permissions);
     }
 
     public String getRemoteIdentity() {
@@ -100,42 +98,19 @@ public final class NutsUserConfig implements Serializable {
         this.credentials = credentials;
     }
 
-    public String[] getRights() {
-        return rights.toArray(new String[0]);
+    public String[] getPermissions() {
+        return permissions;
     }
 
-    public void setRights(String[] rights) {
-        this.rights = rights == null ? new HashSet() : new HashSet(Arrays.asList(rights));
-    }
-
-    public void addGroup(String grp) {
-        groups.add(grp);
-    }
-
-    public void removeGroup(String grp) {
-        groups.remove(grp);
-    }
-
-    public void addRight(String right) {
-        rights.add(right);
-    }
-
-    public void removeRight(String right) {
-        if (!PrivateNutsUtils.isBlank(right)) {
-            rights.remove(right);
-        }
+    public void setPermissions(String[] permissions) {
+        this.permissions = permissions;
     }
 
     public String[] getGroups() {
-        return groups.toArray(new String[0]);
+        return groups;
     }
 
     public void setGroups(String[] groups) {
-        this.groups = groups == null ? new HashSet() : new HashSet(Arrays.asList(groups));
+        this.groups = groups;
     }
-
-    public boolean containsRight(String right) {
-        return rights.contains(right);
-    }
-
 }

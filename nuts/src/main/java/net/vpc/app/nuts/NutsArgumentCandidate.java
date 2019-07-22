@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
  * Argument Candidate used in Auto Complete.
  * 
@@ -36,7 +38,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.5
  */
-public interface NutsArgumentCandidate {
+public interface NutsArgumentCandidate extends Serializable {
 
     /**
      * argument value

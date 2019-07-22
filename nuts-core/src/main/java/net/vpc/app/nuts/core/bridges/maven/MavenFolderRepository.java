@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.*;
@@ -50,7 +49,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.repos.NutsCachedRepository;
+import net.vpc.app.nuts.core.impl.def.repos.NutsCachedRepository;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 /**
@@ -212,7 +211,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
-                MavenFolderRepository.this.undeploy().id(id).session(session).run();
+                MavenFolderRepository.this.undeploy().setId(id).setSession(session).run();
             }
 
             @Override

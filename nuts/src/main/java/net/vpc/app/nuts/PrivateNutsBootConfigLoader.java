@@ -31,10 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import static net.vpc.app.nuts.NutsBootWorkspace.LOG;
 
@@ -44,9 +41,9 @@ import static net.vpc.app.nuts.NutsBootWorkspace.LOG;
  * @author vpc
  * @since 0.5.6
  */
-class PrivateNutsBootConfigLoader {
+final class PrivateNutsBootConfigLoader {
 
-    static PrivateNutsBootConfig loadBootConfig(String workspaceLocation) {
+    static NutsBootWorkspace.InformationImpl loadBootConfig(String workspaceLocation) {
         File versionFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (versionFile.isFile()) {
@@ -67,22 +64,29 @@ class PrivateNutsBootConfigLoader {
         return null;
     }
 
-    private static PrivateNutsBootConfig loadBootConfigJSON(String json) {
+    private static NutsBootWorkspace.InformationImpl loadBootConfigJSON(String json) {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        PrivateNutsBootConfig c = new PrivateNutsBootConfig();
+        NutsBootWorkspace.InformationImpl c = new NutsBootWorkspace.InformationImpl();
         String configVersion = (String) jsonObject.get("configVersion");
+
+        //TODO this supported in 0.5.4, should be removed ifd that version is no more supported
         if (configVersion == null) {
             configVersion = (String) jsonObject.get("createApiVersion");
-            if (configVersion == null) {
-                configVersion = Nuts.getVersion();
-            }
+        }
+
+        if (configVersion == null) {
+            configVersion = Nuts.getVersion();
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
-        if (buildNumber < 506) {
+        if (buildNumber <= 501) {
+            //load nothing!
+        }else if (buildNumber <= 505) {
             loadConfigVersion502(c, jsonObject);
-        } else {
+        }else if (buildNumber <= 506) {
             loadConfigVersion506(c, jsonObject);
+        } else {
+            loadConfigVersion507(c, jsonObject);
         }
         return c;
     }
@@ -106,15 +110,57 @@ class PrivateNutsBootConfigLoader {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion506(PrivateNutsBootConfig config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion507(NutsBootWorkspace.InformationImpl config, Map<String, Object> jsonObject) {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
-        config.setWorkspace((String) jsonObject.get("workspace"));
+        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
+        config.setJavaCommand((String) jsonObject.get("javaCommand"));
+        config.setJavaOptions((String) jsonObject.get("javaOptions"));
+        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
+        config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
+        String s = (String) jsonObject.get("storeLocationStrategy");
+        if (s != null && s.length() > 0) {
+            config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
+        }
+        s = (String) jsonObject.get("repositoryStoreLocationStrategy");
+        if (s != null && s.length() > 0) {
+            config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
+        }
+        s = (String) jsonObject.get("storeLocationLayout");
+
+        if (s != null && s.length() > 0) {
+            config.setStoreLocationLayout(NutsOsFamily.valueOf(s.toUpperCase()));
+        }
+        List<Map<String,Object>> extensions = (List<Map<String,Object>>) jsonObject.get("extensions");
+        if(extensions!=null){
+            LinkedHashSet<String> extSet=new LinkedHashSet<>();
+            for (Map<String, Object> extension : extensions) {
+                String eid = (String)extension.get("id");
+                Boolean enabled = (Boolean)extension.get("enabled");
+                if(enabled!=null && enabled){
+                    extSet.add(eid);
+                }
+            }
+            config.setExtensionsSet(extSet);
+        }else {
+            config.setExtensionsSet(new HashSet<>());
+        }
+    }
+
+
+    /**
+     * best effort to load config object from jsonObject saved with nuts version
+     * "[0.5.6]" and later.
+     *
+     * @param config config object to fill
+     * @param jsonObject config JSON object
+     */
+    private static void loadConfigVersion506(NutsBootWorkspace.InformationImpl config, Map<String, Object> jsonObject) {
+        config.setUuid((String) jsonObject.get("uuid"));
+        config.setName((String) jsonObject.get("name"));
+        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("apiVersion"));
         config.setRuntimeId((String) jsonObject.get("runtimeId"));
-        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
-        config.setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("runtimeDependencies"), ";", true)));
-        config.setExtensionDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("extensionDependencies"), ";", true)));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
@@ -140,14 +186,12 @@ class PrivateNutsBootConfigLoader {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(PrivateNutsBootConfig config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion502(NutsBootWorkspace.InformationImpl config, Map<String, Object> jsonObject) {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
-        config.setWorkspace((String) jsonObject.get("workspace"));
+        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("bootApiVersion"));
         config.setRuntimeId((String) jsonObject.get("bootRuntime"));
-        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
-        config.setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split((String) jsonObject.get("bootRuntimeDependencies"), ";", true)));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
         Map<String, String> storeLocations = new LinkedHashMap<>();

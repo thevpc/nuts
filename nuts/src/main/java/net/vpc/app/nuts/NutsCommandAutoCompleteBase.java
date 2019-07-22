@@ -40,20 +40,24 @@ import java.util.List;
  */
 public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComplete {
 
+    /**
+     * candidates map
+     */
     private final LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
 
+    /**
+     * possible candidates
+     * @return possible candidates
+     */
     @Override
-    public List getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates() {
         return new ArrayList<>(candidates.values());
     }
 
-    @Override
-    public void addCandidate(String value, String display) {
-        if (value != null && !value.trim().isEmpty()) {
-            addCandidatesImpl(new NutsDefaultArgumentCandidate(value));
-        }
-    }
-
+    /**
+     * add candidate
+     * @param value candidate
+     */
     @Override
     public void addCandidate(NutsArgumentCandidate value) {
         if (value != null && !value.getValue().trim().isEmpty()) {
@@ -61,13 +65,13 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
         }
     }
 
+    /**
+     * simple add candidates implementation
+     * @param value candidate
+     * @return {@code this} instance
+     */
     protected NutsArgumentCandidate addCandidatesImpl(NutsArgumentCandidate value) {
         return candidates.put(value.getValue(), value);
-    }
-
-    @Override
-    public void addExpectedTypedValue(String type, String name) {
-        addCandidate("", "<" + name + ">");
     }
 
 }

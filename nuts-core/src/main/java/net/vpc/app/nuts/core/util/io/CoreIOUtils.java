@@ -59,7 +59,6 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -69,7 +68,6 @@ import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.core.io.DefaultNutsURLHeader;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -92,7 +90,7 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static int execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -233,7 +231,7 @@ public class CoreIOUtils {
         return bestJava;
     }
 
-    public static int execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
+    public static ProcessExecHelper execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
         PrintStream out = terminal.out();
         PrintStream err = terminal.err();
         InputStream in = terminal.in();
@@ -270,10 +268,34 @@ public class CoreIOUtils {
                 terminal.out().printf("%s%n", pb.getCommandString());
             }
         }
-        try {
-            return pb.start().waitFor().getResult();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+        return new ProcessExecHelper(pb,ws,out==null?terminal.out():out);
+    }
+    public static class ProcessExecHelper implements IProcessExecHelper{
+        ProcessBuilder2 pb;
+        NutsWorkspace ws;
+        PrintStream out;
+
+        public ProcessExecHelper(ProcessBuilder2 pb,NutsWorkspace ws,PrintStream out) {
+            this.pb = pb;
+            this.ws = ws;
+            this.out = out;
+        }
+
+        public void dryExec(){
+            if (ws.io().getTerminalFormat().isFormatted(out)) {
+                out.print("[dry] ==[exec]== ");
+                out.println(pb.getFormattedCommandString(ws));
+            } else {
+                out.print("[dry] exec ");
+                out.printf("%s%n", pb.getCommandString());
+            }
+        }
+        public int exec(){
+            try {
+                return pb.start().waitFor().getResult();
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 
@@ -1167,7 +1189,7 @@ public class CoreIOUtils {
         }
     }
 
-    public static NutsHttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
+    public static NutsHttpConnection getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
         //        System.out.println("getHttpClientFacade "+url);
         NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws, url));
         if (best == null) {
@@ -1663,7 +1685,7 @@ public class CoreIOUtils {
             final OutputStream p = Files.newOutputStream(outPath);
             NutsURLHeader header = null;
             long size = -1;
-            NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
+            NutsHttpConnection f = CoreIOUtils.getHttpClientFacade(ws, path);
             try {
 
                 header = f.getURLHeader();
@@ -1745,7 +1767,7 @@ public class CoreIOUtils {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
-                        NutsHttpConnectionFacade hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
+                        NutsHttpConnection hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
                         cachedNutsURLHeader = hf.getURLHeader();
                     } catch (Exception ex) {
                         //ignore

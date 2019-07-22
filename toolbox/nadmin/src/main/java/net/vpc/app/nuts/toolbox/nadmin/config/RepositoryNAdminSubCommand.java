@@ -6,11 +6,11 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 
 import java.io.PrintStream;
 import java.util.*;
 import net.vpc.app.nuts.NutsArgumentCandidate;
+import net.vpc.app.nuts.toolbox.nadmin.util.NAdminUtils;
 
 /**
  *
@@ -19,18 +19,10 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
 public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
 
         NutsWorkspace ws = context.getWorkspace();
-        if (cmdLine.next("save repository", "sw") != null) {
-            String repositoryName = cmdLine.required().nextNonOption(cmdLine.createName("repository")).getString();
-            cmdLine.setCommandName("config save repository").unexpectedArgument();
-            if (cmdLine.isExecMode()) {
-                trySave(context, ws, ws.config().getRepository(repositoryName), true, null);
-            }
-            return true;
-
-        } else if (cmdLine.next("create repo", "cr") != null) {
+        if (cmdLine.next("create repo", "cr") != null) {
             String repositoryName = null;
             String location = null;
             String repoType = null;
@@ -89,10 +81,12 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             @Override
                             public List<NutsArgumentCandidate> getCandidates() {
                                 ArrayList<NutsArgumentCandidate> arrayList = new ArrayList<>();
+                                NutsCommandLine c = cmdLine;
+
                                 for (Map.Entry<String, NutsRepositoryDefinition> e : repoPatterns.entrySet()) {
-                                    arrayList.add(new NutsDefaultArgumentCandidate(e.getKey()));
+                                    arrayList.add(c.createCandidate(e.getKey()));
                                 }
-                                arrayList.add(new NutsDefaultArgumentCandidate("<RepositoryName>"));
+                                arrayList.add(c.createCandidate("<RepositoryName>"));
                                 return arrayList;
                             }
 
@@ -159,7 +153,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                                 repository.config().getLocation(false)
                         );
                     }
-                    out.printf(t.toString());
+                    out.print(t.toString());
                 }
                 return true;
 
@@ -167,7 +161,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
 
                     for (NutsRepository repository : ws.config().getRepositories()) {
-                        config.showRepoTree(context, repository, "");
+                        NAdminUtils.showRepoTree(context, repository, "");
                     }
                 }
                 return true;
@@ -177,7 +171,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
 
                     NutsRepository editedRepo = ws.config().getRepository(localId);
-                    editedRepo.config().setEnabled(true);
+                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
@@ -185,7 +179,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 String localId = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
                 if (cmdLine.isExecMode()) {
                     NutsRepository editedRepo = ws.config().getRepository(localId);
-                    editedRepo.config().setEnabled(false);
+                    editedRepo.config().setEnabled(false, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
@@ -215,12 +209,12 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 
                 } else if (cmdLine.next("enable", "br") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
-                    editedRepo.config().setEnabled(true);
+                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("disable", "dr") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
-                    editedRepo.config().setEnabled(true);
+                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
                 } else if (cmdLine.next("list repos", "lr") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
@@ -250,7 +244,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     out.printf("edit repository %s list repos ...%n", repoId);
                 } else {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
-                    if (UserNAdminSubCommand.exec(editedRepo, cmdLine, config, autoSave, context)) {
+                    if (UserNAdminSubCommand.exec(editedRepo, cmdLine, autoSave, context)) {
                         //okkay
                     } else {
                         throw new NutsIllegalArgumentException(context.getWorkspace(), "config edit repo: Unsupported command " + cmdLine);
@@ -262,9 +256,5 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
         return false;
     }
 
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
-    }
 
 }

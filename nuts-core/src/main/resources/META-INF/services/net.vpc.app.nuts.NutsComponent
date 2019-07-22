@@ -1,27 +1,27 @@
 net.vpc.app.nuts.core.DefaultHttpTransportComponent
 
-net.vpc.app.nuts.core.repos.DefaultNutsRepositoryFactoryComponent
+net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepositoryFactoryComponent
 
 
 net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal
 net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedUnixAnsi
 net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase
 
-net.vpc.app.nuts.core.archetypes.ServerNutsWorkspaceArchetypeComponent
-net.vpc.app.nuts.core.archetypes.MinimalNutsWorkspaceArchetypeComponent
-net.vpc.app.nuts.core.archetypes.DefaultNutsWorkspaceArchetypeComponent
+net.vpc.app.nuts.core.impl.def.archetypes.ServerNutsWorkspaceArchetypeComponent
+net.vpc.app.nuts.core.impl.def.archetypes.MinimalNutsWorkspaceArchetypeComponent
+net.vpc.app.nuts.core.impl.def.archetypes.DefaultNutsWorkspaceArchetypeComponent
 
-net.vpc.app.nuts.core.installers.ZipNutsInstallerComponent
+net.vpc.app.nuts.core.impl.def.installers.ZipNutsInstallerComponent
 
-net.vpc.app.nuts.core.parsers.BashNutsDescriptorContentParserComponent
-net.vpc.app.nuts.core.parsers.ZipNutsDescriptorContentParserComponent
-net.vpc.app.nuts.core.parsers.JarNutsDescriptorContentParserComponent
-net.vpc.app.nuts.core.parsers.NutsShellDescriptorContentParserComponent
+net.vpc.app.nuts.core.impl.def.parsers.BashNutsDescriptorContentParserComponent
+net.vpc.app.nuts.core.impl.def.parsers.ZipNutsDescriptorContentParserComponent
+net.vpc.app.nuts.core.impl.def.parsers.JarNutsDescriptorContentParserComponent
+net.vpc.app.nuts.core.impl.def.parsers.NutsShellDescriptorContentParserComponent
 
-net.vpc.app.nuts.core.executors.JavaNutsExecutorComponent
-net.vpc.app.nuts.core.executors.JavaSourceNutsExecutorComponent
-net.vpc.app.nuts.core.executors.NutsShellNutsExecutorComponent
-net.vpc.app.nuts.core.executors.ProcessNutsExecutorComponent
+net.vpc.app.nuts.core.impl.def.executors.JavaNutsExecutorComponent
+net.vpc.app.nuts.core.impl.def.executors.JavaSourceNutsExecutorComponent
+net.vpc.app.nuts.core.impl.def.executors.NutsShellNutsExecutorComponent
+net.vpc.app.nuts.core.impl.def.executors.ProcessNutsExecutorComponent
 
 net.vpc.app.nuts.core.bridges.maven.MavenNutsRepositoryFactoryComponent
 net.vpc.app.nuts.core.DefaultNutsIndexStoreClientFactory

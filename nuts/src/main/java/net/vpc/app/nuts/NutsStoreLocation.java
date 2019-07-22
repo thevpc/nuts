@@ -93,13 +93,20 @@ public enum NutsStoreLocation {
      * Contains temporary runtime special files (like sockets on LINUX systems).
      */
     RUN;
-    
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsStoreLocation() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

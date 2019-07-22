@@ -36,9 +36,21 @@ package net.vpc.app.nuts;
  */
 public interface NutsTableFormat extends NutsFormat {
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsTableFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsTableFormat setSession(NutsSession session);
 
@@ -96,12 +108,20 @@ public interface NutsTableFormat extends NutsFormat {
         LAST_ROW_LINE,
         LAST_ROW_SEP,
         LAST_ROW_END;
+
+        /**
+         * lower-cased identifier for the enum entry
+         */
         private final String id;
 
         Separator() {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
+        /**
+         * lower cased identifier.
+         * @return lower cased identifier
+         */
         public String id() {
             return id;
         }

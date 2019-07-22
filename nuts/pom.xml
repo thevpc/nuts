@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.5.6</version>
+    <version>0.5.7</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -218,7 +218,7 @@
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.5.6.0</fileVersion>
+                                <fileVersion>0.5.7.0</fileVersion>
                                 <txtFileVersion>txt file version?</txtFileVersion>
                                 <fileDescription>a description</fileDescription>
                                 <copyright>my copyright</copyright>

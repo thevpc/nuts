@@ -40,4 +40,16 @@ public class CoreNutsConstants {
         }
         public static final String CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
     }
+
+    public static final class Files {
+        public static final String WORKSPACE_SECURITY_CONFIG_FILE_NAME = "nuts-security-config.json";
+        public static final String WORKSPACE_MAIN_CONFIG_FILE_NAME = "nuts-main-config.json";
+    }
+
+    /**
+     * valid values for Query parameter "face"
+     */
+    public static final class QueryFaces {
+        public static final String CATALOG = "catalog";
+    }
 }

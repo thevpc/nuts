@@ -24,9 +24,21 @@ public interface NutsPropertiesFormat extends NutsFormat {
 
     NutsPropertiesFormat setSort(boolean sort);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsPropertiesFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsPropertiesFormat setSession(NutsSession session);
 

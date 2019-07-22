@@ -12,12 +12,11 @@ import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallEvent;
-import net.vpc.app.nuts.NutsInstallListener;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceEvent;
-import net.vpc.app.nuts.core.repos.DefaultNutsInstalledRepository;
+import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsInstalledRepository;
 
 /**
  *
@@ -48,7 +47,7 @@ public interface NutsWorkspaceExt {
      */
     String[] getInstalledVersions(NutsId id, NutsSession session);
 
-    String[] getCompanionTools();
+    String[] getCompanionIds();
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
@@ -77,17 +76,7 @@ public interface NutsWorkspaceExt {
 
     NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
 
-    void fireOnAddRepository(NutsWorkspaceEvent event);
-
-    void fireOnRemoveRepository(NutsWorkspaceEvent event);
-
-    void fireOnInstall(NutsInstallEvent event);
-
-    void fireOnUpdate(NutsInstallEvent event) ;
-    
-    void fireOnUninstall(NutsInstallEvent event);
-    
-    public void deployBoot(NutsSession session, NutsId def,boolean withDependencies);
+    void deployBoot(NutsSession session, NutsId def,boolean withDependencies);
 
     /**
      * creates a zip file based on the folder. The folder should contain a
@@ -124,7 +113,8 @@ public interface NutsWorkspaceExt {
     //                                new NutsContent(destFile,
     //                                        true,
     //                                        false),
-    //                                null
+    //                                null,
+    //                    false,false,false,false,null
     //                        );
     //                    } else {
     //                        throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");

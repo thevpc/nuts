@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (autoSave == null) {
             autoSave = false;
         }
@@ -48,7 +47,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 cmdLine.setCommandName("config java").unexpectedArgument();
                 if (autoSave) {
-                    conf.save(false);
+                    conf.save(false, context.getSession());
                 }
             } else {
                 while (cmdLine.hasNext()) {
@@ -58,7 +57,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (autoSave) {
-                    conf.save(false);
+                    conf.save(false, context.getSession());
                 }
             }
             return true;
@@ -77,7 +76,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (autoSave) {
-                conf.save(false);
+                conf.save(false, context.getSession());
             }
             return true;
         } else if (cmdLine.next("list java") != null) {
@@ -121,11 +120,6 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
     }
 
 }

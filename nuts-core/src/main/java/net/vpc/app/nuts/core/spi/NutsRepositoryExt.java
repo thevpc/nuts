@@ -36,20 +36,6 @@ public interface NutsRepositoryExt {
 
     String getIdFilename(NutsId id);
 
-    int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode);
-
-    void fireOnUndeploy(NutsContentEvent evt);
-
-    void fireOnDeploy(NutsContentEvent file);
-
-    void fireOnInstall(NutsContentEvent evt);
-
-    void fireOnPush(NutsContentEvent file);
-
-    void fireOnAddRepository(NutsRepositoryEvent repository);
-
-    public void fireOnRemoveRepository(NutsRepositoryEvent repository);
-
     NutsIndexStoreClient getIndexStoreClient();
 
     void pushImpl(NutsPushRepositoryCommand command);

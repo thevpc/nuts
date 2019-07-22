@@ -105,7 +105,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public final NutsFetchDisplayOptions configure(boolean skipUnsupported, String... args) {
-        configure(false, ws.commandLine().setArgs(args));
+        configure(false, ws.commandLine().setArguments(args));
         return this;
     }
 

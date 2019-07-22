@@ -36,9 +36,21 @@ package net.vpc.app.nuts;
  */
 public interface NutsTreeFormat extends NutsFormat {
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsTreeFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsTreeFormat setSession(NutsSession session);
 

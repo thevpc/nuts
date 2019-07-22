@@ -61,7 +61,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     protected NutsCommandLine cmdLine(String[] args, NshExecutionContext context) {
-        return context.getWorkspace().commandLine().setArgs(args)
+        return context.getWorkspace().commandLine().setArguments(args)
                 .autoComplete(context.getGlobalContext().getAutoComplete())
                 .commandName(getName());
     }

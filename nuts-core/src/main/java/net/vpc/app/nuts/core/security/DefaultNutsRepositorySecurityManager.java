@@ -5,17 +5,17 @@
  */
 package net.vpc.app.nuts.core.security;
 
-import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsAddUserCommand;
-import net.vpc.app.nuts.core.DefaultNutsRemoveUserCommand;
-import net.vpc.app.nuts.core.DefaultNutsUpdateUserCommand;
-import net.vpc.app.nuts.core.repos.DefaultNutsRepositoryConfigManager;
+import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsAddUserCommand;
+import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsRemoveUserCommand;
+import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsUpdateUserCommand;
+import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepositoryConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -28,10 +28,17 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
     private final NutsRepository repo;
     private final WrapperNutsAuthenticationAgent agent;
+    private final Map<String, NutsAuthorizations> authorizations = new HashMap<>();
 
     public DefaultNutsRepositorySecurityManager(final NutsRepository repo) {
         this.repo = repo;
         this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), repo.config(), x -> getAuthenticationAgent(x));
+        this.repo.addRepositoryListener(new NutsRepositoryListener() {
+            @Override
+            public void onConfigurationChanged(NutsRepositoryEvent event) {
+                authorizations.clear();
+            }
+        });
     }
 
     @Override
@@ -61,9 +68,28 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         return new DefaultNutsRemoveUserCommand(repo);
     }
 
+    private NutsAuthorizations getAuthorizations(String n) {
+        NutsAuthorizations aa = authorizations.get(n);
+        if (aa != null) {
+            return aa;
+        }
+        NutsUserConfig s = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(n);
+        if (s != null) {
+            String[] rr = s.getPermissions();
+            aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
+            authorizations.put(n, aa);
+        } else {
+            aa = new NutsAuthorizations(Collections.emptyList());
+        }
+        return aa;
+    }
+
     @Override
     public boolean isAllowed(String right) {
-        String name = repo.getWorkspace().security().getCurrentLogin();
+        if (!repo.getWorkspace().security().isSecure()) {
+            return true;
+        }
+        String name = repo.getWorkspace().security().getCurrentUsername();
         if (NutsConstants.Users.ADMIN.equals(name)) {
             return true;
         }
@@ -73,15 +99,14 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         items.push(name);
         while (!items.isEmpty()) {
             String n = items.pop();
-            NutsUserConfig s = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(n);
-            if (s != null) {
-                if (s.containsRight("!" + right)) {
-                    return false;
-                }
-                if (s.containsRight(right)) {
-                    return true;
-                }
-                for (String g : s.getGroups()) {
+            NutsAuthorizations s = getAuthorizations(n);
+            Boolean ea = s.explicitAccept(right);
+            if (ea != null) {
+                return ea;
+            }
+            NutsUserConfig uc = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(n);
+            if (uc != null && uc.getGroups() != null) {
+                for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
                         visitedGroups.add(g);
                         items.push(g);
@@ -93,16 +118,16 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsEffectiveUser[] findUsers() {
-        List<NutsEffectiveUser> all = new ArrayList<>();
+    public NutsUser[] findUsers() {
+        List<NutsUser> all = new ArrayList<>();
         for (NutsUserConfig secu : NutsRepositoryConfigManagerExt.of(repo.config()).getUsers()) {
             all.add(getEffectiveUser(secu.getUser()));
         }
-        return all.toArray(new NutsEffectiveUser[0]);
+        return all.toArray(new NutsUser[0]);
     }
 
     @Override
-    public NutsEffectiveUser getEffectiveUser(String username) {
+    public NutsUser getEffectiveUser(String username) {
         NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(username);
         Stack<String> inherited = new Stack<>();
         if (u != null) {
@@ -115,7 +140,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
                 visited.add(s);
                 NutsUserConfig ss = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(s);
                 if (ss != null) {
-                    inherited.addAll(Arrays.asList(ss.getRights()));
+                    inherited.addAll(Arrays.asList(ss.getPermissions()));
                     for (String group : ss.getGroups()) {
                         if (!visited.contains(group)) {
                             curr.push(group);
@@ -124,7 +149,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
                 }
             }
         }
-        return u == null ? null : new DefaultNutsEffectiveUser(u, inherited.toArray(new String[0]));
+        return u == null ? null : new DefaultNutsUser(u, inherited.toArray(new String[0]));
     }
 
     @Override
@@ -139,8 +164,8 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent) {
-
+    public NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent, NutsUpdateOptions options) {
+        options= CoreNutsUtils.validate(options,repo.getWorkspace());
         DefaultNutsRepositoryConfigManager cc = (DefaultNutsRepositoryConfigManager) repo.config();
 
         if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent) == null) {
@@ -150,7 +175,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         NutsRepositoryConfig conf = cc.getStoredConfig();
         if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgent)) {
             conf.setAuthenticationAgent(authenticationAgent);
-            cc.fireConfigurationChanged();
+            cc.fireConfigurationChanged("authentication-agent",options.getSession());
         }
         return this;
     }

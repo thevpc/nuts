@@ -41,8 +41,8 @@ public interface NutsMapListener<K, V> extends NutsListener{
     /**
      * Invoked when item added
      *
-     * @param key
-     * @param value
+     * @param key key
+     * @param value value
      */
     default void entryAdded(K key, V value){
         
@@ -51,8 +51,8 @@ public interface NutsMapListener<K, V> extends NutsListener{
     /**
      * Invoked when item removed
      *
-     * @param key
-     * @param value
+     * @param key key
+     * @param value value
      */
     default void entryRemoved(K key, V value){
         
@@ -61,9 +61,9 @@ public interface NutsMapListener<K, V> extends NutsListener{
     /**
      * Invoked when item updated
      *
-     * @param key
-     * @param newValue
-     * @param oldValue
+     * @param key key
+     * @param newValue new value
+     * @param oldValue old value
      */
     default void entryUpdated(K key, V newValue, V oldValue){
         

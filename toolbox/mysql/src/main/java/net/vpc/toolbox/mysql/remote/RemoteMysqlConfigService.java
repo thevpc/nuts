@@ -50,7 +50,7 @@ public class RemoteMysqlConfigService {
     }
 
     private Path getConfigPath() {
-        return context.getConfigFolder().resolve(name + CLIENT_CONFIG_EXT);
+        return context.getSharedConfigFolder().resolve(name + CLIENT_CONFIG_EXT);
     }
 
     public boolean existsConfig() {

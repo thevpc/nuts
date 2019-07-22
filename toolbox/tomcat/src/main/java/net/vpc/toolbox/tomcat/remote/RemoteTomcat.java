@@ -11,7 +11,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import net.vpc.app.nuts.NutsCommandLine;
@@ -305,7 +304,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(getContext().getWorkspace().commandLine().setArgs(
+                install(getContext().getWorkspace().commandLine().setArguments(
                         new String[]{
                             "--name",
                             instance,
@@ -339,7 +338,7 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getConfigFolder(),
+        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
                 (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
             for (Path entry : pp) {
                 try {

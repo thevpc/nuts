@@ -94,12 +94,21 @@ public interface NutsXmlFormat extends NutsFormat {
      */
     <T> T parse(File file, Class<T> clazz);
 
-    @Override
-    NutsSession getSession();
-
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsXmlFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsXmlFormat setSession(NutsSession session);
 

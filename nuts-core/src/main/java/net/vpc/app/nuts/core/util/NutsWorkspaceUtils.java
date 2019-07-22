@@ -28,6 +28,7 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
  * @author vpc
  */
 public class NutsWorkspaceUtils {
+    private static final Logger LOG = Logger.getLogger(NutsWorkspaceUtils.class.getName());
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
         String[] conf = {};
@@ -349,5 +350,61 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
         }
     }
+    public static class Events{
 
+        public static void fireOnInstall(NutsWorkspace ws,NutsInstallEvent event) {
+            for (NutsInstallListener listener : ws.getInstallListeners()) {
+                listener.onInstall(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onInstall(event);
+            }
+        }
+
+        public static void fireOnUpdate(NutsWorkspace ws,NutsInstallEvent event) {
+            for (NutsInstallListener listener : ws.getInstallListeners()) {
+                listener.onUpdate(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onUpdate(event);
+            }
+        }
+
+        public static void fireOnUninstall(NutsWorkspace ws,NutsInstallEvent event) {
+            for (NutsInstallListener listener : ws.getInstallListeners()) {
+                listener.onUninstall(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onUninstall(event);
+            }
+        }
+
+        public static void fireOnAddRepository(NutsWorkspace ws,NutsWorkspaceEvent event) {
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(ws.config().getName(), 20),
+                        event.getRepository().config().name()});
+            }
+
+            for (NutsWorkspaceListener listener : ws.getWorkspaceListeners()) {
+                listener.onAddRepository(event);
+            }
+            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+                listener.onAddRepository(event);
+            }
+        }
+
+        public static void fireOnRemoveRepository(NutsWorkspace ws,NutsWorkspaceEvent event) {
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(ws.config().getName(), 20),
+                        event.getRepository().config().name()});
+            }
+            for (NutsWorkspaceListener listener : ws.getWorkspaceListeners()) {
+                listener.onRemoveRepository(event);
+            }
+            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+                listener.onRemoveRepository(event);
+            }
+        }
+
+    }
 }

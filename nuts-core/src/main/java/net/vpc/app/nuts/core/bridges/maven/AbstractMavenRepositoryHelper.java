@@ -66,7 +66,7 @@ public abstract class AbstractMavenRepositoryHelper {
     protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
         switch (CoreStringUtils.trim(id.getFace())) {
             case NutsConstants.QueryFaces.COMPONENT_HASH:
-            case NutsConstants.QueryFaces.DESC_HASH: {
+            case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 break;
             }
             default: {
@@ -112,7 +112,7 @@ public abstract class AbstractMavenRepositoryHelper {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESC_HASH), new ByteArrayInputStream(bytes), session);
+            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH), new ByteArrayInputStream(bytes), session);
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
@@ -128,7 +128,7 @@ public abstract class AbstractMavenRepositoryHelper {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
             }
-            case NutsConstants.QueryFaces.DESC_HASH: {
+            case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 return ".pom.sha1";
             }
             case NutsConstants.QueryFaces.CATALOG: {

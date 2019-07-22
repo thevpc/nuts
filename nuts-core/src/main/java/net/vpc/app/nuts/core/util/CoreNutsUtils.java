@@ -58,6 +58,14 @@ public class CoreNutsUtils {
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
+    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
+    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
+    static {
+        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.ARCH, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OS, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OSDIST, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.PLATFORM, null);
+    }
 
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
         @Override
@@ -167,15 +175,7 @@ public class CoreNutsUtils {
                     )
                     .build();
 
-    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
-    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
 
-    static {
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.ARCH, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OS, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OSDIST, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.PLATFORM, null);
-    }
 
     public static NutsId findNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
         if (all != null) {
@@ -448,7 +448,7 @@ public class CoreNutsUtils {
                 .setFailSafe(options.isFailSafe())
                 .setName(options.getName())
                 .setLocation(options.getLocation())
-                .setDeployPriority(options.getDeployOrder());
+                .setDeployOrder(options.getDeployOrder());
     }
 
     public static NutsCreateRepositoryOptions refToOptions(NutsRepositoryRef ref) {
@@ -795,5 +795,60 @@ public class CoreNutsUtils {
         }
     }
 
+    public static NutsUpdateOptions validate(NutsUpdateOptions o,NutsWorkspace ws){
+        if(o==null){
+            o=new NutsUpdateOptions();
+        }
+        if(o.getSession()==null){
+            o.session(ws.createSession());
+        }
+        return o;
+    }
     
+    public static NutsAddOptions validate(NutsAddOptions o,NutsWorkspace ws){
+        if(o==null){
+            o=new NutsAddOptions();
+        }
+        if(o.getSession()==null){
+            o.session(ws.createSession());
+        }
+        return o;
+    }
+
+    public static NutsRemoveOptions validate(NutsRemoveOptions o,NutsWorkspace ws){
+        if(o==null){
+            o=new NutsRemoveOptions();
+        }
+        if(o.getSession()==null){
+            o.session(ws.createSession());
+        }
+        return o;
+    }
+
+    public static NutsAddOptions toAddOptions(NutsUpdateOptions o){
+        return new NutsAddOptions().session(o.getSession());
+    }
+    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o){
+        return new NutsRemoveOptions().session(o.getSession());
+    }
+
+    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o){
+        return new NutsUpdateOptions().session(o.getSession());
+    }
+    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o){
+        return new NutsUpdateOptions().session(o.getSession());
+    }
+
+    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o){
+        return new NutsRemoveOptions().session(o.getSession());
+    }
+    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o){
+        return new NutsRemoveOptions().session(o.getSession());
+    }
+
+    public static String idToPath(NutsId id) {
+        return id.getGroup().replace('.','/')+"/"+
+                id.getName()+"/"+id.getVersion();
+    }
+
 }

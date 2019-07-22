@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsConstants;
+
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -46,7 +46,7 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.repos.DefaultNutsInstalledRepository;
+import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -61,7 +61,6 @@ public class FormattableNutsId {
     NutsId id;
     boolean i;
     boolean d;
-    Boolean extension = null;
     Boolean executable = null;
     Boolean executableApp = null;
     boolean fetched = false;
@@ -346,10 +345,13 @@ public class FormattableNutsId {
                 this.executableApp = desc.isNutsApplication();
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
-            this.status_e = def.getId().getShortName().equals(NutsConstants.Ids.NUTS_API) ? 'a'
-                    : def.getId().getShortName().equals(NutsConstants.Ids.NUTS_RUNTIME) ? 'r'
-                    : extension != null && extension ? 'e'
-                            : '-';
+            if(def!=null) {
+                this.status_e = def.isApi() ? 'a'
+                        : def.isRuntime() ? 'r'
+                        : def.isExtension()  ? 'e'
+                        : def.isCompanion()  ? 'c'
+                        : '-';
+            }
             this.status_i = buildComponentAppStatus();
             this.status_s = '-';
             this.status_o = '-';

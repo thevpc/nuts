@@ -268,19 +268,21 @@ public interface NutsApplicationContext extends NutsConfigurable {
      */
     Path cacheFolder();
 
-    /**
-     * application store id (typically the long nuts id)
-     *
-     * @return application store id (typically the long nuts id)
-     */
-    String getStoreId();
+    Path getSharedAppsFolder();
 
-    /**
-     * equivalent to {@code getStoreId()}
-     *
-     * @return application store id (typically the long nuts id)
-     */
-    String storeId();
+    Path getSharedConfigFolder();
+
+    Path getSharedLogFolder();
+
+    Path getSharedTempFolder();
+
+    Path getSharedVarFolder();
+
+    Path getSharedLibFolder();
+
+    Path getSharedRunFolder();
+
+    Path getSharedFolder(NutsStoreLocation location);
 
     /**
      * application nuts id

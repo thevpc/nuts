@@ -110,7 +110,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand lib();
+    NutsSearchCommand libs();
 
     /**
      * set lib filter. if true lib (non app) only are retrieved.
@@ -118,7 +118,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand lib(boolean enable);
+    NutsSearchCommand libs(boolean enable);
 
     /**
      * set lib filter. if true lib (non app) only are retrieved.
@@ -126,14 +126,67 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setLib(boolean enable);
+    NutsSearchCommand setLibs(boolean enable);
+
+    /**
+     * set extensions filter. extensions only are retrieved.
+     *
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand extensions();
+
+    /**
+     * set extensions filter. if true extensions only are retrieved.
+     *
+     * @param enable extensions filter
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand extensions(boolean enable);
+
+    /**
+     * set extensions filter. if true extensions only are retrieved.
+     *
+     * @param enable extensions filter
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand setExtensions(boolean enable);
+
+
+    /**
+     * set companions filter. companions only are retrieved.
+     *
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand companions();
+
+    /**
+     * set companions filter. if true companions only are retrieved.
+     *
+     * @param enable companions filter
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand companions(boolean enable);
+
+    /**
+     * set companions filter. if true companions only are retrieved.
+     *
+     * @param enable companions filter
+     * @return {@code this} instance
+     * @since 0.5.7
+     */
+    NutsSearchCommand setCompanions(boolean enable);
 
     /**
      * set app filter. non lib (app) only are retrieved.
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand app();
+    NutsSearchCommand apps();
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -141,7 +194,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand app(boolean enable);
+    NutsSearchCommand apps(boolean enable);
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -149,7 +202,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setApp(boolean enable);
+    NutsSearchCommand setApps(boolean enable);
+
+    NutsSearchCommand runtime();
+
+    NutsSearchCommand runtime(boolean enable);
+
+    NutsSearchCommand setRuntime(boolean enable);
 
     /**
      * set nuts app filter. nuts app (implementing NutsApplication) only are
@@ -157,7 +216,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand nutsApp();
+    NutsSearchCommand nutsApps();
 
     /**
      * set nuts app filter. if true nuts app (implementing NutsApplication) only
@@ -166,7 +225,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NutsSearchCommand nutsApp(boolean enable);
+    NutsSearchCommand nutsApps(boolean enable);
 
     /**
      * set nuts app filter. if true nuts app (implementing NutsApplication) only
@@ -175,28 +234,44 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setNutsApp(boolean enable);
+    NutsSearchCommand setNutsApps(boolean enable);
+
+    boolean isRuntime();
+
+    /**
+     * companion filter
+     *
+     * @return companion filter
+     */
+    boolean isCompanions();
+
+    /**
+     * extension filter
+     *
+     * @return extension filter
+     */
+    boolean isExtensions();
 
     /**
      * app filter
      *
      * @return app filter
      */
-    boolean isApp();
+    boolean isApps();
 
     /**
      * nuts app filter
      *
      * @return nuts app filter
      */
-    boolean isNutsApp();
+    boolean isNutsApps();
 
     /**
      * lib filter
      *
      * @return lib filter
      */
-    boolean isLib();
+    boolean isLibs();
 
     /**
      * add id to search.
@@ -474,7 +549,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     Comparator getComparator();
 
     boolean isDistinct();
-    
+
+    String getTargetApiVersion();
+
+    NutsSearchCommand setTargetApiVersion(String targetApiVersion);
+
+    NutsSearchCommand targetApiVersion(String targetApiVersion);
+
     boolean isMain();
 
     boolean isLatest();
@@ -677,7 +758,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     /**
      * default version only
      *
-     * @return @since v0.5.5
+     * @return {@code this} instance
+     * @since v0.5.5
      */
     NutsSearchCommand defaultVersions();
 
@@ -973,9 +1055,17 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     boolean isCached();
 
     /**
+     * search for default versions status.
+     * <ul>
+     * <li>return true of only default values are searched for</li>
+     * <li>return false of only default values are searched for</li>
+     * <li>return null of both default values and non default ones are searched for</li>
+     * </ul>
+     *
+     *
      *
      * @since v0.5.5
-     * @return
+     * @return search for default versions status
      */
     Boolean getDefaultVersions();
 

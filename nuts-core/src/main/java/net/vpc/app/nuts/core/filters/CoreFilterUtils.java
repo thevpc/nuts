@@ -38,13 +38,12 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsExtensionInfo;
+import net.vpc.app.nuts.NutsExtensionInformation;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyFilterAnd;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyFilterOr;
 import net.vpc.app.nuts.core.filters.descriptor.NutsDescriptorFilterAnd;
@@ -144,10 +143,10 @@ public class CoreFilterUtils {
         return new NutsDependencyFilterAnd(all);
     }
 
-    public static List<NutsExtensionInfo> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInfo> base) {
-        LinkedHashMap<String, NutsExtensionInfo> valid = new LinkedHashMap<>();
-        for (NutsExtensionInfo n : base) {
-            NutsExtensionInfo old = valid.get(n.getId().getShortName());
+    public static List<NutsExtensionInformation> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInformation> base) {
+        LinkedHashMap<String, NutsExtensionInformation> valid = new LinkedHashMap<>();
+        for (NutsExtensionInformation n : base) {
+            NutsExtensionInformation old = valid.get(n.getId().getShortName());
             if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
                 valid.put(n.getId().getShortName(), n);
             }

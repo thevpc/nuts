@@ -155,9 +155,21 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
 
     NutsDeployCommand setSourceRepository(String repository);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsDeployCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsDeployCommand setSession(NutsSession session);
 

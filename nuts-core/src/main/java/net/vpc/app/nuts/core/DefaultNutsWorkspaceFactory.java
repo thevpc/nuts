@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import java.lang.reflect.Modifier;
 import net.vpc.app.nuts.*;
@@ -40,11 +41,12 @@ import net.vpc.app.nuts.core.util.common.ClassClassMap;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.ListMap;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory, NutsBootWorkspaceFactory {
+public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceFactory.class.getName());
 
@@ -55,24 +57,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory, NutsBo
     private final ClassClassMap discoveredCacheByClass = new ClassClassMap();
     private NutsWorkspace workspace;
 
-    public DefaultNutsWorkspaceFactory() {
-    }
-
-    public DefaultNutsWorkspaceFactory(NutsWorkspace workspace) {
-        this.workspace = workspace;
-    }
-
-    @Override
-    public int getBootSupportLevel(NutsWorkspaceOptions options) {
-        return NutsComponent.DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public NutsWorkspace createWorkspace(NutsWorkspaceOptions options) {
-        return new DefaultNutsWorkspace();
-    }
-
-    public final void initialize(NutsWorkspace ws) {
+    public DefaultNutsWorkspaceFactory(NutsWorkspace ws) {
         this.workspace = ws;
     }
 

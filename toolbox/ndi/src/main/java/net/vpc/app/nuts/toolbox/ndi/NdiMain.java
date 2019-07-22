@@ -10,6 +10,12 @@ import java.util.List;
 
 public class NdiMain extends NutsApplication {
 
+    public static final String[] COMPANIONS = {"net.vpc.app.nuts:nuts",
+            "net.vpc.app.nuts.toolbox:ndi",
+            "net.vpc.app.nuts.toolbox:nsh",
+            "net.vpc.app.nuts.toolbox:nadmin"
+    };
+
     public static void main(String[] args) {
         new NdiMain().runAndExit(args);
     }
@@ -44,9 +50,6 @@ public class NdiMain extends NutsApplication {
                     if (context.configureFirst(cmd)) {
                     } else if ((a = cmd.nextBoolean("-F", "--force-all")) != null) {
                         forceAll = a.getBooleanValue();
-                        if (forceAll) {
-                            context.getSession().force();
-                        }
                     } else if ((a = cmd.nextBoolean("-t", "--fetch")) != null) {
                         fetch = a.getBooleanValue();
                     } else if ((a = cmd.nextBoolean("-x", "--external", "--spawn")) != null) {
@@ -63,6 +66,16 @@ public class NdiMain extends NutsApplication {
                         }
                     } else if ((a = cmd.nextString("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getStringValue());
+                    } else if ((a = cmd.nextString("-i", "--installed")) != null) {
+                        forceAll = true;
+                        for (NutsId resultId : context.getWorkspace().search().installed().getResultIds()) {
+                            idsToInstall.add(resultId.getLongName());
+                        }
+                    } else if ((a = cmd.nextString("-c", "--companions")) != null) {
+                        forceAll = true;
+                        for (String companion : COMPANIONS) {
+                            idsToInstall.add(context.getWorkspace().search().id(companion).latest().getResultIds().required().getLongName());
+                        }
                     } else if (cmd.peek().isOption()) {
                         cmd.unexpectedArgument();
                     } else {
@@ -87,6 +100,9 @@ public class NdiMain extends NutsApplication {
             cmd.required();
         }
         if (cmd.isExecMode()) {
+            if (forceAll) {
+                context.getSession().yes();
+            }
             SystemNdi ndi = createNdi(context);
             if (ndi == null) {
                 throw new NutsExecutionException(context.getWorkspace(), "Platform not supported : " + context.getWorkspace().config().getPlatformOs(), 2);
@@ -95,7 +111,7 @@ public class NdiMain extends NutsApplication {
             if (!context.getSession().isPlainTrace()) {
                 subTrace = false;
             }
-            if (idsToInstall.isEmpty()) {
+            if (!idsToInstall.isEmpty()) {
                 for (String id : idsToInstall) {
                     try {
                         result.addAll(
@@ -121,7 +137,8 @@ public class NdiMain extends NutsApplication {
                 if (context.getSession().isTrace()) {
                     context.workspace().object().session(context.session()).value(result).println();
                 }
-            } else {
+            }
+            if (!idsToUninstall.isEmpty()) {
                 for (String id : idsToUninstall) {
                     try {
                         ndi.removeNutsScript(
@@ -136,20 +153,28 @@ public class NdiMain extends NutsApplication {
         }
     }
 
-    @Override
-    protected void onInstallApplication(NutsApplicationContext context) {
-        NutsCommandLine cmd = context.commandLine()
-                .setCommandName("ndi --nuts-exec-mode=install");
+    protected void onInstallApplicationOrUpdate(NutsApplicationContext context, boolean update) {
+        NutsCommandLine cmd = context.commandLine();
+        if (update) {
+            cmd.setCommandName("ndi --nuts-exec-mode=update");
+        } else {
+            cmd.setCommandName("ndi --nuts-exec-mode=install");
+        }
         NutsArgument a;
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
                 //
+            } else if((a=cmd.nextBoolean("--skip-init"))!=null){
+                if(a.getBooleanValue()){
+                    return;
+                }
             } else {
                 cmd.unexpectedArgument();
             }
         }
         SystemNdi ndi = createNdi(context);
         if (ndi != null) {
+            context.getSession().yes();
             try {
                 ndi.configurePath(context.getSession());
             } catch (IOException e) {
@@ -160,7 +185,7 @@ public class NdiMain extends NutsApplication {
             if (!context.getSession().isPlainOut()) {
                 subTrace = false;
             }
-            for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin"}) {
+            for (String s : COMPANIONS) {
                 try {
                     result.addAll(Arrays.asList(
                             ndi.createNutsScript(
@@ -182,10 +207,15 @@ public class NdiMain extends NutsApplication {
     }
 
     @Override
+    protected void onInstallApplication(NutsApplicationContext context) {
+        onInstallApplicationOrUpdate(context,false);
+    }
+
+    @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
-        onInstallApplication(applicationContext);
+        onInstallApplicationOrUpdate(applicationContext,true);
     }
 
     @Override

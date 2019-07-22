@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -50,26 +50,28 @@ public interface NutsJsonFormat extends NutsFormat {
     NutsJsonFormat setCompact(boolean compact);
 
     /**
-     * @return @since 0.5.6
+     * return value to format
+     * @return value to format
+     * @since 0.5.6
      */
     Object getValue();
 
     /**
-     * @param value
-     * @return
+     * @param value value to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsJsonFormat value(Object value);
 
     /**
-     * @param value
-     * @return
+     * @param value value to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsJsonFormat setValue(Object value);
 
     <T> T parse(URL url, Class<T> clazz);
-    
+
     <T> T parse(InputStream inputStream, Class<T> clazz);
 
     <T> T parse(byte[] bytes, Class<T> clazz);
@@ -80,9 +82,21 @@ public interface NutsJsonFormat extends NutsFormat {
 
     <T> T parse(File file, Class<T> cls);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsJsonFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsJsonFormat setSession(NutsSession session);
 

@@ -45,7 +45,8 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     private boolean runtime;
     private boolean updateApplied;
     private boolean updateForced;
-    private boolean updateAvailable;
+    private boolean updateVersionAvailable;
+    private boolean updateStatusAvailable;
 
     public DefaultNutsUpdateResult() {
     }
@@ -102,11 +103,25 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
 
     @Override
     public boolean isUpdateAvailable() {
-        return updateAvailable;
+        return isUpdateVersionAvailable() || isUpdateStatusAvailable();
     }
 
-    public void setUpdateAvailable(boolean updateAvailable) {
-        this.updateAvailable = updateAvailable;
+    @Override
+    public boolean isUpdateVersionAvailable() {
+        return updateVersionAvailable;
+    }
+
+    public void setUpdateVersionAvailable(boolean updateVersion) {
+        this.updateVersionAvailable = updateVersion;
+    }
+
+    @Override
+    public boolean isUpdateStatusAvailable() {
+        return updateStatusAvailable;
+    }
+
+    public void setUpdateStatusAvailable(boolean updateStatus) {
+        this.updateStatusAvailable = updateStatus;
     }
 
     public void setLocal(NutsDefinition local) {

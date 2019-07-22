@@ -94,7 +94,7 @@ public class Nsh extends NutsApplication {
                         .setOwner(applicationContext.getAppId())
                         .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new net.vpc.app.nuts.NutsAddOptions()
-                                .session(sessionCopy.force(force).trace(false))
+                                .session(sessionCopy.yes(force).trace(false))
                 )) {
                     reinstalled.add(command.getName());
                 } else {
@@ -117,7 +117,7 @@ public class Nsh extends NutsApplication {
                 applicationContext.session().out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
             }
         }
-        cfg.save(false);
+        cfg.save(false, applicationContext.getSession());
     }
 
     @Override

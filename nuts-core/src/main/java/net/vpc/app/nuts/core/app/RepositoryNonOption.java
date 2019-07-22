@@ -29,13 +29,10 @@
  */
 package net.vpc.app.nuts.core.app;
 
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  *
@@ -43,31 +40,32 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class RepositoryNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
     private NutsRepository repository;
 
-    public RepositoryNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+    public RepositoryNonOption(NutsWorkspace workspace, String name) {
+        super(workspace,name);
     }
 
     public RepositoryNonOption(String name, NutsRepository repository) {
-        super(name);
+        super(repository.getWorkspace(),name);
         this.repository = repository;
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        if (workspace != null) {
-            for (NutsRepository repository : workspace.config().getRepositories()) {
-                all.add(new NutsDefaultArgumentCandidate(repository.config().getName()));
+        NutsCommandLine c = getWorkspace().commandLine();
+        if(repository!=null){
+            if (repository.config().isSupportedMirroring()) {
+                for (NutsRepository repository : repository.config().getMirrors()) {
+                    all.add(c.createCandidate(repository.config().getName()));
+                }
             }
-        }
-        if (repository != null && repository.config().isSupportedMirroring()) {
-            for (NutsRepository repository : repository.config().getMirrors()) {
-                all.add(new NutsDefaultArgumentCandidate(repository.config().getName()));
+        }else{
+            for (NutsRepository repository : getWorkspace().config().getRepositories()) {
+                all.add(c.createCandidate(repository.config().getName()));
             }
+
         }
         return all;
     }

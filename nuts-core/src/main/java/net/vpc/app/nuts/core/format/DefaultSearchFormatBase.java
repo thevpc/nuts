@@ -30,11 +30,8 @@
 package net.vpc.app.nuts.core.format;
 
 import java.io.PrintWriter;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsIterableFormat;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 
 /**
@@ -67,11 +64,27 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
         return displayOptions;
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, commandLine);
     }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public NutsIterableFormat configure(boolean skipUnsupported, String... args) {
         return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, args, "search-" + getOutputFormat().name().toLowerCase());

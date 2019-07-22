@@ -40,11 +40,14 @@ import net.vpc.common.javashell.JShellContext;
  */
 public interface NutsShellContext extends JShellContext {
 
+    NutsSession session();
+
     NutsSession getSession();
 
     NutsShellContext setSession(NutsSession session);
 
-//    NutsSessionTerminal getTerminal();
+    NutsWorkspace workspace();
+
     NutsWorkspace getWorkspace();
 
     void setWorkspace(NutsWorkspace workspace);

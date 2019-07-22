@@ -6,6 +6,7 @@
        **-w** or **--ws** or **--workspace** : update all workspace\'s related components (api, runtime and extensions)
        **-i** or **--installed** : update all installed components
        **-e** or **--extensions** : update all workspace\'s extensions
+       **-ec** or **--companions** : update all companions
        **-r** or **--runtime** : update workspace\'s runtime component (minor workspace update)
        **-A** or **--api** : update workspace\'s api (major workspace update)
        **-v** \<version\>

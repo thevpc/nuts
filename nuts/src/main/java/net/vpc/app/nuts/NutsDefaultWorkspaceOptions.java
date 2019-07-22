@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Created by vpc on 1/23/17.
@@ -43,6 +44,7 @@ import java.util.Map;
  * @since 0.5.4
  */
 public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptions {
+    private static final long serialVersionUID = 1;
 
     public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
         return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
@@ -181,9 +183,15 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     private long creationTime;
 
     /**
+     * if true no real execution, wil dry exec
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsClassLoaderProvider classLoaderProvider;
+    private boolean dry = false;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Supplier<ClassLoader> classLoaderSupplier;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -399,6 +407,16 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     }
 
     @Override
+    public boolean isDry() {
+        return dry;
+    }
+
+    public NutsWorkspaceOptions setDry(boolean dry) {
+        this.dry = dry;
+        return this;
+    }
+
+    @Override
     public long getCreationTime() {
         return creationTime;
     }
@@ -439,12 +457,12 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     }
 
     @Override
-    public NutsClassLoaderProvider getClassLoaderProvider() {
-        return classLoaderProvider;
+    public Supplier<ClassLoader> getClassLoaderSupplier() {
+        return classLoaderSupplier;
     }
 
-    public NutsDefaultWorkspaceOptions setClassLoaderProvider(NutsClassLoaderProvider provider) {
-        this.classLoaderProvider = provider;
+    public NutsDefaultWorkspaceOptions setClassLoaderSupplier(Supplier<ClassLoader> provider) {
+        this.classLoaderSupplier = provider;
         return this;
     }
 

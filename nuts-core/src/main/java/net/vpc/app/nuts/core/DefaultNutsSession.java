@@ -49,6 +49,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
     private boolean trace;
+    private boolean force;
     private NutsConfirmationMode confirm = null;
     private NutsOutputFormat outputFormat;
     protected NutsIterableFormat iterFormatHandler = null;
@@ -273,11 +274,27 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return this;
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public Object configure(boolean skipUnsupported, String... args) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-session");
@@ -353,7 +370,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
-                case "--force":
+                case "--force":{
+                    a = cmdLine.nextBoolean();
+                    if (enabled) {
+                        this.setForce(a.getBooleanValue());
+                    }
+                    return true;
+                }
                 case "--yes":
                 case "-y": {
                     if (enabled) {
@@ -399,7 +422,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                         if (v.isEmpty()) {
                             getTerminal().setMode(NutsTerminalMode.FORMATTED);
                         } else {
-                            NutsArgument bb = cmdLine.newArgument(v);
+                            NutsArgument bb = cmdLine.createArgument(v);
                             Boolean b = bb.getBoolean(null);
                             if (b != null) {
                                 if (b) {
@@ -549,7 +572,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public boolean isForce() {
-        return getConfirm() == NutsConfirmationMode.YES;
+        return force;
     }
 
     @Override
@@ -558,13 +581,24 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession force(boolean force) {
-        return setForce(force);
+    public NutsSession force(boolean value) {
+        return setForce(value);
     }
 
     @Override
     public NutsSession setForce(boolean force) {
-        return setConfirm(force ? NutsConfirmationMode.YES : null);
+        this.force=force;
+        return this;
+    }
+
+    @Override
+    public boolean isYes() {
+        return getConfirm() == NutsConfirmationMode.YES;
+    }
+
+    @Override
+    public boolean isNo() {
+        return getConfirm() == NutsConfirmationMode.NO;
     }
 
     @Override
@@ -578,8 +612,38 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession ask(boolean ask) {
-        return setAsk(true);
+    public NutsSession ask(boolean value) {
+        return setAsk(value);
+    }
+
+    @Override
+    public NutsSession setYes(boolean value) {
+        return setConfirm(value ? NutsConfirmationMode.YES : null);
+    }
+
+    @Override
+    public NutsSession yes(boolean value) {
+        return setYes(value);
+    }
+
+    @Override
+    public NutsSession setNo(boolean value) {
+        return setConfirm(value ? NutsConfirmationMode.NO : null);
+    }
+
+    @Override
+    public NutsSession no(boolean value) {
+        return setNo(value);
+    }
+
+    @Override
+    public NutsSession no() {
+        return no(true);
+    }
+
+    @Override
+    public NutsSession yes() {
+        return yes(true);
     }
 
     @Override

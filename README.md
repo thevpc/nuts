@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.5.6.0
+/_/ |_/\__,_/\__/____/   version 0.5.7.0
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
@@ -31,7 +31,7 @@ to  install and uninstall components allowing multiple versions of the very same
 + find              : searche for existing/installable components
 
 ## Download Latest stable version
-+ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar)
++ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar)
 
 ## Requirements
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
@@ -39,12 +39,12 @@ Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 ## Installation
 
 ```
-java -jar nuts-0.5.6.jar
+java -jar nuts-0.5.7.jar
 ```
 
 You may want to install in more verbose manner:
 ```
-java -jar nuts-0.5.6.jar --trace
+java -jar nuts-0.5.7.jar --trace
 ```
 
 To check if nuts is installed issue this command:
@@ -56,7 +56,7 @@ nuts version
 It should show a result like this (nuts-api-version/nuts-impl-version)
 
 ```
-0.5.6/0.5.6.0
+0.5.7/0.5.7.0
 ```
 
 # Troubleshooting
@@ -103,13 +103,14 @@ nuts update --all
 ### run without script nuts [Windows,iOS]
 
 ```
-java -jar nuts-0.5.6.jar ...your command here...
+java -jar nuts-0.5.7.jar ...your command here...
 ```
 
 ## Latest News
 
-+ 2019/06/23 	nuts 0.5.6.0 released [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.6.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md)
-+ 2019/06/08 	nuts 0.5.5.0 released [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.5.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md)
++ 2019/07/14 	nuts 0.5.7.0 released [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.7.0.md)
++ 2019/06/23 	nuts 0.5.6.0 released [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md)
++ 2019/06/08 	nuts 0.5.5.0 released [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md)
 + 2019/04/21 	nuts 0.5.4.0 released [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.4.0.md)
 + 2019/01/05 	nuts 0.5.3.0 released [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.3.0.md)
 + 2018/12/28 	nuts 0.5.2.0 released [nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.2.0.md)

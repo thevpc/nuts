@@ -80,11 +80,27 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
         return name;
     }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, getName());
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);

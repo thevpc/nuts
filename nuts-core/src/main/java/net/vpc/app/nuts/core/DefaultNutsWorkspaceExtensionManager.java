@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigBoot;
 import net.vpc.app.nuts.core.spi.NutsFormatFilteredPrintStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
@@ -58,11 +59,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
     private final Set<String> exclusions = new HashSet<String>();
     private final NutsWorkspace ws;
+    private final NutsBootWorkspaceFactory bootFactory;
     private final NutsWorkspaceFactory objectFactory;
 
-    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceFactory objectFactory) {
+    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory,String[] excludedExtensions) {
         this.ws = ws;
-        this.objectFactory = objectFactory;
+        this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
+        this.bootFactory = bootFactory;
+        setExcludedExtensions(excludedExtensions);
     }
 
     public boolean isExcludedExtension(NutsId excluded) {
@@ -84,12 +88,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
 //    @Override
-    public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
+    public List<NutsExtensionInformation> findWorkspaceExtensions(NutsSession session) {
         return findWorkspaceExtensions(ws.config().getApiVersion(), session);
     }
 
   //  @Override
-    public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
+    public List<NutsExtensionInformation> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
             version = ws.config().getApiVersion();
         }
@@ -98,31 +102,31 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     //@Override
-    public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
+    public List<NutsExtensionInformation> findExtensions(String id, String extensionType, NutsSession session) {
         return findExtensions(ws.id().parseRequired(id), extensionType, session);
     }
 
    // @Override
-    public List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session) {
+    public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException(ws, "Missing version");
         }
-        List<NutsExtensionInfo> ret = new ArrayList<>();
+        List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
             String url = r + "/" + CoreIOUtils.getPath(id, "." + extensionType, '/');
             allUrls.add(url);
             URL u = expandURL(url);
             if (u != null) {
-                NutsExtensionInfo[] s = new NutsExtensionInfo[0];
+                NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.json().parse(rr, DefaultNutsExtensionInfo[].class);
+                    s = ws.json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException e) {
                     //ignore!
                 }
                 if (s != null) {
-                    for (NutsExtensionInfo nutsExtensionInfo : s) {
-                        ((DefaultNutsExtensionInfo) nutsExtensionInfo).setSource(u.toString());
+                    for (NutsExtensionInformation nutsExtensionInfo : s) {
+                        ((DefaultNutsExtensionInformation) nutsExtensionInfo).setSource(u.toString());
                         ret.add(nutsExtensionInfo);
                     }
                 }
@@ -135,7 +139,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return ret;
     }
 
-    protected void onInitializeWorkspace(ClassLoader bootClassLoader) {
+    public void onInitializeWorkspace(ClassLoader bootClassLoader) {
         //now will iterate over Extension classes to wire them ...
         discoverTypes(bootClassLoader);
         List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class);
@@ -192,7 +196,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
-    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
+    public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
         NutsSession searchSession = session.trace(false);
         if (id == null) {
@@ -563,8 +567,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return NutsWorkspaceConfigManagerExt.of(ws.config());
     }
 
-    private NutsWorkspaceConfig getStoredConfig() {
-        return configExt().getStoredConfig();
+    private NutsWorkspaceConfigBoot getStoredConfig() {
+        return configExt().getStoredConfigBoot();
     }
 
     public synchronized NutsURLClassLoader getNutsURLClassLoader(URL[] urls, ClassLoader parent) {

@@ -69,38 +69,79 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
     /**
-     * @return @since 0.5.6
+     * id to format
+     * @return id to format
+     * @since 0.5.6
      */
     NutsId getValue();
 
 
+    /**
+     * create new instance of id builder
+     * @return new instance of id builder
+     */
     NutsIdBuilder builder();
 
+    /**
+     * detect nuts id from resources containing the given class
+     * or null if not found. If multiple resolutions return the first.
+     * @param clazz to search for
+     * @return nuts id detected from resources containing the given class
+     */
     NutsId resolveId(Class clazz);
 
+    /**
+     * detect all nuts ids from resources containing the given class.
+     * @param clazz to search for
+     * @return all nuts ids detected from resources containing the given class
+     */
     NutsId[] resolveIds(Class clazz);
 
     /**
-     * @param id
-     * @return
+     * set id to format
+     * @param id id to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsIdFormat value(NutsId id);
 
     /**
-     * @param id
-     * @return
+     * id to format
+     * @param id id to format
+     * @return {@code this} instance
      * @since 0.5.6
      */
     NutsIdFormat setValue(NutsId id);
 
-    NutsId parseRequired(String nutFormat);
+    /**
+     * parse id or error if not valid
+     * @param id to parse
+     * @return parsed id
+     */
+    NutsId parseRequired(String id);
 
+    /**
+     * parse id or null if not valid
+     * @param id to parse
+     * @return parsed id
+     */
     NutsId parse(String id);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsIdFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsIdFormat setSession(NutsSession session);
 
@@ -114,6 +155,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     @Override
-    public NutsIdFormat configure(boolean skipUnsupported, String... args);
+    NutsIdFormat configure(boolean skipUnsupported, String... args);
 
 }

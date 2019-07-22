@@ -37,6 +37,7 @@ import net.vpc.common.strings.StringUtils;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
+
 import net.vpc.common.javashell.JShellBuiltin;
 import net.vpc.common.javashell.JShellExecutionContext;
 
@@ -45,7 +46,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
     private NutsShellContext shellContext;
     private NutsWorkspace workspace;
     private NutsSession session;
-//    private NutsSessionTerminal terminal;
+    //    private NutsSessionTerminal terminal;
     private NutsCommandAutoComplete autoComplete;
 
     public NutsJavaShellEvalContext() {
@@ -62,7 +63,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         super(parentContext);
 //        if (parentContext instanceof NutsJavaShellEvalContext) {
         NutsJavaShellEvalContext parentContext1 = (NutsJavaShellEvalContext) parentContext;
-        this.shellContext = (NutsShellContext)parentContext1.shellContext.copy();
+        this.shellContext = (NutsShellContext) parentContext1.shellContext.copy();
         this.shellContext.getUserProperties().put(JShellContext.class.getName(), this);
         this.workspace = parentContext1.workspace;
         this.session = (this.workspace == null ? null : this.workspace.createSession());
@@ -107,11 +108,21 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         }
     }
 
+    @Override
+    public NutsSession session() {
+        return getSession();
+    }
+
+    @Override
+    public NutsWorkspace workspace() {
+        return getWorkspace();
+    }
+
     public NutsShellContext getShellContext() {
         return shellContext;
     }
 
-//    @Override
+    //    @Override
 //    public NutsSessionTerminal getTerminal() {
 //        if (terminal != null) {
 //            return terminal;
@@ -279,7 +290,9 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                value, display
+                                                args.createCandidate(
+                                                        value, display
+                                                )
                                         );
                                     }
                                 } else {

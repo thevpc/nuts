@@ -91,7 +91,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
         }
         List<AutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                context.getWorkspace().commandLine().setArgs(options.items).toString()
+                context.getWorkspace().commandLine().setArguments(options.items).toString()
         );
         Properties p = new Properties();
         for (AutoCompleteCandidate autoCompleteCandidate : aa) {

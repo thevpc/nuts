@@ -253,9 +253,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         String help = sb.toString();
         if (vars) {
-            if (help != null) {
-                help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
-            }
+            help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
         return help;
     }

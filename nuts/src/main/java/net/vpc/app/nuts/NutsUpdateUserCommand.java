@@ -52,33 +52,19 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand undoAddGroups(Collection<String> groups);
 
-    NutsUpdateUserCommand removeRight(String right);
+    NutsUpdateUserCommand removePermission(String permission);
 
-    NutsUpdateUserCommand addRight(String right);
+    NutsUpdateUserCommand addPermission(String permission);
 
-    NutsUpdateUserCommand undoAddRight(String right);
+    NutsUpdateUserCommand undoAddPermission(String permissions);
 
-    NutsUpdateUserCommand addRights(String... rights);
+    NutsUpdateUserCommand addPermissions(String... permissions);
 
-    NutsUpdateUserCommand undoAddRights(String... rights);
+    NutsUpdateUserCommand undoAddPermissions(String... permissions);
 
-    NutsUpdateUserCommand addRights(Collection<String> rights);
+    NutsUpdateUserCommand addPermissions(Collection<String> permissions);
 
-    NutsUpdateUserCommand undoAddRights(Collection<String> rights);
-
-    String[] getAddGroups();
-
-    String[] getRemoveGroups();
-
-    char[] getCredentials();
-
-    char[] getOldCredentials();
-
-    String getRemoteIdentity();
-
-    String[] getAddRights();
-
-    String[] getRemoveRights();
+    NutsUpdateUserCommand undoAddPermissions(Collection<String> permissions);
 
     NutsUpdateUserCommand removeGroups(String... groups);
 
@@ -88,13 +74,13 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand undoRemoveGroups(Collection<String> groups);
 
-    NutsUpdateUserCommand removeRights(String... rights);
+    NutsUpdateUserCommand removePermissions(String... permissions);
 
-    NutsUpdateUserCommand undoRemoveRights(String... rights);
+    NutsUpdateUserCommand undoRemovePermissions(String... permissions);
 
-    NutsUpdateUserCommand removeRights(Collection<String> rights);
+    NutsUpdateUserCommand removePermissions(Collection<String> permissions);
 
-    NutsUpdateUserCommand undoRemoveRights(Collection<String> rights);
+    NutsUpdateUserCommand undoRemovePermissions(Collection<String> permissions);
 
     NutsUpdateUserCommand credentials(char[] password);
 
@@ -114,13 +100,13 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setLogin(String login);
 
-    boolean isResetRights();
+    boolean isResetPermissions();
 
-    NutsUpdateUserCommand resetRights();
+    NutsUpdateUserCommand resetPermissions();
 
-    NutsUpdateUserCommand resetRights(boolean resetRights);
+    NutsUpdateUserCommand resetPermissions(boolean resetPermissions);
 
-    NutsUpdateUserCommand setResetRights(boolean resetRights);
+    NutsUpdateUserCommand setResetPermissions(boolean resetPermissions);
 
     boolean isResetGroups();
 
@@ -130,9 +116,21 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setResetGroups(boolean resetGroups);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUpdateUserCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUpdateUserCommand setSession(NutsSession session);
 
@@ -161,4 +159,19 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
     NutsUpdateUserCommand remoteCredentials(char[] password);
 
     char[] getRemoteCredentials();
+
+    String[] getAddGroups();
+
+    String[] getRemoveGroups();
+
+    char[] getCredentials();
+
+    char[] getOldCredentials();
+
+    String getRemoteIdentity();
+
+    String[] getAddPermissions();
+
+    String[] getRemovePermissions();
+
 }

@@ -71,7 +71,7 @@ public interface NutsVersionFilter extends NutsSearchIdFilter {
      * true if the version is accepted by this instance filter
      * @param sid search id
      * @param session current session instance
-     * @return 
+     * @return true if accepted
      */
     @Override
     default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {

@@ -38,9 +38,25 @@ public interface NutsIterableFormat extends NutsConfigurable {
 
     NutsOutputFormat getOutputFormat();
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine);
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public NutsIterableFormat configure(boolean skipUnsupported, String... args);
 

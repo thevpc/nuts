@@ -29,14 +29,11 @@
  */
 package net.vpc.app.nuts.core.app;
 
-import net.vpc.app.nuts.NutsRepositoryDefinition;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  *
@@ -44,23 +41,21 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class RepositoryTypeNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-
     public RepositoryTypeNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+        super(workspace,name);
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
-        for (NutsRepositoryDefinition repo : workspace.config().getDefaultRepositories()) {
+        for (NutsRepositoryDefinition repo : getWorkspace().config().getDefaultRepositories()) {
             allValid.add(repo.getType());
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
+        NutsCommandLine c = getWorkspace().commandLine();
         for (String v : allValid) {
-            all.add(new NutsDefaultArgumentCandidate(v));
+            all.add(c.createCandidate(v));
         }
         return all;
     }

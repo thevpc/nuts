@@ -37,11 +37,8 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class NutsIdNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-
     public NutsIdNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+        super(workspace,name);
     }
 
 }

@@ -29,15 +29,10 @@
  */
 package net.vpc.app.nuts.core.app;
 
-import net.vpc.app.nuts.NutsEffectiveUser;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsUserConfig;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  *
@@ -45,46 +40,45 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class GroupNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
     private NutsRepository repository;
     private NutsUserConfig securityEntityConfig;
 
     public GroupNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+        super(workspace,name);
     }
 
-    public GroupNonOption(String name, NutsWorkspace workspace, NutsRepository repository) {
-        super(name);
-        this.workspace = workspace;
-        this.repository = repository;
-    }
-
-    public GroupNonOption(String name, NutsRepository repository) {
-        super(name);
-        this.workspace = repository.getWorkspace();
-        this.repository = repository;
-    }
-
-    public GroupNonOption(String name, NutsUserConfig securityEntityConfig) {
-        super(name);
-        this.securityEntityConfig = securityEntityConfig;
-    }
+//    public GroupNonOption(String name, NutsWorkspace workspace, NutsRepository repository) {
+//        super(name);
+//        this.workspace = workspace;
+//        this.repository = repository;
+//    }
+//
+//    public GroupNonOption(String name, NutsRepository repository) {
+//        super(name);
+//        this.workspace = repository.getWorkspace();
+//        this.repository = repository;
+//    }
+//
+//    public GroupNonOption(String name, NutsUserConfig securityEntityConfig) {
+//        super(name);
+//        this.securityEntityConfig = securityEntityConfig;
+//    }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
+        NutsCommandLine c=getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new NutsDefaultArgumentCandidate(n));
+                all.add(c.createCandidate(n));
             }
         } else if (repository != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : repository.security().findUsers()) {
-                all.add(new NutsDefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+            for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers()) {
+                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
-        } else if (workspace != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.security().findUsers()) {
-                all.add(new NutsDefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+        } else {
+            for (NutsUser nutsSecurityEntityConfig : getWorkspace().security().findUsers()) {
+                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

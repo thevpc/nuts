@@ -78,9 +78,21 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 
     NutsUndeployCommand clearIds();
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUndeployCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUndeployCommand setSession(NutsSession session);
 

@@ -64,7 +64,7 @@ public class Test04_CreateLoadLinuxTest {
 
         NutsWorkspace w = Nuts.openWorkspace(new String[]{
             "--system-config-home", new File(base, "system.config").getPath(),
-            "info"
+            "-y","info"
         });
         System.out.println("==========================");
         w.info().println();

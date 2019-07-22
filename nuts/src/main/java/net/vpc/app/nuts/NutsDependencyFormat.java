@@ -94,9 +94,21 @@ public interface NutsDependencyFormat extends NutsFormat {
      */
     NutsDependencyFormat setValue(NutsDependency dependency);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsDependencyFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsDependencyFormat setSession(NutsSession session);
 

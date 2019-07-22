@@ -29,3 +29,6 @@ toolbox/nuts-server/target
 /mk-nuts-bootstrap
 /lib/vpc-common-nuts-template/target/
 /lib/nuts-lib-template/target/
+# Project exclude paths
+/nuts/target/
+/nuts-core/target/

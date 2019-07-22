@@ -37,7 +37,7 @@ import java.util.Iterator;
  */
 public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryCommand {
 
-    NutsSearchVersionsRepositoryCommand filter(NutsIdFilter filter);
+//    NutsSearchVersionsRepositoryCommand filter(NutsIdFilter filter);
 
     NutsSearchVersionsRepositoryCommand setFilter(NutsIdFilter filter);
 
@@ -50,14 +50,14 @@ public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryComma
     @Override
     public NutsSearchVersionsRepositoryCommand run();
 
-    @Override
-    public NutsSearchVersionsRepositoryCommand session(NutsRepositorySession session);
+//    @Override
+//    public NutsSearchVersionsRepositoryCommand session(NutsRepositorySession session);
 
     @Override
     public NutsSearchVersionsRepositoryCommand setSession(NutsRepositorySession session);
 
     Iterator<NutsId> getResult();
 
-    NutsSearchVersionsRepositoryCommand id(NutsId id);
+//    NutsSearchVersionsRepositoryCommand id(NutsId id);
 
 }

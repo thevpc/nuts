@@ -39,34 +39,76 @@ package net.vpc.app.nuts;
  */
 public interface NutsCommandLineFormat {
 
+    /**
+     * true if argument is accepted (to be displayed)
+     * @param argIndex arg index
+     * @param arg arg value
+     * @return true if argument is accepted (to be displayed)
+     */
     default boolean acceptArgument(int argIndex, String arg) {
         return true;
     }
 
+    /**
+     * true if env is accepted (to be displayed)
+     * @param envName env name
+     * @param envValue env value
+     * @return true if env is accepted (to be displayed)
+     */
     default boolean acceptEnvName(String envName, String envValue) {
         return true;
     }
 
+    /**
+     * true if redirect input is accepted (to be displayed)
+     * @return true if redirect input is accepted (to be displayed)
+     */
     default boolean acceptRedirectInput() {
         return true;
     }
 
+    /**
+     * true if redirect output is accepted (to be displayed)
+     * @return true if redirect output is accepted (to be displayed)
+     */
     default boolean acceptRedirectOutput() {
         return true;
     }
 
+    /**
+     * true if redirect error is accepted (to be displayed)
+     * @return true if redirect error is accepted (to be displayed)
+     */
     default boolean acceptRedirectError() {
         return true;
     }
 
+    /**
+     * replace the given argument or return null
+     * @param argIndex arg index
+     * @param arg arg value
+     * @return new value or null
+     */
     default String replaceArgument(int argIndex, String arg) {
         return null;
     }
 
+    /**
+     * replace the given env name or return null
+     * @param envName env name
+     * @param envValue env value
+     * @return new value or null
+     */
     default String replaceEnvName(String envName, String envValue) {
         return null;
     }
 
+    /**
+     * replace the given env value or return null
+     * @param envName env name
+     * @param envValue env value
+     * @return new value or null
+     */
     default String replaceEnvValue(String envName, String envValue) {
         return null;
     }

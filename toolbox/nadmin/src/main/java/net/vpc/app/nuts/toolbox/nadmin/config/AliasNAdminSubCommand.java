@@ -12,11 +12,9 @@ import net.vpc.app.nuts.NutsAddOptions;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandAliasConfig;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsRemoveOptions;
-import net.vpc.app.nuts.NutsSupportLevelContext;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
@@ -44,8 +42,8 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
 
         public AliasInfo(NutsWorkspaceCommandAlias a, NutsWorkspace ws) {
             name = a.getName();
-            command = ws.commandLine().setArgs(a.getCommand()).toString();
-            executionOptions = ws.commandLine().setArgs(a.getExecutorOptions()).toString();
+            command = ws.commandLine().setArguments(a.getCommand()).toString();
+            executionOptions = ws.commandLine().setArguments(a.getExecutorOptions()).toString();
             factoryId = a.getFactoryId();
             owner = a.getOwner();
         }
@@ -73,7 +71,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list aliases") != null) {
             cmdLine.setCommandName("nadmin list aliases").unexpectedArgument();
             if (cmdLine.isExecMode()) {
@@ -87,7 +85,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCommandAlias::getName,
-                                                    x -> context.getWorkspace().commandLine().setArgs(x.getCommand()).toString(),
+                                                    x -> context.getWorkspace().commandLine().setArguments(x.getCommand()).toString(),
                                                     (x, y) -> {
                                                         throw new IllegalArgumentException("Duplicate " + x);
                                                     },
@@ -152,11 +150,6 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
     }
 
 }

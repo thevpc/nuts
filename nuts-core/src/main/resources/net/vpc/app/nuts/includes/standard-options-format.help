@@ -1,4 +1,4 @@
-##STANDARD OPTIONS FORMAT## :
+##STANDARD OPTIONS FORMAT##:
 Standard format of options is supported as follows :
 
  **--!...** or **-!...** 
@@ -8,10 +8,10 @@ Standard format of options is supported as follows :
       equivalent to **--...** any-value
 
  **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[t]]
-      option will switched to [[true]]
+      option is switched to [[true]]
 
  **--...**=[[false]]|[[disable]]|[[disabled]]|[[no]]|[[none]]|[[never]]|[[n]]|[[off]]|[[ko]]|[[f]]
-      option will switched to [[false]]
+      option is switched to [[false]]
 
  **--//...** or **-//...** 
-      option will be discarded (and all of its parameters). Though, it is up to the application to add such behavior.
+      option is discarded (and all of its parameters). Though, it is up to the application to add such behavior.

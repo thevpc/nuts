@@ -124,7 +124,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = ws.commandLine().newArgument(value).getBoolean(null);
+            Boolean b = ws.commandLine().createArgument(value).getBoolean(null);
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

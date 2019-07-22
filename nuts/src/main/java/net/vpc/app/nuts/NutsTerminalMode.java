@@ -38,12 +38,20 @@ public enum NutsTerminalMode {
     INHERITED,
     FORMATTED,
     FILTERED;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsTerminalMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

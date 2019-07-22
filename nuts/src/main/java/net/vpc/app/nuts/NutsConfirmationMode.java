@@ -57,12 +57,20 @@ public enum NutsConfirmationMode {
      * non interactive mode, throw exception
      */
     ERROR;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsConfirmationMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

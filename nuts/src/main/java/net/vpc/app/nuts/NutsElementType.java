@@ -43,18 +43,34 @@ public enum NutsElementType {
     ARRAY(false),
     OBJECT(false)
     ;
+
+    /**
+     * true if private type
+     */
     private final boolean primitive;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
-    private NutsElementType(boolean primitive) {
+    NutsElementType(boolean primitive) {
         this.id = name().toLowerCase().replace('_', '-');
         this.primitive = primitive;
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * true if private type
+     * @return true if private type
+     */
     public boolean isPrimitive() {
         return primitive;
     }

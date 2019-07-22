@@ -30,17 +30,12 @@
 package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.core.DefaultNutsDependency;
-import net.vpc.app.nuts.core.DefaultNutsId;
-import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.MapStringMapper;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -59,9 +54,13 @@ import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomDependency;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdFilter;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomXmlParser;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by vpc on 2/20/17.
@@ -370,4 +369,235 @@ public class MavenUtils {
         }
         return s;
     }
+
+
+    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid) {
+        String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getName() + "-" + rid.getVersion() + ".pom";
+        return loadDependenciesAndRepositoriesFromPomPath(urlPath);
+    }
+
+    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
+        DepsAndRepos depsAndRepos = null;
+//        if (!NO_M2) {
+            File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
+            if (mavenNutsCorePom.isFile()) {
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath());
+            }
+//        }
+        if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
+            for (String baseUrl : new String[]{
+                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
+                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
+            }) {
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
+                if (!depsAndRepos.deps.isEmpty()) {
+                    break;
+                }
+            }
+        }
+        return depsAndRepos;
+    }
+
+    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
+        DepsAndRepos depsAndRepos = new DepsAndRepos();
+//        String repositories = null;
+//        String dependencies = null;
+        InputStream xml = null;
+        try {
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+                xml = new URL(url).openStream();
+            } else {
+                File file = new File(url);
+                if (file.isFile()) {
+                    xml = Files.newInputStream(file.toPath());
+                } else {
+                    return depsAndRepos;
+                }
+            }
+//            List<String> dependenciesList = new ArrayList<>();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xml);
+            Element c = doc.getDocumentElement();
+            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
+                    Element c2 = (Element) c.getChildNodes().item(i);
+                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
+                            Element c3 = (Element) c2.getChildNodes().item(j);
+                            String groupId = null;
+                            String artifactId = null;
+                            String version = null;
+                            String scope = null;
+                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                if (c3.getChildNodes().item(k) instanceof Element) {
+                                    Element c4 = (Element) c3.getChildNodes().item(k);
+                                    switch (c4.getNodeName()) {
+                                        case "groupId": {
+                                            groupId = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "artifactId": {
+                                            artifactId = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "version": {
+                                            version = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                        case "scope": {
+                                            scope = c4.getTextContent().trim();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (CoreStringUtils.isBlank(groupId)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
+                            } else if (groupId.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
+                            }
+                            if (CoreStringUtils.isBlank(artifactId)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                            } else if (artifactId.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
+                            }
+                            if (CoreStringUtils.isBlank(version)) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                            } else if (version.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                            }
+                            //this is maven dependency, using "compile"
+                            if (CoreStringUtils.isBlank(scope) || scope.equals("compile")) {
+                                depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
+                            } else if (version.contains("$")) {
+                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                            }
+                        }
+                    }
+                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
+                    Element c2 = (Element) c.getChildNodes().item(i);
+                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                        if (c2.getChildNodes().item(j) instanceof Element) {
+                            Element c3 = (Element) c2.getChildNodes().item(j);
+                            switch (c3.getNodeName()) {
+                                case "nuts-runtime-repositories": {
+                                    String t = c3.getTextContent().trim();
+                                    if (t.length() > 0) {
+                                        depsAndRepos.deps.addAll(CoreStringUtils.split(t, ";", true));
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            //ignore
+        } finally {
+            if (xml != null) {
+                try {
+                    xml.close();
+                } catch (IOException ex) {
+                    //ignore
+                }
+            }
+        }
+
+        return depsAndRepos;
+    }
+
+    /**
+     * find latest maven component
+     *
+     * @param filter filter
+     * @return latest runtime version
+     */
+    public static NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {
+        String path = zId.getGroup().replace('.', '/') + '/' + zId.getName();
+        String bestVersion = null;
+//        if (!NO_M2) {
+            File mavenNutsCoreFolder = new File(System.getProperty("user.home"), ".m2/repository/" + path + "/".replace("/", File.separator));
+            if (mavenNutsCoreFolder.isDirectory()) {
+                File[] children = mavenNutsCoreFolder.listFiles();
+                if (children != null) {
+                    for (File file : children) {
+                        if (file.isDirectory()) {
+                            String[] goodChildren = file.list(new FilenameFilter() {
+                                @Override
+                                public boolean accept(File dir, String name) {
+                                    return name.endsWith(".pom");
+                                }
+                            });
+                            if (goodChildren != null && goodChildren.length > 0) {
+                                String p = file.getName();
+                                if (filter==null || filter.test(p)) {
+                                    if (bestVersion == null || DefaultNutsVersion.compareVersions(bestVersion, p) < 0) {
+                                        bestVersion = p;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+//        }
+        for (String repoUrl : new String[]{NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT, NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
+            if (!repoUrl.endsWith("/")) {
+                repoUrl = repoUrl + "/";
+            }
+            boolean found = false;
+            try {
+                URL runtimeMetadata = new URL(repoUrl + path + "/maven-metadata.xml");
+                found = true;
+                DocumentBuilderFactory factory
+                        = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(runtimeMetadata.openStream());
+                Element c = doc.getDocumentElement();
+                for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                    if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
+                                        Element c4 = (Element) c3.getChildNodes().item(k);
+                                        String p = c4.getTextContent();
+                                        if (filter==null || filter.test(p)) {
+                                            if (bestVersion == null || DefaultNutsVersion.compareVersions(bestVersion, p) < 0) {
+                                                bestVersion = p;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                    //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
+                }
+            } catch (Exception ex) {
+                // ignore any error
+            }
+            if (found) {
+                break;
+            }
+        }
+        if (bestVersion == null) {
+            return null;
+        }
+        return zId.setVersion(bestVersion);
+    }
+
+    public static class DepsAndRepos {
+
+        public LinkedHashSet<String> deps = new LinkedHashSet<>();
+        public LinkedHashSet<String> repos = new LinkedHashSet<>();
+    }
+
+
 }

@@ -35,28 +35,73 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public enum NutsDependencyScope {
+    /**
+     * equivalent to maven's compile and to gradle's api
+     */
     API,
+    /**
+     * equivalent to gradle's implementation
+     */
     IMPLEMENTATION,
+    /**
+     * equivalent to maven's provided
+     */
     PROVIDED,
+    /**
+     * equivalent to gradle's import
+     */
     IMPORT,
+    /**
+     * equivalent to maven's runtime
+     */
     RUNTIME,
+    /**
+     * equivalent to maven's system
+     */
     SYSTEM,
+    /**
+     * equivalent to maven's test
+     */
     TEST_COMPILE,
+    /**
+     * dependencies needed for test but are provided by container.
+     */
     TEST_PROVIDED,
+    /**
+     * dependencies needed for test execution
+     */
     TEST_RUNTIME,
+    /**
+     * other
+     */
     OTHER;
 
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private String id;
 
-    private NutsDependencyScope() {
+    /**
+     * default constructor
+     */
+    NutsDependencyScope() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }
 
-    public static NutsDependencyScope parseLenient(String s) {
+    /**
+     * parse string to a valid NutsDependencyScope or NutsDependencyScope.OTHER
+     * @param s string to parse
+     * @return valid NutsDependencyScope instance
+     */
+    public static NutsDependencyScope parse(String s) {
         if (s == null) {
             s = "";
         }

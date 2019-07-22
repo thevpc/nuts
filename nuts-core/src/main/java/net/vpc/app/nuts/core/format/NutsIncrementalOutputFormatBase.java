@@ -31,15 +31,10 @@ package net.vpc.app.nuts.core.format;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.NutsIterableOutput;
-import net.vpc.app.nuts.NutsIterableFormat;
 
 /**
  *
@@ -111,11 +106,27 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         return out;
     }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final NutsIterableOutput configure(boolean skipUnsupported, String... args) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "search");
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * silently
+     * @param commandLine arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
@@ -130,7 +141,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         String[] arr = cmd.toArray();
         if (getDisplayOptions().configureFirst(cmd)) {
             if (getFormat() != null) {
-                getFormat().configureFirst(ws.commandLine().setArgs(arr));
+                getFormat().configureFirst(ws.commandLine().setArguments(arr));
             }
             return true;
         }

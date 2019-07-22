@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import java.io.File;
-import net.vpc.app.nuts.NutsExecutableInfo;
+import net.vpc.app.nuts.NutsExecutableInformation;
 import net.vpc.common.javashell.JShellCommandType;
 import net.vpc.common.javashell.JShellCommandTypeResolver;
 import net.vpc.common.javashell.JShellContext;
@@ -52,7 +52,7 @@ class NutsCommandTypeResolver implements JShellCommandTypeResolver {
         if (!item.startsWith("/")) {
             path = context.getCwd() + "/" + item;
         }
-        final NutsExecutableInfo w = ncontext.getWorkspace().exec().command(item).which();
+        final NutsExecutableInformation w = ncontext.getWorkspace().exec().command(item).which();
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }

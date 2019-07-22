@@ -39,6 +39,7 @@ import java.util.Map;
  * @since 0.5.4
  */
 public class NutsCommandAliasFactoryConfig implements Serializable {
+    private static final long serialVersionUID = 1;
 
     /**
      * Factory id (unique identifier in the workspace)
@@ -49,48 +50,86 @@ public class NutsCommandAliasFactoryConfig implements Serializable {
      * Factory Type
      */
     private String factoryType;
+
     /**
      * priority (the higher the better)
      */
     private int priority;
+
     /**
      * factory parameters
      */
     private Map<String, String> parameters;
 
+    /**
+     * Factory id (unique identifier in the workspace)
+     * @return Factory id (unique identifier in the workspace)
+     */
     public String getFactoryId() {
         return factoryId;
     }
 
-    public NutsCommandAliasFactoryConfig setFactoryId(String factoryId) {
-        this.factoryId = factoryId;
+    /**
+     * Factory id (unique identifier in the workspace)
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasFactoryConfig setFactoryId(String value) {
+        this.factoryId = value;
         return this;
     }
 
+    /**
+     * Factory Type
+     * @return Factory Type
+     */
     public String getFactoryType() {
         return factoryType;
     }
 
-    public NutsCommandAliasFactoryConfig setFactoryType(String factoryType) {
-        this.factoryType = factoryType;
+    /**
+     * Factory Type
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasFactoryConfig setFactoryType(String value) {
+        this.factoryType = value;
         return this;
     }
 
+    /**
+     * factory parameters
+     * @return factory parameters
+     */
     public Map<String, String> getParameters() {
         return parameters;
     }
 
-    public NutsCommandAliasFactoryConfig setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+    /**
+     * factory parameters
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasFactoryConfig setParameters(Map<String, String> value) {
+        this.parameters = value;
         return this;
     }
 
+    /**
+     * priority (the higher the better)
+     * @return priority (the higher the better)
+     */
     public int getPriority() {
         return priority;
     }
 
-    public NutsCommandAliasFactoryConfig setPriority(int priority) {
-        this.priority = priority;
+    /**
+     * priority (the higher the better)
+     * @param value new value
+     * @return {@code this} instance
+     */
+    public NutsCommandAliasFactoryConfig setPriority(int value) {
+        this.priority = value;
         return this;
     }
 }

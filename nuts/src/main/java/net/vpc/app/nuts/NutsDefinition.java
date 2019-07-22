@@ -41,6 +41,14 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     NutsId getId();
 
+    boolean isApi();
+
+    boolean isRuntime();
+
+    boolean isExtension();
+
+    boolean isCompanion();
+
     NutsContent getContent();
 
     Path getPath();
@@ -48,7 +56,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsDescriptor getDescriptor();
 
     /**
-     *
      * optional
      *
      * @return install info
@@ -56,7 +63,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsInstallInformation getInstallInformation();
 
     /**
-     *
      * optional
      *
      * @return descriptor
@@ -66,7 +72,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     /**
      * all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
-     *
+     * <p>
      * optional
      *
      * @return dependencies
@@ -76,7 +82,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     /**
      * all of some of the transitive dependencies of the current Nuts as Tree
      * result of the search command
-     *
+     * <p>
      * optional
      *
      * @return dependencies tree nodes
@@ -90,14 +96,16 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     String getRepositoryName();
 
-    
+
     boolean isSetContent();
-    
+
     boolean isSetInstallInformation();
-    
+
     boolean isSetDependencyNodes();
-    
+
     boolean isSetDependencies();
 
     boolean isSetEffectiveDescriptor();
+
+    NutsId getApiId();
 }

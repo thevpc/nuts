@@ -14,7 +14,7 @@ resolve and download on-need dependencies over the wire.
 
 ==nuts== is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
 view of the the  components __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
-to __install__ and __uninstall__ components allowing multiple versions of the very same components to  be installed.
+to __install__ and __uninstall__ components allowing multiple versions of the very same component to  be installed.
 
 Although ==nuts== focuses on java components, it still supports, by design, native and all non java components.
 Dependencies are fetched according to the current operating system type, distribution and hardware
@@ -369,9 +369,14 @@ Java         Version: **${java.version} (${java.vm.name})**
 
  **--recover**  or **-z**
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
+      Will bootstrap a new workspace unless **-K** (**--skip-companions**) option is armed.
 
  **--reset**  or **-Z**
       reset (delete) ==nuts== workspace folder before starting the workspace. All user configuration will not be deleted.
+
+ **--dry**  or **-D**
+      perform a dry execution (with no side effects) rather than an effective one. prints actions or external command lines to
+      perform if the **--dry** was not armed. Useful to know more about command effects.
 
  **--skip-welcome**  or **-K**
       do not call welcome command if the command line is empty. This is helpful in conjunction with **--reset** not 
@@ -457,21 +462,22 @@ Java         Version: **${java.version} (${java.vm.name})**
             
  {{undeploy}} \[**-options**\]... <id> ...  
       undeploy <ids>
-      for more details, type : ==nuts== help deploy
+      for more details, type : ==nuts== help undeploy
             
  {{exec}} \[**-options**\]... \[command\] <args>...
  **--exec** \[**-options**\]... \[command\] <args>...
  **-e** \[**-options**\]... \[command\] <args>...
       run command with the given executor options \( it will be considered an option if it
-      starts with **-** \). This is helpful to issue JVM Options to executor for instance
-      for more details, type : ==nuts== help info
+      starts with **-** \). This is helpful to issue JVM Options to executor for instance.
+      for more details, type : ==nuts== help exec
 
  {{which}} \[**-options**\]... \[command\] ...
       show command to be executed if run with 'exec' 
       for more details, type : ==nuts== help which
             
  **--reset** \[**-options**\]... 
-       reset (delete) ==nuts== workspace folder and exit. Will not bootstrap any workspace!
+       reset (delete) ==nuts== workspace folder. Will bootstrap a new workspace unless **-K**
+       (**--skip-companions**) option is armed.
        Actually this is a special command that is available only at boot time.
        Available options are :
        **-y** : to skip confirmation

@@ -102,6 +102,58 @@ final class PrivateNutsUtils {
         return str.trim();
     }
 
+    public static String idToPath(PrivateNutsId id) {
+        return id.getGroupId().replace('.','/')+"/"+
+                id.getArtifactId()+"/"+id.getVersion();
+    }
+
+    public static String idToPath(String str) {
+        int status=0;
+
+        char[] chars = str.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            switch (status) {
+                case 0: {
+                    switch (c) {
+                        case ':': {
+                            status = 1;
+                            chars[i]='/';
+                            break;
+                        }
+                        case '.': {
+                            chars[i]='/';
+                            break;
+                        }
+                        case '#': {
+                            status = 2;
+                            chars[i]='/';
+                            break;
+                        }
+                    }
+                }
+                case 1: {
+                    switch (c) {
+                        case '#': {
+                            status = 2;
+                            chars[i]='/';
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return new String(chars);
+    }
+
+    public static String trimToNull(String str) {
+        if (str == null) {
+            return null;
+        }
+        String s = str.trim();
+        return s.length()==0?null:s;
+    }
+
     public static List<String> split(String str, String separators, boolean trim) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -382,29 +434,6 @@ final class PrivateNutsUtils {
         return split(repositories, "\n;", true);
     }
 
-    public static PrivateNutsBootConfig createNutsBootConfig(Properties properties) {
-        String id = properties.getProperty("project.id");
-        String version = properties.getProperty("project.version");
-        String dependencies = properties.getProperty("project.dependencies.compile");
-        if (PrivateNutsUtils.isBlank(id)) {
-            throw new NutsIllegalArgumentException(null, "Missing id");
-        }
-        if (PrivateNutsUtils.isBlank(version)) {
-            throw new NutsIllegalArgumentException(null, "Missing version");
-        }
-        if (PrivateNutsUtils.isBlank(dependencies)) {
-            throw new NutsIllegalArgumentException(null, "Missing dependencies");
-        }
-        String repositories = properties.getProperty("project.repositories");
-        if (repositories == null) {
-            repositories = "";
-        }
-        return new PrivateNutsBootConfig()
-                .setRuntimeId(id + "#" + version)
-                .setRuntimeDependencies(new LinkedHashSet<>(PrivateNutsUtils.split(dependencies, ";", false)))
-                .setBootRepositories(repositories);
-    }
-
     public static int parseFileSize(String s) {
         s = s.toLowerCase();
         int multiplier = 1;
@@ -478,11 +507,48 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
-        return deleteAndConfirmAll(folders, force, new boolean[1], header, term, session);
+    private static class SimpleConfirmDelete implements ConfirmDelete{
+        private boolean force;
+        private List<File> ignoreDeletion=new ArrayList<>();
+
+        @Override
+        public boolean isForce() {
+            return force;
+        }
+
+        @Override
+        public void setForce(boolean value) {
+            this.force = value;
+        }
+
+        public void ignore(File directory){
+            ignoreDeletion.add(directory);
+        }
+
+        @Override
+        public boolean accept(File directory) {
+            for (File ignored : ignoreDeletion) {
+                String s=ignored.getPath()+File.separatorChar;
+                if(directory.getPath().startsWith(s)){
+                    return false;
+                }
+            }
+            return false;
+        }
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll, String header, NutsTerminal term, NutsSession session) {
+    private interface ConfirmDelete{
+        boolean isForce();
+        void setForce(boolean value);
+        boolean accept(File directory);
+        void ignore(File directory);
+    }
+
+    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
+        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session);
+    }
+
+    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session) {
         int count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -490,7 +556,7 @@ final class PrivateNutsUtils {
                 if (child.exists()) {
                     if (!headerWritten) {
                         headerWritten = true;
-                        if (!force && !refForceAll[0]) {
+                        if (!force && !refForceAll.isForce()) {
                             if (header != null) {
                                 if (term != null) {
                                     term.out().println(header);
@@ -509,9 +575,9 @@ final class PrivateNutsUtils {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll, NutsTerminal term, NutsSession session) {
+    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session) {
         if (directory.exists()) {
-            if (!force && !refForceAll[0]) {
+            if (!force && !refForceAll.isForce()) {
                 String line;
                 if (term != null) {
                     line = term.ask().forString("Do you confirm deleting %s [y/n/c/a] ? : ", directory).session(session).getValue();
@@ -522,10 +588,11 @@ final class PrivateNutsUtils {
                     line = s.nextLine();
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
-                    refForceAll[0] = true;
+                    refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NutsUserCancelException(null);
                 } else if (!PrivateNutsUtils.parseBoolean(line, false)) {
+                    refForceAll.ignore(directory);
                     return false;
                 }
             }
@@ -791,4 +858,7 @@ final class PrivateNutsUtils {
         return 0;
     }
 
+    public static Set<String> parseDependencies(String s){
+        return new LinkedHashSet<>(PrivateNutsUtils.split(s, ";", false));
+    }
 }

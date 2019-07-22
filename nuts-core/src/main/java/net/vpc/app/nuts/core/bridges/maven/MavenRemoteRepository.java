@@ -30,13 +30,13 @@
 package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.core.repos.NutsCachedRepository;
+import net.vpc.app.nuts.core.impl.def.repos.NutsCachedRepository;
 
 /**
  * Created by vpc on 1/15/17.
@@ -143,7 +143,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     + getIdFilename(id.setFaceDescriptor())
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open()) {
+            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -194,7 +194,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
@@ -248,7 +248,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
                 return null;
             }
@@ -297,7 +297,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     + getIdFilename(id.setFaceDescriptor())
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open()) {
+            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -324,7 +324,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/.folders");
             String[] foldersFileContent = null;
             try {
-                foldersFileStream = helper.openStream(id, foldersFileUrl, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
+                foldersFileStream = helper.openStream(id, foldersFileUrl, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
                 foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
@@ -434,10 +434,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             NutsRepository loc = getLocalMavenRepo();
             if (loc != null) {
                 return loc.fetchContent()
-                        .id(id)
-                        .descriptor(descriptor)
-                        .localPath(localPath)
-                        .session(session.copy().setFetchMode(NutsFetchMode.LOCAL))
+                        .setId(id)
+                        .setDescriptor(descriptor)
+                        .setLocalPath(localPath)
+                        .setSession(session.copy().setFetchMode(NutsFetchMode.LOCAL))
                         .run()
                         .getResult();
             }

@@ -29,14 +29,16 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import net.vpc.app.nuts.NutsWorkspace;
+
 /**
  *
  * @author vpc
  */
 public class FolderNonOption extends net.vpc.app.nuts.core.app.DefaultNonOption {
 
-    public FolderNonOption(String name) {
-        super(name);
+    public FolderNonOption(NutsWorkspace ws, String name) {
+        super(ws,name);
     }
 
 }

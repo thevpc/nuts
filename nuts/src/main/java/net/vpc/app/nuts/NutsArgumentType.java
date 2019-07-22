@@ -52,13 +52,20 @@ public enum NutsArgumentType {
      * options (--!option) that will be interpreted as (--option=false).
      */
     BOOLEAN;
-    
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsArgumentType() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

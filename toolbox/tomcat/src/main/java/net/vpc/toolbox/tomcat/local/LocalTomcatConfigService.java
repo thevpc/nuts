@@ -108,7 +108,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public Path getConfigPath() {
-        return context.getConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT);
+        return context.getSharedConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT);
     }
 
     public boolean existsConfig() {
@@ -589,7 +589,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatConfigService loadConfig() {
         String name = getName();
-        Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
+        Path f = context.getSharedConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
             config = context.workspace().json().parse(f, LocalTomcatConfig.class);
             return this;
@@ -605,7 +605,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     @Override
     public LocalTomcatConfigService remove() {
         try {
-            Files.delete(context.getConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT));
+            Files.delete(context.getSharedConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT));
             return this;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

@@ -44,12 +44,20 @@ public enum NutsApplicationMode {
      * SINGLE argument, so spaces must be escaped.
      */
     UPDATE;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsApplicationMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

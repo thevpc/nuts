@@ -41,9 +41,21 @@ public interface NutsObjectFormat extends NutsFormat {
 
     NutsObjectFormat value(Object obj);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsObjectFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsObjectFormat setSession(NutsSession session);
 

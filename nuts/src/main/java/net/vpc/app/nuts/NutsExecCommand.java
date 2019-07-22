@@ -174,15 +174,15 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand embedded();
 
-    public NutsExecCommand copyFrom(NutsExecCommand other);
+    NutsExecCommand copyFrom(NutsExecCommand other);
 
-    public NutsExecCommand copy();
+    NutsExecCommand copy();
 
     int getResult();
 
     String getCommandString();
 
-    NutsExecutableInfo which();
+    NutsExecutableInformation which();
 
     String[] getExecutorOptions();
 
@@ -196,9 +196,21 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand setCommandLineFormat(NutsCommandLineFormat format);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsExecCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsExecCommand setSession(NutsSession session);
 
@@ -222,4 +234,11 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     @Override
     NutsExecCommand run();
 
+    boolean isDry();
+
+    NutsExecCommand setDry(boolean value);
+
+    NutsExecCommand dry(boolean value);
+
+    NutsExecCommand dry();
 }

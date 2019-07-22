@@ -5,7 +5,9 @@
  */
 package net.vpc.app.nuts.core.spi;
 
+import net.vpc.app.nuts.NutsRemoveOptions;
 import net.vpc.app.nuts.NutsRepositoryConfigManager;
+import net.vpc.app.nuts.NutsUpdateOptions;
 import net.vpc.app.nuts.NutsUserConfig;
 
 /**
@@ -18,9 +20,9 @@ public interface NutsRepositoryConfigManagerExt {
         return ((NutsRepositoryConfigManagerExt) o);
     }
 
-    NutsRepositoryConfigManager removeUser(String userId);
+    NutsRepositoryConfigManager removeUser(String userId, NutsRemoveOptions options);
 
-    NutsRepositoryConfigManager setUser(NutsUserConfig user);
+    NutsRepositoryConfigManager setUser(NutsUserConfig user, NutsUpdateOptions options);
 
     NutsUserConfig getUser(String userId);
 

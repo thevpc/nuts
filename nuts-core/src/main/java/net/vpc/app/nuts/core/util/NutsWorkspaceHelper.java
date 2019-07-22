@@ -31,7 +31,7 @@ package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
 import java.util.*;
-import net.vpc.app.nuts.core.DefaultNutsFetchCommand;
+import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
 
 /**

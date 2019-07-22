@@ -6,21 +6,6 @@
     therefore it is assumed to be part of version control checkout.
     Without this configuration present, some functionality in the IDE may be limited or fail altogether.
     -->
-    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-        <word>api</word>
-        <word>classpath</word>
-        <word>config</word>
-        <word>ids</word>
-        <word>inlined</word>
-        <word>iterable</word>
-        <word>javascript</word>
-        <word>json</word>
-        <word>kwallet</word>
-        <word>nullable</word>
-        <word>parsable</word>
-        <word>runtime'</word>
-        <word>xml</word>
-    </spellchecker-wordlist>
     <properties xmlns="http://www.netbeans.org/ns/maven-properties-data/1">
         <!--
         Properties that influence various parts of the IDE, especially code formatting and the like. 
@@ -32,4 +17,23 @@
         <netbeans.hint.jdkPlatform>default_platform</netbeans.hint.jdkPlatform>
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
     </properties>
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>api</word>
+        <word>classpath</word>
+        <word>config</word>
+        <word>gradle</word>
+        <word>http</word>
+        <word>ids</word>
+        <word>inlined</word>
+        <word>iterable</word>
+        <word>javascript</word>
+        <word>json</word>
+        <word>kwallet</word>
+        <word>maven</word>
+        <word>nullable</word>
+        <word>parsable</word>
+        <word>runtime'</word>
+        <word>xml</word>
+        <word>zypper</word>
+    </spellchecker-wordlist>
 </project-shared-configuration>

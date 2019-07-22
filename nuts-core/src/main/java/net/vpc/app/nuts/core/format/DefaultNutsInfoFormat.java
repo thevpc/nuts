@@ -25,6 +25,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
+    private boolean lenient=false;
 
     public DefaultNutsInfoFormat(NutsWorkspace ws) {
         super(ws, "info");
@@ -79,21 +80,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     @Override
     public void print(Writer w) {
-        LinkedHashMap<String, Object> r = null;
-        if (requests.isEmpty()) {
-            r = buildWorkspaceMap(isShowRepositories());
-        } else {
-            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
-            r = new LinkedHashMap<>();
-            NutsCommandLine requestCmd = ws.commandLine().setArgs(requests);
-            while (!requestCmd.isEmpty()) {
-                NutsArgument a = requestCmd.next();
-                if (t.containsKey(a.toString())) {
-                    r.put(a.toString(), t.get(a.toString()));
-                }
-            }
-        }
-        NutsObjectFormat m = ws.object().session(getValidSession()).value(r);
+        NutsObjectFormat m = ws.object().session(getValidSession());
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
@@ -105,7 +92,36 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             args.add("--multiline-property=java-library-path=" + File.pathSeparator);
         }
         m.configure(true, args.toArray(new String[0]));
-        m.print(w);
+
+        LinkedHashMap<String, Object> r = null;
+        if (requests.isEmpty()) {
+            r = buildWorkspaceMap(isShowRepositories());
+        } else if(requests.size()==1){
+            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
+            String key = requests.get(0);
+            Object v = t.get(key);
+            if(v!=null){
+                m.value(v).print(w);
+            }else{
+                if(!isLenient()) {
+                    throw new NutsIllegalArgumentException(ws, "Property not found : " + key);
+                }
+            }
+            return;
+        } else {
+            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
+            r = new LinkedHashMap<>();
+            for (String request : requests) {
+                if (t.containsKey(request)) {
+                    r.put(request, t.get(request));
+                }else{
+                    if(!isLenient()) {
+                        throw new NutsIllegalArgumentException(ws, "Property not found : " + request);
+                    }
+                }
+            }
+        }
+        m.value(r).print(w);
     }
 
     @Override
@@ -123,9 +139,27 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 this.setFancy(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
+            case "--lenient": {
+                this.setLenient(cmdLine.nextBoolean().getBooleanValue());
+                return true;
+            }
             case "--add": {
                 NutsArgument r = cmdLine.nextString().getArgumentValue();
                 extraProperties.put(r.getStringKey(), r.getStringValue());
+                return true;
+            }
+            case "--get": {
+                String r = cmdLine.nextString().getStringValue();
+                requests.add(r);
+                while(true){
+                    NutsArgument p = cmdLine.peek();
+                    if(p!=null && !p.isOption()){
+                        cmdLine.skip();
+                        requests.add(p.getString());
+                    }else{
+                        break;
+                    }
+                }
                 return true;
             }
             default: {
@@ -270,5 +304,14 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     private String stringValue(Object s) {
         return CoreCommonUtils.stringValue(s);
+    }
+
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    public NutsInfoFormat setLenient(boolean lenient) {
+        this.lenient = lenient;
+        return this;
     }
 }

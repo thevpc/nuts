@@ -30,14 +30,28 @@
 package net.vpc.app.nuts;
 
 /**
+ * Class responsible of creating and initializing Workspace
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
  */
 public interface NutsBootWorkspaceFactory {
 
+    /**
+     * when multiple factories are available, the best one is selected according to
+     * the maximum value of {@code getBootSupportLevel(options)}.
+     * Note that default value (for the reference implementation) is {@code NutsComponent.DEFAULT_SUPPORT}.
+     * Any value less or equal to zero is ignored (and the factory is discarded)
+     * @param options command line options
+     * @return support level
+     */
     int getBootSupportLevel(NutsWorkspaceOptions options);
 
-    NutsWorkspace createWorkspace(NutsWorkspaceOptions options);
+    /**
+     * create workspace with the given options
+     * @param options boot init options
+     * @return initialized workspace
+     */
+    NutsWorkspace createWorkspace(NutsWorkspaceInitInformation options);
 
 }

@@ -7,7 +7,6 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.NonBlockingInputStreamAdapter;
 import net.vpc.common.strings.StringUtils;
@@ -28,7 +27,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("connect") != null) {
             char[] password = null;
             String server = null;
@@ -70,7 +69,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                     IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.session().out());
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!StringUtils.isBlank(login)) {
-                        out.printf("connect ==%s %s== %n", login, password);
+                        out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {
                         String line = context.session().getTerminal().readLine("");
@@ -95,11 +94,6 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
     }
 
     public static boolean isBlank(char[] string) {

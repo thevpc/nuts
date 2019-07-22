@@ -55,4 +55,8 @@ public interface NutsWorkspaceListener extends NutsListener{
     default void onUpdateProperty(NutsWorkspaceEvent event) {
 
     }
+    
+    default void onConfigurationChanged(NutsWorkspaceEvent event) {
+
+    }
 }

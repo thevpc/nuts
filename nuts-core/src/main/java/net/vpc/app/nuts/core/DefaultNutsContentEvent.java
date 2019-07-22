@@ -30,11 +30,8 @@
 package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
-import net.vpc.app.nuts.NutsContentEvent;
-import net.vpc.app.nuts.NutsDeployRepositoryCommand;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 
 /**
  *
@@ -43,7 +40,7 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class DefaultNutsContentEvent implements NutsContentEvent {
 
-    private final NutsDeployRepositoryCommand deployment;
+    private final NutsRepositoryCommand command;
     /**
      * stored deployment Path, this is Repository dependent
      */
@@ -51,9 +48,9 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
     private final NutsSession session;
     private final NutsRepository repository;
 
-    public DefaultNutsContentEvent(Path path, NutsDeployRepositoryCommand deployment, NutsSession session, NutsRepository repository) {
+    public DefaultNutsContentEvent(Path path, NutsRepositoryCommand command, NutsSession session, NutsRepository repository) {
         this.path = path;
-        this.deployment = deployment;
+        this.command = command;
         this.session = session;
         this.repository = repository;
     }
@@ -68,9 +65,9 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
         return path;
     }
 
-    @Override
-    public NutsDeployRepositoryCommand getDeployment() {
-        return deployment;
+//    @Override
+    public NutsRepositoryCommand getCommand() {
+        return command;
     }
 
     @Override

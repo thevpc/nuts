@@ -670,7 +670,7 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService[] listConfig() {
         List<LocalTomcatConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getConfigFolder(),
+        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
                 (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {
             for (Path entry : pp) {
                 try {

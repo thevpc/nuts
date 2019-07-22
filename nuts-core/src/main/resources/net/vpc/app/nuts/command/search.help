@@ -43,6 +43,13 @@ search for components/==nuts==
               include scope in the search dependencies process. if none defined, only [[installed]] scope is searched.
             
        **--default** or **--default-versions** : find only default installed versions. This  is meaningful with **--installed** flag
+       **--libs** : find libraries (non app) only
+       **--apps** : find applications (non libraries) only
+       **--nuts-apps** : find nuts applications only
+       **--extensions** : find extensions only
+       **--runtime** : find runtime only
+       **--companions** : find companions only
+       **--api-version** : find components compatible with the given api-version
 
        **-l**      
       |**--long**       

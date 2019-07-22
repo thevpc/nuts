@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
@@ -19,11 +18,11 @@ import java.util.Arrays;
 public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        return exec(null, cmdLine, config, autoSave, context);
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
+        return exec(null, cmdLine, autoSave, context);
     }
 
-    public static boolean exec(NutsRepository editedRepo, NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public static boolean exec(NutsRepository editedRepo, NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         NutsWorkspace workspace = context.getWorkspace();
         if (cmdLine.next("add user", "au") != null) {
             NutsRepository repository = null;
@@ -64,20 +63,20 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    NutsEffectiveUser[] security;
+                    NutsUser[] security;
                     if (repository == null) {
                         security = workspace.security().findUsers();
                     } else {
                         security = repository.security().findUsers();
                     }
-                    for (NutsEffectiveUser u : security) {
+                    for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
-                        if (!StringUtils.isBlank(u.getMappedUser())) {
-                            out.printf("   Mapper to  : %s%n", u.getMappedUser());
+                        if (!StringUtils.isBlank(u.getRemoteIdentity())) {
+                            out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));
                         out.printf("   Groups     : %s%n", (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
-                        out.printf("   Rights     : %s%n", (u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
+                        out.printf("   Rights     : %s%n", (u.getPermissions().length == 0 ? "None" : Arrays.asList(u.getPermissions())));
                     }
                 }
                 return true;
@@ -109,9 +108,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
                     boolean admin;
                     if (repository == null) {
-                        admin = workspace.security().isAllowed(NutsConstants.Rights.ADMIN);
+                        admin = workspace.security().isAllowed(NutsConstants.Permissions.ADMIN);
                     } else {
-                        admin = repository.security().isAllowed(NutsConstants.Rights.ADMIN);
+                        admin = repository.security().isAllowed(NutsConstants.Permissions.ADMIN);
                     }
 
                     if (oldPassword == null && !admin) {
@@ -142,7 +141,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
 
                 String user = cmdLine.required().nextNonOption(cmdLine.createName("Username")).getString();
                 if (cmdLine.isExecMode()) {
-                    NutsEffectiveUser u = null;
+                    NutsUser u = null;
                     if (repository == null) {
                         u = workspace.security().findUser(user);
                     } else {
@@ -205,9 +204,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(cmdLine.createName("Right")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).addRight(a).run();
+                                        repository.security().updateUser(user).addPermission(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).addRight(a).run();
+                                        workspace.security().updateUser(user).addPermission(a).run();
                                     }
                                 }
                                 break;
@@ -216,9 +215,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(cmdLine.createName("Right")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).removeRight(a).run();
+                                        repository.security().updateUser(user).removePermission(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).removeRight(a).run();
+                                        workspace.security().updateUser(user).removePermission(a).run();
                                     }
                                 }
                                 break;
@@ -273,7 +272,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     if (!context.getWorkspace().security().isAdmin()) {
                         credentials = context.session().getTerminal().readPassword("Enter password : ");
                     }
-                    if (workspace.security().switchUnsecureMode(credentials)) {
+                    if (workspace.security().setSecureMode(false,credentials, new NutsUpdateOptions().session(context.getSession()))) {
                         out.println("<<unsecure box activated.Anonymous has all rights.>>");
                     } else {
                         out.println("<<unsecure box is already activated.>>");
@@ -299,7 +298,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 //secure-box
                 if (cmdLine.isExecMode()) {
-                    if (workspace.security().switchSecureMode(credentials)) {
+                    if (workspace.security().setSecureMode(true,credentials, new NutsUpdateOptions().session(context.getSession()))) {
                         out.println("\"\"secure box activated.\"\"");
                     } else {
                         out.println("\"\"secure box already activated.\"\"");
@@ -315,9 +314,5 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
         return false;
     }
 
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
-    }
 
 }

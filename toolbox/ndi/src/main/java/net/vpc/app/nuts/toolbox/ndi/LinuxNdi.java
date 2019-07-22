@@ -26,8 +26,8 @@ public class LinuxNdi implements SystemNdi {
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
         NutsId nid = context.getWorkspace().id().parse(options.getId());
-        if ("nuts".equals(nid.getShortName()) || "net.vpc.app.nut:nuts".equals(nid.getShortName())) {
-            return createBootScript(options.isForceBoot() || options.getSession().isForce(), options.getSession().isTrace());
+        if ("nuts".equals(nid.getShortName()) || "net.vpc.app.nuts:nuts".equals(nid.getShortName())) {
+            return createBootScript(options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>();
             r.addAll(Arrays.asList(createBootScript(false, false)));
@@ -48,7 +48,7 @@ public class LinuxNdi implements SystemNdi {
             String n = nid.getName();
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
-            if (!options.getSession().isForce() && exists) {
+            if (!options.getSession().isYes() && exists) {
                 if (context.getSession().isPlainTrace()) {
                     context.session().out().printf("Script already exists ==%s==%n", ff);
                 }
@@ -218,7 +218,7 @@ public class LinuxNdi implements SystemNdi {
             lines.add(goodLine);
             updatedBashrc = true;
         }
-        if (session.isForce() || updatedBashrc) {
+        if (session.isYes() || updatedBashrc) {
             IOUtils.saveString(lines.stream().collect(Collectors.joining("\n")) + "\n", bashrc);
         }
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
@@ -240,11 +240,11 @@ public class LinuxNdi implements SystemNdi {
         if (!fileContent.trim().equals(goodNdiRc.toString().trim())) {
             updatedNdirc = true;
         }
-        if (session.isForce() || updatedNdirc) {
+        if (session.isYes() || updatedNdirc) {
             IOUtils.saveString(goodNdiRc.toString(), nutsndirc);
         }
-        if ((session.isForce() || updatedBashrc || updatedNdirc) && session.isTrace()) {
-            if (session.isForce()) {
+        if ((session.isYes() || updatedBashrc || updatedNdirc) && session.isTrace()) {
+            if (session.isYes()) {
                 if (context.getSession().isPlainTrace()) {
                     context.session().out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                 }

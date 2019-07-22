@@ -29,11 +29,11 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
@@ -42,24 +42,22 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class PackagingNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-
-    public PackagingNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+    public PackagingNonOption(NutsWorkspace ws,String name) {
+        super(ws,name);
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsDefaultArgumentCandidate("jar"));
-        all.add(new NutsDefaultArgumentCandidate("war"));
-        all.add(new NutsDefaultArgumentCandidate("war"));
-        all.add(new NutsDefaultArgumentCandidate("ear"));
-        all.add(new NutsDefaultArgumentCandidate("nuts-extension"));
-        all.add(new NutsDefaultArgumentCandidate("elf"));
-        all.add(new NutsDefaultArgumentCandidate("pe"));
-        all.add(new NutsDefaultArgumentCandidate("bin"));
+        NutsCommandLine c=getWorkspace().commandLine();
+        all.add(c.createCandidate("jar"));
+        all.add(c.createCandidate("war"));
+        all.add(c.createCandidate("war"));
+        all.add(c.createCandidate("ear"));
+        all.add(c.createCandidate("nuts-extension"));
+        all.add(c.createCandidate("elf"));
+        all.add(c.createCandidate("pe"));
+        all.add(c.createCandidate("bin"));
         return all;
     }
 

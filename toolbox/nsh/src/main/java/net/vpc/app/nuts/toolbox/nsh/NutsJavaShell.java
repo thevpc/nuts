@@ -176,7 +176,7 @@ public class NutsJavaShell extends JShell {
         PrintStream out = session.out();
         PrintStream err = session.err();
         NutsCommandLine cmd = null;
-        cmd = getWorkspace().commandLine().setArgs(args).setAutoComplete(appContext.getAutoComplete());
+        cmd = getWorkspace().commandLine().setArguments(args).setAutoComplete(appContext.getAutoComplete());
         NutsArgument a;
         while (cmd.hasNext()) {
             if (boot_nonOptions.isEmpty()) {
@@ -223,7 +223,7 @@ public class NutsJavaShell extends JShell {
     @Override
     public void executeShell(String[] args) {
         prepareExecuteShell(args);
-        if (!(getWorkspace().commandLine().setArgs(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
+        if (!(getWorkspace().commandLine().setArguments(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
             return;
         }
         executeFile(getStartupScript(), getRootContext(), true);
@@ -253,7 +253,7 @@ public class NutsJavaShell extends JShell {
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
-            login = ws.security().getCurrentLogin();
+            login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
         if (!StringUtils.isBlank(getRootContext().getServiceName())) {

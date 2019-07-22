@@ -143,7 +143,7 @@ public class NutsApplications {
         }
         LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
             inherited ? "(inherited)" : "",
-            lifeCycle, ws.commandLine().setArgs(args).toString()});
+            lifeCycle, ws.commandLine().setArguments(args).toString()});
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {

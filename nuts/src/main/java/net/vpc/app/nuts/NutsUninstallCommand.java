@@ -82,9 +82,21 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     boolean isErase();
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUninstallCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUninstallCommand setSession(NutsSession session);
 

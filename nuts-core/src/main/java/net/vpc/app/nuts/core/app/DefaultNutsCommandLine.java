@@ -53,8 +53,6 @@ import java.util.*;
  */
 public class DefaultNutsCommandLine implements NutsCommandLine {
 
-    public static final NutsArgumentName VALUE = new DefaultNonOption("value");
-
     protected LinkedList<String> args = new LinkedList<>();
     protected List<NutsArgument> lookahead = new ArrayList<>();
     protected boolean expandSimpleOptions = false;
@@ -72,33 +70,33 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public DefaultNutsCommandLine(NutsWorkspace ws, NutsApplicationContext context) {
         this.ws = ws;
-        setArgs(context == null ? null : context.getArguments());
+        setArguments(context == null ? null : context.getArguments());
         setAutoComplete(context == null ? null : context.getAutoComplete());
     }
 
     public DefaultNutsCommandLine(NutsWorkspace ws, String[] args, NutsCommandAutoComplete autoComplete) {
         this.ws = ws;
-        setArgs(args);
+        setArguments(args);
         setAutoComplete(autoComplete);
     }
 
     public DefaultNutsCommandLine(NutsWorkspace ws, String[] args) {
         this.ws = ws;
-        setArgs(args);
+        setArguments(args);
     }
 
     public DefaultNutsCommandLine(NutsWorkspace ws, List<String> args, NutsCommandAutoComplete autoComplete) {
         this.ws = ws;
-        setArgs(args);
+        setArguments(args);
         setAutoComplete(autoComplete);
     }
 
     public DefaultNutsCommandLine(List<String> args) {
-        setArgs(args);
+        setArguments(args);
     }
 
     public NutsCommandLine parseLine(String commandLine) {
-        setArgs(NutsCommandLineUtils.parseCommandLine(ws, commandLine));
+        setArguments(NutsCommandLineUtils.parseCommandLine(ws, commandLine));
         return this;
     }
 
@@ -115,13 +113,13 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsCommandLine removeSpecialSimpleOption(String option) {
+    public NutsCommandLine unregisterSpecialSimpleOption(String option) {
         specialSimpleOptions.remove(option);
         return this;
     }
 
     @Override
-    public NutsCommandLine addSpecialSimpleOption(String option) {
+    public NutsCommandLine registerSpecialSimpleOption(String option) {
         specialSimpleOptions.add(option);
         return this;
     }
@@ -183,11 +181,11 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsCommandLine pushBack(NutsArgument a) {
-        if (a == null) {
+    public NutsCommandLine pushBack(NutsArgument arg) {
+        if (arg == null) {
             throwError("Null Argument");
         }
-        lookahead.add(0, a);
+        lookahead.add(0, arg);
         return this;
     }
 
@@ -233,23 +231,23 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return all.toArray(new String[0]);
     }
 
-    public NutsCommandLine setArgs(List<String> args) {
-        return setArgs(args.toArray(new String[0]));
+    public NutsCommandLine setArguments(List<String> arguments) {
+        return setArguments(arguments.toArray(new String[0]));
     }
 
-    public NutsCommandLine setArgs(String[] args) {
+    public NutsCommandLine setArguments(String[] arguments) {
         this.lookahead.clear();
         this.args.clear();
-        if (args != null) {
-            Collections.addAll(this.args, args);
+        if (arguments != null) {
+            Collections.addAll(this.args, arguments);
         }
         return this;
     }
 
     @Override
-    public boolean isSpecialOneDashOption(String v) {
+    public boolean isSpecialSimpleOption(String option) {
         for (String x : specialSimpleOptions) {
-            if (v.equals("-" + x) || v.startsWith("-" + x + eq)) {
+            if (option.equals("-" + x) || option.startsWith("-" + x + eq)) {
                 return true;
             }
         }
@@ -314,7 +312,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (isAutoCompleteMode()) {
                 for (int i = 0; i < nameSeqArray.length; i++) {
                     if (getWordIndex() == autoComplete.getCurrentWordIndex() + i) {
-                        autoComplete.addCandidate(new NutsDefaultArgumentCandidate(nameSeqArray[i]));
+                        autoComplete.addCandidate(createCandidate(nameSeqArray[i]));
                     }
                 }
             }
@@ -336,12 +334,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                                 return p;
                             } else {
                                 if (isAutoCompleteMode() && getWordIndex() + 1 == autoComplete.getCurrentWordIndex()) {
-                                    autoComplete.addCandidate(new NutsDefaultArgumentCandidate("<StringValueFor" + p.getStringKey() + ">"));
+                                    autoComplete.addCandidate(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
                                 }
                                 NutsArgument r2 = peek();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
-                                    return newArgument(p.getString() + eq + r2.getString());
+                                    return createArgument(p.getString() + eq + r2.getString());
                                 } else {
                                     return p;
                                 }
@@ -353,14 +351,14 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                                 if (p.isKeyValue()) {
                                     //should not happen
                                     boolean x = p.getBoolean();
-                                    return newArgument(p.getStringKey() + eq + (!x));
+                                    return createArgument(p.getStringKey() + eq + (!x));
                                 } else {
-                                    return newArgument(p.getStringKey() + eq + (false));
+                                    return createArgument(p.getStringKey() + eq + (false));
                                 }
                             } else if (p.isKeyValue()) {
                                 return p;
                             } else {
-                                return newArgument(p.getStringKey() + eq + (true));
+                                return createArgument(p.getStringKey() + eq + (true));
                             }
                         }
                         default: {
@@ -402,7 +400,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (isAutoComplete()) {
                 List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates();
                 if (values == null || values.isEmpty()) {
-                    autoComplete.addExpectedTypedValue(null, name == null ? "value" : name.getName());
+                    autoComplete.addCandidate(createCandidate(name == null ? "<value>" : name.getName()));
                 } else {
                     for (NutsArgumentCandidate value : values) {
                         autoComplete.addCandidate(value);
@@ -417,14 +415,14 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 if (isAutoComplete()) {
                     List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates();
                     if (values == null || values.isEmpty()) {
-                        autoComplete.addExpectedTypedValue(null, name == null ? "value" : name.getName());
+                        autoComplete.addCandidate(createCandidate(name == null ? "<value>" : name.getName()));
                     } else {
                         for (NutsArgumentCandidate value : values) {
                             autoComplete.addCandidate(value);
                         }
                     }
                 }
-                return newArgument("");
+                return createArgument("");
             }
             if (!error) {
                 return null;//return new Argument("");
@@ -444,9 +442,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public boolean accept(int pos, String... values) {
+    public boolean accept(int index, String... values) {
         for (int i = 0; i < values.length; i++) {
-            NutsArgument argument = get(pos + i);
+            NutsArgument argument = get(index + i);
             if (argument == null) {
                 return false;
             }
@@ -461,26 +459,26 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     public NutsArgument find(String name) {
         int index = indexOf(name);
         if (index >= 0) {
-            return get(index + 1);
+            return get(index);
         }
         return null;
     }
 
     @Override
-    public NutsArgument get(int i) {
-        if (i < 0) {
+    public NutsArgument get(int index) {
+        if (index < 0) {
             return null;
         }
-        if (i < lookahead.size()) {
-            return lookahead.get(i);
+        if (index < lookahead.size()) {
+            return lookahead.get(index);
         }
-        while (!args.isEmpty() && i >= lookahead.size()) {
+        while (!args.isEmpty() && index >= lookahead.size()) {
             if (!ensureNext(isExpandSimpleOptions(), true)) {
                 break;
             }
         }
-        if (i < lookahead.size()) {
-            return lookahead.get(i);
+        if (index < lookahead.size()) {
+            return lookahead.get(index);
         }
         return null;
     }
@@ -581,7 +579,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return lookahead.remove(0);
             }
             String v = args.removeFirst();
-            return newArgument(v);
+            return createArgument(v);
         } else {
             if (required) {
                 throwError("Missing argument");
@@ -613,7 +611,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         if (!expandSimpleOptions || v.length() <= 2) {
             return false;
         }
-        if (isSpecialOneDashOption(v)) {
+        if (isSpecialSimpleOption(v)) {
             return false;
         }
         if (v.charAt(0) == '-') {
@@ -649,7 +647,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                     char c = chars[i];
                     if (c == '!') {
                         if (last != null) {
-                            lookahead.add(newArgument(prefix + last));
+                            lookahead.add(createArgument(prefix + last));
                             last = null;
                         }
                         negate = true;
@@ -659,20 +657,20 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             nextArg = last + nextArg;
                             last = null;
                         }
-                        lookahead.add(newArgument(prefix + nextArg));
+                        lookahead.add(createArgument(prefix + nextArg));
                         i = chars.length;
                     } else {
                         if (last != null) {
-                            lookahead.add(newArgument(prefix + last));
+                            lookahead.add(createArgument(prefix + last));
                         }
                         last = chars[i];
                     }
                 }
                 if (last != null) {
-                    lookahead.add(newArgument(prefix + last));
+                    lookahead.add(createArgument(prefix + last));
                 }
             } else {
-                lookahead.add(newArgument(v));
+                lookahead.add(createArgument(v));
             }
             return true;
         }
@@ -684,8 +682,13 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsArgument newArgument(String s) {
-        return new DefaultNutsArgument(s, eq);
+    public NutsArgument createArgument(String argument) {
+        return new DefaultNutsArgument(argument, eq);
+    }
+
+    @Override
+    public NutsArgumentCandidate createCandidate(String value, String label) {
+        return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label)?value:label);
     }
 
     @Override
@@ -701,25 +704,25 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return new ArchitectureNonOption(label, ws);
             }
             case "packaging": {
-                return new PackagingNonOption(label, ws);
+                return new PackagingNonOption(ws,label);
             }
             case "extension": {
                 return new ExtensionNonOption(type, null);
             }
             case "file": {
-                return new FileNonOption(type);
+                return new FileNonOption(ws,type);
             }
             case "boolean": {
-                return new ValueNonOption(type, "true", "false");
+                return new ValueNonOption(ws,type, "true", "false");
             }
             case "repository": {
-                return new RepositoryNonOption(label, ws);
+                return new RepositoryNonOption(ws, label);
             }
             case "repository-type": {
                 return new RepositoryTypeNonOption(label, ws);
             }
             case "right": {
-                return new RightNonOption(label, ws, null, null, false);
+                return new PermissionNonOption(label, ws, null, null, false);
             }
             case "user": {
                 return new UserNonOption(label, ws);
@@ -728,7 +731,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return new GroupNonOption(label, ws);
             }
             default: {
-                return new DefaultNonOption(label);
+                return new DefaultNonOption(ws,label);
             }
         }
     }
@@ -752,4 +755,5 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     private String highlightText(String text) {
         return "{{" + ws.io().getTerminalFormat().escapeText(text) + "}}";
     }
+
 }

@@ -329,9 +329,6 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setFace(String value) {
-        if (NutsConstants.QueryKeys.FACE_DEFAULT_VALUE.equals(value)) {
-            value = null;
-        }
         return setQueryProperty(NutsConstants.QueryKeys.FACE, CoreStringUtils.trimToNull(value))
                 .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }

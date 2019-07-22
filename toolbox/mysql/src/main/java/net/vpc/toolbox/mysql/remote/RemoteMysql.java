@@ -3,7 +3,6 @@ package net.vpc.toolbox.mysql.remote;
 import net.vpc.app.nuts.*;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlConfig;
-import net.vpc.toolbox.mysql.util.UserCancelException;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -28,7 +27,7 @@ public class RemoteMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().commandLine().setArgs(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().setArguments(args)
                 .setCommandName("mysql --remote");
         NutsArgument a;
         while (cmd.hasNext()) {
@@ -398,7 +397,7 @@ public class RemoteMysql {
 
     public RemoteMysqlConfigService[] listConfig() {
         List<RemoteMysqlConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
+        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getSharedConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
             for (Path file1 : configFiles) {
                 try {
                     String nn = file1.getFileName().toString();

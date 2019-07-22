@@ -48,12 +48,20 @@ public enum NutsWorkspaceOpenMode {
      * Open Workspace (if found) or throw Error (if not found)
      */
     OPEN_EXISTING;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsWorkspaceOpenMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

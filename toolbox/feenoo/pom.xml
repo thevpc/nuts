@@ -4,7 +4,7 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>feenoo</artifactId>
     <name>net.vpc.app.nuts.toolbox.feenoo</name>
-    <version>0.5.6.0</version>
+    <version>0.5.7.0</version>
     <packaging>jar</packaging>
     <description>Nuts Search Class Command</description>
     <properties>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.6</version>
+            <version>0.5.7</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>

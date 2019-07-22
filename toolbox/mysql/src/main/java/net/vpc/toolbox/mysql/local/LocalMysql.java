@@ -8,9 +8,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,7 @@ public class LocalMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().commandLine().setArgs(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().setArguments(args)
                 .commandName("mysql --local");
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
@@ -498,7 +496,7 @@ public class LocalMysql {
 
     public LocalMysqlConfigService[] listConfig() {
         List<LocalMysqlConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
+        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getSharedConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
             for (Path file1 : configFiles) {
                 try {
                     LocalMysqlConfigService c = loadMysqlConfig(file1);

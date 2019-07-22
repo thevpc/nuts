@@ -57,7 +57,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public Path getConfigPath() {
-        return context.getConfigFolder().resolve(name + REMOTE_CONFIG_EXT);
+        return context.getSharedConfigFolder().resolve(name + REMOTE_CONFIG_EXT);
     }
 
     public RemoteTomcatConfigService save() {

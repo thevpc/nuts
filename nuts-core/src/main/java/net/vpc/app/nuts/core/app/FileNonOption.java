@@ -29,13 +29,15 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import net.vpc.app.nuts.NutsWorkspace;
+
 /**
  *
  * @author vpc
  */
 public class FileNonOption extends net.vpc.app.nuts.core.app.DefaultNonOption {
 
-    public FileNonOption(String name) {
-        super(name);
+    public FileNonOption(NutsWorkspace ws, String name) {
+        super(ws,name);
     }
 }

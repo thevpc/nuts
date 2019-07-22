@@ -37,12 +37,20 @@ package net.vpc.app.nuts;
 public enum NutsRepositorySupportedAction {
     SEARCH,
     DEPLOY;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsRepositorySupportedAction() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

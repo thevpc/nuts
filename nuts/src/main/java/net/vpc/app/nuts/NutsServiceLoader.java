@@ -32,10 +32,10 @@ package net.vpc.app.nuts;
 import java.util.List;
 
 /**
- *
+ * Component service class loader.
  * @author vpc
- * @param <T>
- * @param <B>
+ * @param <T> component type
+ * @param <B> component support constraint type
  * @since 0.5.4
  */
 public interface NutsServiceLoader<T extends NutsComponent<B>, B> {

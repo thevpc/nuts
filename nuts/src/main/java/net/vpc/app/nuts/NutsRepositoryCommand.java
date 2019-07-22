@@ -37,7 +37,7 @@ public interface NutsRepositoryCommand extends NutsConfigurable {
 
     NutsRepositoryCommand setSession(NutsRepositorySession session);
 
-    NutsRepositoryCommand session(NutsRepositorySession session);
+//    NutsRepositoryCommand session(NutsRepositorySession session);
 
     NutsRepositorySession getSession();
 

@@ -41,9 +41,21 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
 
     NutsRemoveUserCommand setLogin(String login);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsRemoveUserCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsRemoveUserCommand setSession(NutsSession session);
 

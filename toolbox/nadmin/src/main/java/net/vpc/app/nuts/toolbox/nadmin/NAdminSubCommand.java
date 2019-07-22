@@ -16,13 +16,13 @@ import net.vpc.app.nuts.NutsCommandLine;
 public interface NAdminSubCommand extends NutsComponent<Object> {
 
     /**
-     * true if processed
+     * execute command and return true.
+     * If the command is not supported return false.
      *
-     * @param cmdLine
-     * @param config
-     * @param autoSave
-     * @param context
-     * @return
+     * @param cmdLine  command line
+     * @param autoSave auto save
+     * @param context application context
+     * @return true if the sub command is supported and executed
      */
-    boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context);
+    boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context);
 }

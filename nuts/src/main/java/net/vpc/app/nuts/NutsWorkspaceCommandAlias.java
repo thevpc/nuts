@@ -44,6 +44,8 @@ public interface NutsWorkspaceCommandAlias {
 
     void exec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
 
+    void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
+
     String getHelpText() throws NutsExecutionException;
 
     String[] getCommand();

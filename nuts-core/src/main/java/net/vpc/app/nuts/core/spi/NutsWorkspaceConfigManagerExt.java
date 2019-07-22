@@ -2,55 +2,72 @@ package net.vpc.app.nuts.core.spi;
 
 import net.vpc.app.nuts.*;
 
-import java.net.URL;
 import java.nio.file.Path;
-import net.vpc.app.nuts.core.config.DefaultNutsWorkspaceCurrentConfig;
+
+import net.vpc.app.nuts.core.impl.def.config.*;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
-    public static NutsWorkspaceConfigManagerExt of(NutsWorkspaceConfigManager wsc) {
+    static NutsWorkspaceConfigManagerExt of(NutsWorkspaceConfigManager wsc) {
         return (NutsWorkspaceConfigManagerExt) wsc;
     }
 
     void setStartCreateTimeMillis(long currentTimeMillis);
 
-    void onInitializeWorkspace(Path workspaceLocation,NutsWorkspaceOptions options, URL[] bootClassWorldURLs, ClassLoader classLoader);
-    
     void setCurrentConfig(DefaultNutsWorkspaceCurrentConfig runningContext);
 
-    void setConfig(NutsWorkspaceConfig config, NutsSession session);
+    void setConfigBoot(NutsWorkspaceConfigBoot config, NutsUpdateOptions options);
+
+    void setConfigApi(NutsWorkspaceConfigApi config, NutsUpdateOptions options);
+
+    void setConfigRuntime(NutsWorkspaceConfigRuntime config, NutsUpdateOptions options);
+
+    void setConfigSecurity(NutsWorkspaceConfigSecurity config, NutsUpdateOptions options);
+
+    void setConfigMain(NutsWorkspaceConfigMain config, NutsUpdateOptions options);
 
     void setEndCreateTimeMillis(long currentTimeMillis);
 
-    boolean isConfigurationChanged();
+    void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force);
 
-    Path getConfigFile();
+    void prepareBootRuntime(NutsId id, boolean force);
+
+    void prepareBootExtension(NutsId id, boolean force);
+
+    void prepareBoot(boolean force);
+
+    boolean isConfigurationChanged();
 
     boolean loadWorkspace(NutsSession session);
 
-    void setBootApiVersion(String value);
+    void setBootApiVersion(String value, NutsUpdateOptions options);
 
-    void setBootRuntime(String value);
+    void setBootRuntimeId(String value, NutsUpdateOptions options);
 
-    void setBootRuntimeDependencies(String value);
+    void setBootRuntimeDependencies(String value, NutsUpdateOptions options);
 
-    void setBootRepositories(String value);
+    void setBootRepositories(String value, NutsUpdateOptions options);
 
     NutsUserConfig getUser(String userId);
 
     NutsUserConfig[] getUsers();
 
-    void setUser(NutsUserConfig config);
+    void setUser(NutsUserConfig config, NutsUpdateOptions options);
 
-    void removeUser(String userId);
+    void removeUser(String userId, NutsRemoveOptions options);
 
-    void setUsers(NutsUserConfig[] users);
+    void setSecure(boolean secure, NutsUpdateOptions options);
 
-    void setSecure(boolean secure);
+    void fireConfigurationChanged(String configName, NutsSession session, DefaultNutsWorkspaceConfigManager.ConfigEventType t);
 
-    void fireConfigurationChanged();
+    NutsWorkspaceConfigApi getStoredConfigApi();
 
-    NutsWorkspaceConfig getStoredConfig();
+    NutsWorkspaceConfigBoot getStoredConfigBoot();
+
+    NutsWorkspaceConfigSecurity getStoredConfigSecurity();
+
+    NutsWorkspaceConfigMain getStoredConfigMain();
+
 
     NutsWorkspace getWorkspace();
 
@@ -58,17 +75,13 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     Path getRepositoriesRoot();
 
-    void setExcludedRepositories(String[] excludedRepositories);
-
     boolean isValidWorkspaceFolder();
 
     NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 
-//    char[] decryptString(char[] input);
-//
-//    byte[] decryptString(byte[] input);
-//
-//    char[] encryptString(char[] input);
-//
-//    byte[] encryptString(byte[] input);
+    void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options);
+
+    void setUsers(NutsUserConfig[] users, NutsUpdateOptions options);
+
+    NutsWorkspaceConfigRuntime getStoredConfigRuntime();
 }

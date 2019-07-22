@@ -52,15 +52,15 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
     }
 
     @Override
-    public NutsHttpConnectionFacade open(String url) throws IOException {
-        return new DefaultNutsHttpConnectionFacade(new URL(url));
+    public NutsHttpConnection open(String url) throws IOException {
+        return new DefaultNutsHttpConnection(new URL(url));
     }
 
-    private static class DefaultNutsHttpConnectionFacade implements NutsHttpConnectionFacade {
+    private static class DefaultNutsHttpConnection implements NutsHttpConnection {
 
         private final URL url;
 
-        public DefaultNutsHttpConnectionFacade(URL url) {
+        public DefaultNutsHttpConnection(URL url) {
             this.url = url;
         }
 

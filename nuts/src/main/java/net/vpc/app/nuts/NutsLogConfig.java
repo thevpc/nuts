@@ -38,6 +38,7 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public class NutsLogConfig implements Serializable{
+    private static final long serialVersionUID = 1;
 
     private Level logLevel = null;
     private int logSize = 0;
@@ -45,7 +46,6 @@ public class NutsLogConfig implements Serializable{
     private String logName = null;
     private String logFolder = null;
     private boolean logInherited = false;
-    private boolean debug = false;
 
     public Level getLogLevel() {
         return logLevel;
@@ -100,14 +100,4 @@ public class NutsLogConfig implements Serializable{
         this.logInherited = logInherited;
         return this;
     }
-
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public NutsLogConfig setDebug(boolean debug) {
-        this.debug = debug;
-        return this;
-    }
-
 }

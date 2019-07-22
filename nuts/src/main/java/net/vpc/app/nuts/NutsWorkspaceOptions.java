@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Created by vpc on 1/23/17.
@@ -39,7 +40,7 @@ import java.util.Map;
  */
 public interface NutsWorkspaceOptions extends Serializable {
 
-   NutsDefaultWorkspaceOptions copy();
+    NutsDefaultWorkspaceOptions copy();
 
     NutsWorkspaceOptionsFormat format();
 
@@ -49,9 +50,11 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     String getArchetype();
 
-    NutsClassLoaderProvider getClassLoaderProvider();
+    Supplier<ClassLoader> getClassLoaderSupplier();
 
     NutsConfirmationMode getConfirm();
+
+    boolean isDry();
 
     long getCreationTime();
 

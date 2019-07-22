@@ -64,20 +64,6 @@ public interface NutsCommandAutoComplete {
 
     /**
      * add candidate
-     * @param value candidate value
-     * @param display candidate user display label
-     */
-    void addCandidate(String value, String display);
-
-    /**
-     * add candidate
-     * @param type candidate type
-     * @param name candidate name
-     */
-    void addExpectedTypedValue(String type, String name);
-
-    /**
-     * add candidate
      * @param value candidate
      */
     void addCandidate(NutsArgumentCandidate value);

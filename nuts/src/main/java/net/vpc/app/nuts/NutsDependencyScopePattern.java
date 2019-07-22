@@ -65,14 +65,21 @@ public enum NutsDependencyScopePattern {
     /**
      * all dependencies (no restriction)
      */
-    ALL();
+    ALL;
 
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private String id;
 
-    private NutsDependencyScopePattern() {
+    NutsDependencyScopePattern() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

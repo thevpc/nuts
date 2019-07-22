@@ -32,6 +32,9 @@ package net.vpc.app.nuts;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,7 +45,7 @@ import java.util.Map;
  *
  * @author vpc
  */
-class PrivateNutsJsonParser {
+final class PrivateNutsJsonParser {
 
     private StreamTokenizer st;
 
@@ -203,4 +206,11 @@ class PrivateNutsJsonParser {
         }
     }
 
+    public static Map<String,Object> parse(Path path) {
+        try(Reader r= Files.newBufferedReader(path)) {
+            return new PrivateNutsJsonParser(r).parseObject();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 }

@@ -134,12 +134,16 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand checkUpdates();
 
     /**
-     *
-     * @param applyUpdates
-     * @return null if no updates
+     * check for updates.
+     * @param applyUpdates if true updates will be applied
+     * @return {@code this} instance
      */
     NutsUpdateCommand checkUpdates(boolean applyUpdates);
 
+    /**
+     * execute update check (if not already performed) then return result
+     * @return updates result
+     */
     NutsWorkspaceUpdateResult getResult();
 
     int getResultCount();
@@ -162,6 +166,8 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand setUpdateExtensions(boolean enable);
 
+    NutsUpdateCommand setUpdateCompanions(boolean updateCompanions);
+
     boolean isUpdateExtensions();
 
     NutsUpdateCommand runtime();
@@ -171,6 +177,8 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand updateRuntime(boolean enable);
 
     NutsUpdateCommand setUpdateRuntime(boolean enable);
+
+    boolean isUpdateCompanions();
 
     boolean isUpdateRuntime();
 
@@ -206,13 +214,27 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand runtime(boolean enable);
 
+    NutsUpdateCommand companions(boolean enable);
+
     NutsUpdateCommand extensions(boolean enable);
 
     NutsUpdateCommand installed(boolean enable);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUpdateCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsUpdateCommand setSession(NutsSession session);
 

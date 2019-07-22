@@ -49,14 +49,9 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
     NutsPushRepositoryCommand setSession(NutsRepositorySession session);
 
     @Override
-    NutsPushRepositoryCommand session(NutsRepositorySession session);
-
-    @Override
     NutsPushRepositoryCommand run();
 
     String[] getArgs();
-
-    NutsPushRepositoryCommand arg(String arg);
 
     NutsPushRepositoryCommand addArg(String arg);
 
@@ -67,12 +62,6 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
     NutsPushRepositoryCommand clearArgs();
 
     boolean isOffline();
-
-    NutsPushRepositoryCommand offline();
-
-    NutsPushRepositoryCommand offline(boolean enable);
-
-    NutsPushRepositoryCommand repository(String repository);
 
     NutsPushRepositoryCommand setRepository(String repository);
 

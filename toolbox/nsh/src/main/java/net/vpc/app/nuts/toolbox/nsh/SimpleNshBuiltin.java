@@ -191,7 +191,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NutsCommandLine commandLine = context.getWorkspace().commandLine().setArgs(args);
+        NutsCommandLine commandLine = context.getWorkspace().commandLine().setArguments(args);
         SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {
             if (robustMode) {

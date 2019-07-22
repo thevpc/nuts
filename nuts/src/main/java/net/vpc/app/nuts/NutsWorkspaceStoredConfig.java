@@ -73,7 +73,7 @@ public interface NutsWorkspaceStoredConfig {
 
     String getRuntimeDependencies();
 
-    String getExtensionDependencies();
+//    String getExtensionDependencies();
 
     String getBootRepositories();
 

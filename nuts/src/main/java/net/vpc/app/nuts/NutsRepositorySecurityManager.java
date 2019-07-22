@@ -46,11 +46,11 @@ public interface NutsRepositorySecurityManager {
 
     NutsRemoveUserCommand removeUser(String name);
 
-    NutsEffectiveUser[] findUsers();
+    NutsUser[] findUsers();
 
-    NutsEffectiveUser getEffectiveUser(String username);
+    NutsUser getEffectiveUser(String username);
 
-    NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent);
+    NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent, NutsUpdateOptions options);
 
     NutsAuthenticationAgent getAuthenticationAgent(String id);
 

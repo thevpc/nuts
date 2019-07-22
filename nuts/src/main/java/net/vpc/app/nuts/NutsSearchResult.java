@@ -43,25 +43,29 @@ import java.util.stream.Stream;
 public interface NutsSearchResult<T> extends Iterable<T> {
 
     /**
+     * return result as a  java.util.List .
+     *
      * consumes the result and returns a list Calling this method twice will
      * result in unexpected behavior (may return an empty list as the result is
      * already consumed or throw an Exception)
      *
-     * @return
+     * @return result as a  java.util.List
      */
     List<T> list();
 
     /**
+     * return the first value or null if none found.
      *
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
      *
-     * @return the first value of null if none found
+     * @return the first value or null if none found
      */
     T first();
 
     /**
+     * return the first value or NutsNotFoundException if not found.
      *
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
@@ -72,6 +76,7 @@ public interface NutsSearchResult<T> extends Iterable<T> {
     T required() throws NutsNotFoundException;
 
     /**
+     * return the first value while checking that there are no more elements.
      *
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
@@ -85,15 +90,18 @@ public interface NutsSearchResult<T> extends Iterable<T> {
     T singleton() throws NutsTooManyElementsException, NutsNotFoundException;
 
     /**
+     * return result as a  java.util.stream.Stream .
      *
      * Calling this method twice will result in unexpected behavior (may return
      * 0 as the result is already consumed or throw an Exception)
      *
-     * @return
+     * @return result as a  java.util.stream.Stream
      */
     Stream<T> stream();
 
     /**
+     * return elements count of this result.
+     *
      * consumes the result and returns the number of elements consumed. Calling
      * this method twice will result in unexpected behavior (may return 0 as the
      * result is already consumed or throw an Exception)

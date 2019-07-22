@@ -39,6 +39,6 @@ public abstract class NutsWorkspaceException extends NutsException {
     public NutsWorkspaceException(NutsWorkspace workspace, String message, Throwable ex) {
         super(workspace,
                 PrivateNutsUtils.isBlank(message)
-                ? ("Worksapace " + (workspace == null ? "<null>" : workspace.config().name()) + " has encountred problem") : message, ex);
+                ? ("Workspace " + (workspace == null ? "<null>" : workspace.config().name()) + " has encountered problem") : message, ex);
     }
 }

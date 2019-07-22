@@ -29,10 +29,12 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
  * Created by vpc on 1/8/17.
  *
  * @since 0.5.4
  */
-public class NutsTransportParamPart {
+public class NutsTransportParamPart{
 }

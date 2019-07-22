@@ -44,13 +44,8 @@ public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryComm
     public NutsFetchDescriptorRepositoryCommand run();
 
     @Override
-    public NutsFetchDescriptorRepositoryCommand session(NutsRepositorySession session);
-
-    @Override
-    public NutsFetchDescriptorRepositoryCommand setSession(NutsRepositorySession session);
+    NutsFetchDescriptorRepositoryCommand setSession(NutsRepositorySession session);
 
     NutsDescriptor getResult();
-
-    NutsFetchDescriptorRepositoryCommand id(NutsId id);
 
 }

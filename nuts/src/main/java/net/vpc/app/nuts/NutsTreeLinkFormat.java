@@ -36,16 +36,36 @@ package net.vpc.app.nuts;
  */
 public interface NutsTreeLinkFormat {
 
-    public enum Type {
+    enum Type {
+        /**
+         * first node in the tree
+         */
         FIRST,
+        /**
+         * any middle node in the tree
+         */
         MIDDLE,
+        /**
+         * last node in the tree
+         */
         LAST;
+
+        /**
+         * lower-cased identifier for the enum entry
+         */
         private final String id;
 
+        /**
+         * constructor
+         */
         Type() {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
+        /**
+         * lower cased identifier.
+         * @return lower cased identifier
+         */
         public String id() {
             return id;
         }

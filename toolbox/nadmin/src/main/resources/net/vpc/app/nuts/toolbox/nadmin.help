@@ -3,27 +3,41 @@ manage nuts workspace
 ##SYNOPSIS:##
 **nadmin** {{\<command\>}} [**\<options\>**]
 manage nuts workspace
+{{list aliases}}
+    list all command aliases
 
-{{show location}}
+{{add alias}} <name>=<value> ...
+{{add alias}} <name> <value> ...
+    add new command alias or aliases
 
-{{create workspace}} ...
+{{remove alias}} <name> ...
+    remove command alias or aliases
 
-{{set workspace}} api-version
+{{list archetypes}}
+    list all available archetypes
 
-{{set workspace}} runtime-version
+{{delete}} {{apps}}|{{config}}|{{var}}|{{log}}|{{temp}}|{{cache}}|{{lib}}|{{run}} ... [**--force**|**-f**]
+    delete store folders
 
-{{create repo}} ...
+{{connect}} <username\@server:port> [--password <password>]
+    connect to remote nuts server . default port is 8898
 
 {{add repo}} ...
-
+    add repository
 {{remove repo}} ...
+    remove repository
 
 {{list repos}} ...
+    list repositories
+
+{{edit repo}} <repoId> ...
 
 {{list extension points}}|{{lxp}}
         : list currently loaded extension points
 
-{{edit repo}} <repoId> ...
+{{import}}
+
+{{unimport}}
 
 {{list imports}}
 
@@ -31,13 +45,6 @@ manage nuts workspace
 
 {{list archetypes}}
 
-{{import}}
-
-{{list imports}}
-
-{{clear imports}}
-
-{{unimport}}
 
 {{list users}}
 

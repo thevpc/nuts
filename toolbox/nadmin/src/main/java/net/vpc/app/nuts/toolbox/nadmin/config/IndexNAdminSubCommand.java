@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import java.nio.file.Paths;
-import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ import net.vpc.app.nuts.NutsSupportLevelContext;
 public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin update stats";
         NutsArgument a;
         if (cmdLine.next("update stats") != null) {
@@ -37,11 +36,6 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
     }
 
     private void updateStatistics(NutsApplicationContext context, String[] repos) {

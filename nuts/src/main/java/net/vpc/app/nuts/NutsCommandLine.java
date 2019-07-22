@@ -82,27 +82,100 @@ import java.util.List;
  */
 public interface NutsCommandLine {
 
-    ////////////////////////////////////////////////
+    /**
+     * set autocomplete instance
+     *
+     * @param autoComplete autocomplete instance
+     * @return {@code this} instance
+     */
     NutsCommandLine autoComplete(NutsCommandAutoComplete autoComplete);
 
+    /**
+     * set autocomplete instance
+     *
+     * @param autoComplete autocomplete instance
+     * @return {@code this} instance
+     */
     NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
 
-    NutsCommandLine removeSpecialSimpleOption(String option);
+    /**
+     * autocomplete instance
+     * @return autocomplete instance
+     */
+    NutsCommandAutoComplete getAutoComplete();
 
-    NutsCommandLine addSpecialSimpleOption(String option);
+    /**
+     * unregister {@code options} as simple (with simple '-') option.
+     * This method helps considering '-version' as a single simple options when
+     * {@code isExpandSimpleOptions()==true}
+     *
+     * @param option option
+     * @return {@code this} instance
+     */
+    NutsCommandLine unregisterSpecialSimpleOption(String option);
 
+    /**
+     * list of registered simple options
+     * @return list of registered simple options
+     */
+    String[] getSpecialSimpleOptions();
+
+    /**
+     * register {@code options} as simple (with simple '-') option.
+     * This method helps considering '-version' as a single simple options when
+     * {@code isExpandSimpleOptions()==true}
+     *
+     * @param option option
+     * @return {@code this} instance
+     */
+    NutsCommandLine registerSpecialSimpleOption(String option);
+
+    /**
+     * test if the option is a registered simple option
+     * This method helps considering '-version' as a single simple options when
+     * {@code isExpandSimpleOptions()==true}
+     *
+     * @param option option
+     * @return {@code this} instance
+     */
+    boolean isSpecialSimpleOption(String option);
+
+    /**
+     * enable simple option expansion
+     *
+     * @return {@code this} instance
+     */
     NutsCommandLine expandSimpleOptions();
 
+    /**
+     * enable or disable simple option expansion
+     * @param expand expand
+     * @return {@code this} instance
+     */
     NutsCommandLine expandSimpleOptions(boolean expand);
 
+    /**
+     * current word index
+     *
+     * @return current word index
+     */
     int getWordIndex();
 
+    /**
+     * true if auto complete instance is not registered (is null)
+     *
+     * @return true if auto complete instance is not registered (is null)
+     */
     boolean isExecMode();
 
+    /**
+     * true if auto complete instance is registered (is not null)
+     *
+     * @return true if auto complete instance is registered (is not null)
+     */
     boolean isAutoCompleteMode();
 
     /**
-     *
      * @return command name that will be used as an extra info in thrown
      * exceptions
      */
@@ -113,32 +186,76 @@ public interface NutsCommandLine {
      *
      * @param commandName commandName
      * @return {@code this} instance
-     * 
      */
     NutsCommandLine setCommandName(String commandName);
 
+    /**
+     * set command name that will be used as an extra info in thrown exceptions
+     *
+     * @param commandName commandName
+     * @return {@code this} instance
+     */
     NutsCommandLine commandName(String commandName);
 
-    String[] getSpecialSimpleOptions();
 
+    /**
+     * true if simple option expansion is enabled
+     *
+     * @return true if simple option expansion is enabled
+     */
     boolean isExpandSimpleOptions();
 
+    /**
+     * enable or disable simple option expansion
+     * @param expand expand
+     * @return {@code this} instance
+     */
     NutsCommandLine setExpandSimpleOptions(boolean expand);
 
-    boolean isSpecialOneDashOption(String v);
-
-    ////////////////////////////////////////////////
+    /**
+     * throw exception if command line is empty or the first word is an option
+     *
+     * @return {@code this} instance
+     */
     NutsCommandLine requireNonOption();
 
+    /**
+     * throw exception if command line is not empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
     NutsCommandLine unexpectedArgument(String errorMessage);
 
+    /**
+     * throw exception if command line is not empty
+     *
+     * @return {@code this} instance
+     */
     NutsCommandLine unexpectedArgument();
 
+    /**
+     * throw exception if command line is empty
+     *
+     * @return {@code this} instance
+     */
     NutsCommandLine required();
 
+    /**
+     * throw exception if command line is empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
     NutsCommandLine required(String errorMessage);
 
-    NutsCommandLine pushBack(NutsArgument a);
+    /**
+     * push back argument so that it will be first to be retrieved (using next methods)
+     *
+     * @param arg argument
+     * @return {@code this} instance
+     */
+    NutsCommandLine pushBack(NutsArgument arg);
 
     /**
      * consume (remove) the first argument and return it return null if not
@@ -193,13 +310,20 @@ public interface NutsCommandLine {
 
     /**
      * next argument with any value type (may having not a value). equivalent to
-     * next(NutsArgumentType.VOID,names)
+     * {@code next(NutsArgumentType.ANY,names)}
      *
      * @param names names
      * @return next argument
      */
     NutsArgument next(String... names);
 
+    /**
+     * next argument with any value type (may having not a value).
+     *
+     * @param expectValue expected value type
+     * @param names       names
+     * @return next argument
+     */
     NutsArgument next(NutsArgumentType expectValue, String... names);
 
     /**
@@ -228,53 +352,167 @@ public interface NutsCommandLine {
      */
     NutsArgument nextNonOption(NutsArgumentName name);
 
+    /**
+     * consume all words and return consumed count
+     *
+     * @return consumed count
+     */
     int skipAll();
 
+    /**
+     * skip next argument
+     *
+     * @return words count
+     */
     int skip();
 
+    /**
+     * consume {@code count} words and return how much it was able to consume
+     *
+     * @param count count
+     * @return consumed count
+     */
     int skip(int count);
 
+    /**
+     * true if arguments start with the given suite.
+     *
+     * @param values arguments suite
+     * @return true if arguments start with the given suite.
+     */
     boolean accept(String... values);
 
-    boolean accept(int pos, String... values);
+    /**
+     * true if arguments start at index {@code index} with the given suite.
+     *
+     * @param index  starting index
+     * @param values arguments suite
+     * @return true if arguments start with the given suite.
+     */
+    boolean accept(int index, String... values);
 
+    /**
+     * find first argument with argument key name
+     * @param name argument key name
+     * @return find first argument with argument key name
+     */
     NutsArgument find(String name);
 
-    NutsArgument get(int i);
+    /**
+     * return argument at given index
+     * @param index argument index
+     * @return argument at given index
+     */
+    NutsArgument get(int index);
 
+    /**
+     * return true if any argument is equal to the given name
+     * @param name argument name
+     * @return true if any argument is equal to the given name
+     */
     boolean contains(String name);
 
+    /**
+     * first  argument index (or -1 if not found) with value {@code name}
+     * @param name argument key name
+     * @return first  argument index (or -1 if not found) with value {@code name}
+     */
     int indexOf(String name);
 
+    /**
+     * number of arguments available to retrieve
+     * @return number of arguments available to retrieve
+     */
     int length();
 
+    /**
+     * true if no more arguments are available
+     * @return true if no more arguments are available
+     */
     boolean isEmpty();
 
     /**
-     * returns un-parsed arguments
+     * returns un-parsed (or partially parsed) available arguments
      *
-     * @return un-parsed arguments
+     * @return returns un-parsed (or partially parsed) available arguments
      */
     String[] toArray();
 
-    NutsArgument newArgument(String val);
 
+    /**
+     * true if the argument and index exists and is option
+     * @param index index
+     * @return true if the argument and index exists and is option
+     */
     boolean isOption(int index);
 
+    /**
+     * true if the argument and index exists and is non option
+     * @param index index
+     * @return true if the argument and index exists and is non option
+     */
     boolean isNonOption(int index);
 
+    /**
+     * create new argument
+     * @param argument new argument
+     * @return new argument
+     */
+    NutsArgument createArgument(String argument);
+
+    /**
+     * create argument name
+     * @param type create argument type
+     * @return argument name
+     */
     default NutsArgumentName createName(String type) {
         return createName(type, type);
     }
 
+    /**
+     * create argument name
+     * @param type argument type
+     * @param label argument label
+     * @return argument name
+     */
     NutsArgumentName createName(String type, String label);
 
-    NutsCommandAutoComplete getAutoComplete();
+    /**
+     * create argument candidate
+     * @param value candidate value
+     * @return argument candidate
+     */
+    default NutsArgumentCandidate createCandidate(String value) {
+        return createCandidate(value, value);
+    }
 
+    /**
+     * create argument candidate
+     * @param value candidate value
+     * @param label candidate label
+     * @return argument candidate
+     */
+    NutsArgumentCandidate createCandidate(String value, String label);
+
+    /**
+     * reset this instance with the given parsed arguments
+     * @param commandLine to parse
+     * @return reset this instance with the given parsed arguments
+     */
     NutsCommandLine parseLine(String commandLine);
 
-    NutsCommandLine setArgs(List<String> args);
+    /**
+     * reset this instance with the given arguments
+     * @param arguments to parse
+     * @return reset this instance with the given arguments
+     */
+    NutsCommandLine setArguments(List<String> arguments);
 
-    NutsCommandLine setArgs(String[] args);
+    /**
+     * reset this instance with the given arguments
+     * @param arguments to parse
+     * @return reset this instance with the given arguments
+     */
+    NutsCommandLine setArguments(String[] arguments);
 
 }

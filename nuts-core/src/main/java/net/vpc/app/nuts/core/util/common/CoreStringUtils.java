@@ -726,4 +726,19 @@ public class CoreStringUtils {
         }
     }
 
+    public static List<String> split(String str, String separators, boolean trim) {
+        if (str == null) {
+            return Collections.EMPTY_LIST;
+        }
+        StringTokenizer st = new StringTokenizer(str, separators);
+        List<String> result = new ArrayList<>();
+        while (st.hasMoreElements()) {
+            String s = st.nextToken();
+            if (trim) {
+                s = s.trim();
+            }
+            result.add(s);
+        }
+        return result;
+    }
 }

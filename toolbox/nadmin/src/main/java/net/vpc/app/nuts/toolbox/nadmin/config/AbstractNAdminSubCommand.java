@@ -5,13 +5,10 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminSubCommand;
 
 import java.io.PrintStream;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  *
@@ -48,15 +45,19 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 PrintStream out = context.session().out();
                 if (repository == null) {
-                    workspace.config().save(false);
+                    workspace.config().save(false, context.getSession());
                     //out.print("##workspace saved.##\n");
                 } else {
                     //out.printf("##repository %s saved.##%n", repository.config().getName());
-                    repository.config().save();
+                    repository.config().save(context.getSession());
                 }
             }
         }
         return save;
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+        return DEFAULT_SUPPORT;
+    }
 }

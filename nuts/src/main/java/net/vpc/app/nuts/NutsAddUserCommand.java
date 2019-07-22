@@ -43,27 +43,61 @@ import java.util.Collection;
  */
 public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
+    /**
+     * add group named {@code group} to the specified user
+     * @param group group name
+     * @return {@code this} instance
+     */
     NutsAddUserCommand addGroup(String group);
 
+    /**
+     * add group list named {@code groups} to the specified user
+     * @param groups group list
+     * @return {@code this} instance
+     */
     NutsAddUserCommand addGroups(String... groups);
 
+    /**
+     * add group list named {@code groups} to the specified user
+     * @param groups group list
+     * @return {@code this} instance
+     */
     NutsAddUserCommand addGroups(Collection<String> groups);
 
-    NutsAddUserCommand addRight(String right);
+    /**
+     * add permission named {@code permission} to the specified user
+     * @param permission permission name from {@code NutsConstants.Permissions}
+     * @return {@code this} instance
+     */
+    NutsAddUserCommand addPermission(String permission);
 
-    NutsAddUserCommand addRights(String... rights);
+    /**
+     * add permissions list named {@code permissions} to the specified user
+     * @param permissions group list
+     * @return {@code this} instance
+     */
+    NutsAddUserCommand addPermissions(String... permissions);
 
-    NutsAddUserCommand addRights(Collection<String> rights);
+    /**
+     * add permissions list named {@code permissions} to the specified user
+     * @param permissions group list
+     * @return {@code this} instance
+     */
+    NutsAddUserCommand addPermissions(Collection<String> permissions);
 
+    /**
+     * group list defined by {@link #addGroup}, @link {@link #addGroups(String...)}} and @link {@link #addGroups(Collection)}}
+     * @return group list
+     */
     String[] getGroups();
 
-    String getLogin();
+    String getUsername();
 
     char[] getCredentials();
 
     String getRemoteIdentity();
 
-    String[] getRights();
+    String[] getPermissions();
 
     NutsAddUserCommand group(String group);
 
@@ -75,19 +109,19 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     NutsAddUserCommand removeGroups(Collection<String> groups);
 
-    NutsAddUserCommand removeRights(String... rights);
+    NutsAddUserCommand removePermissions(String... permissions);
 
-    NutsAddUserCommand removeRights(Collection<String> rights);
+    NutsAddUserCommand removePermissions(Collection<String> permissions);
 
-    NutsAddUserCommand right(String right);
+    NutsAddUserCommand permission(String permission);
 
-    NutsAddUserCommand rights(String... rights);
+    NutsAddUserCommand permissions(String... permissions);
 
-    NutsAddUserCommand rights(Collection<String> rights);
+    NutsAddUserCommand permissions(Collection<String> permissions);
 
-    NutsAddUserCommand login(String login);
+    NutsAddUserCommand username(String username);
 
-    NutsAddUserCommand setLogin(String login);
+    NutsAddUserCommand setUsername(String username);
 
     NutsAddUserCommand credentials(char[] password);
 
@@ -97,12 +131,21 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     NutsAddUserCommand setRemoteIdentity(String remoteIdentity);
 
-    //
-    // NutsWorkspaceCommand overridden methods
-    //    
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsAddUserCommand session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsAddUserCommand setSession(NutsSession session);
 

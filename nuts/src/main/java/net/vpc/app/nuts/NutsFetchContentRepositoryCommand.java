@@ -43,28 +43,20 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
     NutsId getId();
 
     @Override
-    public NutsFetchContentRepositoryCommand run();
+    NutsFetchContentRepositoryCommand run();
+
 
     @Override
-    public NutsFetchContentRepositoryCommand session(NutsRepositorySession session);
-
-    @Override
-    public NutsFetchContentRepositoryCommand setSession(NutsRepositorySession session);
+    NutsFetchContentRepositoryCommand setSession(NutsRepositorySession session);
 
     NutsContent getResult();
 
-    NutsFetchContentRepositoryCommand id(NutsId id);
-
     Path getLocalPath();
-
-    NutsFetchContentRepositoryCommand localPath(Path localPath);
 
     NutsFetchContentRepositoryCommand setLocalPath(Path localPath);
 
     NutsDescriptor getDescriptor();
 
     NutsFetchContentRepositoryCommand setDescriptor(NutsDescriptor descriptor);
-
-    NutsFetchContentRepositoryCommand descriptor(NutsDescriptor descriptor);
 
 }

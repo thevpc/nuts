@@ -45,7 +45,7 @@ public class ProjectService {
     }
 
     public Path getConfigFile() {
-        Path storeLocation = context.getConfigFolder().resolve("projects");
+        Path storeLocation = context.getSharedConfigFolder().resolve("projects");
         return storeLocation.resolve(config.getId().replace(":", "-") + ".config");
     }
 

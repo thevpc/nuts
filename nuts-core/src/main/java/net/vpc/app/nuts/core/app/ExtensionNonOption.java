@@ -29,30 +29,25 @@
  */
 package net.vpc.app.nuts.core.app;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDefaultArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  * @author vpc
  */
 public class ExtensionNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-
     public ExtensionNonOption(String name, NutsWorkspace workspace) {
-        super(name);
-        this.workspace = workspace;
+        super(workspace,name);
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
+        NutsCommandLine c=getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsDefaultArgumentCandidate(NutsConstants.Ids.NUTS_RUNTIME));
+        all.add(c.createCandidate(NutsConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"
         return all;
     }

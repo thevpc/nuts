@@ -31,7 +31,7 @@ public class FilesFoldersApi {
         String[] foldersFileContent = null;
         try {
             foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), baseUrl)
+            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r")
                     .stream().map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
         } catch (UncheckedIOException ex) {
             //
@@ -45,7 +45,7 @@ public class FilesFoldersApi {
         String[] foldersFileContent = null;
         try {
             foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), baseUrl)
+            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r")
                     .stream().map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
         } catch (UncheckedIOException ex) {
             //

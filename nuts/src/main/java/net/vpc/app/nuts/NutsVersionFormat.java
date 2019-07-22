@@ -38,9 +38,21 @@ import java.util.Properties;
  */
 public interface NutsVersionFormat extends NutsFormat {
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsVersionFormat session(NutsSession session);
 
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
     @Override
     NutsVersionFormat setSession(NutsSession session);
 

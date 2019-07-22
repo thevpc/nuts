@@ -38,12 +38,20 @@ public enum NutsFetchMode {
     INSTALLED,
     LOCAL,
     REMOTE;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsFetchMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

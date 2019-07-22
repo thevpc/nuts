@@ -1,1 +1,1 @@
-net.vpc.app.nuts.core.DefaultNutsWorkspaceFactory
+net.vpc.app.nuts.core.DefaultNutsBootWorkspaceFactory

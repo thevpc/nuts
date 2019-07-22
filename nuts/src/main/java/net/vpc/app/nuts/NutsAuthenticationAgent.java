@@ -87,11 +87,11 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetreive when true {@link #getCredentials(char[], net.vpc.app.nuts.NutsEnvProvider) } 
+     * @param allowRetrieve when true {@link #getCredentials(char[], net.vpc.app.nuts.NutsEnvProvider) }
      * can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @param envProvider environment provider, nullable
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsEnvProvider envProvider);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsEnvProvider envProvider);
 }

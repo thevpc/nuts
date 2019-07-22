@@ -33,15 +33,27 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
- *
+ * Content describes a component file location and its characteristics.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsContent extends Serializable {
 
+    /**
+     * component local path
+     * @return component local parth
+     */
     Path getPath();
 
+    /**
+     * when true, the content was retrieved from cache rather then from remote location.
+     * @return true if content is cached
+     */
     boolean isCached();
 
+    /**
+     * when true, the path location is temporary and should be deleted after usage
+     * @return true if content temporary
+     */
     boolean isTemporary();
 }

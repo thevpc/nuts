@@ -140,10 +140,9 @@ public interface NutsSession extends NutsConfigurable {
     boolean isForce();
 
     /**
-     * /**
      * change force flag value. some operations may require user confirmation
      * before performing critical operations such as overriding existing values,
-     * deleting sensitive informations ; in such cases, arming force flag will
+     * deleting sensitive information ; in such cases, arming force flag will
      * provide an implicit confirmation.
      *
      * @param enable if true force flag is armed
@@ -188,6 +187,74 @@ public interface NutsSession extends NutsConfigurable {
      * @return {@code this} instance
      */
     NutsSession setAsk(boolean enable);
+
+    /**
+     * change YES flag value. some operations may require user confirmation
+     * before performing critical operations such as overriding existing values,
+     * deleting sensitive information ; in such cases, arming yes flag will
+     * provide an implicit confirmation.
+     *
+     * @param enable if true yes flag is armed
+     * @return {@code this} instance
+     */
+    NutsSession setYes(boolean enable);
+
+    /**
+     * equivalent to {@code setYes(true)}
+     *
+     * @return {@code this} instance
+     */
+    NutsSession yes();
+
+    /**
+     * equivalent to {@code setYes(enable)}
+     *
+     * @param enable new value
+     * @return {@code this} instance
+     */
+    NutsSession yes(boolean enable);
+
+    /**
+     * true if YES is armed.
+     *
+     * @return true if YES is armed.
+     * @since 0.5.7
+     */
+    boolean isYes();
+
+    /**
+     * change no flag value. some operations may require user confirmation
+     * before performing critical operations such as overriding existing values,
+     * deleting sensitive information ; in such cases, arming no flag will
+     * provide an implicit negative confirmation.
+     *
+     * @param enable if true NO flag is armed
+     * @return {@code this} instance
+     */
+    NutsSession setNo(boolean enable);
+
+    /**
+     * equivalent to {@code setNo(true)}
+     *
+     * @return {@code this} instance
+     */
+    NutsSession no();
+
+    /**
+     * equivalent to {@code setNo(enable)}
+     *
+     * @param enable new value
+     * @return {@code this} instance
+     */
+    NutsSession no(boolean enable);
+
+    /**
+     * true if NO is armed.
+     *
+     * @return true if NO is armed.
+     * @since 0.5.7
+     */
+    boolean isNo();
 
     /**
      * true if ASK is armed.

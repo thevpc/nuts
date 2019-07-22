@@ -108,7 +108,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     @Override
     public char[] createCredentials(
             char[] credentials,
-            boolean allowRetreive,
+            boolean allowRetrieve,
             char[] credentialId,
             NutsEnvProvider envProvider
     ) {
@@ -117,7 +117,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
         } else {
             char[] val;
             char type;
-            if (allowRetreive) {
+            if (allowRetrieve) {
                 val = encryptChars(credentials, getPassphrase(envProvider));
                 type = 'B';
             } else {

@@ -61,7 +61,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public Path getVersionFile() {
-        return context.getConfigFolder().resolve(name + ".version");
+        return context.getSharedConfigFolder().resolve(name + ".version");
     }
 
     public String getCurrentVersion() {

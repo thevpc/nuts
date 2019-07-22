@@ -74,9 +74,9 @@ public interface NutsWorkspaceExtensionManager {
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
     /**
-     * reurn loaded extensions
+     * return loaded extensions
      *
-     * @return
+     * @return extension ids
      */
     NutsId[] getExtensions();
 

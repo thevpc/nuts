@@ -41,12 +41,20 @@ public enum NutsOutputFormat {
     TABLE,
     TREE,
     PLAIN;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
     private final String id;
 
     NutsOutputFormat() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
     public String id() {
         return id;
     }

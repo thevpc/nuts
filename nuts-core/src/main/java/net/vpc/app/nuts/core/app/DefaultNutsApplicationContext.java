@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import net.vpc.app.nuts.NutsCommandAutoCompleteBase;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
@@ -20,7 +21,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsWorkspace workspace;
     private NutsSession session;
     private Path[] folders = new Path[NutsStoreLocation.values().length];
-    private String storeId;
+    private Path[] sharedFolders = new Path[NutsStoreLocation.values().length];
     private NutsId appId;
     private long startTimeMillis;
     private String[] args;
@@ -100,11 +101,11 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.args = (args);
         this.appId = (_appId);
         this.appClass = appClass;
-        this.storeId = (storeId == null ? this.appId.toString() : storeId);
         this.session = (workspace.createSession());
         NutsWorkspaceConfigManager cfg = workspace.config();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
-            setFolder(folder, cfg.getStoreLocation(this.storeId, folder));
+            setFolder(folder, cfg.getStoreLocation(this.appId, folder));
+            setSharedFolder(folder, cfg.getStoreLocation(this.appId.setVersion(NutsConstants.Versions.RELEASE), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
             this.workspace.io().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
@@ -142,6 +143,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return autoComplete;
     }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final NutsApplicationContext configure(boolean skipUnsupported, String... args) {
         NutsId appId = getAppId();
@@ -149,6 +158,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return NutsConfigurableHelper.configure(this, workspace, skipUnsupported, args, appName);
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     *                        silently
+     * @param commandLine     arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, workspace, skipUnsupported, commandLine);
@@ -168,6 +185,16 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(workspace, "Help", 0);
+            }
+            case "--skip-event": {
+                switch (getMode()){
+                    case INSTALL:
+                    case UNINSTALL:
+                    case UPDATE:{
+                        cmd.skip();
+                        throw new NutsExecutionException(workspace, "skip-event", 0);
+                    }
+                }
             }
             case "--version": {
                 cmd.skip();
@@ -233,18 +260,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getFolder(NutsStoreLocation.APPS);
     }
 
-    public NutsApplicationContext setAppsFolder(Path folder) {
-        return setFolder(NutsStoreLocation.APPS, folder);
-    }
-
     @Override
     public Path getConfigFolder() {
         return getFolder(NutsStoreLocation.CONFIG);
-    }
-
-//    @Override
-    public NutsApplicationContext setConfigFolder(Path folder) {
-        return setFolder(NutsStoreLocation.CONFIG, folder);
     }
 
     @Override
@@ -252,19 +270,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getFolder(NutsStoreLocation.LOG);
     }
 
-//    @Override
-    public NutsApplicationContext setLogFolder(Path folder) {
-        return setFolder(NutsStoreLocation.LOG, folder);
-    }
-
     @Override
     public Path getTempFolder() {
         return getFolder(NutsStoreLocation.TEMP);
-    }
-
-//    @Override
-    public NutsApplicationContext setTempFolder(Path folder) {
-        return setFolder(NutsStoreLocation.TEMP, folder);
     }
 
     @Override
@@ -272,18 +280,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getFolder(NutsStoreLocation.VAR);
     }
 
-//    @Override
-    public NutsApplicationContext setVarFolder(Path folder) {
-        return setFolder(NutsStoreLocation.VAR, folder);
-    }
-
     @Override
     public Path getLibFolder() {
         return getFolder(NutsStoreLocation.LIB);
-    }
-
-    public NutsApplicationContext setLibFolder(Path folder) {
-        return setFolder(NutsStoreLocation.LIB, folder);
     }
 
     @Override
@@ -291,17 +290,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getFolder(NutsStoreLocation.RUN);
     }
 
-    public NutsApplicationContext setRunFolder(Path folder) {
-        return setFolder(NutsStoreLocation.RUN, folder);
-    }
-
     @Override
     public Path getCacheFolder() {
         return getFolder(NutsStoreLocation.CACHE);
-    }
-
-    public NutsApplicationContext setCacheFolder(Path folder) {
-        return setFolder(NutsStoreLocation.CACHE, folder);
     }
 
     @Override
@@ -314,16 +305,51 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return this;
     }
 
-    @Override
-    public String getStoreId() {
-        return storeId;
-    }
-
-//    @Override
-    public NutsApplicationContext setStoreId(String storeId) {
-        this.storeId = storeId;
+    public NutsApplicationContext setSharedFolder(NutsStoreLocation location, Path folder) {
+        this.sharedFolders[location.ordinal()] = folder;
         return this;
     }
+
+    @Override
+    public Path getSharedAppsFolder() {
+        return getSharedFolder(NutsStoreLocation.APPS);
+    }
+
+    @Override
+    public Path getSharedConfigFolder() {
+        return getSharedFolder(NutsStoreLocation.CONFIG);
+    }
+
+    @Override
+    public Path getSharedLogFolder() {
+        return getSharedFolder(NutsStoreLocation.LOG);
+    }
+
+    @Override
+    public Path getSharedTempFolder() {
+        return getSharedFolder(NutsStoreLocation.TEMP);
+    }
+
+    @Override
+    public Path getSharedVarFolder() {
+        return getSharedFolder(NutsStoreLocation.VAR);
+    }
+
+    @Override
+    public Path getSharedLibFolder() {
+        return getSharedFolder(NutsStoreLocation.LIB);
+    }
+
+    @Override
+    public Path getSharedRunFolder() {
+        return getSharedFolder(NutsStoreLocation.RUN);
+    }
+
+    @Override
+    public Path getSharedFolder(NutsStoreLocation location) {
+        return sharedFolders[location.ordinal()];
+    }
+
 
     @Override
     public NutsId getAppId() {
@@ -335,7 +361,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return appId == null ? null : appId.getVersion();
     }
 
-//    @Override
+    //    @Override
     public NutsApplicationContext setAppId(NutsId appId) {
         this.appId = appId;
         return this;
@@ -346,7 +372,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return args;
     }
 
-//    @Override
+    //    @Override
     public NutsApplicationContext setArgs(String[] args) {
         this.args = args;
         return this;
@@ -359,7 +385,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.commandLine().setArgs(getArguments()).setAutoComplete(getAutoComplete());
+        return workspace.commandLine().setArguments(getArguments()).setAutoComplete(getAutoComplete());
     }
 
     @Override
@@ -443,11 +469,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public String storeId() {
-        return getStoreId();
-    }
-
-    @Override
     public NutsId appId() {
         return getAppId();
     }
@@ -509,7 +530,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         @Override
         public String getLine() {
-            return new DefaultNutsCommandLine(workspace).setArgs(getWords()).toString();
+            return new DefaultNutsCommandLine(workspace).setArguments(getWords()).toString();
         }
 
         @Override

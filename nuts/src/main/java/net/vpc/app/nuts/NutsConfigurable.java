@@ -30,7 +30,8 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Configurable interface define a extensible way to configure nuts commands
+ * and objects using simple argument line options.
  * @author vpc
  * @since 0.5.5
  */

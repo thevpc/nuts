@@ -32,7 +32,12 @@ package net.vpc.app.nuts.core;
 import java.nio.file.Path;
 import java.util.Objects;
 import javax.swing.JOptionPane;
+
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  * Created by vpc on 1/6/17.
@@ -50,17 +55,31 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsDependencyTreeNode[] dependencyNodes;
     private NutsDependency[] dependencies;
     private NutsDescriptor effectiveDescriptor;
+    private boolean api = false;
+    private boolean runtime = false;
+    private boolean extension = false;
+    private boolean companion = false;
+    private NutsId apiId = null;
 
     public DefaultNutsDefinition() {
     }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install,
+                                 boolean api, boolean runtime,
+                                 boolean extension,
+                                 boolean companion,
+                                 NutsId apiId) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
+        this.api = api;
+        this.runtime = runtime;
+        this.extension = extension;
+        this.companion = companion;
+        this.apiId = apiId;
     }
 
     public DefaultNutsDefinition(NutsDefinition other) {
@@ -75,6 +94,11 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
             this.dependencyNodes = !other.isSetDependencyNodes() ? null : other.getDependencyNodes();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
+            this.apiId=other.getApiId();
+            this.api=other.isApi();
+            this.runtime=other.isRuntime();
+            this.extension=other.isExtension();
+            this.companion=other.isCompanion();
         }
     }
 
@@ -259,4 +283,38 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
 
+    @Override
+    public boolean isApi() {
+        return api;
+    }
+
+    @Override
+    public boolean isRuntime() {
+        return runtime;
+    }
+
+    @Override
+    public boolean isExtension() {
+        return extension;
+    }
+
+    @Override
+    public boolean isCompanion() {
+        return companion;
+    }
+
+    @Override
+    public NutsId getApiId() {
+        return apiId;
+    }
+
+    public DefaultNutsDefinition setRepositoryUuid(String repositoryUuid) {
+        this.repositoryUuid = repositoryUuid;
+        return this;
+    }
+
+    public DefaultNutsDefinition setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
+        return this;
+    }
 }

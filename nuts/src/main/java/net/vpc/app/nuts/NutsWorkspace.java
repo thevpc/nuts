@@ -49,7 +49,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     /**
      * equivalent to {@link #getUuid()}
      *
-     * @return
+     * @return workspace uuid
      */
     String uuid();
 

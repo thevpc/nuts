@@ -32,19 +32,33 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- *
+ * Event for {@link NutsRepositoryListener} methods.
  * @author vpc
  * @since 0.5.3
  */
 public interface NutsContentEvent {
 
+    /**
+     * component path
+     * @return component path
+     */
     Path getPath();
 
-    NutsDeployRepositoryCommand getDeployment();
-
+    /**
+     * current workspace
+     * @return workspace
+     */
     NutsWorkspace getWorkspace();
 
+    /**
+     * current session
+     * @return session
+     */
     NutsSession getSession();
 
+    /**
+     * current repository
+     * @return current repository
+     */
     NutsRepository getRepository();
 }

@@ -32,7 +32,8 @@ package net.vpc.app.nuts.core.security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import net.vpc.app.nuts.NutsClassLoaderProvider;
+import java.util.function.Supplier;
+
 import net.vpc.app.nuts.NutsConfirmationMode;
 import net.vpc.app.nuts.NutsDefaultWorkspaceOptions;
 import net.vpc.app.nuts.NutsExecutionType;
@@ -84,8 +85,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsClassLoaderProvider getClassLoaderProvider() {
-        return options.getClassLoaderProvider();
+    public Supplier<ClassLoader> getClassLoaderSupplier() {
+        return options.getClassLoaderSupplier();
     }
 
     @Override
@@ -96,6 +97,11 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     @Override
     public long getCreationTime() {
         return options.getCreationTime();
+    }
+
+    @Override
+    public boolean isDry() {
+        return options.isDry();
     }
 
     @Override

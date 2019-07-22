@@ -1,4 +1,4 @@
-# Troubleshooting nuts 0.5.6.0
+# Troubleshooting nuts
 Network Updatable Things Services
 
 # Recover and Reset modes
@@ -39,5 +39,5 @@ After invoking reset mode, nuts commands (installed by ndi) will not be availabl
 you should use the jar base invocation at least once to reinstall these commands.
 
 ```
-java -jar nuts-0.5.6.jar
+java -jar nuts-0.5.7.jar
 ```

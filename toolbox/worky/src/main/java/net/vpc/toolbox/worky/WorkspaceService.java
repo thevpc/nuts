@@ -356,12 +356,12 @@ public class WorkspaceService {
     }
 
     public Path getConfigFile() {
-        return appContext.getConfigFolder().resolve("workspace.projects");
+        return appContext.getSharedConfigFolder().resolve("workspace.projects");
     }
 
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        Path storeLocation = appContext.getConfigFolder().resolve("projects");
+        Path storeLocation = appContext.getSharedConfigFolder().resolve("projects");
 
         if (Files.isDirectory(storeLocation)) {
             try (DirectoryStream<Path> ds = Files.newDirectoryStream(storeLocation)) {

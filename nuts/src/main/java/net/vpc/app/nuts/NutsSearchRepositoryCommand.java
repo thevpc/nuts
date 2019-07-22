@@ -37,20 +37,15 @@ import java.util.Iterator;
  */
 public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
 
-    NutsSearchRepositoryCommand filter(NutsIdFilter filter);
-
     NutsSearchRepositoryCommand setFilter(NutsIdFilter filter);
 
     NutsIdFilter getFilter();
 
     @Override
-    public NutsSearchRepositoryCommand run();
+    NutsSearchRepositoryCommand run();
 
     @Override
-    public NutsSearchRepositoryCommand session(NutsRepositorySession session);
-
-    @Override
-    public NutsSearchRepositoryCommand setSession(NutsRepositorySession session);
+    NutsSearchRepositoryCommand setSession(NutsRepositorySession session);
 
     Iterator<NutsId> getResult();
 

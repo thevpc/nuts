@@ -71,7 +71,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     @Override
     public char[] createCredentials(
             char[] credentials,
-            boolean allowRetreive,
+            boolean allowRetrieve,
             char[] credentialId,
             NutsEnvProvider envProvider
     ) {

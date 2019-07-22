@@ -100,7 +100,7 @@ public class SshCommand extends AbstractNshBuiltin {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommandLine c = context.getWorkspace().commandLine().setArgs(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
+                NutsCommandLine c = context.getWorkspace().commandLine().setArguments(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
                 NutsArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace")) != null) {

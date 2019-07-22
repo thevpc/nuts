@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgumentCandidate;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  *
@@ -42,8 +43,8 @@ public class ValueNonOption extends DefaultNonOption {
 
     private String[] values;
 
-    public ValueNonOption(String name, String... values) {
-        super(name);
+    public ValueNonOption(NutsWorkspace ws,String name, String... values) {
+        super(ws,name);
         this.values = values;
     }
 

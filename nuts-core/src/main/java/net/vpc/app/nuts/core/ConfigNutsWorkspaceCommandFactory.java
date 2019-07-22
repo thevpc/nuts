@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+
+import net.vpc.app.nuts.core.impl.def.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -41,20 +43,24 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         return Integer.MAX_VALUE;
     }
 
-    public void uninstallCommand(String name) {
+    public void uninstallCommand(String name, NutsRemoveOptions options) {
+        options=CoreNutsUtils.validate(options,configManagerExt.getWorkspace());
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
+                configManagerExt.fireConfigurationChanged("command",options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
         }
     }
 
-    public void installCommand(NutsCommandAliasConfig command) {
+    public void installCommand(NutsCommandAliasConfig command, NutsAddOptions options) {
+        options=CoreNutsUtils.validate(options,configManagerExt.getWorkspace());
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         configManagerExt.getWorkspace().json().value(command).print(path);
+        configManagerExt.fireConfigurationChanged("command",options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
     }
 
     @Override

@@ -82,8 +82,24 @@ public class NutsDependencyScopes {
         return normalizeScope(s1).equals(NutsDependencyScope.API.id());
     }
 
+    public static boolean isCompileScope(String scope) {
+        if(scope==null){
+            return true;
+        }
+        scope=normalizeScope(scope);
+        switch (scope){
+            case "compile":
+            case "api":
+            case "implementation":
+                return true;
+        }
+        return false;
+    }
+
     public static int getScopesPriority(String s1) {
         switch (normalizeScope(s1)) {
+            case "api":
+            case "implementation":
             case "compile":
                 return 5;
             case "runtime":
