@@ -43,23 +43,38 @@ public class FormattedPrintStreamUtils {
                 if (m.start() != i) {
                     sb.append(format.substring(i, m.start()));
                 }
-                Object arg = x < args.length ? args[x] : "MISSING_ARG_" + x;
                 String g = m.group();
-
-                if (g.endsWith("N")) {
-                    //escape %
-                    char[] s=String.valueOf(arg).toCharArray();
-                    for (int j = 0; j < s.length; j++) {
-                        char c = s[j];
-                        if(c=='%'){
-                            sb.append('\\');
+                switch (g.charAt(g.length()-1)){
+                    case 'N':{
+                        //escape %
+                        Object arg = x < args.length ? args[x] : "MISSING_ARG_" + x;
+                        x++;
+                        char[] s = String.valueOf(arg).toCharArray();
+                        for (int j = 0; j < s.length; j++) {
+                            char c = s[j];
+                            if (c == '%') {
+                                sb.append('\\');
+                            }
+                            sb.append(c);
                         }
-                        sb.append(c);
+                        break;
                     }
-                } else {
-                    sb.append(escapeText(format0(locale, g, arg)));
+                    case 'n':{
+                        sb.append("\n");
+                        break;
+                    }
+                    case '%':{
+                        sb.append("%");
+                        break;
+                    }
+                    default:{
+                        //escape %
+                        Object arg = x < args.length ? args[x] : "MISSING_ARG_" + x;
+                        x++;
+                        sb.append(escapeText(format0(locale, g, arg)));
+                        break;
+                    }
                 }
-                x++;
                 i = m.end();
             } else {
                 sb.append(format.substring(i));
