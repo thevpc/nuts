@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigBoot;
-import net.vpc.app.nuts.core.spi.NutsFormatFilteredPrintStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedNull;
@@ -40,7 +39,6 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     NutsPrintStreamFormattedNull.class,
                     NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
-                    NutsFormatFilteredPrintStream.class,
                     NutsSystemTerminalBase.class,
                     NutsSessionTerminalBase.class,
                     NutsSessionTerminal.class,

@@ -66,14 +66,12 @@ public interface NutsPathCopyAction {
 
     Object getTarget();
 
-//    NutsIOCopyAction setTarget(Object target);
     NutsPathCopyAction setTarget(OutputStream target);
 
     NutsPathCopyAction setTarget(Path target);
 
     NutsPathCopyAction setTarget(File target);
 
-//    NutsIOCopyAction to(Object target);
     NutsPathCopyAction to(OutputStream target);
 
     NutsPathCopyAction to(String target);
@@ -114,7 +112,7 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction to(Object target);
 
-    public static class ValidationException extends RuntimeException {
+    class ValidationException extends RuntimeException {
 
         public ValidationException() {
         }

@@ -30,11 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 3/19/17.
+ * Dependency filter
  *
  * @since 0.5.4
  */
 public interface NutsDependencyFilter {
 
+    /**
+     * return true if the {@code dependency} is accepted
+     * @param from parent (dependent) id
+     * @param dependency dependency id
+     * @param session session
+     * @return true if the {@code dependency} is accepted
+     */
     boolean accept(NutsId from, NutsDependency dependency, NutsSession session);
 }

@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  */
 public interface NutsObjectElementBuilder extends NutsObjectElement {
 
-    public NutsObjectElementBuilder set(String name, NutsElement e);
+    NutsObjectElementBuilder set(String name, NutsElement e);
 
     NutsObjectElementBuilder clear();
     

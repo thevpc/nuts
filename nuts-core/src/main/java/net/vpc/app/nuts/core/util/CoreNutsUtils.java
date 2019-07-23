@@ -850,5 +850,4 @@ public class CoreNutsUtils {
         return id.getGroup().replace('.','/')+"/"+
                 id.getName()+"/"+id.getVersion();
     }
-
 }

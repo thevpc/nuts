@@ -978,7 +978,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         Set<Pos> reserved = new HashSet<>();
 
         public void discardRow(int row) {
-            reserved.remove(row);
+            for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext(); ) {
+                Pos pos = iterator.next();
+                if(pos.row==row){
+                    iterator.remove();
+                }
+            }
         }
 
         public boolean isReserved(int col, int row) {

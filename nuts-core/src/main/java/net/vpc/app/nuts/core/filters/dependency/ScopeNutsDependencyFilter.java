@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.filters.dependency;
 
 import java.util.EnumSet;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifi
 
     public ScopeNutsDependencyFilter(NutsDependencyScopePattern... scopes) {
         for (NutsDependencyScopePattern scope : scopes) {
-            this.scopes.addAll(scope.expand());
+            this.scopes.addAll(NutsDependencyScopes.expand(scope));
         }
     }
 

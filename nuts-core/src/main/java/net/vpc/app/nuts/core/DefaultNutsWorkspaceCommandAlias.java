@@ -148,14 +148,13 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         }
         if (helpCommand != null && helpCommand.length > 0) {
             try {
-                String ss = ws.exec()
+                return ws.exec()
                         .command(helpCommand)
                         .failFast(false)
                         .redirectErrorStream()
                         .grabOutputString()
                         .run()
                         .getOutputString();
-                return ss;
             } catch (Exception ex) {
                 //ignore
                 return "Failed to retrieve help for " + getName();

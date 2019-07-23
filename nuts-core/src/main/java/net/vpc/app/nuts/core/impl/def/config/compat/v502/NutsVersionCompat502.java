@@ -73,7 +73,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         return cc;
     }
 
-    public NutsWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
+    private NutsWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
         return getWorkspace().json().parse(bytes, NutsWorkspaceConfigBoot502.class);
     }
 

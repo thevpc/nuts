@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsAddUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsRemoveUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsUpdateUserCommand;
-import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepositoryConfigManager;
+import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepoConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -156,7 +156,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     public NutsAuthenticationAgent getAuthenticationAgent(String id) {
         id = CoreStringUtils.trim(id);
         if (id.isEmpty()) {
-            id = ((DefaultNutsRepositoryConfigManager) repo.config())
+            id = ((DefaultNutsRepoConfigManager) repo.config())
                     .getStoredConfig().getAuthenticationAgent();
         }
         NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(id);
@@ -166,7 +166,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     @Override
     public NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent, NutsUpdateOptions options) {
         options= CoreNutsUtils.validate(options,repo.getWorkspace());
-        DefaultNutsRepositoryConfigManager cc = (DefaultNutsRepositoryConfigManager) repo.config();
+        DefaultNutsRepoConfigManager cc = (DefaultNutsRepoConfigManager) repo.config();
 
         if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent) == null) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Unsupported Authentication Agent " + authenticationAgent);

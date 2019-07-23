@@ -134,6 +134,6 @@ public interface NutsElementFormat extends NutsFormat {
      * @return {@code this} instance
      */
     @Override
-    public NutsElementFormat configure(boolean skipUnsupported, String... args);
+    NutsElementFormat configure(boolean skipUnsupported, String... args);
 
 }

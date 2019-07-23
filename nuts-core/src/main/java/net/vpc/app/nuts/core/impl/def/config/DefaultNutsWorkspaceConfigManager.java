@@ -1249,7 +1249,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                             .failFast(false)
                             .getResultDefinition();
                     if(def!=null){
-                        ws.io().copy().from(path).to(jarFile).run();
+                        ws.io().copy().from(def.getPath()).to(jarFile).run();
                         return;
                     }
                 }
@@ -1544,11 +1544,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
             NutsVersionCompat compat = createNutsVersionCompat(Nuts.getVersion());
             NutsWorkspaceConfigApi aconfig = compat.parseApiConfig();
-            cconfig.merge(aconfig);
-
+            if(aconfig!=null) {
+                cconfig.merge(aconfig);
+            }
             NutsWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig();
-            cconfig.merge(rconfig);
-
+            if(rconfig!=null) {
+                cconfig.merge(rconfig);
+            }
             NutsWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig();
             NutsWorkspaceConfigMain mconfig = compat.parseMainConfig();
             if (options.isRecover() || options.isReset()) {

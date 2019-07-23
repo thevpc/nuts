@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepositoryConfigManager;
+import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepoConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -50,7 +50,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected NutsRepository parentRepository;
     protected NutsWorkspace workspace;
     protected NutsRepositorySecurityManager securityManager;
-    protected DefaultNutsRepositoryConfigManager configManager;
+    protected DefaultNutsRepoConfigManager configManager;
     protected NutsIndexStoreClient nutsIndexStoreClient;
 
     public AbstractNutsRepository() {

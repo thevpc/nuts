@@ -149,12 +149,12 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public boolean isIncludeOptional() {
+    public boolean isOptional() {
         return includeOptional;
     }
 
     @Override
-    public NutsUpdateCommand setIncludeOptional(boolean includeOptional) {
+    public NutsUpdateCommand setOptional(boolean includeOptional) {
         this.includeOptional = includeOptional;
         return this;
     }
@@ -235,7 +235,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public boolean isUpdateApi() {
+    public boolean isApi() {
         if (updateApi || isUpdateNone()) {
             return true;
         }
@@ -249,21 +249,21 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public boolean isUpdateInstalled() {
+    public boolean isInstalled() {
         return updateInstalled;
     }
 
     @Override
-    public boolean isUpdateCompanions() {
-        if (isUpdateApi()) {
+    public boolean isCompanions() {
+        if (isApi()) {
             return true;
         }
         return updateCompanions;
     }
 
     @Override
-    public boolean isUpdateRuntime() {
-        if (isUpdateApi()) {
+    public boolean isRuntime() {
+        if (isApi()) {
             return true;
         }
         if (updateRuntime) {
@@ -279,27 +279,27 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand setUpdateApi(boolean enableMajorUpdates) {
+    public NutsUpdateCommand setApi(boolean enableMajorUpdates) {
         this.updateApi = enableMajorUpdates;
         return this;
     }
 
     @Override
-    public NutsUpdateCommand setUpdateCompanions(boolean updateCompanions) {
+    public NutsUpdateCommand setCompanions(boolean updateCompanions) {
         this.updateCompanions = updateCompanions;
         return this;
     }
 
     @Override
-    public boolean isUpdateExtensions() {
-        if (isUpdateApi()) {
+    public boolean isExtensions() {
+        if (isApi()) {
             return true;
         }
         return updateExtensions;
     }
 
     @Override
-    public NutsUpdateCommand setUpdateExtensions(boolean updateExtensions) {
+    public NutsUpdateCommand setExtensions(boolean updateExtensions) {
         this.updateExtensions = updateExtensions;
         return this;
     }
@@ -310,8 +310,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand setApiVersion(String forceBootAPIVersion) {
-        this.forceBootAPIVersion = forceBootAPIVersion;
+    public NutsUpdateCommand setApiVersion(String value) {
+        this.forceBootAPIVersion = value;
         return this;
     }
 
@@ -346,22 +346,23 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand setUpdateRuntime(boolean updateRuntime) {
+    public NutsUpdateCommand setRuntime(boolean updateRuntime) {
         this.updateRuntime = updateRuntime;
         return this;
     }
 
     @Override
-    public NutsUpdateCommand setUpdateInstalled(boolean updateInstalled) {
-        this.updateInstalled = updateInstalled;
+    public NutsUpdateCommand setInstalled(boolean enable) {
+        this.updateInstalled = enable;
         return this;
     }
 
     @Override
     public NutsUpdateCommand workspace() {
-        setUpdateApi(true);
-        setUpdateRuntime(true);
-        setUpdateExtensions(true);
+        setApi(true);
+        setRuntime(true);
+        setExtensions(true);
+        setCompanions(true);
         return this;
     }
 
@@ -372,7 +373,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand api(boolean enable) {
-        setUpdateApi(enable);
+        setApi(enable);
         return this;
     }
 
@@ -383,7 +384,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand runtime(boolean enable) {
-        return setUpdateRuntime(enable);
+        return setRuntime(enable);
     }
 
     @Override
@@ -392,13 +393,18 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
+    public NutsUpdateCommand companions() {
+        return companions(false);
+    }
+
+    @Override
     public NutsUpdateCommand companions(boolean enable) {
-        return setUpdateCompanions(enable);
+        return setCompanions(enable);
     }
 
     @Override
     public NutsUpdateCommand extensions(boolean enable) {
-        return setUpdateExtensions(enable);
+        return setExtensions(enable);
     }
 
     @Override
@@ -408,7 +414,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand installed(boolean enable) {
-        return setUpdateInstalled(enable);
+        return setInstalled(enable);
     }
 
     @Override
@@ -428,10 +434,11 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand all() {
-        setUpdateApi(true);
-        setUpdateRuntime(true);
-        setUpdateExtensions(true);
-        setUpdateInstalled(true);
+        setApi(true);
+        setRuntime(true);
+        setExtensions(true);
+        setCompanions(true);
+        setInstalled(true);
         return this;
     }
 
@@ -504,58 +511,18 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand includeOptional() {
-        return includeOptional(true);
+    public NutsUpdateCommand optional() {
+        return optional(true);
     }
 
     @Override
-    public NutsUpdateCommand includeOptional(boolean enable) {
-        return setIncludeOptional(enable);
+    public NutsUpdateCommand optional(boolean enable) {
+        return setOptional(enable);
     }
 
     @Override
-    public NutsUpdateCommand apiVersion(String forceBootAPIVersion) {
-        return setApiVersion(forceBootAPIVersion);
-    }
-
-    @Override
-    public NutsUpdateCommand updateWorkspace() {
-        return updateWorkspace(true);
-    }
-
-    @Override
-    public NutsUpdateCommand updateWorkspace(boolean enable) {
-        return setUpdateApi(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand updateExtensions() {
-        return updateExtensions(true);
-    }
-
-    @Override
-    public NutsUpdateCommand updateExtensions(boolean enable) {
-        return setUpdateExtensions(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand updateRunime() {
-        return setUpdateRuntime(true);
-    }
-
-    @Override
-    public NutsUpdateCommand updateRuntime(boolean enable) {
-        return setUpdateRuntime(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand updateInstalled() {
-        return updateInstalled(true);
-    }
-
-    @Override
-    public NutsUpdateCommand updateInstalled(boolean enable) {
-        return setUpdateInstalled(enable);
+    public NutsUpdateCommand apiVersion(String value) {
+        return setApiVersion(value);
     }
 
     @Override
@@ -596,7 +563,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-A":
             case "--api": {
-                this.runtime(cmdLine.nextBoolean().getBooleanValue());
+                this.api(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
 

@@ -70,10 +70,6 @@ public interface NutsTableFormat extends NutsFormat {
 
     NutsTableFormat setVisibleHeader(boolean visibleHeader);
 
-//    NutsTableFormat setColumnsConfig(String... names);
-//
-//    NutsTableFormat setColumnConfigIndex(String name, int index);
-
     NutsTableBordersFormat getBorder();
 
     NutsTableFormat setBorder(NutsTableBordersFormat border);

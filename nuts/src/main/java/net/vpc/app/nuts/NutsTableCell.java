@@ -36,12 +36,6 @@ package net.vpc.app.nuts;
  */
 public interface NutsTableCell {
 
-    //        public RenderedCell getRendered() {
-    //            return rendered;
-    //        }
-    //        public void setRendered(RenderedCell rendered) {
-    //            this.rendered = rendered;
-    //        }
     int getColspan();
 
     NutsTableCell setColspan(int colspan);

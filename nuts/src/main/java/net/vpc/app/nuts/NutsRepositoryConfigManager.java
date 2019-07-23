@@ -100,7 +100,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled, NutsUpdateOptions options);
 
-    public int getDeployOrder();
+    int getDeployOrder();
 
     NutsRepositoryConfigManager setEnabled(boolean enabled, NutsUpdateOptions options);
 

@@ -80,7 +80,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
         return cc;
     }
 
-    public NutsWorkspaceConfigBoot506 parseConfig506(byte[] bytes) {
+    private NutsWorkspaceConfigBoot506 parseConfig506(byte[] bytes) {
         return getWorkspace().json().parse(bytes, NutsWorkspaceConfigBoot506.class);
     }
 

@@ -369,6 +369,16 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsSearchCommand clearArchs();
 
+    NutsSearchCommand frozenIds(String... values);
+
+    NutsSearchCommand addFrozenIds(String... values);
+
+    NutsSearchCommand frozenIds(NutsId... values);
+
+    NutsSearchCommand addFrozenIds(NutsId... value);
+
+    NutsSearchCommand clearFrozenIds();
+
     NutsSearchCommand addArch(String value);
 
     NutsSearchCommand removeArch(String value);
@@ -438,6 +448,20 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setLatest(boolean enable);
 
     NutsSearchCommand dependencyFilter(NutsDependencyFilter filter);
+
+    NutsSearchCommand frozenId(NutsId id);
+
+    NutsSearchCommand addFrozenId(NutsId id);
+
+    NutsSearchCommand removeFrozenId(NutsId id);
+
+    NutsSearchCommand frozenId(String id);
+
+    NutsSearchCommand removeFrozenId(String id);
+
+    NutsSearchCommand addFrozenId(String id);
+
+    NutsId[] getFrozenIds();
 
     NutsSearchCommand setDependencyFilter(NutsDependencyFilter filter);
 

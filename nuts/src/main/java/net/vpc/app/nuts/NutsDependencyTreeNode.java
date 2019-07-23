@@ -32,15 +32,27 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 
 /**
- *
+ * Dependency tree node
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsDependencyTreeNode extends Serializable{
 
+    /**
+     * node dependency
+     * @return node dependency
+     */
     NutsDependency getDependency();
 
+    /**
+     * node children
+     * @return node children
+     */
     NutsDependencyTreeNode[] getChildren();
 
+    /**
+     * true if the node is partial filled (not all children are considered)
+     * @return true if the node is partial filled (not all children are considered)
+     */
     boolean isPartial();
 }

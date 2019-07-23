@@ -74,7 +74,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         if(options.getSession()==null){
             options.setSession(workspace.createSession());
         }
-        configManager = new DefaultNutsRepositoryConfigManager(
+        configManager = new DefaultNutsRepoConfigManager(
                 this, options.getSession(), options.getLocation(), optionsConfig,
                 Math.max(0, speed), options.getDeployOrder(),
                 options.isTemporary(), options.isEnabled(),

@@ -33,79 +33,189 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
- * Created by vpc on 1/6/17.
+ * Definition is an <strong>immutable</strong> object that contains all information about a component identified by it's Id.
  *
  * @since 0.5.4
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 
+    /**
+     * component id
+     *
+     * @return component id
+     */
     NutsId getId();
 
+    /**
+     * true if this definition denoted a nuts api id component.
+     * a component is nuts api if it corresponds to {@link NutsConstants.Ids#NUTS_API}
+     *
+     * @return true if this definition denoted a nuts api id component.
+     */
     boolean isApi();
 
+    /**
+     * true if this definition denoted a nuts runtime id component.
+     * a component is nuts runtime if it contains a property "nuts-runtime" equal to true.
+     * Default Nuts runtime id is {@link NutsConstants.Ids#NUTS_RUNTIME}
+     *
+     * @return true if this definition denoted a nuts runtime id component.
+     */
     boolean isRuntime();
 
+    /**
+     * true if this definition denoted a nuts extension id component.
+     * a component is nuts extension if it contains a property "nuts-extension" equal to true.
+     *
+     * @return true if this definition denoted a nuts extension id component.
+     */
     boolean isExtension();
 
+    /**
+     * true if this definition denoted a nuts companion id component.
+     * Default companions are
+     * <ul>
+     *     <li>net.vpc.app.nuts.toolbox:nsh</li>
+     *     <li>net.vpc.app.nuts.toolbox:nadmin</li>
+     *     <li>net.vpc.app.nuts.toolbox:ndi</li>
+     * </ul>
+     *
+     * @return true if this definition denoted a nuts extension id component.
+     */
     boolean isCompanion();
 
-    NutsContent getContent();
-
-    Path getPath();
-
+    /**
+     * return component descriptor
+     * @return component descriptor
+     */
     NutsDescriptor getDescriptor();
 
     /**
-     * optional
+     * return component content file info (including path).
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
      *
-     * @return install info
+     * @return component content file info
+     * @throws NutsElementNotFoundException if the property is not requested
+     */
+    NutsContent getContent();
+
+    /**
+     * return component content file path.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
+     *
+     * @return component content file path
+     * @throws NutsElementNotFoundException if the property is not requested
+     */
+    Path getPath();
+
+    /**
+     * return component install information.
+     * this is an <strong>optional</strong> property.
+     * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available.
+     *
+     * @return component install information
+     * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsInstallInformation getInstallInformation();
 
     /**
-     * optional
+     * return component effective descriptor.
+     * this is an <strong>optional</strong> property.
+     * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available).
      *
-     * @return descriptor
+     * @return component effective descriptor
+     * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsDescriptor getEffectiveDescriptor();
 
     /**
-     * all or some of the transitive dependencies of the current Nuts as List
+     * return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
-     * <p>
-     * optional
+     * this is an <strong>optional</strong> property.
+     * It must be requested (see {@link NutsSearchCommand#dependencies()} to be available.
      *
-     * @return dependencies
+     * @return all or some of the transitive dependencies of the current Nuts as List
+     * result of the search command.
+     * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsDependency[] getDependencies();
 
     /**
-     * all of some of the transitive dependencies of the current Nuts as Tree
-     * result of the search command
-     * <p>
-     * optional
+     * return all of some of the transitive dependencies of the current Nuts as Tree result of the search command
+     * this is an <strong>optional</strong> property.
+     * It must be requested (see {@link NutsSearchCommand#dependenciesTree()} to be available.
      *
-     * @return dependencies tree nodes
+     * @return all of some of the transitive dependencies of the current Nuts as Tree result of the search command.
+     * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsDependencyTreeNode[] getDependencyNodes();
 
+    /**
+     * return target api id (included in dependency) for the current id.
+     * This is relevant for runtime, extension and companion ids.
+     * For other regular ids, this returns null.
+     *
+     * @return target (included in dependency) api id for the current id
+     */
+    NutsId getApiId();
+
+    /**
+     * Compares this object with the specified definition for order.
+     * This is equivalent to comparing subsequent ids.
+     *
+     * @param other other definition to compare with
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     */
     @Override
     int compareTo(NutsDefinition other);
 
+    /**
+     * id of the repository providing this id.
+     * @return id of the repository providing this id.
+     */
     String getRepositoryUuid();
 
+    /**
+     * name of the repository providing this id.
+     * @return name of the repository providing this id.
+     */
     String getRepositoryName();
 
 
+    /**
+     * true if requested content
+     *
+     * @return true if requested content
+     */
     boolean isSetContent();
 
+    /**
+     * true if requested content
+     *
+     * @return true if requested content
+     */
     boolean isSetInstallInformation();
 
+    /**
+     * true if requested content
+     *
+     * @return true if requested content
+     */
     boolean isSetDependencyNodes();
 
+    /**
+     * true if requested content
+     *
+     * @return true if requested content
+     */
     boolean isSetDependencies();
 
+    /**
+     * true if requested effective descriptor
+     *
+     * @return true if requested content
+     */
     boolean isSetEffectiveDescriptor();
 
-    NutsId getApiId();
 }

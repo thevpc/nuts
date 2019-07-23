@@ -29,8 +29,7 @@ public class LinuxNdi implements SystemNdi {
         if ("nuts".equals(nid.getShortName()) || "net.vpc.app.nuts:nuts".equals(nid.getShortName())) {
             return createBootScript(options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace());
         } else {
-            List<NdiScriptnfo> r = new ArrayList<>();
-            r.addAll(Arrays.asList(createBootScript(false, false)));
+            List<NdiScriptnfo> r = new ArrayList<>(Arrays.asList(createBootScript(false, false)));
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()

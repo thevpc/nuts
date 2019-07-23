@@ -27,8 +27,13 @@ public class NutsExecRuntimeFilter implements NutsDescriptorFilter, Simplifiable
             if(apiId==null){
                 return true;
             }
-            if(apiId.getVersion().equals(other.getId().getVersion())){
-                return true;
+            for (NutsDependency dependency : other.getDependencies()) {
+                if (dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                    if (apiId.getVersion().equals(dependency.getId().getVersion())) {
+                        return true;
+                    }
+                    return false;
+                }
             }
         }
         if(communityRuntime) {

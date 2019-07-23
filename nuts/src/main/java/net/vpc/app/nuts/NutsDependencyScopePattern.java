@@ -32,20 +32,59 @@ package net.vpc.app.nuts;
 import java.util.EnumSet;
 
 /**
- *
+ * Supported dependency scope pattern.
+ * A dependency scope pattern
  * @author vpc
  * @since 0.5.6
  */
 public enum NutsDependencyScopePattern {
+    /**
+     * api (gradle) / compile (maven)
+     */
     API,
+
+    /**
+     * implementation (gradle) / compile (maven)
+     */
     IMPLEMENTATION,
+
+    /**
+     * provided (gradle) / provided (maven)
+     */
     PROVIDED,
+
+    /**
+     * import (maven)
+     */
     IMPORT,
+
+    /**
+     * testRuntime (gradle) / runtime (maven)
+     */
     RUNTIME,
+    /**
+     * system (maven)
+     */
     SYSTEM,
+
+    /**
+     * testCompile (gradle) / test (maven)
+     */
     TEST_COMPILE,
+
+    /**
+     * testCompileOnly (gradle)
+     */
     TEST_PROVIDED,
+
+    /**
+     * testRuntime (gradle)
+     */
     TEST_RUNTIME,
+
+    /**
+     * other
+     */
     OTHER,
 
     /**
@@ -53,14 +92,20 @@ public enum NutsDependencyScopePattern {
      * 'test,compile,system,runtime' witch are NOT optional
      */
     TEST,
-    
-    
+
+    /**
+     * maven compile
+     */
     COMPILE,
     /**
      * dependencies needed for running/executing the nuts : includes
      * 'compile,system,runtime' witch are NOT optional
      */
     RUN,
+
+    /**
+     * run test
+     */
     RUN_TEST,
     /**
      * all dependencies (no restriction)
@@ -84,83 +129,6 @@ public enum NutsDependencyScopePattern {
         return id;
     }
 
-    public EnumSet<NutsDependencyScope> expand() {
-        EnumSet<NutsDependencyScope> v = EnumSet.noneOf(NutsDependencyScope.class);
-        switch (this) {
-            case RUN: 
-            {
-                v.add(NutsDependencyScope.API);
-                v.add(NutsDependencyScope.IMPLEMENTATION);
-                v.add(NutsDependencyScope.SYSTEM);
-                v.add(NutsDependencyScope.RUNTIME);
-                break;
-            }
-            case RUN_TEST: {
-                v.addAll(NutsDependencyScopePattern.RUN.expand());
-                v.add(NutsDependencyScope.TEST_COMPILE);
-                v.add(NutsDependencyScope.TEST_RUNTIME);
-                break;
-            }
-            case COMPILE: 
-            {
-                v.add(NutsDependencyScope.API);
-                v.add(NutsDependencyScope.IMPLEMENTATION);
-                v.add(NutsDependencyScope.SYSTEM);
-                v.add(NutsDependencyScope.PROVIDED);
-                break;
-            }
-            case TEST: {
-                v.add(NutsDependencyScope.TEST_COMPILE);
-                v.add(NutsDependencyScope.TEST_RUNTIME);
-                v.add(NutsDependencyScope.TEST_PROVIDED);
-                break;
-            }
-            case ALL: {
-                v.add(NutsDependencyScope.API);
-                v.add(NutsDependencyScope.IMPLEMENTATION);
-                v.add(NutsDependencyScope.RUNTIME);
-                v.add(NutsDependencyScope.SYSTEM);
-                v.add(NutsDependencyScope.PROVIDED);
-                v.add(NutsDependencyScope.TEST_COMPILE);
-                v.add(NutsDependencyScope.TEST_RUNTIME);
-                v.add(NutsDependencyScope.TEST_PROVIDED);
-                v.add(NutsDependencyScope.OTHER);
-                break;
-            }
-            case API:{
-                v.add(NutsDependencyScope.API);
-            }
-            case IMPORT:{
-                v.add(NutsDependencyScope.IMPORT);
-            }
-            case IMPLEMENTATION:{
-                v.add(NutsDependencyScope.IMPLEMENTATION);
-            }
-            case PROVIDED:{
-                v.add(NutsDependencyScope.PROVIDED);
-            }
-            case RUNTIME:{
-                v.add(NutsDependencyScope.RUNTIME);
-            }
-            case SYSTEM:{
-                v.add(NutsDependencyScope.SYSTEM);
-            }
-            case TEST_COMPILE:{
-                v.add(NutsDependencyScope.TEST_COMPILE);
-            }
-            case TEST_PROVIDED:{
-                v.add(NutsDependencyScope.TEST_PROVIDED);
-            }
-            case TEST_RUNTIME:{
-                v.add(NutsDependencyScope.TEST_RUNTIME);
-            }
-            case OTHER:{
-                v.add(NutsDependencyScope.OTHER);
-            }
-            default:{
-                throw new IllegalArgumentException("Unsupported "+this);
-            }
-        }
-        return v;
-    }
+
+
 }

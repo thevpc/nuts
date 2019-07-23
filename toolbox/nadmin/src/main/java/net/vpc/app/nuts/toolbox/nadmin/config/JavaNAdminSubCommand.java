@@ -92,7 +92,6 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-
                 NutsSdkLocation[] sdks = conf.getSdks("java");
                 Arrays.sort(sdks, new Comparator<NutsSdkLocation>() {
                     @Override
@@ -115,7 +114,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 for (NutsSdkLocation jloc : sdks) {
                     m.addRow(jloc.getName(), jloc.getVersion(), jloc.getPath());
                 }
-                out.printf(t.toString());
+                out.print(t.format());
             }
             return true;
         }

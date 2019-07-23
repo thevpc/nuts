@@ -314,15 +314,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                         if (list == null) {
                             NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
-                            NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
+                            NutsDependencyFilter _dependencyFilter = CoreFilterUtils.AndSimplified(
                                     new NutsDependencyScopeFilter().addScopes(getScope()),
                                     getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                                     null//getDependencyFilter()
-                            ));
+                            );
                             NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
-                            List<NutsId> ids = Arrays.asList(id);
-                            graph.push(ids, _dependencyFilter);
-                            NutsId[] pp = graph.collect(ids, ids);
+                            NutsId[] pp = graph.resolveDependencies(id, _dependencyFilter);
                             list = new DefaultNutsDependency[pp.length];
                             for (int i = 0; i < list.length; i++) {
                                 list[i] = new DefaultNutsDependency(pp[i]);

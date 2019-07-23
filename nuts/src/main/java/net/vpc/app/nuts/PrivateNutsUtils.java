@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -39,6 +44,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -53,6 +59,7 @@ final class PrivateNutsUtils {
 
     private static final Logger LOG = Logger.getLogger(PrivateNutsUtils.class.getName());
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
+    public static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (isBlank(workspace)) {
@@ -317,7 +324,6 @@ final class PrivateNutsUtils {
             LOG.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
                 String.valueOf(url),
                 formatPeriodMilli(time)});
-            //e.printStackTrace();
         }
         return props;
     }
@@ -354,70 +360,7 @@ final class PrivateNutsUtils {
         return sb.toString();
     }
 
-    public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
-        String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
-        String str = null;
-        try {
-            str = PrivateNutsUtils.readStringFromURL(new URL(mvnUrl));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        if (str != null) {
-            for (String line : str.split("\n")) {
-                line = line.trim();
-                if (line.startsWith("<release>")) {
-                    return line.substring("<release>".length(), line.length() - "</release>".length()).trim();
-                }
-            }
-        }
-        throw new NutsNotFoundException(null, nutsId);
-    }
 
-    public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
-        String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
-        String mvnUrl = repo;
-        String sep = "/";
-        if (!isURL(repo)) {
-            sep = File.separator;
-        }
-        if (!mvnUrl.endsWith("/") && !mvnUrl.endsWith(sep)) {
-            mvnUrl += sep;
-        }
-        return mvnUrl + jarPath;
-    }
-
-    public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder) {
-        String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
-        File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
-        if (cachedFile.isFile()) {
-            return cachedFile;
-        }
-        for (String r : repositories) {
-            LOG.log(Level.FINE, "Checking {0} jar from {1}", new Object[]{nutsId, r});
-            String path = resolveMavenFullPath(r, nutsId, "jar");
-            File file = toFile(r);
-            if (file == null) {
-                try {
-                    copy(new URL(path), cachedFile);
-                    LOG.log(Level.CONFIG, "[CACHED ] Cached jar file {0}", new Object[]{cachedFile.getPath()});
-                    return cachedFile;
-                } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, "[ERROR  ] Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
-                    //ex.printStackTrace();
-                    //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
-                }
-            } else {
-                //file
-                File f = new File(r, jarPath);
-                if (f.isFile()) {
-                    return f;
-                } else {
-                    LOG.log(Level.SEVERE, "Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
-                }
-            }
-        }
-        return null;
-    }
 
     public static String replaceDollarString(String path, Function<String, String> m) {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
@@ -599,7 +542,7 @@ final class PrivateNutsUtils {
             Path directoryPath = Paths.get(directory.getPath());
             try {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.log(Level.CONFIG, "Deleting folder : {0}", directory.getPath());
+                    LOG.log(Level.CONFIG, "[SUCCESS] Deleting folder : {0}", directory.getPath());
                 }
                 Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
                     @Override
@@ -860,5 +803,335 @@ final class PrivateNutsUtils {
 
     public static Set<String> parseDependencies(String s){
         return new LinkedHashSet<>(PrivateNutsUtils.split(s, ";", false));
+    }
+
+    public static class Mvn{
+
+        public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
+            String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
+            String str = null;
+            try {
+                str = PrivateNutsUtils.readStringFromURL(new URL(mvnUrl));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            if (str != null) {
+                for (String line : str.split("\n")) {
+                    line = line.trim();
+                    if (line.startsWith("<release>")) {
+                        return line.substring("<release>".length(), line.length() - "</release>".length()).trim();
+                    }
+                }
+            }
+            throw new NutsNotFoundException(null, nutsId);
+        }
+
+        public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
+            String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
+            String mvnUrl = repo;
+            String sep = "/";
+            if (!isURL(repo)) {
+                sep = File.separator;
+            }
+            if (!mvnUrl.endsWith("/") && !mvnUrl.endsWith(sep)) {
+                mvnUrl += sep;
+            }
+            return mvnUrl + jarPath;
+        }
+
+        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder) {
+            String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
+            File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
+            if (cachedFile.isFile()) {
+                return cachedFile;
+            }
+            for (String r : repositories) {
+                LOG.log(Level.FINE, "Checking {0} jar from {1}", new Object[]{nutsId, r});
+                String path = resolveMavenFullPath(r, nutsId, "jar");
+                File file = toFile(r);
+                if (file == null) {
+                    try {
+                        copy(new URL(path), cachedFile);
+                        LOG.log(Level.CONFIG, "[CACHED ] Cached jar file {0}", new Object[]{cachedFile.getPath()});
+                        return cachedFile;
+                    } catch (Exception ex) {
+                        LOG.log(Level.SEVERE, "[ERROR  ] Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                        //ex.printStackTrace();
+                        //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
+                    }
+                } else {
+                    //file
+                    File f = new File(r, jarPath);
+                    if (f.isFile()) {
+                        return f;
+                    } else {
+                        LOG.log(Level.SEVERE, "Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                    }
+                }
+            }
+            return null;
+        }
+
+        static Deps loadDependencies(PrivateNutsId rid) {
+            String urlPath = idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
+            return loadDependencies(urlPath);
+        }
+
+        static Deps loadDependencies(String urlPath) {
+            Deps depsAndRepos = null;
+            if (!NO_M2) {
+                File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
+                if (mavenNutsCorePom.isFile()) {
+                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath());
+                }
+            }
+            if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
+                for (String baseUrl : new String[]{
+                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
+                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
+                }) {
+                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
+                    if (!depsAndRepos.deps.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+            return depsAndRepos;
+        }
+
+        static Deps loadDependenciesAndRepositoriesFromPomUrl(String url) {
+            Deps depsAndRepos = new Deps();
+            InputStream xml = null;
+            try {
+                if (url.startsWith("http://") || url.startsWith("https://")) {
+                    xml = new URL(url).openStream();
+                } else {
+                    File file = new File(url);
+                    if (file.isFile()) {
+                        xml = Files.newInputStream(file.toPath());
+                    } else {
+                        return depsAndRepos;
+                    }
+                }
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(xml);
+                Element c = doc.getDocumentElement();
+                for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                String groupId = null;
+                                String artifactId = null;
+                                String version = null;
+                                String scope = null;
+                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                    if (c3.getChildNodes().item(k) instanceof Element) {
+                                        Element c4 = (Element) c3.getChildNodes().item(k);
+                                        switch (c4.getNodeName()) {
+                                            case "groupId": {
+                                                groupId = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "artifactId": {
+                                                artifactId = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "version": {
+                                                version = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "scope": {
+                                                scope = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (isBlank(groupId)) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
+                                } else if (groupId.contains("$")) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
+                                }
+                                if (isBlank(artifactId)) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                                } else if (artifactId.contains("$")) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
+                                }
+                                if (isBlank(version)) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                                } else if (version.contains("$")) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                                }
+                                //this is maven dependency, using "compile"
+                                if (isBlank(scope) || scope.equals("compile")) {
+                                    depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
+                                } else if (version.contains("$")) {
+                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                                }
+                            }
+                        }
+                    } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                switch (c3.getNodeName()) {
+                                    case "nuts-runtime-repositories": {
+                                        String t = c3.getTextContent().trim();
+                                        if (t.length() > 0) {
+                                            depsAndRepos.deps.addAll(split(t, ";", true));
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } catch (Exception ex) {
+                //ignore
+            } finally {
+                if (xml != null) {
+                    try {
+                        xml.close();
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
+            }
+
+            return depsAndRepos;
+        }
+
+        /**
+         * find latest maven component
+         *
+         * @param filter filter
+         * @return latest runtime version
+         */
+        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter) {
+            String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
+            String bestVersion = null;
+            if (!NO_M2) {
+                File mavenNutsCoreFolder = new File(System.getProperty("user.home"), ".m2/repository/" + path + "/".replace("/", File.separator));
+                if (mavenNutsCoreFolder.isDirectory()) {
+                    File[] children = mavenNutsCoreFolder.listFiles();
+                    if (children != null) {
+                        for (File file : children) {
+                            if (file.isDirectory()) {
+                                String[] goodChildren = file.list(new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File dir, String name) {
+                                        return name.endsWith(".pom");
+                                    }
+                                });
+                                if (goodChildren != null && goodChildren.length > 0) {
+                                    String p = file.getName();
+                                    if (filter == null || filter.test(p)) {
+                                        if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                            bestVersion = p;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            for (String repoUrl : new String[]{NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT, NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
+                if (!repoUrl.endsWith("/")) {
+                    repoUrl = repoUrl + "/";
+                }
+                boolean found = false;
+                try {
+                    URL runtimeMetadata = new URL(repoUrl + path + "/maven-metadata.xml");
+                    found = true;
+                    DocumentBuilderFactory factory
+                            = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document doc = builder.parse(runtimeMetadata.openStream());
+                    Element c = doc.getDocumentElement();
+                    for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                        if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
+                            Element c2 = (Element) c.getChildNodes().item(i);
+                            for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                                if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
+                                    Element c3 = (Element) c2.getChildNodes().item(j);
+                                    for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                        if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
+                                            Element c4 = (Element) c3.getChildNodes().item(k);
+                                            String p = c4.getTextContent();
+                                            if (filter == null || filter.test(p)) {
+                                                if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                                    bestVersion = p;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
+                    }
+                } catch (Exception ex) {
+                    // ignore any error
+                }
+                if (found) {
+                    break;
+                }
+            }
+            if (bestVersion == null) {
+                return null;
+            }
+            return zId.getGroupId() + ":" + zId.getArtifactId() + "#" + bestVersion;
+        }
+
+        static File createFile(String parent, String child) {
+            String userHome = System.getProperty("user.home");
+            if (child.startsWith("~/")) {
+                child = new File(userHome, child.substring(2)).getPath();
+            }
+            if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
+                return new File(child);
+            }
+            if (parent != null) {
+                if (parent.startsWith("~/")) {
+                    parent = new File(userHome, parent.substring(2)).getPath();
+                }
+            } else {
+                parent = ".";
+            }
+            return new File(parent, child);
+        }
+
+        static boolean isInfiniteLoopThread(String className, String methodName) {
+            Thread thread = Thread.currentThread();
+            StackTraceElement[] elements = thread.getStackTrace();
+
+            if (elements == null || elements.length == 0) {
+                return false;
+            }
+
+            for (int i = 0; i < elements.length; i++) {
+                StackTraceElement element = elements[elements.length - (i + 1)];
+                if (className.equals(element.getClassName())) {
+                    if (methodName.equals(element.getMethodName())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    public static class Deps {
+
+        LinkedHashSet<String> deps = new LinkedHashSet<>();
+        LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
 }

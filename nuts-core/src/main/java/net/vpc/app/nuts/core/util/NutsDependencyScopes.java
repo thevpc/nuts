@@ -168,7 +168,7 @@ public class NutsDependencyScopes {
         if (other != null) {
             for (NutsDependencyScopePattern s : other) {
                 if (s != null) {
-                    a.addAll(s.expand());
+                    a.addAll(NutsDependencyScopes.expand(s));
                 }
             }
         }
@@ -176,7 +176,156 @@ public class NutsDependencyScopes {
     }
 
     public static EnumSet<NutsDependencyScope> expand(NutsDependencyScopePattern other) {
-        return other == null ? EnumSet.noneOf(NutsDependencyScope.class) : other.expand();
+        if(other == null){
+            return EnumSet.noneOf(NutsDependencyScope.class);
+        }
+        EnumSet<NutsDependencyScope> v = EnumSet.noneOf(NutsDependencyScope.class);
+        switch (other) {
+            case RUN:
+            {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.RUNTIME);
+                break;
+            }
+            case RUN_TEST: {
+                v.addAll(expand(NutsDependencyScopePattern.RUN));
+                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                break;
+            }
+            case COMPILE:
+            {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.PROVIDED);
+                break;
+            }
+            case TEST: {
+                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+                break;
+            }
+            case ALL: {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.RUNTIME);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.PROVIDED);
+                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+                v.add(NutsDependencyScope.OTHER);
+                break;
+            }
+            case API:{
+                v.add(NutsDependencyScope.API);
+            }
+            case IMPORT:{
+                v.add(NutsDependencyScope.IMPORT);
+            }
+            case IMPLEMENTATION:{
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+            }
+            case PROVIDED:{
+                v.add(NutsDependencyScope.PROVIDED);
+            }
+            case RUNTIME:{
+                v.add(NutsDependencyScope.RUNTIME);
+            }
+            case SYSTEM:{
+                v.add(NutsDependencyScope.SYSTEM);
+            }
+            case TEST_COMPILE:{
+                v.add(NutsDependencyScope.TEST_COMPILE);
+            }
+            case TEST_PROVIDED:{
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+            }
+            case TEST_RUNTIME:{
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+            }
+            case OTHER:{
+                v.add(NutsDependencyScope.OTHER);
+            }
+            default:{
+                throw new IllegalArgumentException("Unsupported "+other);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * parse string to a valid NutsDependencyScopePattern or NutsDependencyScope.OTHER
+     * @param value string to parse
+     * @return valid NutsDependencyScopePattern instance
+     */
+    public static NutsDependencyScope parseDependencyScope(String value) {
+        if (value == null) {
+            value = "";
+        }
+        value = value.trim().toLowerCase();
+        switch (value) {
+            case "":
+            case "compile": //maven
+                return NutsDependencyScope.API;
+            case "compileonly": //gradle
+            case "compile-only": //gradle
+                return NutsDependencyScope.PROVIDED;
+            case "test": //maven
+                return NutsDependencyScope.TEST_COMPILE;
+            case "testcompile": //gradle
+                return NutsDependencyScope.TEST_COMPILE;
+            case "testruntime": //gradle
+                return NutsDependencyScope.TEST_RUNTIME;
+            case "testcompileonly": //gradle
+                return NutsDependencyScope.TEST_PROVIDED;
+        }
+        try {
+            String enumString = value.toUpperCase().replace('-', '_');
+            return NutsDependencyScope.valueOf(enumString);
+        }catch (Exception ex){
+            //ignore
+        }
+        return NutsDependencyScope.OTHER;
+    }
+
+    /**
+     * parse string to a valid NutsDependencyScopePattern or NutsDependencyScope.OTHER
+     * @param value string to parse
+     * @return valid NutsDependencyScopePattern instance
+     */
+    public static NutsDependencyScopePattern parseDependencyScopePattern(String value) {
+        if (value == null) {
+            value = "";
+        }
+        value = value.trim().toLowerCase();
+        switch (value) {
+            case "":
+            case "compile": //maven
+                return NutsDependencyScopePattern.API;
+            case "compileonly": //gradle
+            case "compile-only": //gradle
+                return NutsDependencyScopePattern.PROVIDED;
+            case "test": //maven
+                return NutsDependencyScopePattern.TEST_COMPILE;
+            case "testcompile": //gradle
+                return NutsDependencyScopePattern.TEST_COMPILE;
+            case "testruntime": //gradle
+                return NutsDependencyScopePattern.TEST_RUNTIME;
+            case "testcompileonly": //gradle
+                return NutsDependencyScopePattern.TEST_PROVIDED;
+        }
+        try {
+            String enumString = value.toUpperCase().replace('-', '_');
+            return NutsDependencyScopePattern.valueOf(enumString);
+        }catch (Exception ex){
+            //ignore
+        }
+        return NutsDependencyScopePattern.OTHER;
     }
 
     //    public static String combineScopes(String s1, String s2) {

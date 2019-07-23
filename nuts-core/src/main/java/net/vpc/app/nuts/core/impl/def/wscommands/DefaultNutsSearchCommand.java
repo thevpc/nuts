@@ -52,6 +52,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
@@ -142,79 +143,85 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         for (String j : this.getScripts()) {
             if (!CoreStringUtils.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = simplify(CoreFilterUtils.And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = simplify(CoreFilterUtils.And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
+                    depFilter = CoreFilterUtils.AndSimplified(depFilter, NutsDependencyJavascriptFilter.valueOf(j));
                 } else {
-                    _idFilter = simplify(CoreFilterUtils.And(_idFilter, NutsJavascriptIdFilter.valueOf(j)));
+                    _idFilter = CoreFilterUtils.AndSimplified(_idFilter, NutsJavascriptIdFilter.valueOf(j));
                 }
             }
         }
         NutsDescriptorFilter packs = null;
         for (String v : this.getPackaging()) {
-            packs = CoreNutsUtils.simplify(CoreFilterUtils.Or(packs, new NutsDescriptorFilterPackaging(v)));
+            packs = CoreFilterUtils.OrSimplified(packs, new NutsDescriptorFilterPackaging(v));
         }
         NutsDescriptorFilter archs = null;
         for (String v : this.getArch()) {
-            archs = CoreNutsUtils.simplify(CoreFilterUtils.Or(archs, new NutsDescriptorFilterArch(v)));
+            archs = CoreFilterUtils.OrSimplified(archs, new NutsDescriptorFilterArch(v));
         }
 
-        _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, packs, archs));
+        _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, packs, archs);
 
         if (this.getRepositories().length > 0) {
             rfilter = new DefaultNutsRepositoryFilter(Arrays.asList(this.getRepositories())).simplify();
         }
 
-        NutsRepositoryFilter _repositoryFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(rfilter, this.getRepositoryFilter()));
-        _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, this.getDescriptorFilter()));
-        _idFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_idFilter, idFilter0));
+        NutsRepositoryFilter _repositoryFilter = CoreFilterUtils.AndSimplified(rfilter, this.getRepositoryFilter());
+        _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, this.getDescriptorFilter());
+        _idFilter = CoreFilterUtils.AndSimplified(_idFilter, idFilter0);
         if (getDefaultVersions() != null) {
-            _idFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_idFilter, new NutsDefaultVersionIdFilter(getDefaultVersions())));
+            _idFilter = CoreFilterUtils.AndSimplified(_idFilter, new NutsDefaultVersionIdFilter(getDefaultVersions()));
         }
         if (execType != null) {
             switch (execType) {
                 case "libs": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecStatusIdFilter(false, false)));
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(false, false));
                     break;
                 }
                 case "apps": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecStatusIdFilter(true, null)));
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(true, null));
                     break;
                 }
                 case "nuts-apps": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecStatusIdFilter(null, true)));
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(null, true));
                     break;
                 }
                 case "extensions": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecExtensionFilter(
-                            targetApiVersion==null?null:ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()))
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecExtensionFilter(
+                            targetApiVersion==null?null:ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build())
                     );
                     break;
                 }
                 case "runtime": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecRuntimeFilter(
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecRuntimeFilter(
                             targetApiVersion==null?null:ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
                             ,false
-                            ))
+                            )
                     );
                     break;
                 }
                 case "companions": {
-                    _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new NutsExecCompanionFilter(
+                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecCompanionFilter(
                             targetApiVersion==null?null:ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
                             NutsWorkspaceExt.of(ws).getCompanionIds()
-                            ))
+                            )
                     );
                     break;
                 }
             }
         }else{
             if(targetApiVersion!=null) {
-                _descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(_descriptorFilter, new BootAPINutsDescriptorFilter(
+                _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new BootAPINutsDescriptorFilter(
                                 ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build().getVersion()
-                        ))
+                        )
                 );
             }
+        }
+        if(!frozenIds.isEmpty()){
+            _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsFrozenIdExtensionFilter(
+                            frozenIds.toArray(new NutsId[0])
+                    )
+            );
         }
         if (!wildcardIds.isEmpty()) {
             for (String wildcardId : wildcardIds) {
@@ -395,28 +402,18 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
     private NutsId[] findDependencies(List<NutsId> ids) {
         NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
-        NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
+        NutsDependencyFilter _dependencyFilter = CoreFilterUtils.AndSimplified(
                 new NutsDependencyScopeFilter().addScopes(getScope()),
                 getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                 getDependencyFilter()
-        ));
+        );
         NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
-        graph.push(ids, _dependencyFilter);
-        return graph.collect(ids, ids);
+        return graph.resolveDependencies(ids, _dependencyFilter);
     }
 
     @Override
     public String getResultNutsPath() {
-        StringBuilder sb = new StringBuilder();
-        for (NutsId nutsDefinition : getResultIds()) {
-            if (nutsDefinition != null) {
-                if (sb.length() > 0) {
-                    sb.append(";");
-                }
-                sb.append(nutsDefinition.getLongNameId().toString());
-            }
-        }
-        return sb.toString();
+        return getResultIds().list().stream().map(NutsId::getLongName).collect(Collectors.joining(";"));
     }
 
     private <T> NutsSearchResult<T> postProcessResult(IteratorBuilder<T> a) {
@@ -673,7 +670,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     for (NutsFetchMode mode : fetchMode) {
                         List<Iterator<NutsId>> all = new ArrayList<>();
                         for (NutsId nutsId1 : nutsId2) {
-                            NutsIdFilter idFilter2 = CoreNutsUtils.simplify(CoreFilterUtils.And(sIdFilter, nutsId1.toFilter()));
+                            NutsIdFilter idFilter2 = CoreFilterUtils.AndSimplified(sIdFilter, nutsId1.toFilter());
                             if (mode == NutsFetchMode.INSTALLED) {
                                 all.add(
                                         IteratorBuilder.ofLazy(() -> {

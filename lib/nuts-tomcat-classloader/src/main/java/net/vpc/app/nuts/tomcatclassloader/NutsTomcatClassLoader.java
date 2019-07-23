@@ -73,9 +73,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                     try {
                         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                         DocumentBuilder db = dbf.newDocumentBuilder();
-                        InputStream is = null;
-                        try {
-                            is = resource.getURL().openStream();
+                        try (InputStream is = resource.getURL().openStream()) {
                             Document doc = db.parse(is);
                             NodeList loader = doc.getDocumentElement().getElementsByTagName("Loader");
                             if (loader != null) {
@@ -102,10 +100,6 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                                     }
                                 }
 
-                            }
-                        } finally {
-                            if (is != null) {
-                                is.close();
                             }
                         }
                     } catch (Exception ex) {
@@ -143,7 +137,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                     = Nuts.openWorkspace(
                             new NutsDefaultWorkspaceOptions()
                                     .setRuntimeId(getWorkspaceBootRuntime())
-                                    .setClassLoaderSupplier(()->getParent())
+                                    .setClassLoaderSupplier(this::getParent)
                                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
                                     .setWorkspace(getWorkspaceLocation())
                                     .setArchetype(getWorkspaceArchetype())

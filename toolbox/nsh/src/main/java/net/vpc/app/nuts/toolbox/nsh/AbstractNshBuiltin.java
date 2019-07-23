@@ -135,7 +135,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                     .loadBest(new NutsSupportLevelContext<NshBuiltin>() {
                         @Override
                         public NutsWorkspace getWorkspace() {
-                            return getWorkspace();
+                            return context.getWorkspace();
                         }
 
                         @Override

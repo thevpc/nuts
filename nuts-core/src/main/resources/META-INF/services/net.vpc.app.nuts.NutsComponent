@@ -1,6 +1,6 @@
 net.vpc.app.nuts.core.DefaultHttpTransportComponent
 
-net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepositoryFactoryComponent
+net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepoFactoryComponent
 
 
 net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal

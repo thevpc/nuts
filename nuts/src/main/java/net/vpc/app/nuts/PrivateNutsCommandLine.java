@@ -111,8 +111,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-//        this.autoComplete = autoComplete;
-//        return this;
         throw new UnsupportedOperationException(NOT_SUPPORTED);
     }
 

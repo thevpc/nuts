@@ -36,7 +36,6 @@ import java.util.*;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.NutsIdAndNutsDependencyFilterItem;
 import net.vpc.app.nuts.core.filters.dependency.NutsExclusionDependencyFilter;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class NutsIdGraph {
@@ -44,7 +43,7 @@ public class NutsIdGraph {
     private NutsIdGraphContext context = new NutsIdGraphContext();
 
     private final Set<NutsId> visited = new LinkedHashSet<>();
-    private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
+    private final Set<NutsIdNode> wildIds = new LinkedHashSet<>();
     private final NutsSession session;
     private final boolean failFast;
     private int maxComplexity = 300;
@@ -52,6 +51,23 @@ public class NutsIdGraph {
     public NutsIdGraph(NutsSession session, boolean failFast) {
         this.session = session;
         this.failFast = failFast;
+    }
+
+    private void reset(){
+        visited.clear();
+        wildIds.clear();;
+        maxComplexity = 300;
+
+    }
+
+    public NutsId[] resolveDependencies(List<NutsId> ids,NutsDependencyFilter _dependencyFilter) {
+        reset();
+        push(ids, _dependencyFilter);
+        return collect(ids, ids);
+    }
+
+    public NutsId[] resolveDependencies(NutsId id,NutsDependencyFilter _dependencyFilter) {
+        return resolveDependencies(Arrays.asList(id),_dependencyFilter);
     }
 
     public NutsIdInfo resolveBest(Set<NutsIdInfo> ids) {
@@ -82,7 +98,7 @@ public class NutsIdGraph {
         }
 
         Map<String, NutsIdNode> wildIds = new HashMap<>();
-        for (NutsIdNode wildeId : this.wildeIds) {
+        for (NutsIdNode wildeId : this.wildIds) {
             wildIds.put(cleanup(wildeId.id).toString(), wildeId);
         }
         for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
@@ -274,7 +290,7 @@ public class NutsIdGraph {
                         }
                     }
                 } else {
-                    wildeIds.add(curr.id);
+                    wildIds.add(curr.id);
                 }
             }
         }

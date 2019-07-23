@@ -160,7 +160,7 @@ public class NutsFetchDisplayOptions {
             if (this.getIdFormat().isHighlightScope()) {
                 displayOptionsArgs.add("--highlight-scope");
             }
-            if (this.getIdFormat().isOmitEnv()) {
+            if (this.getIdFormat().isOmitQuery()) {
                 displayOptionsArgs.add("--omit-env");
             }
             if (this.getIdFormat().isOmitFace()) {

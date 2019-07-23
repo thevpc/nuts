@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,7 +32,6 @@ package net.vpc.app.nuts;
 import java.util.Collection;
 
 /**
- *
  * @author vpc
  * @since 0.5.4
  */
@@ -61,7 +60,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand clearIds();
 
     NutsId[] getIds();
-//////
 
     NutsUpdateCommand frozenId(NutsId id);
 
@@ -105,36 +103,81 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
+    /**
+     * if true enable installing new components when an update is request for
+     * non installed packages.
+     *
+     * @return true if enable install
+     */
     boolean isEnableInstall();
 
-    NutsUpdateCommand includeOptional();
+    /**
+     * include optional dependencies.
+     * equivalent to @code optional(true)}
+     *
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand optional();
 
-    NutsUpdateCommand includeOptional(boolean includeOptional);
+    /**
+     * when true include optional dependencies
+     *
+     * @param includeOptional include optional
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand optional(boolean includeOptional);
 
-    NutsUpdateCommand setIncludeOptional(boolean includeOptional);
+    /**
+     * when true include optional dependencies
+     *
+     * @param includeOptional include optional
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand setOptional(boolean includeOptional);
 
-    boolean isIncludeOptional();
+    /**
+     * return true when include optional dependencies
+     *
+     * @return return true when include optional dependencies
+     */
+    boolean isOptional();
 
-    NutsUpdateCommand apiVersion(String forceBootAPIVersion);
+    /**
+     * set target api version required for updating other components
+     *
+     * @param value target api version
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand apiVersion(String value);
 
-    NutsUpdateCommand setApiVersion(String forceBootAPIVersion);
+    /**
+     * set target api version required for updating other components
+     *
+     * @param value target api version
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand setApiVersion(String value);
 
+    /**
+     * return target api version required for updating other components
+     *
+     * @return target api version required for updating other components
+     */
     String getApiVersion();
 
     /**
-     *
      * @return null if no updates
      */
     NutsUpdateCommand update();
 
     /**
-     *
      * @return null if no updates
      */
     NutsUpdateCommand checkUpdates();
 
     /**
      * check for updates.
+     *
      * @param applyUpdates if true updates will be applied
      * @return {@code this} instance
      */
@@ -142,57 +185,91 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     /**
      * execute update check (if not already performed) then return result
+     *
      * @return updates result
      */
     NutsWorkspaceUpdateResult getResult();
 
     int getResultCount();
 
+    /**
+     * update api, runtime, extensions and companions
+     *
+     * @return {@code this} instance
+     */
     NutsUpdateCommand workspace();
 
-    NutsUpdateCommand updateWorkspace();
+    /**
+     * update api, runtime, extensions, companions and all installed components
+     *
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand all();
 
-    NutsUpdateCommand updateWorkspace(boolean enable);
+    /**
+     * update workspace api version
+     *
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand api();
 
-    NutsUpdateCommand setUpdateApi(boolean enable);
+    NutsUpdateCommand api(boolean enable);
 
-    boolean isUpdateApi();
+    NutsUpdateCommand setApi(boolean enable);
 
+    boolean isApi();
+
+
+    /**
+     * update workspace extension components
+     *
+     * @return {@code this} instance
+     */
     NutsUpdateCommand extensions();
 
-    NutsUpdateCommand updateExtensions();
+    NutsUpdateCommand extensions(boolean enable);
 
-    NutsUpdateCommand updateExtensions(boolean enable);
+    NutsUpdateCommand setExtensions(boolean enable);
 
-    NutsUpdateCommand setUpdateExtensions(boolean enable);
+    boolean isExtensions();
 
-    NutsUpdateCommand setUpdateCompanions(boolean updateCompanions);
 
-    boolean isUpdateExtensions();
+    /**
+     * update workspace companion versions
+     * @return {@code this} instance
+     */
+    NutsUpdateCommand companions();
 
+    NutsUpdateCommand companions(boolean enable);
+
+    NutsUpdateCommand setCompanions(boolean updateCompanions);
+
+    boolean isCompanions();
+
+    /**
+     * update workspace runtime version
+     * @return {@code this} instance
+     */
     NutsUpdateCommand runtime();
 
-    NutsUpdateCommand updateRunime();
+    NutsUpdateCommand setRuntime(boolean enable);
 
-    NutsUpdateCommand updateRuntime(boolean enable);
+    NutsUpdateCommand runtime(boolean enable);
 
-    NutsUpdateCommand setUpdateRuntime(boolean enable);
+    boolean isRuntime();
 
-    boolean isUpdateCompanions();
-
-    boolean isUpdateRuntime();
-
+    /**
+     * update installed components
+     * @return {@code this} instance
+     */
     NutsUpdateCommand installed();
 
-    NutsUpdateCommand updateInstalled();
+    NutsUpdateCommand setInstalled(boolean enable);
 
-    NutsUpdateCommand updateInstalled(boolean updateExtensions);
+    boolean isInstalled();
 
-    NutsUpdateCommand setUpdateInstalled(boolean updateExtensions);
+    NutsUpdateCommand installed(boolean enable);
 
-    boolean isUpdateInstalled();
-
-    NutsUpdateCommand all();
 
     NutsUpdateCommand scope(NutsDependencyScope scope);
 
@@ -207,18 +284,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand addScopes(NutsDependencyScope... scopes);
 
     NutsUpdateCommand clearScopes();
-
-    NutsUpdateCommand api();
-
-    NutsUpdateCommand api(boolean enable);
-
-    NutsUpdateCommand runtime(boolean enable);
-
-    NutsUpdateCommand companions(boolean enable);
-
-    NutsUpdateCommand extensions(boolean enable);
-
-    NutsUpdateCommand installed(boolean enable);
 
     /**
      * update session
@@ -244,7 +309,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

@@ -58,14 +58,15 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     @Override
     public void install(NutsExecutionContext executionContext) {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
-        NutsId id = executionContext.getDefinition().getId();
+//        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .command(executionContext.getDefinition())
                     .command("--nuts-exec-mode=install")
-                    .addExecutorOptions("-Dnuts.export.debug").addCommand(executionContext.getArguments())
+//                    .addExecutorOptions("-Dnuts.export.debug")
+                    .addCommand(executionContext.getArguments())
                     .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
                     .failFast()
                     .run();

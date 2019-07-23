@@ -16,9 +16,9 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
-public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
+public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsRepoConfigManager.class.getName());
 
     private final NutsRepository repository;
     private final int speed;
@@ -30,12 +30,12 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     private boolean temporary;
     private boolean enabled = true;
     private String globalName;
-    private boolean supportedMirroring = false;
+    private boolean supportedMirroring;
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
     private String repositoryName;
     private String repositoryType;
 
-    public DefaultNutsRepositoryConfigManager(NutsRepository repository, NutsSession session, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
+    public DefaultNutsRepoConfigManager(NutsRepository repository, NutsSession session, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
         if (CoreStringUtils.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Repository Type");
         }

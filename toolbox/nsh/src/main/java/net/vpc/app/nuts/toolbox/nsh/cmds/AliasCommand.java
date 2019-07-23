@@ -100,9 +100,7 @@ public class AliasCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
-            for (String k : context.getRootContext().aliases().getAll()) {
-                options.show.add(k);
-            }
+            options.show.addAll(context.getRootContext().aliases().getAll());
         }
         for (Map.Entry<String, String> entry : options.add.entrySet()) {
             context.getRootContext().aliases().set(entry.getKey(), entry.getValue());

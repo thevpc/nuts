@@ -48,9 +48,9 @@ public interface NutsIdFormat extends NutsFormat {
 
     NutsIdFormat setOmitImportedGroup(boolean omitImportedGroup);
 
-    boolean isOmitEnv();
+    boolean isOmitQuery();
 
-    NutsIdFormat setOmitEnv(boolean omitEnv);
+    NutsIdFormat setOmitQuery(boolean omitEnv);
 
     boolean isOmitFace();
 
@@ -67,6 +67,100 @@ public interface NutsIdFormat extends NutsFormat {
     boolean isHighlightOptional();
 
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
+
+    /**
+     * return true if omit scope
+     * @return true if omit scope
+     */
+    boolean isOmitClassifier();
+
+    /**
+     * if true omit (do not include) face when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitClassifier(boolean value);
+
+    /**
+     * if true omit (do not include) face when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitClassifier(boolean value);
+
+    /**
+     * omit scope
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitClassifier();
+
+    /**
+     * return true if omit scope
+     * @return true if omit scope
+     */
+    boolean isOmitAlternative();
+
+    /**
+     * if true omit (do not include) face when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitAlternative(boolean value);
+
+    /**
+     * if true omit (do not include) face when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitAlternative(boolean value);
+
+    /**
+     * omit scope
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitAlternative();
+
+    /**
+     * query properties omitted
+     * @return query properties omitted
+     */
+    String[] getOmitQueryProperties();
+
+    /**
+     * return true if omit query property named {@code name}
+     * @param name property name
+     * @return true if omit query property named {@code name}
+     */
+    boolean isOmitQueryProperty(String name);
+
+    /**
+     * if true omit (do not include) query property named {@code name} when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param name property name
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitQueryProperty(String name,boolean value);
+
+    /**
+     * if true omit (do not include) query property named {@code name} when formatting the value
+     * set using {@link #setValue(NutsId)} .
+     * @param name property name
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitQueryProperty(String name,boolean value);
+
+    /**
+     * omit query property named {@code name}
+     * @param name property name
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitQueryProperty(String name);
 
     /**
      * id to format
@@ -121,9 +215,12 @@ public interface NutsIdFormat extends NutsFormat {
     NutsId parseRequired(String id);
 
     /**
-     * parse id or null if not valid
+     * parse id or null if not valid.
+     * id is parsed in the form
+     * namespace://group:name#version?key=&lt;value&gt;{@code &}key=&lt;value&gt; ...
      * @param id to parse
      * @return parsed id
+     * @throws NutsParseException if the string cannot be evaluated
      */
     NutsId parse(String id);
 

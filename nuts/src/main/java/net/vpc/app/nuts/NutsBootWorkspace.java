@@ -32,24 +32,17 @@ package net.vpc.app.nuts;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
@@ -67,18 +60,13 @@ import org.w3c.dom.Element;
  */
 public final class NutsBootWorkspace {
 
-    private static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
     public static final Logger LOG = Logger.getLogger(NutsBootWorkspace.class.getName());
     private final long creationTime = System.currentTimeMillis();
     private NutsDefaultWorkspaceOptions options;
-    //    private String runtimeId;
     private Supplier<ClassLoader> contextClassLoaderSupplier;
     private int newInstanceRequirements;
-    private InformationImpl workspaceInformation;
-    //    private String requiredJavaCommand;
-//    private String requiredBootVersion;
-//    private String requiredJavaOptions;
-//    private PrivateNutsId bootId;
+    private PrivateNutsWorkspaceInitInformation workspaceInformation;
+    private boolean preparedWorkspace;
     private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
@@ -131,31 +119,10 @@ public final class NutsBootWorkspace {
         }
         this.options = (options instanceof NutsDefaultWorkspaceOptions) ? ((NutsDefaultWorkspaceOptions) options) : options.copy();
         newInstanceRequirements = 0;
-        PrivateNutsLogUtils.bootstrap(options.getLogConfig());
-        LOG.log(Level.CONFIG, "Start Nuts {0} : {1}", new Object[]{Nuts.getVersion(), Instant.ofEpochMilli(creationTime).toString()});
-        LOG.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.format().getBootCommandLine());
-        LOG.log(Level.CONFIG, "Open Nuts Workspace (compact) : {0}", options.format().compact().getBootCommandLine());
-        workspaceInformation = createConfig(options);
-        PrivateNutsLogUtils.prepare(options.getLogConfig(), PrivateNutsUtils.syspath(getRunningStoreLocation(NutsStoreLocation.LOG) + "/net/vpc/app/nuts/nuts/" + workspaceInformation.getApiVersion()));
-
-        newInstanceRequirements = checkRequirements(true);
-        if (newInstanceRequirements == 0) {
-            workspaceInformation.setJavaCommand(null);
-            workspaceInformation.setJavaOptions(null);
-        }
-        this.contextClassLoaderSupplier = options.getClassLoaderSupplier() == null ? () -> Thread.currentThread().getContextClassLoader()
-                : options.getClassLoaderSupplier();
-    }
-
-    public String getRunningStoreLocation(NutsStoreLocation location) {
-        Map<String, String> s = workspaceInformation.getStoreLocations();
-        if (s != null) {
-            return s.get(location.id());
-        }
-        return null;
     }
 
     public boolean hasUnsatisfiedRequirements() {
+        prepareWorkspace();
         return newInstanceRequirements != 0;
     }
 
@@ -174,21 +141,22 @@ public final class NutsBootWorkspace {
     }
 
     public String[] createProcessCommandLine() {
+        prepareWorkspace();
         LOG.log(Level.FINE, "Running version {0}.  {1}", new Object[]{workspaceInformation.getApiVersion(), getRequirementsHelpString(true)});
         StringBuilder errors = new StringBuilder();
-        String defaultWorkspaceLibFolder = getRunningStoreLocation(NutsStoreLocation.LIB);
+        String defaultWorkspaceLibFolder = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
         List<String> repos = new ArrayList<>();
         repos.add(defaultWorkspaceLibFolder);
-        if (!NO_M2) {
+        if (!PrivateNutsUtils.NO_M2) {
             repos.add(System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository"));
         }
         repos.addAll(Arrays.asList(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT,
                 NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
                 NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
         ));
-        File file = PrivateNutsUtils.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
+        File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
-                getRunningStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT
+                workspaceInformation.getCacheBoot()
         );
         if (file == null) {
             errors.append("Unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
@@ -239,176 +207,351 @@ public final class NutsBootWorkspace {
         return options;
     }
 
-    private static class DepsAndRepos {
 
-        LinkedHashSet<String> deps = new LinkedHashSet<>();
-        LinkedHashSet<String> repos = new LinkedHashSet<>();
-    }
+    private boolean prepareWorkspace() {
+        if (!preparedWorkspace) {
+            preparedWorkspace = true;
 
-    private DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(PrivateNutsId rid) {
-        String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        return loadDependenciesAndRepositoriesFromPomPath(urlPath);
-    }
-
-    private DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
-        DepsAndRepos depsAndRepos = null;
-        if (!NO_M2) {
-            File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
-            if (mavenNutsCorePom.isFile()) {
-                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath());
+            PrivateNutsLogUtils.bootstrap(options.getLogConfig());
+            if (LOG.isLoggable(Level.CONFIG)) {
+                LOG.log(Level.CONFIG, "===============================================================================");
+                LOG.log(Level.CONFIG, "    _   __      __                                            ");
+                LOG.log(Level.CONFIG, "   / | / /_  __/ /______    Network Updatable Things Services");
+                LOG.log(Level.CONFIG, "  /  |/ / / / / __/ ___/    The Open Source Package Manager for Java (TM)");
+                LOG.log(Level.CONFIG, " / /|  / /_/ / /_(__  )     and other Things ... by vpc");
+                LOG.log(Level.CONFIG, "/_/ |_/\\__,_/\\__/____/      http://github.com/thevpc/nuts");
+                LOG.log(Level.CONFIG, "");
+                LOG.log(Level.CONFIG, "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
+                LOG.log(Level.CONFIG, "");
+                LOG.log(Level.CONFIG, "[BOOT   ] Start Nuts {0} : {1}", new Object[]{Nuts.getVersion(), Instant.ofEpochMilli(creationTime).toString()});
+                LOG.log(Level.CONFIG, "[BOOT   ] Open Nuts Workspace : {0}", options.format().getBootCommandLine());
+                LOG.log(Level.CONFIG, "[BOOT   ] Open Nuts Workspace (compact) : {0}", options.format().compact().getBootCommandLine());
             }
-        }
-        if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (String baseUrl : new String[]{
-                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-            }) {
-                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
-                if (!depsAndRepos.deps.isEmpty()) {
-                    break;
-                }
-            }
-        }
-        return depsAndRepos;
-    }
+            workspaceInformation = new PrivateNutsWorkspaceInitInformation();
+            workspaceInformation.setOptions(options);
 
-    private DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
-        DepsAndRepos depsAndRepos = new DepsAndRepos();
-//        String repositories = null;
-//        String dependencies = null;
-        InputStream xml = null;
-        try {
-            if (url.startsWith("http://") || url.startsWith("https://")) {
-                xml = new URL(url).openStream();
+            String _ws = options.getWorkspace();
+            String workspaceName;
+            String lastConfigPath = null;
+            boolean defaultLocation = false;
+            PrivateNutsWorkspaceInitInformation lastConfigLoaded = null;
+            if (_ws != null && _ws.matches("[a-z-]+://.*")) {
+                //this is a protocol based workspace
+                //String protocol=ws.substring(0,ws.indexOf("://"));
+                workspaceName = "remote-bootstrap";
+                lastConfigPath = NutsPlatformUtils.getPlatformHomeFolder(null, null, null,
+                        workspaceInformation.isGlobal(),
+                        PrivateNutsUtils.resolveValidWorkspaceName(workspaceName));
+                lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath);
+                defaultLocation = true;
+
             } else {
-                File file = new File(url);
-                if (file.isFile()) {
-                    xml = Files.newInputStream(file.toPath());
+                defaultLocation = PrivateNutsUtils.isValidWorkspaceName(workspaceInformation.getWorkspaceLocation());
+                int maxDepth = 36;
+                for (int i = 0; i < maxDepth; i++) {
+                    lastConfigPath
+                            = PrivateNutsUtils.isValidWorkspaceName(_ws)
+                            ? NutsPlatformUtils.getPlatformHomeFolder(
+                            null, null, null,
+                            workspaceInformation.isGlobal(),
+                            PrivateNutsUtils.resolveValidWorkspaceName(_ws)
+                    ) : PrivateNutsUtils.getAbsolutePath(_ws);
+
+                    PrivateNutsWorkspaceInitInformation configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath);
+                    if (configLoaded == null) {
+                        //not loaded
+                        break;
+                    }
+                    if (PrivateNutsUtils.isBlank(configLoaded.getWorkspaceLocation())) {
+                        lastConfigLoaded = configLoaded;
+                        break;
+                    }
+                    _ws = configLoaded.getWorkspaceLocation();
+                    if (i >= maxDepth - 1) {
+                        throw new NutsIllegalArgumentException(null, "Cyclic Workspace resolution");
+                    }
+                }
+                workspaceName = PrivateNutsUtils.resolveValidWorkspaceName(options.getWorkspace());
+            }
+            workspaceInformation.setWorkspaceLocation(lastConfigPath);
+            if (lastConfigLoaded != null) {
+                workspaceInformation.setWorkspaceLocation(lastConfigPath);
+                workspaceInformation.setName(lastConfigLoaded.getName());
+                workspaceInformation.setUuid(lastConfigLoaded.getUuid());
+                workspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
+                workspaceInformation.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
+                workspaceInformation.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
+                workspaceInformation.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
+                workspaceInformation.setStoreLocations(lastConfigLoaded.getStoreLocations() == null ? null : new LinkedHashMap<>(lastConfigLoaded.getStoreLocations()));
+                workspaceInformation.setHomeLocations(lastConfigLoaded.getHomeLocations() == null ? null : new LinkedHashMap<>(lastConfigLoaded.getHomeLocations()));
+            }
+            if (PrivateNutsUtils.isBlank(workspaceInformation.getName())) {
+                workspaceInformation.setName(workspaceName);
+            }
+            Map<String, String> homeLocations = workspaceInformation.getHomeLocations();
+            if (workspaceInformation.getStoreLocationStrategy() == null) {
+                workspaceInformation.setStoreLocationStrategy(defaultLocation ? NutsStoreLocationStrategy.EXPLODED : NutsStoreLocationStrategy.STANDALONE);
+            }
+            if (workspaceInformation.getRepositoryStoreLocationStrategy() == null) {
+                workspaceInformation.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+            }
+            String workspace = workspaceInformation.getWorkspaceLocation();
+            String[] homes = new String[NutsStoreLocation.values().length];
+            for (NutsStoreLocation type : NutsStoreLocation.values()) {
+                homes[type.ordinal()] = NutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
+                        workspaceInformation.isGlobal(), workspaceInformation.getName());
+                if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
+                    throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());
+                }
+            }
+            NutsStoreLocationStrategy storeLocationStrategy = workspaceInformation.getStoreLocationStrategy();
+            if (storeLocationStrategy == null) {
+                storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
+            }
+            Map<String, String> storeLocations = workspaceInformation.getStoreLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(workspaceInformation.getStoreLocations());
+            for (NutsStoreLocation location : NutsStoreLocation.values()) {
+                String typeId = location.id();
+                String _storeLocation = storeLocations.get(typeId);
+                if (PrivateNutsUtils.isBlank(_storeLocation)) {
+                    switch (storeLocationStrategy) {
+                        case STANDALONE: {
+                            storeLocations.put(typeId, (workspace + File.separator + typeId));
+                            break;
+                        }
+                        case EXPLODED: {
+                            storeLocations.put(typeId, homes[location.ordinal()]);
+                            break;
+                        }
+                    }
+                } else if (!PrivateNutsUtils.isAbsolutePath(_storeLocation)) {
+                    switch (storeLocationStrategy) {
+                        case STANDALONE: {
+                            storeLocations.put(typeId, (workspace + File.separator + location.name().toLowerCase()));
+                            break;
+                        }
+                        case EXPLODED: {
+                            storeLocations.put(typeId, homes[location.ordinal()] + PrivateNutsUtils.syspath("/" + _storeLocation));
+                            break;
+                        }
+                    }
+                }
+            }
+            workspaceInformation.setStoreLocations(storeLocations);
+            workspaceInformation.setApiVersion(options.getApiVersion());
+
+            //prepare log from config
+            PrivateNutsLogUtils.prepare(options.getLogConfig(), PrivateNutsUtils.syspath(workspaceInformation.getStoreLocation(NutsStoreLocation.LOG) + "/net/vpc/app/nuts/nuts/" + workspaceInformation.getApiVersion()));
+
+            //now that config information is prepared proceed to any cleanup
+            if (options.isReset()) {
+                if (options.isDry()) {
+                    System.out.println("[dry] [reset] delete ALL workspace folders and configurations");
                 } else {
-                    return depsAndRepos;
+                    deleteStoreLocations(true, NutsStoreLocation.values());
                 }
-            }
-//            List<String> dependenciesList = new ArrayList<>();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xml);
-            Element c = doc.getDocumentElement();
-            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            String groupId = null;
-                            String artifactId = null;
-                            String version = null;
-                            String scope = null;
-                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                if (c3.getChildNodes().item(k) instanceof Element) {
-                                    Element c4 = (Element) c3.getChildNodes().item(k);
-                                    switch (c4.getNodeName()) {
-                                        case "groupId": {
-                                            groupId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            artifactId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "version": {
-                                            version = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "scope": {
-                                            scope = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            if (PrivateNutsUtils.isBlank(groupId)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
-                            } else if (groupId.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
-                            }
-                            if (PrivateNutsUtils.isBlank(artifactId)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
-                            } else if (artifactId.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
-                            }
-                            if (PrivateNutsUtils.isBlank(version)) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
-                            }
-                            //this is maven dependency, using "compile"
-                            if (PrivateNutsUtils.isBlank(scope) || scope.equals("compile")) {
-                                depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
-                            }
-                        }
-                    }
-                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            switch (c3.getNodeName()) {
-                                case "nuts-runtime-repositories": {
-                                    String t = c3.getTextContent().trim();
-                                    if (t.length() > 0) {
-                                        depsAndRepos.deps.addAll(PrivateNutsUtils.split(t, ";", true));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
+            } else if (options.isRecover()) {
+                if (options.isDry()) {
+                    System.out.println("[dry] [recover] delete CACHE/TEMP workspace folders");
+                } else {
+                    deleteStoreLocations(false, NutsStoreLocation.CACHE, NutsStoreLocation.TEMP);
                 }
             }
 
-        } catch (Exception ex) {
-            //ignore
-        } finally {
-            if (xml != null) {
+            //after eventual clean up
+            if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
+                    || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
+                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null);
+                if (s == null) {
+                    throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
+                }
+                workspaceInformation.setApiVersion(PrivateNutsId.parse(s).getVersion());
+            }
+            if (PrivateNutsUtils.isBlank(workspaceInformation.getApiVersion())) {
+                workspaceInformation.setApiVersion(Nuts.getVersion());
+            }
+
+            Path apiPath = Paths.get(workspaceInformation.getStoreLocations().get(NutsStoreLocation.CONFIG.id()))
+                    .resolve(NutsConstants.Folders.ID)
+                    .resolve("net/vpc/app/nuts/nuts").resolve(workspaceInformation.getApiVersion()).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
+            boolean loadedApiConfig = false;
+
+            //This is not cache, but still, if recover or reset, config will be ignored!
+            if (isLoadFromCache() && Files.isRegularFile(apiPath)) {
                 try {
-                    xml.close();
-                } catch (IOException ex) {
-                    //ignore
+                    Map<String, Object> obj = PrivateNutsJsonParser.parse(apiPath);
+                    LOG.log(Level.FINEST, "[SUCCESS] Loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, apiPath.toString()});
+                    loadedApiConfig = true;
+                    if (workspaceInformation.getRuntimeId() == null) {
+                        String runtimeId = (String) obj.get("runtimeId");
+                        if (PrivateNutsUtils.isBlank(runtimeId)) {
+                            LOG.log(Level.CONFIG, "[ERROR  ] {0} does not contain runtime-id", new Object[]{NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME});
+                        }
+                        workspaceInformation.setRuntimeId(runtimeId);
+                    }
+                    if (workspaceInformation.getBootRepositories() == null) {
+                        workspaceInformation.setBootRepositories((String) obj.get("bootRepositories"));
+                    }
+                    if (workspaceInformation.getJavaCommand() == null) {
+                        workspaceInformation.setJavaCommand((String) obj.get("javaCommand"));
+                    }
+                    if (workspaceInformation.getJavaOptions() == null) {
+                        workspaceInformation.setJavaOptions((String) obj.get("javaOptions"));
+                    }
+                } catch (UncheckedIOException e) {
+                    LOG.log(Level.CONFIG, "[ERROR  ] Unable to read {0}", new Object[]{apiPath.toString()});
                 }
             }
-        }
+            if (!loadedApiConfig || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
+                    || workspaceInformation.getRuntimeDependenciesSet() == null || workspaceInformation.getExtensionDependenciesSet() == null || workspaceInformation.getBootRepositories() == null) {
 
-        return depsAndRepos;
+                //resolve extension id
+                if (workspaceInformation.getRuntimeId() == null) {
+                    String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
+                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."));
+                    if (runtimeId != null) {
+                        LOG.log(Level.FINEST, "[SUCCESS] Resolved latest runtime-id : {0}", runtimeId);
+                    } else {
+                        LOG.log(Level.FINEST, "[ERROR  ] Unable to resolve latest runtime-id (is connection ok?)");
+                    }
+                    workspaceInformation.setRuntimeId(runtimeId);
+                    workspaceInformation.setRuntimeDependenciesSet(null);
+                    workspaceInformation.setBootRepositories(null);
+                }
+                if (workspaceInformation.getRuntimeId() == null) {
+                    workspaceInformation.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + workspaceInformation.getApiVersion() + ".0");
+                    LOG.log(Level.CONFIG, "[ERROR  ] Consider default runtime-id : {0}", new Object[]{workspaceInformation.getRuntimeId()});
+                }
+                if (workspaceInformation.getRuntimeId().indexOf('#') < 0) {
+                    workspaceInformation.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + workspaceInformation.getRuntimeId());
+                }
+
+                //resolve runtime libraries
+                if (workspaceInformation.getRuntimeDependenciesSet() == null) {
+                    Set<String> loadedDeps = null;
+                    String extraBootRepositories = null;
+                    PrivateNutsId rid = PrivateNutsId.parse(workspaceInformation.getRuntimeId());
+                    try {
+                        Path runtimeFile = Paths.get(workspaceInformation.getCacheBoot())
+                                .resolve(PrivateNutsUtils.idToPath(rid)).resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
+                        boolean cacheLoaded = false;
+                        if (isLoadFromCache() && Files.isRegularFile(runtimeFile)) {
+                            try {
+                                Map<String, Object> obj = PrivateNutsJsonParser.parse(runtimeFile);
+                                LOG.log(Level.FINEST, "[SUCCESS] Loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, runtimeFile.toString()});
+                                loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
+                                extraBootRepositories = (String) obj.get("bootRepositories");
+                            } catch (Exception ex) {
+                                LOG.log(Level.FINEST, "[ERROR  ] Unable to load {0} file : {1} : {2}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, runtimeFile.toString(), ex.toString()});
+                                //ignore...
+                            }
+                            cacheLoaded = true;
+                        }
+                        if (!cacheLoaded || loadedDeps == null) {
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()));
+                            if (depsAndRepos != null) {
+                                loadedDeps = depsAndRepos.deps;
+                                extraBootRepositories = String.join(";", depsAndRepos.repos);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        LOG.log(Level.FINEST, "[ERROR  ] Unable to load {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, ex.toString()});
+                        //
+                    }
+                    if (loadedDeps == null) {
+                        throw new IllegalArgumentException("Unable to load dependencies for " + rid);
+                    }
+                    workspaceInformation.setRuntimeDependenciesSet(loadedDeps);
+
+                    LinkedHashSet<String> bootRepositories = new LinkedHashSet<>();
+                    if (extraBootRepositories != null) {
+                        for (String v : PrivateNutsUtils.split(extraBootRepositories, ";", true)) {
+                            if (v.length() > 0) {
+                                bootRepositories.add(v);
+                            }
+                        }
+                    }
+                    bootRepositories.add(NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL);
+                    bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+                    bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+                    workspaceInformation.setBootRepositories(String.join(";", bootRepositories));
+                }
+
+                //resolve extension libraries
+
+                if (workspaceInformation.getExtensionDependenciesSet() == null) {
+                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
+                    LinkedHashSet<String> visitedSimpleIds = new LinkedHashSet<>();
+
+                    LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
+                    if (options.getExcludedExtensions() != null) {
+                        for (String excludedExtension : options.getExcludedExtensions()) {
+                            excludedExtensions.add(PrivateNutsId.parse(excludedExtension).getShortName());
+                        }
+                    }
+                    if (workspaceInformation.getExtensionsSet() != null) {
+                        for (String extension : workspaceInformation.getExtensionsSet()) {
+                            PrivateNutsId eid = PrivateNutsId.parse(extension);
+                            if (!excludedExtensions.contains(eid.getShortName())) {
+                                Path extensionFile = Paths.get(workspaceInformation.getCacheBoot())
+                                        .resolve(PrivateNutsUtils.idToPath(eid)).resolve(NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME);
+                                Set<String> loadedDeps = null;
+                                if (isLoadFromCache() && Files.isRegularFile(extensionFile)) {
+                                    try {
+                                        Map<String, Object> obj = PrivateNutsJsonParser.parse(apiPath);
+                                        LOG.log(Level.FINEST, "[SUCCESS] Loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString()});
+                                        loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
+                                    } catch (Exception ex) {
+                                        LOG.log(Level.FINEST, "[SUCCESS] Unable to load {0} file : {1} : {2}", new String[]{NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString(), ex.toString()});
+                                        //ignore
+                                    }
+                                }
+                                if (loadedDeps == null) {
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid);
+                                    if (depsAndRepos != null) {
+                                        loadedDeps = depsAndRepos.deps;
+                                    }
+                                }
+                                if (loadedDeps != null) {
+                                    for (String loadedDep : loadedDeps) {
+                                        String sed = PrivateNutsId.parse(loadedDep).getShortName();
+                                        //when multiple versions, the first is retained
+                                        if (!visitedSimpleIds.contains(sed)) {
+                                            visitedSimpleIds.add(sed);
+                                            allExtDependencies.add(loadedDep);
+                                        }
+                                    }
+                                } else {
+                                    throw new IllegalArgumentException("Unable to load dependencies for " + eid);
+                                }
+                            }
+                        }
+                        workspaceInformation.setExtensionDependenciesSet(allExtDependencies);
+                    } else {
+                        workspaceInformation.setExtensionDependenciesSet(new HashSet<>());
+                    }
+                }
+            }
+
+            newInstanceRequirements = checkRequirements(true);
+            if (newInstanceRequirements == 0) {
+                workspaceInformation.setJavaCommand(null);
+                workspaceInformation.setJavaOptions(null);
+            }
+            this.contextClassLoaderSupplier = options.getClassLoaderSupplier() == null ? () -> Thread.currentThread().getContextClassLoader()
+                    : options.getClassLoaderSupplier();
+            return true;
+        }
+        return false;
     }
 
-    public void run() {
-        if (hasUnsatisfiedRequirements()) {
-            startNewProcess();
-            return;
-        }
-
-        NutsWorkspace workspace = this.openWorkspace();
-        runWorkspaceCommand(workspace, "Workspace started successfully");
+    private boolean isLoadFromCache(){
+        return !options.isRecover() && !options.isReset();
     }
 
     public NutsWorkspace openWorkspace() {
+        prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
             throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
-        }
-        if (options.isReset()) {
-            if(options.isDry()){
-                System.out.println("[dry] [reset] delete ALL workspace folders and configurations");
-            }else {
-                deleteStoreLocations(true, NutsStoreLocation.values());
-            }
-        } else if (options.isRecover()) {
-            if(options.isDry()){
-                System.out.println("[dry] [recover] delete CACHE/TEMP workspace folders");
-            }else {
-                deleteStoreLocations(false, NutsStoreLocation.CACHE, NutsStoreLocation.TEMP);
-            }
         }
         //if recover or reset mode with -K option (SkipWelcome)
         //as long as there are no applications to run, wil exit before creating workspace
@@ -417,23 +560,28 @@ public final class NutsBootWorkspace {
             throw new NutsExecutionException(null, 0);
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.format().getBootCommandLine());
-            LOG.log(Level.CONFIG, "Open Workspace with config        : ");
+            LOG.log(Level.CONFIG, "[BOOT   ] Open Workspace with command line  : {0}", options.format().getBootCommandLine());
+            LOG.log(Level.CONFIG, "[BOOT   ] Open Workspace with config        : ");
             LOG.log(Level.CONFIG, "\t nuts-uuid                      : {0}", PrivateNutsUtils.desc(workspaceInformation.getUuid()));
             LOG.log(Level.CONFIG, "\t nuts-name                      : {0}", PrivateNutsUtils.desc(workspaceInformation.getName()));
             LOG.log(Level.CONFIG, "\t nuts-api-version               : {0}", Nuts.getVersion());
             LOG.log(Level.CONFIG, "\t nuts-boot-repositories         : {0}", PrivateNutsUtils.desc(workspaceInformation.getBootRepositories()));
             LOG.log(Level.CONFIG, "\t nuts-runtime-dependencies      : {0}", PrivateNutsUtils.desc(workspaceInformation.getRuntimeDependenciesSet()));
             LOG.log(Level.CONFIG, "\t nuts-extension-dependencies    : {0}", PrivateNutsUtils.desc(workspaceInformation.getExtensionDependenciesSet()));
+            if (hasUnsatisfiedRequirements()) {
+                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
+            } else {
+                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
+            }
             LOG.log(Level.CONFIG, "\t nuts-workspace                 : {0}", PrivateNutsUtils.formatLogValue(options.getWorkspace(), workspaceInformation.getWorkspaceLocation()));
-            LOG.log(Level.CONFIG, "\t nuts-store-apps                : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.APPS), getRunningStoreLocation(NutsStoreLocation.APPS)));
-            LOG.log(Level.CONFIG, "\t nuts-store-config              : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), getRunningStoreLocation(NutsStoreLocation.CONFIG)));
-            LOG.log(Level.CONFIG, "\t nuts-store-var                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), getRunningStoreLocation(NutsStoreLocation.VAR)));
-            LOG.log(Level.CONFIG, "\t nuts-store-log                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LOG), getRunningStoreLocation(NutsStoreLocation.LOG)));
-            LOG.log(Level.CONFIG, "\t nuts-store-temp                : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.TEMP), getRunningStoreLocation(NutsStoreLocation.TEMP)));
-            LOG.log(Level.CONFIG, "\t nuts-store-cache               : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CACHE), getRunningStoreLocation(NutsStoreLocation.CACHE)));
-            LOG.log(Level.CONFIG, "\t nuts-store-run                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.RUN), getRunningStoreLocation(NutsStoreLocation.RUN)));
-            LOG.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), getRunningStoreLocation(NutsStoreLocation.LIB)));
+            LOG.log(Level.CONFIG, "\t nuts-store-apps                : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.APPS), workspaceInformation.getStoreLocation(NutsStoreLocation.APPS)));
+            LOG.log(Level.CONFIG, "\t nuts-store-config              : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), workspaceInformation.getStoreLocation(NutsStoreLocation.CONFIG)));
+            LOG.log(Level.CONFIG, "\t nuts-store-var                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), workspaceInformation.getStoreLocation(NutsStoreLocation.VAR)));
+            LOG.log(Level.CONFIG, "\t nuts-store-log                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LOG), workspaceInformation.getStoreLocation(NutsStoreLocation.LOG)));
+            LOG.log(Level.CONFIG, "\t nuts-store-temp                : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.TEMP), workspaceInformation.getStoreLocation(NutsStoreLocation.TEMP)));
+            LOG.log(Level.CONFIG, "\t nuts-store-cache               : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CACHE), workspaceInformation.getStoreLocation(NutsStoreLocation.CACHE)));
+            LOG.log(Level.CONFIG, "\t nuts-store-run                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.RUN), workspaceInformation.getStoreLocation(NutsStoreLocation.RUN)));
+            LOG.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), workspaceInformation.getStoreLocation(NutsStoreLocation.LIB)));
             LOG.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocationStrategy(), workspaceInformation.getStoreLocationStrategy()));
             LOG.log(Level.CONFIG, "\t nuts-repos-store-strategy      : {0}", PrivateNutsUtils.formatLogValue(options.getRepositoryStoreLocationStrategy(), workspaceInformation.getRepositoryStoreLocationStrategy()));
             LOG.log(Level.CONFIG, "\t nuts-store-layout              : {0}", PrivateNutsUtils.formatLogValue(options.getStoreLocationLayout(), workspaceInformation.getStoreLocationLayout() == null ? "system" : workspaceInformation.getStoreLocationLayout().id()));
@@ -452,6 +600,7 @@ public final class NutsBootWorkspace {
             LOG.log(Level.CONFIG, "\t user-name                      : {0}", System.getProperty("user.name"));
             LOG.log(Level.CONFIG, "\t user-dir                       : {0}", System.getProperty("user.dir"));
             LOG.log(Level.CONFIG, "\t user-home                      : {0}", System.getProperty("user.home"));
+            //
         }
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
@@ -473,39 +622,23 @@ public final class NutsBootWorkspace {
                 throw new IllegalArgumentException("Invalid state");
             }
             boolean recover = options.isRecover() || options.isReset();
+
             LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
 
-            String workspaceBootLibFolder = getRunningStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT;
-            PrivateNutsId bootRuntime = PrivateNutsId.parse(workspaceInformation.getRuntimeId());
+            String workspaceBootLibFolder = workspaceInformation.getCacheBoot();
 
             String[] repositories = PrivateNutsUtils.splitUrlStrings(workspaceInformation.getBootRepositories()).toArray(new String[0]);
-            File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
-            if (f == null || !f.isFile()) {
-                f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
-                throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + bootRuntime + ". Unable to resolve file "
-                        + (f == null ? getFileName(bootRuntime, "jar") : f.getPath())
-                );
-            }
 
-            allExtensionFiles.put(workspaceInformation.getRuntimeId(), f);
+            allExtensionFiles.put(workspaceInformation.getRuntimeId(), getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover,"runtime"));
             for (String idStr : workspaceInformation.getRuntimeDependenciesSet()) {
-                PrivateNutsId id = PrivateNutsId.parse(idStr);
-                f = getBootFile(id, getFileName(id, "jar"), repositories, workspaceBootLibFolder, !recover);
-                if (f == null) {
-                    throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + id);
-                }
-                allExtensionFiles.put(id.toString(), f);
+                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover,"runtime dependency"));
             }
             for (String idStr : workspaceInformation.getExtensionDependenciesSet()) {
-                PrivateNutsId id = PrivateNutsId.parse(idStr);
-                f = getBootFile(id, getFileName(id, "jar"), repositories, workspaceBootLibFolder, !recover);
-                if (f == null) {
-                    throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load Extension " + id);
-                }
-                allExtensionFiles.put(id.toString(), f);
+                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover,"extension dependency"));
             }
+
             bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
-            LOG.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : ", new Object[]{bootClassWorldURLs.length});
+            LOG.log(Level.CONFIG, "[SUCCESS] Loading Nuts ClassWorld from {0} jars : ", new Object[]{bootClassWorldURLs.length});
             if (LOG.isLoggable(Level.CONFIG)) {
                 for (URL bootClassWorldURL : bootClassWorldURLs) {
                     LOG.log(Level.CONFIG, "\t {0}", new Object[]{PrivateNutsUtils.formatURL(bootClassWorldURL)});
@@ -520,7 +653,7 @@ public final class NutsBootWorkspace {
             for (NutsBootWorkspaceFactory a : serviceLoader) {
                 factories.add(a);
             }
-            factories.sort(new NutsBootWorkspaceFactoryComparator(options));
+            factories.sort(new PrivateNutsBootWorkspaceFactoryComparator(options));
             NutsBootWorkspaceFactory factoryInstance = null;
             for (NutsBootWorkspaceFactory a : factories) {
                 factoryInstance = a;
@@ -528,7 +661,7 @@ public final class NutsBootWorkspace {
                     workspaceInformation.setBootWorkspaceFactory(factoryInstance);
                     nutsWorkspace = a.createWorkspace(workspaceInformation);
                 } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, "Unable to create workspace using factory " + a, ex);
+                    LOG.log(Level.SEVERE, "[ERROR  ] Unable to create workspace using factory " + a, ex);
                 }
                 if (nutsWorkspace != null) {
                     break;
@@ -536,14 +669,14 @@ public final class NutsBootWorkspace {
             }
             if (nutsWorkspace == null) {
                 //should never happen
-                System.err.print("Unable to load Workspace \""+options.getWorkspace()+"\" from ClassPath : \n");
+                System.err.print("Unable to load Workspace \"" + options.getWorkspace() + "\" from ClassPath : \n");
                 for (URL url : bootClassWorldURLs) {
                     System.err.printf("\t %s%n", PrivateNutsUtils.formatURL(url));
                 }
-                LOG.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs));
+                LOG.log(Level.SEVERE, "[ERROR  ] Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs));
                 throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs));
             }
-            LOG.log(Level.FINE, "End Initialize Workspace");
+            LOG.log(Level.FINE, "[BOOT   ] End Initialize Workspace");
             return nutsWorkspace;
         } catch (NutsReadOnlyException | NutsUserCancelException ex) {
             throw ex;
@@ -565,101 +698,17 @@ public final class NutsBootWorkspace {
         for (File file : list) {
             if (file != null) {
                 if (isLoadedClassPath(file)) {
-                    LOG.log(Level.WARNING, "File will not be loaded (already in classloader) : {0}", file);
+                    LOG.log(Level.WARNING, "[CACHE  ] File will not be loaded (already in classloader) : {0}", file);
                 } else {
                     try {
                         urls.add(file.toURI().toURL());
                     } catch (MalformedURLException e) {
-                        LOG.log(Level.WARNING, "Failed to create url for  {0}", file);
+                        LOG.log(Level.WARNING, "[ERROR  ] Failed to create url for  {0}", file);
                     }
                 }
             }
         }
         return urls.toArray(new URL[0]);
-    }
-
-    /**
-     * find latest maven component
-     *
-     * @param filter filter
-     * @return latest runtime version
-     */
-    private static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter) {
-        String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
-        String bestVersion = null;
-        if (!NO_M2) {
-            File mavenNutsCoreFolder = new File(System.getProperty("user.home"), ".m2/repository/" + path + "/".replace("/", File.separator));
-            if (mavenNutsCoreFolder.isDirectory()) {
-                File[] children = mavenNutsCoreFolder.listFiles();
-                if (children != null) {
-                    for (File file : children) {
-                        if (file.isDirectory()) {
-                            String[] goodChildren = file.list(new FilenameFilter() {
-                                @Override
-                                public boolean accept(File dir, String name) {
-                                    return name.endsWith(".pom");
-                                }
-                            });
-                            if (goodChildren != null && goodChildren.length > 0) {
-                                String p = file.getName();
-                                if (filter==null || filter.test(p)) {
-                                    if (bestVersion == null || PrivateNutsUtils.compareRuntimeVersion(bestVersion, p) < 0) {
-                                        bestVersion = p;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (String repoUrl : new String[]{NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT, NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
-            if (!repoUrl.endsWith("/")) {
-                repoUrl = repoUrl + "/";
-            }
-            boolean found = false;
-            try {
-                URL runtimeMetadata = new URL(repoUrl + path + "/maven-metadata.xml");
-                found = true;
-                DocumentBuilderFactory factory
-                        = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(runtimeMetadata.openStream());
-                Element c = doc.getDocumentElement();
-                for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
-                        Element c2 = (Element) c.getChildNodes().item(i);
-                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
-                                Element c3 = (Element) c2.getChildNodes().item(j);
-                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                    if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
-                                        Element c4 = (Element) c3.getChildNodes().item(k);
-                                        String p = c4.getTextContent();
-                                        if (filter==null || filter.test(p)) {
-                                            if (bestVersion == null || PrivateNutsUtils.compareRuntimeVersion(bestVersion, p) < 0) {
-                                                bestVersion = p;
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
-                }
-            } catch (Exception ex) {
-                // ignore any error
-            }
-            if (found) {
-                break;
-            }
-        }
-        if (bestVersion == null) {
-            return null;
-        }
-        return zId.getGroupId() + ":" + zId.getArtifactId() + "#" + bestVersion;
     }
 
     protected String getHome(NutsStoreLocation storeFolder) {
@@ -689,41 +738,24 @@ public final class NutsBootWorkspace {
         return base + File.separator + path;
     }
 
-    protected URL expandURL(String url) throws MalformedURLException {
-        url = expandPath(url, workspaceInformation.getWorkspaceLocation());
-        if (PrivateNutsUtils.isURL(url)) {
-            return new URL(url);
+    private File getBootCacheJar(String id, String[] repositories, String cacheFolder, boolean useCache,String name) {
+        PrivateNutsId vid=PrivateNutsId.parse(id);
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache);
+        if (f == null) {
+            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load "+name+" " + vid);
         }
-        return new File(url).toURI().toURL();
+        return f;
     }
 
-    private File getBootFile(PrivateNutsId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache) {
+    private File getBootCacheFile(PrivateNutsId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache) {
         String path = getPathFile(vid, fileName);
         for (String repository : repositories) {
-            File file = getBootFile(path, repository, cacheFolder, useCache);
+            File file = getBootCacheFile(path, repository, cacheFolder, useCache);
             if (file != null) {
                 return file;
             }
         }
         return null;
-    }
-
-    private static File createFile(String parent, String child) {
-        String userHome = System.getProperty("user.home");
-        if (child.startsWith("~/")) {
-            child = new File(userHome, child.substring(2)).getPath();
-        }
-        if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
-            return new File(child);
-        }
-        if (parent != null) {
-            if (parent.startsWith("~/")) {
-                parent = new File(userHome, parent.substring(2)).getPath();
-            }
-        } else {
-            parent = ".";
-        }
-        return new File(parent, child);
     }
 
     private String getFileName(PrivateNutsId id, String ext) {
@@ -734,7 +766,7 @@ public final class NutsBootWorkspace {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    private File getBootFile(String path, String repository, String cacheFolder, boolean useCache) {
+    private File getBootCacheFile(String path, String repository, String cacheFolder, boolean useCache) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = repository.trim();
         repository = expandPath(repository, workspaceInformation.getWorkspaceLocation());
@@ -781,7 +813,7 @@ public final class NutsBootWorkspace {
         } else {
             repository = localFile.getPath();
         }
-        File repoFolder = createFile(getHome(NutsStoreLocation.CONFIG), repository);
+        File repoFolder = PrivateNutsUtils.Mvn.createFile(getHome(NutsStoreLocation.CONFIG), repository);
         File ff = null;
 
         if (repoFolder.isDirectory()) {
@@ -846,7 +878,7 @@ public final class NutsBootWorkspace {
                         if (!zname.endsWith("/") && zname.endsWith(".class")) {
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             try {
-                                if (isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
+                                if (PrivateNutsUtils.Mvn.isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
                                     return false;
                                 }
                                 ClassLoader contextClassLoader = getContextClassLoader();
@@ -854,7 +886,7 @@ public final class NutsBootWorkspace {
                                     return false;
                                 }
                                 Class<?> aClass = contextClassLoader.loadClass(clz);
-                                LOG.log(Level.FINEST, "Class {0} Loaded successfully from {1}", new Object[]{aClass, file});
+                                LOG.log(Level.FINEST, "[SUCCESS] Class {0} Loaded successfully from {1}", new Object[]{aClass, file});
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;
@@ -874,25 +906,6 @@ public final class NutsBootWorkspace {
             }
         } catch (IOException e) {
             return false;
-        }
-        return false;
-    }
-
-    private boolean isInfiniteLoopThread(String className, String methodName) {
-        Thread thread = Thread.currentThread();
-        StackTraceElement[] elements = thread.getStackTrace();
-
-        if (elements == null || elements.length == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < elements.length; i++) {
-            StackTraceElement element = elements[elements.length - (i + 1)];
-            if (className.equals(element.getClassName())) {
-                if (methodName.equals(element.getMethodName())) {
-                    return true;
-                }
-            }
         }
         return false;
     }
@@ -919,25 +932,32 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void runWorkspaceCommand(NutsWorkspace workspace, String message) {
+    public void runWorkspace() {
+        if (hasUnsatisfiedRequirements()) {
+            startNewProcess();
+            return;
+        }
+        NutsWorkspace workspace = this.openWorkspace();
+        String message = "Workspace started successfully";
+
         NutsWorkspaceOptions o = this.getOptions();
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.log(Level.CONFIG, "Running workspace in {0} mode", getWorkspaceRunModeString());
+            LOG.log(Level.CONFIG, "[BOOT   ] Running workspace in {0} mode", getWorkspaceRunModeString());
         }
         if (workspace == null && o.getApplicationArguments().length > 0) {
             switch (o.getApplicationArguments()[0]) {
                 case "version": {
-                    if(options.isDry()){
+                    if (options.isDry()) {
                         System.out.println("[boot-internal-command] show-version");
-                    }else {
+                    } else {
                         System.out.println("nuts-version :" + Nuts.getVersion());
                     }
                     return;
                 }
                 case "help": {
-                    if(options.isDry()){
+                    if (options.isDry()) {
                         System.out.println("[boot-internal-command] show-help");
-                    }else {
+                    } else {
                         System.out.println("Nuts is a package manager mainly for java applications.");
                         System.out.println("Unluckily it was unable to locate nuts-core component which is esessential for its execution.\n");
                         System.out.println("nuts-version :" + Nuts.getVersion());
@@ -980,7 +1000,7 @@ public final class NutsBootWorkspace {
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace", 243);
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.log(Level.CONFIG, "Deleting Workspace locations : {0}", workspaceInformation.getWorkspaceLocation());
+            LOG.log(Level.CONFIG, "[SUCCESS] Deleting Workspace locations : {0}", workspaceInformation.getWorkspaceLocation());
         }
         boolean force = false;
         switch (confirm) {
@@ -1016,7 +1036,7 @@ public final class NutsBootWorkspace {
                 }
             }
         }
-        PrivateNutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER,null,null);
+        PrivateNutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, null);
     }
 
     private void fallbackInstallActionUnavailable(String message) {
@@ -1026,7 +1046,7 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void showError(InformationImpl actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
+    private void showError(PrivateNutsWorkspaceInitInformation actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         Map<String, String> rbc_locations = actualBootConfig.getStoreLocations();
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
@@ -1089,295 +1109,25 @@ public final class NutsBootWorkspace {
         System.err.printf("Now exiting Nuts, Bye!%n");
     }
 
-    /**
-     * createConfig from Options
-     *
-     * @param options boot config. Should contain home,workspace, and all
-     *                StoreLocation information
-     * @return resolved config
-     */
-    private InformationImpl createConfig(NutsWorkspaceOptions options) {
-        InformationImpl config = new InformationImpl();
-        config.setOptions(options);
-        String ws = options.getWorkspace();
-        String name;
-        String lastConfigPath = null;
-        boolean defaultLocation = false;
-        InformationImpl lastConfigLoaded = null;
-        if(ws!=null && ws.matches("[a-z-]+://.*")){
-            //this is a protocol based workspace
-            //String protocol=ws.substring(0,ws.indexOf("://"));
-            name="remote-bootstrap";
-            lastConfigPath=NutsPlatformUtils.getPlatformHomeFolder(null, null, null,
-                    config.isGlobal(),
-                    PrivateNutsUtils.resolveValidWorkspaceName(name));
-            lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath);
-            defaultLocation=true;
 
-        }else {
-            defaultLocation=PrivateNutsUtils.isValidWorkspaceName(config.getWorkspaceLocation());
-            int maxDepth = 36;
-            for (int i = 0; i < maxDepth; i++) {
-                lastConfigPath
-                        = PrivateNutsUtils.isValidWorkspaceName(ws)
-                        ? NutsPlatformUtils.getPlatformHomeFolder(
-                        null, null, null,
-                        config.isGlobal(),
-                        PrivateNutsUtils.resolveValidWorkspaceName(ws)
-                ) : PrivateNutsUtils.getAbsolutePath(ws);
-
-                InformationImpl configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath);
-                if (configLoaded == null) {
-                    //not loaded
-                    break;
-                }
-                if (PrivateNutsUtils.isBlank(configLoaded.getWorkspaceLocation())) {
-                    lastConfigLoaded = configLoaded;
-                    break;
-                }
-                ws = configLoaded.getWorkspaceLocation();
-                if (i >= maxDepth - 1) {
-                    throw new NutsIllegalArgumentException(null, "Cyclic Workspace resolution");
-                }
-            }
-            name=PrivateNutsUtils.resolveValidWorkspaceName(options.getWorkspace());
-        }
-        config.setWorkspaceLocation(lastConfigPath);
-        if (lastConfigLoaded != null) {
-            config.setWorkspaceLocation(lastConfigPath);
-            config.setName(lastConfigLoaded.getName());
-            config.setUuid(lastConfigLoaded.getUuid());
-            config.setBootRepositories(lastConfigLoaded.getBootRepositories());
-            config.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
-            config.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
-            config.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-            config.setStoreLocations(lastConfigLoaded.getStoreLocations() == null ? null : new LinkedHashMap<>(lastConfigLoaded.getStoreLocations()));
-            config.setHomeLocations(lastConfigLoaded.getHomeLocations() == null ? null : new LinkedHashMap<>(lastConfigLoaded.getHomeLocations()));
-        }
-        if (PrivateNutsUtils.isBlank(config.getName())) {
-            config.setName(name);
-        }
-        Map<String, String> homeLocations = config.getHomeLocations();
-        if (config.getStoreLocationStrategy() == null) {
-            config.setStoreLocationStrategy(defaultLocation ? NutsStoreLocationStrategy.EXPLODED : NutsStoreLocationStrategy.STANDALONE);
-        }
-        if (config.getRepositoryStoreLocationStrategy() == null) {
-            config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-        }
-        String workspace = config.getWorkspaceLocation();
-        String[] homes = new String[NutsStoreLocation.values().length];
-        for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            homes[type.ordinal()] = NutsPlatformUtils.getPlatformHomeFolder(config.getStoreLocationLayout(), type, homeLocations,
-                    config.isGlobal(), config.getName());
-            if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
-                throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());
-            }
-        }
-        NutsStoreLocationStrategy storeLocationStrategy = config.getStoreLocationStrategy();
-        if (storeLocationStrategy == null) {
-            storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
-        }
-        Map<String, String> storeLocations = config.getStoreLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(config.getStoreLocations());
-        for (NutsStoreLocation location : NutsStoreLocation.values()) {
-            String typeId = location.id();
-            String _storeLocation = storeLocations.get(typeId);
-            if (PrivateNutsUtils.isBlank(_storeLocation)) {
-                switch (storeLocationStrategy) {
-                    case STANDALONE: {
-                        storeLocations.put(typeId, (workspace + File.separator + typeId));
-                        break;
-                    }
-                    case EXPLODED: {
-                        storeLocations.put(typeId, homes[location.ordinal()]);
-                        break;
-                    }
-                }
-            } else if (!PrivateNutsUtils.isAbsolutePath(_storeLocation)) {
-                switch (storeLocationStrategy) {
-                    case STANDALONE: {
-                        storeLocations.put(typeId, (workspace + File.separator + location.name().toLowerCase()));
-                        break;
-                    }
-                    case EXPLODED: {
-                        storeLocations.put(typeId, homes[location.ordinal()] + PrivateNutsUtils.syspath("/" + _storeLocation));
-                        break;
-                    }
-                }
-            }
-        }
-        config.setStoreLocations(storeLocations);
-
-        config.setApiVersion(options.getApiVersion());
-        if (NutsConstants.Versions.LATEST.equalsIgnoreCase(config.getApiVersion())
-                || NutsConstants.Versions.RELEASE.equalsIgnoreCase(config.getApiVersion())) {
-            String s = resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null);
-            if (s == null) {
-                throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
-            }
-            config.setApiVersion(PrivateNutsId.parse(s).getVersion());
-        }
-        if(PrivateNutsUtils.isBlank(config.getApiVersion())){
-            config.setApiVersion(Nuts.getVersion());
-        }
-
-        Path f = Paths.get(config.getStoreLocations().get(NutsStoreLocation.CONFIG.id()))
-                .resolve(NutsConstants.Folders.ID)
-                .resolve("net/vpc/app/nuts/nuts").resolve(config.getApiVersion()).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
-        boolean loadedApiConfig = false;
-        if (!options.isRecover() && !options.isReset() && Files.isRegularFile(f)) {
-            try {
-                Map<String, Object> obj = PrivateNutsJsonParser.parse(f);
-                loadedApiConfig = true;
-                if (config.getRuntimeId() == null) {
-                    config.setRuntimeId((String) obj.get("runtimeId"));
-                }
-                if (config.getBootRepositories() == null) {
-                    config.setBootRepositories((String) obj.get("bootRepositories"));
-                }
-                if (config.getJavaCommand() == null) {
-                    config.setJavaCommand((String) obj.get("javaCommand"));
-                }
-                if (config.getJavaOptions() == null) {
-                    config.setJavaOptions((String) obj.get("javaOptions"));
-                }
-            } catch (UncheckedIOException e) {
-                LOG.log(Level.CONFIG, "Unable to read {0}", new Object[]{f.toString()});
-            }
-        }
-        if (!loadedApiConfig || config.getRuntimeId() == null || config.getRuntimeDependenciesSet() == null || config.getExtensionDependenciesSet() == null || config.getBootRepositories() == null) {
-            if (config.getRuntimeId() == null) {
-                String apiVersion=config.getApiId().substring(config.getApiId().indexOf('#')+1);
-                config.setRuntimeId(resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion)->rtVersion.startsWith(apiVersion+".")));
-                config.setRuntimeDependenciesSet(null);
-                config.setBootRepositories(null);
-            }
-            if (config.getRuntimeId() == null) {
-                config.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + config.getApiVersion() + ".0");
-                LOG.log(Level.CONFIG, "[ERROR  ] Failed to load latest runtime id. Considering defaults : {0}", new Object[]{config.getRuntimeId()});
-            }
-            if (config.getRuntimeId().indexOf('#') < 0) {
-                config.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + config.getRuntimeId());
-            }
-            if (config.getRuntimeDependenciesSet() == null) {
-                Set<String> loadedDeps = null;
-                String extraBootRepositories=null;
-                PrivateNutsId rid=PrivateNutsId.parse(config.getRuntimeId());
-                try {
-                    Path extensionFile = Paths.get(config.getStoreLocations().get(NutsStoreLocation.CACHE.id())).resolve(NutsConstants.Folders.BOOT)
-                            .resolve(PrivateNutsUtils.idToPath(rid)).resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
-                    boolean cacheLoaded=false;
-                    if (Files.isRegularFile(extensionFile)) {
-                        try {
-                            Map<String, Object> obj = PrivateNutsJsonParser.parse(f);
-                            loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
-                            extraBootRepositories = (String) obj.get("bootRepositories");
-                        }catch (Exception ex){
-                            //ignore...
-                        }
-                        cacheLoaded=true;
-                    }
-                    if(!cacheLoaded || loadedDeps==null) {
-                        DepsAndRepos depsAndRepos = loadDependenciesAndRepositoriesFromPomPath(PrivateNutsId.parse(config.getRuntimeId()));
-                        if (depsAndRepos != null) {
-                            loadedDeps=depsAndRepos.deps;
-                            extraBootRepositories = String.join(";", depsAndRepos.repos);
-                        }
-                    }
-                } catch (Exception ex) {
-                    //
-                }
-                if(loadedDeps==null){
-                    throw new IllegalArgumentException("Unable to load dependencies for "+rid);
-                }
-                config.setRuntimeDependenciesSet(loadedDeps);
-
-                LinkedHashSet<String> bootRepositories = new LinkedHashSet<>();
-                if (extraBootRepositories != null) {
-                    for (String v : PrivateNutsUtils.split(extraBootRepositories,";",true)) {
-                        if (v.length() > 0) {
-                            bootRepositories.add(v);
-                        }
-                    }
-                }
-                bootRepositories.add(NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL);
-                bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
-                bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
-                config.setBootRepositories(String.join(";", bootRepositories));
-            }
-            if (config.getExtensionDependenciesSet() == null) {
-                LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
-                LinkedHashSet<String> visitedSimpleIds = new LinkedHashSet<>();
-
-                LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
-                if (options.getExcludedExtensions() != null) {
-                    for (String excludedExtension : options.getExcludedExtensions()) {
-                        excludedExtensions.add(PrivateNutsId.parse(excludedExtension).getShortName());
-                    }
-                }
-                if (config.getExtensionsSet() != null) {
-                    for (String extension : config.getExtensionsSet()) {
-                        PrivateNutsId eid = PrivateNutsId.parse(extension);
-                        if (!excludedExtensions.contains(eid.getShortName())) {
-                            Path extensionFile = Paths.get(config.getStoreLocations().get(NutsStoreLocation.CACHE.id())).resolve(NutsConstants.Folders.BOOT)
-                                    .resolve(PrivateNutsUtils.idToPath(eid)).resolve(NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME);
-                            Set<String> loadedDeps = null;
-                            if (Files.isRegularFile(extensionFile)) {
-                                try {
-                                    Map<String, Object> obj = PrivateNutsJsonParser.parse(f);
-                                    loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
-                                }catch (Exception ex){
-                                    //ignore
-                                }
-                            }
-                            if (loadedDeps == null) {
-                                DepsAndRepos depsAndRepos = loadDependenciesAndRepositoriesFromPomPath(eid);
-                                if (depsAndRepos != null) {
-                                    loadedDeps = depsAndRepos.deps;
-                                }
-                            }
-                            if (loadedDeps != null) {
-                                for (String loadedDep : loadedDeps) {
-                                    String sed = PrivateNutsId.parse(loadedDep).getShortName();
-                                    //when multiple versions, the first is retained
-                                    if (!visitedSimpleIds.contains(sed)) {
-                                        visitedSimpleIds.add(sed);
-                                        allExtDependencies.add(loadedDep);
-                                    }
-                                }
-                            }else{
-                                throw new IllegalArgumentException("Unable to load dependencies for "+eid);
-                            }
-                        }
-                    }
-                    config.setExtensionDependenciesSet(allExtDependencies);
-                } else {
-                    config.setExtensionDependenciesSet(new HashSet<>());
-                }
-            }
-        }
-
-        return config;
-    }
-
-
-    private int checkRequirements(boolean insatistfiedOnly) {
+    private int checkRequirements(boolean unsatisfiedOnly) {
         int req = 0;
         if (!PrivateNutsUtils.isBlank(workspaceInformation.getApiVersion())) {
-            if ((insatistfiedOnly && !workspaceInformation.getApiVersion().equals(Nuts.getVersion())) || !insatistfiedOnly) {
+            if (!unsatisfiedOnly || !workspaceInformation.getApiVersion().equals(Nuts.getVersion())) {
                 req += 1;
             }
         }
-        if ((insatistfiedOnly && !PrivateNutsUtils.isActualJavaCommand(workspaceInformation.getJavaCommand())) || !insatistfiedOnly) {
+        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaCommand(workspaceInformation.getJavaCommand())) {
             req += 2;
         }
-        if ((insatistfiedOnly && !PrivateNutsUtils.isActualJavaOptions(workspaceInformation.getJavaOptions())) || !insatistfiedOnly) {
+        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaOptions(workspaceInformation.getJavaOptions())) {
             req += 4;
         }
         return req;
     }
 
-    public String getRequirementsHelpString(boolean insatistfiedOnly) {
-        int req = insatistfiedOnly ? newInstanceRequirements : checkRequirements(false);
+    public String getRequirementsHelpString(boolean unsatisfiedOnly) {
+        int req = unsatisfiedOnly ? newInstanceRequirements : checkRequirements(false);
         StringBuilder sb = new StringBuilder();
         if ((req & 1) != 0) {
             sb.append("Nuts Version ").append(workspaceInformation.getApiId());
@@ -1393,434 +1143,6 @@ public final class NutsBootWorkspace {
             return sb.toString();
         }
         return null;
-    }
-
-    static class NutsBootClassLoader extends URLClassLoader {
-
-        NutsBootClassLoader(URL[] urls, ClassLoader parent) {
-            super(urls, parent);
-        }
-    }
-
-    private static class NutsBootWorkspaceFactoryComparator implements Comparator<NutsBootWorkspaceFactory> {
-
-        private final NutsWorkspaceOptions options;
-
-        public NutsBootWorkspaceFactoryComparator(NutsWorkspaceOptions options) {
-            this.options = options;
-        }
-
-        @Override
-        public int compare(NutsBootWorkspaceFactory o1, NutsBootWorkspaceFactory o2) {
-            //sort by reverse order!
-            return Integer.compare(o2.getBootSupportLevel(options), o1.getBootSupportLevel(options));
-        }
-    }
-
-    static final class InformationImpl implements NutsWorkspaceInitInformation {
-
-        private NutsWorkspaceOptions options;
-        /**
-         * workspace api version
-         */
-        private String apiVersion;
-        /**
-         * workspace runtime id (group, name avec version)
-         */
-        private String runtimeId;
-        private NutsBootWorkspaceFactory bootWorkspaceFactory;
-        private URL[] bootClassWorldURLs;
-        private ClassLoader workspaceClassLoader;
-
-
-        /**
-         * workspace uuid
-         */
-        private String uuid;
-
-        /**
-         * workspace name
-         */
-        private String name;
-
-        /**
-         * workspace path
-         */
-        private String workspace;
-
-        /**
-         * runtime component dependencies id list (; separated)
-         */
-        private LinkedHashSet<String> runtimeDependenciesSet;
-
-        /**
-         *
-         */
-        private LinkedHashSet<String> extensionDependenciesSet;
-
-        /**
-         *
-         */
-        private LinkedHashSet<String> extensionsSet;
-
-        /**
-         * bootRepositories list (; separated) where to look for runtime
-         * dependencies
-         */
-        private String bootRepositories;
-
-        /**
-         * java executable command to run nuts binaries
-         */
-        private String javaCommand;
-
-        /**
-         * java executable command options to run nuts binaries
-         */
-        private String javaOptions;
-
-        /**
-         * workspace store location strategy
-         */
-        private NutsStoreLocationStrategy storeLocationStrategy;
-
-        /**
-         * workspace bootRepositories store location strategy
-         */
-        private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
-
-        /**
-         * workspace store location layout
-         */
-        private NutsOsFamily storeLocationLayout;
-
-        /**
-         * when global is true consider system wide folders (user independent but
-         * needs greater privileges)
-         */
-        private boolean global;
-
-//    /**
-//     * when true enable Desktop GUI components if available
-//     */
-//    private boolean gui;
-
-        /**
-         * workspace store locations
-         */
-        private Map<String, String> storeLocations;
-        /**
-         * workspace expected locations for all layout. Relevant when moving the
-         * workspace cross operating systems
-         */
-        private Map<String, String> homeLocations;
-
-        @Override
-        public NutsWorkspaceOptions getOptions() {
-            return options;
-        }
-
-        public InformationImpl setOptions(NutsWorkspaceOptions options) {
-            this.options = options;
-            if (options != null) {
-                this.setWorkspaceLocation(options.getWorkspace());
-                this.setName(options.getName());
-                this.setStoreLocationStrategy(options.getStoreLocationStrategy());
-                this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
-                this.setStoreLocationLayout(options.getStoreLocationLayout());
-                this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
-                this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-                this.setRuntimeId(options.getRuntimeId());
-                this.global = options.isGlobal();
-                this.runtimeId = options.getRuntimeId();
-                this.javaCommand=options.getJavaCommand();
-                this.javaOptions=options.getJavaOptions();
-                this.apiVersion=PrivateNutsUtils.trimToNull(options.getApiVersion());
-            }
-            return this;
-        }
-
-        @Override
-        public String getWorkspaceLocation() {
-            return workspace;
-        }
-
-        @Override
-        public String getApiVersion() {
-            return apiVersion;
-        }
-
-        public InformationImpl setApiVersion(String apiVersion) {
-            this.apiVersion = apiVersion;
-            return this;
-        }
-
-        @Override
-        public String getRuntimeId() {
-            return runtimeId;
-        }
-
-        public InformationImpl setRuntimeId(String runtimeId) {
-            this.runtimeId = runtimeId;
-            return this;
-        }
-
-        @Override
-        public String getRuntimeDependencies() {
-            return String.join(";", getRuntimeDependenciesSet());
-        }
-
-        @Override
-        public String getExtensionDependencies() {
-            return String.join(";",getExtensionDependenciesSet());
-        }
-
-        @Override
-        public String getBootRepositories() {
-            return bootRepositories;
-        }
-
-        @Override
-        public NutsBootWorkspaceFactory getBootWorkspaceFactory() {
-            return bootWorkspaceFactory;
-        }
-
-        public InformationImpl setBootWorkspaceFactory(NutsBootWorkspaceFactory bootWorkspaceFactory) {
-            this.bootWorkspaceFactory = bootWorkspaceFactory;
-            return this;
-        }
-
-        @Override
-        public URL[] getClassWorldURLs() {
-            return bootClassWorldURLs;
-        }
-
-        public InformationImpl setBootClassWorldURLs(URL[] bootClassWorldURLs) {
-            this.bootClassWorldURLs = bootClassWorldURLs;
-            return this;
-        }
-
-        @Override
-        public ClassLoader getClassWorldLoader() {
-            return workspaceClassLoader;
-        }
-
-        public InformationImpl setWorkspaceClassLoader(ClassLoader workspaceClassLoader) {
-            this.workspaceClassLoader = workspaceClassLoader;
-            return this;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getUuid() {
-            return uuid;
-        }
-
-        public void setUuid(String uuid) {
-            this.uuid = uuid;
-        }
-
-
-        public String getApiId() {
-            return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
-        }
-
-        public Set<String> getRuntimeDependenciesSet() {
-            return runtimeDependenciesSet;
-        }
-
-        public InformationImpl setRuntimeDependenciesSet(Set<String> runtimeDependenciesSet) {
-            this.runtimeDependenciesSet = runtimeDependenciesSet ==null?null:new LinkedHashSet<>(runtimeDependenciesSet);
-            return this;
-        }
-
-        public Set<String> getExtensionDependenciesSet() {
-            return extensionDependenciesSet;
-        }
-
-        public InformationImpl setExtensionDependenciesSet(Set<String> extensionDependenciesSet) {
-            this.extensionDependenciesSet = extensionDependenciesSet ==null?null:new LinkedHashSet<>(extensionDependenciesSet);
-            return this;
-        }
-
-        public String getJavaCommand() {
-            return javaCommand;
-        }
-
-        public InformationImpl setJavaCommand(String javaCommand) {
-            this.javaCommand = javaCommand;
-            return this;
-        }
-
-        public String getJavaOptions() {
-            return javaOptions;
-        }
-
-        public InformationImpl setJavaOptions(String javaOptions) {
-            this.javaOptions = javaOptions;
-            return this;
-        }
-
-        public InformationImpl setBootRepositories(String repositories) {
-            this.bootRepositories = repositories;
-            return this;
-        }
-
-        public NutsStoreLocationStrategy getStoreLocationStrategy() {
-            return storeLocationStrategy;
-        }
-
-        public InformationImpl setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
-            this.storeLocationStrategy = storeLocationStrategy;
-            return this;
-        }
-
-
-        public InformationImpl setWorkspaceLocation(String workspace) {
-            this.workspace = workspace;
-            return this;
-        }
-
-        public NutsOsFamily getStoreLocationLayout() {
-            return storeLocationLayout;
-        }
-
-        public void setStoreLocations(Map<String, String> storeLocations) {
-            this.storeLocations = storeLocations;
-        }
-
-        public void setHomeLocations(Map<String, String> homeLocations) {
-            this.homeLocations = homeLocations;
-        }
-
-        public InformationImpl setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
-            this.storeLocationLayout = storeLocationLayout;
-            return this;
-        }
-
-        public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-            return repositoryStoreLocationStrategy;
-        }
-
-        public InformationImpl setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
-            this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-            return this;
-        }
-
-        public Map<String, String> getStoreLocations() {
-            return storeLocations;
-        }
-
-        public Map<String, String> getHomeLocations() {
-            return homeLocations;
-        }
-
-        public boolean isGlobal() {
-            return global;
-        }
-
-        public Set<String> getExtensionsSet() {
-            return extensionsSet;
-        }
-
-        public void setExtensionsSet(Set<String> extensionsSet) {
-            this.extensionsSet = extensionsSet ==null?new LinkedHashSet<>():new LinkedHashSet<>(extensionsSet);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-            if (!PrivateNutsUtils.isBlank(apiVersion)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("apiVersion='").append(apiVersion).append('\'');
-            }
-            if (!PrivateNutsUtils.isBlank(runtimeId)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("runtimeId='").append(runtimeId).append('\'');
-            }
-            if (!runtimeDependenciesSet.isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
-            }
-            if (!PrivateNutsUtils.isBlank(bootRepositories)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("bootRepositories='").append(bootRepositories).append('\'');
-            }
-            if (!PrivateNutsUtils.isBlank(javaCommand)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("javaCommand='").append(javaCommand).append('\'');
-            }
-            if (!PrivateNutsUtils.isBlank(javaOptions)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("javaOptions='").append(javaOptions).append('\'');
-            }
-            if (!PrivateNutsUtils.isBlank(workspace)) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("workspace='").append(workspace).append('\'');
-            }
-            if (storeLocations != null && !storeLocations.isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("storeLocations=").append(storeLocations);
-
-            }
-            if (homeLocations != null && !homeLocations.isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("homeLocations=").append(homeLocations);
-
-            }
-            if (storeLocationStrategy != null) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("storeLocationStrategy=").append(storeLocationStrategy);
-            }
-            if (repositoryStoreLocationStrategy != null) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("repositoryStoreLocationStrategy=").append(repositoryStoreLocationStrategy);
-            }
-            if (storeLocationLayout != null) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("storeLocationLayout=").append(storeLocationLayout);
-            }
-            if (global) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append("global");
-            }
-            sb.append('}');
-            return sb.toString();
-        }
-
-
     }
 
 }

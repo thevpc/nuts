@@ -113,7 +113,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             }
             homes[type.ordinal()] = Paths.get(ss);
         }
-        Map<String, String> storeLocations = getStoreLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(getStoreLocations());
+        Map<String, String> storeLocations = getStoreLocations();
         for (NutsStoreLocation location : NutsStoreLocation.values()) {
             String typeId = location.id();
             switch (location) {

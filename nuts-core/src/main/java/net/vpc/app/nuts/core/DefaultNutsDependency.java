@@ -75,7 +75,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public boolean isOptional() {
-        return Boolean.parseBoolean(optional);
+        return Boolean.parseBoolean(getOptional());
     }
 
     @Override

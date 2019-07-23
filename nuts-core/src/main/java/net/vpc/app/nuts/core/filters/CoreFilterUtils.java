@@ -57,6 +57,7 @@ import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.core.filters.id.NutstDescriptorIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutstVersionIdFilter;
 import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterAnd;
+import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterOr;
 import net.vpc.app.nuts.core.filters.version.NutsVersionFilterAnd;
 import net.vpc.app.nuts.core.filters.version.NutsVersionFilterOr;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -70,6 +71,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 public class CoreFilterUtils {
 
     public static NutsIdFilter idFilterOf(NutsDescriptorFilter other) {
+        if(other==null){
+            return null;
+        }
         return new NutstDescriptorIdFilter(other);
     }
 
@@ -78,13 +82,13 @@ public class CoreFilterUtils {
     }
 
     public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter) {
-        return CoreNutsUtils.simplify(
-                CoreFilterUtils.And(
+        return
+                CoreFilterUtils.AndSimplified(
                         idFilter,
                         CoreFilterUtils.idFilterOf(
-                                CoreFilterUtils.And(CoreFilterUtils.createNutsDescriptorFilter(map), descriptorFilter)
+                                CoreFilterUtils.AndSimplified(CoreFilterUtils.createNutsDescriptorFilter(map), descriptorFilter)
                         )
-                ));
+                );
     }
 
     public static NutsDescriptorFilter Or(NutsDescriptorFilter... all) {
@@ -104,7 +108,7 @@ public class CoreFilterUtils {
     }
 
     public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osdist, String platform) {
-        return CoreNutsUtils.simplify(And(new NutsDescriptorFilterArch(arch), new NutsDescriptorFilterOs(os), new NutsDescriptorFilterOsdist(osdist), new NutsDescriptorFilterPlatform(platform)));
+        return AndSimplified(new NutsDescriptorFilterArch(arch), new NutsDescriptorFilterOs(os), new NutsDescriptorFilterOsdist(osdist), new NutsDescriptorFilterPlatform(platform));
     }
 
     public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap) {
@@ -127,6 +131,38 @@ public class CoreFilterUtils {
         return new NutsIdFilterAnd(all);
     }
 
+    public static NutsDescriptorFilter AndSimplified(NutsDescriptorFilter... all) {
+        return CoreNutsUtils.simplify(And(all));
+    }
+
+    public static NutsDescriptorFilter OrSimplified(NutsDescriptorFilter... all) {
+        return CoreNutsUtils.simplify(Or(all));
+    }
+
+    public static NutsIdFilter AndSimplified(NutsIdFilter... all) {
+        return CoreNutsUtils.simplify(And(all));
+    }
+
+    public static NutsIdFilter OrSimplified(NutsIdFilter... all) {
+        return CoreNutsUtils.simplify(Or(all));
+    }
+
+    public static NutsRepositoryFilter AndSimplified(NutsRepositoryFilter... all) {
+        return CoreNutsUtils.simplify(And(all));
+    }
+
+    public static NutsRepositoryFilter OrSimplified(NutsRepositoryFilter... all) {
+        return CoreNutsUtils.simplify(Or(all));
+    }
+
+    public static NutsDependencyFilter AndSimplified(NutsDependencyFilter... all) {
+        return CoreNutsUtils.simplify(And(all));
+    }
+
+    public static NutsDependencyFilter OrSimplified(NutsDependencyFilter... all) {
+        return CoreNutsUtils.simplify(Or(all));
+    }
+
     public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
         return new NutsDescriptorFilterAnd(all);
     }
@@ -137,6 +173,10 @@ public class CoreFilterUtils {
 
     public static NutsRepositoryFilter And(NutsRepositoryFilter... all) {
         return new NutsRepositoryFilterAnd(all);
+    }
+
+    public static NutsRepositoryFilter Or(NutsRepositoryFilter... all) {
+        return new NutsRepositoryFilterOr(all);
     }
 
     public static NutsDependencyFilter And(NutsDependencyFilter... all) {

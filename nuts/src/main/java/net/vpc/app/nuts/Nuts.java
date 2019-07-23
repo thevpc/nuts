@@ -105,16 +105,16 @@ public final class Nuts {
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
                 + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
+        NutsDefaultWorkspaceOptions options;
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
-            boot = new NutsBootWorkspace(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
-            boot.getOptions().setApplicationArguments(args);
+            options = (NutsDefaultWorkspaceOptions) NutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
         } else {
-            NutsDefaultWorkspaceOptions t = new NutsDefaultWorkspaceOptions();
-            t.setApplicationArguments(args);
-            boot = new NutsBootWorkspace(t);
+            options = new NutsDefaultWorkspaceOptions();
         }
-        boot.getOptions().setInherited(true);
-        boot.getOptions().setCreationTime(startTime);
+        options.setApplicationArguments(args);
+        options.setInherited(true);
+        options.setCreationTime(startTime);
+        boot = new NutsBootWorkspace(options);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 
@@ -157,7 +157,7 @@ public final class Nuts {
      */
     public static void runWorkspace(String... args) throws NutsExecutionException {
         //long startTime = System.currentTimeMillis();
-        new NutsBootWorkspace(args).run();
+        new NutsBootWorkspace(args).runWorkspace();
     }
 
 }

@@ -204,7 +204,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 
-//    boolean isGlobal();
     String getDefaultIdComponentExtension(String packaging);
 
     String getDefaultIdExtension(NutsId id);

@@ -36,9 +36,6 @@ package net.vpc.app.nuts;
  */
 public interface NutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCommand {
 
-//    @Override
-//    NutsUpdateRepositoryStatisticsCommand session(NutsRepositorySession session);
-
     @Override
     NutsUpdateRepositoryStatisticsCommand setSession(NutsRepositorySession session);
 

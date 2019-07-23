@@ -62,21 +62,8 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     NutsDeployRepositoryCommand setTransitive(boolean transitive);
 
-//    NutsDeployRepositoryCommand offline(boolean offline);
-//
-//    NutsDeployRepositoryCommand offline();
-//
-//    NutsDeployRepositoryCommand repository(String repository);
-//
-//    NutsDeployRepositoryCommand id(NutsId id);
-
-//    NutsDeployRepositoryCommand transitive(boolean transitive);
-
     @Override
     NutsDeployRepositoryCommand setSession(NutsRepositorySession session);
-
-//    @Override
-//    NutsDeployRepositoryCommand session(NutsRepositorySession session);
 
     @Override
     NutsDeployRepositoryCommand run();

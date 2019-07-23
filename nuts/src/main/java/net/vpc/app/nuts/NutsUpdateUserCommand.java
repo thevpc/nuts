@@ -116,6 +116,26 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setResetGroups(boolean resetGroups);
 
+    NutsUpdateUserCommand setRemoteCredentials(char[] password);
+
+    NutsUpdateUserCommand remoteCredentials(char[] password);
+
+    char[] getRemoteCredentials();
+
+    String[] getAddGroups();
+
+    String[] getRemoveGroups();
+
+    char[] getCredentials();
+
+    char[] getOldCredentials();
+
+    String getRemoteIdentity();
+
+    String[] getAddPermissions();
+
+    String[] getRemovePermissions();
+
     /**
      * update session
      *
@@ -153,25 +173,4 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateUserCommand run();
-
-    NutsUpdateUserCommand setRemoteCredentials(char[] password);
-
-    NutsUpdateUserCommand remoteCredentials(char[] password);
-
-    char[] getRemoteCredentials();
-
-    String[] getAddGroups();
-
-    String[] getRemoveGroups();
-
-    char[] getCredentials();
-
-    char[] getOldCredentials();
-
-    String getRemoteIdentity();
-
-    String[] getAddPermissions();
-
-    String[] getRemovePermissions();
-
 }

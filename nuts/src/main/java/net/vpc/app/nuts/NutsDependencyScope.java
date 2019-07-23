@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Supported dependency scope lists
  * @author vpc
  * @since 0.5.4
  */
@@ -48,7 +48,7 @@ public enum NutsDependencyScope {
      */
     PROVIDED,
     /**
-     * equivalent to gradle's import
+     * equivalent to maven's import
      */
     IMPORT,
     /**
@@ -96,43 +96,5 @@ public enum NutsDependencyScope {
         return id;
     }
 
-    /**
-     * parse string to a valid NutsDependencyScope or NutsDependencyScope.OTHER
-     * @param s string to parse
-     * @return valid NutsDependencyScope instance
-     */
-    public static NutsDependencyScope parse(String s) {
-        if (s == null) {
-            s = "";
-        }
-        s = s.trim().toLowerCase();
-        switch (s) {
-            case "":
-            case "compile":
-            case "api":
-                return API;
-            case "implementation":
-                return IMPLEMENTATION;
-            case "provided": //maven
-            case "compileOnly": //gradle
-            case "compile-only": //gradle
-                return PROVIDED;
-            case "runtime":
-                return RUNTIME;
-            case "import":
-                return IMPORT;
-            case "system":
-                return SYSTEM;
-            case "test":
-            case "test-compile":
-                return TEST_COMPILE;
-            case "test-provided":
-                return TEST_PROVIDED;
-            case "test-runtime":
-                return TEST_RUNTIME;
-            default:
-                return OTHER;
-        }
-    }
 
 }

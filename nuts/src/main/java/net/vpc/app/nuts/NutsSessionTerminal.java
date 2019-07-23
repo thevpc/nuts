@@ -40,13 +40,6 @@ import java.io.PrintStream;
 @NutsPrototype
 public interface NutsSessionTerminal extends NutsSessionTerminalBase, NutsTerminal {
 
-//    /**
-//     * return terminal mode
-//     *
-//     * @return terminal mode
-//     */
-//    NutsTerminalMode getTerminalMode();
-
     void setIn(InputStream in);
 
     void setOut(PrintStream out);

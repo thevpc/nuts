@@ -5,6 +5,8 @@ import net.vpc.app.nuts.*;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
+
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 public class NutsDependencyScopeFilter implements NutsDependencyFilter {
@@ -28,19 +30,19 @@ public class NutsDependencyScopeFilter implements NutsDependencyFilter {
     public NutsDependencyScopeFilter addScopePatterns(Collection<NutsDependencyScopePattern> scope) {
         EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
         for (NutsDependencyScopePattern ss : scope) {
-            s2.addAll(ss.expand());
+            s2.addAll(NutsDependencyScopes.expand(ss));
         }
         return new NutsDependencyScopeFilter(s2);
     }
 
     @Override
     public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
-        return scope.contains(NutsDependencyScope.parse(dependency.getScope()));
+        return scope.contains(NutsDependencyScopes.parseDependencyScope(dependency.getScope()));
     }
 
     @Override
     public String toString() {
-        return "scope in (" + scope.stream().map(x -> CoreCommonUtils.getEnumString(x)).collect(Collectors.joining(", ")) + ')';
+        return "scope in (" + scope.stream().map(CoreCommonUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
     }
 
 }

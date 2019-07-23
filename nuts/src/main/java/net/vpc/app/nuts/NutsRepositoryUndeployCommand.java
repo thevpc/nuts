@@ -39,9 +39,6 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
     @Override
     NutsRepositoryUndeployCommand setSession(NutsRepositorySession session);
 
-//    @Override
-//    NutsRepositoryUndeployCommand session(NutsRepositorySession session);
-
     @Override
     NutsRepositoryUndeployCommand run();
 
@@ -57,21 +54,7 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 
     NutsRepositoryUndeployCommand setTransitive(boolean transitive);
 
-//    NutsRepositoryUndeploymentOptions copy();
     boolean isOffline();
 
     NutsRepositoryUndeployCommand setOffline(boolean offline);
-
-//    NutsRepositoryUndeployCommand offline(boolean offline);
-//
-//    NutsRepositoryUndeployCommand offline();
-
-//    NutsRepositoryUndeployCommand repository(String repository);
-//
-//    NutsRepositoryUndeployCommand id(NutsId id);
-//
-//    NutsRepositoryUndeployCommand transitive();
-//
-//    NutsRepositoryUndeployCommand transitive(boolean transitive);
-
 }

@@ -174,7 +174,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsContent getContent() {
         if (!isSetContent()) {
-            throw new NutsException(null, "Unable to get content. You need to call search.content(...) first.");
+            throw new NutsElementNotFoundException(null, "Unable to get content. You need to call search.content(...) first.");
         }
         return content;
     }
@@ -182,7 +182,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
         if (!isSetEffectiveDescriptor()) {
-            throw new NutsException(null, "Unable to get effectiveDescriptor. You need to call search.effective(...) first.");
+            throw new NutsElementNotFoundException(null, "Unable to get effectiveDescriptor. You need to call search.effective(...) first.");
         }
         return effectiveDescriptor;
     }
@@ -190,7 +190,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsInstallInformation getInstallInformation() {
         if (!isSetInstallInformation()) {
-            throw new NutsException(null, "Unable to get install information. You need to call search.installInformation(...) first.");
+            throw new NutsElementNotFoundException(null, "Unable to get install information. You need to call search.installInformation(...) first.");
         }
         return installInformation;
     }
@@ -198,7 +198,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDependencyTreeNode[] getDependencyNodes() {
         if (!isSetDependencyNodes()) {
-            throw new NutsException(null, "Unable to get dependencyNodes. You need to call search.dependencyNodes(...) first.");
+            throw new NutsElementNotFoundException(null, "Unable to get dependencyNodes. You need to call search.dependencyNodes(...) first.");
         }
         return dependencyNodes;
     }
@@ -206,7 +206,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDependency[] getDependencies() {
         if (!isSetDependencies()) {
-            throw new NutsException(null, "Unable to get dependencies. You need to call search.dependencies(...) first.");
+            throw new NutsElementNotFoundException(null, "Unable to get dependencies. You need to call search.dependencies(...) first.");
         }
         return this.dependencies;
     }
@@ -238,7 +238,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
             }
             return 1;
         }
-        return o1.toString().compareTo(o2.toString());
+        return o1.compareTo(o2);
     }
 
     @Override

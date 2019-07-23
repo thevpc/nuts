@@ -55,6 +55,7 @@ public class NutsWorkspaceLocation implements Serializable {
         this.name = other.getName();
         this.location = other.getLocation();
         this.enabled = other.isEnabled();
+        this.uuid = other.getUuid();
     }
 
     public NutsWorkspaceLocation(String uuid, String name, String location) {
