@@ -108,7 +108,7 @@ java -jar nuts-0.5.7.jar ...your command here...
 
 ## Latest News
 
-+ 2019/07/14 	nuts 0.5.7.0 released [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.7.0.md)
++ 2019/07/23 	nuts 0.5.7.0 released [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.7.0.md)
 + 2019/06/23 	nuts 0.5.6.0 released [nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md)
 + 2019/06/08 	nuts 0.5.5.0 released [nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md)
 + 2019/04/21 	nuts 0.5.4.0 released [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) [change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.4.0.md)
