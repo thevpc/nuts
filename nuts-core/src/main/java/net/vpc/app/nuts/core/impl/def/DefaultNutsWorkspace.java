@@ -827,7 +827,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
-            return io().loadFormattedString(urlPath, getClass().getClassLoader(), "no help found");
+            return io().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
         }
         return null;
     }

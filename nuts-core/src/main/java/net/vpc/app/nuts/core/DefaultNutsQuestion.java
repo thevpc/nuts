@@ -132,7 +132,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is [[%s]]", ff.format(this.getDefaultValue(),this));
+                out.printf("default is ##%s##", ff.format(this.getDefaultValue(),this));
             }
 
             if (_acceptedValues.length > 0) {
