@@ -41,10 +41,15 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 String user = cmdLine.required().nextNonOption(cmdLine.createName("Username")).getString();
-                String mappedUser = cmdLine.nextNonOption(cmdLine.createName("MappedUser")).getString();
                 char[] password = cmdLine.nextNonOption(cmdLine.createName("Password")).getString().toCharArray();
+                String mappedUser=null;
+                char[] remotePassword=null;
+                if(!cmdLine.isEmpty()) {
+                    mappedUser = cmdLine.nextNonOption(cmdLine.createName("RemoteId")).getString();
+                    remotePassword = cmdLine.nextNonOption(cmdLine.createName("RemotePassword")).getString().toCharArray();
+                }
                 if (cmdLine.isExecMode()) {
-                    repository.security().addUser(user).credentials(password).remoteIdentity(mappedUser).run();
+                    repository.security().addUser(user).credentials(password).remoteIdentity(mappedUser).remoteCredentials(remotePassword).run();
                 }
             }
             if (cmdLine.isExecMode()) {

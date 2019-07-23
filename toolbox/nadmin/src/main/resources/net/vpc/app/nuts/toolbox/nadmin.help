@@ -3,61 +3,81 @@ manage nuts workspace
 ##SYNOPSIS:##
 **nadmin** {{\<command\>}} [**\<options\>**]
 manage nuts workspace
+
+##ALIAS COMMANDS:##
 {{list aliases}}
-    list all command aliases
+        : list all command aliases
 
 {{add alias}} <name>=<value> ...
 {{add alias}} <name> <value> ...
-    add new command alias or aliases
+        : add new command alias or aliases
 
 {{remove alias}} <name> ...
-    remove command alias or aliases
+        : remove command alias or aliases
 
+##IMPORT COMMANDS:##
+{{import}} <group> ...
+        : add group to imported groups
+
+{{unimport}} <group> ...
+        : remove group from imported groups
+
+{{list imports}}
+        : list imported groups
+
+{{clear imports}}
+        : remove all imported groups
+
+
+##REPOSITORY COMMANDS:##
 {{list archetypes}}
-    list all available archetypes
+        : list all available archetypes
 
-{{delete}} {{apps}}|{{config}}|{{var}}|{{log}}|{{temp}}|{{cache}}|{{lib}}|{{run}} ... [**--force**|**-f**]
-    delete store folders
+{{add repo}} <repos-name> ...
+        : add repository
 
-{{connect}} <username\@server:port> [--password <password>]
-    connect to remote nuts server . default port is 8898
+{{remove repo}} <repos-name> ...
+        : remove repository
 
-{{add repo}} ...
-    add repository
-{{remove repo}} ...
-    remove repository
-
-{{list repos}} ...
-    list repositories
+{{list repos}}
+        : list repositories
 
 {{edit repo}} <repoId> ...
+        : edit repository
 
+{{update stats}} <repo-folder-path> ...
+        : update local repo statistics
+
+##SECUTIRY COMMANDS:##
+{{list users}}
+        : list available users
+
+{{add user}} [**options**] <username> <password>
+        : add new user to the workspace
+
+{{add user}} [**--repo** | **-r** <repo-name>] <username> <password> [<remote-identity> <remote-password>]
+        : add new user to the repository
+
+{{edit user}}
+        : edit user
+
+{{passwd}}
+        : change password
+
+{{secure}}
+        : switch to secure mode
+
+{{unsecure}}
+        : switch to un-secure mode
+
+##GENERAL COMMANDS:##
 {{list extension points}}|{{lxp}}
         : list currently loaded extension points
 
-{{import}}
-
-{{unimport}}
-
-{{list imports}}
-
-{{clear imports}}
-
-{{list archetypes}}
-
-
-{{list users}}
-
-{{add user}}
-
-{{edit user}}
-
-{{passwd}}
-
-{{secure}}
-
-{{unsecure}}
+{{delete}} {{apps}}|{{config}}|{{var}}|{{log}}|{{temp}}|{{cache}}|{{lib}}|{{run}} ... [**--force**|**-f**]
+        : delete store folders
 
 {{set loglevel}} verbose|fine|finer|finest|error|severe|config|all|none
 
-
+{{connect}} <username\@server:port> [--password <password>]
+        : connect to remote nuts server . default port is 8898
