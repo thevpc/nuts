@@ -1,11 +1,11 @@
 ==nsh== (or ==nuts== bash) is a portable shell, bash like (mostly compatible), implemented in java.
 
 ##SYNOPSIS:##
-==nsh== \[**options**\]...
+==nsh== \[**<options>**\]...
  run interactive shell
-==nsh== \[**options**\]... **-c** \<command\>
+==nsh== \[**<options>**\]... **-c** \<command\>
  run command
-==nsh== \[**options**\]... \<file\>
+==nsh== \[**<options>**\]... \<file\>
  run file
 
 ##OPTIONS:##
