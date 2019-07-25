@@ -28,6 +28,7 @@ public class NutsFetchDisplayOptions {
         NutsDisplayProperty.STATUS,
         NutsDisplayProperty.INSTALL_DATE,
         NutsDisplayProperty.INSTALL_USER,
+        NutsDisplayProperty.REPOSITORY,
         NutsDisplayProperty.ID
     };
     public static NutsDisplayProperty[] DISPLAY_MIN = new NutsDisplayProperty[]{
@@ -41,6 +42,14 @@ public class NutsFetchDisplayOptions {
     public NutsFetchDisplayOptions(NutsWorkspace ws) {
         this.ws = ws;
         this.idFormat = ws.id();
+        this.idFormat.setHighlightImportedGroup(true);
+        this.idFormat.setOmitQuery(true);
+        this.idFormat.setOmitFace(true);
+        this.idFormat.setOmitNamespace(true);
+        this.idFormat.setOmitAlternative(false);
+        this.idFormat.setOmitClassifier(false);
+        this.idFormat.setOmitGroup(false);
+        this.idFormat.setOmitImportedGroup(false);
     }
 
     public void setIdFormat(NutsIdFormat idFormat) {

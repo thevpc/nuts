@@ -195,6 +195,9 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public String format() {
+        if(id==null){
+            return "<null>";
+        }
         Map<String, String> queryMap = id.getQueryMap();
         String scope = queryMap.remove("scope");
         String optional = queryMap.remove("optional");

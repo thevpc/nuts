@@ -78,7 +78,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 emptyCommand = false;
                 if(!visited.contains(sid)) {
                     visited.add(sid);
-                    List<NutsId> allIds = ws.search().id(sid).session(searchSession).latest().getResultIds().list();
+                    List<NutsId> allIds = ws.search().id(sid).session(searchSession).latest().targetApiVersion(ws.config().getApiVersion()).getResultIds().list();
                     if (allIds.isEmpty()) {
                         throw new NutsNotFoundException(ws, sid);
                     }

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.iter.PushBackIterator;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -370,10 +372,19 @@ public class CoreCommonUtils {
             return ws.io().getTerminalFormat().escapeText(getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return ws.io().getTerminalFormat().escapeText(((Instant) o).toString());
+            return ws.io().getTerminalFormat().escapeText(
+                    CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
+            );
+        }
+        if (o instanceof Temporal) {
+            return ws.io().getTerminalFormat().escapeText(
+                    CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
+            );
         }
         if (o instanceof Date) {
-            return ws.io().getTerminalFormat().escapeText(((Date) o).toInstant().toString());
+            return ws.io().getTerminalFormat().escapeText(
+                    CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
+            );
         }
         if (o instanceof NutsId) {
             return ws.id().value((NutsId) o).format();

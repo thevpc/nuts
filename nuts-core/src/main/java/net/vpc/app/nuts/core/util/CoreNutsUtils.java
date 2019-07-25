@@ -40,6 +40,8 @@ import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;
 
 import java.lang.reflect.Array;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -52,6 +54,12 @@ import java.util.regex.Pattern;
  */
 public class CoreNutsUtils {
 
+    public static final int DEFAULT_UUID_LENGTH = 25;
+    public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;
+    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            .withZone( ZoneId.systemDefault() )
+            ;
     private static final Logger LOG = Logger.getLogger(CoreNutsUtils.class.getName());
 //    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");

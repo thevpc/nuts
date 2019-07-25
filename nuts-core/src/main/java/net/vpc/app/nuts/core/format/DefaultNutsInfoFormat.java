@@ -217,7 +217,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-global", options.isGlobal());
         props.put("nuts-workspace", stringValue(rt.getWorkspaceLocation().toString()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.name().toLowerCase(), rt.getStoreLocation(folderType).toString());
+            props.put("nuts-workspace-" + folderType.name().toLowerCase(), stringValue(rt.getStoreLocation(folderType).toString()));
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure()));
@@ -237,12 +237,12 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("os-name", ws.config().getPlatformOs().toString());
         props.put("os-family", stringValue(ws.config().getPlatformOsFamily()));
         if (ws.config().getPlatformOsDist() != null) {
-            props.put("os-dist", ws.config().getPlatformOsDist().toString());
+            props.put("os-dist", stringValue(ws.config().getPlatformOsDist().toString()));
         }
-        props.put("os-arch", ws.config().getPlatformArch().toString());
-        props.put("user-name", System.getProperty("user.name"));
-        props.put("user-home", System.getProperty("user.home"));
-        props.put("user-dir", System.getProperty("user.dir"));
+        props.put("os-arch", stringValue(ws.config().getPlatformArch().toString()));
+        props.put("user-name", stringValue(System.getProperty("user.name")));
+        props.put("user-home", stringValue(System.getProperty("user.home")));
+        props.put("user-dir", stringValue(System.getProperty("user.dir")));
         props.put("command-line-long", ws.config().options().format().compact(false).getBootCommandLine());
         props.put("command-line-short", ws.config().options().format().compact(true).getBootCommandLine());
         props.put("inherited", ws.config().options().isInherited());
@@ -303,7 +303,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return CoreCommonUtils.stringValue(s);
+        return ws.io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(s));
     }
 
     public boolean isLenient() {

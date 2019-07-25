@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2019 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -33,24 +33,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsDependencyTreeNode;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExecutionEntry;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsInstalledRepository;
+import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
@@ -77,7 +70,7 @@ public class FormattableNutsId {
     char status_i;
     char status_s;
     char status_o;
-    String display;
+    //    String display;
     boolean built = false;
 
     public static FormattableNutsId of(Object object, NutsSession session) {
@@ -153,8 +146,178 @@ public class FormattableNutsId {
         return b;
     }
 
+    private static FormatHelper getFormatHelper(NutsWorkspace ws) {
+        FormatHelper h = (FormatHelper) ws.userProperties().get(FormatHelper.class.getName());
+        if (h != null) {
+            return h;
+        }
+        FormatHelperResetListener h2 = (FormatHelperResetListener) ws.userProperties().get(FormatHelperResetListener.class.getName());
+        if (h2 == null) {
+            h2 = new FormatHelperResetListener();
+            ws.addWorkspaceListener(h2);
+        }
+        h = new FormatHelper(ws);
+        ws.userProperties().put(FormatHelper.class.getName(), h);
+        return h;
+    }
+
+    public static class FormatHelperResetListener implements NutsWorkspaceListener, NutsRepositoryListener {
+        private void _onReset(NutsWorkspace ws) {
+            ws.userProperties().remove(FormatHelper.class.getName());
+        }
+
+        @Override
+        public void onAddRepository(NutsWorkspaceEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onRemoveRepository(NutsWorkspaceEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onReloadWorkspace(NutsWorkspaceEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onCreateWorkspace(NutsWorkspaceEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onUpdateProperty(NutsWorkspaceEvent event) {
+
+        }
+
+        @Override
+        public void onAddRepository(NutsRepositoryEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onRemoveRepository(NutsRepositoryEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onConfigurationChanged(NutsRepositoryEvent event) {
+            _onReset(event.getWorkspace());
+        }
+
+        @Override
+        public void onConfigurationChanged(NutsWorkspaceEvent event) {
+            _onReset(event.getWorkspace());
+        }
+    }
+
+    public static class FormatHelper {
+        NutsWorkspace ws;
+
+        public FormatHelper(NutsWorkspace ws) {
+            this.ws = ws;
+        }
+
+        private Integer maxRepoNameSize;
+        private Integer maxUserNameSize;
+
+        public int maxRepoNameSize() {
+            if (maxRepoNameSize != null) {
+                return maxRepoNameSize;
+            }
+            int z = 0;
+            Stack<NutsRepository> stack = new Stack<>();
+            for (NutsRepository repository : ws.config().getRepositories()) {
+                stack.push(repository);
+            }
+            while (!stack.isEmpty()) {
+                NutsRepository r = stack.pop();
+                int n = r.config().getName().length();
+                if (n > z) {
+                    z = n;
+                }
+                if (r.config().isSupportedMirroring()) {
+                    for (NutsRepository repository : r.config().getMirrors()) {
+                        stack.push(repository);
+                    }
+                }
+            }
+            return maxRepoNameSize = z;
+        }
+
+        public int maxUserNameSize() {
+            if (maxUserNameSize != null) {
+                return maxUserNameSize;
+            }
+            int z = "anonymous".length();
+            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(ws.config());
+            NutsUserConfig[] users = wc.getStoredConfigSecurity().getUsers();
+            if (users != null) {
+                for (NutsUserConfig user : users) {
+                    String s = user.getUser();
+                    if (s != null) {
+                        z = Math.max(s.length(), z);
+                    }
+                }
+            }
+            Stack<NutsRepository> stack = new Stack<>();
+            for (NutsRepository repository : ws.config().getRepositories()) {
+                stack.push(repository);
+            }
+            while (!stack.isEmpty()) {
+                NutsRepository r = stack.pop();
+                NutsRepositoryConfigManagerExt rc = NutsRepositoryConfigManagerExt.of(r.config());
+                NutsUserConfig[] users1 = rc.getUsers();
+                if (users1 != null) {
+                    for (NutsUserConfig user : users1) {
+                        String s = user.getUser();
+                        if (s != null) {
+                            z = Math.max(s.length(), z);
+                        }
+                    }
+                }
+                if (r.config().isSupportedMirroring()) {
+                    for (NutsRepository repository : r.config().getMirrors()) {
+                        stack.push(repository);
+                    }
+                }
+            }
+            return maxUserNameSize = z;
+        }
+    }
+
     public String getSingleColumnRow(NutsFetchDisplayOptions oo) {
-        return CoreStringUtils.join(" ", Arrays.asList(getMultiColumnRow(oo)));
+        NutsDisplayProperty[] a = oo.getDisplayProperties();
+        StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < a.length; j++) {
+            String s = buildMain(oo, a[j]);
+            int z = 0;
+            switch (a[j]) {
+                case INSTALL_DATE: {
+                    z = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER_LENGTH;
+                    break;
+                }
+                case REPOSITORY: {
+                    z = getFormatHelper(session.getWorkspace()).maxRepoNameSize();
+                    break;
+                }
+                case REPOSITORY_ID: {
+                    z = CoreNutsUtils.DEFAULT_UUID_LENGTH;
+                    break;
+                }
+                case INSTALL_USER: {
+                    z = getFormatHelper(session.getWorkspace()).maxUserNameSize();
+                    break;
+                }
+            }
+            s = CoreStringUtils.alignLeft(s, z);
+            if (j > 0) {
+                sb.append(' ');
+            }
+            sb.append(s);
+        }
+        return sb.toString();
     }
 
     public String buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
@@ -224,7 +387,41 @@ public class FormattableNutsId {
                 if (def != null && def.getInstallInformation() != null) {
                     return stringValue(def.getInstallInformation().getInstallDate());
                 }
-                return "    -  -     :  :  .   ";
+                return "<null>";
+            }
+            case REPOSITORY: {
+                String rname = null;
+                if (def != null) {
+                    if (def.getRepositoryName() != null) {
+                        rname = def.getRepositoryName();
+                    }
+                    if (def.getRepositoryUuid() != null) {
+                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), true);
+                        if (r != null) {
+                            rname = r.config().getName();
+                        }
+                    }
+                }
+                if (rname == null && id != null) {
+                    rname = id.getNamespace();
+                }
+                return stringValue(rname);
+            }
+            case REPOSITORY_ID: {
+                String ruuid = null;
+                if (def != null) {
+                    if (def.getRepositoryUuid() != null) {
+                        ruuid = def.getRepositoryUuid();
+                    }
+                }
+                if (ruuid == null && id != null) {
+                    String p = id.getNamespace();
+                    NutsRepository r = ws.config().findRepositoryByName(p, true);
+                    if (r != null) {
+                        ruuid = r.uuid();
+                    }
+                }
+                return stringValue(ruuid);
             }
             case INSTALL_USER: {
                 if (def != null && def.getInstallInformation() != null) {
@@ -345,11 +542,11 @@ public class FormattableNutsId {
                 this.executableApp = desc.isNutsApplication();
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
-            if(def!=null) {
+            if (def != null) {
                 this.status_e = def.isApi() ? 'a'
                         : def.isRuntime() ? 'r'
-                        : def.isExtension()  ? 'e'
-                        : def.isCompanion()  ? 'c'
+                        : def.isExtension() ? 'e'
+                        : def.isCompanion() ? 'c'
                         : '-';
             }
             this.status_i = buildComponentAppStatus();
@@ -439,9 +636,9 @@ public class FormattableNutsId {
 
     public String getStatusString() {
         if (dep != null) {
-            return ""+status_f + status_e + status_i + status_s;
+            return "" + status_f + status_e + status_i + status_s;
         }
-        return ""+status_f + status_e + status_i;
+        return "" + status_f + status_e + status_i;
     }
 
     private String keywordArr1(String[] any) {

@@ -342,6 +342,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
                         }
 //                        boolean escalateMode = false;
+                        boolean contentSuccessful=false;
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
                                 NutsRepository repo = ws.config().getRepository(foundDefinition.getRepositoryUuid(), true);
@@ -352,6 +353,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                         .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
+                                    contentSuccessful=true;
                                     foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));
                                     break;
                                 }
@@ -363,7 +365,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 //                                }
                             }
                         }
-                        if (foundDefinition.getContent() == null || foundDefinition.getPath() == null) {
+                        if (!contentSuccessful) {
                             CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
                             foundDefinition = null;
 //                        } else if (escalateMode) {

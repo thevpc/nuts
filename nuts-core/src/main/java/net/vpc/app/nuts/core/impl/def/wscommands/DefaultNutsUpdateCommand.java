@@ -352,7 +352,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
         NutsWorkspaceConfigApi aconfig = null;
         NutsWorkspaceConfigRuntime rconfig = null;
-        if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
+        if (apiUpdate!=null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
             aconfig = wcfg.getStoredConfigApi();
             aconfig.setApiVersion(apiUpdate.getAvailable().getId().getVersion().toString());
 //            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), apiUpdate.getAvailable().getId(), false);
@@ -360,7 +360,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             traceSingleUpdate(apiUpdate);
             requireSave = true;
         }
-        if (runtimeUpdate.isUpdateAvailable() && !runtimeUpdate.isUpdateApplied()) {
+        if (runtimeUpdate!=null && runtimeUpdate.isUpdateAvailable() && !runtimeUpdate.isUpdateApplied()) {
 //            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), runtimeUpdate.getAvailable().getId(), true);
             aconfig = wcfg.getStoredConfigApi();
             aconfig.setRuntimeId(runtimeUpdate.getAvailable().getId().getLongName());
@@ -371,8 +371,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             traceSingleUpdate(runtimeUpdate);
             requireSave = true;
         }
-        NutsId finalApiId = apiUpdate.getAvailable()==null?apiUpdate.getLocal().getId():apiUpdate.getAvailable().getId();
-        NutsId finalRuntimeId = runtimeUpdate.getAvailable()==null?runtimeUpdate.getLocal().getId():runtimeUpdate.getAvailable().getId();
+        NutsId finalApiId = (apiUpdate==null || apiUpdate.getAvailable()==null)?ws.config().getApiId():apiUpdate.getAvailable().getId();
+        NutsId finalRuntimeId = (runtimeUpdate==null || runtimeUpdate.getAvailable()==null)?ws.config().getRuntimeId():runtimeUpdate.getAvailable().getId();
         wcfg.prepareBootApi(finalApiId,finalRuntimeId, true);
         wcfg.prepareBootRuntime(finalRuntimeId, true);
         for (NutsUpdateResult extension : result.getExtensions()) {

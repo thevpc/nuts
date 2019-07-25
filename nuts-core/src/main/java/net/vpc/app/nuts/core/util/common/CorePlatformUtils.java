@@ -484,8 +484,7 @@ public class CorePlatformUtils {
         try {
             mainClass = getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.log(java.util.logging.Level.SEVERE, "Invalid file format {0}", sourceName);
-            LOG.log(java.util.logging.Level.FINER, "Invalid file format " + sourceName, ex);
+            LOG.log(Level.FINEST, "Invalid file format " + sourceName, ex);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(

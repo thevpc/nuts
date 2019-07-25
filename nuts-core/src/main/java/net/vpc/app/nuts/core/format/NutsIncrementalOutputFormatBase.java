@@ -230,7 +230,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
 
     @Override
     public NutsIterableOutput setSession(NutsSession session) {
-        //should copy because will chage outputformat
+        //should copy because will change outputformat
         this.session = session == null ? null : session.copy();
         return this;
     }
