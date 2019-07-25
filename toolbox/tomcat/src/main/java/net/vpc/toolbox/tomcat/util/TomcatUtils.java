@@ -24,7 +24,6 @@ public class TomcatUtils {
                 .replace('/', '_')
                 .replace('*', '_')
                 .replace('?', '_')
-                .replace('.', '_')
                 .replace('\\', '_');
     }
 
@@ -66,7 +65,7 @@ public class TomcatUtils {
         if (value == null) {
             value = "";
         }
-        int dot = value.indexOf('.');
+        int dot = value.indexOf('/');
         if (dot >= 0) {
             return new String[]{value.substring(0, dot), value.substring(0, dot + 1)};
         } else if (preferInstance) {

@@ -507,12 +507,13 @@ public class LocalTomcat {
     }
 
     public void setPort(NutsCommandLine args) {
-        args.setCommandName("tomcat --local get-port");
+        args.setCommandName("tomcat --local set-port");
         LocalTomcatServiceBase s = null;
         NutsArgument a;
+        String type="http";
         boolean redirect = false;
-        boolean shutdown = false;
-        boolean ajp = false;
+//        boolean shutdown = false;
+//        boolean ajp = false;
         Integer port = null;
         while (args.hasNext()) {
             if (context.configureFirst(args)) {
@@ -522,9 +523,11 @@ public class LocalTomcat {
             } else if ((a = args.nextBoolean("--redirect")) != null) {
                 redirect = a.getBooleanValue();
             } else if ((a = args.nextBoolean("--shutdown")) != null) {
-                shutdown = a.getBooleanValue();
+                type = a.getBooleanValue()?"shutdown":"http";
             } else if ((a = args.nextBoolean("--ajp")) != null) {
-                ajp = a.getBooleanValue();
+                type = a.getBooleanValue()?"ajp":"http";
+            } else if ((a = args.nextBoolean("--http")) != null) {
+                type = a.getBooleanValue()?"http":"http";
             } else if (port == null && args.peek().isInt()) {
                 port = args.next().getInt();
             } else {
@@ -535,21 +538,28 @@ public class LocalTomcat {
             s = loadServiceBase("");
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        if (shutdown) {
-            if (port == null) {
-                port = 8005;
+        switch (type){
+            case "shutdown":{
+                if (port == null) {
+                    port = 8005;
+                }
+                c.setShutdownPort(port);
+                break;
             }
-            c.showOutLog(c.getShutdownPort());
-        } else if (ajp) {
-            if (port == null) {
-                port = redirect ? 8443 : 8009;
+            case "ajp":{
+                if (port == null) {
+                    port = redirect ? 8443 : 8009;
+                }
+                c.setConnectorPort("AJP/1.3", redirect, port);
+                break;
             }
-            c.setConnectorPort("AJP/1.3", redirect, port);
-        } else {
-            if (port == null) {
-                port = redirect ? 8080 : 8443;
+            case "http":{
+                if (port == null) {
+                    port = redirect ? 8080 : 8443;
+                }
+                c.setConnectorPort("HTTP/1.1", redirect, port);
+                break;
             }
-            c.setConnectorPort("HTTP/1.1", redirect, port);
         }
     }
 
@@ -770,13 +780,11 @@ public class LocalTomcat {
     public LocalTomcatServiceBase readBaseServiceArg(NutsCommandLine args) {
         NutsArgument a;
         if ((a = args.nextString("--name")) != null) {
-            return (loadOrCreateTomcatConfig(a.getStringValue()));
+            return (loadServiceBase(a.getStringValue()));
         } else if ((a = args.nextString("--app")) != null) {
             return (loadApp(a.getStringValue()));
         } else if ((a = args.nextString("--domain")) != null) {
             return (loadDomain(a.getStringValue()));
-        } else if ((a = args.nextString("-c", "--conf")) != null) {
-            return (loadServiceBase(a.getStringValue()));
         } else if (args.hasNext() && args.peek().isOption() && args.peek().isDouble()) {
             return null;
         } else {

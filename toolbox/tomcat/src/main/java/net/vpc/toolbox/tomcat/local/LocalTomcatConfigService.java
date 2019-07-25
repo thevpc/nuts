@@ -847,7 +847,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return port == null ? null : Integer.parseInt(port);
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            //
+            if(context.session().isPlainOut()) {
+                context.session().err().println("@@ERROR:@@ : " + ex);
+            }
         }
         //
         return null;
@@ -874,7 +876,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return port == null ? null : Integer.parseInt(port);
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            //
+            if(context.session().isPlainOut()) {
+                context.session().err().println("@@ERROR:@@ : " + ex);
+            }
         }
         //
         return null;
@@ -913,6 +917,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 throw new IllegalArgumentException("Not Found Connector");
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
+            if(context.session().isPlainOut()) {
+                context.session().err().println("@@ERROR:@@ : " + ex);
+            }
             //
         }
     }
@@ -937,6 +944,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 transformer.transform(domSource, streamResult);
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
+            if(context.session().isPlainOut()) {
+                context.session().err().println("@@ERROR:@@ : " + ex);
+            }
             //
         }
     }

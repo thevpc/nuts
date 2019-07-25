@@ -1,30 +1,109 @@
 ##tomcat## toolbox to start, monitor and deploy both local and remote tomcat instances
 
 ##SYNOPSIS:##
-##tomcat## \<TARGET\> \<OPTIONS\> ...
+##tomcat## [\<target\>] [<command>] **<what>** \<**options**\> <args>...
 
 tomcat toolbox to start, monitor and remote deploy applications
 
-[[<TARGET>]]
+[[<target>]]
     --server | -s : local tomcat configuration
     --client | -c : remote tomcat configuration
     If no target is provided, local tomcat configuration is considered.
 
-[[Local Tomcat Options]] :
-    --help          : show this help and exit
-    --version       : show version and exit
-    --no-colors     : disable color formatting
-    --verbose       : activate verbose mode (more output text)
-    list            :
-        list \[**options**\]
-    list            :
-    add  | set      :
-    show | describe :
-    remove          :
+[[<command>]]
+    commands depend on target and are listed below.
+
+[[<what>]]
+    tomcat supports three configuration namespaces : instance,app and domain.
+    global config is a set of apps and domains.
+    domain config is a subset of apps.
+    and app config may be (or may be not) bound to a domain config.
+
+    all commands are bound to one of these namespaces as follows :
+
+    **--name** <config>
+        use tomcat instance configuration
+
+    **--name** <config>.<domainOrApp>
+        use domain or application configuration
+
+    **--app** <config>.<app>
+        use application configuration
+
+    **--app** <config>.<domain>
+        use domain configuration
+
+
+##Local/Server Tomcat commands## :
+    list            \[**<options>**\]
+                    : list instance information
+        \[**--name**\] <name>
+                    : select instance name
+        \[**--apps**\]
+                    : list all apps
+        \[**--domains**\]
+                    : list all domains
+
+    show | describe **<what>**
+                    : show instance/app/domain information
+        \[**--name**\] <name>
+                    : select instance name
+        \[**--app**\]
+                    : select app name in the form 'name' or 'instance.name'
+        \[**--domain**\]
+                    : select domain name in the form 'name' or 'instance.name'
+
+    add  --name   <instance-name>
+                    : add new instance
+
+    add  --app   <app-name>
+                    : add new application
+
+    add  --domain   <app-name>
+                    : add new domain
+
+    add  | set      **<what>**
+                    :
+
+    remove       **<what>**
+                    :
+
+    status       **<what>**
+                    :
+
+    install      **<what>**
+                    :
+
+    reset        **<what>**
+                    :
+
+    deploy       **<what>**
+                    :
+
+    deploy-file  **<what>**
+                    :
+
+    delete-log   **<what>**
+                    :
+
+    delete-temp  **<what>**
+                    :
+
+    delete-work  **<what>**
+                    :
+
+    show-log **<what>** [**--path**] [<lines-count>]
+                    :
+
+    get-port | show-port **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**]
+                    :
+
+    set-port  **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**] <port>
+                    :
 
 ##EXAMPLES##:
 
-##commit## /my/checkeout/folder
+##tomcat## my-instance set
    commits and @@DELETES@@ the checked out folder
 
 
