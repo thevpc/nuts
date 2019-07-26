@@ -1,115 +1,159 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * <p>
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * <p>
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
- * Format used to format command line by {@link NutsExecCommand}
+ * Simple Command line Format
  *
- * @see NutsExecCommand#setCommandLineFormat(net.vpc.app.nuts.NutsCommandLineFormat)
- * @see NutsExecCommand#getCommandString()
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.7
  */
-public interface NutsCommandLineFormat {
+public interface NutsCommandLineFormat extends NutsFormat{
 
     /**
-     * true if argument is accepted (to be displayed)
-     * @param argIndex arg index
-     * @param arg arg value
-     * @return true if argument is accepted (to be displayed)
+     * set command line
+     * @param value value
+     * @return {@code this} instance
      */
-    default boolean acceptArgument(int argIndex, String arg) {
-        return true;
+    NutsCommandLineFormat setValue(NutsCommandLine value);
+
+    /**
+     * set command line
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsCommandLineFormat value(NutsCommandLine value);
+
+    /**
+     * return current command line
+     *
+     * @return current command line
+     */
+    NutsCommandLine getValue();
+
+    /**
+     * return new Command line instance
+     * @param line command line to parse
+     * @return new Command line instance
+     */
+    NutsCommandLine parse(String line);
+
+    /**
+     * return new Command line instance
+     *
+     * @param args command line args
+     * @return new Command line instance
+     */
+    NutsCommandLine create(String ... args);
+
+    /**
+     * return new Command line instance
+     *
+     * @param args command line args
+     * @return new Command line instance
+     */
+    NutsCommandLine create(List<String> args);
+
+
+    /**
+     * create new argument
+     * @param argument new argument
+     * @return new argument
+     */
+    NutsArgument createArgument(String argument);
+
+    /**
+     * create argument name
+     * @param type create argument type
+     * @return argument name
+     */
+    default NutsArgumentName createName(String type) {
+        return createName(type, type);
     }
 
     /**
-     * true if env is accepted (to be displayed)
-     * @param envName env name
-     * @param envValue env value
-     * @return true if env is accepted (to be displayed)
+     * create argument name
+     * @param type argument type
+     * @param label argument label
+     * @return argument name
      */
-    default boolean acceptEnvName(String envName, String envValue) {
-        return true;
+    NutsArgumentName createName(String type, String label);
+
+    /**
+     * create argument candidate
+     * @param value candidate value
+     * @return argument candidate
+     */
+    default NutsArgumentCandidate createCandidate(String value) {
+        return createCandidate(value, value);
     }
 
     /**
-     * true if redirect input is accepted (to be displayed)
-     * @return true if redirect input is accepted (to be displayed)
+     * create argument candidate
+     * @param value candidate value
+     * @param label candidate label
+     * @return argument candidate
      */
-    default boolean acceptRedirectInput() {
-        return true;
-    }
+    NutsArgumentCandidate createCandidate(String value, String label);
 
     /**
-     * true if redirect output is accepted (to be displayed)
-     * @return true if redirect output is accepted (to be displayed)
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
      */
-    default boolean acceptRedirectOutput() {
-        return true;
-    }
+    @Override
+    NutsCommandLineFormat session(NutsSession session);
 
     /**
-     * true if redirect error is accepted (to be displayed)
-     * @return true if redirect error is accepted (to be displayed)
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
      */
-    default boolean acceptRedirectError() {
-        return true;
-    }
+    @Override
+    NutsCommandLineFormat setSession(NutsSession session);
 
     /**
-     * replace the given argument or return null
-     * @param argIndex arg index
-     * @param arg arg value
-     * @return new value or null
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * @param args argument to configure with
+     * @return {@code this} instance
      */
-    default String replaceArgument(int argIndex, String arg) {
-        return null;
-    }
+    @Override
+    NutsCommandLineFormat configure(boolean skipUnsupported, String... args);
 
-    /**
-     * replace the given env name or return null
-     * @param envName env name
-     * @param envValue env value
-     * @return new value or null
-     */
-    default String replaceEnvName(String envName, String envValue) {
-        return null;
-    }
-
-    /**
-     * replace the given env value or return null
-     * @param envName env name
-     * @param envValue env value
-     * @return new value or null
-     */
-    default String replaceEnvValue(String envName, String envValue) {
-        return null;
-    }
 }

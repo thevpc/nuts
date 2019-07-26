@@ -34,10 +34,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsExecCommand;
-import net.vpc.app.nuts.NutsOsFamily;
-import net.vpc.app.nuts.NutsPlatformUtils;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -108,7 +106,7 @@ public class JpsCommand extends SimpleNshBuiltin {
         List<JpsRow> results = new ArrayList<>();
 
         NutsExecCommand e = context.getWorkspace().exec().syscall()
-                .command(resolveJpsCommand(), "-l", "-v", "-m")
+                .command(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
                 .redirectErrorStream()
                 .grabOutputString()
                 .failFast().run();
@@ -142,12 +140,12 @@ public class JpsCommand extends SimpleNshBuiltin {
         context.setPrintOutObject(results);
     }
 
-    public static String resolveJpsCommand() {
-        return resolveJavaToolCommand(null, "jps");
+    public static String resolveJpsCommand(NutsWorkspace ws) {
+        return resolveJavaToolCommand(ws,null, "jps");
     }
 
-    public static String resolveJavaToolCommand(String javaHome, String javaCommand) {
-        String exe = NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+    public static String resolveJavaToolCommand(NutsWorkspace ws,String javaHome, String javaCommand) {
+        String exe = ws.config().getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }

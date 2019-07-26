@@ -57,7 +57,7 @@ public class PermissionNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLine c=getWorkspace().commandLine();
+        NutsCommandLineFormat c=getWorkspace().commandLine();
         for (String r : NutsConstants.Permissions.ALL) {
             all.add(c.createCandidate(r));
         }

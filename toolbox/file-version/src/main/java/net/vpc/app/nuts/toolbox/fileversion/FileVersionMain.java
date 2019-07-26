@@ -296,7 +296,7 @@ public class FileVersionMain extends NutsApplication {
                 p.setProperty("nuts.version-provider", "win-pe");
                 if (!StringUtils.isBlank(artifactId) && !StringUtils.isBlank(artifactVersion)) {
                     d.add(new VersionDescriptor(
-                            ws.id().builder().setName(artifactId).setVersion(artifactVersion).build(),
+                            ws.id().builder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                             p
                     ));
                 }
@@ -356,7 +356,7 @@ public class FileVersionMain extends NutsApplication {
                                 && !StringUtils.isBlank(Bundle_Name)
                                 && !StringUtils.isBlank(Bundle_Version)) {
                             all.add(new VersionDescriptor(
-                                    ws.id().builder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
+                                    ws.id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties
                             ));
                         }
@@ -367,9 +367,9 @@ public class FileVersionMain extends NutsApplication {
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));
-                            properties.setProperty("name", d.getId().getName());
+                            properties.setProperty("name", d.getId().getArtifactId());
                             properties.setProperty("face", d.getId().getFace());
-                            properties.setProperty("group", d.getId().getGroup());
+                            properties.setProperty("group", d.getId().getGroupId());
                             properties.setProperty("version", d.getId().getVersion().toString());
 //                            if (d.getExt() != null) {
 //                                properties.setProperty("ext", d.getExt());
@@ -380,7 +380,7 @@ public class FileVersionMain extends NutsApplication {
                             if (d.getDescription() != null) {
                                 properties.setProperty("description", d.getDescription());
                             }
-                            properties.setProperty("locations", StringUtils.join(";", d.getLocations()));
+                            properties.setProperty("locations", ws.json().value(d.getLocations()).format());
                             properties.setProperty("platform", StringUtils.join(";", d.getPlatform()));
                             properties.setProperty("os", StringUtils.join(";", d.getOs()));
                             properties.setProperty("arch", StringUtils.join(";", d.getArch()));
@@ -412,7 +412,7 @@ public class FileVersionMain extends NutsApplication {
                                 }
                             }
                             all.add(new VersionDescriptor(
-                                    ws.id().builder().setGroup(d.getPomId().getGroupId())
+                                    ws.id().builder().setGroupId(d.getPomId().getGroupId())
                                             .setNamespace(d.getPomId().getArtifactId())
                                             .setVersion(d.getPomId().getVersion())
                                             .build(),
@@ -436,7 +436,7 @@ public class FileVersionMain extends NutsApplication {
                             if (version != null && version.trim().length() != 0) {
                                 all.add(new VersionDescriptor(
                                         ws.id().builder()
-                                                .setGroup(groupId).setName(artifactId).setVersion(version)
+                                                .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
                                                 .build(),
                                         prop
                                 ));

@@ -187,9 +187,7 @@ public class LocalTomcat {
                 toShow.add(loadServiceBase(""));
             }
             for (LocalTomcatServiceBase s2 : toShow) {
-                getContext().session().out().printf("[[%s]] :\n", s2.getName());
-                s2.write(getContext().session().out());
-                getContext().session().out().println();
+                s2.println(getContext().session().out());
             }
         }
     }
@@ -680,18 +678,20 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService[] listConfig() {
         List<LocalTomcatConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
-                (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {
-            for (Path entry : pp) {
-                try {
-                    LocalTomcatConfigService c = loadTomcatConfig(entry);
-                    all.add(c);
-                } catch (Exception ex) {
-                    //ignore
+        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
+            try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
+                    (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {
+                for (Path entry : pp) {
+                    try {
+                        LocalTomcatConfigService c = loadTomcatConfig(entry);
+                        all.add(c);
+                    } catch (Exception ex) {
+                        //ignore
+                    }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
         }
         return all.toArray(new LocalTomcatConfigService[0]);
     }

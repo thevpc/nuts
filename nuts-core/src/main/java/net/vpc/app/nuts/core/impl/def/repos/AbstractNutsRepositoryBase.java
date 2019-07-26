@@ -90,7 +90,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         if (CoreStringUtils.isBlank(groups)) {
             return true;
         }
-        return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups));
+        return id.getGroupId().matches(CoreStringUtils.simpexpToRegexp(groups));
     }
 
     @Override
@@ -198,7 +198,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
                 classifier = "-" + c;
             }
         }
-        return id.getName() + "-" + id.getVersion().getValue() + classifier + ext;
+        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
     }
 
 

@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
-import net.vpc.app.nuts.NutsConstants;
+
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
@@ -60,11 +60,9 @@ import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadataParser;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -109,8 +107,8 @@ public class MavenRepositoryFolderHelper {
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
         NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
-        Path groupFolder = getStoreLocation().resolve(id.getGroup().replace('.', File.separatorChar));
-        return groupFolder.resolve(id.getName());
+        Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
+        return groupFolder.resolve(id.getArtifactId());
     }
 
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {

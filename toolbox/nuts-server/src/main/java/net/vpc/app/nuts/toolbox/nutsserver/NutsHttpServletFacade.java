@@ -64,8 +64,8 @@ public class NutsHttpServletFacade {
                         context.getWorkspace()
                                 .id().builder()
                                 .setNamespace(context.getServerId())
-                                .setGroup("net.vpc.app.nuts")
-                                .setName("nuts-server")
+                                .setGroupId("net.vpc.app.nuts")
+                                .setArtifactId("nuts-server")
                                 .setVersion(context.getWorkspace().config().getRuntimeId().getVersion().toString())
                                 .build().toString()
                 );

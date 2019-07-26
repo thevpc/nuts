@@ -30,7 +30,7 @@ public class LocalMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().commandLine().setArguments(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().create(args)
                 .commandName("mysql --local");
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
@@ -496,18 +496,20 @@ public class LocalMysql {
 
     public LocalMysqlConfigService[] listConfig() {
         List<LocalMysqlConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getSharedConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
-            for (Path file1 : configFiles) {
-                try {
-                    LocalMysqlConfigService c = loadMysqlConfig(file1);
-                    all.add(c);
-                } catch (Exception ex) {
-                    //ignore
+        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
+            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getSharedConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
+                for (Path file1 : configFiles) {
+                    try {
+                        LocalMysqlConfigService c = loadMysqlConfig(file1);
+                        all.add(c);
+                    } catch (Exception ex) {
+                        //ignore
+                    }
                 }
-            }
 
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
         return all.toArray(new LocalMysqlConfigService[0]);
     }

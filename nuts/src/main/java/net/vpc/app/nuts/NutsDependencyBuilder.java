@@ -47,17 +47,17 @@ public interface NutsDependencyBuilder {
 
     /**
      * set group value
-     * @param group new value
+     * @param groupId new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder setGroup(String group);
+    NutsDependencyBuilder setGroupId(String groupId);
 
     /**
      * set name value
-     * @param name new value
+     * @param artifactId new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder setName(String name);
+    NutsDependencyBuilder setArtifactId(String artifactId);
 
     /**
      * set version value
@@ -149,7 +149,7 @@ public interface NutsDependencyBuilder {
      * return name
      * @return name
      */
-    String getName();
+    String getArtifactId();
 
     /**
      * return classifier

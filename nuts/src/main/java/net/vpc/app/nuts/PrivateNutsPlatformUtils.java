@@ -37,7 +37,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsPlatformUtils {
+final class PrivateNutsPlatformUtils {
 
     public static NutsOsFamily getPlatformOsFamily() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -238,7 +238,7 @@ public class NutsPlatformUtils {
         }
         boolean wasSystem = false;
         if (storeLocationLayout == null) {
-            storeLocationLayout = NutsPlatformUtils.getPlatformOsFamily();
+            storeLocationLayout = PrivateNutsPlatformUtils.getPlatformOsFamily();
         }
         String s = null;
         String folderTypeName = folderType.name().toLowerCase();

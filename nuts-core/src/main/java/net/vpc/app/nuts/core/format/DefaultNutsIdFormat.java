@@ -6,10 +6,7 @@ import java.io.Writer;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import net.vpc.app.nuts.core.DefaultNutsIdBuilder;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
@@ -22,12 +19,11 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     private boolean omitNamespace;
     private boolean omitGroup;
     private boolean omitImportedGroup;
-    private boolean omitEnv = true;
-    private boolean omitFace = true;
+    private boolean omitProperties = true;
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;
-    private Set<String> queryPropertiesOmitted=new HashSet<>();
+    private Set<String> omittedProperties =new HashSet<>();
     private NutsId id;
 
     public DefaultNutsIdFormat(NutsWorkspace ws) {
@@ -69,25 +65,29 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public boolean isOmitQuery() {
-        return omitEnv;
+    public boolean isOmitOtherProperties() {
+        return omitProperties;
     }
 
     @Override
-    public NutsIdFormat setOmitQuery(boolean omitEnv) {
-        this.omitEnv = omitEnv;
+    public NutsIdFormat setOmitOtherProperties(boolean value) {
+        this.omitProperties = value;
         return this;
+    }
+
+    @Override
+    public NutsIdFormat omitOtherProperties(boolean value) {
+        return setOmitOtherProperties(value);
     }
 
     @Override
     public boolean isOmitFace() {
-        return omitFace;
+        return isOmitProperty(NutsConstants.IdProperties.FACE);
     }
 
     @Override
     public NutsIdFormat setOmitFace(boolean omitFace) {
-        this.omitFace = omitFace;
-        return this;
+        return setOmitProperty(NutsConstants.IdProperties.FACE,omitFace);
     }
 
     @Override
@@ -125,12 +125,12 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public boolean isOmitClassifier() {
-        return isOmitQueryProperty("classifier");
+        return isOmitProperty(NutsConstants.IdProperties.CLASSIFIER);
     }
 
     @Override
     public NutsIdFormat setOmitClassifier(boolean value) {
-        return setOmitQueryProperty("classifier",value);
+        return setOmitProperty(NutsConstants.IdProperties.CLASSIFIER,value);
     }
 
     @Override
@@ -143,54 +143,54 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return omitClassifier(true);
     }
 
+//    @Override
+//    public boolean isOmitAlternative() {
+//        return isOmitProperty(NutsConstants.IdProperties.ALTERNATIVE);
+//    }
+//
+//    @Override
+//    public NutsIdFormat setOmitAlternative(boolean value) {
+//        return setOmitProperty(NutsConstants.IdProperties.ALTERNATIVE,value);
+//    }
+//
+//    @Override
+//    public NutsIdFormat omitAlternative(boolean value) {
+//        return setOmitAlternative(value);
+//    }
+//
+//    @Override
+//    public NutsIdFormat omitAlternative() {
+//        return omitAlternative(true);
+//    }
+
     @Override
-    public boolean isOmitAlternative() {
-        return isOmitQueryProperty("alternative");
+    public String[] getOmitProperties() {
+        return omittedProperties.toArray(new String[0]);
     }
 
     @Override
-    public NutsIdFormat setOmitAlternative(boolean value) {
-        return setOmitQueryProperty("alternative",value);
+    public boolean isOmitProperty(String name) {
+        return omittedProperties.contains(name);
     }
 
     @Override
-    public NutsIdFormat omitAlternative(boolean value) {
-        return setOmitAlternative(value);
-    }
-
-    @Override
-    public NutsIdFormat omitAlternative() {
-        return omitAlternative(true);
-    }
-
-    @Override
-    public String[] getOmitQueryProperties() {
-        return queryPropertiesOmitted.toArray(new String[0]);
-    }
-
-    @Override
-    public boolean isOmitQueryProperty(String name) {
-        return queryPropertiesOmitted.contains(name);
-    }
-
-    @Override
-    public NutsIdFormat setOmitQueryProperty(String name, boolean value) {
+    public NutsIdFormat setOmitProperty(String name, boolean value) {
         if(value){
-            queryPropertiesOmitted.add(name);
+            omittedProperties.add(name);
         }else{
-            queryPropertiesOmitted.remove(name);
+            omittedProperties.remove(name);
         }
         return this;
     }
 
     @Override
-    public NutsIdFormat omitQueryProperty(String name, boolean value) {
-        return setOmitQueryProperty(name,true);
+    public NutsIdFormat omitProperty(String name, boolean value) {
+        return setOmitProperty(name,true);
     }
 
     @Override
-    public NutsIdFormat omitQueryProperty(String name) {
-        return omitQueryProperty(name,true);
+    public NutsIdFormat omitProperty(String name) {
+        return omitProperty(name,true);
     }
 
     @Override
@@ -198,17 +198,18 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if(id==null){
             return "<null>";
         }
-        Map<String, String> queryMap = id.getQueryMap();
-        String scope = queryMap.remove("scope");
-        String optional = queryMap.remove("optional");
-        String classifier = queryMap.remove("classifier");
-        String exclusions = queryMap.remove("exclusions");
+        Map<String, String> queryMap = id.getProperties();
+        String scope = queryMap.remove(NutsConstants.IdProperties.SCOPE);
+        String optional = queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
+        String classifier = queryMap.remove(NutsConstants.IdProperties.CLASSIFIER);
+//        String alternative = queryMap.remove(NutsConstants.IdProperties.ALTERNATIVE);
+        String exclusions = queryMap.remove(NutsConstants.IdProperties.EXCLUSIONS);
         NutsIdBuilder idBuilder = id.builder();
-        if (omitEnv) {
-            idBuilder.setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+        if (isOmitOtherProperties()) {
+            idBuilder.setProperties(new LinkedHashMap<>());
         }
-        if (omitFace) {
-            idBuilder.setQueryProperty(NutsConstants.QueryKeys.FACE, null);
+        if (isOmitFace()) {
+            idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
         NutsTerminalFormat tf = ws.io().getTerminalFormat();
@@ -221,28 +222,41 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
         if (!isOmitGroup()) {
-            if (!CoreStringUtils.isBlank(id.getGroup())) {
-                boolean importedGroup = ws.config().getImports().contains(id.getGroup());
+            if (!CoreStringUtils.isBlank(id.getGroupId())) {
+                boolean importedGroup = ws.config().getImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroup())) {
                     if (importedGroup) {
                         sb.append("<<");
-                        sb.append(tf.escapeText(id.getGroup()));
+                        sb.append(tf.escapeText(id.getGroupId()));
                         sb.append(">>");
                     } else {
-                        sb.append(tf.escapeText(id.getGroup()));
+                        sb.append(tf.escapeText(id.getGroupId()));
                     }
                     sb.append(":");
                 }
             }
         }
         sb.append("[[");
-        sb.append(tf.escapeText(id.getName()));
+        sb.append(tf.escapeText(id.getArtifactId()));
         sb.append("]]");
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
             sb.append("#");
             sb.append(tf.escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;
+
+//        if (!CoreStringUtils.isBlank(alternative)) {
+//            if (firstQ) {
+//                sb.append("{{\\?}}");
+//                firstQ = false;
+//            } else {
+//                sb.append("{{\\&}}");
+//            }
+//            sb.append("{{alternative}}=**");
+//            sb.append("**");
+//            sb.append(tf.escapeText(alternative));
+//            sb.append("**");
+//        }
 
         if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
@@ -297,7 +311,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             sb.append(tf.escapeText(exclusions));
             sb.append("@@");
         }
-        if (!CoreStringUtils.isBlank(id.getQuery())) {
+        if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys=new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v = queryMap.get(k);
@@ -388,7 +402,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         switch (a.getStringKey()) {
             case "--omit-env": {
-                setOmitQuery(cmdLine.nextBoolean().getBooleanValue());
+                setOmitOtherProperties(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-face": {

@@ -343,7 +343,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         boolean requireSave = false;
         final PrintStream out = CoreIOUtils.resolveOut(getValidSession());
         boolean accept = ws.io().getTerminal().ask()
-                .forBoolean("Would you like to apply updates").setDefaultValue(true)
+                .forBoolean("Would you like to apply updates?").setDefaultValue(true)
                 .session(getValidSession()).getValue();
         if (getValidSession().isAsk() && !accept) {
             throw new NutsUserCancelException(ws);
@@ -582,9 +582,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     private NutsId toCanonicalForm(NutsId id) {
         if (id != null) {
             id = id.setNamespace(null);
-            String oldValue = id.getQueryMap().get(NutsConstants.QueryKeys.FACE);
+            String oldValue = id.getProperties().get(NutsConstants.IdProperties.FACE);
             if (oldValue != null && oldValue.trim().isEmpty()) {
-                id = id.setQueryProperty(NutsConstants.QueryKeys.FACE, null);
+                id = id.setProperty(NutsConstants.IdProperties.FACE, null);
             }
         }
         return id;

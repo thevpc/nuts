@@ -34,7 +34,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         }
         List<String> commands = new ArrayList<String>();
         NutsWorkspace ws = getSession().getWorkspace();
-        NutsCommandLine commandLine = ws.commandLine().setArguments(args);
+        NutsCommandLine commandLine = ws.commandLine().create(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -70,7 +70,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                     case ALIAS: {
                         out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.id().value(p.getId()).format(),
-                                ws.commandLine().setArguments(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
+                                ws.commandLine().create(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
                         );
                         break;
                     }

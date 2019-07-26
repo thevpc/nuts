@@ -56,7 +56,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         return this;
     }
 
-    public LocalTomcatDomainConfigService write(PrintStream out) {
+    public LocalTomcatDomainConfigService print(PrintStream out) {
         context.workspace().json().value(getConfig()).print(out);
         return this;
     }

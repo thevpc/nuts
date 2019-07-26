@@ -36,42 +36,7 @@ package net.vpc.app.nuts;
  */
 public interface NutsTreeLinkFormat {
 
-    enum Type {
-        /**
-         * first node in the tree
-         */
-        FIRST,
-        /**
-         * any middle node in the tree
-         */
-        MIDDLE,
-        /**
-         * last node in the tree
-         */
-        LAST;
+    String formatMain(NutsAlignFormat type);
 
-        /**
-         * lower-cased identifier for the enum entry
-         */
-        private final String id;
-
-        /**
-         * constructor
-         */
-        Type() {
-            this.id = name().toLowerCase().replace('_', '-');
-        }
-
-        /**
-         * lower cased identifier.
-         * @return lower cased identifier
-         */
-        public String id() {
-            return id;
-        }
-    }
-
-    String formatMain(Type type);
-
-    String formatChild(Type type);
+    String formatChild(NutsAlignFormat type);
 }

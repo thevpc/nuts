@@ -136,10 +136,10 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
         if (this.getDescriptor() == null) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Missing Descriptor");
         }
-        if (CoreStringUtils.isBlank(this.getId().getGroup())) {
+        if (CoreStringUtils.isBlank(this.getId().getGroupId())) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Empty group");
         }
-        if (CoreStringUtils.isBlank(this.getId().getName())) {
+        if (CoreStringUtils.isBlank(this.getId().getArtifactId())) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Empty name");
         }
         if ((this.getId().getVersion().isBlank())) {

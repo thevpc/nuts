@@ -32,11 +32,11 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     public NutsPatternIdFilter(NutsId id) {
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
-        g = CoreStringUtils.toPattern(id.getGroup());
-        n = CoreStringUtils.toPattern(id.getName());
+        g = CoreStringUtils.toPattern(id.getGroupId());
+        n = CoreStringUtils.toPattern(id.getArtifactId());
         v = id.getVersion().toFilter();
-        qm = id.getQueryMap();
-        for (Map.Entry<String, String> entry : id.getQueryMap().entrySet()) {
+        qm = id.getProperties();
+        for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
             String key = entry.getKey();
             String val = entry.getValue();
             if (!key.contains("*")) {
@@ -59,10 +59,10 @@ public class NutsPatternIdFilter implements NutsIdFilter {
 
     @Override
     public boolean accept(NutsId other, NutsSession session) {
-        if (!g.matcher(other.getGroup()).matches()) {
+        if (!g.matcher(other.getGroupId()).matches()) {
             return false;
         }
-        if (!n.matcher(other.getName()).matches()) {
+        if (!n.matcher(other.getArtifactId()).matches()) {
             return false;
         }
         if (!v.accept(other.getVersion(), session)) {
@@ -71,7 +71,7 @@ public class NutsPatternIdFilter implements NutsIdFilter {
         Map<String, String> oqm = null;
         for (Predicate<Map<String, String>> pp : q) {
             if (oqm == null) {
-                oqm = other.getQueryMap();
+                oqm = other.getProperties();
             }
             if (!pp.test(oqm)) {
                 return false;

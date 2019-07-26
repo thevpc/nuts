@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.impl.def.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
+import net.vpc.app.nuts.core.DefaultNutsExecutorDescriptor;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.format.json.JsonStringBuffer;
 
@@ -130,7 +131,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         .setExecutable(true)
                         //                        .setExt("sh")
                         .setPackaging("sh")
-                        .setExecutor(new NutsExecutorDescriptor(BASH))
+                        .setExecutor(new DefaultNutsExecutorDescriptor(BASH))
                         .build();
             }
             return ws.descriptor().parse(comment.getValidString());

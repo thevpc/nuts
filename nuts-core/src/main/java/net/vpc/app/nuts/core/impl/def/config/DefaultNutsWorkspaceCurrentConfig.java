@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsHomeLocationsMap;
@@ -107,7 +108,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         }
         Path[] homes = new Path[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            String ss = NutsPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
+            String ss = Nuts.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
             if (CoreStringUtils.isBlank(ss)) {
                 throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
             }
@@ -155,7 +156,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             apiId = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
         }
         if (storeLocationLayout == null) {
-            storeLocationLayout = NutsPlatformUtils.getPlatformOsFamily();
+            storeLocationLayout = getPlatformOsFamily();
         }
         return this;
     }
@@ -334,7 +335,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     
     public Path getHomeLocation(NutsStoreLocation folderType) {
-        return ws.io().path(NutsPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(),
+        return ws.io().path(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()
@@ -430,10 +431,30 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return platformArch;
     }
 
-    
+
+    private static NutsOsFamily getPlatformOsFamily0() {
+        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        if (property.startsWith("linux")) {
+            return NutsOsFamily.LINUX;
+        }
+        if (property.startsWith("win")) {
+            return NutsOsFamily.WINDOWS;
+        }
+        if (property.startsWith("mac")) {
+            return NutsOsFamily.MACOS;
+        }
+        if (property.startsWith("sunos")) {
+            return NutsOsFamily.UNIX;
+        }
+        if (property.startsWith("freebsd")) {
+            return NutsOsFamily.UNIX;
+        }
+        return NutsOsFamily.UNKNOWN;
+    }
+
     public NutsOsFamily getPlatformOsFamily() {
         if (platformOsFamily == null) {
-            platformOsFamily = NutsPlatformUtils.getPlatformOsFamily();
+            platformOsFamily = getPlatformOsFamily0();
         }
         return platformOsFamily;
     }

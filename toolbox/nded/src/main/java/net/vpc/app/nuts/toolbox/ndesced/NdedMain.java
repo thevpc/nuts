@@ -30,9 +30,9 @@ public class NdedMain extends NutsApplication {
             } else if ((a = commandLine.nextString("--id")) != null) {
                 String v = a.getStringValue();
                 builder0.setId(v);
-            } else if ((a = commandLine.nextString("--alternative")) != null) {
-                String v = a.getStringValue();
-                builder0.setAlternative(v);
+//            } else if ((a = commandLine.nextString("--alternative")) != null) {
+//                String v = a.getStringValue();
+//                builder0.setAlternative(v);
             } else if ((a = commandLine.nextString("--name")) != null) {
                 String v = a.getStringValue();
                 builder0.setName(v);
@@ -69,7 +69,9 @@ public class NdedMain extends NutsApplication {
                 }
             } else if ((a = commandLine.nextString("--location")) != null) {
                 String v = a.getStringValue();
-                builder0.addLocation(v);
+                builder0.addLocation(
+                        context.workspace().descriptor().locationBuilder().setUrl(v).setClassifier(null).build()
+                        );
             } else if ((a = commandLine.nextBoolean("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
             } else {
@@ -135,7 +137,7 @@ public class NdedMain extends NutsApplication {
         if (!nullOnly || b.getLocations().length == 0) {
             String s = checkParam("location", Arrays.toString(b.getLocations()));
             if (!isBlank(s)) {
-                b.addLocation(s);
+                b.addLocation(context.workspace().descriptor().locationBuilder().setUrl(s).build());
             }
         }
 
@@ -147,11 +149,11 @@ public class NdedMain extends NutsApplication {
             error = true;
             context.session().err().print("Missing id\n");
         } else {
-            if (b.getId().getName() == null) {
+            if (b.getId().getArtifactId() == null) {
                 error = true;
                 context.session().err().print("Missing id name\n");
             }
-            if (b.getId().getGroup() == null) {
+            if (b.getId().getGroupId() == null) {
                 error = true;
                 context.session().err().print("Missing id group\n");
             }
@@ -216,10 +218,10 @@ public class NdedMain extends NutsApplication {
                 throw new NutsExecutionException(context.getWorkspace(), "Cancelled", 1);
             }
         }
-        String path = b.getId().getGroup().replace('.', '/')
-                + '/' + b.getId().getName()
+        String path = b.getId().getGroupId().replace('.', '/')
+                + '/' + b.getId().getArtifactId()
                 + '/' + b.getId().getVersion()
-                + '/' + b.getId().getName() + "-" + b.getId().getVersion() + ".json";
+                + '/' + b.getId().getArtifactId() + "-" + b.getId().getVersion() + ".json";
         File file = new File(home, path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
@@ -228,8 +230,8 @@ public class NdedMain extends NutsApplication {
         out.printf("packaging  : ==%s==%n", desc.getPackaging() == null ? "" : desc.getPackaging());
         if (desc.getLocations().length > 0) {
             out.println("locations  : ");
-            for (String s : b.getLocations()) {
-                out.printf("             ==%s==%n", s);
+            for (NutsIdLocation s : b.getLocations()) {
+                out.printf("             ==%s== %s%n", s.getClassifier(),s.getUrl());
             }
         }
         if (!confirm("Confirm ?")) {

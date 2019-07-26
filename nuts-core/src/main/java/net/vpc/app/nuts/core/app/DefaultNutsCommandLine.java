@@ -232,6 +232,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsCommandLine setArguments(List<String> arguments) {
+        if(arguments==null){
+            return setArguments(new String[0]);
+        }
         return setArguments(arguments.toArray(new String[0]));
     }
 
@@ -370,6 +373,10 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
         }
         return null;
+    }
+
+    private NutsArgumentCandidate createCandidate(String s) {
+        return DefaultNutsCommandLineFormat.Factory.createCandidate0(ws,s,null);
     }
 
     @Override
@@ -568,11 +575,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return count;
     }
 
-    @Override
-    public NutsArgumentName createName(String type) {
-        return createName(type, type);
-    }
-
     public NutsArgument next(boolean required, boolean expandSimpleOptions) {
         if (ensureNext(expandSimpleOptions, false)) {
             if (!lookahead.isEmpty()) {
@@ -677,64 +679,15 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return false;
     }
 
+    private NutsArgument createArgument(String v) {
+        return DefaultNutsCommandLineFormat.Factory.createArgument0(ws,v,eq);
+    }
+
     private boolean isAutoComplete() {
         return autoComplete != null && getWordIndex() == autoComplete.getCurrentWordIndex();
     }
 
-    @Override
-    public NutsArgument createArgument(String argument) {
-        return new DefaultNutsArgument(argument, eq);
-    }
 
-    @Override
-    public NutsArgumentCandidate createCandidate(String value, String label) {
-        return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label)?value:label);
-    }
-
-    @Override
-    public NutsArgumentName createName(String type, String label) {
-        if (type == null) {
-            type = "";
-        }
-        if (label == null) {
-            label = type;
-        }
-        switch (type) {
-            case "arch": {
-                return new ArchitectureNonOption(label, ws);
-            }
-            case "packaging": {
-                return new PackagingNonOption(ws,label);
-            }
-            case "extension": {
-                return new ExtensionNonOption(type, null);
-            }
-            case "file": {
-                return new FileNonOption(ws,type);
-            }
-            case "boolean": {
-                return new ValueNonOption(ws,type, "true", "false");
-            }
-            case "repository": {
-                return new RepositoryNonOption(ws, label);
-            }
-            case "repository-type": {
-                return new RepositoryTypeNonOption(label, ws);
-            }
-            case "right": {
-                return new PermissionNonOption(label, ws, null, null, false);
-            }
-            case "user": {
-                return new UserNonOption(label, ws);
-            }
-            case "group": {
-                return new GroupNonOption(label, ws);
-            }
-            default: {
-                return new DefaultNonOption(ws,label);
-            }
-        }
-    }
 
     public NutsCommandLine copy() {
         DefaultNutsCommandLine c = new DefaultNutsCommandLine(ws, toArray(), autoComplete);
@@ -755,5 +708,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     private String highlightText(String text) {
         return "{{" + ws.io().getTerminalFormat().escapeText(text) + "}}";
     }
+
 
 }

@@ -84,7 +84,9 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     public NutsObjectFormat getBase() {
-        if (base == null || outputFormat != getOutputFormat()) {
+        NutsOutputFormat nextOutputFormat = getOutputFormat();
+        if (base == null || this.outputFormat != nextOutputFormat) {
+            this.outputFormat = nextOutputFormat;
             base = createObjectFormat();
             base.setValue(getValue());
             base.setSession(getValidSession());

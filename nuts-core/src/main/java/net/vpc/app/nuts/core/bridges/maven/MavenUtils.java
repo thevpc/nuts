@@ -210,7 +210,7 @@ public class MavenUtils {
         try {
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(is, ws, session, path.toString());
-                if (nutsDescriptor.getId().getName() == null) {
+                if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
                         LOG.log(Level.FINE, "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
@@ -258,20 +258,20 @@ public class MavenUtils {
                     }
                 }
                 if (parentId != null) {
-                    properties.put("parent.groupId", parentId.getGroup());
-                    properties.put("parent.artifactId", parentId.getName());
+                    properties.put("parent.groupId", parentId.getGroupId());
+                    properties.put("parent.artifactId", parentId.getArtifactId());
                     properties.put("parent.version", parentId.getVersion().getValue());
 
-                    properties.put("project.parent.groupId", parentId.getGroup());
-                    properties.put("project.parent.artifactId", parentId.getName());
+                    properties.put("project.parent.groupId", parentId.getGroupId());
+                    properties.put("project.parent.artifactId", parentId.getArtifactId());
                     properties.put("project.parent.version", parentId.getVersion().getValue());
                     nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
                 }
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (CoreStringUtils.isBlank(thisId.getGroup())) {
-                            thisId = thisId.setGroup(parentId.getGroup());
+                        if (CoreStringUtils.isBlank(thisId.getGroupId())) {
+                            thisId = thisId.setGroupId(parentId.getGroupId());
                         }
                         if (CoreStringUtils.isBlank(thisId.getVersion().getValue())) {
                             thisId = thisId.setVersion(parentId.getVersion().getValue());
@@ -315,11 +315,11 @@ public class MavenUtils {
                 if (!CoreStringUtils.isBlank(nutsPackaging)) {
                     nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
                 }
-                properties.put("pom.groupId", thisId.getGroup());
+                properties.put("pom.groupId", thisId.getGroupId());
                 properties.put("pom.version", thisId.getVersion().getValue());
-                properties.put("pom.artifactId", thisId.getName());
-                properties.put("project.groupId", thisId.getGroup());
-                properties.put("project.artifactId", thisId.getName());
+                properties.put("pom.artifactId", thisId.getArtifactId());
+                properties.put("project.groupId", thisId.getGroupId());
+                properties.put("project.artifactId", thisId.getArtifactId());
                 properties.put("project.version", thisId.getVersion().getValue());
                 properties.put("version", thisId.getVersion().getValue());
                 nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
@@ -372,7 +372,7 @@ public class MavenUtils {
 
 
     public static DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid) {
-        String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getName() + "-" + rid.getVersion() + ".pom";
+        String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath);
     }
 
@@ -404,7 +404,7 @@ public class MavenUtils {
 //        String dependencies = null;
         InputStream xml = null;
         try {
-            if (url.startsWith("http://") || url.startsWith("https://")) {
+            if (CoreIOUtils.isPathHttp(url)) {
                 xml = new URL(url).openStream();
             } else {
                 File file = new File(url);
@@ -516,7 +516,7 @@ public class MavenUtils {
      * @return latest runtime version
      */
     public static NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {
-        String path = zId.getGroup().replace('.', '/') + '/' + zId.getName();
+        String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
         String bestVersion = null;
 //        if (!NO_M2) {
             File mavenNutsCoreFolder = new File(System.getProperty("user.home"), ".m2/repository/" + path + "/".replace("/", File.separator));

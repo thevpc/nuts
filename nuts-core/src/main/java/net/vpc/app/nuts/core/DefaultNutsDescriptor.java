@@ -43,7 +43,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-    private String alternative;
+//    private String alternative;
     private NutsId[] parents;
     private String packaging;
 //    private String ext;
@@ -63,7 +63,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] os;
     private String[] osdist;
     private String[] platform;
-    private String[] locations;
+    private NutsIdLocation[] locations;
+    private NutsClassifierMapping[] classifierMappings;
     private NutsDependency[] dependencies;
     private NutsDependency[] standardDependencies;
     private Map<String, String> properties;
@@ -71,7 +72,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsDescriptor d) {
         this(
                 d.getId(),
-                d.getAlternative(),
+//                d.getAlternative(),
                 d.getParents(),
                 d.getPackaging(),
                 d.isExecutable(),
@@ -88,25 +89,26 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getDependencies(),
                 d.getStandardDependencies(),
                 d.getLocations(),
-                d.getProperties()
+                d.getProperties(),
+                d.getClassifierMappings()
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication,
+    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean nutsApplication,
             //                                 String ext,
             NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
             String[] arch, String[] os, String[] osdist, String[] platform,
             NutsDependency[] dependencies,
             NutsDependency[] standardDependencies,
-            String[] locations, Map<String, String> properties) {
+                                 NutsIdLocation[] locations, Map<String, String> properties,NutsClassifierMapping[] classifierMappings) {
         if (id == null) {
             throw new NutsIllegalArgumentException(null, "Missing id");
         }
-        if (!id.getQueryMap().isEmpty()) {
+        if (!id.getProperties().isEmpty()) {
             throw new NutsIllegalArgumentException(null, "id should not have query defined in descriptors");
         }
         this.id = id;
-        this.alternative = CoreStringUtils.trimToNull(alternative);
+//        this.alternative = CoreStringUtils.trimToNull(alternative);
         this.packaging = CoreStringUtils.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
@@ -124,6 +126,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.osdist = CoreCommonUtils.toArraySet(osdist);
         this.platform = CoreCommonUtils.toArraySet(platform);
         this.locations = CoreCommonUtils.toArraySet(locations);
+        this.classifierMappings = CoreCommonUtils.toArraySet(classifierMappings);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {
@@ -146,10 +149,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
     }
 
-    @Override
-    public String getAlternative() {
-        return alternative;
-    }
+//    @Override
+//    public String getAlternative() {
+//        return alternative;
+//    }
 
     @Override
     public NutsExecutorDescriptor getInstaller() {
@@ -236,15 +239,20 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String[] getLocations() {
+    public NutsIdLocation[] getLocations() {
         return locations;
+    }
+
+    @Override
+    public NutsClassifierMapping[] getClassifierMappings() {
+        return classifierMappings;
     }
 
     @Override
     public String toString() {
         return "DefaultNutsDescriptor{"
                 + "id=" + id
-                + ", alternative='" + alternative + '\''
+//                + ", alternative='" + alternative + '\''
                 + ", parents=" + Arrays.toString(parents)
                 + ", packaging='" + packaging + '\''
                 + //                ", ext='" + ext + '\'' +
@@ -277,7 +285,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return executable == that.executable
                 && nutsApplication == that.nutsApplication
                 && Objects.equals(id, that.id)
-                && Objects.equals(alternative, that.alternative)
+//                && Objects.equals(alternative, that.alternative)
                 && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging)
                 && //                        Objects.equals(ext, that.ext) &&
@@ -290,6 +298,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && Arrays.equals(osdist, that.osdist)
                 && Arrays.equals(platform, that.platform)
                 && Arrays.equals(locations, that.locations)
+                && Arrays.equals(classifierMappings, that.classifierMappings)
                 && Arrays.equals(dependencies, that.dependencies)
                 && Arrays.equals(standardDependencies, that.standardDependencies)
                 && Objects.equals(properties, that.properties);
@@ -298,7 +307,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, alternative, packaging,
+        int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
                 executable, nutsApplication, executor, installer, name, description, properties);
         result = 31 * result + Arrays.hashCode(parents);
@@ -307,6 +316,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         result = 31 * result + Arrays.hashCode(osdist);
         result = 31 * result + Arrays.hashCode(platform);
         result = 31 * result + Arrays.hashCode(locations);
+        result = 31 * result + Arrays.hashCode(classifierMappings);
         result = 31 * result + Arrays.hashCode(dependencies);
         result = 31 * result + Arrays.hashCode(standardDependencies);
         return result;

@@ -65,7 +65,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
         if (CoreStringUtils.isBlank(location)) {
             return DEFAULT_SUPPORT;
         }
-        if (location.startsWith("http://") || location.startsWith("https://")) {
+        if (CoreIOUtils.isPathHttp(location)) {
             return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {

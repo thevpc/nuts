@@ -260,7 +260,7 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
 
     public void parse(String[] args) {
-        NutsArgumentsParser.parseNutsArguments(args, this);
+        PrivateNutsArgumentsParser.parseNutsArguments(args, this);
     }
 
     public NutsDefaultWorkspaceOptions() {
@@ -268,7 +268,7 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
 
     @SuppressWarnings("LeakingThisInConstructor")
     public NutsDefaultWorkspaceOptions(String[] args) {
-        NutsArgumentsParser.parseNutsArguments(args, this);
+        PrivateNutsArgumentsParser.parseNutsArguments(args, this);
     }
 
     @Override

@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
+
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts is
  * it's main class for creating and opening nuts workspaces.
@@ -107,7 +109,7 @@ public final class Nuts {
         );
         NutsDefaultWorkspaceOptions options;
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
-            options = (NutsDefaultWorkspaceOptions) NutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
+            options = (NutsDefaultWorkspaceOptions) PrivateNutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
         } else {
             options = new NutsDefaultWorkspaceOptions();
         }
@@ -160,4 +162,37 @@ public final class Nuts {
         new NutsBootWorkspace(args).runWorkspace();
     }
 
+    /**
+     * Create a {@link NutsWorkspaceOptions} instance from string array of valid
+     * nuts options
+     *
+     * @param bootArguments input arguments to parse
+     * @return newly created and filled options instance
+     */
+    public static NutsWorkspaceOptions parseNutsArguments(String[] bootArguments) {
+        return PrivateNutsArgumentsParser.parseNutsArguments(bootArguments);
+    }
+
+    /**
+     * resolves nuts home folder.Home folder is the root for nuts folders.It
+     * depends on folder type and store layout. For instance log folder depends
+     * on on the underlying operating system (linux,windows,...).
+     * Specifications: XDG Base Directory Specification
+     * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+     *
+     * @param folderType folder type to resolve home for
+     * @param storeLocationLayout location layout to resolve home for
+     * @param homeLocations workspace home locations
+     * @param global global workspace
+     * @param workspaceName workspace name or id (discriminator)
+     * @return home folder path
+     */
+    public static String getPlatformHomeFolder(
+            NutsOsFamily storeLocationLayout,
+            NutsStoreLocation folderType,
+            Map<String, String> homeLocations,
+            boolean global,
+            String workspaceName) {
+        return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout,folderType,homeLocations,global,workspaceName);
+    }
 }

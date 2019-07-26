@@ -45,7 +45,7 @@ public class ExtensionNonOption extends DefaultNonOption {
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
-        NutsCommandLine c=getWorkspace().commandLine();
+        NutsCommandLineFormat c=getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
         all.add(c.createCandidate(NutsConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"

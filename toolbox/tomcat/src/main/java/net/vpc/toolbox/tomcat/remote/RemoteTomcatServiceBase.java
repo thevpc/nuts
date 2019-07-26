@@ -8,7 +8,13 @@ public abstract class RemoteTomcatServiceBase {
 
     public abstract String getName();
 
-    public abstract RemoteTomcatServiceBase write(PrintStream out);
+    public abstract RemoteTomcatServiceBase print(PrintStream out);
+
+    public RemoteTomcatServiceBase println(PrintStream out) {
+        print(out);
+        out.println();
+        return this;
+    }
 
     public abstract RemoteTomcatServiceBase remove();
 }

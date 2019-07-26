@@ -84,6 +84,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
+        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
         do {
             if (context.configureFirst(cmdLine)) {
                 //
@@ -94,7 +95,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                     if (cmdLine.next("--xml") != null) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
                     } else if (cmdLine.next("--system") != null) {
                         o.sourceFormat = Format.PROPS;
@@ -104,12 +105,12 @@ public class PropsCommand extends AbstractNshBuiltin {
                     } else if (cmdLine.next("--props") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
                     } else if (cmdLine.next("--file") != null) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else {
                         cmdLine.setCommandName(getName()).unexpectedArgument();
                     }
@@ -126,16 +127,16 @@ public class PropsCommand extends AbstractNshBuiltin {
                     } else if (cmdLine.next("--to-props-file") != null) {
                         o.targetFormat = Format.PROPS;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
                     } else if (cmdLine.next("--to-xml-file") != null) {
                         o.targetFormat = Format.XML;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else if (cmdLine.next("--to-file") != null) {
                         o.targetFormat = Format.AUTO;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
                     } else if (cmdLine.next("--print-props") != null) {
                         o.targetFormat = Format.PROPS;
@@ -157,7 +158,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                     } else if (cmdLine.next("--xml") != null) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
                     } else if (cmdLine.next("--system") != null) {
                         o.sourceFormat = Format.PROPS;
@@ -167,11 +168,11 @@ public class PropsCommand extends AbstractNshBuiltin {
                     } else if (cmdLine.next("--props") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else if (cmdLine.next("--file") != null) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else {
                         cmdLine.setCommandName(getName()).unexpectedArgument();
                     }

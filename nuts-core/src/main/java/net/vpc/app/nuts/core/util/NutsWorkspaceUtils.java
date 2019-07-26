@@ -152,14 +152,14 @@ public class NutsWorkspaceUtils {
     }
 
     public static NutsId configureFetchEnv(NutsWorkspace ws, NutsId id) {
-        Map<String, String> qm = id.getQueryMap();
-        if (qm.get(NutsConstants.QueryKeys.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
+        Map<String, String> qm = id.getProperties();
+        if (qm.get(NutsConstants.IdProperties.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
             qm.put("arch", ws.config().getPlatformArch().toString());
             qm.put("os", ws.config().getPlatformOs().toString());
             if (ws.config().getPlatformOsDist() != null) {
                 qm.put("osdist", ws.config().getPlatformOsDist().toString());
             }
-            return id.setQuery(qm);
+            return id.setProperties(qm);
         }
         return id;
     }
@@ -221,10 +221,10 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(workspace, "Missing id");
         }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(workspace, "Missing group for " + id);
         }
-        if (CoreStringUtils.isBlank(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(workspace, "Missing name for " + id);
         }
     }
@@ -336,10 +336,10 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Missing id");
         }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(ws, "Missing group for " + id);
         }
-        if (CoreStringUtils.isBlank(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
         }
     }

@@ -613,15 +613,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatConfigService write(PrintStream out) {
+    public LocalTomcatConfigService print(PrintStream out) {
         Map<String, Object> result = new LinkedHashMap<>();
+        result.put("name", getName());
         result.put("version", getValidCatalinaVersion());
         result.put("status", getStatus());
         result.put("home", getCatalinaHome());
         result.put("base", getCatalinaBase());
         result.put("out", getOutLogFile());
         result.put("config", getConfig());
-        context.workspace().json().value(result).print(out);
+        context.workspace().object().session(context.session()).value(result).print(out);
         return this;
     }
 

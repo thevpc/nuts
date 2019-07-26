@@ -29,7 +29,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected boolean redirectErrorStream;
     protected boolean failFast;
     protected boolean dry;
-    protected NutsCommandLineFormat commandStringFormatter;
+    protected NutsExecCommandFormat commandStringFormatter;
 
     public AbstractNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws, "exec");
@@ -440,7 +440,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public String getCommandString() {
-        NutsCommandLineFormat f = getCommandLineFormat();
+        NutsExecCommandFormat f = getCommandLineFormat();
         StringBuilder sb = new StringBuilder();
         if (env != null) {
             for (Map.Entry<Object, Object> e : env.entrySet()) {
@@ -539,12 +539,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsCommandLineFormat getCommandLineFormat() {
+    public NutsExecCommandFormat getCommandLineFormat() {
         return commandStringFormatter;
     }
 
     @Override
-    public NutsExecCommand setCommandLineFormat(NutsCommandLineFormat commandStringFormatter) {
+    public NutsExecCommand setCommandLineFormat(NutsExecCommandFormat commandStringFormatter) {
         this.commandStringFormatter = commandStringFormatter;
         return this;
     }

@@ -192,7 +192,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatAppConfigService write(PrintStream out) {
+    public LocalTomcatAppConfigService print(PrintStream out) {
         Map<String, Object> result = new HashMap<>();
         result.put("name", getFullName());
         result.put("config", getConfig());

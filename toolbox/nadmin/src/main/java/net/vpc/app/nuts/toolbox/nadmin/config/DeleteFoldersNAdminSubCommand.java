@@ -67,7 +67,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.session().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().config().name(), storeLocation);
                 if (force
                         || context.session().terminal().ask()
-                        .forBoolean("Force Delete").setDefaultValue(false).session(context.getSession())
+                        .forBoolean("Force Delete?").setDefaultValue(false).session(context.getSession())
                         .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
@@ -89,7 +89,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.session().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.config().name(), storeLocation);
                 if (force
                         || context.session().terminal().ask()
-                        .forBoolean("Force Delete").setDefaultValue(false).session(context.getSession())
+                        .forBoolean("Force Delete?").setDefaultValue(false).session(context.getSession())
                         .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
@@ -130,7 +130,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.session().out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
                         || context.session().getTerminal().ask()
-                        .forBoolean("Force Delete").setDefaultValue(false)
+                        .forBoolean("Force Delete?").setDefaultValue(false)
                         .session(context.getSession()).getBooleanValue()) {
                     try {
                         Files.delete(s);

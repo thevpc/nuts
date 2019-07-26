@@ -501,7 +501,7 @@ public class CorePlatformUtils {
             jarStream = new BufferedInputStream(jarStream);
         }
         final List<NutsExecutionEntry> classes = new ArrayList<>();
-        final List<String> manifiestClass = new ArrayList<>();
+        final List<String> manifestClass = new ArrayList<>();
         try {
             ZipUtils.visitZipStream(jarStream, new Predicate<String>() {
                 @Override
@@ -523,7 +523,7 @@ public class CorePlatformUtils {
                         if (a != null && a.containsKey("Main-Class")) {
                             String v = a.getValue("Main-Class");
                             if (!CoreStringUtils.isBlank(v)) {
-                                manifiestClass.add(v);
+                                manifestClass.add(v);
                             }
                         }
                     }
@@ -535,8 +535,8 @@ public class CorePlatformUtils {
         }
         List<NutsExecutionEntry> entries = new ArrayList<>();
         String defaultEntry = null;
-        if (manifiestClass.size() > 0) {
-            defaultEntry = manifiestClass.get(0);
+        if (manifestClass.size() > 0) {
+            defaultEntry = manifestClass.get(0);
         }
         boolean defaultFound = false;
         for (NutsExecutionEntry entry : classes) {

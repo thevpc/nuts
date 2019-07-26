@@ -141,7 +141,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         String[] arr = cmd.toArray();
         if (getDisplayOptions().configureFirst(cmd)) {
             if (getFormat() != null) {
-                getFormat().configureFirst(ws.commandLine().setArguments(arr));
+                getFormat().configureFirst(ws.commandLine().create(arr));
             }
             return true;
         }

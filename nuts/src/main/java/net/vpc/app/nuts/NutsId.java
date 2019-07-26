@@ -42,19 +42,19 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     boolean equalsSimpleName(NutsId other);
 
-    NutsTokenFilter groupToken();
+    NutsTokenFilter groupIdToken();
 
-    NutsTokenFilter queryToken();
+    NutsTokenFilter propertiesToken();
 
     NutsTokenFilter versionToken();
 
-    NutsTokenFilter nameToken();
+    NutsTokenFilter artifactIdToken();
 
     NutsTokenFilter namespaceToken();
 
     NutsTokenFilter anyToken();
 
-    NutsId setGroup(String newGroupId);
+    NutsId setGroupId(String newGroupId);
 
     NutsId setNamespace(String newNamespace);
 
@@ -62,19 +62,19 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     NutsId setVersion(String newVersion);
 
-    NutsId setName(String newName);
+    NutsId setArtifactId(String newName);
 
     String getFace();
 
     String getScope();
 
-    String getAlternative();
+//    String getAlternative();
 
     NutsId setScope(String value);
 
     NutsId setOptional(String value);
 
-    NutsId setAlternative(String value);
+//    NutsId setAlternative(String value);
 
     NutsId setArch(String value);
 
@@ -100,23 +100,23 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     NutsId setFaceDescriptor();
 
-    NutsId setQueryProperty(String property, String value);
+    NutsId setProperty(String property, String value);
 
-    NutsId setQuery(Map<String, String> queryMap, boolean merge);
+    NutsId setProperties(Map<String, String> queryMap, boolean merge);
 
-    NutsId setQuery(Map<String, String> queryMap);
+    NutsId setProperties(Map<String, String> queryMap);
 
-    NutsId unsetQuery();
+    NutsId unsetProperties();
 
-    NutsId setQuery(String query);
+    NutsId setProperties(String properties);
 
-    String getQuery();
+    String getPropertiesQuery();
 
-    Map<String, String> getQueryMap();
+    Map<String, String> getProperties();
 
     String getNamespace();
 
-    String getGroup();
+    String getGroupId();
 
     /**
      * return a string representation of this id. All of group, name, version,
@@ -130,7 +130,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     /**
      * return a new instance of NutsId defining only group, name and version,
      * ignoring namespace, and queryMap values. An example of long name is
-     * <code>my-group:my-artifact#my-version</code>
+     * <code>my-group:my-artifact#my-version?alt</code>
      *
      * @return group, name and version only Id instance
      */
@@ -167,7 +167,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      *
      * @return return name part of this id
      */
-    String getName();
+    String getArtifactId();
 
     String getClassifier();
 

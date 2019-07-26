@@ -348,17 +348,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             throw new NutsNotFoundException(this, "<null>");
         }
         NutsId thisId = descriptor.getId();
-        if (CoreNutsUtils.isEffectiveId(thisId)) {
-            return thisId.setAlternative(descriptor.getAlternative());
-        }
-        String g = thisId.getGroup();
+//        if (CoreNutsUtils.isEffectiveId(thisId)) {
+//            return thisId.setAlternative(descriptor.getAlternative());
+//        }
+        String g = thisId.getGroupId();
         String v = thisId.getVersion().getValue();
         if ((CoreStringUtils.isBlank(g)) || (CoreStringUtils.isBlank(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
                 NutsId p = fetch().copyFrom(options).id(parent).setEffective(true).setSession(options.getSession()).getResultId();
                 if (CoreStringUtils.isBlank(g)) {
-                    g = p.getGroup();
+                    g = p.getGroupId();
                 }
                 if (CoreStringUtils.isBlank(v)) {
                     v = p.getVersion().getValue();
@@ -373,11 +373,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v)) {
             Map<String, String> p = descriptor.getProperties();
-            NutsId bestId = new DefaultNutsId(null, g, thisId.getName(), v, "");
+            NutsId bestId = new DefaultNutsId(null, g, thisId.getArtifactId(), v, "");
             bestId = bestId.apply(new MapStringMapper(p));
-            if (CoreNutsUtils.isEffectiveId(bestId)) {
-                return bestId.setAlternative(descriptor.getAlternative());
-            }
+//            if (CoreNutsUtils.isEffectiveId(bestId)) {
+//                return bestId.setAlternative(descriptor.getAlternative());
+//            }
             Stack<NutsId> all = new Stack<>();
             NutsId[] parents = descriptor.getParents();
             all.addAll(Arrays.asList(parents));
@@ -385,18 +385,19 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsId parent = all.pop();
                 NutsDescriptor dd = fetch().copyFrom(options).id(parent).setEffective(true).getResultDescriptor();
                 bestId.apply(new MapStringMapper(dd.getProperties()));
-                if (CoreNutsUtils.isEffectiveId(bestId)) {
-                    return bestId.setAlternative(descriptor.getAlternative());
-                }
+//                if (CoreNutsUtils.isEffectiveId(bestId)) {
+//                    return bestId.setAlternative(descriptor.getAlternative());
+//                }
                 all.addAll(Arrays.asList(dd.getParents()));
             }
             throw new NutsNotFoundException(this, bestId.toString(), "Unable to fetchEffective for " + thisId + ". Best Result is " + bestId.toString(), null);
         }
-        NutsId bestId = new DefaultNutsId(null, g, thisId.getName(), v, "");
+        NutsId bestId = new DefaultNutsId(null, g, thisId.getArtifactId(), v, "");
         if (!CoreNutsUtils.isEffectiveId(bestId)) {
             throw new NutsNotFoundException(this, bestId.toString(), "Unable to fetchEffective for " + thisId + ". Best Result is " + bestId.toString(), null);
         }
-        return bestId.setAlternative(descriptor.getAlternative());
+//        return bestId.setAlternative(descriptor.getAlternative());
+        return bestId;
     }
 
     @Override
@@ -743,7 +744,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     public String resolveCommandName(NutsId id) {
-        String nn = id.getName();
+        String nn = id.getArtifactId();
         NutsWorkspaceCommandAlias c = config().findCommandAlias(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -752,7 +753,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } else {
             return nn;
         }
-        nn = id.getName() + "-" + id.getVersion();
+        nn = id.getArtifactId() + "-" + id.getVersion();
         c = config().findCommandAlias(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -761,7 +762,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } else {
             return nn;
         }
-        nn = id.getGroup() + "." + id.getName() + "-" + id.getVersion();
+        nn = id.getGroupId() + "." + id.getArtifactId() + "-" + id.getVersion();
         c = config().findCommandAlias(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -826,7 +827,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public String resolveDefaultHelp(Class clazz) {
         NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
-            String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
+            String urlPath = "/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".help";
             return io().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
         }
         return null;

@@ -150,7 +150,9 @@ public class DefaultNutsInstalledRepository {
                 return p;
             }
         }
-        Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+        Path pp = ws.config().getStoreLocation(id
+                //.setAlternative("")
+                .setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         String defaultVersion = "";
         if (Files.isRegularFile(pp)) {
             try {
@@ -168,7 +170,9 @@ public class DefaultNutsInstalledRepository {
     public void setDefaultVersion(NutsId id, NutsSession session) {
         NutsId baseVersion = id.getShortNameId();
         String version = id.getVersion().getValue();
-        Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+        Path pp = ws.config().getStoreLocation(id
+//                .setAlternative("")
+                .setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         if (CoreStringUtils.isBlank(version)) {
             if (Files.isRegularFile(pp)) {
                 try {

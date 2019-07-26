@@ -64,6 +64,10 @@ public interface NutsDependency extends Serializable{
      */
     NutsDependency setOptional(String optional);
 
+    /**
+     * get scope string value (may be $ var).
+     * @return scope string value (may be $ var)
+     */
     String getScope();
 
     /**
@@ -73,6 +77,10 @@ public interface NutsDependency extends Serializable{
      */
     NutsDependency setScope(String scope);
 
+    /**
+     * get classifier string value (may be $ var)
+     * @return classifier string
+     */
     String getClassifier();
 
     /**
@@ -112,13 +120,13 @@ public interface NutsDependency extends Serializable{
      * return component group (aka groupId in maven)
      * @return component group (aka groupId in maven)
      */
-    String getGroup();
+    String getGroupId();
 
     /**
      * return component name (aka artifactId)
      * @return component name (aka artifactId in maven)
      */
-    String getName();
+    String getArtifactId();
 
     /**
      * return dependency full name in the form

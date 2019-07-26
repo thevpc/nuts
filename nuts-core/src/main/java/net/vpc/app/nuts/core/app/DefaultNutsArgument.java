@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,7 +29,11 @@
  */
 package net.vpc.app.nuts.core.app;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
+
 import net.vpc.app.nuts.core.DefaultNutsTokenFilter;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
@@ -39,21 +43,183 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
  * @author vpc
  */
 public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
-
+    boolean enabled = true;
+    boolean negated = false;
+    String optionPrefix = null;
+    String optionName = null;
+    String keyPart = null;
+    String valuePart = null;
     /**
      * equal character
      */
     private final char eq;
 
+    public DefaultNutsArgument(String expression) {
+        this(expression,'=');
+    }
+
+
     /**
      * Constructor
      *
      * @param expression expression
-     * @param eq equals
+     * @param eq         equals
      */
     public DefaultNutsArgument(String expression, char eq) {
         super(expression);
         this.eq = eq;
+
+        if (expression == null) {
+            //
+        } else if (expression.length() == 0) {
+            optionPrefix = "";
+            optionName = "";
+            keyPart = "";
+        } else if (expression.length() == 1) {
+            switch (expression.charAt(0)) {
+                case '-':
+                case '+': {
+                    optionPrefix = expression;
+                    optionName = "";
+                    keyPart = expression;
+                    break;
+                }
+                default: {
+                    optionPrefix = "";
+                    optionName = "";
+                    keyPart = expression;
+                }
+            }
+        } else {
+            StringReader reader = new StringReader(expression);
+            int r = -1;
+            final int EXPECT_OPTION = 1;
+            final int EXPECT_COMMENT = 2;
+            final int EXPECT_NEG = 3;
+            final int EXPECT_NAME = 4;
+            final int EXPECT_VAL = 5;
+            int status = EXPECT_OPTION;
+            StringBuilder b_option_prefix = new StringBuilder();
+            StringBuilder b_option_name = new StringBuilder();
+            StringBuilder b_key = new StringBuilder();
+            StringBuilder b_val = null;
+            try {
+                while ((r = reader.read()) != -1) {
+                    char c = (char) r;
+                    switch (status) {
+                        case EXPECT_OPTION: {
+                            if (c == '-' || c == '+') {
+                                b_option_prefix.append(c);
+                                b_key.append(c);
+                                if (b_option_prefix.length() >= 2) {
+                                    status = EXPECT_COMMENT;
+                                }
+                            } else if (c == '/') {
+                                reader.mark(1);
+                                r = reader.read();
+                                if (r == '/') {
+                                    enabled = false;
+                                    status = EXPECT_NEG;
+                                } else {
+                                    if (b_option_prefix.length() > 0) {
+                                        b_option_name.append('/');
+                                    }
+                                    b_key.append('/');
+                                    if (r != -1) {
+                                        reader.reset();
+                                    }
+                                    status = EXPECT_NAME;
+                                }
+                            } else if (c == '!') {
+                                negated = true;
+                                status = EXPECT_NAME;
+                            } else if (c == eq) {
+                                status = EXPECT_VAL;
+                                b_val = new StringBuilder();
+                            } else {
+                                if (b_option_prefix.length() > 0) {
+                                    b_option_name.append(c);
+                                }
+                                b_key.append(c);
+                                status = EXPECT_NAME;
+                            }
+                            break;
+                        }
+                        case EXPECT_COMMENT: {
+                            if (c == '/') {
+                                reader.mark(1);
+                                r = reader.read();
+                                if (r == '/') {
+                                    enabled = false;
+                                    status = EXPECT_NEG;
+                                } else {
+                                    b_option_name.append('/');
+                                    if (r != -1) {
+                                        reader.reset();
+                                    }
+                                    status = EXPECT_NAME;
+                                }
+                            } else if (c == '!') {
+                                negated = true;
+                                status = EXPECT_NAME;
+                            } else if (c == eq) {
+                                status = EXPECT_VAL;
+                                b_val = new StringBuilder();
+                            } else {
+                                if (b_option_prefix.length() > 0) {
+                                    b_option_name.append(c);
+                                }
+                                b_key.append(c);
+                                status = EXPECT_NAME;
+                            }
+                            break;
+                        }
+                        case EXPECT_NEG: {
+                            if (c == '!') {
+                                negated = true;
+                                status = EXPECT_NAME;
+                            } else if (c == eq) {
+                                status = EXPECT_VAL;
+                                b_val = new StringBuilder();
+                            } else {
+                                if (b_option_prefix.length() > 0) {
+                                    b_option_name.append(c);
+                                }
+                                b_key.append(c);
+                                status = EXPECT_NAME;
+                            }
+                            break;
+                        }
+                        case EXPECT_NAME: {
+                            if (c == eq) {
+                                status = EXPECT_VAL;
+                                b_val = new StringBuilder();
+                            } else {
+                                if (b_option_prefix.length() > 0) {
+                                    b_option_name.append(c);
+                                }
+                                b_key.append(c);
+                                status = EXPECT_NAME;
+                            }
+                            break;
+                        }
+                        case EXPECT_VAL: {
+                            b_val.append(c);
+                            break;
+                        }
+                        default:{
+                            throw new IllegalStateException("Unsupported state");
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            optionPrefix = b_option_prefix.toString();
+            optionName = b_option_name.toString();
+            keyPart = b_key.toString();
+            valuePart = b_val == null ? null : b_val.toString();
+        }
     }
 
     public boolean isUnsupported() {
@@ -67,9 +233,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isOption() {
-        return expression != null
-                && expression.length() > 0
-                && (expression.charAt(0) == '-' || expression.charAt(0) == '+');
+        return optionPrefix!=null && optionPrefix.length() > 0;
     }
 
     @Override
@@ -79,7 +243,16 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isKeyValue() {
-        return expression != null && expression.indexOf(eq) >= 0;
+        return valuePart != null;
+    }
+
+    public String getStringOptionPrefix() {
+        return optionPrefix;
+    }
+
+    @Override
+    public String getKeyValueSeparator() {
+        return String.valueOf(eq);
     }
 
     @Override
@@ -87,40 +260,20 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
         if (expression == null) {
             return this;
         }
-        int x = expression.indexOf(eq);
-        String p = expression;
-        if (x >= 0) {
-            p = expression.substring(0, x);
+        return new DefaultNutsArgument(keyPart, eq);
+    }
+
+    @Override
+    public NutsArgument getArgumentOptionName() {
+        if (expression == null) {
+            return this;
         }
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < p.length()) {
-            switch (p.charAt(i)) {
-                case '-': {
-                    sb.append(p.charAt(i));
-                    break;
-                }
-                case '+': {
-                    sb.append(p.charAt(i));
-                    break;
-                }
-                case '!': {
-                    sb.append(p.substring(i + 1));
-                    return new DefaultNutsArgument(sb.toString(), eq);
-                }
-                case '/': {
-                    if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
-                        sb.append(p.substring(i + 2));
-                        return new DefaultNutsArgument(sb.toString(), eq);
-                    }
-                }
-                default: {
-                    return new DefaultNutsArgument(p, eq);
-                }
-            }
-            i++;
-        }
-        return new DefaultNutsArgument(p, eq);
+        return new DefaultNutsArgument(optionName, eq);
+    }
+
+    @Override
+    public String getStringOptionName() {
+        return optionName;
     }
 
     @Override
@@ -128,11 +281,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
         if (expression == null) {
             return this;
         }
-        int x = expression.indexOf(eq);
-        if (x >= 0) {
-            return new DefaultNutsArgument(expression.substring(x + 1), eq);
-        }
-        return new DefaultNutsArgument(null, eq);
+        return new DefaultNutsArgument(valuePart, eq);
     }
 
     @Override
@@ -157,67 +306,12 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isNegated() {
-        if (expression == null) {
-            return false;
-        }
-        int i = 0;
-        while (i < expression.length()) {
-            switch (expression.charAt(i)) {
-                case '-': {
-                    //ignore leading dashes
-                    break;
-                }
-                case '+': {
-                    //ignore leading dashes
-                    break;
-                }
-                case '!': {
-                    return true;
-                }
-                default: {
-                    return false;
-                }
-            }
-            i++;
-        }
-        return false;
+        return negated;
     }
 
     @Override
     public boolean isEnabled() {
-        if (expression == null) {
-            return true;
-        }
-        int i = 0;
-        boolean opt = false;
-        boolean slash = false;
-        while (i < expression.length()) {
-            switch (expression.charAt(i)) {
-                case '-': {
-                    opt = true;
-                    break;
-                }
-                case '+': {
-                    opt = true;
-                    break;
-                }
-                case '/': {
-                    if (!opt) {
-                        return false;
-                    }
-                    if (slash) {
-                        return false;
-                    }
-                    slash = true;
-                    break;
-                }
-                default: {
-                    return true;
-                }
-            }
-            i++;
-        }
-        return true;
+        return enabled;
     }
 
     @Override

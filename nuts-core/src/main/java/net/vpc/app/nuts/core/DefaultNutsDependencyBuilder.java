@@ -58,8 +58,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder(NutsDependencyBuilder other) {
         if (other != null) {
             setNamespace(other.getNamespace());
-            setGroup(other.getGroup());
-            setName(other.getName());
+            setGroupId(other.getGroup());
+            setArtifactId(other.getArtifactId());
             setVersion(other.getVersion());
             setScope(other.getScope());
             setOptional(other.getOptional());
@@ -71,8 +71,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder(NutsDependency other) {
         if (other != null) {
             setNamespace(other.getNamespace());
-            setGroup(other.getGroup());
-            setName(other.getName());
+            setGroupId(other.getGroupId());
+            setArtifactId(other.getArtifactId());
             setVersion(other.getVersion());
             setScope(other.getScope());
             setOptional(other.getOptional());
@@ -88,14 +88,14 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsDependencyBuilder setGroup(String group) {
-        this.group = CoreStringUtils.trimToNull(group);
+    public NutsDependencyBuilder setGroupId(String groupId) {
+        this.group = CoreStringUtils.trimToNull(groupId);
         return this;
     }
 
     @Override
-    public NutsDependencyBuilder setName(String name) {
-        this.name = CoreStringUtils.trimToNull(name);
+    public NutsDependencyBuilder setArtifactId(String artifactId) {
+        this.name = CoreStringUtils.trimToNull(artifactId);
         return this;
     }
 
@@ -115,13 +115,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public NutsDependencyBuilder setId(NutsId id) {
         if (id == null) {
             setNamespace(null);
-            setGroup(null);
-            setName(null);
+            setGroupId(null);
+            setArtifactId(null);
             setVersion((String) null);
         } else {
             setNamespace(id.getNamespace());
-            setGroup(id.getGroup());
-            setName(id.getName());
+            setGroupId(id.getGroupId());
+            setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
         }
         return this;
@@ -179,7 +179,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         return new DefaultNutsId(
                 getNamespace(),
                 getGroup(),
-                getName(),
+                getArtifactId(),
                 getVersion().getValue(),
                 ""
         );
@@ -188,7 +188,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependency build() {
         return new DefaultNutsDependency(
-                getNamespace(), getGroup(), getName(), getClassifier(),
+                getNamespace(), getGroup(), getArtifactId(), getClassifier(),
                 getVersion(),
                 getScope(),
                 getOptional(),
@@ -207,7 +207,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public String getName() {
+    public String getArtifactId() {
         return name;
     }
 

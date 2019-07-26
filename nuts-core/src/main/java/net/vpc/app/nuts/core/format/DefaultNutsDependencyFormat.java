@@ -42,18 +42,18 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public boolean isOmitGroup() {
+    public boolean isOmitGroupId() {
         return omitGroup;
     }
 
     @Override
-    public NutsDependencyFormat setOmitGroup(boolean omitGroup) {
+    public NutsDependencyFormat setOmitGroupId(boolean omitGroup) {
         this.omitGroup = omitGroup;
         return this;
     }
 
     @Override
-    public boolean isOmitImportedGroup() {
+    public boolean isOmitImportedGroupId() {
         return omitImportedGroup;
     }
 
@@ -64,12 +64,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public boolean isOmitQuery() {
+    public boolean isOmitOtherProperties() {
         return omitQuery;
     }
 
     @Override
-    public NutsDependencyFormat setOmitQuery(boolean value) {
+    public NutsDependencyFormat setOmitOtherProperties(boolean value) {
         this.omitQuery = value;
         return this;
     }
@@ -121,18 +121,19 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     @Override
     public String format() {
         NutsIdBuilder id = value.getId().builder();
-        Map<String, String> q = id.getQueryMap();
+        Map<String, String> q = id.getProperties();
         for (Iterator<Map.Entry<String, String>> iterator = q.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, String> e = iterator.next();
             switch (e.getKey()) {
-                case "scope":
-                case "optional":
-                case "classifier":
-                case "exclusions": {
+                case NutsConstants.IdProperties.SCOPE:
+                case NutsConstants.IdProperties.OPTIONAL:
+//                case NutsConstants.IdProperties.ALTERNATIVE:
+                case NutsConstants.IdProperties.CLASSIFIER:
+                case NutsConstants.IdProperties.EXCLUSIONS: {
                     break;
                 }
                 default: {
-                    if(isOmitQuery()) {
+                    if(isOmitOtherProperties()) {
                         iterator.remove();
                     }
                 }
@@ -140,7 +141,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         }
         NutsIdFormat id1 = ws.id();
         for (String omitQueryProperty : getOmitQueryProperties()) {
-            id1.omitQueryProperty(omitQueryProperty);
+            id1.omitProperty(omitQueryProperty);
         }
         return id1
                 .session(getSession())
@@ -148,9 +149,9 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 .setHighlightImportedGroup(isHighlightImportedGroup())
                 .setHighlightOptional(isHighlightOptional())
                 .setHighlightScope(isHighlightScope())
-                .setOmitQuery(false)
-                .setOmitGroup(isOmitGroup())
-                .setOmitImportedGroup(isOmitImportedGroup())
+                .setOmitOtherProperties(false)
+                .setOmitGroup(isOmitGroupId())
+                .setOmitImportedGroup(isOmitImportedGroupId())
                 .setOmitNamespace(isOmitNamespace())
                 .format();
     }
@@ -187,12 +188,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public boolean isOmitClassifier() {
-        return isOmitQueryProperty("classifier");
+        return isOmitQueryProperty(NutsConstants.IdProperties.CLASSIFIER);
     }
 
     @Override
     public NutsDependencyFormat setOmitClassifier(boolean value) {
-        return setOmitQueryProperty("classifier",value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.CLASSIFIER,value);
     }
 
     @Override
@@ -208,12 +209,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public boolean isOmitOptional() {
-        return isOmitQueryProperty("optional");
+        return isOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL);
     }
 
     @Override
     public NutsDependencyFormat setOmitOptional(boolean value) {
-        return setOmitQueryProperty("optional",value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL,value);
     }
 
     @Override
@@ -229,12 +230,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public boolean isOmitExclusions() {
-        return isOmitQueryProperty("exclusions");
+        return isOmitQueryProperty(NutsConstants.IdProperties.EXCLUSIONS);
     }
 
     @Override
     public NutsDependencyFormat setOmitExclusions(boolean value) {
-        return setOmitQueryProperty("exclusions",value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.EXCLUSIONS,value);
     }
 
     @Override
@@ -249,12 +250,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public boolean isOmitScope() {
-        return isOmitQueryProperty("scope");
+        return isOmitQueryProperty(NutsConstants.IdProperties.SCOPE);
     }
 
     @Override
     public NutsDependencyFormat setOmitScope(boolean value) {
-        return setOmitQueryProperty("scope",value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.SCOPE,value);
     }
 
     @Override
@@ -267,25 +268,25 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         return omitScope(true);
     }
 
-    @Override
-    public boolean isOmitAlternative() {
-        return isOmitQueryProperty("alternative");
-    }
-
-    @Override
-    public NutsDependencyFormat setOmitAlternative(boolean value) {
-        return setOmitQueryProperty("alternative",value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitAlternative(boolean value) {
-        return setOmitAlternative(value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitAlternative() {
-        return omitAlternative(true);
-    }
+//    @Override
+//    public boolean isOmitAlternative() {
+//        return isOmitQueryProperty(NutsConstants.IdProperties.ALTERNATIVE);
+//    }
+//
+//    @Override
+//    public NutsDependencyFormat setOmitAlternative(boolean value) {
+//        return setOmitQueryProperty(NutsConstants.IdProperties.ALTERNATIVE,value);
+//    }
+//
+//    @Override
+//    public NutsDependencyFormat omitAlternative(boolean value) {
+//        return setOmitAlternative(value);
+//    }
+//
+//    @Override
+//    public NutsDependencyFormat omitAlternative() {
+//        return omitAlternative(true);
+//    }
 
     @Override
     public String[] getOmitQueryProperties() {
@@ -318,6 +319,56 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
+    public NutsDependencyFormat omitNamespace(boolean omitNamespace) {
+        return setOmitNamespace(omitNamespace);
+    }
+
+    @Override
+    public NutsDependencyFormat omitNamespace() {
+        return omitNamespace(true);
+    }
+
+    @Override
+    public NutsDependencyFormat omitGroupId(boolean omitGroup) {
+        return setOmitGroupId(omitGroup);
+    }
+
+    @Override
+    public NutsDependencyFormat omitGroupId() {
+        return omitGroupId(true);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightImportedGroup(boolean highlightImportedGroup) {
+        return setHighlightImportedGroup(highlightImportedGroup);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightImportedGroup() {
+        return highlightImportedGroup(true);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightScope(boolean highlightScope) {
+        return setHighlightScope(highlightScope);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightScope() {
+        return highlightScope(true);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightOptional(boolean highlightOptional) {
+        return setHighlightOptional(true);
+    }
+
+    @Override
+    public NutsDependencyFormat highlightOptional() {
+        return highlightOptional(true);
+    }
+
+    @Override
     public void print(Writer out) {
         try {
             out.write(format());
@@ -339,7 +390,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         }
         switch (a.getStringKey()) {
             case "--omit-env": {
-                setOmitQuery(cmdLine.nextBoolean().getBooleanValue());
+                setOmitOtherProperties(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
 //            case "--omit-face": {
@@ -347,7 +398,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 //                return true;
 //            }
             case "--omit-group": {
-                setOmitGroup(cmdLine.nextBoolean().getBooleanValue());
+                setOmitGroupId(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-imported-group": {

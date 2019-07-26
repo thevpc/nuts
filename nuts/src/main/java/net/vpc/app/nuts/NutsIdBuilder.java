@@ -40,7 +40,7 @@ import java.util.function.Function;
  */
 public interface NutsIdBuilder extends Serializable {
 
-    NutsIdBuilder setGroup(String newGroupId);
+    NutsIdBuilder setGroupId(String newGroupId);
 
     NutsIdBuilder setNamespace(String newNamespace);
 
@@ -48,11 +48,11 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setVersion(NutsVersion version);
 
-    NutsIdBuilder setName(String newName);
+    NutsIdBuilder setArtifactId(String newName);
 
     String getFace();
 
-    String getAlternative();
+//    String getAlternative();
 
     String getOs();
 
@@ -70,7 +70,7 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setFace(String value);
 
-    NutsIdBuilder setAlternative(String value);
+//    NutsIdBuilder setAlternative(String value);
 
     NutsIdBuilder setClassifier(String value);
 
@@ -86,29 +86,33 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setOsdist(String value);
 
-    NutsIdBuilder setQueryProperty(String property, String value);
+    NutsIdBuilder setProperty(String property, String value);
 
-    NutsIdBuilder setQuery(Map<String, String> queryMap, boolean merge);
+    NutsIdBuilder setProperties(Map<String, String> queryMap, boolean merge);
 
-    NutsIdBuilder setQuery(Map<String, String> queryMap);
+    NutsIdBuilder setProperties(Map<String, String> queryMap);
 
     NutsIdBuilder setPackaging(String packaging);
 
-    NutsIdBuilder unsetQuery();
+    NutsIdBuilder unsetProperties();
 
-    NutsIdBuilder setQuery(String query);
+    NutsIdBuilder setProperties(String query);
 
-    String getQuery();
+    String getPropertiesQuery();
 
-    Map<String, String> getQueryMap();
+    Map<String, String> getProperties();
 
     String getNamespace();
 
-    String getGroup();
+    String getGroupId();
+
+    String getLongName();
+
+    String getShortName();
 
     String getFullName();
 
-    String getName();
+    String getArtifactId();
 
     NutsVersion getVersion();
 

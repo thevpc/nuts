@@ -90,29 +90,31 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
             if (Files.isDirectory(file.path)) {
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.path, new DirectoryStream.Filter<Path>() {
-                    @Override
-                    public boolean accept(Path pathname) throws IOException {
-                        try {
-                            return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
-                        } catch (Exception e) {
-                            //ignore
-                            return false;
-                        }
-                    }
-                })) {
-
-                    for (Path item : stream) {
-                        if (Files.isDirectory(item)) {
-                            if (file.depth < maxDepth) {
-                                stack.push(new PathAndDepth(item, file.depth + 1));
+                if(Files.isDirectory(file.path)) {
+                    try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.path, new DirectoryStream.Filter<Path>() {
+                        @Override
+                        public boolean accept(Path pathname) throws IOException {
+                            try {
+                                return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
+                            } catch (Exception e) {
+                                //ignore
+                                return false;
                             }
-                        } else {
-                            stack.push(new PathAndDepth(item, file.depth));
                         }
+                    })) {
+
+                        for (Path item : stream) {
+                            if (Files.isDirectory(item)) {
+                                if (file.depth < maxDepth) {
+                                    stack.push(new PathAndDepth(item, file.depth + 1));
+                                }
+                            } else {
+                                stack.push(new PathAndDepth(item, file.depth));
+                            }
+                        }
+                    } catch (IOException ex) {
+                        //
                     }
-                } catch (IOException ex) {
-                    //
                 }
             } else {
                 visitedFilesCount++;
@@ -134,7 +136,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     }
                     if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
                         NutsId nutsId = t.getId().setNamespace(repository);
-                        nutsId = nutsId.setAlternative(t.getAlternative());
+//                        nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
                         break;
                     }

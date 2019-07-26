@@ -60,7 +60,6 @@ import net.vpc.app.nuts.core.format.FormattableNutsId;
 import net.vpc.app.nuts.core.format.NutsDisplayProperty;
 import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
-import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -306,12 +305,16 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             //nothind
         } else if (!isLatest() && isDistinct()) {
             return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(),
-                    applyTraceDecoratorIterOfNutsId(IteratorBuilder.of(curr).distinct((NutsId nutsId) -> nutsId.getLongNameId().setAlternative(nutsId.getAlternative()).toString()).iterator(), trace));
+                    applyTraceDecoratorIterOfNutsId(IteratorBuilder.of(curr).distinct((NutsId nutsId) -> nutsId.getLongNameId()
+//                            .setAlternative(nutsId.getAlternative())
+                            .toString()).iterator(), trace));
         } else if (isLatest() && isDistinct()) {
             Map<String, NutsId> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
                 NutsId nutsId = curr.next();
-                String k = nutsId.getShortNameId().setAlternative(nutsId.getAlternative()).toString();
+                String k = nutsId.getShortNameId()
+//                        .setAlternative(nutsId.getAlternative())
+                        .toString();
                 NutsId old = visited.get(k);
                 if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
                     visited.put(k, nutsId);
@@ -322,7 +325,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             Map<String, List<NutsId>> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
                 NutsId nutsId = curr.next();
-                String k = nutsId.getShortNameId().setAlternative(nutsId.getAlternative()).toString();
+                String k = nutsId.getShortNameId()
+//                        .setAlternative(nutsId.getAlternative())
+                        .toString();
                 List<NutsId> oldList = visited.get(k);
                 if (oldList == null || oldList.get(0).getVersion().isBlank() || oldList.get(0).getVersion().compareTo(nutsId.getVersion()) < 0) {
                     visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
@@ -650,17 +655,17 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 NutsId nutsId = ws.id().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
-                    if (CoreStringUtils.isBlank(nutsId.getGroup())) {
-                        if (nutsId.getName().equals("nuts")) {
+                    if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
+                        if (nutsId.getArtifactId().equals("nuts")) {
                             if (nutsId.getVersion().isBlank() || nutsId.getVersion().ge("0.5")) {
-                                nutsId2.add(nutsId.setGroup("net.vpc.app.nuts"));
+                                nutsId2.add(nutsId.setGroupId("net.vpc.app.nuts"));
                             } else {
                                 //older versions
-                                nutsId2.add(nutsId.setGroup("net.vpc.app"));
+                                nutsId2.add(nutsId.setGroupId("net.vpc.app"));
                             }
                         } else {
                             for (String aImport : ws.config().getImports()) {
-                                nutsId2.add(nutsId.setGroup(aImport));
+                                nutsId2.add(nutsId.setGroupId(aImport));
                             }
                         }
                     } else {
@@ -674,7 +679,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             if (mode == NutsFetchMode.INSTALLED) {
                                 all.add(
                                         IteratorBuilder.ofLazy(() -> {
-                                            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getQueryMap(), idFilter2, sDescriptorFilter));
+                                            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter));
                                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
                                             return NutsWorkspaceExt.of(ws)
                                                     .getInstalledRepository().findVersions(nutsId1, filter, rsession);
@@ -682,7 +687,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             } else {
                                 for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, search.getOptions())) {
                                     if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
-                                        NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getQueryMap(), idFilter2, sDescriptorFilter));
+                                        NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter));
                                         all.add(
                                                 IteratorBuilder.ofLazy(new Iterable<NutsId>() {
                                                     @Override
@@ -698,7 +703,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                         coalesce.add(IteratorUtils.concat(all));
                     }
-                    if (nutsId.getGroup() == null) {
+                    if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
                         NutsSearchCommand search2 = ws.search()
                                 .copyFrom(search.getOptions())
@@ -707,7 +712,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .setFetchStratery(search.getOptions().getFetchStrategy())
                                 .setSession(session);
                         search2.setIdFilter(new NutsIdFilterOr(
-                                new NutsPatternIdFilter(nutsId.setGroup("*")),
+                                new NutsPatternIdFilter(nutsId.setGroupId("*")),
                                 CoreNutsUtils.simplify(search2.getIdFilter())
                         ));
                         coalesce.add(search2.getResultIds().iterator());

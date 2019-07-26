@@ -42,8 +42,8 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
 
         public AliasInfo(NutsWorkspaceCommandAlias a, NutsWorkspace ws) {
             name = a.getName();
-            command = ws.commandLine().setArguments(a.getCommand()).toString();
-            executionOptions = ws.commandLine().setArguments(a.getExecutorOptions()).toString();
+            command = ws.commandLine().create(a.getCommand()).toString();
+            executionOptions = ws.commandLine().create(a.getExecutorOptions()).toString();
             factoryId = a.getFactoryId();
             owner = a.getOwner();
         }
@@ -85,7 +85,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCommandAlias::getName,
-                                                    x -> context.getWorkspace().commandLine().setArguments(x.getCommand()).toString(),
+                                                    x -> context.getWorkspace().commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
                                                         throw new IllegalArgumentException("Duplicate " + x);
                                                     },
@@ -140,9 +140,9 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 for (AliasInfo value : toAdd.values()) {
                     context.getWorkspace().config().addCommandAlias(
                             new NutsCommandAliasConfig()
-                                    .setCommand(context.getWorkspace().commandLine().parseLine(value.command).toArray())
+                                    .setCommand(context.getWorkspace().commandLine().parse(value.command).toArray())
                                     .setName(value.name)
-                                    .setExecutorOptions(context.getWorkspace().commandLine().parseLine(value.executionOptions).toArray()),
+                                    .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toArray()),
                              new NutsAddOptions().session(context.getSession()));
                 }
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);

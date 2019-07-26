@@ -45,38 +45,37 @@ import java.util.function.Function;
 public class DefaultNutsId implements NutsId {
     public static final long serialVersionUID = 1L;
     private final String namespace;
-    private final String group;
-    private final String name;
+    private final String groupId;
+    private final String artifactId;
     private final NutsVersion version;
     private final String query;
 
-    public DefaultNutsId(String namespace, String group, String name, String version, Map<String, String> query) {
-        this(namespace, group, name, DefaultNutsVersion.valueOf(version), query);
+    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, Map<String, String> query) {
+        this(namespace, groupId, artifactId, DefaultNutsVersion.valueOf(version), query);
     }
 
-    protected DefaultNutsId(String namespace, String group, String name, NutsVersion version, Map<String, String> query) {
+    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, Map<String, String> query) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
+        this.groupId = CoreStringUtils.trimToNull(groupId);
+        this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? DefaultNutsVersion.EMPTY : version;
-        this.query = formatQuery(query);
+        this.query = formatPropertiesQuery(query);
     }
 
-    public static String formatQuery(Map<String, String> query) {
+    public static String formatPropertiesQuery(Map<String, String> query) {
         StringBuilder sb = new StringBuilder();
         if (query != null) {
             Set<String> sortedKeys = new TreeSet<>(query.keySet());
             for (String k : sortedKeys) {
                 String v = query.get(k);
-                switch (k) {
-                    case "face":
-                    case "alternative": {
-                        if ("default".equals(v)) {
-                            v = null;
-                        }
-                        break;
-                    }
-                }
+//                switch (k) {
+//                    case NutsConstants.IdProperties.ALTERNATIVE: {
+//                        if (CoreNutsUtils.isDefaultAlternative(v)) {
+//                            v = null;
+//                        }
+//                        break;
+//                    }
+//                }
                 if (v != null && v.length() > 0) {
                     if (sb.length() > 0) {
                         sb.append("&");
@@ -88,22 +87,22 @@ public class DefaultNutsId implements NutsId {
         return CoreStringUtils.trimToNull(sb.toString());
     }
 
-    protected DefaultNutsId(String namespace, String group, String name, NutsVersion version, String query) {
+    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, String query) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
+        this.groupId = CoreStringUtils.trimToNull(groupId);
+        this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? DefaultNutsVersion.EMPTY : version;
         this.query = CoreStringUtils.trimToNull(query);
     }
 
-    public DefaultNutsId(String group, String name, String version) {
-        this(null, group, name, version, (String) null);
+    public DefaultNutsId(String groupId, String artifactId, String version) {
+        this(null, groupId, artifactId, version, (String) null);
     }
 
-    public DefaultNutsId(String namespace, String group, String name, String version, String query) {
+    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, String query) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
+        this.groupId = CoreStringUtils.trimToNull(groupId);
+        this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = DefaultNutsVersion.valueOf(version);
         this.query = CoreStringUtils.trimToNull(query);
     }
@@ -132,13 +131,13 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsTokenFilter groupToken() {
-        return new DefaultNutsTokenFilter(getGroup());
+    public NutsTokenFilter groupIdToken() {
+        return new DefaultNutsTokenFilter(getGroupId());
     }
 
     @Override
-    public NutsTokenFilter queryToken() {
-        return new DefaultNutsTokenFilter(getQuery());
+    public NutsTokenFilter propertiesToken() {
+        return new DefaultNutsTokenFilter(getPropertiesQuery());
     }
 
     @Override
@@ -147,8 +146,8 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsTokenFilter nameToken() {
-        return new DefaultNutsTokenFilter(getName());
+    public NutsTokenFilter artifactIdToken() {
+        return new DefaultNutsTokenFilter(getArtifactId());
     }
 
     @Override
@@ -158,7 +157,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsTokenFilter anyToken() {
-        NutsTokenFilter[] oo = {groupToken(), queryToken(), versionToken(), nameToken(), namespaceToken()};
+        NutsTokenFilter[] oo = {groupIdToken(), propertiesToken(), versionToken(), artifactIdToken(), namespaceToken()};
         return new NutsTokenFilter() {
             @Override
             public boolean isNull() {
@@ -217,8 +216,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return CoreStringUtils.trim(name).equals(CoreStringUtils.trim(other.getName()))
-                && CoreStringUtils.trim(group).equals(CoreStringUtils.trim(other.getGroup()));
+        return CoreStringUtils.trim(artifactId).equals(CoreStringUtils.trim(other.getArtifactId()))
+                && CoreStringUtils.trim(groupId).equals(CoreStringUtils.trim(other.getGroupId()));
     }
 
     @Override
@@ -230,14 +229,14 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public DefaultNutsId setGroup(String newGroup) {
-        if (CoreStringUtils.trim(group).equals(CoreStringUtils.trim(newGroup))) {
+    public DefaultNutsId setGroupId(String newGroup) {
+        if (CoreStringUtils.trim(groupId).equals(CoreStringUtils.trim(newGroup))) {
             return this;
         }
         return new DefaultNutsId(
                 namespace,
                 newGroup,
-                name,
+                artifactId,
                 version,
                 query
         );
@@ -250,8 +249,8 @@ public class DefaultNutsId implements NutsId {
         }
         return new DefaultNutsId(
                 newNamespace,
-                group,
-                name,
+                groupId,
+                artifactId,
                 version,
                 query
         );
@@ -267,8 +266,8 @@ public class DefaultNutsId implements NutsId {
         }
         return new DefaultNutsId(
                 namespace,
-                group,
-                name,
+                groupId,
+                artifactId,
                 newVersion,
                 query
         );
@@ -282,21 +281,21 @@ public class DefaultNutsId implements NutsId {
         }
         return new DefaultNutsId(
                 namespace,
-                group,
-                name,
+                groupId,
+                artifactId,
                 newVersion,
                 query
         );
     }
 
     @Override
-    public NutsId setName(String newName) {
-        if (CoreStringUtils.trim(name).equals(CoreStringUtils.trim(newName))) {
+    public NutsId setArtifactId(String newName) {
+        if (CoreStringUtils.trim(artifactId).equals(CoreStringUtils.trim(newName))) {
             return this;
         }
         return new DefaultNutsId(
                 namespace,
-                group,
+                groupId,
                 newName,
                 version,
                 query
@@ -305,99 +304,99 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getFace() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.FACE);
+        String s = getProperties().get(NutsConstants.IdProperties.FACE);
         return CoreStringUtils.trimToNull(s);
     }
 
     @Override
     public String getScope() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.SCOPE);
+        String s = getProperties().get(NutsConstants.IdProperties.SCOPE);
         return CoreStringUtils.trimToNull(s);
     }
 
-    @Override
-    public String getAlternative() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.ALTERNATIVE);
-        return CoreStringUtils.trimToNull(s);
-    }
+//    @Override
+//    public String getAlternative() {
+//        String s = getProperties().get(NutsConstants.IdProperties.ALTERNATIVE);
+//        return CoreStringUtils.trimToNull(s);
+//    }
 
     @Override
     public String getClassifier() {
-        String s = getQueryMap().get("classifier");
+        String s = getProperties().get(NutsConstants.IdProperties.CLASSIFIER);
         return CoreStringUtils.trimToNull(s);
     }
 
     @Override
     public NutsId setFace(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.FACE, CoreStringUtils.trimToNull(value))
-                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+        return setProperty(NutsConstants.IdProperties.FACE, CoreStringUtils.trimToNull(value))
+                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsId setScope(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.SCOPE, CoreStringUtils.trimToNull(value))
-                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+        return setProperty(NutsConstants.IdProperties.SCOPE, CoreStringUtils.trimToNull(value))
+                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsId setOptional(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.OPTIONAL, CoreStringUtils.trimToNull(value))
-                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+        return setProperty(NutsConstants.IdProperties.OPTIONAL, CoreStringUtils.trimToNull(value))
+                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
-    @Override
-    public NutsId setAlternative(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.ALTERNATIVE, CoreNutsUtils.trimToNullAlternative(value))
-                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
-    }
+//    @Override
+//    public NutsId setAlternative(String value) {
+//        return setProperty(NutsConstants.IdProperties.ALTERNATIVE, CoreNutsUtils.trimToNullAlternative(value))
+//                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+//    }
 
     @Override
     public NutsId setArch(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.ARCH, CoreStringUtils.trimToNull(value))
-                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+        return setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.trimToNull(value))
+                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsId setPackaging(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.PACKAGING, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trimToNull(value));
     }
 
     @Override
     public NutsId setPlatform(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.PLATFORM, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.trimToNull(value));
     }
 
     @Override
     public NutsId setOsdist(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.OSDIST, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.OSDIST, CoreStringUtils.trimToNull(value));
     }
 
     @Override
     public NutsId setOs(String value) {
-        return setQueryProperty(NutsConstants.QueryKeys.OS, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.trimToNull(value));
     }
 
     @Override
     public String getOs() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.OS);
+        String s = getProperties().get(NutsConstants.IdProperties.OS);
         return CoreStringUtils.trimToNull(s);
     }
 
     @Override
     public String getOsdist() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.OSDIST);
+        String s = getProperties().get(NutsConstants.IdProperties.OSDIST);
         return CoreStringUtils.trimToNull(s);
     }
 
     @Override
     public String getPlatform() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.PLATFORM);
+        String s = getProperties().get(NutsConstants.IdProperties.PLATFORM);
         return CoreStringUtils.trimToNull(s);
     }
 
     @Override
     public String getArch() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.ARCH);
+        String s = getProperties().get(NutsConstants.IdProperties.ARCH);
         return CoreStringUtils.trimToNull(s);
     }
 
@@ -412,25 +411,25 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId setQueryProperty(String property, String value) {
+    public NutsId setProperty(String property, String value) {
         if (value == null || value.length() == 0) {
             if (query != null && !query.isEmpty()) {
-                Map<String, String> m = getQueryMap();
+                Map<String, String> m = getProperties();
                 m.remove(property);
-                return setQuery(m);
+                return setProperties(m);
             }
             return this;
         } else {
-            Map<String, String> m = getQueryMap();
+            Map<String, String> m = getProperties();
             m.put(property, value);
-            return setQuery(m);
+            return setProperties(m);
         }
     }
 
     @Override
-    public NutsId setQuery(Map<String, String> queryMap, boolean merge) {
+    public NutsId setProperties(Map<String, String> queryMap, boolean merge) {
         if (merge) {
-            Map<String, String> m = getQueryMap();
+            Map<String, String> m = getProperties();
             if (queryMap != null) {
                 for (Map.Entry<String, String> e : queryMap.entrySet()) {
                     String property = e.getKey();
@@ -442,9 +441,9 @@ public class DefaultNutsId implements NutsId {
                     }
                 }
             }
-            return setQuery(m);
+            return setProperties(m);
         } else {
-            String m = DefaultNutsId.formatQuery(queryMap);
+            String m = DefaultNutsId.formatPropertiesQuery(queryMap);
             if (m == null) {
                 m = "";
             }
@@ -453,8 +452,8 @@ public class DefaultNutsId implements NutsId {
             }
             return new DefaultNutsId(
                     namespace,
-                    group,
-                    name,
+                    groupId,
+                    artifactId,
                     version,
                     m
             );
@@ -462,37 +461,37 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId setQuery(Map<String, String> queryMap) {
-        return setQuery(queryMap, false);
+    public NutsId setProperties(Map<String, String> queryMap) {
+        return setProperties(queryMap, false);
     }
 
     @Override
-    public NutsId unsetQuery() {
-        return setQuery("");
+    public NutsId unsetProperties() {
+        return setProperties("");
     }
 
     @Override
-    public NutsId setQuery(String query) {
-        if (CoreStringUtils.trim(this.query).equals(query)) {
+    public NutsId setProperties(String properties) {
+        if (CoreStringUtils.trim(this.query).equals(properties)) {
             return this;
         }
         return new DefaultNutsId(
                 namespace,
-                group,
-                name,
+                groupId,
+                artifactId,
                 version,
-                query
+                properties
         );
     }
 
     @Override
-    public String getQuery() {
+    public String getPropertiesQuery() {
         return query;
     }
 
     @Override
-    public Map<String, String> getQueryMap() {
-        String q = getQuery();
+    public Map<String, String> getProperties() {
+        String q = getPropertiesQuery();
         if (q == null || q.equals("")) {
             return new LinkedHashMap<>();
         }
@@ -505,26 +504,26 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public String getGroup() {
-        return group;
+    public String getGroupId() {
+        return groupId;
     }
 
     @Override
     public NutsId getShortNameId() {
-        return new DefaultNutsId(null, group, name, (NutsVersion) null, "");
+        return new DefaultNutsId(null, groupId, artifactId, (NutsVersion) null, "");
     }
 
     @Override
     public NutsId getLongNameId() {
-        return new DefaultNutsId(null, group, name, version, "");
+        return new DefaultNutsId(null, groupId, artifactId, version, "");
     }
 
     @Override
     public String getShortName() {
-        if (CoreStringUtils.isBlank(group)) {
-            return CoreStringUtils.trim(name);
+        if (CoreStringUtils.isBlank(groupId)) {
+            return CoreStringUtils.trim(artifactId);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
     }
 
     @Override
@@ -543,8 +542,8 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getArtifactId() {
+        return artifactId;
     }
 
     @Override
@@ -558,10 +557,10 @@ public class DefaultNutsId implements NutsId {
         if (!CoreStringUtils.isBlank(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!CoreStringUtils.isBlank(group)) {
-            sb.append(group).append(":");
+        if (!CoreStringUtils.isBlank(groupId)) {
+            sb.append(groupId).append(":");
         }
-        sb.append(name);
+        sb.append(artifactId);
         if (!version.isBlank()) {
             sb.append("#").append(version);
         }
@@ -579,7 +578,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getOptional() {
-        String s = getQueryMap().get(NutsConstants.QueryKeys.OPTIONAL);
+        String s = getProperties().get(NutsConstants.IdProperties.OPTIONAL);
         return CoreStringUtils.trimToNull(s);
     }
 
@@ -597,10 +596,10 @@ public class DefaultNutsId implements NutsId {
         if (namespace != null ? !namespace.equals(nutsId.namespace) : nutsId.namespace != null) {
             return false;
         }
-        if (group != null ? !group.equals(nutsId.group) : nutsId.group != null) {
+        if (groupId != null ? !groupId.equals(nutsId.groupId) : nutsId.groupId != null) {
             return false;
         }
-        if (name != null ? !name.equals(nutsId.name) : nutsId.name != null) {
+        if (artifactId != null ? !artifactId.equals(nutsId.artifactId) : nutsId.artifactId != null) {
             return false;
         }
         if (version != null ? !version.equals(nutsId.version) : nutsId.version != null) {
@@ -613,8 +612,8 @@ public class DefaultNutsId implements NutsId {
     @Override
     public int hashCode() {
         int result = namespace != null ? namespace.hashCode() : 0;
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
+        result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (query != null ? query.hashCode() : 0);
         return result;
@@ -624,10 +623,10 @@ public class DefaultNutsId implements NutsId {
     public NutsId apply(Function<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(this.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(this.getGroup(), properties),
-                CoreNutsUtils.applyStringProperties(this.getName(), properties),
+                CoreNutsUtils.applyStringProperties(this.getGroupId(), properties),
+                CoreNutsUtils.applyStringProperties(this.getArtifactId(), properties),
                 CoreNutsUtils.applyStringProperties(this.getVersion().getValue(), properties),
-                CoreNutsUtils.applyMapProperties(this.getQueryMap(), properties)
+                CoreNutsUtils.applyMapProperties(this.getProperties(), properties)
         );
     }
 

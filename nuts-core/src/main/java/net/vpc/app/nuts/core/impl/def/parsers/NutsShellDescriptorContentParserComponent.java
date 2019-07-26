@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.impl.def.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
+import net.vpc.app.nuts.core.DefaultNutsExecutorDescriptor;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.format.json.JsonStringBuffer;
 
@@ -126,7 +127,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                 return new DefaultNutsDescriptorBuilder()
                         .setId(CoreNutsUtils.parseNutsId("temp:nsh#1.0"))
                         .setPackaging("nsh")
-                        .setExecutor(new NutsExecutorDescriptor(NSH))
+                        .setExecutor(new DefaultNutsExecutorDescriptor(NSH))
                         .build();
             }
             return ws.descriptor().parse(comment.getValidString());

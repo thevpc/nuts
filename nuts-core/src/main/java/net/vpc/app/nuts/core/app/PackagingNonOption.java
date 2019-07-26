@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.core.app;
 
-import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsCommandLineFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class PackagingNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLine c=getWorkspace().commandLine();
+        NutsCommandLineFormat c=getWorkspace().commandLine();
         all.add(c.createCandidate("jar"));
         all.add(c.createCandidate("war"));
         all.add(c.createCandidate("war"));

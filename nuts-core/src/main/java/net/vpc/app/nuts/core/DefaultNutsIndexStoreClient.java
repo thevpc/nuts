@@ -44,9 +44,11 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/allVersions"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
-                        CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
-                        CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace()), CoreStringUtils.trim(id.getAlternative()));
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/, repository.getUuid(),
+                        CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
+                        CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
+//                , CoreStringUtils.trim(id.getAlternative())
+        );
         try {
             NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
@@ -102,10 +104,11 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
-                        CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),
-                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace()),
-                        CoreStringUtils.trim(id.getAlternative()));
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
+                        CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
+                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
+//                ,CoreStringUtils.trim(id.getAlternative())
+        );
         try {
             NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
@@ -123,10 +126,11 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
-                        CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),
-                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace()),
-                        CoreStringUtils.trim(id.getAlternative()));
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
+                        CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
+                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
+//                ,CoreStringUtils.trim(id.getAlternative())
+        );
         try {
             NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);

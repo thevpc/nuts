@@ -54,7 +54,7 @@ public class RepositoryNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLine c = getWorkspace().commandLine();
+        NutsCommandLineFormat c = getWorkspace().commandLine();
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
                 for (NutsRepository repository : repository.config().getMirrors()) {

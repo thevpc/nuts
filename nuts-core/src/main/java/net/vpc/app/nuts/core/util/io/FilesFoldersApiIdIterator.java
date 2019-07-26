@@ -124,7 +124,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                     }
                     if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
                         NutsId nutsId = t.getId().setNamespace(repository);
-                        nutsId = nutsId.setAlternative(t.getAlternative());
+//                        nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
                         break;
                     }

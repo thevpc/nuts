@@ -1405,18 +1405,18 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public String getDefaultIdBasedir(NutsId id) {
         NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(), id);
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
         if (id.getVersion().isBlank()) {
             return plainIdPath;
         }
         String version = id.getVersion().getValue();
-        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
+//        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
         String x = plainIdPath + "/" + version;
-        if (a != null) {
-            x += "/" + a;
-        }
+//        if (a != null) {
+//            x += "/" + a;
+//        }
         return x;
     }
 
@@ -1430,7 +1430,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 classifier = "-" + c;
             }
         }
-        return id.getName() + "-" + id.getVersion().getValue() + classifier + ext;
+        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
     }
 
     @Override
@@ -1439,11 +1439,16 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new NutsIllegalArgumentException(ws, "Unsupported empty Packaging");
         }
         switch (packaging) {
+            case "jar":
             case "bundle":
             case "nuts-extension":
             case "maven-archetype":
             case "maven-plugin":
+            case "ejb-client":
+            case "test-jar":
             case "ejb":
+            case "java-source":
+            case "javadoc":
                 return ".jar";
             case "dll":
             case "so":
@@ -1451,8 +1456,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return "-natives.jar";
             case "war":
                 return ".war";
-            case "jar":
-                return ".jar";
             case "ear":
                 return ".ear";
             case "pom":
@@ -1470,8 +1473,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public String getDefaultIdExtension(NutsId id) {
-        Map<String, String> q = id.getQueryMap();
-        String f = CoreStringUtils.trim(q.get(NutsConstants.QueryKeys.FACE));
+        Map<String, String> q = id.getProperties();
+        String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;
@@ -1486,7 +1489,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return getDefaultIdExtension(id.setFaceComponent()) + ".sha1";
             }
             case NutsConstants.QueryFaces.COMPONENT: {
-                return getDefaultIdComponentExtension(q.get(NutsConstants.QueryKeys.PACKAGING));
+                return getDefaultIdComponentExtension(q.get(NutsConstants.IdProperties.PACKAGING));
             }
             default: {
                 if (f.equals("cache") || f.endsWith(".cache")) {
@@ -1502,11 +1505,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsId createComponentFaceId(NutsId id, NutsDescriptor desc) {
-        Map<String, String> q = id.getQueryMap();
-        q.put(NutsConstants.QueryKeys.PACKAGING, CoreStringUtils.trim(desc.getPackaging()));
+        Map<String, String> q = id.getProperties();
+        q.put(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trim(desc.getPackaging()));
 //        q.put(NutsConstants.QUERY_EXT,CoreStringUtils.trim(descriptor.getExt()));
-        q.put(NutsConstants.QueryKeys.FACE, NutsConstants.QueryFaces.COMPONENT);
-        return id.setQuery(q);
+        q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.COMPONENT);
+        return id.setProperties(q);
     }
 
     @Override

@@ -82,7 +82,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         if (CoreStringUtils.isBlank(groups)) {
             return true;
         }
-        return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups));
+        return id.getGroupId().matches(CoreStringUtils.simpexpToRegexp(groups));
     }
 
     @Override

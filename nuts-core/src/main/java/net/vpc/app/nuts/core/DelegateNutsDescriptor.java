@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExecutorDescriptor;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 
 import java.util.Map;
 
@@ -106,7 +103,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
         return getBase().getExecutor();
     }
 
-//    @Override
+    //    @Override
 //    public String getExt() {
 //        return getBase().getExt();
 //    }
@@ -150,10 +147,10 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
         return getBase().getPlatform();
     }
 
-    @Override
-    public String getAlternative() {
-        return getBase().getAlternative();
-    }
+//    @Override
+//    public String getAlternative() {
+//        return getBase().getAlternative();
+//    }
 
     @Override
     public NutsDescriptor setProperties(Map<String, String> map, boolean append) {
@@ -166,7 +163,13 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String[] getLocations() {
+    public NutsIdLocation[] getLocations() {
         return getBase().getLocations();
     }
+
+    @Override
+    public NutsClassifierMapping[] getClassifierMappings() {
+        return getBase().getClassifierMappings();
+    }
+
 }

@@ -25,13 +25,13 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsSession session, NutsExecCommand execCommand) {
         super(cmd[0],
-                session.getWorkspace().commandLine().setArguments(cmd).toString(),
+                session.getWorkspace().commandLine().create(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
-        NutsCommandLine cmdLine = session.getWorkspace().commandLine().setArguments(this.executorOptions);
+        NutsCommandLine cmdLine = session.getWorkspace().commandLine().create(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getStringKey()) {
@@ -75,7 +75,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String getHelpText() {
-        switch (NutsPlatformUtils.getPlatformOsFamily()) {
+        switch (session.getWorkspace().config().getPlatformOsFamily()) {
             case WINDOWS: {
                 return "No help available. Try " + getName() + " /help";
             }
@@ -87,7 +87,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "SYSEXEC " + session.workspace().commandLine().setArguments(cmd).toString();
+        return "SYSEXEC " + session.workspace().commandLine().create(cmd).toString();
     }
 
 }

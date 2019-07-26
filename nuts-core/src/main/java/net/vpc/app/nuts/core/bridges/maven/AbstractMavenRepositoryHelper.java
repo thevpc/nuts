@@ -122,8 +122,8 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     protected String getIdExtension(NutsId id) {
-        Map<String, String> q = id.getQueryMap();
-        String f = CoreStringUtils.trim(q.get(NutsConstants.QueryKeys.FACE));
+        Map<String, String> q = id.getProperties();
+        String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
@@ -138,7 +138,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 return getIdExtension(id.setFaceComponent()) + ".sha1";
             }
             case NutsConstants.QueryFaces.COMPONENT: {
-                String packaging = q.get(NutsConstants.QueryKeys.PACKAGING);
+                String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
                 return repository.getWorkspace().config().getDefaultIdComponentExtension(packaging);
             }
             default: {

@@ -44,7 +44,7 @@ public class LinuxNdi implements SystemNdi {
 //                }
 //                //appContext.out().printf("==%s== resolved as ==%s==\n", parse,fetched.getId());
 //            }
-            String n = nid.getName();
+            String n = nid.getArtifactId();
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
             if (!options.getSession().isYes() && exists) {
@@ -81,9 +81,9 @@ public class LinuxNdi implements SystemNdi {
     @Override
     public void removeNutsScript(String id, NutsSession session) throws IOException {
         NutsId nid = context.getWorkspace().id().parse(id);
-        Path f = getScriptFile(nid.getName());
+        Path f = getScriptFile(nid.getArtifactId());
         if (Files.isRegularFile(f)) {
-            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm", f.toString())
+            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", f.toString())
                     .defaultValue(true)
                     .getBooleanValue()) {
                 Files.delete(f);

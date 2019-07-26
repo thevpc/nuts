@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsCommandLineFormat;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.common.io.ZipOptions;
@@ -64,6 +65,7 @@ public class ZipCommand extends AbstractNshBuiltin {
 //        NutsPrintStream out = context.out();
         File outZip = null;
         NutsArgument a;
+        NutsCommandLineFormat nutsCommandLineFormat = context.getWorkspace().commandLine();
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //
@@ -72,7 +74,7 @@ public class ZipCommand extends AbstractNshBuiltin {
             } else if (cmdLine.peek().isOption()) {
                 throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
             } else {
-                String path = cmdLine.required().nextNonOption(cmdLine.createName("file")).getString();
+                String path = cmdLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
                 File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 if (outZip == null) {
                     outZip = file;

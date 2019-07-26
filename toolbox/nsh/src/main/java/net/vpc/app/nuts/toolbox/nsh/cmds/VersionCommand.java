@@ -48,7 +48,7 @@ public class VersionCommand extends AbstractNshBuiltin {
     @Override
     public void exec(String[] args, NshExecutionContext context) {
         NutsWorkspace ws = context.getWorkspace();
-        NutsCommandLine cmdLine = context.getWorkspace().commandLine().setArguments(args);
+        NutsCommandLine cmdLine = context.getWorkspace().commandLine().create(args);
         NutsVersionFormat version = ws.version();
         version.configure(true, cmdLine);
         version

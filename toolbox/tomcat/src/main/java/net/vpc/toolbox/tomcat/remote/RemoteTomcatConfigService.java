@@ -162,7 +162,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         return this;
     }
 
-    public RemoteTomcatConfigService write(PrintStream out) {
+    public RemoteTomcatConfigService print(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
         context.workspace().json().value(getConfig()).print(new PrintWriter(out));
         w.flush();

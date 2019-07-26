@@ -5,8 +5,7 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.*;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.NonBlockingInputStreamAdapter;
 import net.vpc.common.strings.StringUtils;
@@ -14,10 +13,6 @@ import net.vpc.common.strings.StringUtils;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * @author vpc
@@ -28,6 +23,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
+        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
         if (cmdLine.next("connect") != null) {
             char[] password = null;
             String server = null;
@@ -38,7 +34,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if ((a = cmdLine.nextString("--password")) != null) {
                     password = a.getStringValue("").toCharArray();
                 } else {
-                    server = cmdLine.nextRequiredNonOption(cmdLine.createName("ServerAddress")).getString();
+                    server = cmdLine.nextRequiredNonOption(commandLineFormat.createName("ServerAddress")).getString();
                     cmdLine.setCommandName("nadmin connect").unexpectedArgument();
                 }
             }

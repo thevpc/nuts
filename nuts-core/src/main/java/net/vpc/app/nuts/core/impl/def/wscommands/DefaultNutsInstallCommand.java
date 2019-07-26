@@ -188,7 +188,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             cmdArgs.add(0,"--trace");
         }
         if (!defsToInstall.isEmpty()) {
-            if(ws.io().getTerminal().ask().forBoolean("Continue installation")
+            if(ws.io().getTerminal().ask().forBoolean("Continue installation?")
                     .defaultValue(true)
                     .session(session).getBooleanValue()) {
                 if(session.isForce()){

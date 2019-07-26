@@ -159,7 +159,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             switch (getValidSession().getConfirm()) {
                 case ERROR: {
                     out.flush();
-                    out.println(" ? : cancel");
+                    out.println(" : cancel");
                     throw new NutsUserCancelException(ws);
                 }
             }
@@ -167,12 +167,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 switch (getValidSession().getConfirm()) {
                     case YES: {
                         out.flush();
-                        out.println(" ? : yes");
+                        out.println(" : yes");
                         throw new NutsUserCancelException(ws);
                     }
                     case NO: {
                         out.flush();
-                        out.println(" ? : no");
+                        out.println(" : no");
                         throw new NutsUserCancelException(ws);
                     }
                 }
@@ -185,7 +185,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     v = terminal.readPassword("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
                 } else {
                     out.flush();
-                    v = terminal.readPassword(" ? : ");
+                    v = terminal.readPassword(" ");
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
                     throw new NutsUserCancelException(ws);

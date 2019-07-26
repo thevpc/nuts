@@ -69,10 +69,10 @@ public class CoreNutsUtils {
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
     static {
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.ARCH, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OS, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.OSDIST, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QueryKeys.PLATFORM, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
     }
 
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
@@ -106,7 +106,7 @@ public class CoreNutsUtils {
         }
     };
 
-    private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList("scope", "optional"));
+    private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList(NutsConstants.IdProperties.SCOPE, NutsConstants.IdProperties.OPTIONAL));
     public static Comparator<NutsDescriptor> NUTS_DESC_ENV_SPEC_COMPARATOR = new Comparator<NutsDescriptor>() {
         @Override
         public int compare(NutsDescriptor o1, NutsDescriptor o2) {
@@ -152,7 +152,7 @@ public class CoreNutsUtils {
     public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
             = new DefaultNutsDescriptorBuilder()
                     .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
-                    .setAlternative("suse")
+//                    .setAlternative("suse")
                     .setName("Application Full Name")
                     .setDescription("Application Description")
                     .setExecutable(true)
@@ -162,16 +162,16 @@ public class CoreNutsUtils {
                     .setOs(new String[]{"linux#4.6"})
                     .setOsdist(new String[]{"opensuse#42"})
                     .setPlatform(new String[]{"java#8"})
-                    .setExecutor(new NutsExecutorDescriptor(
+                    .setExecutor(new DefaultNutsExecutorDescriptor(
                             new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
-                    .setInstaller(new NutsExecutorDescriptor(
+                    .setInstaller(new DefaultNutsExecutorDescriptor(
                             new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
-                    .setLocations(new String[]{
-                "http://server/somelink"
+                    .setLocations(new NutsIdLocation[]{
+                new DefaultNutsIdLocation("http://server/somelink",null)
             })
                     .setDependencies(
                             new NutsDependency[]{
@@ -221,11 +221,11 @@ public class CoreNutsUtils {
     }
 
     public static boolean isEffectiveId(NutsId id) {
-        return (isEffectiveValue(id.getGroup()) && isEffectiveValue(id.getName()) && isEffectiveValue(id.getVersion().getValue()));
+        return (isEffectiveValue(id.getGroupId()) && isEffectiveValue(id.getArtifactId()) && isEffectiveValue(id.getVersion().getValue()));
     }
 
     public static boolean containsVars(NutsId id) {
-        return (CoreStringUtils.containsVars(id.getGroup()) && CoreStringUtils.containsVars(id.getName()) && CoreStringUtils.containsVars(id.getVersion().getValue()));
+        return (CoreStringUtils.containsVars(id.getGroupId()) && CoreStringUtils.containsVars(id.getArtifactId()) && CoreStringUtils.containsVars(id.getVersion().getValue()));
     }
 
     /**
@@ -341,10 +341,10 @@ public class CoreNutsUtils {
                     protocol,
                     group,
                     name,
-                    queryMap.get("classifier"),
+                    queryMap.get(NutsConstants.IdProperties.CLASSIFIER),
                     DefaultNutsVersion.valueOf(version),
-                    queryMap.get("scope"),
-                    queryMap.get("optional"),
+                    queryMap.get(NutsConstants.IdProperties.SCOPE),
+                    queryMap.get(NutsConstants.IdProperties.OPTIONAL),
                     null
             );
         }
@@ -385,27 +385,27 @@ public class CoreNutsUtils {
         if (parent != null) {
             boolean modified = false;
             String namespace = child.getNamespace();
-            String group = child.getGroup();
-            String name = child.getName();
+            String group = child.getGroupId();
+            String name = child.getArtifactId();
             String version = child.getVersion().getValue();
-            Map<String, String> face = child.getQueryMap();
+            Map<String, String> face = child.getProperties();
             if (CoreStringUtils.isBlank(namespace)) {
                 modified = true;
                 namespace = parent.getNamespace();
             }
             if (CoreStringUtils.isBlank(group)) {
                 modified = true;
-                group = parent.getGroup();
+                group = parent.getGroupId();
             }
             if (CoreStringUtils.isBlank(name)) {
                 modified = true;
-                name = parent.getName();
+                name = parent.getArtifactId();
             }
             if (CoreStringUtils.isBlank(version)) {
                 modified = true;
                 version = parent.getVersion().getValue();
             }
-            Map<String, String> parentFaceMap = parent.getQueryMap();
+            Map<String, String> parentFaceMap = parent.getProperties();
             if (!parentFaceMap.isEmpty()) {
                 modified = true;
                 face.putAll(parentFaceMap);
@@ -423,10 +423,10 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static boolean isDefaultAlternative(String s1) {
-        s1 = CoreStringUtils.trim(s1);
-        return s1.isEmpty() || s1.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE);
-    }
+//    public static boolean isDefaultAlternative(String s1) {
+//        s1 = CoreStringUtils.trim(s1);
+//        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
+//    }
 
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
@@ -658,13 +658,13 @@ public class CoreNutsUtils {
         return null;
     }
 
-    public static String trimToNullAlternative(String s) {
-        if (s == null) {
-            return null;
-        }
-        s = s.trim();
-        return (s.isEmpty() || NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
-    }
+//    public static String trimToNullAlternative(String s) {
+//        if (s == null) {
+//            return null;
+//        }
+//        s = s.trim();
+//        return (s.isEmpty() || NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
+//    }
 
     public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
         if (pattern == null) {
@@ -749,7 +749,7 @@ public class CoreNutsUtils {
         if (id == null) {
             throw new NutsElementNotFoundException(null, "Missing id");
         }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroupId())) {
             throw new NutsElementNotFoundException(null, "Missing group for " + id);
         }
     }
@@ -758,10 +758,10 @@ public class CoreNutsUtils {
         if (id == null) {
             throw new NutsElementNotFoundException(null, "Missing id");
         }
-        if (CoreStringUtils.isBlank(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroupId())) {
             throw new NutsElementNotFoundException(null, "Missing group for " + id);
         }
-        if (CoreStringUtils.isBlank(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getArtifactId())) {
             throw new NutsElementNotFoundException(null, "Missing name for " + id.toString());
         }
     }
@@ -855,7 +855,35 @@ public class CoreNutsUtils {
     }
 
     public static String idToPath(NutsId id) {
-        return id.getGroup().replace('.','/')+"/"+
-                id.getName()+"/"+id.getVersion();
+        return id.getGroupId().replace('.','/')+"/"+
+                id.getArtifactId()+"/"+id.getVersion();
     }
+
+    public static Properties copyOfNonNull(Properties p){
+        if(p==null){
+            return new Properties();
+        }
+        Properties p2=new Properties();
+        p2.putAll(p);
+        return p2;
+    }
+
+    public static Properties copyOfOrNull(Properties p){
+        if(p==null){
+            return null;
+        }
+        Properties p2=new Properties();
+        p2.putAll(p);
+        return p2;
+    }
+
+    public static boolean acceptClassifier(NutsIdLocation location,String classifier){
+        if(location==null){
+            return false;
+        }
+        String c0 = CoreStringUtils.trim(classifier);
+        String c1 = CoreStringUtils.trim(location.getClassifier());
+        return c0.equals(c1);
+    }
+
 }

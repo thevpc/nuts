@@ -132,7 +132,7 @@ public class LsCommand extends SimpleNshBuiltin {
             options.h = a.getBooleanValue();
             return true;
         } else if (commandLine.peek().isNonOption()) {
-            String path = commandLine.next(commandLine.createName("file")).getString();
+            String path = commandLine.next(context.getWorkspace().commandLine().createName("file")).getString();
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toArray()));
             commandLine.skip();

@@ -142,7 +142,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     public boolean acceptMonitoring(String path, Object source, String sourceName, NutsSession session) {
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = ws.commandLine().setArguments(new String[]{String.valueOf(o)}).next().getBoolean();
+            o = ws.commandLine().create(new String[]{String.valueOf(o)}).next().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {

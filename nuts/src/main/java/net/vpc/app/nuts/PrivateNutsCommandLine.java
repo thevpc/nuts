@@ -587,10 +587,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return count;
     }
 
-    @Override
-    public NutsArgumentName createName(String type) {
-        return createName(type, type);
-    }
+//    @Override
+//    public NutsArgumentName createName(String type) {
+//        return createName(type, type);
+//    }
 
     public NutsArgument next(boolean required, boolean expandSimpleOptions) {
         if (ensureNext(expandSimpleOptions, false)) {
@@ -695,7 +695,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //        return autoComplete != null && getWordIndex() == autoComplete.getCurrentWordIndex();
     }
 
-    @Override
+//    @Override
     public NutsArgument createArgument(String argument) {
         return createArgument0(argument, eq);
     }
@@ -704,10 +704,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return new ArgumentImpl(argument, eq);
     }
 
-    @Override
-    public NutsArgumentName createName(String type, String label) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-    }
+//    @Override
+//    public NutsArgumentName createName(String type, String label) {
+//        throw new UnsupportedOperationException(NOT_SUPPORTED);
+//    }
 
     protected void throwError(String message) {
         StringBuilder m = new StringBuilder();
@@ -926,12 +926,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return i;
     }
 
-    @Override
-    public NutsArgumentCandidate createCandidate(String value, String label) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
-        //AUTOCOMPLETE
-//        return new CandidateImpl(value,label);
-    }
+//    @Override
+//    public NutsArgumentCandidate createCandidate(String value, String label) {
+//        throw new UnsupportedOperationException(NOT_SUPPORTED);
+//        //AUTOCOMPLETE
+////        return new CandidateImpl(value,label);
+//    }
 
 //    /**
 //     * Default (simple) NutsArgumentCandidate implementation.
@@ -962,7 +962,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     /**
      * This is a minimal implementation of NutsArgument and hence should not be
      * used. Instead an instance of NutsArgument can be retrieved using
-     * {@link NutsCommandLine#createArgument(String)}
+     * {@link NutsCommandLineFormat#createArgument(String)}
      *
      * @author vpc
      * @since 0.5.5
@@ -983,6 +983,26 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         public ArgumentImpl(String expression, char eq) {
             super(expression);
             this.eq = eq;
+        }
+
+        @Override
+        public String getStringOptionPrefix() {
+            throw new NutsException(null, "Unsupported");
+        }
+
+        @Override
+        public String getKeyValueSeparator() {
+            return String.valueOf(eq);
+        }
+
+        @Override
+        public NutsArgument getArgumentOptionName() {
+            throw new NutsException(null, "Unsupported");
+        }
+
+        @Override
+        public String getStringOptionName() {
+            throw new NutsException(null, "Unsupported");
         }
 
         /**

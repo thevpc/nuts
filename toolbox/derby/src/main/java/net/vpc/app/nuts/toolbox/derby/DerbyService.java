@@ -57,7 +57,7 @@ public class DerbyService {
     private Path download(String id, Path folder) {
         final NutsId iid = appContext.getWorkspace().id().parse(id);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
-        Path targetFile = folder.resolve(iid.getName() + ".jar");
+        Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
             if (appContext.session().isPlainTrace()) {

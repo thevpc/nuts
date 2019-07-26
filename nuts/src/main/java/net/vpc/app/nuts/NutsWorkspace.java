@@ -86,13 +86,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsIOManager io();
 
-    /**
-     * new instance of an empty command line
-     *
-     * @return new instance of an empty command line
-     */
-    NutsCommandLine commandLine();
-
     ///////////////////// factory
     NutsSession createSession();
 
@@ -120,6 +113,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     void addInstallListener(NutsInstallListener listener);
 
     NutsInstallListener[] getInstallListeners();
+
+    NutsCommandLineFormat commandLine();
 
     /**
      * create json format instance

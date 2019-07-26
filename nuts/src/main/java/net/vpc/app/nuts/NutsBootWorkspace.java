@@ -105,7 +105,7 @@ public final class NutsBootWorkspace {
     };
 
     public NutsBootWorkspace(String... args) {
-        this(NutsArgumentsParser.parseNutsArguments(args));
+        this(PrivateNutsArgumentsParser.parseNutsArguments(args));
     }
 
     public NutsBootWorkspace(NutsWorkspaceOptions options) {
@@ -184,7 +184,7 @@ public final class NutsBootWorkspace {
             }
         }
         if (workspaceInformation.getJavaOptions() != null) {
-            Collections.addAll(cmd, new PrivateNutsCommandLine().parseLine(workspaceInformation.getJavaOptions()).toArray());
+            Collections.addAll(cmd, PrivateNutsCommandLine.parseCommandLineArray(workspaceInformation.getJavaOptions()));
         }
         cmd.add("-jar");
         cmd.add(file.getPath());
@@ -239,7 +239,7 @@ public final class NutsBootWorkspace {
                 //this is a protocol based workspace
                 //String protocol=ws.substring(0,ws.indexOf("://"));
                 workspaceName = "remote-bootstrap";
-                lastConfigPath = NutsPlatformUtils.getPlatformHomeFolder(null, null, null,
+                lastConfigPath = PrivateNutsPlatformUtils.getPlatformHomeFolder(null, null, null,
                         workspaceInformation.isGlobal(),
                         PrivateNutsUtils.resolveValidWorkspaceName(workspaceName));
                 lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath);
@@ -251,7 +251,7 @@ public final class NutsBootWorkspace {
                 for (int i = 0; i < maxDepth; i++) {
                     lastConfigPath
                             = PrivateNutsUtils.isValidWorkspaceName(_ws)
-                            ? NutsPlatformUtils.getPlatformHomeFolder(
+                            ? PrivateNutsPlatformUtils.getPlatformHomeFolder(
                             null, null, null,
                             workspaceInformation.isGlobal(),
                             PrivateNutsUtils.resolveValidWorkspaceName(_ws)
@@ -298,7 +298,7 @@ public final class NutsBootWorkspace {
             String workspace = workspaceInformation.getWorkspaceLocation();
             String[] homes = new String[NutsStoreLocation.values().length];
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
-                homes[type.ordinal()] = NutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
+                homes[type.ordinal()] = PrivateNutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                         workspaceInformation.isGlobal(), workspaceInformation.getName());
                 if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
                     throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());
@@ -712,7 +712,7 @@ public final class NutsBootWorkspace {
     }
 
     protected String getHome(NutsStoreLocation storeFolder) {
-        return NutsPlatformUtils.getPlatformHomeFolder(
+        return PrivateNutsPlatformUtils.getPlatformHomeFolder(
                 workspaceInformation.getStoreLocationLayout(),
                 storeFolder,
                 workspaceInformation.getHomeLocations(),

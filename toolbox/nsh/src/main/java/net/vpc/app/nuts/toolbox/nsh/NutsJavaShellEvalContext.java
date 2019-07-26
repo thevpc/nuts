@@ -276,7 +276,8 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLine args = workspace.commandLine().parseLine(s);
+                                    NutsCommandLineFormat commandLineFormat = workspace.commandLine();
+                                    NutsCommandLine args = commandLineFormat.parse(s);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
@@ -290,7 +291,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                args.createCandidate(
+                                                commandLineFormat.createCandidate(
                                                         value, display
                                                 )
                                         );

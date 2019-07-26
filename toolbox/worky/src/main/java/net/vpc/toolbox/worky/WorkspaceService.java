@@ -146,13 +146,14 @@ public class WorkspaceService {
         boolean interactive = false;
         NutsArgument a;
         boolean run = false;
+        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //consumed
             } else if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
             } else {
-                String folder = cmdLine.nextNonOption(cmdLine.createName("Folder")).getString();
+                String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
                 run = true;
                 if (cmdLine.isExecMode()) {
                     scan(new File(folder), interactive);

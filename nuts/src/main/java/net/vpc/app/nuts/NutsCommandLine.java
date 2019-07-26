@@ -453,46 +453,6 @@ public interface NutsCommandLine {
      */
     boolean isNonOption(int index);
 
-    /**
-     * create new argument
-     * @param argument new argument
-     * @return new argument
-     */
-    NutsArgument createArgument(String argument);
-
-    /**
-     * create argument name
-     * @param type create argument type
-     * @return argument name
-     */
-    default NutsArgumentName createName(String type) {
-        return createName(type, type);
-    }
-
-    /**
-     * create argument name
-     * @param type argument type
-     * @param label argument label
-     * @return argument name
-     */
-    NutsArgumentName createName(String type, String label);
-
-    /**
-     * create argument candidate
-     * @param value candidate value
-     * @return argument candidate
-     */
-    default NutsArgumentCandidate createCandidate(String value) {
-        return createCandidate(value, value);
-    }
-
-    /**
-     * create argument candidate
-     * @param value candidate value
-     * @param label candidate label
-     * @return argument candidate
-     */
-    NutsArgumentCandidate createCandidate(String value, String label);
 
     /**
      * reset this instance with the given parsed arguments
@@ -514,5 +474,4 @@ public interface NutsCommandLine {
      * @return reset this instance with the given arguments
      */
     NutsCommandLine setArguments(String[] arguments);
-
 }

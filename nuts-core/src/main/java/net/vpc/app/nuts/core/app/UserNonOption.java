@@ -54,7 +54,7 @@ public class UserNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLine c = getWorkspace().commandLine();
+        NutsCommandLineFormat c = getWorkspace().commandLine();
 
         if (repository != null) {
             for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers()) {

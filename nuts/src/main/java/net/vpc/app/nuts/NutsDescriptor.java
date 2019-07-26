@@ -50,9 +50,9 @@ public interface NutsDescriptor extends Serializable {
 
     boolean isNutsApplication();
 
-    String getPackaging();
+    //    String getAlternative();
 
-    String getAlternative();
+    String getPackaging();
 
     String[] getArch();
 
@@ -64,9 +64,12 @@ public interface NutsDescriptor extends Serializable {
 
     String getName();
 
-    String[] getLocations();
+    NutsClassifierMapping[] getClassifierMappings();
+    NutsDescriptor setClassifierMappings(NutsClassifierMapping[] value);
 
-    NutsDescriptor setLocations(String[] locations);
+    NutsIdLocation[] getLocations();
+
+    NutsDescriptor setLocations(NutsIdLocation[] locations);
 
     /**
      * The dependencies specified here are not used until they are referenced in
@@ -138,7 +141,7 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptorBuilder builder();
 
-    NutsDescriptor setAlternative(String alternative);
+//    NutsDescriptor setAlternative(String alternative);
 
     NutsDescriptor replaceDependency(Predicate<NutsDependency> filter, UnaryOperator<NutsDependency> converter);
 

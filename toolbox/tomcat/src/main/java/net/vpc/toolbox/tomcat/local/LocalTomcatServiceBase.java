@@ -8,7 +8,13 @@ public abstract class LocalTomcatServiceBase {
 
     public abstract String getName();
 
-    public abstract LocalTomcatServiceBase write(PrintStream out);
+    public abstract LocalTomcatServiceBase print(PrintStream out);
+
+    public LocalTomcatServiceBase println(PrintStream out) {
+        print(out);
+        out.println();
+        return this;
+    }
 
     public abstract LocalTomcatServiceBase remove();
 }

@@ -71,7 +71,7 @@ public class NutsComponentController {
                                                                      @RequestParam("arch") String arch,
                                                                      @RequestParam("face") String face,
                                                                      @RequestParam("scope") String scope,
-                                                                     @RequestParam("alternative") String alternative,
+//                                                                     @RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative,
                                                                      @RequestParam("all") Boolean all) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
@@ -81,16 +81,16 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.id().builder()
-                        .setName(name)
+                        .setArtifactId(name)
                         .setNamespace(namespace)
-                        .setGroup(group)
+                        .setGroupId(group)
                         .setVersion(version)
                         .setArch(arch)
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
                         .setScope(scope)
-                        .setAlternative(alternative)
+//                        .setAlternative(alternative)
                         .build();
                 List<Map<String, String>> result;
                 if (all) {
@@ -114,8 +114,9 @@ public class NutsComponentController {
                                                                     @RequestParam("osdist") String osdist,
                                                                     @RequestParam("arch") String arch,
                                                                     @RequestParam("face") String face,
-                                                                    @RequestParam("scope") String scope,
-                                                                    @RequestParam("alternative") String alternative) {
+                                                                    @RequestParam("scope") String scope
+//            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
+    ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
             LOG.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
@@ -124,15 +125,15 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.id().builder()
-                        .setName(name)
+                        .setArtifactId(name)
                         .setNamespace(namespace)
-                        .setGroup(group)
+                        .setGroupId(group)
                         .setArch(arch)
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
                         .setScope(scope)
-                        .setAlternative(alternative)
+//                        .setAlternative(alternative)
                         .build();
                 List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), id);
                 List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
@@ -153,8 +154,9 @@ public class NutsComponentController {
                                                    @RequestParam("osdist") String osdist,
                                                    @RequestParam("arch") String arch,
                                                    @RequestParam("face") String face,
-                                                   @RequestParam("scope") String scope,
-                                                   @RequestParam("alternative") String alternative) {
+                                                   @RequestParam("scope") String scope
+//            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
+    ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
             LOG.info("Deleting the component " + name + " data for subscriber " + subscriber.cacheFolderName());
@@ -164,16 +166,16 @@ public class NutsComponentController {
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
                         ws.id().builder()
-                                .setName(name)
+                                .setArtifactId(name)
                                 .setNamespace(namespace)
-                                .setGroup(group)
+                                .setGroupId(group)
                                 .setVersion(version)
                                 .setArch(arch)
                                 .setOs(os)
                                 .setOsdist(osdist)
                                 .setFace(face)
                                 .setScope(scope)
-                                .setAlternative(alternative)
+//                                .setAlternative(alternative)
                                 .build());
                 this.dataService.deleteData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                 return ResponseEntity.ok(true);
@@ -193,8 +195,9 @@ public class NutsComponentController {
                                                @RequestParam("osdist") String osdist,
                                                @RequestParam("arch") String arch,
                                                @RequestParam("face") String face,
-                                               @RequestParam("scope") String scope,
-                                               @RequestParam("alternative") String alternative) {
+                                               @RequestParam("scope") String scope
+//            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
+    ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
         if (subscriber != null) {
             LOG.info("Getting all versions of component " + name + " data for subscriber " + subscriber.cacheFolderName());
@@ -203,16 +206,16 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.id().builder()
-                        .setName(name)
+                        .setArtifactId(name)
                         .setNamespace(namespace)
-                        .setGroup(group)
+                        .setGroupId(group)
                         .setVersion(version)
                         .setArch(arch)
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
                         .setScope(scope)
-                        .setAlternative(alternative)
+//                        .setAlternative(alternative)
                         .build();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
                 List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data, null);

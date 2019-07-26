@@ -67,7 +67,7 @@ class URLParts {
             for (URLPart pathItem : new URLParts(r2.substring(x + 1)).values) {
                 rr.add(pathItem);
             }
-            values = rr.toArray(new URLPart[rr.size()]);
+            values = rr.toArray(new URLPart[0]);
         } else if (r.startsWith("/")) {
             values = new URLPart[]{new URLPart("/", r.substring(1))};
         } else {

@@ -170,7 +170,7 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig().setServer(
                             context.session().terminal()
-                                    .ask().forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server")
+                                    .ask().forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--server")
                                     .defaultValue("ssh://login@myserver/instanceName").session(context.getSession())
                                     .getValue()
                     );
@@ -179,7 +179,7 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig()
                             .setRemoteTempPath(context.session().terminal().ask()
-                                    .forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
+                                    .forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
                                     .session(context.getSession())
                                     .getValue()
                             );
@@ -188,7 +188,7 @@ public class RemoteTomcat {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(context.session().terminal().ask()
-                                .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")
+                                .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value ?", c.getName(), aa.getName(), "-app.path")
                                 .session(context.getSession())
                                 .getValue());
                     }
@@ -304,7 +304,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(getContext().getWorkspace().commandLine().setArguments(
+                install(getContext().getWorkspace().commandLine().create(
                         new String[]{
                             "--name",
                             instance,
@@ -338,18 +338,20 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
-                (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
-            for (Path entry : pp) {
-                try {
-                    RemoteTomcatConfigService c = loadTomcatConfig(entry);
-                    all.add(c);
-                } catch (Exception ex) {
-                    //ignore
+        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
+            try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
+                    (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
+                for (Path entry : pp) {
+                    try {
+                        RemoteTomcatConfigService c = loadTomcatConfig(entry);
+                        all.add(c);
+                    } catch (Exception ex) {
+                        //ignore
+                    }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
         }
         return all.toArray(new RemoteTomcatConfigService[0]);
     }
@@ -364,12 +366,10 @@ public class RemoteTomcat {
             public void show(RemoteTomcatServiceBase aa) {
                 if (json) {
                     getContext().session().out().printf("[[%s]] :\n", aa.getName());
-                    aa.write(getContext().session().out());
-                    getContext().session().out().println();
+                    aa.println(getContext().session().out());
                 } else {
                     getContext().session().out().printf("[[%s]] :\n", aa.getName());
-                    aa.write(getContext().session().out());
-                    getContext().session().out().println();
+                    aa.println(getContext().session().out());
                 }
             }
         }

@@ -136,10 +136,10 @@ public class NutsIdGraph {
             return null;
         }
         id = id.setNamespace(null);
-        Map<String, String> m = id.getQueryMap();
+        Map<String, String> m = id.getProperties();
         if (m != null && !m.isEmpty()) {
-            m.remove(NutsConstants.QueryKeys.FACE);
-            id = id.setQuery(m);
+            m.remove(NutsConstants.IdProperties.FACE);
+            id = id.setProperties(m);
         }
         return id;
     }
@@ -161,16 +161,16 @@ public class NutsIdGraph {
 
     private NutsId uniformNutsId(NutsId id) {
         NutsIdBuilder b = id.builder();
-        Map<String, String> m = b.getQueryMap();
+        Map<String, String> m = b.getProperties();
         Map<String, String> ok = new HashMap<>();
-        ok.put(NutsConstants.QueryKeys.ARCH, m.get(NutsConstants.QueryKeys.ARCH));
-        ok.put(NutsConstants.QueryKeys.OSDIST, m.get(NutsConstants.QueryKeys.OSDIST));
-        ok.put(NutsConstants.QueryKeys.OS, m.get(NutsConstants.QueryKeys.OS));
-        ok.put(NutsConstants.QueryKeys.PLATFORM, m.get(NutsConstants.QueryKeys.PLATFORM));
-        ok.put(NutsConstants.QueryKeys.ALTERNATIVE, m.get(NutsConstants.QueryKeys.ALTERNATIVE));
-        ok.put(NutsConstants.QueryKeys.CLASSIFIER, m.get(NutsConstants.QueryKeys.CLASSIFIER));
+        ok.put(NutsConstants.IdProperties.ARCH, m.get(NutsConstants.IdProperties.ARCH));
+        ok.put(NutsConstants.IdProperties.OSDIST, m.get(NutsConstants.IdProperties.OSDIST));
+        ok.put(NutsConstants.IdProperties.OS, m.get(NutsConstants.IdProperties.OS));
+        ok.put(NutsConstants.IdProperties.PLATFORM, m.get(NutsConstants.IdProperties.PLATFORM));
+//        ok.put(NutsConstants.IdProperties.ALTERNATIVE, m.get(NutsConstants.IdProperties.ALTERNATIVE));
+        ok.put(NutsConstants.IdProperties.CLASSIFIER, m.get(NutsConstants.IdProperties.CLASSIFIER));
         b.setNamespace(null);
-        b.setQuery(ok);
+        b.setProperties(ok);
         return b.build();
     }
 
@@ -301,10 +301,10 @@ public class NutsIdGraph {
 
     private NutsId prepareDepId(NutsDependency dept, NutsId item) {
         if (!NutsDependencyScopes.isDefaultScope(dept.getScope())) {
-            item = item.setQueryProperty("scope", dept.getScope());
+            item = item.setProperty("scope", dept.getScope());
         }
         if (dept.isOptional()) {
-            item = item.setQueryProperty("optional", "true");
+            item = item.setProperty(NutsConstants.IdProperties.OPTIONAL, "true");
         }
         return item;
     }
@@ -565,7 +565,7 @@ public class NutsIdGraph {
                 }
                 if (id1.getVersion().isSingleValue() && id2.getVersion().isSingleValue()) {
                     int x = id1.getVersion().compareTo(id2.getVersion());
-                    int c = NutsDependencyScopes.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
+                    int c = NutsDependencyScopes.compareScopes(id1.getProperties().get("scope"), id2.getProperties().get("scope"));
                     if (x != 0) {
                         if (c == 0) {
                             //better version with same scope

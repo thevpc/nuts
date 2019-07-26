@@ -175,7 +175,7 @@ public class TestCommand extends AbstractNshBuiltin {
 
     @Override
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine commandLine = context.getWorkspace().commandLine().setArguments(args)
+        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
                 .setCommandName("test");
         if (commandLine.isEmpty()) {
             throw new NutsExecutionException(context.getWorkspace(),"result=" + 1, 1);

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
-import net.vpc.app.nuts.NutsCommandLineFormat;
+import net.vpc.app.nuts.NutsExecCommandFormat;
 import net.vpc.toolbox.mysql.util.MysqlUtils;
 
 public class RemoteMysqlDatabaseConfigService {
@@ -174,7 +174,7 @@ public class RemoteMysqlDatabaseConfigService {
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
         if (context.session().isPlainTrace()) {
-            context.session().out().printf("[[EXEC]] %s%n", b.setCommandLineFormat(new NutsCommandLineFormat() {
+            context.session().out().printf("[[EXEC]] %s%n", b.setCommandLineFormat(new NutsExecCommandFormat() {
                 @Override
                 public String replaceEnvValue(String envName, String envValue) {
                     if (envName.toLowerCase().contains("password")

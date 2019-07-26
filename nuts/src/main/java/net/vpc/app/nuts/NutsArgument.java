@@ -228,6 +228,34 @@ public interface NutsArgument extends NutsTokenFilter {
     NutsArgument getArgumentKey();
 
     /**
+     * return option prefix part  ('-' and '--')
+     * @return option prefix part  ('-' and '--')
+     * @since 0.5.7
+     */
+    String getStringOptionPrefix();
+
+    /**
+     * return query value separator
+     * @return query value separator
+     * @since 0.5.7
+     */
+    String getKeyValueSeparator();
+
+    /**
+     * return option key part excluding prefix ('-' and '--')
+     * @return option key part excluding prefix ('-' and '--')
+     * @since 0.5.7
+     */
+    NutsArgument getArgumentOptionName();
+
+    /**
+     * return option key part excluding prefix ('-' and '--')
+     * @return option key part excluding prefix ('-' and '--')
+     * @since 0.5.7
+     */
+    String getStringOptionName();
+
+    /**
      * return new instance (never null) of the value part of the argument (after
      * =). However Argument's value may be null (
      * {@code getArgumentValue().getString() == null}). Here are some examples of

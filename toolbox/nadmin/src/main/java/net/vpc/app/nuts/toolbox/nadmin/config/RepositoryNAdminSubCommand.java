@@ -21,6 +21,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
 
+        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
         NutsWorkspace ws = context.getWorkspace();
         if (cmdLine.next("create repo", "cr") != null) {
             String repositoryName = null;
@@ -28,13 +29,13 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             String repoType = null;
             while (cmdLine.hasNext()) {
                 if (cmdLine.next("-t", "--type") != null) {
-                    repoType = cmdLine.required().nextNonOption(cmdLine.createName("repository-type")).getString();
+                    repoType = cmdLine.required().nextNonOption(commandLineFormat.createName("repository-type")).getString();
                 } else if (cmdLine.next("-l", "--location") != null) {
-                    location = cmdLine.nextNonOption(cmdLine.createName("folder")).getString();
+                    location = cmdLine.nextNonOption(commandLineFormat.createName("folder")).getString();
                 } else if (cmdLine.next("-id", "--id") != null) {
-                    repositoryName = cmdLine.required().nextNonOption(cmdLine.createName("NewRepositoryName")).getString();
+                    repositoryName = cmdLine.required().nextNonOption(commandLineFormat.createName("NewRepositoryName")).getString();
                 } else if (!cmdLine.peek().isOption()) {
-                    location = cmdLine.nextNonOption(cmdLine.createName("RepositoryLocation")).getString();
+                    location = cmdLine.nextNonOption(commandLineFormat.createName("RepositoryLocation")).getString();
                 } else {
                     cmdLine.setCommandName("config create repo").unexpectedArgument();
                 }
@@ -81,12 +82,11 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             @Override
                             public List<NutsArgumentCandidate> getCandidates() {
                                 ArrayList<NutsArgumentCandidate> arrayList = new ArrayList<>();
-                                NutsCommandLine c = cmdLine;
 
                                 for (Map.Entry<String, NutsRepositoryDefinition> e : repoPatterns.entrySet()) {
-                                    arrayList.add(c.createCandidate(e.getKey()));
+                                    arrayList.add(commandLineFormat.createCandidate(e.getKey()));
                                 }
-                                arrayList.add(c.createCandidate("<RepositoryName>"));
+                                arrayList.add(commandLineFormat.createCandidate("<RepositoryName>"));
                                 return arrayList;
                             }
 
@@ -101,8 +101,8 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             location = found.getLocation();
                             repoType = found.getType();
                         } else {
-                            location = cmdLine.required().nextNonOption(cmdLine.createName("folder", "location")).getString();
-                            repoType = cmdLine.required().nextNonOption(cmdLine.createName("repository-type")).getString();
+                            location = cmdLine.required().nextNonOption(commandLineFormat.createName("folder", "location")).getString();
+                            repoType = cmdLine.required().nextNonOption(commandLineFormat.createName("repository-type")).getString();
                         }
                         if (cmdLine.isExecMode()) {
                             NutsRepository repo = null;
@@ -127,7 +127,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 return true;
 
             } else if (cmdLine.next("remove repo", "rr") != null) {
-                String locationOrRepositoryName = cmdLine.required().nextNonOption(cmdLine.createName("repository")).getString();
+                String locationOrRepositoryName = cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString();
                 if (cmdLine.isExecMode()) {
                     ws.config().removeRepository(locationOrRepositoryName, new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
@@ -167,7 +167,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 return true;
 
             } else if (cmdLine.next("enable repo", "er") != null) {
-                String localId = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
+                String localId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                 if (cmdLine.isExecMode()) {
 
                     NutsRepository editedRepo = ws.config().getRepository(localId);
@@ -176,7 +176,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 return true;
             } else if (cmdLine.next("disable repo", "rr") != null) {
-                String localId = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
+                String localId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                 if (cmdLine.isExecMode()) {
                     NutsRepository editedRepo = ws.config().getRepository(localId);
                     editedRepo.config().setEnabled(false, new NutsUpdateOptions().session(context.getSession()));
@@ -184,11 +184,11 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 return true;
             } else if (cmdLine.next("edit repo", "er") != null) {
-                String repoId = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
+                String repoId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                 if (cmdLine.next("add repo", "ar") != null) {
-                    String repositoryName = cmdLine.required().nextNonOption(cmdLine.createName("NewRepositoryName")).getString();
-                    String location = cmdLine.required().nextNonOption(cmdLine.createName("folder")).getString();
-                    String repoType = cmdLine.nextNonOption(cmdLine.createName("repository-type")).getString();
+                    String repositoryName = cmdLine.required().nextNonOption(commandLineFormat.createName("NewRepositoryName")).getString();
+                    String location = cmdLine.required().nextNonOption(commandLineFormat.createName("folder")).getString();
+                    String repoType = cmdLine.nextNonOption(commandLineFormat.createName("repository-type")).getString();
 
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     NutsRepository repo = editedRepo.config().addMirror(
@@ -202,7 +202,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     trySave(context, ws, repo, autoSave, null);
 
                 } else if (cmdLine.next("remove repo", "rr") != null) {
-                    String location = cmdLine.required().nextNonOption(cmdLine.createName("RepositoryName")).getString();
+                    String location = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     editedRepo.config().removeMirror(location, new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);

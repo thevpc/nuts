@@ -77,13 +77,13 @@ public class NutsComponentService {
             @RequestParam("arch") String arch,
             @RequestParam("face") String face,
             @RequestParam("scope") String scope,
-            @RequestParam("alternative") String alternative,
+//            @RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative,
             @RequestParam("all") String all) {
 
         String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/dependencies"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
-                + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s&all=%s",
-                workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch, all);
+                + "face=%s&os=%s&osdist=%s&scope=%s&arch=%s&all=%s"/*&alternative=%s*/,
+                workspace, name, namespace, group, version, face, os, osdist, scope, arch, all/*alternative,*/ );
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }
@@ -97,8 +97,9 @@ public class NutsComponentService {
             @RequestParam("os") String os,
             @RequestParam("osdist") String osdist,
             @RequestParam("face") String face,
-            @RequestParam("scope") String scope,
-            @RequestParam("alternative") String alternative) {
+            @RequestParam("scope") String scope
+//        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
+    ) {
         NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
         NutsId id = ws.createIdBuilder()
                 .setName(name)
@@ -109,7 +110,7 @@ public class NutsComponentService {
                 .setOsdist(osdist)
                 .setFace(face)
                 .setScope(scope)
-                .setAlternative(alternative)
+//                .setAlternative(alternative)
                 .build();
         NutsFetchCommand fetch = ws.fetch().id(id);
         Path filePath = fetch.getResultPath();
@@ -138,8 +139,9 @@ public class NutsComponentService {
             @RequestParam("os") String os,
             @RequestParam("osdist") String osdist,
             @RequestParam("face") String face,
-            @RequestParam("scope") String scope,
-            @RequestParam("alternative") String alternative) {
+            @RequestParam("scope") String scope
+//        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
+    ) {
         NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
         NutsId id = ws.createIdBuilder()
                 .setName(name)
@@ -150,13 +152,13 @@ public class NutsComponentService {
                 .setOsdist(osdist)
                 .setFace(face)
                 .setScope(scope)
-                .setAlternative(alternative)
+//                .setAlternative(alternative)
                 .build();
         ws.undeploy().id(id).run();
         String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/delete"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
-                + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=",
-                workspace, name, namespace, group, version, face, os, osdist, scope, alternative);
+                + "face=%s&os=%s&osdist=%s&scope=%s&arch="/*&alternative=%s*/,
+                workspace, name, namespace, group, version, face, os, osdist, scope/*, alternative*/);
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }

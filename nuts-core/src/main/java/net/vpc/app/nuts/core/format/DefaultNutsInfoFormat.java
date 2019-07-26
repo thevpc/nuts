@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+
+import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -55,7 +57,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     @Override
     public NutsInfoFormat addProperty(String key, String value) {
-        extraProperties.setProperty(key, value);
+        if(value==null){
+            extraProperties.remove(key);
+        }else {
+            extraProperties.setProperty(key, value);
+        }
         return this;
     }
 
@@ -84,12 +90,14 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
-            args.add("--multiline-property=nuts-runtime-path=:|;");
+            args.add("--multiline-property=nuts-runtime-path=;");
+            args.add("--multiline-property=java-classpath=" + File.pathSeparator);
+            args.add("--multiline-property=java-library-path=" + File.pathSeparator);
+
             args.add("--multiline-property=nuts-boot-runtime-path=:|;");
             args.add("--multiline-property=java.class.path=" + File.pathSeparator);
             args.add("--multiline-property=java-class-path=" + File.pathSeparator);
             args.add("--multiline-property=java.library.path=" + File.pathSeparator);
-            args.add("--multiline-property=java-library-path=" + File.pathSeparator);
         }
         m.configure(true, args.toArray(new String[0]));
 
@@ -185,14 +193,13 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.config().getOptions();
         Set<String> extraKeys = new TreeSet<>();
-        if (extraProperties != null) {
-            extraKeys = new TreeSet(extraProperties.keySet());
-        }
+        extraKeys = new TreeSet(extraProperties.keySet());
 
         props.put("name", stringValue(rt.getName()));
         props.put("nuts-api-version", stringValue(rt.getApiVersion()));
-        props.put("nuts-api-id", stringValue(rt.getApiId().getLongName()));
-        props.put("nuts-runtime-id", stringValue(rt.getRuntimeId().getLongName()));
+        NutsIdFormat idFormat = ws.id();
+        props.put("nuts-api-id", idFormat.value(rt.getApiId()).format());
+        props.put("nuts-runtime-id", idFormat.value(rt.getRuntimeId()).format());
         URL[] cl = rt.getBootClassWorldURLs();
         List<String> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
@@ -230,10 +237,10 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-read-only", (options.isReadOnly()));
         props.put("nuts-skip-companions", options.isSkipCompanions());
         props.put("nuts-skip-welcome", options.isSkipWelcome());
-        props.put("java-version", System.getProperty("java.version"));
-        props.put("java-executable", CoreIOUtils.resolveJavaCommand(null));
-        props.put("java-classpath", System.getProperty("java.class.path"));
-        props.put("java-library-path", System.getProperty("java.library.path"));
+        props.put("java-version", stringValue(System.getProperty("java.version")));
+        props.put("java-executable", stringValue(CoreIOUtils.resolveJavaCommand(null)));
+        props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
+        props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
         props.put("os-name", ws.config().getPlatformOs().toString());
         props.put("os-family", stringValue(ws.config().getPlatformOsFamily()));
         if (ws.config().getPlatformOsDist() != null) {
@@ -243,11 +250,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", stringValue(System.getProperty("user.home")));
         props.put("user-dir", stringValue(System.getProperty("user.dir")));
-        props.put("command-line-long", ws.config().options().format().compact(false).getBootCommandLine());
-        props.put("command-line-short", ws.config().options().format().compact(true).getBootCommandLine());
+        props.put("command-line-long", ws.commandLine().value(ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())).format());
+        props.put("command-line-short", ws.commandLine().value(ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())).format());
         props.put("inherited", ws.config().options().isInherited());
-        props.put("inherited-nuts-boot-args", System.getProperty("nuts.boot.args"));
-        props.put("inherited-nuts-args", System.getProperty("nuts.args"));
+        props.put("inherited-nuts-boot-args", ws.commandLine().value(ws.commandLine().parse(System.getProperty("nuts.boot.args"))).format());
+        props.put("inherited-nuts-args", ws.commandLine().value(ws.commandLine().parse(System.getProperty("nuts.args"))).format());
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());

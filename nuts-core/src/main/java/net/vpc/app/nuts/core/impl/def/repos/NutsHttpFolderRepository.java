@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -108,8 +109,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected String getDescPath(NutsId id) {
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         String version = id.getVersion().getValue();
         return (CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + NutsConstants.Files.DESCRIPTOR_FILE_NAME
@@ -159,8 +160,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String userName = all[2];
         String repo = all[3];
         String apiUrlBase = "https://api.github.com/repos/" + userName + "/" + repo + "/contents";
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
@@ -209,8 +210,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     public Iterator<NutsId> findVersionsImplFilesFolders(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         try {
             String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
             String[] all = FilesFoldersApi.getFolders(artifactUrl, session.getSession());
@@ -253,8 +254,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             return null;
         }
         if (id.getVersion().isSingleValue()) {
-            String groupId = id.getGroup();
-            String artifactId = id.getName();
+            String groupId = id.getGroupId();
+            String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.setFaceDescriptor())
@@ -324,12 +325,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safeCopy().monitorable().run();
             return new DefaultNutsContent(localFile, false, false);
         } else {
-            for (String location : descriptor.getLocations()) {
-                try {
-                    getWorkspace().io().copy().session(session.getSession()).from(location).to(localFile).safeCopy().monitorable().run();
-                    return new DefaultNutsContent(localFile, false, false);
-                } catch (Exception ex) {
-                    //ignore!!
+            for (NutsIdLocation location : descriptor.getLocations()) {
+                if(CoreNutsUtils.acceptClassifier(location,id.getClassifier())) {
+                    try {
+                        getWorkspace().io().copy().session(session.getSession()).from(location).to(localFile).safeCopy().monitorable().run();
+                        return new DefaultNutsContent(localFile, false, false);
+                    } catch (Exception ex) {
+                        //ignore!!
+                    }
                 }
             }
             return null;

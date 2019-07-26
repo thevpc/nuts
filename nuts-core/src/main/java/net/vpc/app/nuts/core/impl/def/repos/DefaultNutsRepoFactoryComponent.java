@@ -92,7 +92,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                 .setName("system")
                 .setLocation(
                 CoreIOUtils.getNativePath(
-                        NutsPlatformUtils.getPlatformHomeFolder(null, 
+                        Nuts.getPlatformHomeFolder(null,
                                 NutsStoreLocation.CONFIG, null, 
                                 true, 
                                 NutsConstants.Names.DEFAULT_WORKSPACE_NAME)

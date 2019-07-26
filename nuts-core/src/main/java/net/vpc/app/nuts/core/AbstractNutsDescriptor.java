@@ -56,9 +56,8 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             return this;
         }
         NutsId n_id = getId();
-        String n_alt = getAlternative();
+//        String n_alt = getAlternative();
         String n_packaging = getPackaging();
-//        String n_ext = getExt();
         boolean n_executable = isExecutable();
         boolean n_app = isNutsApplication();
         String n_name = getName();
@@ -113,22 +112,13 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         n_osdist.addAll(Arrays.asList(getOsdist()));
         n_platform.addAll(Arrays.asList(getPlatform()));
         NutsId[] n_parents = new NutsId[0];
-//        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
-//            n_packaging = "jar";
-//            n_ext = "jar";
-//        } else if (n_packaging.isEmpty()) {
-//            n_packaging = n_ext;
-//        } else {
-//            n_ext = n_packaging;
-//        }
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
-                .setAlternative(n_alt)
+//                .setAlternative(n_alt)
                 .setParents(n_parents)
                 .setPackaging(n_packaging)
                 .setExecutable(n_executable)
                 .setNutsApplication(n_app)
-                //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -148,9 +138,8 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         Function<String, String> map = new MapToFunction<String, String>(properties);
 
         NutsId n_id = getId().apply(map);
-        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
+//        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
-//        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
         String n_desc = CoreNutsUtils.applyStringProperties(getDescription(), map);
         NutsExecutorDescriptor n_executor = getExecutor();
@@ -175,12 +164,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
-                .setAlternative(n_alt)
+//                .setAlternative(n_alt)
                 .setParents(getParents())
                 .setPackaging(n_packaging)
                 .setExecutable(isExecutable())
                 .setNutsApplication(isNutsApplication())
-                //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -198,10 +186,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
-                CoreNutsUtils.applyStringProperties(child.getName(), properties),
+                CoreNutsUtils.applyStringProperties(child.getGroupId(), properties),
+                CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties),
                 CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
-                CoreNutsUtils.applyMapProperties(child.getQueryMap(), properties)
+                CoreNutsUtils.applyMapProperties(child.getProperties(), properties)
         );
     }
 
@@ -212,8 +200,8 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
         return new DefaultNutsDependency(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
-                CoreNutsUtils.applyStringProperties(child.getName(), properties),
+                CoreNutsUtils.applyStringProperties(child.getGroupId(), properties),
+                CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties),
                 CoreNutsUtils.applyStringProperties(child.getClassifier(), properties),
                 CoreNutsUtils.applyStringProperties(child.getVersion(), properties),
                 CoreNutsUtils.applyStringProperties(child.getScope(), properties),
@@ -270,8 +258,13 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setLocations(String[] locations) {
+    public NutsDescriptor setLocations(NutsIdLocation[] locations) {
         return builder().setLocations(locations).build();
+    }
+
+    @Override
+    public NutsDescriptor setClassifierMappings(NutsClassifierMapping[] value) {
+        return builder().setClassifierMappings(value).build();
     }
 
     @Override
@@ -340,13 +333,13 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         return builder().setExecutable(executable).build();
     }
 
-    @Override
-    public NutsDescriptor setAlternative(String alternative) {
-        if (CoreStringUtils.trim(alternative).equals(getAlternative())) {
-            return this;
-        }
-        return builder().setAlternative(alternative).build();
-    }
+//    @Override
+//    public NutsDescriptor setAlternative(String alternative) {
+//        if (CoreStringUtils.trim(alternative).equals(getAlternative())) {
+//            return this;
+//        }
+//        return builder().setAlternative(alternative).build();
+//    }
 
     @Override
     public NutsDescriptor setNutsApplication(boolean nutsApp) {

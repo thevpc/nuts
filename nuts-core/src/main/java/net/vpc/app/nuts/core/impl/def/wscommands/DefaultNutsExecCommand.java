@@ -26,7 +26,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setPackaging("exe")
             .setExecutable(true)
-            .setExecutor(new NutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
+            .setExecutor(new DefaultNutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
             .build();
 
 
@@ -122,7 +122,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
         for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class)) {
             if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)
-                    || nutsExecutorComponent.getId().getName().equals(nutsId.toString())
+                    || nutsExecutorComponent.getId().getArtifactId().equals(nutsId.toString())
                     || nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-" + nutsId.toString())) {
                 return nutsExecutorComponent;
             }

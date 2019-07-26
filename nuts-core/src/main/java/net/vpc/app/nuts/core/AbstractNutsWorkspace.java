@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
+import net.vpc.app.nuts.core.app.DefaultNutsCommandLineFormat;
 import net.vpc.app.nuts.core.format.*;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFormat;
 import net.vpc.app.nuts.core.format.json.DefaultNutsJsonFormat;
@@ -165,8 +166,8 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsCommandLine commandLine() {
-        return new DefaultNutsCommandLine(this);
+    public NutsCommandLineFormat commandLine() {
+        return new DefaultNutsCommandLineFormat(this);
     }
 
     @Override

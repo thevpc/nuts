@@ -422,7 +422,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                         if (v.isEmpty()) {
                             getTerminal().setMode(NutsTerminalMode.FORMATTED);
                         } else {
-                            NutsArgument bb = cmdLine.createArgument(v);
+                            NutsArgument bb = ws.commandLine().createArgument(v);
                             Boolean b = bb.getBoolean(null);
                             if (b != null) {
                                 if (b) {

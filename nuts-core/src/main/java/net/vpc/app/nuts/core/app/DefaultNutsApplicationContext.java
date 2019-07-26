@@ -52,7 +52,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = workspace.commandLine().parseLine(args[0].substring(args[0].indexOf('=') + 1));
+            NutsCommandLine execModeCommand = workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getStringKey()) {
@@ -154,7 +154,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     @Override
     public final NutsApplicationContext configure(boolean skipUnsupported, String... args) {
         NutsId appId = getAppId();
-        String appName = appId == null ? "app" : appId.getName();
+        String appName = appId == null ? "app" : appId.getArtifactId();
         return NutsConfigurableHelper.configure(this, workspace, skipUnsupported, args, appName);
     }
 
@@ -385,7 +385,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.commandLine().setArguments(getArguments()).setAutoComplete(getAutoComplete());
+        return workspace.commandLine().create(getArguments()).setAutoComplete(getAutoComplete());
     }
 
     @Override

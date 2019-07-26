@@ -1,6 +1,7 @@
 package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.ssh.SshPath;
@@ -11,7 +12,10 @@ import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
 
@@ -129,8 +133,12 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         return name;
     }
 
-    public RemoteTomcatAppConfigService write(PrintStream out) {
-        context.getWorkspace().json().value(getConfig()).print(out);
+    public RemoteTomcatAppConfigService print(PrintStream out) {
+        NutsWorkspace ws = context.getWorkspace();
+        Map<String,Object> m=new LinkedHashMap<>();
+        m.put("name",getName());
+        m.putAll(ws.element().fromElement(ws.element().toElement(getConfig()), Map.class));
+        ws.object().session(context.session()).value(m).print(out);
         return this;
     }
 

@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
@@ -16,10 +17,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-    private String alternative;
+    //    private String alternative;
     private NutsId[] parents;
     private String packaging;
-//    private String ext;
+    //    private String ext;
     private boolean executable;
     private boolean nutsApplication;
     private NutsExecutorDescriptor executor;
@@ -36,7 +37,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<String> os;
     private List<String> osdist;
     private List<String> platform;
-    private List<String> locations;
+    private List<NutsIdLocation> locations;
+    private List<NutsClassifierMapping> classifierMappings;
     private List<NutsDependency> dependencies;
     private List<NutsDependency> standardDependencies;
     private Map<String, String> properties;
@@ -44,14 +46,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public DefaultNutsDescriptorBuilder() {
     }
 
-    public DefaultNutsDescriptorBuilder(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
-            NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-            String[] arch, String[] os, String[] osdist, String[] platform,
-            NutsDependency[] dependencies,
-            NutsDependency[] standardDependencies,
-            String[] locations, Map<String, String> properties) {
+    public DefaultNutsDescriptorBuilder(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
+                                        NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
+                                        String[] arch, String[] os, String[] osdist, String[] platform,
+                                        NutsDependency[] dependencies,
+                                        NutsDependency[] standardDependencies,
+                                        NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings) {
         setId(id);
-        setAlternative(alternative);
+//        setAlternative(alternative);
         setPackaging(packaging);
         setParents(parents);
         setExecutable(executable);
@@ -67,6 +69,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setPlatform(platform);
         setLocations(locations);
         setDependencies(dependencies);
+        setClassifierMappings(classifierMappings);
         setStandardDependencies(standardDependencies);
         setProperties(properties, false);
     }
@@ -83,7 +86,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder set(NutsDescriptorBuilder other) {
         if (other != null) {
             setId(other.getId());
-            setAlternative(other.getAlternative());
+//            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
@@ -109,7 +112,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder set(NutsDescriptor other) {
         if (other != null) {
             setId(other.getId());
-            setAlternative(other.getAlternative());
+//            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
@@ -118,7 +121,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setName(other.getName());
             setExecutor(other.getExecutor());
             setInstaller(other.getInstaller());
-//            setExt(other.getExt());
             setArch(other.getArch());
             setOs(other.getOs());
             setOsdist(other.getOsdist());
@@ -161,11 +163,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    @Override
-    public NutsDescriptorBuilder setAlternative(String alternative) {
-        this.alternative = alternative;
-        return this;
-    }
+//    @Override
+//    public NutsDescriptorBuilder setAlternative(String alternative) {
+//        this.alternative = alternative;
+//        return this;
+//    }
 
     @Override
     public NutsDescriptorBuilder setDescription(String description) {
@@ -185,7 +187,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-//    @Override
+    //    @Override
 //    public NutsDescriptorBuilder setExt(String ext) {
 //        this.ext = CoreStringUtils.trim(ext);
 //        return this;
@@ -247,7 +249,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder addLocation(String location) {
+    public NutsDescriptorBuilder addLocation(NutsIdLocation location) {
         if (this.locations == null) {
             this.locations = new ArrayList<>();
         }
@@ -256,8 +258,24 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setLocations(String[] locations) {
+    public NutsDescriptorBuilder setLocations(NutsIdLocation[] locations) {
         this.locations = new ArrayList<>(Arrays.asList(locations));
+        return this;
+    }
+
+
+    @Override
+    public NutsDescriptorBuilder addClassifierMapping(NutsClassifierMapping value) {
+        if (this.classifierMappings == null) {
+            this.classifierMappings = new ArrayList<>();
+        }
+        this.classifierMappings.add(value);
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder setClassifierMappings(NutsClassifierMapping[] value) {
+        this.classifierMappings = new ArrayList<>(Arrays.asList(value));
         return this;
     }
 
@@ -275,9 +293,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    public String getAlternative() {
-        return alternative;
-    }
+//    public String getAlternative() {
+//        return alternative;
+//    }
 
     @Override
     public NutsExecutorDescriptor getInstaller() {
@@ -322,7 +340,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return executor;
     }
 
-//    @Override
+    //    @Override
 //    public String getExt() {
 //        return ext;
 //    }
@@ -391,17 +409,22 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptor build() {
         return new DefaultNutsDescriptor(
-                getId(), getAlternative(), getParents(), getPackaging(), isExecutable(), isNutsApplication(),
+                getId(), /*getAlternative(),*/ getParents(), getPackaging(), isExecutable(), isNutsApplication(),
                 //                getExt(),
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
-                getLocations(), getProperties()
+                getLocations(), getProperties(), getClassifierMappings()
         );
     }
 
     @Override
-    public String[] getLocations() {
-        return locations == null ? new String[0] : locations.toArray(new String[0]);
+    public NutsIdLocation[] getLocations() {
+        return locations == null ? new NutsIdLocation[0] : locations.toArray(new NutsIdLocation[0]);
+    }
+
+    @Override
+    public NutsClassifierMapping[] getClassifierMappings() {
+        return classifierMappings == null ? new NutsClassifierMapping[0] : classifierMappings.toArray(new NutsClassifierMapping[0]);
     }
 
     @Override
@@ -542,7 +565,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
         Map<String, String> p = new LinkedHashMap<>();
         boolean someUpdate = false;
-        for (Iterator<Map.Entry<String, String>> it = getProperties().entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, String>> it = getProperties().entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, String> entry = it.next();
             if (filter == null || filter.test(entry)) {
                 String v = converter.apply(entry);
@@ -567,7 +590,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyParents(NutsDescriptor[] parentDescriptors) {
         NutsId n_id = getId();
-        String n_alt = getAlternative();
+//        String n_alt = getAlternative();
         String n_packaging = getPackaging();
 //        String n_ext = getExt();
         boolean n_executable = isExecutable();
@@ -620,21 +643,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         n_osdist.addAll(Arrays.asList(getOsdist()));
         n_platform.addAll(Arrays.asList(getPlatform()));
         NutsId[] n_parents = new NutsId[0];
-//        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
-//            n_packaging = "jar";
-//            n_ext = "jar";
-//        } else if (n_packaging.isEmpty()) {
-//            n_packaging = n_ext;
-//        } else {
-//            n_ext = n_packaging;
-//        }
 
         setId(n_id);
-        setAlternative(n_alt);
+//        setAlternative(n_alt);
         setParents(n_parents);
         setPackaging(n_packaging);
         setExecutable(n_executable);
-//        setExt(n_ext);
         setExecutor(n_executor);
         setInstaller(n_installer);
         setName(n_name);
@@ -654,9 +668,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         Function<String, String> map = new CoreStringUtils.MapToFunction<>(properties);
 
         NutsId n_id = getId().apply(map);
-        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
+//        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
-//        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
         String n_desc = CoreNutsUtils.applyStringProperties(getDescription(), map);
         NutsExecutorDescriptor n_executor = getExecutor();
@@ -680,11 +693,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
 
         this.setId(n_id);
-        this.setAlternative(n_alt);
+//        this.setAlternative(n_alt);
         this.setParents(getParents());
         this.setPackaging(n_packaging);
         this.setExecutable(isExecutable());
-//        this.setExt(n_ext);
         this.setExecutor(n_executor);
         this.setInstaller(n_installer);
         this.setName(n_name);
@@ -702,10 +714,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
-                CoreNutsUtils.applyStringProperties(child.getName(), properties),
+                CoreNutsUtils.applyStringProperties(child.getGroupId(), properties),
+                CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties),
                 CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
-                CoreNutsUtils.applyMapProperties(child.getQueryMap(), properties)
+                CoreNutsUtils.applyMapProperties(child.getProperties(), properties)
         );
     }
 
@@ -716,8 +728,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
         return new DefaultNutsDependency(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
-                CoreNutsUtils.applyStringProperties(child.getName(), properties),
+                CoreNutsUtils.applyStringProperties(child.getGroupId(), properties),
+                CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties),
                 CoreNutsUtils.applyStringProperties(child.getClassifier(), properties),
                 CoreNutsUtils.applyStringProperties(child.getVersion(), properties),
                 CoreNutsUtils.applyStringProperties(child.getScope(), properties),
@@ -736,7 +748,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             if (filter == null || filter.test(d)) {
                 d = converter.apply(d);
                 if (d != null) {
-                    dependenciesList.add(d);;
+                    dependenciesList.add(d);
+                    ;
                 }
             } else {
                 dependenciesList.add(d);
@@ -751,7 +764,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (dependency == null) {
             return this;
         }
-        for (Iterator<NutsDependency> it = dependencies.iterator(); it.hasNext();) {
+        for (Iterator<NutsDependency> it = dependencies.iterator(); it.hasNext(); ) {
             NutsDependency d = it.next();
             if (dependency.test(d)) {
                 //do not add

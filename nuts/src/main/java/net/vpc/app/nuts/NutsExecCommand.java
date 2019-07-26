@@ -192,9 +192,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand spawn();
 
-    NutsCommandLineFormat getCommandLineFormat();
+    NutsExecCommandFormat getCommandLineFormat();
 
-    NutsExecCommand setCommandLineFormat(NutsCommandLineFormat format);
+    NutsExecCommand setCommandLineFormat(NutsExecCommandFormat format);
 
     /**
      * update session

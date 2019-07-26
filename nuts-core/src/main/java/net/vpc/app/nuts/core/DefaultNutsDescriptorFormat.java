@@ -1,18 +1,12 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFormat;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsDescriptorBuilder;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsParseException;
+
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -134,4 +128,18 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         return new DefaultNutsDescriptorBuilder();
     }
 
+    @Override
+    public NutsClassifierMappingBuilder classifierBuilder() {
+        return new DefaultNutsClassifierMappingBuilder();
+    }
+
+    @Override
+    public NutsIdLocationBuilder locationBuilder() {
+        return new DefaultNutsIdLocationBuilder();
+    }
+
+    @Override
+    public NutsExecutorDescriptorBuilder executorBuilder() {
+        return new DefaultNutsExecutorDescriptorBuilder();
+    }
 }

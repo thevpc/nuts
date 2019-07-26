@@ -27,8 +27,8 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
         }
         for (NutsId exclusion : exclusions) {
             NutsId nutsId = dependency.getId();
-            if (nutsId.groupToken().like(exclusion.getGroup())
-                    && nutsId.nameToken().like(exclusion.getName())
+            if (nutsId.groupIdToken().like(exclusion.getGroupId())
+                    && nutsId.artifactIdToken().like(exclusion.getArtifactId())
                     && exclusion.getVersion().toFilter().accept(nutsId.getVersion(), session)) {
                 return false;
             }

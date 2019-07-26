@@ -136,8 +136,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
         NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
-        Path groupFolder = getLocationAsPath().resolve(id.getGroup().replace('.', File.separatorChar));
-        return groupFolder.resolve(id.getName());
+        Path groupFolder = getLocationAsPath().resolve(id.getGroupId().replace('.', File.separatorChar));
+        return groupFolder.resolve(id.getArtifactId());
     }
 
     @Override
@@ -184,7 +184,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (id.getVersion().isBlank() && filter == null) {
             Path file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
-            if (Files.exists(file)) {
+            if (Files.isDirectory(file)) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(file, CoreIOUtils.DIR_FILTER)) {
                     for (Path versionPath : stream) {
                         NutsId id2 = id.setVersion(versionPath.getFileName().toString());

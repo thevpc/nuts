@@ -69,11 +69,11 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
         NutsWorkspaceUtils.checkLongNameNutsId(ws,id);
         NutsWorkspaceUtils.checkSession(ws, getSession());
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
-        Map<String, String> queryMap = id.getQueryMap();
-        queryMap.remove(NutsConstants.QueryKeys.OPTIONAL);
-        queryMap.remove(NutsConstants.QueryKeys.SCOPE);
-        queryMap.put(NutsConstants.QueryKeys.FACE, NutsConstants.QueryFaces.DESCRIPTOR);
-        id = id.setQuery(queryMap);
+        Map<String, String> queryMap = id.getProperties();
+        queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
+        queryMap.remove(NutsConstants.IdProperties.SCOPE);
+        queryMap.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.DESCRIPTOR);
+        id = id.setProperties(queryMap);
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(id, getSession());
         long startTime = System.currentTimeMillis();
@@ -91,7 +91,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
                 id = id.setFaceDescriptor();
                 d = xrepo.fetchDescriptorImpl(id, getSession());
             } else {
-                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getQueryMap(), new NutsPatternIdFilter(id), null);
+                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), new NutsPatternIdFilter(id), null);
                 NutsId a = xrepo.searchLatestVersion(id.setVersion(""), filter, getSession());
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());

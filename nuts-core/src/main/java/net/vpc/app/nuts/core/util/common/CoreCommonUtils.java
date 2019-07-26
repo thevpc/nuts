@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.iter.PushBackIterator;
 import java.io.BufferedReader;
@@ -54,15 +55,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsArrayElement;
-import net.vpc.app.nuts.NutsElementType;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsNamedElement;
-import net.vpc.app.nuts.NutsObjectElement;
-import net.vpc.app.nuts.NutsPrimitiveElement;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.core.app.DefaultNutsArgument;
 
 public class CoreCommonUtils {
@@ -83,6 +76,40 @@ public class CoreCommonUtils {
             for (String a : values0) {
                 a = CoreStringUtils.trim(a);
                 if (!CoreStringUtils.isBlank(a) && !set.contains(a)) {
+                    set.add(a);
+                }
+            }
+        }
+        return set;
+    }
+
+    public static NutsClassifierMapping[] toArraySet(NutsClassifierMapping[] classifierMappings) {
+        Set<NutsClassifierMapping> set = toSet(classifierMappings);
+        return set.toArray(new NutsClassifierMapping[0]);
+    }
+
+    public static Set<NutsClassifierMapping> toSet(NutsClassifierMapping[] classifierMappings) {
+        LinkedHashSet<NutsClassifierMapping> set = new LinkedHashSet<>();
+        if (classifierMappings != null) {
+            for (NutsClassifierMapping a : classifierMappings) {
+                if (a!=null) {
+                    set.add(a);
+                }
+            }
+        }
+        return set;
+    }
+
+    public static NutsIdLocation[] toArraySet(NutsIdLocation[] classifierMappings) {
+        Set<NutsIdLocation> set = toSet(classifierMappings);
+        return set.toArray(new NutsIdLocation[0]);
+    }
+
+    public static Set<NutsIdLocation> toSet(NutsIdLocation[] classifierMappings) {
+        LinkedHashSet<NutsIdLocation> set = new LinkedHashSet<>();
+        if (classifierMappings != null) {
+            for (NutsIdLocation a : classifierMappings) {
+                if (a!=null) {
                     set.add(a);
                 }
             }
@@ -451,11 +478,11 @@ public class CoreCommonUtils {
         if (o.getClass().isEnum()) {
             return getEnumString((Enum) o);
         }
-        if (o instanceof Date) {
-            return ((Date) o).toInstant().toString();
-        }
         if (o instanceof Instant) {
-            return ((Instant) o).toString();
+            return CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o));
+        }
+        if (o instanceof Date) {
+            return CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant());
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

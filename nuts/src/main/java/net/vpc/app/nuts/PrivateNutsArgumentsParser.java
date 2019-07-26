@@ -39,12 +39,12 @@ import java.util.logging.Level;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsArgumentsParser {
+final class PrivateNutsArgumentsParser {
 
     /**
      * private constructor
      */
-    private NutsArgumentsParser() {
+    private PrivateNutsArgumentsParser() {
     }
 
     /**

@@ -447,7 +447,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 dependencyFilter, session);
                         for (NutsDependency dd : dependencies) {
                             if (dd.getVersion().equals(nutsDependency.getVersion())) {
-                                dd = dd.setId(dd.getId().setQueryProperty("resolved-version", dd.getVersion().getValue()));
+                                dd = dd.setId(dd.getId().setProperty("resolved-version", dd.getVersion().getValue()));
                             }
                             all.add(buildTreeNode(root.getId(), dd, def2, visited, session, dependencyFilter));
                         }
@@ -546,12 +546,12 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     if (!CoreStringUtils.isBlank(classifier)) {
                         newIdBuilder.setClassifier(classifier);
                     }
-                    Map<String, String> q = id.getQueryMap();
-                    if (!NutsDependencyScopes.isDefaultScope(q.get(NutsConstants.QueryKeys.SCOPE))) {
-                        newIdBuilder.setScope(q.get(NutsConstants.QueryKeys.SCOPE));
+                    Map<String, String> q = id.getProperties();
+                    if (!NutsDependencyScopes.isDefaultScope(q.get(NutsConstants.IdProperties.SCOPE))) {
+                        newIdBuilder.setScope(q.get(NutsConstants.IdProperties.SCOPE));
                     }
-                    if (!CoreNutsUtils.isDefaultOptional(q.get(NutsConstants.QueryKeys.OPTIONAL))) {
-                        newIdBuilder.setOptional(q.get(NutsConstants.QueryKeys.OPTIONAL));
+                    if (!CoreNutsUtils.isDefaultOptional(q.get(NutsConstants.IdProperties.OPTIONAL))) {
+                        newIdBuilder.setOptional(q.get(NutsConstants.IdProperties.OPTIONAL));
                     }
                     NutsId newId = newIdBuilder.build();
 

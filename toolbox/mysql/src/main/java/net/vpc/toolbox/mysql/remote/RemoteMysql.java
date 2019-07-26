@@ -27,7 +27,7 @@ public class RemoteMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().commandLine().setArguments(args)
+        NutsCommandLine cmd = context.getWorkspace().commandLine().create(args)
                 .setCommandName("mysql --remote");
         NutsArgument a;
         while (cmd.hasNext()) {
@@ -397,18 +397,20 @@ public class RemoteMysql {
 
     public RemoteMysqlConfigService[] listConfig() {
         List<RemoteMysqlConfigService> all = new ArrayList<>();
-        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getSharedConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
-            for (Path file1 : configFiles) {
-                try {
-                    String nn = file1.getFileName().toString();
-                    RemoteMysqlConfigService c = loadMysqlConfig(nn.substring(0, nn.length() - ".config".length()));
-                    all.add(c);
-                } catch (Exception ex) {
-                    //ignore
+        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
+            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getSharedConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
+                for (Path file1 : configFiles) {
+                    try {
+                        String nn = file1.getFileName().toString();
+                        RemoteMysqlConfigService c = loadMysqlConfig(nn.substring(0, nn.length() - ".config".length()));
+                        all.add(c);
+                    } catch (Exception ex) {
+                        //ignore
+                    }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
         }
         return all.toArray(new RemoteMysqlConfigService[0]);
     }

@@ -439,7 +439,7 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
+        String exe = PrivateNutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (PrivateNutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
@@ -472,11 +472,11 @@ final class PrivateNutsUtils {
         public boolean accept(File directory) {
             for (File ignored : ignoreDeletion) {
                 String s=ignored.getPath()+File.separatorChar;
-                if(directory.getPath().startsWith(s)){
+                if(s.startsWith(directory.getPath()+"/")){
                     return false;
                 }
             }
-            return false;
+            return true;
         }
     }
 
@@ -520,13 +520,14 @@ final class PrivateNutsUtils {
 
     private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session) {
         if (directory.exists()) {
-            if (!force && !refForceAll.isForce()) {
+            if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
                 if (term != null) {
-                    line = term.ask().forString("Do you confirm deleting %s [y/n/c/a] ? : ", directory).session(session).getValue();
+                    line = term.ask().forString("Do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).session(session).getValue();
                 } else {
                     Scanner s = new Scanner(System.in);
-                    System.out.printf("Do you confirm deleting %s [y/n/c/a] ? : ", directory);
+                    System.out.printf("Do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
+                    System.out.print(" : ");
                     System.out.flush();
                     line = s.nextLine();
                 }

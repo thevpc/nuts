@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Common Nuts constants. Represents various constants used in runtime
  * implementation.
- *
+ * <p>
  * Created by vpc on 1/14/17.
  *
  * @since 0.1.0
@@ -97,12 +97,11 @@ public final class NutsConstants {
      * Nuts Id query parameter names. Nuts id has the following form
      * namespace://group:name#version?query where query is in the form
      * key=value{@literal @}key=value...
-     *
+     * <p>
      * This class defines all standard key names and their default values in the
      * query part.
-     *
      */
-    public static final class QueryKeys {
+    public static final class IdProperties {
 
         /**
          * id classifier (equivalent to maven classifier). The classifier
@@ -110,7 +109,6 @@ public final class NutsConstants {
          * in content. It is some optional and arbitrary string that - if
          * present - is appended to the artifact name just after the version
          * number.
-         *
          */
         public static final String CLASSIFIER = "classifier";
 
@@ -121,19 +119,19 @@ public final class NutsConstants {
          */
         public static final String FACE = "face";
 
-        /**
-         * id alternative is a second degree classifier that helps providing
-         * multiple alternatives (based on arch, platform,....) for the same
-         * package. The alternative defines distinct descriptors with the same
-         * id.
-         */
-        public static final String ALTERNATIVE = "alt";
+//        /**
+//         * id alternative is a second degree classifier that helps providing
+//         * multiple alternatives (based on arch, platform,....) for the same
+//         * package. The alternative defines distinct descriptors with the same
+//         * id.
+//         */
+//        public static final String ALTERNATIVE = "alt";
 
-        /**
-         * id alternative default value. the default value is equivalent to
-         * missing value.
-         */
-        public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
+//        /**
+//         * id alternative default value. the default value is equivalent to
+//         * missing value.
+//         */
+//        public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
 
         /**
          * id packaging (jar, war, ...)
@@ -167,7 +165,7 @@ public final class NutsConstants {
          * <ul>
          * <li>true</li>
          * </ul>
-         *
+         * <p>
          * any other value, is interpreted as false.
          */
         public static final String OPTIONAL = "optional";
@@ -189,10 +187,15 @@ public final class NutsConstants {
          * <li>compile</li>
          * <li>run</li>
          * </ul>
-         *
+         * <p>
          * any other value, is interpreted as false.
          */
         public static final String SCOPE = "scope";
+
+        /**
+         * dependency exclusions
+         */
+        public static final String EXCLUSIONS = "exclusions";
 
         /**
          * id supported os distribution. mainly useful in linux oses. standard
@@ -206,7 +209,6 @@ public final class NutsConstants {
          * <li>debian</li>
          * <li>arch</li>
          * </ul>
-         *
          */
         public static final String OSDIST = "osdist";
 
@@ -219,14 +221,13 @@ public final class NutsConstants {
          * <li>ppc</li>
          * <li>sparc</li>
          * </ul>
-         *
          */
         public static final String ARCH = "arch";
 
         /**
          * private constructor
          */
-        private QueryKeys() {
+        private IdProperties() {
         }
     }
 
@@ -410,7 +411,7 @@ public final class NutsConstants {
          */
         public static final Set<String> ALL = Collections.unmodifiableSet(
                 new HashSet<>(Arrays.asList(FETCH_DESC, FETCH_CONTENT, SAVE, INSTALL, UPDATE, AUTO_INSTALL, UNINSTALL, EXEC, DEPLOY, UNDEPLOY,
-            PUSH, ADD_REPOSITORY, REMOVE_REPOSITORY, SET_PASSWORD, ADMIN)));
+                        PUSH, ADD_REPOSITORY, REMOVE_REPOSITORY, SET_PASSWORD, ADMIN)));
 
         /**
          * private constructor

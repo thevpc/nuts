@@ -29,14 +29,11 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyBuilder;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsVersion;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.*;
-import net.vpc.app.nuts.NutsDependencyScope;
+
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 
 /**
@@ -45,8 +42,8 @@ import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 public class DefaultNutsDependency implements NutsDependency {
     public static final long serialVersionUID = 1L;
     private final String namespace;
-    private final String group;
-    private final String name;
+    private final String groupId;
+    private final String artifactId;
     private final NutsVersion version;
     private final String scope;
     private final String classifier;
@@ -54,13 +51,13 @@ public class DefaultNutsDependency implements NutsDependency {
     private final NutsId[] exclusions;
 
     public DefaultNutsDependency(NutsId id) {
-        this(id.getNamespace(), id.getGroup(), id.getName(), id.getClassifier(), id.getVersion(), id.getScope(), id.getOptional(), null);
+        this(id.getNamespace(), id.getGroupId(), id.getArtifactId(), id.getClassifier(), id.getVersion(), id.getScope(), id.getOptional(), null);
     }
 
-    public DefaultNutsDependency(String namespace, String group, String name, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions) {
+    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
+        this.groupId = CoreStringUtils.trimToNull(groupId);
+        this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? DefaultNutsVersion.EMPTY : version;
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
@@ -92,25 +89,25 @@ public class DefaultNutsDependency implements NutsDependency {
     public NutsId getId() {
         Map<String, String> m = new LinkedHashMap<>();
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
-            m.put("scope", scope);
+            m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
         if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
-            m.put("optional", optional);
+            m.put(NutsConstants.IdProperties.OPTIONAL, optional);
         }
         if (!CoreStringUtils.isBlank(classifier)) {
-            m.put("classifier", classifier);
+            m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
         if (exclusions.length > 0) {
             TreeSet<String> ex = new TreeSet<>();
             for (NutsId exclusion : exclusions) {
                 ex.add(exclusion.getShortName());
             }
-            m.put("exclusions", CoreStringUtils.join(",", ex));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, CoreStringUtils.join(",", ex));
         }
         return new DefaultNutsId(
                 getNamespace(),
-                getGroup(),
-                getName(),
+                getGroupId(),
+                getArtifactId(),
                 getVersion().getValue(),
                 m
         );
@@ -122,21 +119,21 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
-    public String getGroup() {
-        return group;
+    public String getGroupId() {
+        return groupId;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getArtifactId() {
+        return artifactId;
     }
 
     @Override
     public String getSimpleName() {
-        if (CoreStringUtils.isBlank(group)) {
-            return CoreStringUtils.trim(name);
+        if (CoreStringUtils.isBlank(groupId)) {
+            return CoreStringUtils.trim(artifactId);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
     }
 
     @Override
@@ -179,22 +176,22 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!CoreStringUtils.isBlank(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!CoreStringUtils.isBlank(group)) {
-            sb.append(group).append(":");
+        if (!CoreStringUtils.isBlank(groupId)) {
+            sb.append(groupId).append(":");
         }
-        sb.append(name);
+        sb.append(artifactId);
         if (!CoreStringUtils.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new TreeMap<>();
         if (!CoreStringUtils.isBlank(scope)) {
             if (!scope.equals(NutsDependencyScope.API.id())) {
-                p.put("scope", scope);
+                p.put(NutsConstants.IdProperties.SCOPE, scope);
             }
         }
         if (!CoreStringUtils.isBlank(optional)) {
             if (!optional.equals("false")) {
-                p.put("optional", optional);
+                p.put(NutsConstants.IdProperties.OPTIONAL, optional);
             }
         }
         if (!p.isEmpty()) {

@@ -15,6 +15,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
+        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
         if (cmdLine.next("list imports", "li") != null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
@@ -32,7 +33,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.next("import", "ia") != null) {
             do {
-                String a = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
+                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().addImports(new String[]{a},new NutsAddOptions().session(context.getSession()));
                 }
@@ -43,7 +44,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.next("unimport", "ir") != null) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.required().nextNonOption(cmdLine.createName("import")).getString();
+                String ii = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().config().removeImports(new String[]{ii}, new NutsRemoveOptions().session(context.getSession()));
                 }

@@ -18,6 +18,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import static net.vpc.app.nuts.core.util.io.CoreIOUtils.createInputSource;
@@ -42,7 +43,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
-                session.getWorkspace().commandLine().setArguments(args).toString(),
+                session.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.COMPONENT);
         this.cmdName = cmdName;
         this.args = args;
@@ -94,6 +95,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsFetchCommand options, NutsSession session) {
         NutsWorkspace ws=session.getWorkspace();
+        String classifier=null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile();
         try {
             c.baseFile = contentFile;
@@ -136,32 +138,35 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
                         }
                     }
                     if (c.contentFile == null) {
-                        for (String location : c.descriptor.getLocations()) {
-                            if (location.startsWith("http://") || location.startsWith("https://")) {
-                                try {
-                                    c.contentFile = toPathInputSource(
-                                            createInputSource(new URL(location)),
-                                            c.temps, ws);
-                                } catch (Exception ex) {
+                        for (NutsIdLocation location0 : c.descriptor.getLocations()) {
+                            if(CoreNutsUtils.acceptClassifier(location0,classifier)) {
+                                String location=location0.getUrl();
+                                if (CoreIOUtils.isPathHttp(location)) {
+                                    try {
+                                        c.contentFile = toPathInputSource(
+                                                createInputSource(new URL(location)),
+                                                c.temps, ws);
+                                    } catch (Exception ex) {
 
-                                }
-                            } else {
-                                URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
-                                try {
-                                    c.contentFile = toPathInputSource(
-                                            createInputSource(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
-                                            c.temps, ws);
-                                } catch (Exception ex) {
+                                    }
+                                } else {
+                                    URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
+                                    try {
+                                        c.contentFile = toPathInputSource(
+                                                createInputSource(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
+                                                c.temps, ws);
+                                    } catch (Exception ex) {
 
+                                    }
                                 }
-                            }
-                            if (c.contentFile == null) {
-                                break;
+                                if (c.contentFile == null) {
+                                    break;
+                                }
                             }
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(ws, "Unabel to locale component for " + c.baseFile);
+                        throw new NutsIllegalArgumentException(ws, "Unable to locale component for " + c.baseFile);
                     }
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
@@ -183,7 +188,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + session.getWorkspace().commandLine().setArguments(args).toString();
+        return "NUTS " + cmdName + " " + session.getWorkspace().commandLine().create(args).toString();
     }
 
     private static class CharacterizedExecFile implements AutoCloseable {

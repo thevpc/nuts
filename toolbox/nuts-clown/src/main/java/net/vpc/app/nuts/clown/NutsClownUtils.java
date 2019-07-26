@@ -22,8 +22,8 @@ public class NutsClownUtils {
         _condPut(entity, "osdist", id.getOsdist());
         _condPut(entity, "scope", id.getScope());
         _condPut(entity, "arch", id.getArch());
-        _condPut(entity, "classifier", id.getClassifier());
-        _condPut(entity, "alternative", id.getAlternative());
+        _condPut(entity, NutsConstants.QueryKeys.CLASSIFIER, id.getClassifier());
+//        _condPut(entity, NutsConstants.QueryKeys.ALTERNATIVE, id.getAlternative());
         _condPut(entity, "stringId", id.toString());
         return entity;
     }

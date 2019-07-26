@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.impl.def.parsers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.DefaultNutsExecutorDescriptor;
 import net.vpc.app.nuts.core.bridges.maven.MavenUtils;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -103,7 +104,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                     .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
                                     .setExecutable(mainClass.isSet())
                                     .setPackaging("jar")
-                                    .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
+                                    .setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
                                     .build();
 
                             metainf.set(d);
@@ -138,7 +139,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
-                return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
+                return baseNutsDescriptor.setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
                     "--main-class", mainClass.get()}));
             }
         } else if (metainf.isSet()) {
@@ -155,7 +156,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (classes.length == 0) {
             return baseNutsDescriptor;
         } else {
-            return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
+            return baseNutsDescriptor.setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
                 "--main-class=" + CoreStringUtils.join(":",
                 Arrays.stream(classes)
                 .map(x -> x.getName())

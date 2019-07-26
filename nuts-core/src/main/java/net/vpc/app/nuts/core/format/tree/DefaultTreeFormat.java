@@ -112,25 +112,25 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(b);
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
+        print("", NutsAlignFormat.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
         return b.toString();
     }
 
     @Override
     public void print(PrintStream out) {
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
+        print("", NutsAlignFormat.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
     }
 
     @Override
     public void print(Writer w) {
         PrintWriter out = getValidPrintWriter(w);
-        print("", NutsTreeLinkFormat.Type.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
+        print("", NutsAlignFormat.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
     }
 
-    private void print(String prefix, NutsTreeLinkFormat.Type type, Object o, PrintStream out, boolean hideRoot, int depth) {
+    private void print(String prefix, NutsAlignFormat type, Object o, PrintStream out, boolean hideRoot, int depth) {
         if (!hideRoot) {
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
@@ -149,14 +149,14 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         while (children.hasNext()) {
             Object c = last;
             last = children.next();
-            print(prefix + linkFormatter.formatChild(type), NutsTreeLinkFormat.Type.MIDDLE, c, out, false, depth + 1);
+            print(prefix + linkFormatter.formatChild(type), NutsAlignFormat.CENTER, c, out, false, depth + 1);
         }
         if (last != null) {
-            print(prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsTreeLinkFormat.Type.MIDDLE : NutsTreeLinkFormat.Type.LAST, last, out, false, depth + 1);
+            print(prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsAlignFormat.CENTER : NutsAlignFormat.LAST, last, out, false, depth + 1);
         }
     }
 
-    private void print(String prefix, NutsTreeLinkFormat.Type type, Object o, PrintWriter out, boolean hideRoot, int depth) {
+    private void print(String prefix, NutsAlignFormat type, Object o, PrintWriter out, boolean hideRoot, int depth) {
         boolean skipNewLine = true;
         if (!hideRoot) {
             out.print(prefix);
@@ -182,7 +182,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             } else {
                 out.println();
             }
-            print(prefix + linkFormatter.formatChild(type), NutsTreeLinkFormat.Type.MIDDLE, c, out, false, depth + 1);
+            print(prefix + linkFormatter.formatChild(type), NutsAlignFormat.CENTER, c, out, false, depth + 1);
         }
         if (last != null) {
             if (skipNewLine) {
@@ -190,7 +190,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             } else {
                 out.println();
             }
-            print(prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsTreeLinkFormat.Type.MIDDLE : NutsTreeLinkFormat.Type.LAST, last, out, false, depth + 1);
+            print(prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsAlignFormat.CENTER : NutsAlignFormat.LAST, last, out, false, depth + 1);
         }
         out.flush();
     }
@@ -231,12 +231,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     private static class AsciiTreeLinkFormat implements NutsTreeLinkFormat {
 
         @Override
-        public String formatMain(Type type) {
+        public String formatMain(NutsAlignFormat type) {
             switch (type) {
                 case FIRST: {
                     return ("");
                 }
-                case MIDDLE: {
+                case CENTER: {
                     return ("├── ");
                 }
                 case LAST: {
@@ -247,14 +247,14 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         }
 
         @Override
-        public String formatChild(Type type) {
+        public String formatChild(NutsAlignFormat type) {
             String p = "";
             switch (type) {
                 case FIRST: {
                     p = "";
                     break;
                 }
-                case MIDDLE: {
+                case CENTER: {
                     p = "│   ";
                     break;
                 }
@@ -270,12 +270,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     private static class SpaceTreeLinkFormat implements NutsTreeLinkFormat {
 
         @Override
-        public String formatMain(Type type) {
+        public String formatMain(NutsAlignFormat type) {
             switch (type) {
                 case FIRST: {
                     return ("");
                 }
-                case MIDDLE: {
+                case CENTER: {
                     return ("   ");
                 }
                 case LAST: {
@@ -286,14 +286,14 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         }
 
         @Override
-        public String formatChild(Type type) {
+        public String formatChild(NutsAlignFormat type) {
             String p = "";
             switch (type) {
                 case FIRST: {
                     p = "";
                     break;
                 }
-                case MIDDLE: {
+                case CENTER: {
                     p = "   ";
                     break;
                 }

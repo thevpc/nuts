@@ -136,8 +136,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             return null;
         }
         if (id.getVersion().isSingleValue()) {
-            String groupId = id.getGroup();
-            String artifactId = id.getName();
+            String groupId = id.getGroupId();
+            String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.setFaceDescriptor())
@@ -186,8 +186,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         String userName = all[2];
         String repo = all[3];
         String apiUrlBase = "https://api.github.com/repos/" + userName + "/" + repo + "/contents";
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
@@ -240,8 +240,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         if (id.getVersion().isSingleValue()) {
             return findSingleVersionImpl(id, idFilter, session);
         }
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
@@ -290,8 +290,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     public Iterator<NutsId> findSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
         if (id.getVersion().isSingleValue()) {
-            String groupId = id.getGroup();
-            String artifactId = id.getName();
+            String groupId = id.getGroupId();
+            String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.setFaceDescriptor())
@@ -316,8 +316,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         if (id.getVersion().isSingleValue()) {
             return findSingleVersionImpl(id, idFilter, session);
         }
-        String groupId = id.getGroup();
-        String artifactId = id.getName();
+        String groupId = id.getGroupId();
+        String artifactId = id.getArtifactId();
         InputStream foldersFileStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {

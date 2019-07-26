@@ -74,7 +74,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + session.getWorkspace().commandLine().setArguments(appArgs).toString();
+        return "NUTS " + getId().toString() + " " + session.getWorkspace().commandLine().create(appArgs).toString();
     }
 
 }

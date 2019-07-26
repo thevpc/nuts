@@ -66,7 +66,7 @@ public class GroupNonOption extends DefaultNonOption {
 
     @Override
     public List<NutsArgumentCandidate> getCandidates() {
-        NutsCommandLine c=getWorkspace().commandLine();
+        NutsCommandLineFormat c=getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {

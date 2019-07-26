@@ -35,11 +35,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsDependencyBuilder;
-import net.vpc.app.nuts.core.DefaultNutsDependencyTreeNode;
-import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.MutableNutsDependencyTreeNode;
+import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
@@ -261,6 +257,9 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 .registerTypeHierarchyAdapter(NutsVersion.class, new NutsVersionJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsDescriptor.class, new NutsDescriptorJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsDependency.class, new NutsDependencyJsonAdapter())
+                .registerTypeHierarchyAdapter(NutsIdLocation.class, new NutsIdLocationJsonAdapter())
+                .registerTypeHierarchyAdapter(NutsClassifierMapping.class, new NutsClassifierMappingJsonAdapter())
+                .registerTypeHierarchyAdapter(NutsExecutorDescriptor.class, new NutsExecutorDescriptorAdapter())
                 .registerTypeHierarchyAdapter(NutsDependencyTreeNode.class, new NutsDependencyTreeNodeJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsElement.class, new NutsElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
@@ -360,6 +359,63 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
                 return context.serialize(new DefaultNutsDependencyBuilder(src));
+            }
+            return context.serialize(src);
+        }
+    }
+
+    private static class NutsIdLocationJsonAdapter implements
+            com.google.gson.JsonSerializer<NutsIdLocation>,
+            com.google.gson.JsonDeserializer<NutsIdLocation> {
+
+        @Override
+        public NutsIdLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            NutsIdLocationBuilder b = context.deserialize(json, NutsIdLocationBuilder.class);
+            return b.build();
+        }
+
+        @Override
+        public JsonElement serialize(NutsIdLocation src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src != null) {
+                return context.serialize(new DefaultNutsIdLocationBuilder(src));
+            }
+            return context.serialize(src);
+        }
+    }
+
+    private static class NutsClassifierMappingJsonAdapter implements
+            com.google.gson.JsonSerializer<NutsClassifierMapping>,
+            com.google.gson.JsonDeserializer<NutsClassifierMapping> {
+
+        @Override
+        public NutsClassifierMapping deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            NutsClassifierMappingBuilder b = context.deserialize(json, NutsClassifierMappingBuilder.class);
+            return b.build();
+        }
+
+        @Override
+        public JsonElement serialize(NutsClassifierMapping src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src != null) {
+                return context.serialize(new DefaultNutsClassifierMappingBuilder(src));
+            }
+            return context.serialize(src);
+        }
+    }
+
+    private static class NutsExecutorDescriptorAdapter implements
+            com.google.gson.JsonSerializer<NutsExecutorDescriptor>,
+            com.google.gson.JsonDeserializer<NutsExecutorDescriptor> {
+
+        @Override
+        public NutsExecutorDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            NutsExecutorDescriptorBuilder b = context.deserialize(json, NutsExecutorDescriptorBuilder.class);
+            return b.build();
+        }
+
+        @Override
+        public JsonElement serialize(NutsExecutorDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src != null) {
+                return context.serialize(new DefaultNutsExecutorDescriptorBuilder(src));
             }
             return context.serialize(src);
         }

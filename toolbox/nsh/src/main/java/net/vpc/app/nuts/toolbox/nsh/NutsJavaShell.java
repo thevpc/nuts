@@ -92,7 +92,7 @@ public class NutsJavaShell extends JShell {
             throw new IllegalArgumentException("Unable to resolve application id");
         }
         if ((serviceName == null || serviceName.trim().isEmpty())) {
-            serviceName = this.appId.getName();
+            serviceName = this.appId.getArtifactId();
         }
         NutsShellContext _nrootContext = getRootNutsShellContext();
         JShellContext _rootContext = getRootContext();
@@ -176,7 +176,7 @@ public class NutsJavaShell extends JShell {
         PrintStream out = session.out();
         PrintStream err = session.err();
         NutsCommandLine cmd = null;
-        cmd = getWorkspace().commandLine().setArguments(args).setAutoComplete(appContext.getAutoComplete());
+        cmd = getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete());
         NutsArgument a;
         while (cmd.hasNext()) {
             if (boot_nonOptions.isEmpty()) {
@@ -223,7 +223,7 @@ public class NutsJavaShell extends JShell {
     @Override
     public void executeShell(String[] args) {
         prepareExecuteShell(args);
-        if (!(getWorkspace().commandLine().setArguments(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
+        if (!(getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
             return;
         }
         executeFile(getStartupScript(), getRootContext(), true);

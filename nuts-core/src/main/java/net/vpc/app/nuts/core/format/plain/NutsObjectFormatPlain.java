@@ -131,6 +131,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             }
             case OBJECT: {
                 NutsObjectFormatProps tree = new NutsObjectFormatProps(ws);
+                tree.configure(true, extraConfig.toArray(new String[0]));
                 tree.value(value).print(w);
                 break;
             }

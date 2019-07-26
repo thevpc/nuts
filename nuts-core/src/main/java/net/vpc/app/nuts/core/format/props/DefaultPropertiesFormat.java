@@ -207,25 +207,33 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         int delta = key.length() - ekey.length();
         String formattedKey = compact ? key : CoreStringUtils.alignLeft(ekey, len - delta);
         if (fancySep != null) {
-            String cc = compact ? key : CoreStringUtils.alignLeft("", len + 3);
-            String space = prefix + "==%s==%s%s";
+            String cc = compact ? key : CoreStringUtils.alignLeft("", len+3);
             String[] split = value.split(fancySep);
             if (split.length == 0) {
-                out.printf(prefix + "==%N==%s", formattedKey, separator);
+                out.print(prefix);
+                out.print(formattedKey);
+                out.print(separator);
             } else {
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];
                     if (i == 0) {
-                        out.printf(prefix + "==%N==%s%s", formattedKey, separator, s);
+                        out.print(prefix);
+                        out.print("=="+formattedKey+"==");
+                        out.print(separator);
+                        out.print( s);
                     } else {
                         out.println();
-                        out.printf(space, cc, separator, s);
+                        out.print(cc);
+                        out.print(s);
                     }
                     //                    }
                 }
             }
         } else {
-            out.printf(prefix + "==%N==%s%N", formattedKey, separator, value);
+            out.print(prefix);
+            out.print("=="+formattedKey+"==");
+            out.print(separator);
+            out.print(value);
         }
     }
 

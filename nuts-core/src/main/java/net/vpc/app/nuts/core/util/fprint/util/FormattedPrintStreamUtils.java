@@ -52,7 +52,7 @@ public class FormattedPrintStreamUtils {
                         char[] s = String.valueOf(arg).toCharArray();
                         for (int j = 0; j < s.length; j++) {
                             char c = s[j];
-                            if (c == '%' || c=='\\') {
+                            if (c == '%') {
                                 sb.append('\\');
                             }
                             sb.append(c);

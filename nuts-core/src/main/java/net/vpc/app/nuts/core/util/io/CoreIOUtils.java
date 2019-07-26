@@ -109,9 +109,9 @@ public class CoreIOUtils {
         }
         map.put("nuts.id", id.getLongName());
         map.put("nuts.id.version", id.getVersion().getValue());
-        map.put("nuts.id.name", id.getName());
+        map.put("nuts.id.name", id.getArtifactId());
         map.put("nuts.id.simpleName", id.getShortName());
-        map.put("nuts.id.group", id.getGroup());
+        map.put("nuts.id.group", id.getGroupId());
         map.put("nuts.file", nutMainFile.getPath().toString());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
 
@@ -121,8 +121,8 @@ public class CoreIOUtils {
         }
         map.put("nuts.workspace", workspace.config().getWorkspaceLocation().toString());
         map.put("nuts.version", id.getVersion().getValue());
-        map.put("nuts.name", id.getName());
-        map.put("nuts.group", id.getGroup());
+        map.put("nuts.name", id.getArtifactId());
+        map.put("nuts.group", id.getGroupId());
         map.put("nuts.face", id.getFace());
         map.put("nuts.namespace", id.getNamespace());
         map.put("nuts.id", id.toString());
@@ -170,7 +170,7 @@ public class CoreIOUtils {
         for (String arg : args) {
             String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.commandLine().parseLine(s).toArray());
+                Collections.addAll(args2, workspace.commandLine().parse(s).toArray());
             } else {
                 args2.add(s);
             }
@@ -644,13 +644,13 @@ public class CoreIOUtils {
 
     public static String getPath(NutsId id, String ext, char sep) {
         StringBuilder sb = new StringBuilder();
-        sb.append(id.getGroup().replace('.', sep));
+        sb.append(id.getGroupId().replace('.', sep));
         sb.append(sep);
-        sb.append(id.getName());
+        sb.append(id.getArtifactId());
         sb.append(sep);
         sb.append(id.getVersion().toString());
         sb.append(sep);
-        String name = id.getName() + "-" + id.getVersion().getValue();
+        String name = id.getArtifactId() + "-" + id.getVersion().getValue();
         sb.append(name);
         sb.append(ext);
         return sb.toString();

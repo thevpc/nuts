@@ -188,7 +188,7 @@ public class NutsRepositoryFolderHelper {
         if (Files.exists(file)) {
             NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().descriptor().parse(file) : null;
             if (d != null) {
-                Map<String, String> query = id.getQueryMap();
+                Map<String, String> query = id.getProperties();
                 String os = query.get("os");
                 String arch = query.get("arch");
                 String dist = query.get("dist");
@@ -203,8 +203,8 @@ public class NutsRepositoryFolderHelper {
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
         NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(), id);
-        Path groupFolder = getStoreLocation().resolve(id.getGroup().replace('.', File.separatorChar));
-        return groupFolder.resolve(id.getName());
+        Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
+        return groupFolder.resolve(id.getArtifactId());
     }
 
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {

@@ -43,10 +43,10 @@ public class NutsFetchDisplayOptions {
         this.ws = ws;
         this.idFormat = ws.id();
         this.idFormat.setHighlightImportedGroup(true);
-        this.idFormat.setOmitQuery(true);
+        this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
         this.idFormat.setOmitNamespace(true);
-        this.idFormat.setOmitAlternative(false);
+//        this.idFormat.setOmitAlternative(false);
         this.idFormat.setOmitClassifier(false);
         this.idFormat.setOmitGroup(false);
         this.idFormat.setOmitImportedGroup(false);
@@ -114,7 +114,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public final NutsFetchDisplayOptions configure(boolean skipUnsupported, String... args) {
-        configure(false, ws.commandLine().setArguments(args));
+        configure(false, ws.commandLine().create(args));
         return this;
     }
 
@@ -169,7 +169,7 @@ public class NutsFetchDisplayOptions {
             if (this.getIdFormat().isHighlightScope()) {
                 displayOptionsArgs.add("--highlight-scope");
             }
-            if (this.getIdFormat().isOmitQuery()) {
+            if (this.getIdFormat().isOmitOtherProperties()) {
                 displayOptionsArgs.add("--omit-env");
             }
             if (this.getIdFormat().isOmitFace()) {

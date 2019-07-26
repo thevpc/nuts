@@ -166,7 +166,7 @@ public class CommonRootsHelper {
         }
         if (filter instanceof NutsPatternIdFilter) {
             NutsPatternIdFilter f = ((NutsPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroup());
+            return resolveRootId(f.getId().getGroupId());
         }
         return null;
     }

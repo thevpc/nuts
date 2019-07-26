@@ -61,36 +61,36 @@ public class NutsIndexerUtils {
         Map<String, String> entity = new HashMap<>();
         id = id.setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace())
                 .setScope(StringUtils.isEmpty(id.getScope()) ? NutsDependencyScope.API.id() : id.getScope());
-        _condPut(entity, "name", id.getName());
+        _condPut(entity, "name", id.getArtifactId());
         _condPut(entity, "namespace", id.getNamespace());
-        _condPut(entity, "group", id.getGroup());
+        _condPut(entity, "group", id.getGroupId());
         _condPut(entity, "version", id.getVersion().getValue());
         _condPut(entity, "face", id.getFace());
         _condPut(entity, "os", id.getOs());
         _condPut(entity, "osdist", id.getOsdist());
-        _condPut(entity, "scope", id.getScope());
+        _condPut(entity, NutsConstants.IdProperties.SCOPE, id.getScope());
         _condPut(entity, "arch", id.getArch());
-        _condPut(entity, "classifier", id.getClassifier());
-        _condPut(entity, "alternative", id.getAlternative());
+        _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id.getClassifier());
+//        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, id.getAlternative());
         _condPut(entity, "stringId", id.toString());
         return entity;
     }
 
     public static Map<String, String> nutsDependencyToMap(NutsDependency dependency) {
         Map<String, String> entity = new HashMap<>();
-        _condPut(entity, "name", dependency.getName());
+        _condPut(entity, "name", dependency.getArtifactId());
         _condPut(entity, "namespace", dependency.getNamespace());
-        _condPut(entity, "group", dependency.getGroup());
+        _condPut(entity, "group", dependency.getGroupId());
         _condPut(entity, "version", dependency.getVersion().getValue());
         dependency.getId().setFace(StringUtils.isEmpty(dependency.getId().getFace()) ? "default" : dependency.getId().getFace());
-        _condPut(entity, "face", dependency.getId().getFace());
+        _condPut(entity, NutsConstants.IdProperties.FACE, dependency.getId().getFace());
         _condPut(entity, "os", dependency.getId().getOs());
         _condPut(entity, "osdist", dependency.getId().getOsdist());
         dependency.getId().setScope(StringUtils.isEmpty(dependency.getId().getScope()) ? NutsDependencyScope.API.id() : dependency.getId().getScope());
-        _condPut(entity, "scope", dependency.getScope());
+        _condPut(entity, NutsConstants.IdProperties.SCOPE, dependency.getScope());
         _condPut(entity, "arch", dependency.getId().getArch());
-        _condPut(entity, "classifier", dependency.getId().getClassifier());
-        _condPut(entity, "alternative", dependency.getId().getAlternative());
+        _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, dependency.getId().getClassifier());
+//        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, dependency.getId().getAlternative());
         _condPut(entity, "stringId", dependency.getId().toString());
         return entity;
     }
@@ -110,8 +110,9 @@ public class NutsIndexerUtils {
             String osdist,
             String arch,
             String classifier,
-            String scope,
-            String alternative) {
+            String scope
+//            ,String alternative
+    ) {
         return new BooleanQuery.Builder()
                 .add(new PhraseQuery.Builder().add(new Term("name", name)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term("namespace", namespace)).build(), BooleanClause.Occur.MUST)
@@ -120,25 +121,25 @@ public class NutsIndexerUtils {
                 .add(new PhraseQuery.Builder().add(new Term("os", os)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term("osdist", osdist)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term("arch", arch)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("classifier", classifier)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("scope", scope)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("alternative", alternative)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.CLASSIFIER, classifier)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.SCOPE, scope)).build(), BooleanClause.Occur.MUST)
+//                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.ALTERNATIVE, alternative)).build(), BooleanClause.Occur.MUST)
                 .add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD))
                 .build();
     }
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
         return ws.id().builder()
-                .setName(trim(map.get("name")))
+                .setArtifactId(trim(map.get("name")))
                 .setNamespace(trim(map.get("namespace")))
-                .setGroup(trim(map.get("group")))
+                .setGroupId(trim(map.get("group")))
                 .setVersion(trim(map.get("version")))
                 .setOs(trim(map.get("os")))
                 .setOsdist(trim(map.get("osdist")))
-                .setClassifier(trim(map.get("classifier")))
-                .setScope(trim(map.get("scope")))
+                .setClassifier(trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
+                .setScope(trim(map.get(NutsConstants.IdProperties.SCOPE)))
                 .setArch(trim(map.get("arch")))
-                .setAlternative(trim(map.get("alternative")))
+//                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))
                 .build();
     }
 

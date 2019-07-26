@@ -23,11 +23,10 @@ public class NutsServerMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        String[] args = context.getArguments();
         try {
             boolean autoSave = false;
             NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
-
+            NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
             NutsCommandLine cmdLine = context.commandLine();
 
             class SrvInfo {
@@ -70,39 +69,39 @@ public class NutsServerMain extends NutsApplication {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).name = cmdLine.required().nextNonOption(cmdLine.createName("ServerName")).getString();
+                        servers.get(servers.size() - 1).name = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerName")).getString();
                     } else if (cmdLine.next("-a", "--address") != null) {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).addr = cmdLine.required().nextNonOption(cmdLine.createName("ServerAddress")).getString();
+                        servers.get(servers.size() - 1).addr = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerAddress")).getString();
 
                     } else if (cmdLine.next("-p", "--port") != null) {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(cmdLine.createName("ServerPort")).getInt();
+                        servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerPort")).getInt();
 
                     } else if (cmdLine.next("-l", "--backlog") != null) {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(cmdLine.createName("ServerBacklog")).getInt();
+                        servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerBacklog")).getInt();
                     } else if (cmdLine.next("--ssl-certificate") != null) {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslCertificate = cmdLine.required().nextNonOption(cmdLine.createName("SslCertificate")).required().getString();
+                        servers.get(servers.size() - 1).sslCertificate = cmdLine.required().nextNonOption(commandLineFormat.createName("SslCertificate")).required().getString();
                     } else if (cmdLine.next("--ssl-passphrase") != null) {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.required().nextNonOption(cmdLine.createName("SslPassPhrase")).required().getString();
+                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.required().nextNonOption(commandLineFormat.createName("SslPassPhrase")).required().getString();
                     } else {
                         if (servers.isEmpty()) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
                         }
-                        String s = cmdLine.required().nextNonOption(cmdLine.createName("Workspace")).getString();
+                        String s = cmdLine.required().nextNonOption(commandLineFormat.createName("Workspace")).getString();
                         int eq = s.indexOf('=');
                         if (eq >= 0) {
                             String serverContext = s.substring(0, eq);
@@ -193,12 +192,12 @@ public class NutsServerMain extends NutsApplication {
                     }
                 }
             } else if (cmdLine.next("stop") != null) {
-                String s = cmdLine.required().nextNonOption(cmdLine.createName("ServerName")).getString();
+                String s = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerName")).getString();
                 if (cmdLine.isExecMode()) {
                     serverManager.stopServer(s);
                 }
                 while (cmdLine.hasNext()) {
-                    s = cmdLine.required().nextNonOption(cmdLine.createName("ServerName")).getString();
+                    s = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerName")).getString();
                     if (cmdLine.isExecMode()) {
                         serverManager.stopServer(s);
                     }
@@ -209,7 +208,7 @@ public class NutsServerMain extends NutsApplication {
                     List<NutsServer> servers = serverManager.getServers();
                     PrintStream out = context.session().out();
                     if (servers.isEmpty()) {
-                        out.printf("No Server is Running\n");
+                        out.print("No Server is Running\n");
                     }
                     for (NutsServer o : servers) {
                         if (o.isRunning()) {
