@@ -153,8 +153,13 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
 //    }
 
     @Override
-    public NutsDescriptor setProperties(Map<String, String> map, boolean append) {
-        return getBase().setProperties(map, append);
+    public NutsDescriptor setProperties(Map<String, String> map) {
+        return getBase().setProperties(map);
+    }
+
+    @Override
+    public NutsDescriptor addProperties(Map<String, String> map) {
+        return getBase().addProperties(map);
     }
 
     @Override

@@ -91,45 +91,161 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
      */
     String[] getGroups();
 
+    /**
+     * return username
+     * @return username
+     */
     String getUsername();
 
+    /**
+     * return credentials
+     * @return credentials
+     */
     char[] getCredentials();
 
+    /**
+     * return remote identity
+     * @return remote identity
+     */
     String getRemoteIdentity();
 
+    /**
+     * return permissions
+     * @return permissions
+     */
     String[] getPermissions();
 
+    /**
+     * add user group
+     * @param group new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand group(String group);
 
+    /**
+     * add user groups
+     * @param groups new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand groups(String... groups);
 
+    /**
+     * add user groups
+     * @param groups new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand groups(Collection<String> groups);
 
+    /**
+     * remove group
+     * @param groups new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand removeGroups(String... groups);
 
+    /**
+     * remove groups
+     * @param groups groups to remove
+     * @return {@code this} instance
+     */
     NutsAddUserCommand removeGroups(Collection<String> groups);
 
+    /**
+     * remove permissions
+     * @param permissions permission to remove
+     * @return {@code this} instance
+     */
     NutsAddUserCommand removePermissions(String... permissions);
 
+    /**
+     * remove permissions
+     * @param permissions permissions to remove
+     * @return {@code this} instance
+     */
     NutsAddUserCommand removePermissions(Collection<String> permissions);
 
+    /**
+     * add permission
+     * @param permission new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand permission(String permission);
 
+    /**
+     * add permissions
+     * @param permissions new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand permissions(String... permissions);
 
+    /**
+     * add permissions
+     * @param permissions new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand permissions(Collection<String> permissions);
 
+    /**
+     * set username
+     * @param username new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand username(String username);
 
+    /**
+     * set username
+     * @param username new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand setUsername(String username);
 
+    /**
+     * set credentials
+     * @param password new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand credentials(char[] password);
 
+    /**
+     *
+     * @param password new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand setCredentials(char[] password);
 
+    /**
+     * set remote identity
+     * @param remoteIdentity new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand remoteIdentity(String remoteIdentity);
 
+    /**
+     * set remote identity
+     * @param remoteIdentity new value
+     * @return {@code this} instance
+     */
     NutsAddUserCommand setRemoteIdentity(String remoteIdentity);
+
+    /**
+     * remote credentials
+     * @return remote credentials
+     */
+    char[] getRemoteCredentials();
+
+    /**
+     * set remote credentials
+     * @param password new value
+     * @return {@code this} instance
+     */
+    NutsAddUserCommand remoteCredentials(char[] password);
+
+    /**
+     * set remote credentials
+     * @param password new value
+     * @return {@code this} instance
+     */
+    NutsAddUserCommand setRemoteCredentials(char[] password);
 
     /**
      * update session
@@ -169,9 +285,4 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     @Override
     NutsAddUserCommand run();
 
-    char[] getRemoteCredentials();
-
-    NutsAddUserCommand remoteCredentials(char[] password);
-
-    NutsAddUserCommand setRemoteCredentials(char[] password);
 }

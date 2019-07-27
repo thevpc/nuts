@@ -3,6 +3,7 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,7 +78,7 @@ public class PomIdResolver {
         } catch (IOException ex) {
             Logger.getLogger(PomIdResolver.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return all.toArray(new PomId[all.size()]);
+        return all.toArray(new PomId[0]);
     }
 
     public static PomId resolvePomId(Class clazz) {
@@ -85,7 +86,21 @@ public class PomIdResolver {
     }
 
     public static PomId resolvePomId(Class clazz, PomId defaultValue) {
-        for (PomId v : resolvePomIds(clazz)) {
+        PomId[] pomIds = resolvePomIds(clazz);
+//        if(pomIds.length>1){
+//            System.out.println("==== Multiple ids found : "+Arrays.asList(pomIds));
+//        }else{
+//            System.out.println("==== Single id found : "+Arrays.asList(pomIds));
+//        }
+//        System.out.println(clazz.getClassLoader());
+//        if(clazz.getClassLoader() instanceof URLClassLoader){
+//            URLClassLoader u=(URLClassLoader)clazz.getClassLoader();
+//            for (URL url : u.getURLs()) {
+//                System.out.println("\t"+url);
+//            }
+//        }
+//        new Throwable().printStackTrace(System.out);
+        for (PomId v : pomIds) {
             return v;
         }
         return defaultValue;
@@ -120,6 +135,7 @@ public class PomIdResolver {
         URL url = clazz.getClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
+            System.out.println("== "+url);
             Properties p = new Properties();
             try {
                 p.load(url.openStream());
@@ -128,8 +144,10 @@ public class PomIdResolver {
             }
             String version = p.getProperty("version");
             if (version != null && version.trim().length() != 0) {
+                System.out.println("\t found!!");
                 return version;
             }
+            System.out.println("\t not found");
         }
         return defaultValue;
     }

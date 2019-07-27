@@ -190,7 +190,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
-                    if (!dd.getVersion().toFilter().accept(updated.getId().getVersion(), session)) {
+                    if (!dd.getVersion().filter().accept(updated.getId().getVersion(), session)) {
                         throw new NutsIllegalArgumentException(ws, dd + " unsatisfied  : " + updated.getId().getVersion());
                     }
                 }
@@ -404,7 +404,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 traceSingleUpdate(extension);
             }
         }
-        for (NutsUpdateResult component : result.getComponents()) {
+        for (NutsUpdateResult component : result.getArtifacts()) {
             applyRegularUpdate((DefaultNutsUpdateResult) component);
         }
 

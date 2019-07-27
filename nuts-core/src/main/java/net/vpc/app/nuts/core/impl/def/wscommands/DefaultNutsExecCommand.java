@@ -213,7 +213,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
     }
 
-    protected NutsExecutableInformationExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
+    protected NutsExecutableInformationExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
         NutsDefinition def = null;
         NutsId nid = ws.id().parse(commandName);
         NutsSession searchSession = session.copy().trace(false);
@@ -250,11 +250,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         return ws_exec0(def, commandName, appArgs, executorOptions, env, dir, failFast, executionType, session);
     }
 
-    protected NutsExecutableInformationExt ws_exec0(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
+    protected NutsExecutableInformationExt ws_exec0(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }
 
-    public void ws_exec(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType,boolean dry) {
+    public void ws_exec(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType,boolean dry) {
         ws.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
         session = NutsWorkspaceUtils.validateSession(ws, session);
         if (def != null && def.getPath() != null) {
@@ -266,7 +266,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             NutsExecutorDescriptor executor = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;
             List<String> executorArgs = new ArrayList<>();
-            Properties execProps = null;
+            Map<String,String> execProps = null;
             if (executor == null) {
                 execComponent = resolveNutsExecutorComponent(def);
             } else {

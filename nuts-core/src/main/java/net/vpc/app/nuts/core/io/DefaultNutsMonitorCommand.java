@@ -151,7 +151,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         if (monitorable) {
             if (source instanceof NutsId) {
                 NutsId d = (NutsId) source;
-                if (NutsConstants.QueryFaces.COMPONENT_HASH.equals(d.getFace())) {
+                if (NutsConstants.QueryFaces.CONTENT_HASH.equals(d.getFace())) {
                     monitorable = false;
                 }
                 if (NutsConstants.QueryFaces.DESCRIPTOR_HASH.equals(d.getFace())) {

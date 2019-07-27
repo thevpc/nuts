@@ -65,7 +65,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .command(executionContext.getDefinition())
                     .command("--nuts-exec-mode=install")
-//                    .addExecutorOptions("-Dnuts.export.debug")
+                    .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
                     .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
                     .failFast()

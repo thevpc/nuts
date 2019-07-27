@@ -1,5 +1,5 @@
-==nuts== {{install}} \<nuts-component\>... <args> ...
-      install ==nuts== package \<nuts-component\>
+==nuts== {{install}} \<nuts-artifact\>... <args> ...
+      install ==nuts== package \<nuts-artifact\>
        <args> ...        : provide arguments to pass to installer
 
 #!include</net/vpc/app/command/includes/standard-command.help>

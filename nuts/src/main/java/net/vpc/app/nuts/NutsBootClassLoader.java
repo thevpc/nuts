@@ -8,6 +8,11 @@ import java.net.URLClassLoader;
  */
 class NutsBootClassLoader extends URLClassLoader {
 
+    /**
+     * default constructor
+     * @param urls urls
+     * @param parent parent class loader
+     */
     NutsBootClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }

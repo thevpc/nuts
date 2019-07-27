@@ -123,7 +123,7 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             fillOption("--workspace", "-w", PrivateNutsUtils.isBlank(options.getWorkspace()) ? "" : PrivateNutsUtils.getAbsolutePath(options.getWorkspace()), arguments, false);
             fillOption("--user", "-u", options.getUserName(), arguments, false);
-            fillOption("--password", "-p", options.getPassword(), arguments, false);
+            fillOption("--password", "-p", options.getCredentials(), arguments, false);
             fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
             if (!(omitDefaults && options.getTerminalMode() == null)) {
                 fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);

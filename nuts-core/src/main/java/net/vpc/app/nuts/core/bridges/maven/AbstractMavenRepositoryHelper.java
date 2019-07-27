@@ -35,6 +35,8 @@ import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
@@ -65,7 +67,7 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
         switch (CoreStringUtils.trim(id.getFace())) {
-            case NutsConstants.QueryFaces.COMPONENT_HASH:
+            case NutsConstants.QueryFaces.CONTENT_HASH:
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 break;
             }
@@ -131,15 +133,15 @@ public abstract class AbstractMavenRepositoryHelper {
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 return ".pom.sha1";
             }
-            case NutsConstants.QueryFaces.CATALOG: {
+            case CoreNutsConstants.QueryFaces.CATALOG: {
                 return ".catalog";
             }
-            case NutsConstants.QueryFaces.COMPONENT_HASH: {
-                return getIdExtension(id.setFaceComponent()) + ".sha1";
+            case NutsConstants.QueryFaces.CONTENT_HASH: {
+                return getIdExtension(id.setFaceContent()) + ".sha1";
             }
-            case NutsConstants.QueryFaces.COMPONENT: {
+            case NutsConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
-                return repository.getWorkspace().config().getDefaultIdComponentExtension(packaging);
+                return repository.getWorkspace().config().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "Unsupported fact " + f);

@@ -158,7 +158,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String getDefaultIdBasedir(NutsId id);
 
-    NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
+    NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
 
     NutsCommandAliasFactoryConfig[] getCommandFactories();
 
@@ -204,7 +204,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 
-    String getDefaultIdComponentExtension(String packaging);
+    String getDefaultIdContentExtension(String packaging);
 
     String getDefaultIdExtension(NutsId id);
 

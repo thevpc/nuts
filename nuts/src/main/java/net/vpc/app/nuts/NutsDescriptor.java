@@ -131,7 +131,9 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptor setDependencies(NutsDependency[] dependencies);
 
-    NutsDescriptor setProperties(Map<String, String> map, boolean append);
+    NutsDescriptor setProperties(Map<String, String> map);
+
+    NutsDescriptor addProperties(Map<String, String> map);
 
     NutsDescriptor applyParents(NutsDescriptor[] parentDescriptors);
 

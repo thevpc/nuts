@@ -36,7 +36,7 @@ import java.util.Comparator;
 import java.util.Set;
 
 /**
- * Search command class helps searching multiple component with all of their
+ * Search command class helps searching multiple artifacts with all of their
  * files.
  *
  * @author vpc
@@ -668,14 +668,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand online();
 
     /**
-     * only installed components
+     * only installed artifacts
      *
      * @return {@code this} instance
      */
     NutsSearchCommand installed();
 
     /**
-     * all components (local and remote). If local result found will any way
+     * all artifacts (local and remote). If local result found will any way
      * fetch remote.
      *
      * @return {@code this} instance
@@ -1017,7 +1017,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setInstallInformation(boolean enable);
 
     /**
-     * set locating where to fetch the component. If the location is a folder, a
+     * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
      * @param fileOrFolder path to store to
@@ -1026,7 +1026,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setLocation(Path fileOrFolder);
 
     /**
-     * set locating where to fetch the component. If the location is a folder, a
+     * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
      * @param fileOrFolder path to store to
@@ -1045,7 +1045,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     // Getters
     ////////////////////////////////////////////////////////
     /**
-     * get locating where to fetch the component. If the location is a folder, a
+     * get locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
      * @return location path
@@ -1160,9 +1160,9 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchResult<String[]> getResultStrings(String[] columns);
     
     /**
-     * return result as component names
+     * return result as artifact names
      *
-     * @return result as component names
+     * @return result as artifact names
      */
     NutsSearchResult<String> getResultNames();
 

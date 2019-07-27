@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -58,7 +59,7 @@ public interface NutsVersionFormat extends NutsFormat {
 
     NutsVersionFormat addProperty(String key, String value);
 
-    NutsVersionFormat addProperties(Properties p);
+    NutsVersionFormat addProperties(Map<String,String> p);
 
     /**
      * return version set by {@link #setVersion(net.vpc.app.nuts.NutsVersion) }

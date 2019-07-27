@@ -186,7 +186,7 @@ public class NutsElementPathFilter {
         public List<NutsElement> filter(NutsElement element) {
             NutsArrayElementBuilder aa = builder.forArray();
             aa.add(element);
-            return Arrays.asList(aa);
+            return aa.children();
         }
 
         @Override
@@ -195,7 +195,7 @@ public class NutsElementPathFilter {
             for (NutsElement element : elements) {
                 aa.add(element);
             }
-            return Arrays.asList(aa);
+            return aa.children();
         }
 
     }

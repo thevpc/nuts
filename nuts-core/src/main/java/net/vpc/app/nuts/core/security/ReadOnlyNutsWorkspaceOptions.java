@@ -172,8 +172,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public char[] getPassword() {
-        return options.getPassword();
+    public char[] getCredentials() {
+        return options.getCredentials();
     }
 
     @Override

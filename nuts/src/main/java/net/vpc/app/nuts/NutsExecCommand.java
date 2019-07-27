@@ -100,11 +100,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand clearExecutorOptions();
 
-    Properties getEnv();
+    Map<String,String> getEnv();
 
     NutsExecCommand env(Map<String, String> env);
-
-    NutsExecCommand addEnv(Properties env);
 
     NutsExecCommand addEnv(Map<String, String> env);
 
@@ -113,10 +111,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setEnv(String k, String val);
 
     NutsExecCommand setEnv(Map<String, String> env);
-
-    NutsExecCommand setEnv(Properties env);
-
-    NutsExecCommand env(Properties env);
 
     NutsExecCommand clearEnv();
 

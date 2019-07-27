@@ -67,5 +67,11 @@ public interface NutsClassifierMappingBuilder {
 
     NutsClassifierMappingBuilder setPlatform(String... value);
 
+    NutsClassifierMappingBuilder set(NutsClassifierMappingBuilder value);
+
+    NutsClassifierMappingBuilder set(NutsClassifierMapping value);
+
+    NutsClassifierMappingBuilder clear();
+
     NutsClassifierMapping build();
 }

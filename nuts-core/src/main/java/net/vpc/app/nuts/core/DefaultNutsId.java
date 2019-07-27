@@ -329,19 +329,19 @@ public class DefaultNutsId implements NutsId {
     @Override
     public NutsId setFace(String value) {
         return setProperty(NutsConstants.IdProperties.FACE, CoreStringUtils.trimToNull(value))
-                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+                .addProperties(CoreNutsUtils.QUERY_EMPTY_ENV);
     }
 
     @Override
     public NutsId setScope(String value) {
         return setProperty(NutsConstants.IdProperties.SCOPE, CoreStringUtils.trimToNull(value))
-                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+                .addProperties(CoreNutsUtils.QUERY_EMPTY_ENV);
     }
 
     @Override
     public NutsId setOptional(String value) {
         return setProperty(NutsConstants.IdProperties.OPTIONAL, CoreStringUtils.trimToNull(value))
-                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+                .addProperties(CoreNutsUtils.QUERY_EMPTY_ENV);
     }
 
 //    @Override
@@ -353,7 +353,7 @@ public class DefaultNutsId implements NutsId {
     @Override
     public NutsId setArch(String value) {
         return setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.trimToNull(value))
-                .setProperties(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+                .addProperties(CoreNutsUtils.QUERY_EMPTY_ENV);
     }
 
     @Override
@@ -401,8 +401,8 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId setFaceComponent() {
-        return setFace(NutsConstants.QueryFaces.COMPONENT);
+    public NutsId setFaceContent() {
+        return setFace(NutsConstants.QueryFaces.CONTENT);
     }
 
     @Override
@@ -427,47 +427,57 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId setProperties(Map<String, String> queryMap, boolean merge) {
-        if (merge) {
-            Map<String, String> m = getProperties();
-            if (queryMap != null) {
-                for (Map.Entry<String, String> e : queryMap.entrySet()) {
-                    String property = e.getKey();
-                    String value = e.getValue();
-                    if (value == null || value.isEmpty()) {
-                        m.remove(property);
-                    } else {
-                        m.put(property, value);
-                    }
-                }
-            }
-            return setProperties(m);
-        } else {
-            String m = DefaultNutsId.formatPropertiesQuery(queryMap);
-            if (m == null) {
-                m = "";
-            }
-            if (m.equals(query == null ? "" : query)) {
-                return this;
-            }
-            return new DefaultNutsId(
-                    namespace,
-                    groupId,
-                    artifactId,
-                    version,
-                    m
-            );
+    public NutsId addProperties(Map<String, String> queryMap) {
+        if(queryMap!=null && !queryMap.isEmpty()) {
+            return builder().addProperties(queryMap).build();
         }
+        return this;
     }
+
+    @Override
+    public NutsId addProperties(String properties) {
+        if(CoreStringUtils.isBlank(properties)) {
+            return builder().addProperties(properties).build();
+        }
+        return this;
+    }
+    //    @Override
+//    public NutsId setProperties(Map<String, String> queryMap, boolean merge) {
+//        if (merge) {
+//            Map<String, String> m = getProperties();
+//            if (queryMap != null) {
+//                for (Map.Entry<String, String> e : queryMap.entrySet()) {
+//                    String property = e.getKey();
+//                    String value = e.getValue();
+//                    if (value == null || value.isEmpty()) {
+//                        m.remove(property);
+//                    } else {
+//                        m.put(property, value);
+//                    }
+//                }
+//            }
+//            return setProperties(m);
+//        } else {
+//            String m = DefaultNutsId.formatPropertiesQuery(queryMap);
+//            if (m == null) {
+//                m = "";
+//            }
+//            if (m.equals(query == null ? "" : query)) {
+//                return this;
+//            }
+//            return new DefaultNutsId(
+//                    namespace,
+//                    groupId,
+//                    artifactId,
+//                    version,
+//                    m
+//            );
+//        }
+//    }
 
     @Override
     public NutsId setProperties(Map<String, String> queryMap) {
-        return setProperties(queryMap, false);
-    }
-
-    @Override
-    public NutsId unsetProperties() {
-        return setProperties("");
+        return builder().setProperties(queryMap).build();
     }
 
     @Override
@@ -475,13 +485,7 @@ public class DefaultNutsId implements NutsId {
         if (CoreStringUtils.trim(this.query).equals(properties)) {
             return this;
         }
-        return new DefaultNutsId(
-                namespace,
-                groupId,
-                artifactId,
-                version,
-                properties
-        );
+        return builder().setProperties(properties).build();
     }
 
     @Override
@@ -636,7 +640,7 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsIdFilter toFilter() {
+    public NutsIdFilter filter() {
         return new NutsPatternIdFilter(this);
     }
 
@@ -646,7 +650,7 @@ public class DefaultNutsId implements NutsId {
         if (x != 0) {
             return x;
         }
-        //latests versions first
+        //latest versions first
         x = this.getVersion().compareTo(o2.getVersion());
         return -x;
     }

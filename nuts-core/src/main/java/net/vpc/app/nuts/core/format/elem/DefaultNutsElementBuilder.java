@@ -52,7 +52,7 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
 
     @Override
     public NutsObjectElementBuilder forObject() {
-        return new DefaultNutsObjectElemenBuilder();
+        return new DefaultNutsObjectElementBuilder();
     }
 
     @Override

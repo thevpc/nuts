@@ -42,7 +42,7 @@ public interface NutsWorkspaceUpdateResult {
 
     NutsUpdateResult[] getExtensions();
 
-    NutsUpdateResult[] getComponents();
+    NutsUpdateResult[] getArtifacts();
 
     boolean isUpdatableApi();
 

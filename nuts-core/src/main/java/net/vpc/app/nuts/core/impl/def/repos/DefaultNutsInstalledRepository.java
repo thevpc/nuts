@@ -266,7 +266,7 @@ public class DefaultNutsInstalledRepository {
             protected Iterator<NutsId> iterator() {
                 File installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).toFile().getParentFile();
                 if (installFolder.isDirectory()) {
-                    final NutsVersionFilter filter0 = id.getVersion().toFilter();
+                    final NutsVersionFilter filter0 = id.getVersion().filter();
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
                             .map(new Function<File, NutsId>() {
                                 @Override
@@ -293,7 +293,7 @@ public class DefaultNutsInstalledRepository {
     public NutsId[] findInstalledVersions(NutsId id, NutsRepositorySession session) {
         Path installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).getParent();
         List<NutsId> ok = new ArrayList<>();
-        final NutsVersionFilter filter = id.getVersion().toFilter();
+        final NutsVersionFilter filter = id.getVersion().filter();
         if (Files.isDirectory(installFolder)) {
             try (DirectoryStream<Path> ds = Files.newDirectoryStream(installFolder)) {
                 for (Path folder : ds) {

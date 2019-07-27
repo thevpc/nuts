@@ -32,9 +32,7 @@ package net.vpc.app.nuts.core.impl.def.config;
 import net.vpc.app.nuts.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  *
@@ -51,7 +49,7 @@ public final class NutsWorkspaceConfigMain implements Serializable {
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsCommandAliasFactoryConfig> commandFactories;
-    private Properties env = new Properties();
+    private Map<String,String> env = new LinkedHashMap<>();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
@@ -86,11 +84,11 @@ public final class NutsWorkspaceConfigMain implements Serializable {
         return this;
     }
 
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 
-    public NutsWorkspaceConfigMain setEnv(Properties env) {
+    public NutsWorkspaceConfigMain setEnv(Map<String,String> env) {
         this.env = env;
         return this;
     }

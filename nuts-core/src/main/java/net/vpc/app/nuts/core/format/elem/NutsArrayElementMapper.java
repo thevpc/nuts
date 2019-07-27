@@ -29,53 +29,63 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
-import net.vpc.app.nuts.NutsArrayElement;
-import net.vpc.app.nuts.NutsArrayElementBuilder;
-import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsElementType;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsArrayElement;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsArrayElement extends AbstractNutsElement implements NutsArrayElement {
+public class NutsArrayElementMapper extends AbstractNutsElement implements NutsArrayElement {
 
-    private final NutsElement[] values;
+    private final NutsElementFactoryContext context;
+    private final List<Object> values = new ArrayList<>();
 
-    public DefaultNutsArrayElement(Collection<NutsElement> values) {
+    public NutsArrayElementMapper(Object array, NutsElementFactoryContext context) {
         super(NutsElementType.ARRAY);
-        this.values= values.toArray(new NutsElement[0]);
-    }
-
-    public DefaultNutsArrayElement(NutsElement[] values) {
-        super(NutsElementType.ARRAY);
-        this.values= Arrays.copyOf(values,values.length);
+        this.context = context;
+        if (array.getClass().isArray()) {
+            int count = Array.getLength(array);
+            for (int i = 0; i < count; i++) {
+                values.add(Array.get(array, i));
+            }
+        } else if (array instanceof Collection) {
+            values.addAll((Collection) array);
+        } else if (array instanceof Iterator) {
+            Iterator nl = (Iterator) array;
+            while (nl.hasNext()) {
+                values.add(nl.next());
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported");
+        }
     }
 
     @Override
     public Collection<NutsElement> children() {
-        return Arrays.asList(values);
-    }
-
-
-    @Override
-    public int size() {
-        return values.length;
-    }
-
-    @Override
-    public NutsElement get(int index) {
-        return values[index];
+        return values.stream().map(context::toElement).collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
         return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
+
+    @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
+    public NutsElement get(int index) {
+        return context.toElement(values.get(index));
+    }
+
 }

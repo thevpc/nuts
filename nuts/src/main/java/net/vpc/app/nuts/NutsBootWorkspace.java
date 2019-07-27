@@ -1133,9 +1133,15 @@ public final class NutsBootWorkspace {
             sb.append("Nuts Version ").append(workspaceInformation.getApiId());
         }
         if ((req & 2) != 0) {
+            if(sb.length()>0){
+                sb.append(" and ");
+            }
             sb.append("Java Command ").append(workspaceInformation.getJavaCommand());
         }
         if ((req & 4) != 0) {
+            if(sb.length()>0){
+                sb.append(" and ");
+            }
             sb.append("Java Options ").append(workspaceInformation.getJavaOptions());
         }
         if (sb.length() > 0) {

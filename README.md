@@ -9,26 +9,26 @@ Network Updatable Things Services
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
-components, installing these  components to the current machine and executing such  components on need.
+artifacts, installing these  artifacts to the current machine and executing such  artifacts on need.
 Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
-Nuts components are  stored  into repositories. A  **repository**  may be local for  storing local Nuts
-or remote for accessing  remote components (good examples  are  remote maven  repositories). It may
-also be a proxy repository so that remote components are fetched and cached locally to save network
+Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts
+or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
+also be a proxy repository so that remote artifacts are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  workspace. Managed **nuts**  (components)  have descriptors
+One manages a set of repositories called a  workspace. Managed **nuts**  (artifacts)  have descriptors
 that depicts dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to
 resolve and download on-need dependencies over the wire.
 
 **nuts** is a swiss army knife tool as it acts like (and supports) **maven** build tool to have an abstract
-view of the the  components dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools  
-to  install and uninstall components allowing multiple versions of the very same component to  be installed.
+view of the the  artifacts dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools  
+to  install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
 
 ## COMMON VERBS:
-+ deploy,undeploy   : manage components (package installers) on the local repositories
++ deploy,undeploy   : manage artifacts (package installers) on the local repositories
 + install,uninstall : install/uninstall a package (using its fetched/deployed installer)
 + update            : update a package (using its fetched/deployed installer)
 + fetch,push        : download from, upload to remote repositories
-+ find              : searche for existing/installable components
++ find              : searche for existing/installable artifacts
 
 ## Download Latest stable version
 + Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar)
@@ -94,7 +94,7 @@ nuts derby start
 nuts -y netbeans-launcher
 ```
 
-### update nuts and all installed components
+### update nuts and all installed artifacts
 
 ```
 nuts update --all

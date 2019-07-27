@@ -51,7 +51,7 @@ public class NutsRepositoryConfig implements Serializable {
     private String[] storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
-    private Properties env;
+    private Map<String,String> env;
     private List<NutsRepositoryRef> mirrors;
     private List<NutsUserConfig> users;
     private boolean indexEnabled;
@@ -114,11 +114,11 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 
-    public NutsRepositoryConfig setEnv(Properties env) {
+    public NutsRepositoryConfig setEnv(Map<String,String> env) {
         this.env = env;
         return this;
     }

@@ -1,13 +1,13 @@
 ==nuts== [[update]]  \[**<options>**\]... <ids> ...  <args> ...
        check if a newer version of ==nuts== or any of the provided <ids> 
        is available in the current workspace and perform update by downloading (fetch) 
-       and installing the component. The updated version is promoted to 'default' version.
-       **-a** or **--all** : force updates of both workspace\'s api, runtime extensions and installed components
-       **-w** or **--ws** or **--workspace** : update all workspace\'s related components (api, runtime and extensions)
-       **-i** or **--installed** : update all installed components
+       and installing the artifact. The updated version is promoted to 'default' version.
+       **-a** or **--all** : force updates of both workspace\'s api, runtime extensions and installed artifacts
+       **-w** or **--ws** or **--workspace** : update all workspace\'s related artifacts (api, runtime and extensions)
+       **-i** or **--installed** : update all installed artifacts
        **-e** or **--extensions** : update all workspace\'s extensions
        **-ec** or **--companions** : update all companions
-       **-r** or **--runtime** : update workspace\'s runtime component (minor workspace update)
+       **-r** or **--runtime** : update workspace\'s runtime artifact (minor workspace update)
        **-A** or **--api** : update workspace\'s api (major workspace update)
        **-v** \<version\>
        or **--to-version** \<version\>
@@ -19,7 +19,7 @@
 ##SYNOPSIS:##
 ==nuts== ##update## id1 ...
 
-   update the ==nuts== to the latest version. If --force is armed, will re-download the components and its dependencies.
+   update the ==nuts== to the latest version. If --force is armed, will re-download the artifacts and its dependencies.
 
 ==nuts== ##update## [ --to-version <version> ]
 

@@ -366,23 +366,25 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setProperties(Map<String, String> map, boolean append) {
-        Map<String, String> l_properties = new HashMap<>();
-        if (append) {
-            l_properties.putAll(getProperties());
-        }
-        if (map != null) {
-            l_properties.putAll(map);
-        }
-        if (Objects.equals(l_properties, getProperties())) {
+    public NutsDescriptor setProperties(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
             return this;
         }
-        return builder().setProperties(l_properties).build();
+        return builder().setProperties(map).build();
     }
 
     @Override
+    public NutsDescriptor addProperties(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
+            return this;
+        }
+        return builder().addProperties(map).build();
+    }
+
+
+    @Override
     public NutsDescriptorBuilder builder() {
-        return new DefaultNutsDescriptorBuilder(this);
+        return new DefaultNutsDescriptorBuilder().set(this);
     }
 
     @Override

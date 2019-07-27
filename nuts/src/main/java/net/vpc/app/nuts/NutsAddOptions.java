@@ -34,15 +34,13 @@ import java.io.Serializable;
 /**
  * Generic Add options
  *
+ * @author vpc
  * @see NutsWorkspaceConfigManager#addSdk(net.vpc.app.nuts.NutsSdkLocation,
  * net.vpc.app.nuts.NutsAddOptions)
- * @see
- * NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig,
+ * @see NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig,
  * net.vpc.app.nuts.NutsAddOptions)
- * @see
- * NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig,
+ * @see NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig,
  * net.vpc.app.nuts.NutsAddOptions)
- * @author vpc
  * @since 0.5.4
  */
 public class NutsAddOptions implements Serializable {

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -42,7 +43,7 @@ public interface NutsExecutionContext {
 
     String[] getExecutorOptions();
 
-    Properties getExecutorProperties();
+    Map<String,String> getExecutorProperties();
 
     NutsDefinition getDefinition();
 
@@ -58,7 +59,7 @@ public interface NutsExecutionContext {
 
     NutsSession getSession();
 
-    Properties getEnv();
+    Map<String,String> getEnv();
 
     String getCwd();
 

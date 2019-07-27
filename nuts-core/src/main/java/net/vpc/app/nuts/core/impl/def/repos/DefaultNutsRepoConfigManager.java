@@ -81,7 +81,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public String getEnv(String key, String defaultValue, boolean inherit) {
         String t = null;
         if (config.getEnv() != null) {
-            t = config.getEnv().getProperty(defaultValue);
+            t = config.getEnv().get(defaultValue);
         }
         if (!CoreStringUtils.isBlank(t)) {
             return t;
@@ -94,8 +94,8 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public Properties getEnv(boolean inherit) {
-        Properties p = new Properties();
+    public Map<String,String> getEnv(boolean inherit) {
+        Map<String,String> p = new LinkedHashMap<>();
         if (inherit) {
             p.putAll(repository.getWorkspace().config().getEnv());
         }
@@ -115,10 +115,10 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             }
         } else {
             if (config.getEnv() == null) {
-                config.setEnv(new Properties());
+                config.setEnv(new LinkedHashMap<>());
             }
-            if (!value.equals(config.getEnv().getProperty(property))) {
-                config.getEnv().setProperty(property, value);
+            if (!value.equals(config.getEnv().get(property))) {
+                config.getEnv().put(property, value);
                 fireConfigurationChanged("env",options.getSession());
             }
         }
@@ -401,7 +401,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return getEnv(true);
     }
 

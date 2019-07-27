@@ -63,7 +63,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
         if (descriptor0 == null) {
             descriptor0 = getRepo().fetchDescriptor().setId(id).setSession(getSession()).getResult();
         }
-        id = id.setFaceComponent();
+        id = id.setFaceContent();
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(id, getSession());

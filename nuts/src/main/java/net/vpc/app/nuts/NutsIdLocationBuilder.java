@@ -13,5 +13,11 @@ public interface NutsIdLocationBuilder {
 
     NutsIdLocationBuilder setClassifier(String value);
 
+    NutsIdLocationBuilder set(NutsIdLocationBuilder value);
+
+    NutsIdLocationBuilder set(NutsIdLocation value);
+
+    NutsIdLocationBuilder clear();
+
     NutsIdLocation build();
 }

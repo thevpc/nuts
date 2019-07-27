@@ -54,7 +54,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     @Override
     public void execute() {
         Map<String, String> e2 = null;
-        Properties env1 = execCommand.getEnv();
+        Map<String,String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
@@ -65,7 +65,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     @Override
     public void dryExecute() {
         Map<String, String> e2 = null;
-        Properties env1 = execCommand.getEnv();
+        Map<String,String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }

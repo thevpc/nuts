@@ -33,46 +33,46 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
- * Definition is an <strong>immutable</strong> object that contains all information about a component identified by it's Id.
+ * Definition is an <strong>immutable</strong> object that contains all information about a artifact identified by it's Id.
  *
  * @since 0.5.4
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 
     /**
-     * component id
+     * artifact id
      *
-     * @return component id
+     * @return artifact id
      */
     NutsId getId();
 
     /**
-     * true if this definition denoted a nuts api id component.
-     * a component is nuts api if it corresponds to {@link NutsConstants.Ids#NUTS_API}
+     * true if this definition denoted a nuts api id artifact.
+     * an artifact is a valid nuts api if it corresponds to {@link NutsConstants.Ids#NUTS_API}
      *
-     * @return true if this definition denoted a nuts api id component.
+     * @return true if this definition denoted a nuts api id artifact.
      */
     boolean isApi();
 
     /**
-     * true if this definition denoted a nuts runtime id component.
-     * a component is nuts runtime if it contains a property "nuts-runtime" equal to true.
+     * true if this definition denoted a nuts runtime id artifact.
+     * a artifact is nuts runtime if it contains a property "nuts-runtime" equal to true.
      * Default Nuts runtime id is {@link NutsConstants.Ids#NUTS_RUNTIME}
      *
-     * @return true if this definition denoted a nuts runtime id component.
+     * @return true if this definition denoted a nuts runtime id artifact.
      */
     boolean isRuntime();
 
     /**
-     * true if this definition denoted a nuts extension id component.
-     * a component is nuts extension if it contains a property "nuts-extension" equal to true.
+     * true if this definition denoted a nuts extension id artifact.
+     * an artifact is a valid nuts extension if it contains a property "nuts-extension" equal to true.
      *
-     * @return true if this definition denoted a nuts extension id component.
+     * @return true if this definition denoted a nuts extension id artifact.
      */
     boolean isExtension();
 
     /**
-     * true if this definition denoted a nuts companion id component.
+     * true if this definition denoted a nuts companion id artifact.
      * Default companions are
      * <ul>
      *     <li>net.vpc.app.nuts.toolbox:nsh</li>
@@ -80,50 +80,50 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      *     <li>net.vpc.app.nuts.toolbox:ndi</li>
      * </ul>
      *
-     * @return true if this definition denoted a nuts extension id component.
+     * @return true if this definition denoted a nuts extension id artifact.
      */
     boolean isCompanion();
 
     /**
-     * return component descriptor
-     * @return component descriptor
+     * return artifact descriptor
+     * @return artifact descriptor
      */
     NutsDescriptor getDescriptor();
 
     /**
-     * return component content file info (including path).
+     * return artifact content file info (including path).
      * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
      *
-     * @return component content file info
+     * @return artifact content file info
      * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsContent getContent();
 
     /**
-     * return component content file path.
+     * return artifact content file path.
      * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
      *
-     * @return component content file path
+     * @return artifact content file path
      * @throws NutsElementNotFoundException if the property is not requested
      */
     Path getPath();
 
     /**
-     * return component install information.
+     * return artifact install information.
      * this is an <strong>optional</strong> property.
      * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available.
      *
-     * @return component install information
+     * @return artifact install information
      * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsInstallInformation getInstallInformation();
 
     /**
-     * return component effective descriptor.
+     * return artifact effective descriptor.
      * this is an <strong>optional</strong> property.
      * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available).
      *
-     * @return component effective descriptor
+     * @return artifact effective descriptor
      * @throws NutsElementNotFoundException if the property is not requested
      */
     NutsDescriptor getEffectiveDescriptor();

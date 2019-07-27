@@ -189,7 +189,7 @@ public class NutsRepositoryMirroringHelper {
             repo = this.repo.config().getMirror(repository, false);
         }
         if (repo != null) {
-            NutsId effId = getWorkspace().config().createComponentFaceId(id.unsetProperties(), desc)
+            NutsId effId = getWorkspace().config().createContentFaceId(id.setProperties(""), desc)
 //                    .setAlternative(CoreStringUtils.trim(desc.getAlternative()))
                     ;
             NutsDeployRepositoryCommand dep = repo.deploy()

@@ -322,8 +322,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public Properties getEnv() {
-        Properties p = new Properties();
+    public Map<String,String> getEnv() {
+        Map<String,String> p = new LinkedHashMap<>();
         if (storeModelMain.getEnv() != null) {
             p.putAll(storeModelMain.getEnv());
         }
@@ -490,7 +490,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
         type = toValidSdkName(type);
-        NutsVersionFilter javaVersionFilter = ws.version().parse(requestedVersion).toFilter();
+        NutsVersionFilter javaVersionFilter = ws.version().parse(requestedVersion).filter();
         NutsSdkLocation best = null;
         final NutsSession session = ws.createSession();
         for (NutsSdkLocation jdk : getSdks(type)) {
@@ -740,21 +740,21 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void setEnv(String property, String value, NutsUpdateOptions options) {
-        Properties env = storeModelMain.getEnv();
+        Map<String,String> env = storeModelMain.getEnv();
         options = CoreNutsUtils.validate(options, ws);
         if (CoreStringUtils.isBlank(value)) {
-            if (env != null && env.contains(property)) {
+            if (env != null && env.containsKey(property)) {
                 env.remove(property);
                 fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
             }
         } else {
             if (env == null) {
-                env = new Properties();
+                env = new LinkedHashMap<>();
                 storeModelMain.setEnv(env);
             }
-            String old = env.getProperty(property);
+            String old = env.get(property);
             if (!value.equals(old)) {
-                env.setProperty(property, value);
+                env.put(property, value);
                 fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
             }
         }
@@ -762,11 +762,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public String getEnv(String property, String defaultValue) {
-        Properties env = storeModelMain.getEnv();
+        Map<String,String> env = storeModelMain.getEnv();
         if (env == null) {
             return defaultValue;
         }
-        String o = env.getProperty(property);
+        String o = env.get(property);
         if (CoreStringUtils.isBlank(o)) {
             return defaultValue;
         }
@@ -1184,7 +1184,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         );
         Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id.setFaceComponent().setPackaging("jar")));
+                .resolve(ws.config().getDefaultIdFilename(id.setFaceContent().setPackaging("jar")));
         if(!force && (Files.isRegularFile(configFile) && Files.isRegularFile(jarFile))){
             return;
         }
@@ -1236,7 +1236,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private void downloadId(NutsId id,boolean force,Path path,boolean fetch){
         Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id.setFaceComponent().setPackaging("jar")));
+                .resolve(ws.config().getDefaultIdFilename(id.setFaceContent().setPackaging("jar")));
         if (force || !Files.isRegularFile(jarFile)) {
             if (path != null) {
                 ws.io().copy().from(path).to(jarFile).run();
@@ -1434,7 +1434,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public String getDefaultIdComponentExtension(String packaging) {
+    public String getDefaultIdContentExtension(String packaging) {
         if (CoreStringUtils.isBlank(packaging)) {
             throw new NutsIllegalArgumentException(ws, "Unsupported empty Packaging");
         }
@@ -1485,11 +1485,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             case CoreNutsConstants.QueryFaces.CATALOG: {
                 return ".catalog";
             }
-            case NutsConstants.QueryFaces.COMPONENT_HASH: {
-                return getDefaultIdExtension(id.setFaceComponent()) + ".sha1";
+            case NutsConstants.QueryFaces.CONTENT_HASH: {
+                return getDefaultIdExtension(id.setFaceContent()) + ".sha1";
             }
-            case NutsConstants.QueryFaces.COMPONENT: {
-                return getDefaultIdComponentExtension(q.get(NutsConstants.IdProperties.PACKAGING));
+            case NutsConstants.QueryFaces.CONTENT: {
+                return getDefaultIdContentExtension(q.get(NutsConstants.IdProperties.PACKAGING));
             }
             default: {
                 if (f.equals("cache") || f.endsWith(".cache")) {
@@ -1504,11 +1504,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsId createComponentFaceId(NutsId id, NutsDescriptor desc) {
+    public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
         Map<String, String> q = id.getProperties();
         q.put(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trim(desc.getPackaging()));
 //        q.put(NutsConstants.QUERY_EXT,CoreStringUtils.trim(descriptor.getExt()));
-        q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.COMPONENT);
+        q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.CONTENT);
         return id.setProperties(q);
     }
 

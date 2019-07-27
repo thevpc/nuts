@@ -104,7 +104,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
     /**
-     * if true enable installing new components when an update is request for
+     * if true enable installing new artifacts when an update is request for
      * non installed packages.
      *
      * @return true if enable install
@@ -143,7 +143,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     boolean isOptional();
 
     /**
-     * set target api version required for updating other components
+     * set target api version required for updating other artifacts
      *
      * @param value target api version
      * @return {@code this} instance
@@ -151,7 +151,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand apiVersion(String value);
 
     /**
-     * set target api version required for updating other components
+     * set target api version required for updating other artifacts
      *
      * @param value target api version
      * @return {@code this} instance
@@ -159,9 +159,9 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand setApiVersion(String value);
 
     /**
-     * return target api version required for updating other components
+     * return target api version required for updating other artifacts
      *
-     * @return target api version required for updating other components
+     * @return target api version required for updating other artifacts
      */
     String getApiVersion();
 
@@ -200,7 +200,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand workspace();
 
     /**
-     * update api, runtime, extensions, companions and all installed components
+     * update api, runtime, extensions, companions and all installed artifacts
      *
      * @return {@code this} instance
      */
@@ -221,7 +221,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
 
     /**
-     * update workspace extension components
+     * update workspace extension artifacts
      *
      * @return {@code this} instance
      */
@@ -259,7 +259,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     boolean isRuntime();
 
     /**
-     * update installed components
+     * update installed artifacts
      * @return {@code this} instance
      */
     NutsUpdateCommand installed();

@@ -55,30 +55,51 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder() {
     }
 
-    public DefaultNutsDependencyBuilder(NutsDependencyBuilder other) {
-        if (other != null) {
-            setNamespace(other.getNamespace());
-            setGroupId(other.getGroup());
-            setArtifactId(other.getArtifactId());
-            setVersion(other.getVersion());
-            setScope(other.getScope());
-            setOptional(other.getOptional());
-            setExclusions(other.getExclusions());
-            setClassifier(other.getClassifier());
+    @Override
+    public NutsDependencyBuilder set(NutsDependencyBuilder value) {
+        if (value != null) {
+            setNamespace(value.getNamespace());
+            setGroupId(value.getGroupId());
+            setArtifactId(value.getArtifactId());
+            setVersion(value.getVersion());
+            setScope(value.getScope());
+            setOptional(value.getOptional());
+            setExclusions(value.getExclusions());
+            setClassifier(value.getClassifier());
+        }else{
+            clear();
         }
+        return this;
     }
 
-    public DefaultNutsDependencyBuilder(NutsDependency other) {
-        if (other != null) {
-            setNamespace(other.getNamespace());
-            setGroupId(other.getGroupId());
-            setArtifactId(other.getArtifactId());
-            setVersion(other.getVersion());
-            setScope(other.getScope());
-            setOptional(other.getOptional());
-            setExclusions(other.getExclusions());
-            setClassifier(other.getClassifier());
+    @Override
+    public NutsDependencyBuilder set(NutsDependency value) {
+        if (value != null) {
+            setNamespace(value.getNamespace());
+            setGroupId(value.getGroupId());
+            setArtifactId(value.getArtifactId());
+            setVersion(value.getVersion());
+            setScope(value.getScope());
+            setOptional(value.getOptional());
+            setExclusions(value.getExclusions());
+            setClassifier(value.getClassifier());
+        }else{
+            clear();
         }
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder clear() {
+        setNamespace(null);
+        setGroupId(null);
+        setArtifactId(null);
+        setVersion((NutsVersion)null);
+        setScope(null);
+        setOptional(null);
+        setExclusions(null);
+        setClassifier(null);
+        return this;
     }
 
     @Override
@@ -178,7 +199,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public NutsId getId() {
         return new DefaultNutsId(
                 getNamespace(),
-                getGroup(),
+                getGroupId(),
                 getArtifactId(),
                 getVersion().getValue(),
                 ""
@@ -188,7 +209,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependency build() {
         return new DefaultNutsDependency(
-                getNamespace(), getGroup(), getArtifactId(), getClassifier(),
+                getNamespace(), getGroupId(), getArtifactId(), getClassifier(),
                 getVersion(),
                 getScope(),
                 getOptional(),
@@ -202,7 +223,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public String getGroup() {
+    public String getGroupId() {
         return group;
     }
 

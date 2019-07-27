@@ -109,7 +109,7 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setLogin(v);
+                            options.setUsername(v);
                         }
                         break;
                     }
@@ -118,7 +118,7 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setPassword(v.toCharArray());
+                            options.setCredentials(v.toCharArray());
                         }
                         break;
                     }

@@ -109,6 +109,26 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setExclusions(NutsId[] exclusions);
 
     /**
+     * reset this instance with value
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder set(NutsDependencyBuilder value);
+
+    /**
+     * reset this instance with value
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder set(NutsDependency value);
+
+    /**
+     * reset this instance
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder clear();
+
+    /**
      * true if this dependency is optional.
      * equivalent to {@code Boolean.parseBoolean(getOptional())}
      * @return true if this dependency is optional.
@@ -143,7 +163,7 @@ public interface NutsDependencyBuilder {
      * return group
      * @return group
      */
-    String getGroup();
+    String getGroupId();
 
     /**
      * return name

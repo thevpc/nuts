@@ -40,6 +40,35 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     }
 
     @Override
+    public NutsIdLocationBuilder clear() {
+        setUrl(null);
+        setClassifier(null);
+        return this;
+    }
+
+    @Override
+    public NutsIdLocationBuilder set(NutsIdLocationBuilder value) {
+        if(value==null){
+            clear();
+        }else{
+            setUrl(value.getUrl());
+            setClassifier(value.getClassifier());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsIdLocationBuilder set(NutsIdLocation value) {
+        if(value==null){
+            clear();
+        }else{
+            setUrl(value.getUrl());
+            setClassifier(value.getClassifier());
+        }
+        return this;
+    }
+
+    @Override
     public NutsIdLocationBuilder url(String value) {
         return setUrl(value);
     }

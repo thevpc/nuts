@@ -116,22 +116,27 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
      * option-type : exported (inherited in child workspaces)
      */
     private String[] excludedExtensions;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String[] excludedRepositories;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String[] transientRepositories;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String userName = null;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private char[] password = null;
+    private char[] credentials = null;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -259,8 +264,14 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
 
-    public void parse(String[] args) {
+    /**
+     * parse arguments
+     * @param args arguments
+     * @return {@code this} instance
+     */
+    public NutsDefaultWorkspaceOptions parse(String[] args) {
         PrivateNutsArgumentsParser.parseNutsArguments(args, this);
+        return this;
     }
 
     public NutsDefaultWorkspaceOptions() {
@@ -276,6 +287,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return workspace;
     }
 
+    /**
+     * set workspace
+     * @param workspace workspace
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setWorkspace(String workspace) {
         this.workspace = workspace;
         return this;
@@ -286,6 +302,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return name;
     }
 
+    /**
+     * set workspace name
+     * @param workspaceName new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setName(String workspaceName) {
         this.name = workspaceName;
         return this;
@@ -296,6 +317,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return global;
     }
 
+    /**
+     * set global
+     * @param global new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setGlobal(boolean global) {
         this.global = global;
         return this;
@@ -306,6 +332,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return gui;
     }
 
+    /**
+     * set gui
+     * @param gui new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setGui(boolean gui) {
         this.gui = gui;
         return this;
@@ -316,6 +347,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return archetype;
     }
 
+    /**
+     * set archetype
+     * @param archetype new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setArchetype(String archetype) {
         this.archetype = archetype;
         return this;
@@ -326,6 +362,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return excludedExtensions;
     }
 
+    /**
+     * set excludedExtensions
+     * @param excludedExtensions new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setExcludedExtensions(String[] excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
@@ -336,6 +377,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return excludedRepositories;
     }
 
+    /**
+     * set excludedRepositories
+     * @param excludedRepositories new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setExcludedRepositories(String[] excludedRepositories) {
         this.excludedRepositories = excludedRepositories;
         return this;
@@ -346,18 +392,28 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return userName;
     }
 
-    public NutsDefaultWorkspaceOptions setLogin(String login) {
-        this.userName = login;
+    /**
+     * set login
+     * @param username new value
+     * @return {@code this} instance
+     */
+    public NutsDefaultWorkspaceOptions setUsername(String username) {
+        this.userName = username;
         return this;
     }
 
     @Override
-    public char[] getPassword() {
-        return password;
+    public char[] getCredentials() {
+        return credentials;
     }
 
-    public NutsDefaultWorkspaceOptions setPassword(char[] password) {
-        this.password = password;
+    /**
+     * set password
+     * @param credentials new value
+     * @return {@code this} instance
+     */
+    public NutsDefaultWorkspaceOptions setCredentials(char[] credentials) {
+        this.credentials = credentials;
         return this;
     }
 
@@ -366,6 +422,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return executionType;
     }
 
+    /**
+     * set executionType
+     * @param executionType new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
         return this;
@@ -376,6 +437,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return inherited;
     }
 
+    /**
+     * set inherited
+     * @param inherited new value
+     * @return {@code this} instance
+     */
     NutsDefaultWorkspaceOptions setInherited(boolean inherited) {
         this.inherited = inherited;
         return this;
@@ -402,8 +468,14 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return terminalMode;
     }
 
-    public void setTerminalMode(NutsTerminalMode terminalMode) {
+    /**
+     * set terminalMode
+     * @param terminalMode new value
+     * @return {@code this} instance
+     */
+    public NutsWorkspaceOptions setTerminalMode(NutsTerminalMode terminalMode) {
         this.terminalMode = terminalMode;
+        return this;
     }
 
     @Override
@@ -411,6 +483,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return dry;
     }
 
+    /**
+     * set dry
+     * @param dry new value
+     * @return {@code this} instance
+     */
     public NutsWorkspaceOptions setDry(boolean dry) {
         this.dry = dry;
         return this;
@@ -421,6 +498,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return creationTime;
     }
 
+    /**
+     * set creationTime
+     * @param creationTime new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setCreationTime(long creationTime) {
         this.creationTime = creationTime;
         return this;
@@ -431,6 +513,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return readOnly;
     }
 
+    /**
+     * set readOnly
+     * @param readOnly new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         return this;
@@ -441,6 +528,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return trace;
     }
 
+    /**
+     * set trace
+     * @param trace new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setTrace(boolean trace) {
         this.trace = trace;
         return this;
@@ -451,6 +543,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return runtimeId;
     }
 
+    /**
+     * set runtimeId
+     * @param runtimeId new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setRuntimeId(String runtimeId) {
         this.runtimeId = runtimeId;
         return this;
@@ -461,6 +558,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return classLoaderSupplier;
     }
 
+    /**
+     * set provider
+     * @param provider new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setClassLoaderSupplier(Supplier<ClassLoader> provider) {
         this.classLoaderSupplier = provider;
         return this;
@@ -476,6 +578,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
     }
 
+    /**
+     * set applicationArguments
+     * @param applicationArguments new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setApplicationArguments(String[] applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
@@ -496,6 +603,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return javaOptions;
     }
 
+    /**
+     * set javaOptions
+     * @param javaOptions new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setJavaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
@@ -506,6 +618,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return executorOptions == null ? new String[0] : executorOptions;
     }
 
+    /**
+     * set executorOptions
+     * @param executorOptions new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setExecutorOptions(String[] executorOptions) {
         this.executorOptions = executorOptions;
         return this;
@@ -516,6 +633,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return recover;
     }
 
+    /**
+     * set recover
+     * @param recover new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setRecover(boolean recover) {
         this.recover = recover;
         return this;
@@ -526,6 +648,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return reset;
     }
 
+    /**
+     * set reset
+     * @param reset new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setReset(boolean reset) {
         this.reset = reset;
         return this;
@@ -536,6 +663,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return debug;
     }
 
+    /**
+     * set debug
+     * @param debug new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setDebug(boolean debug) {
         this.debug = debug;
         return this;
@@ -546,6 +678,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return transientRepositories == null ? new String[0] : transientRepositories;
     }
 
+    /**
+     * set transientRepositories
+     * @param transientRepositories new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setTransientRepositories(String[] transientRepositories) {
         this.transientRepositories = transientRepositories;
         return this;
@@ -556,6 +693,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return logConfig;
     }
 
+    /**
+     * set logConfig
+     * @param logConfig new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setLogConfig(NutsLogConfig logConfig) {
         this.logConfig = logConfig;
         return this;
@@ -566,6 +708,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return apiVersion;
     }
 
+    /**
+     * set apiVersion
+     * @param apiVersion new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
@@ -576,6 +723,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return storeLocationLayout;
     }
 
+    /**
+     * set storeLocationLayout
+     * @param storeLocationLayout new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
@@ -586,6 +738,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return storeLocationStrategy;
     }
 
+    /**
+     * set storeLocationStrategy
+     * @param storeLocationStrategy new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
@@ -596,6 +753,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return repositoryStoreLocationStrategy;
     }
 
+    /**
+     * set repositoryStoreLocationStrategy
+     * @param repositoryStoreLocationStrategy new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
         return this;
@@ -612,6 +774,12 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return homeLocations.get(key);
     }
 
+    /**
+     * set store location
+     * @param location location
+     * @param value new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setStoreLocation(NutsStoreLocation location, String value) {
         if (PrivateNutsUtils.isBlank(value)) {
             storeLocations.remove(location.id());
@@ -621,6 +789,13 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return this;
     }
 
+    /**
+     * set home location
+     * @param layout layout
+     * @param location location
+     * @param value new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
         String key = createHomeLocationKey(layout, location);
         if (PrivateNutsUtils.isBlank(value)) {
@@ -636,6 +811,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return skipCompanions;
     }
 
+    /**
+     * set skipInstallCompanions
+     * @param skipInstallCompanions new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setSkipCompanions(boolean skipInstallCompanions) {
         this.skipCompanions = skipInstallCompanions;
         return this;
@@ -646,6 +826,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return skipWelcome;
     }
 
+    /**
+     * set skipWelcome
+     * @param skipWelcome new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setSkipWelcome(boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
@@ -656,6 +841,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return openMode;
     }
 
+    /**
+     * set openMode
+     * @param openMode new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setOpenMode(NutsWorkspaceOpenMode openMode) {
         this.openMode = openMode;
         return this;
@@ -666,6 +856,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return confirm;
     }
 
+    /**
+     * set confirm
+     * @param confirm new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setConfirm(NutsConfirmationMode confirm) {
         this.confirm = confirm;
         return this;
@@ -676,6 +871,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return outputFormat;
     }
 
+    /**
+     * set outputFormat
+     * @param outputFormat new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setOutputFormat(NutsOutputFormat outputFormat) {
         this.outputFormat = outputFormat;
         return this;
@@ -691,6 +891,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return new LinkedHashMap<>(homeLocations);
     }
 
+    /**
+     * add output format options
+     * @param options new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions addOutputFormatOptions(String... options) {
         if (options != null) {
             outputFormatOptions.addAll(Arrays.asList(options));
@@ -698,6 +903,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return this;
     }
 
+    /**
+     * set output format options
+     * @param options new value
+     * @return {@code this} instance
+     */
     public NutsDefaultWorkspaceOptions setOutputFormatOptions(String... options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);

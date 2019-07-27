@@ -336,7 +336,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     }
                     boolean includeContent = shouldIncludeContent(options);
                     if (includeContent || options.isInstallInformation()) {
-                        NutsId id1 = ws.config().createComponentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
+                        NutsId id1 = ws.config().createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
                         Path copyTo = options.getLocation();
                         if (copyTo != null && Files.isDirectory(copyTo)) {
                             copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
@@ -517,7 +517,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     id = id.setVersion("");
                 }
             }
-            NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
+            NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().filter();
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
             List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, CoreFilterUtils.idFilterOf(versionFilter), rsession))
                     .convert(x -> x.getVersion()).list();

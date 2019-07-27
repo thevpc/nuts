@@ -321,7 +321,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         @Override
         public JsonElement serialize(NutsDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
-                return context.serialize(new DefaultNutsDescriptorBuilder(src));
+                return context.serialize(new DefaultNutsDescriptorBuilder().set(src));
             }
             return context.serialize(src);
         }
@@ -358,7 +358,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         @Override
         public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
-                return context.serialize(new DefaultNutsDependencyBuilder(src));
+                return context.serialize(new DefaultNutsDependencyBuilder().set(src));
             }
             return context.serialize(src);
         }

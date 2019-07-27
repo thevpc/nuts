@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Properties;
  */
 public interface NutsEnvProvider {
 
-    Properties getEnv();
+    Map<String,String> getEnv();
 
     String getEnv(String property, String defaultValue);
 }

@@ -93,7 +93,12 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId _appId = workspace.id().resolveId(appClass);
+        NutsId _appId = (NutsId)NutsApplications.getSharedMap().get("nuts.embedded.application.id");
+        if(_appId!=null) {
+            System.out.println("=== Inherited "+_appId);
+        }else {
+            _appId=workspace.id().resolveId(appClass);
+        }
         if (_appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }

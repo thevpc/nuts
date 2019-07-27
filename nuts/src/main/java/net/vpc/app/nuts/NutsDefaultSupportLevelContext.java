@@ -39,6 +39,11 @@ public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContex
     private final NutsWorkspace ws;
     private final T constraints;
 
+    /**
+     * default constructor
+     * @param ws workspace
+     * @param constraints constraints
+     */
     public NutsDefaultSupportLevelContext(NutsWorkspace ws, T constraints) {
         this.ws = ws;
         this.constraints = constraints;

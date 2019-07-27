@@ -117,14 +117,14 @@ public interface NutsDependency extends Serializable{
     NutsDependency setNamespace(String namespace);
 
     /**
-     * return component group (aka groupId in maven)
-     * @return component group (aka groupId in maven)
+     * return artifact group id (aka groupId in maven)
+     * @return artifact group id (aka groupId in maven)
      */
     String getGroupId();
 
     /**
-     * return component name (aka artifactId)
-     * @return component name (aka artifactId in maven)
+     * return artifact id (aka artifactId)
+     * @return artifact id (aka artifactId in maven)
      */
     String getArtifactId();
 

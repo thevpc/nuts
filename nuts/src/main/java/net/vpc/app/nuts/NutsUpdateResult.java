@@ -38,7 +38,7 @@ package net.vpc.app.nuts;
 public interface NutsUpdateResult {
 
     /**
-     * component id
+     * artifact id
      *
      * @return component id
      */
@@ -76,18 +76,18 @@ public interface NutsUpdateResult {
     boolean isUpdateAvailable();
 
     /**
-     * return true if component has newer available version
+     * return true if artifact has newer available version
      *
-     * @return true if component has newer available version
+     * @return true if artifact has newer available version
      * @since 0.5.7
      */
     boolean isUpdateVersionAvailable();
 
     /**
-     * return true if component has no version update
+     * return true if artifact has no version update
      * but still have status (default) to be updated
      *
-     * @return component should have its status updated.
+     * @return artifact should have its status updated.
      * @since 0.5.7
      */
     boolean isUpdateStatusAvailable();

@@ -1,22 +1,22 @@
 #!include</net/vpc/app/nuts/includes/standard-header.help>
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
-and non Java world. It helps discovering, downloading, assembling and executing  remote components (packages) in
+and non Java world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
 a very handy way.
-Each managed component  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
-==nuts== components are  stored  into repositories. A  __repository__  may be local for  storing local ==nuts==
-or remote for accessing  remote components (good examples  are  remote maven  repositories). It may
-also be a proxy __repository__ so that remote components are fetched and cached locally to save network
+Each managed artifact  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
+==nuts== artifacts are  stored  into repositories. A  __repository__  may be local for  storing local ==nuts==
+or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
+also be a proxy __repository__ so that remote artifacts are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  __workspace__. Managed ==nuts==  (components)  have descriptors
+One manages a set of repositories called a  __workspace__. Managed ==nuts==  (artifacts)  have descriptors
 that depicts dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
 resolve and download on-need dependencies over the wire.
 
 ==nuts== is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
-view of the the  components __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
-to __install__ and __uninstall__ components allowing multiple versions of the very same component to  be installed.
+view of the the  artifacts __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
+to __install__ and __uninstall__ artifacts allowing multiple versions of the very same artifact to  be installed.
 
-Although ==nuts== focuses on java components, it still supports, by design, native and all non java components.
+Although ==nuts== focuses on java artifacts, it still supports, by design, native and all non java artifacts.
 Dependencies are fetched according to the current operating system type, distribution and hardware
 architectures.
 
@@ -29,11 +29,11 @@ With container concepts in mind, ==nuts== is the perfect java application tool f
 and other __container managers__.
 
 ##COMMON VERBS:##
-install,uninstall,update : install/uninstall/update a component (using its fetched/deployed installer)
-deploy, undeploy         : manage components on the local repositories
+install,uninstall,update : install/uninstall/update an artifact (using its fetched/deployed installer)
+deploy, undeploy         : manage artifacts on the local repositories
 fetch,push               : download, upload to remote repositories
-search                   : search for existing/installable components
-exec                     : execute a component (tool)
+search                   : search for existing/installable artifacts
+exec                     : execute an artifact (tool)
 
 ##SYNOPSIS:##
 ==nuts== **\[Nuts Options\]**... [[\<command\>]] \<args\> ...
@@ -69,7 +69,7 @@ Java         Version: **${java.version} (${java.vm.name})**
  **-w** <workspace-location>
       workspace location to open (or create).
       this defaults to default-workspace. Typically this refers to ~/.nuts/default-workspace
-      (when **--system-config-home** is not specified). workspace location contains both config and component 
+      (when **--system-config-home** is not specified). workspace location contains both config and artifact
       data (from repositories).
 
  **--user**      <username>
@@ -383,10 +383,10 @@ Java         Version: **${java.version} (${java.vm.name})**
       to start a new workspace (and recreate config files) after resetting the configuration folders.
 
  **--embedded**  or **-b**
-      when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
+      when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
 
  **--external**  or **--spawn** or **-x**
-      when invoking a nuts component, it will always be executed in a newly created process (this is the default)
+      when invoking a nuts artifact, it will always be executed in a newly created process (this is the default)
 
  **--native**  or **--syscall** or **-n**
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
@@ -420,7 +420,7 @@ Java         Version: **${java.version} (${java.vm.name})**
       show welcome message
       for more details, type : ==nuts== help welcome
 
- {{help}}  \[**-options**\]... <nuts-component>... 
+ {{help}}  \[**-options**\]... <nuts-artifact>...
  or **--help** or **-?** or **-h**
       show this help and exit
       for more details, type : ==nuts== help help
@@ -429,18 +429,18 @@ Java         Version: **${java.version} (${java.vm.name})**
       show license info and exit
       for more details, type : ==nuts== help info
 
- {{install}} \[**-options**\]... <nuts-component>... <args> ...
-      install ==nuts== package <nuts-component>
+ {{install}} \[**-options**\]... <nuts-artifact>... <args> ...
+      install ==nuts== package <nuts-artifact>
       for more details, type : ==nuts== help install
 
- {{uninstall}} \[**-options**\]... <nuts-component>... <args> ...        
-      uninstall  ==nuts== package <nuts-component>
+ {{uninstall}} \[**-options**\]... <nuts-artifact>... <args> ...
+      uninstall  ==nuts== package <nuts-artifact>
       for more details, type : ==nuts== help uninstall
 
  {{update}} \[**-options**\]... \<ids\> ...  <args> ...
       check if a newer version of ==nuts== or any of the provided <ids>
       is available in the current workspace and perform update by downloading (fetch)
-      and installing the component. The updated version is promoted to 'default' version.
+      and installing the artifact. The updated version is promoted to 'default' version.
       for more details, type : ==nuts== help update
             
  {{check-updates}} \[**-options**\]... <ids> ...
@@ -501,5 +501,5 @@ Java         Version: **${java.version} (${java.vm.name})**
             /home/me/some-folder.
 
         ==nuts== **--workspace** /home/me/some-folder  **--yes** **-e** **-Xmx1G** netbeans-launcher
-            run netbeans-launcher with JVM option **-Xmx1G**. If the component is not installed
+            run netbeans-launcher with JVM option **-Xmx1G**. If the artifact is not installed
             it will be automatically installed ( **--yes** modifier helps disabling interactive mode)

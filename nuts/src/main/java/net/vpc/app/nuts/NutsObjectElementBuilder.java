@@ -29,15 +29,47 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Collection;
+
 /**
  *
  * @author vpc
  */
-public interface NutsObjectElementBuilder extends NutsObjectElement {
+public interface NutsObjectElementBuilder {
 
     NutsObjectElementBuilder set(String name, NutsElement e);
 
     NutsObjectElementBuilder clear();
     
     NutsObjectElementBuilder remove(String s);
+
+    /**
+     * return value for name or null.
+     * If multiple values are available return any of them.
+     * @param name key name
+     * @return value for name or null
+     */
+    NutsElement get(String name);
+
+    /**
+     * object (key,value) attributes
+     * @return object attributes
+     */
+    Collection<NutsNamedElement> children();
+
+    /**
+     * element count
+     * @return element count
+     */
+    int size();
+
+    NutsObjectElementBuilder set(NutsObjectElement other);
+
+    NutsObjectElementBuilder set(NutsObjectElementBuilder other);
+
+    NutsObjectElementBuilder add(NutsObjectElement other);
+
+    NutsObjectElementBuilder add(NutsObjectElementBuilder other);
+
+    NutsObjectElement build();
 }

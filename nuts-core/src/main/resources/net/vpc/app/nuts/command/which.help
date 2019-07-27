@@ -8,4 +8,4 @@
             shows this help and exit
        
         ==nuts== {{which}} netbeans-launcher exec
-            show netbeans-launcher and exec types. The first is a component the latter is an internal command
+            show netbeans-launcher and exec types. The first is a artifact the latter is an internal command

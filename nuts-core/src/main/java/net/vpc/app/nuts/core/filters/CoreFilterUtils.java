@@ -218,7 +218,7 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsSimpleName(_v2)) {
-            if (_v.getVersion().toFilter().accept(_v2.getVersion(), session)) {
+            if (_v.getVersion().filter().accept(_v2.getVersion(), session)) {
                 return true;
             }
         }
@@ -238,7 +238,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -262,7 +262,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -286,7 +286,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -315,7 +315,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 if (y.equalsSimpleName(_v)) {
-                    if (y.getVersion().toFilter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
                 }

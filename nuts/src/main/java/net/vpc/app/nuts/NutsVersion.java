@@ -57,9 +57,9 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, Comparable<N
 
     boolean ne(String other);
 
-    NutsVersionFilter toFilter();
+    NutsVersionFilter filter();
 
-    NutsVersionInterval[] toIntervals();
+    NutsVersionInterval[] intervals();
 
     boolean isSingleValue();
 

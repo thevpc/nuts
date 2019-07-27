@@ -219,7 +219,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public NutsDependencyBuilder builder() {
-        return new DefaultNutsDependencyBuilder(this);
+        return new DefaultNutsDependencyBuilder().set(this);
     }
 
     @Override

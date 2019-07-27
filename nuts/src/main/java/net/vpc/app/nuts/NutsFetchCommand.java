@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Fetch command class helps fetching/retrieving a component with all of its
+ * Fetch command class helps fetching/retrieving a artifact with all of its
  * files.
  *
  * @author vpc
@@ -46,14 +46,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     // Setters
     ////////////////////////////////////////////////////////
     /**
-     * set id to fetch to nuts-api (api component)
+     * set id to fetch to nuts-api (api artifact)
      *
      * @return {@code this} instance
      */
     NutsFetchCommand nutsApi();
 
     /**
-     * set id to fetch to nuts-core (runtime component)
+     * set id to fetch to nuts-core (runtime artifact)
      *
      * @return {@code this} instance
      */
@@ -92,7 +92,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand id(NutsId id);
 
     /**
-     * set locating where to fetch the component. If the location is a folder, a
+     * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
      * @param fileOrFolder path to store to
@@ -101,7 +101,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setLocation(Path fileOrFolder);
 
     /**
-     * set locating where to fetch the component. If the location is a folder, a
+     * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated. equivalent to {@link #setLocation(java.nio.file.Path)
      * }
      *
@@ -193,9 +193,9 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     String getResultDescriptorHash();
 
     /**
-     * return result as component definition
+     * return result as artifact definition
      *
-     * @return result as component definition
+     * @return result as artifact definition
      */
     NutsDefinition getResultDefinition();
 
@@ -298,14 +298,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand online();
 
     /**
-     * only installed components
+     * only installed artifacts
      *
      * @return {@code this} instance
      */
     NutsFetchCommand installed();
 
     /**
-     * all components (local and remote). If local result found will any way
+     * all artifacts (local and remote). If local result found will any way
      * fetch remote.
      *
      * @return {@code this} instance
@@ -585,7 +585,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     
     /**
-     * get locating where to fetch the component. If the location is a folder, a
+     * get locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
      * @return location path

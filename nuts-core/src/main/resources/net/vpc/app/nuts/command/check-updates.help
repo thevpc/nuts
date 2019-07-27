@@ -1,10 +1,10 @@
 ==nuts== {{check-updates}}  \[**<options>**\]... \<ids\> ...
        check if a newer version of ==nuts== is available in the current workspace without performing updates
-       **-a** or **--all** : check updates for both workspace\'s api, runtime extensions and installed components
-       **-w** or **--ws** or **--workspace** : check updates for all workspace\'s related components (api, runtime and extensions)
-       **-i** or **--installed** : check updates for all installed components
+       **-a** or **--all** : check updates for both workspace\'s api, runtime extensions and installed artifacts
+       **-w** or **--ws** or **--workspace** : check updates for all workspace\'s related artifacts (api, runtime and extensions)
+       **-i** or **--installed** : check updates for all installed artifacts
        **-e** or **--extensions** : check updates for all workspace\'s extensions
-       **-r** or **--runtime** : check updates for workspace\'s runtime component (minor workspace update)
+       **-r** or **--runtime** : check updates for workspace\'s runtime artifact (minor workspace update)
        **-A** or **--api** : check updates for workspace\'s api (major workspace update)
             
 #!include</net/vpc/app/nuts/includes/standard-command.help>

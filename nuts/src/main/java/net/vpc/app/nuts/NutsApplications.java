@@ -30,6 +30,8 @@
 package net.vpc.app.nuts;
 
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +44,15 @@ import java.util.logging.Logger;
 public class NutsApplications {
 
     private static final Logger LOG = Logger.getLogger(NutsApplications.class.getName());
+    public static ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
+    public static Map<String, Object> getSharedMap() {
+        Map<String, Object> m = sharedMap.get();
+        if(m==null){
+            m=new LinkedHashMap<>();
+            sharedMap.set(m);
+        }
+        return m;
+    }
 
     private NutsApplications() {
     }
@@ -129,9 +140,10 @@ public class NutsApplications {
      *
      * @param args application arguments
      * @param ws workspace
+     * @param appClass application class
      * @param lifeCycle application life cycle
      */
-    public static void runApplication(String[] args, NutsWorkspace ws, NutsApplicationLifeCycle lifeCycle) {
+    public static void runApplication(String[] args, NutsWorkspace ws, Class appClass,NutsApplicationLifeCycle lifeCycle) {
         long startTimeMillis = System.currentTimeMillis();
         if (lifeCycle == null) {
             throw new NullPointerException("Null Application");
@@ -141,13 +153,16 @@ public class NutsApplications {
             inherited = true;
             ws = Nuts.openInheritedWorkspace(args);
         }
+        if(appClass==null){
+            appClass=lifeCycle.getClass();
+        }
         LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
             inherited ? "(inherited)" : "",
             lifeCycle, ws.commandLine().create(args).toString()});
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = ws.io().createApplicationContext(args, lifeCycle.getClass(), null, startTimeMillis);
+            applicationContext = ws.io().createApplicationContext(args, appClass, null, startTimeMillis);
         }
         switch (applicationContext.getMode()) {
             /**

@@ -33,9 +33,7 @@ import net.vpc.app.nuts.NutsExecutorDescriptor;
 import net.vpc.app.nuts.NutsId;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
@@ -48,7 +46,7 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
 
     private final NutsId id;
     private final String[] options;
-    private final Properties properties;
+    private final Map<String,String> properties;
 
     public DefaultNutsExecutorDescriptor(NutsId id) {
         this(id, null, null);
@@ -58,10 +56,10 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
         this(id, options, null);
     }
 
-    public DefaultNutsExecutorDescriptor(NutsId id, String[] options, Properties properties) {
+    public DefaultNutsExecutorDescriptor(NutsId id, String[] options, Map<String,String> properties) {
         this.id = id;
         this.options = options == null ? new String[0] : options;
-        this.properties = properties == null ? new Properties() : properties;
+        this.properties = properties == null ? new HashMap<>() : properties;
     }
 
     public NutsId getId() {
@@ -72,8 +70,8 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
         return options;
     }
 
-    public Properties getProperties() {
-        return properties;
+    public Map<String,String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
 

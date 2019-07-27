@@ -96,19 +96,21 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     String getArch();
 
-    NutsId setFaceComponent();
+    NutsId setFaceContent();
 
     NutsId setFaceDescriptor();
 
     NutsId setProperty(String property, String value);
 
-    NutsId setProperties(Map<String, String> queryMap, boolean merge);
+//    NutsId setProperties(Map<String, String> queryMap, boolean merge);
 
     NutsId setProperties(Map<String, String> queryMap);
 
-    NutsId unsetProperties();
+    NutsId addProperties(Map<String, String> queryMap);
 
     NutsId setProperties(String properties);
+
+    NutsId addProperties(String properties);
 
     String getPropertiesQuery();
 
@@ -181,5 +183,5 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     boolean isOptional();
 
-    NutsIdFilter toFilter();
+    NutsIdFilter filter();
 }

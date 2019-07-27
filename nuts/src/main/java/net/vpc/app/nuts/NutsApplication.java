@@ -1,33 +1,36 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Nuts Application is the Top Level class to be handled by nuts as rich console
@@ -129,7 +132,7 @@ public abstract class NutsApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     public void run(NutsWorkspace ws, String[] args) {
-        NutsApplications.runApplication(args, ws, new NutsApplicationLifeCycleImpl(this));
+        NutsApplications.runApplication(args, ws, getClass(), new NutsApplicationLifeCycleImpl(this));
     }
 
     /**
@@ -159,10 +162,21 @@ public abstract class NutsApplication {
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 
+    /**
+     * create application context or return null for default
+     * @param ws workspace
+     * @param args arguments
+     * @param startTimeMillis start time
+     * @return new instance of NutsApplicationContext or null
+     */
     protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
-        return ws.io().createApplicationContext(args, getClass(), null, startTimeMillis);
+        return null;
     }
 
+    /**
+     * run application within the given context
+     * @param applicationContext app context
+     */
     public abstract void run(NutsApplicationContext applicationContext);
 
     @Override
@@ -170,11 +184,20 @@ public abstract class NutsApplication {
         return getClass().getName();
     }
 
+    /**
+     * Default NutsApplicationLifeCycle implementation based on NutsApplication class.
+     */
     private static class NutsApplicationLifeCycleImpl implements NutsApplicationLifeCycle {
-
+        /**
+         * application
+         */
         private final NutsApplication app;
 
-        public NutsApplicationLifeCycleImpl(NutsApplication app) {
+        /**
+         * application
+         * @param app application
+         */
+        NutsApplicationLifeCycleImpl(NutsApplication app) {
             this.app = app;
         }
 

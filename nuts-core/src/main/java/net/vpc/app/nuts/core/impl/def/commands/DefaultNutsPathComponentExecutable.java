@@ -44,7 +44,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
     public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
                 session.getWorkspace().commandLine().create(args).toString(),
-                NutsExecutableType.COMPONENT);
+                NutsExecutableType.ARTIFACT);
         this.cmdName = cmdName;
         this.args = args;
         this.executorOptions = executorOptions;

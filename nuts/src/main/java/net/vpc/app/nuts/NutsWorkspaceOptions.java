@@ -34,96 +34,378 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Created by vpc on 1/23/17.
+ * Workspace options class that holds command argument information.
  *
  * @since 0.5.4
  */
 public interface NutsWorkspaceOptions extends Serializable {
 
+    /**
+     * create a <strong>mutable</strong> copy of this instance
+     *
+     * @return a <strong>mutable</strong> copy of this instance
+     */
     NutsDefaultWorkspaceOptions copy();
 
+    /**
+     * create a new instance of options formatter that help formatting this instance.
+     *
+     * @return a new instance of options formatter that help formatting this instance.
+     */
     NutsWorkspaceOptionsFormat format();
 
+    /**
+     * nuts api version to boot.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child
+     * workspaces)
+     * @return nuts api version to boot.
+     */
     String getApiVersion();
 
+    /**
+     * application arguments.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return application arguments.
+     */
     String[] getApplicationArguments();
 
+    /**
+     * workspace archetype to consider when creating a new workspace.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @return orkspace archetype to consider when creating a new workspace.
+     */
     String getArchetype();
 
+    /**
+     * class loader supplier.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return class loader supplier.
+     */
     Supplier<ClassLoader> getClassLoaderSupplier();
 
+    /**
+     * confirm mode.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return confirm mode.
+     */
     NutsConfirmationMode getConfirm();
 
+    /**
+     * if true no real execution, wil dry exec (execute without side effect).
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return if true no real execution, wil dry exec (execute without side effect).
+     */
     boolean isDry();
 
+    /**
+     * workspace creation evaluated time.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return workspace creation evaluated time.
+     */
     long getCreationTime();
 
+    /**
+     * extensions to be excluded when opening the workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return extensions to be excluded when opening the workspace.
+     */
     String[] getExcludedExtensions();
 
+    /**
+     * repository list to be excluded when opening the workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return repository list to be excluded when opening the workspace.
+     */
     String[] getExcludedRepositories();
 
+    /**
+     * execution type.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return execution type.
+     */
     NutsExecutionType getExecutionType();
 
+    /**
+     * extra executor options.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return extra executor options.
+     */
     String[] getExecutorOptions();
 
+    /**
+     * return home location.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime).
+     *
+     * @param layout   layout
+     * @param location location
+     * @return home location.
+     */
     String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
 
+    /**
+     * return home locations.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime).
+     *
+     * @return home locations
+     */
     Map<String, String> getHomeLocations();
 
+    /**
+     * java command (or java home) used to run workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return java command (or java home) used to run workspace.
+     */
     String getJavaCommand();
 
+    /**
+     * java options used to run workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return java options used to run workspace.
+     */
     String getJavaOptions();
 
+    /**
+     * workspace log configuration.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return workspace log configuration.
+     */
     NutsLogConfig getLogConfig();
 
+    /**
+     * user friendly workspace name.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child
+     * workspaces)
+     * @return user friendly workspace name.
+     */
     String getName();
 
+    /**
+     * mode used to open workspace.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return mode used to open workspace.
+     */
     NutsWorkspaceOpenMode getOpenMode();
 
+    /**
+     * default output format type.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return default output format type.
+     */
     NutsOutputFormat getOutputFormat();
 
+    /**
+     * default output formation options.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return default output formation options.
+     */
     String[] getOutputFormatOptions();
 
-    char[] getPassword();
+    /**
+     * credential needed to log into workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return credential needed to log into workspace.
+     */
+    char[] getCredentials();
 
+    /**
+     * repository store location strategy to consider when creating new repositories
+     * for a new workspace.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @return repository store location strategy to consider when creating new repositories
+     * for a new workspace.
+     */
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
+    /**
+     * nuts runtime id (or version) to boot.
+     *
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return nuts runtime id (or version) to boot.
+     */
     String getRuntimeId();
 
+    /**
+     * store location for the given folder.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     *
+     * @param folder folder type
+     * @return store location for the given folder.
+     */
     String getStoreLocation(NutsStoreLocation folder);
 
+
+    /**
+     * store location layout to consider when creating a new workspace.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @return store location layout to consider when creating a new workspace.
+     */
     NutsOsFamily getStoreLocationLayout();
 
+    /**
+     * store location strategy for creating a new workspace.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @return store location strategy for creating a new workspace.
+     */
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
+    /**
+     * store locations map to consider when creating a new workspace.
+     * <p>
+     * <strong>option-type :</strong> create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @return store locations map to consider when creating a new workspace.
+     */
     Map<String, String> getStoreLocations();
 
+    /**
+     * terminal mode (inherited, formatted, filtered) to use.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return terminal mode (inherited, formatted, filtered) to use.
+     */
     NutsTerminalMode getTerminalMode();
 
+    /**
+     * repositories to register temporarily when running the workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return repositories to register temporarily when running the workspace.
+     */
     String[] getTransientRepositories();
 
+    /**
+     * username to log into when running workspace.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return username to log into when running workspace.
+     */
     String getUserName();
 
+    /**
+     * workspace folder location path.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child
+     * workspaces)
+     * @return workspace folder location path.
+     */
     String getWorkspace();
 
+    /**
+     * if true, extra debug information is written to standard output.
+     * Particularly, exception stack traces are displayed instead of simpler messages.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return if true, extra debug information is written to standard output.
+     */
     boolean isDebug();
 
+    /**
+     * if true consider global/system repository
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return if true consider global/system repository
+     */
     boolean isGlobal();
 
+    /**
+     * if true consider GUI/Swing mode
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return if true consider GUI/Swing mode
+     */
     boolean isGui();
 
+    /**
+     * if true, workspace were invoked from parent process and hence inherits its options.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  if true, workspace were invoked from parent process and hence inherits its options.
+     */
     boolean isInherited();
 
+    /**
+     * if true, workspace configuration are non modifiable.
+     * However cache stills modifiable so that it is possible to load external libraries.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return if true, workspace configuration are non modifiable.
+     */
     boolean isReadOnly();
 
+    /**
+     * if true, boot, cache and temp folder are deleted.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return if true, boot, cache and temp folder are deleted.
+     */
     boolean isRecover();
 
+    /**
+     * if true, workspace will be reset (all configuration and runtime files deleted).
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return if true, workspace will be reset (all configuration and runtime files deleted).
+     */
     boolean isReset();
 
+    /**
+     * if true, do not install nuts companion tools upon workspace creation.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return if true, do not install nuts companion tools upon workspace creation.
+     */
     boolean isSkipCompanions();
 
+    /**
+     * if true, do not run welcome when no application arguments were resolved.
+     * <p>
+     * defaults to false.
+     * <p>
+     * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     * @return if true, do not run welcome when no application arguments were resolved
+     * @since 0.5.5
+     */
     boolean isSkipWelcome();
 
+    /**
+     * when true, extra trace user-friendly information is written to standard output.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  when true, extra trace user-friendly information is written to standard output.
+     */
     boolean isTrace();
 
 }

@@ -62,13 +62,18 @@ public class Test10_ElementPath {
                                                         b.forArray().add(
                                                                 b.forObject()
                                                                         .set("path", b.forString("path1"))
-                                                                        .set("color", b.forString("red")))
+                                                                        .set("color", b.forString("red"))
+                                                        .build())
                                                                 .add(
                                                                         b.forObject()
                                                                                 .set("path", b.forString("path2"))
                                                                                 .set("color", b.forString("green"))
-                                                                )
-                                                ))
+                                                                        .build()
+                                                                ).build()
+                                                )
+                                .build()
+                                )
+                                .build()
                         ).add(b.forObject().set("second",
                                 b.forObject()
                                         .set("name", b.forString("second name"))
@@ -77,14 +82,19 @@ public class Test10_ElementPath {
                                                 b.forArray().add(
                                                         b.forObject()
                                                                 .set("path", b.forString("path3"))
-                                                                .set("color", b.forString("yellow")))
+                                                                .set("color", b.forString("yellow"))
+                                                        .build()
+                                                )
                                                         .add(
                                                                 b.forObject()
                                                                         .set("path", b.forString("path4"))
                                                                         .set("color", b.forString("magenta"))
-                                                        )
+                                                                .build()
+                                                        ).build()
                                         )
-                        ));
+                        .build()
+                        ).build())
+                .build();
         NutsObjectFormat ss = ws.object().session(ws.createSession().json());
         ss.value(p).println();
         String json = ss.format();

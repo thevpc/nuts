@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -48,7 +49,7 @@ public class NutsCommandExecOptions implements Serializable {
     /**
      * execution environment variables
      */
-    private Properties env;
+    private Map<String,String> env;
 
     /**
      * execution directory
@@ -87,7 +88,7 @@ public class NutsCommandExecOptions implements Serializable {
      * execution environment variables
      * @return execution environment variables
      */
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 
@@ -96,7 +97,7 @@ public class NutsCommandExecOptions implements Serializable {
      * @param env new value
      * @return {@code this} instance
      */
-    public NutsCommandExecOptions setEnv(Properties env) {
+    public NutsCommandExecOptions setEnv(Map<String,String> env) {
         this.env = env;
         return this;
     }

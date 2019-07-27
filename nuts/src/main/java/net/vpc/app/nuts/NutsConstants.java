@@ -239,24 +239,22 @@ public final class NutsConstants {
         /**
          * package/component content face (jar, war file)
          */
-        public static final String COMPONENT = "component";
+        public static final String CONTENT = "content";
 
         /**
-         * package/component descriptor (pom, nuts file)
+         * artifact descriptor (pom, nuts file)
          */
         public static final String DESCRIPTOR = "descriptor";
 
         /**
-         * package/component content hash face (jar, war hash file)
+         * artifact content hash face (jar, war hash file)
          */
-        public static final String COMPONENT_HASH = "component-hash";
+        public static final String CONTENT_HASH = "content-hash";
 
         /**
-         * package/component descriptor hash (pom, nuts hash file)
+         * artifact descriptor hash (pom, nuts hash file)
          */
         public static final String DESCRIPTOR_HASH = "descriptor-hash";
-
-        public static final String CATALOG = "catalog";
 
         /**
          * private constructor
@@ -269,19 +267,19 @@ public final class NutsConstants {
 
         /**
          * apache maven2 repository. contains mainly standard (community) java
-         * components.
+         * artifacts.
          */
         public static final String REMOTE_MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/";
 
         /**
          * vpc-public-maven git repository contains mainly nuts author non java
-         * components.
+         * artifacts.
          */
         public static final String REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
 
         /**
          * vpc-public-nuts git repository. contains mainly nuts author non java
-         * components.
+         * artifacts.
          */
         public static final String REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
 
@@ -347,42 +345,42 @@ public final class NutsConstants {
         public static final String SAVE = "save";
 
         /**
-         * auto install component when exec is requested
+         * auto install artifact when exec is requested
          */
         public static final String AUTO_INSTALL = "auto-install";
 
         /**
-         * install component
+         * install artifact
          */
         public static final String INSTALL = "install";
 
         /**
-         * update component
+         * update artifact
          */
         public static final String UPDATE = "update";
 
         /**
-         * uninstall component
+         * uninstall artifact
          */
         public static final String UNINSTALL = "uninstall";
 
         /**
-         * exec component
+         * exec artifact
          */
         public static final String EXEC = "exec";
 
         /**
-         * deploy component
+         * deploy artifact
          */
         public static final String DEPLOY = "deploy";
 
         /**
-         * undeploy component
+         * undeploy artifact
          */
         public static final String UNDEPLOY = "undeploy";
 
         /**
-         * push component
+         * push artifact
          */
         public static final String PUSH = "push";
 
@@ -455,12 +453,12 @@ public final class NutsConstants {
         public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
 
         /**
-         * component (nuts) descriptor file name
+         * nuts artifact descriptor file name
          */
         public static final String DESCRIPTOR_FILE_NAME = "nuts.json";
 
         /**
-         * nuts descriptor file extension
+         * artifact descriptor file extension
          */
         public static final String DESCRIPTOR_FILE_EXTENSION = ".nuts";
 
@@ -516,8 +514,8 @@ public final class NutsConstants {
         public static final String REPOSITORIES = "repos";
 
         /**
-         * folder that contains information about particular nuts components.
-         * each nuts component as its very own folder defined by its group, name
+         * folder that contains information about particular nuts artifacts.
+         * each nuts artifact as its very own folder defined by its group, name
          * and version path parts
          */
         public static final String ID = "id";

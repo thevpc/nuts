@@ -29,9 +29,11 @@
  */
 package net.vpc.app.nuts.core.format.elem;
 
+import net.vpc.app.nuts.NutsArrayElement;
 import net.vpc.app.nuts.NutsArrayElementBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsElement;
@@ -41,17 +43,17 @@ import net.vpc.app.nuts.NutsElementType;
  *
  * @author vpc
  */
-public class DefaultNutsArrayElementBuilder extends AbstractNutsElement implements NutsArrayElementBuilder {
+public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private final List<NutsElement> values = new ArrayList<>();
 
     public DefaultNutsArrayElementBuilder() {
-        super(NutsElementType.ARRAY);
+
     }
 
     @Override
-    public Collection<NutsElement> children() {
-        return values;
+    public List<NutsElement> children() {
+        return Collections.unmodifiableList(values);
     }
 
     @Override
@@ -75,6 +77,28 @@ public class DefaultNutsArrayElementBuilder extends AbstractNutsElement implemen
             throw new NullPointerException();
         }
         values.set(index, e);
+        return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder addAll(NutsArrayElement value) {
+        if(value ==null){
+            throw new NullPointerException();
+        }
+        for (NutsElement child : value.children()) {
+            add(child);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder addAll(NutsArrayElementBuilder value) {
+        if(value ==null){
+            throw new NullPointerException();
+        }
+        for (NutsElement child : value.children()) {
+            add(child);
+        }
         return this;
     }
 
@@ -106,5 +130,24 @@ public class DefaultNutsArrayElementBuilder extends AbstractNutsElement implemen
     public NutsArrayElementBuilder clear() {
         values.clear();
         return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder set(NutsArrayElementBuilder other) {
+        clear();
+        addAll(other);
+        return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder set(NutsArrayElement other) {
+        clear();
+        addAll(other);
+        return this;
+    }
+
+    @Override
+    public NutsArrayElement build() {
+        return new DefaultNutsArrayElement(values);
     }
 }

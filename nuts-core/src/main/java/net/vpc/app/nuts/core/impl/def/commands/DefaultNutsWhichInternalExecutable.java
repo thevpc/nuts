@@ -74,7 +74,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         );
                         break;
                     }
-                    case COMPONENT: {
+                    case ARTIFACT: {
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }

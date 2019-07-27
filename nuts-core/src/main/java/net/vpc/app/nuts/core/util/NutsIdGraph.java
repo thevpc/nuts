@@ -486,6 +486,9 @@ public class NutsIdGraph {
         public NutsSession session;
 
         public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsSession session) {
+            if(!CoreNutsUtils.isEffectiveId(id)){
+                throw new NutsIllegalArgumentException(null,"Non effective Id");
+            }
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>(path);
@@ -495,6 +498,9 @@ public class NutsIdGraph {
         }
 
         public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsSession session) {
+            if(!CoreNutsUtils.isEffectiveId(id)){
+                throw new NutsIllegalArgumentException(null,"Non effective Id");
+            }
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>();
@@ -578,10 +584,10 @@ public class NutsIdGraph {
                     }
                     return c < 0 ? 1 : -1;
                 }
-                if (id1.getVersion().toFilter().accept(id2.getVersion(), session)) {
+                if (id1.getVersion().filter().accept(id2.getVersion(), session)) {
                     return 1;
                 }
-                if (id2.getVersion().toFilter().accept(id1.getVersion(), session)) {
+                if (id2.getVersion().filter().accept(id1.getVersion(), session)) {
                     return -1;
                 }
 

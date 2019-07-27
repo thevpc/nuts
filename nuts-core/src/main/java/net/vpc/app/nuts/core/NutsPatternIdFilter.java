@@ -34,7 +34,7 @@ public class NutsPatternIdFilter implements NutsIdFilter {
         this.wildcard = containsWildcad(id.toString());
         g = CoreStringUtils.toPattern(id.getGroupId());
         n = CoreStringUtils.toPattern(id.getArtifactId());
-        v = id.getVersion().toFilter();
+        v = id.getVersion().filter();
         qm = id.getProperties();
         for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
             String key = entry.getKey();

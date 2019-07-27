@@ -211,39 +211,39 @@ final class PrivateNutsUtils {
         return new File(location).isAbsolute();
     }
 
-    public static boolean storeProperties(Properties p, File file) {
-        Writer writer = null;
-        try {
-            File parentFile = file.getParentFile();
-            if (parentFile != null) {
-                parentFile.mkdirs();
-            }
-            try {
-                p.store(writer = new FileWriter(file), null);
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-            return true;
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "[ERROR  ] Unable to store {0}", file);
-        }
-        return false;
-    }
-
-    public static Properties loadURLPropertiesFromLocalFile(File file) {
-
-        Properties p = new Properties();
-        if (file.isFile()) {
-            try (InputStream in = Files.newInputStream(file.toPath())) {
-                p.load(in);
-            } catch (IOException ex) {
-                //ignore...
-            }
-        }
-        return p;
-    }
+//    public static boolean storeProperties(Properties p, File file) {
+//        Writer writer = null;
+//        try {
+//            File parentFile = file.getParentFile();
+//            if (parentFile != null) {
+//                parentFile.mkdirs();
+//            }
+//            try {
+//                p.store(writer = new FileWriter(file), null);
+//            } finally {
+//                if (writer != null) {
+//                    writer.close();
+//                }
+//            }
+//            return true;
+//        } catch (IOException e) {
+//            LOG.log(Level.SEVERE, "[ERROR  ] Unable to store {0}", file);
+//        }
+//        return false;
+//    }
+//
+//    public static Properties loadURLPropertiesFromLocalFile(File file) {
+//
+//        Properties p = new Properties();
+//        if (file.isFile()) {
+//            try (InputStream in = Files.newInputStream(file.toPath())) {
+//                p.load(in);
+//            } catch (IOException ex) {
+//                //ignore...
+//            }
+//        }
+//        return p;
+//    }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache) {
         long startTime = System.currentTimeMillis();
@@ -1009,7 +1009,7 @@ final class PrivateNutsUtils {
         }
 
         /**
-         * find latest maven component
+         * find latest maven artifact
          *
          * @param filter filter
          * @return latest runtime version

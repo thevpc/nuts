@@ -120,42 +120,35 @@ public class Test06_UpateTest {
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().all().checkUpdates();
-
+        for (NutsUpdateResult u : foundUpdates.getResult().getAllUpdates()) {
+            System.out.println(u.getAvailable());
+        }
         Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getResultCount());
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
-//        Path bootFolder=Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT);
-//        Path bootCompFolder=Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT);
-        Path bootFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+//        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
+//        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
+        Path bootCacheFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
+        Path configFolder=nws.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Assert.assertEquals(true, Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
-                .resolve("nuts-" + newApiVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
-        ));
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
-                .resolve("nuts.properties")
+        Assert.assertEquals(true, Files.exists(configFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+                .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME)
         ));
 
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
-                .resolve("nuts-core-" + newRuntimeVersion + ".jar")
+        Assert.assertEquals(true, Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
+                .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
         ));
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
-                .resolve("nuts-core-" + newRuntimeVersion + NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
-        ));
-        Assert.assertEquals(true, Files.exists(bootFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
-                .resolve("nuts.properties")
-        ));
-
-        try {
-            NutsWorkspace updatedws = Nuts.openWorkspace(new String[]{
-                "--workspace", workpacePath});
-            Assert.assertFalse(true);
-        } catch (NutsUnsatisfiedRequirementsException e) {
-            Assert.assertTrue(true);
-        }
+//        try {
+//            NutsWorkspace updatedws = Nuts.openWorkspace(new String[]{
+//                "--workspace", workpacePath});
+//            Assert.assertFalse(true);
+//        } catch (NutsUnsatisfiedRequirementsException e) {
+//            Assert.assertTrue(true);
+//        }
         NutsBootWorkspace b = new NutsBootWorkspace(
                 "--workspace", workpacePath,
                 "--color=never",

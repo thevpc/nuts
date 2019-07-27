@@ -6,11 +6,9 @@
 package net.vpc.app.nuts.core.filters.id;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +24,7 @@ public class NutsFrozenIdExtensionFilter implements NutsDescriptorFilter, Simpli
     public boolean acceptId(NutsId id, NutsSession session) {
         for (NutsId nutsId : frozen) {
             if(nutsId.getShortNameId().equalsSimpleName(id.getShortNameId())){
-                return (id.getVersion().toFilter().accept(nutsId.getVersion(),session));
+                return (id.getVersion().filter().accept(nutsId.getVersion(),session));
             }
         }
         return true;

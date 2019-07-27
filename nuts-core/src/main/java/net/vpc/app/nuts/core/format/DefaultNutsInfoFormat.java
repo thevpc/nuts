@@ -23,7 +23,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> implements NutsInfoFormat {
 
-    private final Properties extraProperties = new Properties();
+    private final Map<String,String> extraProperties = new LinkedHashMap<>();
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
@@ -60,15 +60,17 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         if(value==null){
             extraProperties.remove(key);
         }else {
-            extraProperties.setProperty(key, value);
+            extraProperties.put(key, value);
         }
         return this;
     }
 
     @Override
-    public NutsInfoFormat addProperties(Properties p) {
+    public NutsInfoFormat addProperties(Map<String,String> p) {
         if (p != null) {
-            extraProperties.putAll(p);
+            for (Map.Entry<String, String> e : p.entrySet()) {
+                addProperty(e.getKey(),e.getValue());
+            }
         }
         return this;
     }
@@ -260,7 +262,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
         props.put("repositories-count", (ws.config().getRepositories().length));
         for (String extraKey : extraKeys) {
-            props.put(extraKey, extraProperties.getProperty(extraKey));
+            props.put(extraKey, extraProperties.get(extraKey));
         }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();

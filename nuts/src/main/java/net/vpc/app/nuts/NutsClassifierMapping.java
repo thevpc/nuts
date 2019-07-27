@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * Created by vpc on 1/5/17.
+ * Nuts can select artifact classifier
  *
  * @since 0.5.4
  */

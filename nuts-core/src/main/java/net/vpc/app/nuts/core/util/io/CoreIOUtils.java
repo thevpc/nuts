@@ -90,7 +90,7 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Map<String,String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -100,8 +100,8 @@ public class CoreIOUtils {
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
 //            map.put((String) entry.getKey(), (String) entry.getValue());
 //        }
-        for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
-            map.put((String) entry.getKey(), (String) entry.getValue());
+        for (Map.Entry<String, String> entry : execProperties.entrySet()) {
+            map.put(entry.getKey(), entry.getValue());
         }
         Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().trace(false)).getResultPath();
         if (nutsJarFile != null) {
@@ -211,7 +211,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parse(requestedJavaVersion).toFilter();
+            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parse(requestedJavaVersion).filter();
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace.createSession())) {
                 bestJava = current;
             }

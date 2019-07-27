@@ -218,7 +218,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             configManager.setStartCreateTimeMillis(uoptions.getCreationTime());
             configManager.setEndCreateTimeMillis(System.currentTimeMillis());
             if (uoptions.getUserName() != null && uoptions.getUserName().trim().length() > 0) {
-                char[] password = uoptions.getPassword();
+                char[] password = uoptions.getCredentials();
                 if (CoreStringUtils.isBlank(password)) {
                     password = io().getTerminal().readPassword("Password : ");
                 }
@@ -725,7 +725,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsExecutorDescriptor installer = descriptor.getInstaller();
         List<String> eargs = new ArrayList<>();
         List<String> aargs = new ArrayList<>();
-        Properties props = null;
+        Map<String,String> props = null;
         if (installer != null) {
             if (installer.getOptions() != null) {
                 eargs.addAll(Arrays.asList(installer.getOptions()));
@@ -739,7 +739,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             aargs.addAll(Arrays.asList(args));
         }
         Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.APPS);
-        Properties env = new Properties();
+        Map<String,String> env = new LinkedHashMap<>();
         return new DefaultNutsExecutionContext(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, temporary, executionType, commandName);
     }
 
@@ -898,7 +898,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsId id2 = def.getId();
             this.io().copy().session(session).from(def.getPath())
                     .to(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))
-                            .resolve(cfg.getDefaultIdFilename(id2.setFaceComponent().setPackaging("jar")))
+                            .resolve(cfg.getDefaultIdFilename(id2.setFaceContent().setPackaging("jar")))
                     ).run();
             this.descriptor().value(this.fetch().id(id2).getResultDescriptor())
                     .print(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))

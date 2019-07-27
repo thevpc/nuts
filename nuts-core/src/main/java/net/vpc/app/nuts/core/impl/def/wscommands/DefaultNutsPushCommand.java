@@ -104,7 +104,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NutsId id2 = ws.config().createComponentFaceId(dws.resolveEffectiveId(descr,
+                        NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr,
                                 ws.fetch().setTransitive(true).session(session)), descr);
                         try {
 
@@ -134,7 +134,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(ws, "Repository " + repo.config().getName() + " is disabled");
                 }
-                NutsId effId = ws.config().createComponentFaceId(id.unsetProperties(), file.getDescriptor())
+                NutsId effId = ws.config().createContentFaceId(id.setProperties(""), file.getDescriptor())
 //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
                         ;
                 repo.deploy().setSession(rsession)

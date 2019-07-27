@@ -1,4 +1,4 @@
-search for components/==nuts==
+search for artifacts/==nuts==
 
 ##SYNOPSYS##:
 ==nuts== {{search}}  \[**<options>**\]... \<ids\> ...  <args> ...
@@ -49,7 +49,7 @@ search for components/==nuts==
        **--extensions** : find extensions only
        **--runtime** : find runtime only
        **--companions** : find companions only
-       **--api-version** : find components compatible with the given api-version
+       **--api-version** : find artifacts compatible with the given api-version
 
        **-l**      
       |**--long**       
@@ -81,26 +81,26 @@ search for components/==nuts==
                                                      **O** : other
                                                      **-** : unknown
 
-                                [[install-date]]      : component install date
-                                [[install-user]]      : component install user
-                                [[id]]                : component id
+                                [[install-date]]      : artifact install date
+                                [[install-user]]      : artifact install user
+                                [[id]]                : artifact id
                                 [[name]]              : simple name
-                                [[packaging]]         : component packaging
-                                [[arch]]              : component supported architectures
-                                [[platform]]          : component supported platforms
-                                [[os]]                : component supported operation systems
-                                [[osdist]]            : component supported OS distributions
+                                [[packaging]]         : artifact packaging
+                                [[arch]]              : artifact supported architectures
+                                [[platform]]          : artifact supported platforms
+                                [[os]]                : artifact supported operation systems
+                                [[osdist]]            : artifact supported OS distributions
                                 [[exec-entry]]        : Main class
-                                [[file-name]]         : component file name
-                                [[file]]              : component file path
-                                [[var-location]]      : component var folder
-                                [[temp-location]]     : component temp folder
-                                [[config-location]]   : component config folder
-                                [[lib-location]]      : component lib folder
-                                [[log-location]]      : component log folder
-                                [[cache-location]]    : component cache folder
-                                [[programs-location]] : component programs folder
-                                [[run-location]]      : component run folder
+                                [[file-name]]         : artifact file name
+                                [[file]]              : artifact file path
+                                [[var-location]]      : artifact var folder
+                                [[temp-location]]     : artifact temp folder
+                                [[config-location]]   : artifact config folder
+                                [[lib-location]]      : artifact lib folder
+                                [[log-location]]      : artifact log folder
+                                [[cache-location]]    : artifact cache folder
+                                [[programs-location]] : artifact programs folder
+                                [[run-location]]      : artifact run folder
                                 [[long]]              : equivalent to [[status]],[[install-date]],[[install-user]],[[id]]
                                 [[all]]               : equivalent to all of the above
    
@@ -123,7 +123,7 @@ search for components/==nuts==
             search installed nuts
 
         ==nuts== {{search}} **--offline** netbeans-\*
-            search all components that start with "netbeans-" in all local repositories
+            search all artifacts that start with "netbeans-" in all local repositories
 
         ==nuts== {{search}} **--anywhere** netbeans-\*
-            search all components that start with "netbeans-" in all local and remote repositories
+            search all artifacts that start with "netbeans-" in all local and remote repositories

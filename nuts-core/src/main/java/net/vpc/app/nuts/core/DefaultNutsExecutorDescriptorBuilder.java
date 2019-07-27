@@ -35,9 +35,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
@@ -50,7 +48,7 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
 
     private NutsId id;
     private String[] options = new String[0];
-    private Properties properties = new Properties();
+    private final Map<String,String> properties = new LinkedHashMap<>();
 
     public DefaultNutsExecutorDescriptorBuilder() {
     }
@@ -69,7 +67,7 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
         return options;
     }
 
-    public Properties getProperties() {
+    public Map<String,String> getProperties() {
         return properties;
     }
 
@@ -80,14 +78,48 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     }
 
     @Override
-    public DefaultNutsExecutorDescriptorBuilder setProperties(Properties properties) {
-        this.properties = CoreNutsUtils.copyOfNonNull(properties);
+    public DefaultNutsExecutorDescriptorBuilder setProperties(Map<String,String> properties) {
+        this.properties.clear();
+        if(properties!=null) {
+            for (Map.Entry<String, String> stringStringEntry : properties.entrySet()) {
+                if (stringStringEntry.getValue() != null) {
+                    this.properties.put(stringStringEntry.getKey(), stringStringEntry.getValue());
+                } else {
+                    this.properties.remove(stringStringEntry.getKey());
+                }
+            }
+        }
         return this;
     }
 
     @Override
     public DefaultNutsExecutorDescriptorBuilder setId(NutsId id) {
         this.id = id;
+        return this;
+    }
+
+    @Override
+    public NutsExecutorDescriptorBuilder set(NutsExecutorDescriptorBuilder value) {
+        return null;
+    }
+
+    @Override
+    public NutsExecutorDescriptorBuilder set(NutsExecutorDescriptor value) {
+        if(value!=null){
+            setId(value.getId());
+            setOptions(value.getOptions());
+            setProperties(value.getProperties());
+        }else{
+            clear();
+        }
+        return this;
+    }
+
+    @Override
+    public NutsExecutorDescriptorBuilder clear() {
+        setId(null);
+        setOptions();
+        setProperties(null);
         return this;
     }
 
@@ -102,7 +134,7 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     }
 
     @Override
-    public NutsExecutorDescriptorBuilder properties(Properties value) {
+    public NutsExecutorDescriptorBuilder properties(Map<String,String> value) {
         return setProperties(value);
     }
 

@@ -36,7 +36,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
         NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
-        id = id.setFaceComponent();
+        id = id.setFaceContent();
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         NutsWorkspaceUtils.checkSimpleNameNutsId(repo.getWorkspace(), id);

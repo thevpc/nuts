@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -43,5 +44,5 @@ public interface NutsExecutorDescriptor extends Serializable {
 
     String[] getOptions();
 
-    Properties getProperties();
+    Map<String,String> getProperties();
 }

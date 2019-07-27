@@ -154,7 +154,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
-                            effId = ws.config().createComponentFaceId(effId.unsetProperties(), descriptor)
+                            effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
 //                                    .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                             ;
                             repo.deploy()
@@ -175,7 +175,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
                         NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
-                        effId = ws.config().createComponentFaceId(effId.unsetProperties(), descriptor)
+                        effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
 //                                .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                         ;
                         repo.deploy()

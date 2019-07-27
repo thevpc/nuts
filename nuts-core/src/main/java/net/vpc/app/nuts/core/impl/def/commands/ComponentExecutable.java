@@ -6,6 +6,9 @@
 package net.vpc.app.nuts.core.impl.def.commands;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import net.vpc.app.nuts.*;
@@ -21,15 +24,16 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     String commandName;
     String[] appArgs;
     String[] executorOptions;
-    Properties env;
+    Map<String,String> env;
     String dir;
     boolean failFast;
     NutsSession session;
     NutsExecutionType executionType;
     DefaultNutsExecCommand execCommand;
+    boolean autoInstall=true;
 
-    public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
-        super(commandName, def.getId().getLongName(), NutsExecutableType.COMPONENT);
+    public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
+        super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
         //all these information areavailable, an exception would be thrown if not!
         def.getContent();
@@ -39,13 +43,27 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
         
         this.commandName = commandName;
         this.appArgs = appArgs;
-        this.executorOptions = executorOptions;
         this.env = env;
         this.dir = dir;
         this.failFast = failFast;
         this.session = session;
         this.executionType = executionType;
         this.execCommand = execCommand;
+
+        List<String> executorOptionsList=new ArrayList<>();
+        for (String option : executorOptions) {
+            NutsArgument a = session.getWorkspace().commandLine().createArgument(option);
+            if(a.getStringKey().equals("--nuts-auto-install")){
+                if(a.isKeyValue()){
+                    autoInstall= a.isNegated() != a.getBooleanValue();
+                }else{
+                    autoInstall=true;
+                }
+            }else{
+                executorOptionsList.add(option);
+            }
+        }
+        this.executorOptions=executorOptionsList.toArray(new String[0]);
     }
 
     @Override
@@ -55,7 +73,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public void execute() {
-        if (!def.getInstallInformation().isInstalled()) {
+        if (autoInstall && !def.getInstallInformation().isInstalled()) {
             session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
                 session.getWorkspace().install().id(def.getId()).run();
         }
@@ -64,7 +82,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public void dryExecute() {
-        if (!def.getInstallInformation().isInstalled()) {
+        if (autoInstall && !def.getInstallInformation().isInstalled()) {
             session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             PrintStream out = session.out();
             out.printf("[dry] ==install== %s%n",def.getId().getLongName());

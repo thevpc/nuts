@@ -675,7 +675,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     for (NutsFetchMode mode : fetchMode) {
                         List<Iterator<NutsId>> all = new ArrayList<>();
                         for (NutsId nutsId1 : nutsId2) {
-                            NutsIdFilter idFilter2 = CoreFilterUtils.AndSimplified(sIdFilter, nutsId1.toFilter());
+                            NutsIdFilter idFilter2 = CoreFilterUtils.AndSimplified(sIdFilter, nutsId1.filter());
                             if (mode == NutsFetchMode.INSTALLED) {
                                 all.add(
                                         IteratorBuilder.ofLazy(() -> {

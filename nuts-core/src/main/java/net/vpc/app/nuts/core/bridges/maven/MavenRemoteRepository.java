@@ -465,7 +465,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
+                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.CONTENT_HASH), in, session);
                         } catch (IOException ex) {
                             return;
                         }
@@ -483,7 +483,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
+                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.CONTENT_HASH), in, session);
                         } catch (IOException ex) {
                             throw new NutsPathCopyAction.ValidationException(ex);
                         }

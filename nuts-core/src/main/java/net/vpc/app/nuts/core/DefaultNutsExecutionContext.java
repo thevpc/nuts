@@ -31,6 +31,8 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -39,9 +41,9 @@ import java.util.Properties;
 public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     private final NutsDefinition nutsDefinition;
-    private final Properties env;
+    private final Map<String,String> env;
     private final String[] executorOptions;
-    private final Properties executorProperties;
+    private final Map<String,String> executorProperties;
     private final String[] args;
     private final NutsSession session;
     private final NutsWorkspace workspace;
@@ -73,7 +75,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition nutsDefinition,
-            String[] args, String[] executorArgs, Properties env, Properties executorProperties,
+            String[] args, String[] executorArgs, Map<String,String> env, Map<String,String> executorProperties,
             String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast,
             boolean temporary,
             NutsExecutionType executionType,
@@ -85,7 +87,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
             executorArgs = new String[0];
         }
         if (executorProperties == null) {
-            executorProperties = new Properties();
+            executorProperties = new LinkedHashMap<>();
         }
         this.commandName = commandName;
         this.nutsDefinition = nutsDefinition;
@@ -96,7 +98,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.executorProperties = executorProperties;
         this.cwd = cwd;
         if (env == null) {
-            env = new Properties();
+            env = new LinkedHashMap<>();
         }
         this.env = env;
         this.failFast = failFast;
@@ -126,7 +128,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public Properties getExecutorProperties() {
+    public Map<String,String> getExecutorProperties() {
         return executorProperties;
     }
 
@@ -166,7 +168,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 

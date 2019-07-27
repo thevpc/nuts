@@ -18,7 +18,7 @@ import net.vpc.app.nuts.core.DefaultNutsVersion;
  */
 public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> implements NutsVersionFormat {
 
-    private final Properties extraProperties = new Properties();
+    private final Map<String,String> extraProperties = new LinkedHashMap<>();
     private boolean all;
     private NutsVersion version;
 
@@ -75,14 +75,20 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public NutsVersionFormat addProperty(String key, String value) {
-        extraProperties.setProperty(key, value);
+        if(value==null){
+            extraProperties.remove(key);
+        }else {
+            extraProperties.put(key, value);
+        }
         return this;
     }
 
     @Override
-    public NutsVersionFormat addProperties(Properties p) {
+    public NutsVersionFormat addProperties(Map<String,String> p) {
         if (p != null) {
-            extraProperties.putAll(p);
+            for (Map.Entry<String, String> entry : p.entrySet()) {
+                addProperty(entry.getKey(),entry.getValue());
+            }
         }
         return this;
     }
@@ -121,7 +127,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
-            props.put(extraKey, extraProperties.getProperty(extraKey));
+            props.put(extraKey, extraProperties.get(extraKey));
         }
         return props;
     }

@@ -124,6 +124,12 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder set(NutsDescriptor other);
 
+    /**
+     * clear this instance (set null/default all properties)
+     * @return {@code this instance}
+     */
+    NutsDescriptorBuilder clear();
+
     NutsDescriptorBuilder setId(String id);
 
     NutsDependency[] getDependencies();
@@ -148,7 +154,7 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setProperties(Map<String, String> map);
 
-    NutsDescriptorBuilder setProperties(Map<String, String> map, boolean append);
+    NutsDescriptorBuilder addProperties(Map<String, String> map);
 
     NutsDescriptorBuilder applyProperties();
 
@@ -159,8 +165,6 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setName(String name);
 
     NutsDescriptorBuilder setParents(NutsId[] parents);
-
-    NutsDescriptor build();
 
     NutsDescriptorBuilder setArch(String[] archs);
 
@@ -175,4 +179,7 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder replaceDependency(Predicate<NutsDependency> filter, UnaryOperator<NutsDependency> converter);
 
     NutsDescriptorBuilder removeDependency(Predicate<NutsDependency> dependency);
+
+    NutsDescriptor build();
+
 }

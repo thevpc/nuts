@@ -46,40 +46,32 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public DefaultNutsDescriptorBuilder() {
     }
 
-    public DefaultNutsDescriptorBuilder(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
-                                        NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-                                        String[] arch, String[] os, String[] osdist, String[] platform,
-                                        NutsDependency[] dependencies,
-                                        NutsDependency[] standardDependencies,
-                                        NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings) {
-        setId(id);
-//        setAlternative(alternative);
-        setPackaging(packaging);
-        setParents(parents);
-        setExecutable(executable);
-        setNutsApplication(nutsApplication);
-        setDescription(description);
-        setName(name);
-        setExecutor(executor);
-        setInstaller(installer);
-//        setExt(ext);
-        setArch(arch);
-        setOs(os);
-        setOsdist(osdist);
-        setPlatform(platform);
-        setLocations(locations);
-        setDependencies(dependencies);
-        setClassifierMappings(classifierMappings);
-        setStandardDependencies(standardDependencies);
-        setProperties(properties, false);
-    }
-
     public DefaultNutsDescriptorBuilder(NutsDescriptor other) {
         set(other);
     }
 
-    public DefaultNutsDescriptorBuilder(NutsDescriptorBuilder other) {
-        set(other);
+    @Override
+    public NutsDescriptorBuilder clear() {
+        setId((NutsId)null);
+//            setAlternative(null);
+        setPackaging(null);
+        setParents(null);
+        setExecutable(false);
+        setNutsApplication(false);
+        setDescription(null);
+        setName(null);
+        setExecutor(null);
+        setInstaller(null);
+        setClassifierMappings(null);
+        setArch(null);
+        setOs(null);
+        setOsdist(null);
+        setPlatform(null);
+        setLocations(null);
+        setDependencies((NutsDependency[])null);
+        setStandardDependencies((NutsDependency[])null);
+        setProperties(null);
+        return this;
     }
 
     @Override
@@ -103,7 +95,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setLocations(other.getLocations());
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
-            setProperties(other.getProperties(), false);
+            setProperties(other.getProperties());
+        }else{
+            clear();
         }
         return this;
     }
@@ -121,6 +115,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setName(other.getName());
             setExecutor(other.getExecutor());
             setInstaller(other.getInstaller());
+            setClassifierMappings(other.getClassifierMappings());
             setArch(other.getArch());
             setOs(other.getOs());
             setOsdist(other.getOsdist());
@@ -128,7 +123,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setLocations(other.getLocations());
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
-            setProperties(other.getProperties(), false);
+            setProperties(other.getProperties());
+        }else{
+            clear();
         }
         return this;
     }
@@ -224,26 +221,22 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setProperties(Map<String, String> map) {
-        return setProperties(map, false);
+        if (map == null || map.isEmpty()) {
+            this.properties = null;
+        } else {
+            this.properties = new HashMap<>(map);
+        }
+        return this;
     }
 
     @Override
-    public NutsDescriptorBuilder setProperties(Map<String, String> properties, boolean append) {
-        if (append) {
-            if (properties == null || properties.isEmpty()) {
-                //do nothing
-            } else {
-                HashMap<String, String> p = new HashMap<>(this.properties);
-                p.putAll(properties);
-                this.properties = p;
-            }
-
+    public NutsDescriptorBuilder addProperties(Map<String, String> properties) {
+        if (properties == null || properties.isEmpty()) {
+            //do nothing
         } else {
-            if (properties == null || properties.isEmpty()) {
-                this.properties = null;
-            } else {
-                this.properties = new HashMap<>(properties);
-            }
+            HashMap<String, String> p = new HashMap<>(this.properties);
+            p.putAll(properties);
+            this.properties = p;
         }
         return this;
     }
@@ -259,7 +252,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setLocations(NutsIdLocation[] locations) {
-        this.locations = new ArrayList<>(Arrays.asList(locations));
+        this.locations = (properties == null)?new ArrayList<>() : new ArrayList<>(Arrays.asList(locations));
         return this;
     }
 
@@ -275,7 +268,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setClassifierMappings(NutsClassifierMapping[] value) {
-        this.classifierMappings = new ArrayList<>(Arrays.asList(value));
+        this.classifierMappings = value==null?new ArrayList<>() : new ArrayList<>(Arrays.asList(value));
         return this;
     }
 
@@ -385,11 +378,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder setDependencies(NutsDependency[] dependencies) {
         this.dependencies = new ArrayList<>();
-        for (NutsDependency dependency : dependencies) {
-            if (dependency == null) {
-                throw new NullPointerException();
+        if(dependencies!=null) {
+            for (NutsDependency dependency : dependencies) {
+                if (dependency == null) {
+                    throw new NullPointerException();
+                }
+                this.dependencies.add(dependency);
             }
-            this.dependencies.add(dependency);
         }
         return this;
     }
@@ -397,11 +392,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder setStandardDependencies(NutsDependency[] dependencies) {
         this.standardDependencies = new ArrayList<>();
-        for (NutsDependency dependency : dependencies) {
-            if (dependency == null) {
-                throw new NullPointerException();
+        if(dependencies!=null) {
+            for (NutsDependency dependency : dependencies) {
+                if (dependency == null) {
+                    throw new NullPointerException();
+                }
+                this.standardDependencies.add(dependency);
             }
-            this.standardDependencies.add(dependency);
         }
         return this;
     }

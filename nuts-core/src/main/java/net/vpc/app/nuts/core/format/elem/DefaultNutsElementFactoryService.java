@@ -61,7 +61,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_BOOLEANS = new NutsElementFactoryBoolean();
     private static final NutsElementFactory F_ENUMS = new NutsElementFactoryEnum();
     private static final NutsElementFactory F_DATE = new NutsElementFactoryDate();
-    private static final NutsElementFactory F_INSTANT = new NutsElementFactoryDate();
+    private static final NutsElementFactory F_INSTANT = new NutsElementFactoryInstant();
     private static final NutsElementFactory F_COLLECTION = new NutsElementFactoryCollection();
     private static final NutsElementFactory F_ITERATOR = new NutsElementFactoryIterator();
     private static final NutsElementFactory F_MAP = new NutsElementFactoryMap();
@@ -118,7 +118,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             return a.create(o, context);
         }
         if (o.getClass().isArray()) {
-            return new DefaultNutsArrayElement(o, context);
+            return new NutsArrayElementMapper(o, context);
         }
         if (context != null && context.getFallback() != null) {
             NutsElement f = context.getFallback().create(o, context);
@@ -171,7 +171,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
             Map.Entry je = (Map.Entry) o;
-            Map m = new HashMap();
+            Map<String,Object> m = new HashMap<>();
             m.put("key", je.getKey());
             m.put("value", je.getValue());
             return context.toElement(m);
@@ -182,7 +182,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return new DefaultNutsArrayElement(o, context);
+            return new NutsArrayElementMapper(o, context);
         }
     }
 
@@ -190,7 +190,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            return new DefaultNutsArrayElement(o, context);
+            return new NutsArrayElementMapper(o, context);
         }
     }
 

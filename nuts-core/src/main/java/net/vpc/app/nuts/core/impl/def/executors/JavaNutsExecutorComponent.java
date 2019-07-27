@@ -267,7 +267,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         ws.config().getBootClassLoader()
                 );
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl2(classLoader, cls, ws, joptions).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl2(def.getId(),classLoader, cls, ws, joptions).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();
@@ -295,9 +295,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         private final Class<?> cls;
         private final NutsWorkspace ws;
         private final JavaExecutorOptions joptions;
+        private final NutsId id;
 
-        public ClassloaderAwareRunnableImpl2(ClassLoader classLoader, Class<?> cls, NutsWorkspace ws, JavaExecutorOptions joptions) {
+        public ClassloaderAwareRunnableImpl2(NutsId id,ClassLoader classLoader, Class<?> cls, NutsWorkspace ws, JavaExecutorOptions joptions) {
             super(classLoader);
+            this.id = id;
             this.cls = cls;
             this.ws = ws;
             this.joptions = joptions;
@@ -330,6 +332,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             if (isNutsApp) {
                 //NutsWorkspace
+                NutsApplications.getSharedMap().put("nuts.embedded.application.id",id);
                 mainMethod.invoke(nutsApp, new Object[]{ws, joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace

@@ -33,15 +33,15 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
- * Content describes a component file location and its characteristics.
+ * Content describes a artifact file location and its characteristics.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsContent extends Serializable {
 
     /**
-     * component local path
-     * @return component local parth
+     * artifact local path
+     * @return artifact local path
      */
     Path getPath();
 

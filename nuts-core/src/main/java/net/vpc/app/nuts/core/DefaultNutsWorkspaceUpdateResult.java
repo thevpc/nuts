@@ -37,7 +37,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     }
 
     @Override
-    public NutsUpdateResult[] getComponents() {
+    public NutsUpdateResult[] getArtifacts() {
         return Arrays.copyOf(components, components.length);
     }
 

@@ -61,7 +61,7 @@ public class NutsRepositoryConfig502 implements Serializable {
     private String runStoreLocation = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
-    private Properties env;
+    private Map<String,String> env;
     private List<NutsRepositoryRef> mirrors;
     private List<NutsUserConfig> users;
     private boolean indexEnabled;
@@ -91,7 +91,7 @@ public class NutsRepositoryConfig502 implements Serializable {
         if (other.getEnv() == null) {
             this.env = null;
         } else {
-            this.env = new Properties();
+            this.env = new LinkedHashMap<>();
             this.env.putAll(other.getEnv());
         }
     }
@@ -228,11 +228,11 @@ public class NutsRepositoryConfig502 implements Serializable {
         return this;
     }
 
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 
-    public NutsRepositoryConfig502 setEnv(Properties env) {
+    public NutsRepositoryConfig502 setEnv(Map<String,String> env) {
         this.env = env;
         return this;
     }

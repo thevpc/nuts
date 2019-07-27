@@ -18,7 +18,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsDefinition commandDefinition;
     protected List<String> command;
     protected List<String> executorOptions;
-    protected Properties env;
+    protected Map<String,String> env;
     protected NutsExecutionException result;
     protected boolean executed;
     protected String directory;
@@ -167,7 +167,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public Properties getEnv() {
+    public Map<String,String> getEnv() {
         return env;
     }
 
@@ -177,23 +177,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand addEnv(Properties env) {
-        if (env != null) {
-            if (this.env == null) {
-                this.env = new Properties();
-                this.env.putAll(env);
-            } else {
-                this.env.putAll(env);
-            }
-        }
-        return this;
-    }
-
-    @Override
     public NutsExecCommand addEnv(Map<String, String> env) {
         if (env != null) {
             if (this.env == null) {
-                this.env = new Properties();
+                this.env = new LinkedHashMap<>();
                 this.env.putAll(env);
             } else {
                 this.env.putAll(env);
@@ -210,7 +197,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsExecCommand setEnv(String k, String val) {
         if (env == null) {
-            env = new Properties();
+            env = new LinkedHashMap<>();
         }
         env.put(k, val);
         return this;
@@ -218,25 +205,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setEnv(Map<String, String> env) {
-        this.env = env == null ? null : new Properties();
+        this.env = env == null ? null : new LinkedHashMap<>();
         if (env != null) {
             this.env.putAll(env);
         }
         return this;
-    }
-
-    @Override
-    public NutsExecCommand setEnv(Properties env) {
-        this.env = env == null ? null : new Properties();
-        if (env != null) {
-            this.env.putAll(env);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsExecCommand env(Properties env) {
-        return setEnv(env);
     }
 
     @Override
@@ -443,9 +416,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         NutsExecCommandFormat f = getCommandLineFormat();
         StringBuilder sb = new StringBuilder();
         if (env != null) {
-            for (Map.Entry<Object, Object> e : env.entrySet()) {
-                String k = (String) e.getKey();
-                String v = (String) e.getValue();
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
                 if (f != null) {
                     if (!f.acceptEnvName(k, v)) {
                         continue;

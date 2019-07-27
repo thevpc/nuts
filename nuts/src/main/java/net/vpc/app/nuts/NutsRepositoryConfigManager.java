@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -90,7 +91,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     void save(NutsSession session);
 
-    Properties getEnv(boolean inherit);
+    Map<String,String> getEnv(boolean inherit);
 
     String getEnv(String key, String defaultValue, boolean inherit);
 

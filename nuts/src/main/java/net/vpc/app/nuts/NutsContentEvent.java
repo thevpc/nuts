@@ -39,8 +39,8 @@ import java.nio.file.Path;
 public interface NutsContentEvent {
 
     /**
-     * component path
-     * @return component path
+     * artifact path
+     * @return artifact path
      */
     Path getPath();
 

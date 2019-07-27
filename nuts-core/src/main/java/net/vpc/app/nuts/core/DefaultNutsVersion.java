@@ -103,12 +103,12 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public NutsVersionFilter toFilter() {
+    public NutsVersionFilter filter() {
         return DefaultNutsVersionFilter.parse(expression);
     }
 
     @Override
-    public NutsVersionInterval[] toIntervals() {
+    public NutsVersionInterval[] intervals() {
         NutsVersionFilter s = DefaultNutsVersionFilter.parse(expression);
         if (s instanceof DefaultNutsVersionFilter) {
             return ((DefaultNutsVersionFilter) s).getIntervals();
@@ -118,7 +118,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public boolean isSingleValue() {
-        NutsVersionInterval[] nutsVersionIntervals = toIntervals();
+        NutsVersionInterval[] nutsVersionIntervals = intervals();
         return nutsVersionIntervals.length != 0 && nutsVersionIntervals.length <= 1 && nutsVersionIntervals[0].isFixedValue();
     }
 

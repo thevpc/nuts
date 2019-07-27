@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -70,7 +71,7 @@ public interface NutsInfoFormat extends NutsFormat {
 
     NutsInfoFormat addProperty(String key, String value);
 
-    NutsInfoFormat addProperties(Properties p);
+    NutsInfoFormat addProperties(Map<String,String> p);
 
     NutsInfoFormat showRepositories();
 

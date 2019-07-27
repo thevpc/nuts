@@ -137,7 +137,7 @@ public class CoreNutsUtils {
 
         private int weight(NutsVersion desc) {
             int x = 1;
-            for (NutsVersionInterval s : desc.toIntervals()) {
+            for (NutsVersionInterval s : desc.intervals()) {
                 x *= weight(s);
             }
             return x;

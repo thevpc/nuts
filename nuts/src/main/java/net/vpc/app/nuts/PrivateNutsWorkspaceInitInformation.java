@@ -39,7 +39,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     private String workspace;
 
     /**
-     * runtime component dependencies id list (; separated)
+     * runtime artifact dependencies id list (; separated)
      */
     private LinkedHashSet<String> runtimeDependenciesSet;
 
