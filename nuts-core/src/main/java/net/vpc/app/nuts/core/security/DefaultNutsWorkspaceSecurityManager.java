@@ -67,7 +67,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     public DefaultNutsWorkspaceSecurityManager(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        this.agent = new WrapperNutsAuthenticationAgent(ws, ws.config(), x -> getAuthenticationAgent(x));
+        this.agent = new WrapperNutsAuthenticationAgent(ws, ()->ws.config().getEnv(), x -> getAuthenticationAgent(x));
         ws.addWorkspaceListener(new NutsWorkspaceListener() {
             @Override
             public void onConfigurationChanged(NutsWorkspaceEvent event) {

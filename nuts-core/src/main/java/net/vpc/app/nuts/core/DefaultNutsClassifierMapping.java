@@ -3,22 +3,29 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.NutsClassifierMapping;
 
 public class DefaultNutsClassifierMapping implements NutsClassifierMapping {
-    private String targetClassifier;
-    private String[] arch;
-    private String[] os;
-    private String[] osdist;
-    private String[] platform;
+    private final String classifier;
+    private final String packaging;
+    private final String[] arch;
+    private final String[] os;
+    private final String[] osdist;
+    private final String[] platform;
 
-    public DefaultNutsClassifierMapping(String targetClassifier, String[] arch, String[] os, String[] osdist, String[] platform) {
-        this.targetClassifier = targetClassifier;
+    public DefaultNutsClassifierMapping(String classifier, String packaging,String[] arch, String[] os, String[] osdist, String[] platform) {
+        this.classifier = classifier;
+        this.packaging = packaging;
         this.arch = arch;
         this.os = os;
         this.osdist = osdist;
         this.platform = platform;
     }
 
+    @Override
+    public String getPackaging() {
+        return packaging;
+    }
+
     public String getClassifier() {
-        return targetClassifier;
+        return classifier;
     }
 
     public String[] getArch() {

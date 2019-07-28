@@ -30,11 +30,17 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * SearchId Filter.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsSearchIdFilter {
 
+    /**
+     * true if search id is accepted
+     * @param sid search id
+     * @param session session
+     * @return true if search id is accepted
+     */
     boolean acceptSearchId(NutsSearchId sid, NutsSession session);
 }

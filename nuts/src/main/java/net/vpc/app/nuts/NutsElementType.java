@@ -30,17 +30,48 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Element type. this an extension of json element types.
  * @author vpc
  */
 public enum NutsElementType {
+    /**
+     * null element
+     */
     NULL(true),
+
+    /**
+     * integer/long (number) element
+     */
     INTEGER(true),
+
+    /**
+     * float/double (number) element
+     */
     FLOAT(true),
+
+    /**
+     * string element
+     */
     STRING(true),
+
+    /**
+     * date element
+     */
     DATE(true),
+
+    /**
+     * boolean element
+     */
     BOOLEAN(true),
+
+    /**
+     * array element
+     */
     ARRAY(false),
+
+    /**
+     * object (list of key/val) element
+     */
     OBJECT(false)
     ;
 

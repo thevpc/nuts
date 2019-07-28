@@ -33,31 +33,83 @@ import java.time.Instant;
 import java.util.Date;
 
 /**
- *
+ * Nuts Element builder that helps creating element instances.
  * @author vpc
  */
 public interface NutsElementBuilder {
 
-    NutsPrimitiveElement forBoolean(String string);
+    /**
+     * create primitive boolean element
+     * @param value value
+     * @return primitive boolean element
+     */
+    NutsPrimitiveElement forBoolean(String value);
 
-    NutsPrimitiveElement forBoolean(boolean s);
+    /**
+     * create primitive boolean element
+     * @param value value
+     * @return primitive boolean element
+     */
+    NutsPrimitiveElement forBoolean(boolean value);
 
-    NutsPrimitiveElement forDate(Date s);
+    /**
+     * create primitive date element
+     * @param value value
+     * @return primitive date element
+     */
+    NutsPrimitiveElement forDate(Date value);
 
-    NutsPrimitiveElement forDate(Instant s);
+    /**
+     * create primitive date element
+     * @param value value
+     * @return primitive date element
+     */
+    NutsPrimitiveElement forDate(Instant value);
 
-    NutsPrimitiveElement forDate(String s);
+    /**
+     * create primitive date element
+     * @param value value
+     * @return primitive date element
+     */
+    NutsPrimitiveElement forDate(String value);
 
+    /**
+     * create primitive null element
+     * @return primitive null element
+     */
     NutsPrimitiveElement forNull();
 
-    NutsPrimitiveElement forNumber(Number s);
+    /**
+     * create primitive number element
+     * @param value value
+     * @return primitive number element
+     */
+    NutsPrimitiveElement forNumber(Number value);
 
-    NutsPrimitiveElement forNumber(String s);
+    /**
+     * create primitive number element
+     * @param value value
+     * @return primitive number element
+     */
+    NutsPrimitiveElement forNumber(String value);
 
-    NutsPrimitiveElement forString(String s);
+    /**
+     * create primitive string element
+     * @param value value
+     * @return primitive string element
+     */
+    NutsPrimitiveElement forString(String value);
 
+    /**
+     * create object element builder (mutable)
+     * @return object element
+     */
     NutsObjectElementBuilder forObject();
-    
+
+    /**
+     * create array element builder (mutable)
+     * @return array element
+     */
     NutsArrayElementBuilder forArray();
 
     

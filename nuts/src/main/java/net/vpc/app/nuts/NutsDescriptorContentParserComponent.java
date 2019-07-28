@@ -30,12 +30,17 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Content parser component is responsible of resolving a Nuts descriptor form a content file
  *
  * @since 0.5.4
  */
 @NutsSingleton
 public interface NutsDescriptorContentParserComponent extends NutsComponent<Object/*any object or null*/> {
 
+    /**
+     * parse content and return a valid NutsDescriptor or null if not supported.
+     * @param parserContext context
+     * @return valid descriptor or null.
+     */
     NutsDescriptor parse(NutsDescriptorContentParserContext parserContext);
 }

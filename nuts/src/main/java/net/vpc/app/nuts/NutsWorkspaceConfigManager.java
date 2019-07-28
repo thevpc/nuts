@@ -41,13 +41,17 @@ import java.util.logging.Level;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
+public interface NutsWorkspaceConfigManager {
 
     String name();
 
     String getName();
 
     String getUuid();
+
+    Map<String,String> getEnv();
+
+    String getEnv(String property, String defaultValue);
 
     NutsWorkspaceStoredConfig stored();
 
@@ -147,12 +151,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
     Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
-
-    long getCreationStartTimeMillis();
-
-    long getCreationFinishTimeMillis();
-
-    long getCreationTimeMillis();
 
     String getDefaultIdFilename(NutsId id);
 
@@ -254,5 +252,10 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsId getPlatformArch();
 
+    long getCreationStartTimeMillis();
+
+    long getCreationFinishTimeMillis();
+
+    long getCreationTimeMillis();
 
 }

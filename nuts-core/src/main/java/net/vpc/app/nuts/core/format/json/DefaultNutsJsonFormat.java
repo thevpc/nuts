@@ -396,7 +396,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         @Override
         public JsonElement serialize(NutsClassifierMapping src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
-                return context.serialize(new DefaultNutsClassifierMappingBuilder(src));
+                return context.serialize(new DefaultNutsClassifierMappingBuilder().set(src));
             }
             return context.serialize(src);
         }

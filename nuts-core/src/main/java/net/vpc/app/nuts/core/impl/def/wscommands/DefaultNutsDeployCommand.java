@@ -75,7 +75,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             Path contentFile2 = null;
             try {
                 if (descriptor == null) {
-                    NutsFetchCommand p = ws.fetch().setTransitive(this.isTransitive()).setSession(getValidSession());
+                    NutsFetchCommand p = ws.fetch().setTransitive(true).setSession(getValidSession());
                     characterizedFile = characterizeForDeploy(ws, contentSource, p, getValidSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "Missing descriptor");
@@ -93,7 +93,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsWorkspaceUtils.checkReadOnly(ws);
                 Path contentFile = contentFile0;
                 Path tempFile2 = null;
-                NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
+                NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true);
                 try {
                     if (Files.isDirectory(contentFile)) {
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -136,7 +136,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         throw new NutsNotFoundException(ws, " at " + contentFile);
                     }
                     //remove workspace
-                    descriptor = descriptor.setId(descriptor.getId().setNamespace(null));
+                    descriptor = descriptor.builder().setId(descriptor.getId().setNamespace(null)).build();
                     if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                         throw new NutsIllegalArgumentException(ws, "Invalid Version " + descriptor.getId().getVersion());
                     }
@@ -151,17 +151,15 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, fetchOptions);
 
                             effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
 //                                    .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                             ;
                             repo.deploy()
-                                    .setOffline(this.isOffline())
-                                    .setTransitive(this.isTransitive())
                                     .setSession(rsession)
-                                    .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository)
+                                    .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                     .run();
                             addResult(effId);
                             return this;
@@ -174,18 +172,15 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         if (!repo.config().isEnabled()) {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
-                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, fetchOptions);
                         effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
 //                                .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                         ;
                         repo.deploy()
-                                .setOffline(this.isOffline())
-                                .setTransitive(this.isTransitive())
                                 .setSession(rsession)
                                 .setId(effId)
                                 .setContent(contentFile)
                                 .setDescriptor(descriptor)
-                                .setRepository(repository)
                                 .run();
                         addResult(effId);
                         return this;

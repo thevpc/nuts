@@ -14,6 +14,8 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsExecCommandFormat;
@@ -174,16 +176,15 @@ public class RemoteMysqlDatabaseConfigService {
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
         if (context.session().isPlainTrace()) {
-            context.session().out().printf("[[EXEC]] %s%n", b.setCommandLineFormat(new NutsExecCommandFormat() {
-                @Override
-                public String replaceEnvValue(String envName, String envValue) {
-                    if (envName.toLowerCase().contains("password")
-                            || envName.toLowerCase().contains("pwd")) {
-                        return "****";
-                    }
-                    return null;
-                }
-            }).getCommandString());
+            context.session().out().printf("[[EXEC]] %s%n", b.format()
+                    .setEnvReplacer(envEntry -> {
+                        if (envEntry.getName().toLowerCase().contains("password")
+                                || envEntry.getName().toLowerCase().contains("pwd")) {
+                            return "****";
+                        }
+                        return null;
+                    })
+                    .format());
         }
         b.redirectErrorStream()
                 .grabOutputString()

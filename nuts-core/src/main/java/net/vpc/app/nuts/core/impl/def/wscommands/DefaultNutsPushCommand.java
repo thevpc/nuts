@@ -141,9 +141,8 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                         .setId(effId)
                         .setContent(file.getPath())
                         .setDescriptor(file.getDescriptor())
-                        .setRepository(repo.config().getName())
-                        .setOffline(this.isOffline())
-                        .setTransitive(true)
+//                        .setOffline(this.isOffline())
+//                        .setTransitive(true)
                         .run();
             }
         }

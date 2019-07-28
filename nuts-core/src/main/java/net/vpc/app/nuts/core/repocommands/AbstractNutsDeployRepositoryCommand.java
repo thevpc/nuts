@@ -43,9 +43,6 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     private NutsId id;
     private Path content;
     private NutsDescriptor descriptor;
-    private String repository;
-    private boolean offline = false;
-    private boolean transitive = true;
 
     public AbstractNutsDeployRepositoryCommand(NutsRepository repo) {
         super(repo, "deploy");
@@ -89,39 +86,6 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     @Override
     public NutsDeployRepositoryCommand setDescriptor(NutsDescriptor descriptor) {
         this.descriptor = descriptor;
-        return this;
-    }
-
-    @Override
-    public String getRepository() {
-        return repository;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setRepository(String repository) {
-        this.repository = repository;
-        return this;
-    }
-
-    @Override
-    public boolean isOffline() {
-        return offline;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setOffline(boolean offline) {
-        this.offline = offline;
-        return this;
-    }
-
-    @Override
-    public boolean isTransitive() {
-        return transitive;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setTransitive(boolean transitive) {
-        this.transitive = transitive;
         return this;
     }
 

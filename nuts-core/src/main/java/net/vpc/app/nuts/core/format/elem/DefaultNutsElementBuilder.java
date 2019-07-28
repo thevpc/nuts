@@ -66,101 +66,101 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forString(String s) {
-        if (s == null) {
+    public NutsPrimitiveElement forString(String value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.STRING, s);
+        return new DefaultNutsPrimitiveElement(NutsElementType.STRING, value);
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(Number s) {
-        if (s == null) {
+    public NutsPrimitiveElement forNumber(Number value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        switch (s.getClass().getName()) {
+        switch (value.getClass().getName()) {
             case "java.lang.Byte":
             case "java.lang.Short":
             case "java.lang.Integer":
             case "java.lang.Long":
             case "java.math.BigInteger":
-                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, s);
+                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
             case "java.lang.float":
             case "java.lang.Double":
             case "java.math.BigDecimal":
-                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, s);
+                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
         }
         // ???
-        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, s);
+        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(String s) {
-        if (s == null) {
+    public NutsPrimitiveElement forNumber(String value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        if (s.indexOf('.') >= 0) {
+        if (value.indexOf('.') >= 0) {
             try {
-                return forNumber(Double.parseDouble(s));
+                return forNumber(Double.parseDouble(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigDecimal(s));
+                return forNumber(new BigDecimal(value));
             } catch (Exception ex) {
 
             }
         } else {
             try {
-                return forNumber(Integer.parseInt(s));
+                return forNumber(Integer.parseInt(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(Long.parseLong(s));
+                return forNumber(Long.parseLong(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigInteger(s));
+                return forNumber(new BigInteger(value));
             } catch (Exception ex) {
 
             }
         }
-        throw new IllegalArgumentException("Unable to parse number " + s);
+        throw new IllegalArgumentException("Unable to parse number " + value);
     }
 
     @Override
-    public NutsPrimitiveElement forBoolean(boolean s) {
-        return s ? TRUE : FALSE;
+    public NutsPrimitiveElement forBoolean(boolean value) {
+        return value ? TRUE : FALSE;
     }
 
     @Override
-    public NutsPrimitiveElement forBoolean(String string) {
-        return CoreCommonUtils.parseBoolean(string, false) ? TRUE : FALSE;
+    public NutsPrimitiveElement forBoolean(String value) {
+        return CoreCommonUtils.parseBoolean(value, false) ? TRUE : FALSE;
     }
 
     @Override
-    public NutsPrimitiveElement forDate(Date s) {
-        if (s == null) {
+    public NutsPrimitiveElement forDate(Date value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, s.toInstant());
+        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, value.toInstant());
     }
 
     @Override
-    public NutsPrimitiveElement forDate(Instant s) {
-        if (s == null) {
+    public NutsPrimitiveElement forDate(Instant value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, s);
+        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, value);
     }
 
     @Override
-    public NutsPrimitiveElement forDate(String s) {
-        if (s == null) {
+    public NutsPrimitiveElement forDate(String value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, DefaultNutsPrimitiveElement.parseDate(s));
+        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, DefaultNutsPrimitiveElement.parseDate(value));
     }
 }

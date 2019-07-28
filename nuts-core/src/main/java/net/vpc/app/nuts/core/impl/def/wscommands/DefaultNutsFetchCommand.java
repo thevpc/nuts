@@ -498,8 +498,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
         }
-        nutsDescriptor = nutsDescriptor.setExecutable(executable);
-        nutsDescriptor = nutsDescriptor.setNutsApplication(nutsApp);
+        nutsDescriptor = nutsDescriptor.builder().setExecutable(executable).build();
+        nutsDescriptor = nutsDescriptor.builder().setNutsApplication(nutsApp).build();
 
         return nutsDescriptor;
     }

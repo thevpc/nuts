@@ -44,7 +44,13 @@ import java.util.logging.Logger;
 public class NutsApplications {
 
     private static final Logger LOG = Logger.getLogger(NutsApplications.class.getName());
-    public static ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
+    private static final ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
+
+    /**
+     * a thread local map used to share information between workspace
+     * and embedded applications.
+     * @return thread local map
+     */
     public static Map<String, Object> getSharedMap() {
         Map<String, Object> m = sharedMap.get();
         if(m==null){
@@ -54,7 +60,65 @@ public class NutsApplications {
         return m;
     }
 
+    /**
+     * private constructor
+     */
     private NutsApplications() {
+    }
+
+    /**
+     * run application with given life cycle.
+     *
+     * @param args application arguments
+     * @param ws workspace
+     * @param appClass application class
+     * @param lifeCycle application life cycle
+     */
+    public static void runApplication(String[] args, NutsWorkspace ws, Class appClass,NutsApplicationLifeCycle lifeCycle) {
+        long startTimeMillis = System.currentTimeMillis();
+        if (lifeCycle == null) {
+            throw new NullPointerException("Null Application");
+        }
+        boolean inherited = false;
+        if (ws == null) {
+            inherited = true;
+            ws = Nuts.openInheritedWorkspace(args);
+        }
+        if(appClass==null){
+            appClass=lifeCycle.getClass();
+        }
+        LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
+            inherited ? "(inherited)" : "",
+            lifeCycle, ws.commandLine().create(args).toString()});
+        NutsApplicationContext applicationContext = null;
+        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
+        if (applicationContext == null) {
+            applicationContext = ws.io().createApplicationContext(args, appClass, null, startTimeMillis);
+        }
+        switch (applicationContext.getMode()) {
+            /**
+             * both RUN and AUTO_COMPLETE executes the save branch. Later
+             * applicationContext.isExecMode()
+             */
+            case RUN:
+            case AUTO_COMPLETE: {
+                lifeCycle.onRunApplication(applicationContext);
+                return;
+            }
+            case INSTALL: {
+                lifeCycle.onInstallApplication(applicationContext);
+                return;
+            }
+            case UPDATE: {
+                lifeCycle.onUpdateApplication(applicationContext);
+                return;
+            }
+            case UNINSTALL: {
+                lifeCycle.onUninstallApplication(applicationContext);
+                return;
+            }
+        }
+        throw new NutsExecutionException(ws, "Unsupported execution mode " + applicationContext.getMode(), 204);
     }
 
     /**
@@ -133,60 +197,5 @@ public class NutsApplications {
         }
         out.flush();
         return (errorCode);
-    }
-
-    /**
-     * run application with given life cycle.
-     *
-     * @param args application arguments
-     * @param ws workspace
-     * @param appClass application class
-     * @param lifeCycle application life cycle
-     */
-    public static void runApplication(String[] args, NutsWorkspace ws, Class appClass,NutsApplicationLifeCycle lifeCycle) {
-        long startTimeMillis = System.currentTimeMillis();
-        if (lifeCycle == null) {
-            throw new NullPointerException("Null Application");
-        }
-        boolean inherited = false;
-        if (ws == null) {
-            inherited = true;
-            ws = Nuts.openInheritedWorkspace(args);
-        }
-        if(appClass==null){
-            appClass=lifeCycle.getClass();
-        }
-        LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
-            inherited ? "(inherited)" : "",
-            lifeCycle, ws.commandLine().create(args).toString()});
-        NutsApplicationContext applicationContext = null;
-        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
-        if (applicationContext == null) {
-            applicationContext = ws.io().createApplicationContext(args, appClass, null, startTimeMillis);
-        }
-        switch (applicationContext.getMode()) {
-            /**
-             * both RUN and AUTO_COMPLETE executes the save branch. Later
-             * applicationContext.isExecMode()
-             */
-            case RUN:
-            case AUTO_COMPLETE: {
-                lifeCycle.onRunApplication(applicationContext);
-                return;
-            }
-            case INSTALL: {
-                lifeCycle.onInstallApplication(applicationContext);
-                return;
-            }
-            case UPDATE: {
-                lifeCycle.onUpdateApplication(applicationContext);
-                return;
-            }
-            case UNINSTALL: {
-                lifeCycle.onUninstallApplication(applicationContext);
-                return;
-            }
-        }
-        throw new NutsExecutionException(ws, "Unsupported execution mode " + applicationContext.getMode(), 204);
     }
 }

@@ -220,11 +220,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setProperties(Map<String, String> map) {
-        if (map == null || map.isEmpty()) {
+    public NutsDescriptorBuilder setProperties(Map<String, String> properties) {
+        if (properties == null || properties.isEmpty()) {
             this.properties = null;
         } else {
-            this.properties = new HashMap<>(map);
+            this.properties = new HashMap<>(properties);
         }
         return this;
     }
@@ -425,14 +425,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder addProperty(String name, String value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    @Override
-    public NutsDescriptorBuilder removeProperty(String name) {
-        properties.get(name);
+    public NutsDescriptorBuilder setProperty(String name, String value) {
+        if(value==null){
+            properties.remove(name);
+        }else {
+            properties.put(name, value);
+        }
         return this;
     }
 

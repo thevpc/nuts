@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Base exception for Repository related exceptions
  *
  * @since 0.5.4
  */
@@ -45,6 +45,10 @@ public abstract class NutsRepositoryException extends NutsException {
         this.repository = repository;
     }
 
+    /**
+     * the repository of this exception
+     * @return the repository of this exception
+     */
     public String getRepository() {
         return repository;
     }

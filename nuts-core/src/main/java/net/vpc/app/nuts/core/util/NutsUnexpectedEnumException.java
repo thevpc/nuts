@@ -33,11 +33,16 @@ import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
- *
+ * Exception Thrown when for any reason, the enum value is not expected/supported.
  * @author vpc
  */
 public class NutsUnexpectedEnumException extends NutsException {
 
+    /**
+     * create new instance of NutsUnexpectedEnumException
+     * @param workspace workspace
+     * @param e enumeration instance (cannot be null)
+     */
     public NutsUnexpectedEnumException(NutsWorkspace workspace, Enum e) {
         super(workspace, "Unexpected/Unsupported enum " + e + " of type " + e.getClass().getName());
     }

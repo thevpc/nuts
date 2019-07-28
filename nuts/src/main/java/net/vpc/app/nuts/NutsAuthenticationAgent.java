@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
+
 /**
  * an Authentication Agent is responsible of storing and retrieving credentials
  * in external repository (password manager, kwallet, keypads,
@@ -55,7 +57,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * @param envProvider environment provider, nullable
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, Map<String,String> envProvider) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id. The {@code credentialsId}
@@ -66,7 +68,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * @param envProvider environment provider, nullable
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider);
+    char[] getCredentials(char[] credentialsId, Map<String,String> envProvider);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -77,7 +79,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * @param envProvider environment provider, nullable
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId, NutsEnvProvider envProvider);
+    boolean removeCredentials(char[] credentialsId, Map<String,String> envProvider);
 
     /**
      * store credentials in the agent's and return the credential id to store
@@ -87,11 +89,11 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetrieve when true {@link #getCredentials(char[], net.vpc.app.nuts.NutsEnvProvider) }
+     * @param allowRetrieve when true {@link #getCredentials(char[], Map)}  }
      * can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @param envProvider environment provider, nullable
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsEnvProvider envProvider);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String,String> envProvider);
 }

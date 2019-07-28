@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * executable type returned by which internal command
  * @author vpc
  * @since 0.5.4
  */
@@ -40,12 +40,21 @@ public enum NutsExecutableType {
      * uninstall,check-updates,license, help, exec, welcome
      */
     INTERNAL,
+
     /**
      * workspace configured command using
      * {@link NutsWorkspaceConfigManager#addCommandAlias(NutsCommandAliasConfig, NutsAddOptions)}
      */
     ALIAS,
+
+    /**
+     * external executable artifact
+     */
     ARTIFACT,
+
+    /**
+     * system command
+     */
     SYSTEM;
 
     /**

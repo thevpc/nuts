@@ -265,7 +265,7 @@ public class MavenUtils {
                     properties.put("project.parent.groupId", parentId.getGroupId());
                     properties.put("project.parent.artifactId", parentId.getArtifactId());
                     properties.put("project.parent.version", parentId.getVersion().getValue());
-                    nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
+                    nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.builder().applyProperties(properties).build();
                 }
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
@@ -309,11 +309,11 @@ public class MavenUtils {
                     if (CoreNutsUtils.containsVars(thisId)) {
                         throw new NutsNotFoundException(null, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
                     }
-                    nutsDescriptor = nutsDescriptor.setId(thisId);
+                    nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
                 String nutsPackaging = nutsDescriptor.getProperties().get("nuts-packaging");
                 if (!CoreStringUtils.isBlank(nutsPackaging)) {
-                    nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
+                    nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsPackaging).build();
                 }
                 properties.put("pom.groupId", thisId.getGroupId());
                 properties.put("pom.version", thisId.getVersion().getValue());
@@ -322,7 +322,7 @@ public class MavenUtils {
                 properties.put("project.artifactId", thisId.getArtifactId());
                 properties.put("project.version", thisId.getVersion().getValue());
                 properties.put("version", thisId.getVersion().getValue());
-                nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
+                nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.builder().applyProperties(properties).build();
             } finally {
                 if (stream != null) {
                     stream.close();

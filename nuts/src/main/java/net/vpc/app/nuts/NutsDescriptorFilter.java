@@ -30,12 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 2/19/17.
+ * Descriptor filter
  *
  * @since 0.5.4
  */
 public interface NutsDescriptorFilter extends NutsSearchIdFilter {
 
+    /**
+     * return true if descriptor is accepted
+     * @param descriptor descriptor
+     * @param session session
+     * @return true if descriptor is accepted
+     */
     boolean accept(NutsDescriptor descriptor, NutsSession session);
 
     @Override

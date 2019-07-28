@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.spi;
 
-import net.vpc.app.nuts.NutsEnvProvider;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**

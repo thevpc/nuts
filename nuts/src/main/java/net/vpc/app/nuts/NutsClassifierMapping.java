@@ -33,18 +33,50 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * Nuts can select artifact classifier
- *
- * @since 0.5.4
+ * classifier selector immutable class.
+ * Nuts can select artifact classifier according to filters based on arch, os, os dist and platform.
+ * This class defines the mapping to classifier to consider if all the filters.
+ * When multiple selectors match, the first on prevails.
+ * @since 0.5.7
  */
 public interface NutsClassifierMapping extends Serializable {
+    /**
+     * classifier to select
+     * @return classifier to select
+     */
     String getClassifier();
 
+    /**
+     * packaging to select
+     * @return classifier to select
+     */
+    String getPackaging();
+
+    /**
+     * arch list filter.
+     * al least one of the list must match.
+     * @return arch list filter
+     */
     String[] getArch();
 
+    /**
+     * os list filter.
+     * al least one of the list must match.
+     * @return os list filter
+     */
     String[] getOs();
 
+    /**
+     * os distribution list filter.
+     * al least one of the list must match.
+     * @return os distribution list filter
+     */
     String[] getOsdist();
 
+    /**
+     * platform list filter.
+     * al least one of the list must match.
+     * @return platform list filter.
+     */
     String[] getPlatform();
 }

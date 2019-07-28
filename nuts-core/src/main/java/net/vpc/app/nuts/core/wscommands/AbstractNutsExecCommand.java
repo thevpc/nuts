@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.wscommands;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.DefaultNutsExecCommandFormat;
 import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 
 import java.io.ByteArrayOutputStream;
@@ -29,17 +30,14 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected boolean redirectErrorStream;
     protected boolean failFast;
     protected boolean dry;
-    protected NutsExecCommandFormat commandStringFormatter;
 
     public AbstractNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws, "exec");
     }
 
-    private static String enforceDoubleQuote(String s) {
-        if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
-            s = "\"" + s.replace("\"", "\\\"") + "\"";
-        }
-        return s;
+    @Override
+    public NutsExecCommandFormat format(){
+        return new DefaultNutsExecCommandFormat(ws).setValue(this);
     }
 
     @Override
@@ -178,37 +176,38 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand addEnv(Map<String, String> env) {
-        if (env != null) {
-            if (this.env == null) {
-                this.env = new LinkedHashMap<>();
-                this.env.putAll(env);
-            } else {
-                this.env.putAll(env);
+        if(env!=null) {
+            for (Map.Entry<String, String> entry : env.entrySet()) {
+                setEnv(entry.getKey(), entry.getValue());
             }
         }
         return this;
     }
 
     @Override
-    public NutsExecCommand env(String k, String val) {
-        return setEnv(k, val);
+    public NutsExecCommand env(String key, String value) {
+        return setEnv(key, value);
     }
 
     @Override
-    public NutsExecCommand setEnv(String k, String val) {
-        if (env == null) {
-            env = new LinkedHashMap<>();
+    public NutsExecCommand setEnv(String key, String value) {
+        if(value ==null){
+            if (env!= null) {
+                env.remove(key);
+            }
+        }else {
+            if (env == null) {
+                env = new LinkedHashMap<>();
+            }
+            env.put(key, value);
         }
-        env.put(k, val);
         return this;
     }
 
     @Override
     public NutsExecCommand setEnv(Map<String, String> env) {
-        this.env = env == null ? null : new LinkedHashMap<>();
-        if (env != null) {
-            this.env.putAll(env);
-        }
+        clearEnv();
+        addEnv(env);
         return this;
     }
 
@@ -412,83 +411,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public String getCommandString() {
-        NutsExecCommandFormat f = getCommandLineFormat();
-        StringBuilder sb = new StringBuilder();
-        if (env != null) {
-            for (Map.Entry<String, String> e : env.entrySet()) {
-                String k = e.getKey();
-                String v = e.getValue();
-                if (f != null) {
-                    if (!f.acceptEnvName(k, v)) {
-                        continue;
-                    }
-                    String k2 = f.replaceEnvName(k, v);
-                    if (k2 != null) {
-                        k = k2;
-                    }
-                    String v2 = f.replaceEnvValue(k, v);
-                    if (v2 != null) {
-                        v = v2;
-                    }
-                }
-                if (sb.length() > 0) {
-                    sb.append(" ");
-                }
-                sb.append(enforceDoubleQuote(k)).append("=").append(enforceDoubleQuote(v));
-            }
-        }
-        for (int i = 0; i < command.size(); i++) {
-            String s = command.get(i);
-            if (f != null) {
-                if (!f.acceptArgument(i, s)) {
-                    continue;
-                }
-                String k2 = f.replaceArgument(i, s);
-                if (k2 != null) {
-                    s = k2;
-                }
-            }
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            sb.append(enforceDoubleQuote(s));
-        }
-        if (isRedirectErrorStream()) {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
-                }
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2>&1");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
-                }
-            }
-        } else {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
-                }
-            }
-            if (err != null) {
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2> ").append("{stream}");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    @Override
     public String[] getExecutorOptions() {
         return executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]);
     }
@@ -509,17 +431,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsExecCommand spawn() {
         return setExecutionType(NutsExecutionType.SPAWN);
-    }
-
-    @Override
-    public NutsExecCommandFormat getCommandLineFormat() {
-        return commandStringFormatter;
-    }
-
-    @Override
-    public NutsExecCommand setCommandLineFormat(NutsExecCommandFormat commandStringFormatter) {
-        this.commandStringFormatter = commandStringFormatter;
-        return this;
     }
 
     protected String getExtraErrorMessage() {

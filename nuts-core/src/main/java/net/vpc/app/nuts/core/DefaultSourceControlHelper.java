@@ -58,9 +58,9 @@ public class DefaultSourceControlHelper {
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.setId(d.getId().setVersion(newVersion));
+                d = d.builder().setId(d.getId().setVersion(newVersion)).build();
             } else {
-                d = d.setId(d.getId().setVersion(oldVersion + ".1"));
+                d = d.builder().setId(d.getId().setVersion(oldVersion + ".1")).build();
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().value(d).print(file);
@@ -97,7 +97,7 @@ public class DefaultSourceControlHelper {
             NutsDescriptor d = ws.descriptor().parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION);
-            d = d.setId(newId);
+            d = d.builder().setId(newId).build();
 
             ws.descriptor().value(d).print(file);
 

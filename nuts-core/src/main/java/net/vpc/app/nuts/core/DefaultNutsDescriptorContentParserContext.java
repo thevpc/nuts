@@ -49,16 +49,14 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private final NutsSession session;
     private final InputSource file;
     private final String fileExtension;
-    private final String fileType;
     private final String mimeType;
     private byte[] bytes;
     private final NutsFetchCommand options;
 
-    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String mimeType, NutsFetchCommand options) {
         this.file = file.multi();
         this.session = session;
         this.fileExtension = fileExtension;
-        this.fileType = fileType;
         this.mimeType = mimeType;
         this.options = options;
     }
@@ -98,11 +96,6 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     }
 
     @Override
-    public String getFileType() {
-        return fileType;
-    }
-
-    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -113,7 +106,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     }
 
     @Override
-    public NutsFetchCommand getQueryOptions() {
+    public NutsFetchCommand getFetchOptions() {
         return options;
     }
 

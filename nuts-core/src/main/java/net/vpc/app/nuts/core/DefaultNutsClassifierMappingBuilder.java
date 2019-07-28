@@ -6,6 +6,7 @@ import net.vpc.app.nuts.NutsClassifierMappingBuilder;
 public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappingBuilder {
 
     private String classifier;
+    private String packaging;
     private String[] arch;
     private String[] os;
     private String[] osdist;
@@ -14,12 +15,21 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
     public DefaultNutsClassifierMappingBuilder() {
     }
 
-    public DefaultNutsClassifierMappingBuilder(NutsClassifierMapping value) {
-        setClassifier(value.getClassifier());
-        setPlatform(value.getPlatform());
-        setOs(value.getOs());
-        setOsdist(value.getOsdist());
-        setPlatform(value.getPlatform());
+
+    @Override
+    public String getPackaging() {
+        return packaging;
+    }
+
+    @Override
+    public DefaultNutsClassifierMappingBuilder setPackaging(String packaging) {
+        this.packaging = packaging;
+        return this;
+    }
+
+    @Override
+    public DefaultNutsClassifierMappingBuilder packaging(String packaging) {
+        return setPackaging(packaging);
     }
 
     @Override
@@ -104,10 +114,11 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
 
     @Override
     public NutsClassifierMappingBuilder set(NutsClassifierMappingBuilder value) {
-        if(value==null){
+        if (value == null) {
             clear();
-        }else{
+        } else {
             setClassifier(value.getClassifier());
+            setPackaging(value.getPackaging());
             setOsdist(value.getOsdist());
             setOs(value.getOs());
             setPlatform(value.getPlatform());
@@ -118,10 +129,11 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
 
     @Override
     public NutsClassifierMappingBuilder set(NutsClassifierMapping value) {
-        if(value==null){
+        if (value == null) {
             clear();
-        }else{
+        } else {
             setClassifier(value.getClassifier());
+            setPackaging(value.getPackaging());
             setOsdist(value.getOsdist());
             setOs(value.getOs());
             setPlatform(value.getPlatform());
@@ -132,6 +144,7 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
 
     @Override
     public NutsClassifierMappingBuilder clear() {
+        setPackaging(null);
         setClassifier(null);
         setOsdist();
         setOs();
@@ -142,6 +155,6 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
 
     @Override
     public NutsClassifierMapping build() {
-        return new DefaultNutsClassifierMapping(classifier, arch, os, osdist, platform);
+        return new DefaultNutsClassifierMapping(classifier, packaging,arch, os, osdist, platform);
     }
 }

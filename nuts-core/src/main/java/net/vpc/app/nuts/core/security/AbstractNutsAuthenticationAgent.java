@@ -5,6 +5,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Arrays;
+import java.util.Map;
+
 import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsAuthenticationAgentSpi {
@@ -29,7 +31,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, NutsEnvProvider envProvider) {
+    public boolean removeCredentials(char[] credentialsId, Map<String,String> envProvider) {
         extractId(credentialsId);
         return true;
     }
@@ -40,7 +42,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) {
+    public void checkCredentials(char[] credentialsId, char[] password, Map<String,String> envProvider) {
         if (CoreStringUtils.isBlank(password)) {
             throw new NutsSecurityException(ws, "Missing old password");
         }
@@ -96,7 +98,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider) {
+    public char[] getCredentials(char[] credentialsId, Map<String,String> envProvider) {
         //credentials are already encrypted with default passphrase!
         CredentialsId validCredentialsId = extractId(credentialsId);
         if (validCredentialsId.type == 'B') {
@@ -110,7 +112,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
             char[] credentials,
             boolean allowRetrieve,
             char[] credentialId,
-            NutsEnvProvider envProvider
+            Map<String,String> envProvider
     ) {
         if (CoreStringUtils.isBlank(credentials)) {
             return null;
@@ -134,10 +136,13 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
         }
     }
 
-    public String getPassphrase(NutsEnvProvider envProvider) {
+    public String getPassphrase(Map<String,String> envProvider) {
         String defVal = CoreSecurityUtils.DEFAULT_PASSPHRASE;
         if (envProvider != null) {
-            String r = envProvider.getEnv("nuts.authentication-agent.simple.passphrase", defVal);
+            String r = envProvider.get("nuts.authentication-agent.simple.passphrase");
+            if (r == null) {
+                r=defVal;
+            }
             if (r == null || r.isEmpty()) {
                 r = defVal;
             }

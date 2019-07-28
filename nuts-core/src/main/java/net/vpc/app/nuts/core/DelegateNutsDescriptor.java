@@ -64,21 +64,6 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setExecutor(NutsExecutorDescriptor executor) {
-        return getBase().setExecutor(executor);
-    }
-
-    @Override
-    public NutsDescriptor setId(NutsId id) {
-        return getBase().setId(id);
-    }
-
-    @Override
-    public NutsDescriptor setPackaging(String packaging) {
-        return getBase().setPackaging(packaging);
-    }
-
-    @Override
     public String getName() {
         return getBase().getName();
     }
@@ -151,21 +136,6 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
 //    public String getAlternative() {
 //        return getBase().getAlternative();
 //    }
-
-    @Override
-    public NutsDescriptor setProperties(Map<String, String> map) {
-        return getBase().setProperties(map);
-    }
-
-    @Override
-    public NutsDescriptor addProperties(Map<String, String> map) {
-        return getBase().addProperties(map);
-    }
-
-    @Override
-    public NutsDescriptor setExecutable(boolean executable) {
-        return getBase().setExecutable(executable);
-    }
 
     @Override
     public NutsIdLocation[] getLocations() {

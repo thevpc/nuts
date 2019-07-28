@@ -444,7 +444,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session
             );
         }
-        NutsDescriptor effectiveDescriptor = descriptor.applyParents(parentDescriptors).applyProperties();
+        NutsDescriptor effectiveDescriptor = descriptor.builder().applyParents(parentDescriptors).applyProperties().build();
         NutsDependency[] oldDependencies = effectiveDescriptor.getDependencies();
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
@@ -487,7 +487,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         if (someChange) {
-            effectiveDescriptor = effectiveDescriptor.setDependencies(newDeps.toArray(new NutsDependency[0]));
+            effectiveDescriptor = effectiveDescriptor.builder().setDependencies(newDeps.toArray(new NutsDependency[0])).build();
         }
         return effectiveDescriptor;
     }

@@ -81,7 +81,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             if (cache.isWriteEnabled()) {
                 NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(c, new DefaultNutsFetchCommand(getWorkspace()).session(session.getSession()));
                 if (!id0.getLongName().equals(c.getId().getLongName())) {
-                    c = c.setId(id0);
+                    c = c.builder().setId(id0).build();
                 }
                 cache.deployDescriptor(c.getId(), c, session);
             }

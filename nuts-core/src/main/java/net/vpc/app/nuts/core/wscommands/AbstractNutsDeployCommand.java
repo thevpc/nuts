@@ -23,8 +23,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     protected String descSha1;
     protected String fromRepository;
     protected String toRepository;
-    protected boolean offline = false;
-    protected boolean transitive = true;
     protected final List<NutsId> ids = new ArrayList<>();
 
     public AbstractNutsDeployCommand(NutsWorkspace ws) {
@@ -175,30 +173,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public boolean isOffline() {
-        return offline;
-    }
-
-    @Override
-    public NutsDeployCommand setOffline(boolean offline) {
-        this.offline = offline;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public boolean isTransitive() {
-        return transitive;
-    }
-
-    @Override
-    public NutsDeployCommand setTransitive(boolean transitive) {
-        this.transitive = transitive;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
     public NutsDeployCommand content(InputStream value) {
         return setContent(value);
     }
@@ -273,26 +247,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand repository(String repository) {
         return setTargetRepository(repository);
-    }
-
-    @Override
-    public NutsDeployCommand offline() {
-        return setOffline(true);
-    }
-
-    @Override
-    public NutsDeployCommand offline(boolean offline) {
-        return setOffline(offline);
-    }
-
-    @Override
-    public NutsDeployCommand transitive() {
-        return setTransitive(true);
-    }
-
-    @Override
-    public NutsDeployCommand transitive(boolean transitive) {
-        return setTransitive(transitive);
     }
 
     @Override
@@ -410,11 +364,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             return false;
         }
         switch (a.getStringKey()) {
-            case "-o":
-            case "--offline": {
-                setOffline(cmdLine.nextBoolean().getBooleanValue());
-                return true;
-            }
             case "-d":
             case "--desc": {
                 setDescriptor(cmdLine.nextString().getStringValue());

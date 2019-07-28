@@ -118,7 +118,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                             break;
                         default:
                             try {
-                                maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), NutsWorkspaceHelper.createNoRepositorySession(parserContext.getSession(), NutsFetchMode.REMOTE, parserContext.getQueryOptions()), path));
+                                maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), NutsWorkspaceHelper.createNoRepositorySession(parserContext.getSession(), NutsFetchMode.REMOTE, parserContext.getFetchOptions()), path));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -139,8 +139,8 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
-                return baseNutsDescriptor.setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
-                    "--main-class", mainClass.get()}));
+                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
+                    "--main-class", mainClass.get()})).build();
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
@@ -156,12 +156,12 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (classes.length == 0) {
             return baseNutsDescriptor;
         } else {
-            return baseNutsDescriptor.setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
+            return baseNutsDescriptor.builder().setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
                 "--main-class=" + CoreStringUtils.join(":",
                 Arrays.stream(classes)
                 .map(x -> x.getName())
                 .collect(Collectors.toList())
-                )}, null)).setExecutable(true);
+                )}, null)).setExecutable(true).build();
         }
     }
 }

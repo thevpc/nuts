@@ -36,7 +36,10 @@ package net.vpc.app.nuts;
  */
 public interface NutsDependencyFormat extends NutsFormat {
 
-
+    /**
+     * true if omit namespace from formatted string.
+     * @return true if omit namespace from formatted string
+     */
     boolean isOmitNamespace();
 
     /**
@@ -298,6 +301,10 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat omitQueryProperty(String name);
 
 
+    /**
+     * true if highlight (distinct color) imported group
+     * @return true if highlight (distinct color) imported group
+     */
     boolean isHighlightImportedGroup();
 
     /**

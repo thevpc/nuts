@@ -35,125 +35,345 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- *
+ * Nuts deploy command
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsDeployCommand extends NutsWorkspaceCommand {
 
+    /**
+     * set content
+     * @param stream content
+     * @return {@code this} instance
+     */
     NutsDeployCommand content(InputStream stream);
 
+    /**
+     * set content
+     * @param stream content
+     * @return {@code this} instance
+     */
     NutsDeployCommand setContent(InputStream stream);
 
+    /**
+     * set content
+     * @param path content
+     * @return {@code this} instance
+     */
     NutsDeployCommand content(String path);
 
+    /**
+     * set content
+     * @param path content
+     * @return {@code this} instance
+     */
     NutsDeployCommand setContent(String path);
 
+    /**
+     * set content
+     * @param file content
+     * @return {@code this} instance
+     */
     NutsDeployCommand content(File file);
 
+    /**
+     * set content
+     * @param file content
+     * @return {@code this} instance
+     */
     NutsDeployCommand setContent(File file);
 
+    /**
+     * set content
+     * @param file content
+     * @return {@code this} instance
+     */
     NutsDeployCommand content(Path file);
 
+    /**
+     * set content
+     * @param file content
+     * @return {@code this} instance
+     */
     NutsDeployCommand setContent(Path file);
 
-    NutsDeployCommand descriptor(InputStream stream);
-
-    NutsDeployCommand setDescriptor(InputStream stream);
-
-    NutsDeployCommand descriptor(Path path);
-
-    NutsDeployCommand setDescriptor(Path path);
-
-    NutsDeployCommand descriptor(String path);
-
-    NutsDeployCommand setDescriptor(String path);
-
-    NutsDeployCommand descriptor(File file);
-
-    NutsDeployCommand setDescriptor(File file);
-
-    NutsDeployCommand descriptor(URL url);
-
-    NutsDeployCommand setDescriptor(URL url);
-
-    NutsDeployCommand sha1(String sha1);
-
-    NutsDeployCommand setSha1(String sha1);
-
-    NutsDeployCommand descSha1(String descSHA1);
-
-    NutsDeployCommand setDescSha1(String descSHA1);
-
+    /**
+     * set content
+     * @param url content
+     * @return {@code this} instance
+     */
     NutsDeployCommand content(URL url);
 
+    /**
+     * set content
+     * @param url content
+     * @return {@code this} instance
+     */
     NutsDeployCommand setContent(URL url);
 
+    /**
+     * set descriptor
+     * @param stream descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descriptor(InputStream stream);
+
+    /**
+     * set descriptor
+     * @param stream descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescriptor(InputStream stream);
+
+    /**
+     * set descriptor
+     * @param path descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descriptor(Path path);
+
+    /**
+     * set descriptor
+     * @param path descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescriptor(Path path);
+
+    /**
+     * set descriptor
+     * @param path descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descriptor(String path);
+
+    /**
+     * set descriptor
+     * @param path descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescriptor(String path);
+
+    /**
+     * set descriptor
+     * @param file descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descriptor(File file);
+
+    /**
+     * set descriptor
+     * @param file descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescriptor(File file);
+
+    /**
+     * set descriptor
+     * @param url descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descriptor(URL url);
+
+    /**
+     * set descriptor
+     * @param url descriptor
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescriptor(URL url);
+
+    /**
+     * set descriptor
+     * @param descriptor descriptor
+     * @return {@code this} instance
+     */
     NutsDeployCommand descriptor(NutsDescriptor descriptor);
 
+    /**
+     * set descriptor
+     * @param descriptor descriptor
+     * @return {@code this} instance
+     */
     NutsDeployCommand setDescriptor(NutsDescriptor descriptor);
 
-    NutsDeployCommand repository(String repository);
-
-    NutsDeployCommand setRepository(String repository);
-
-    NutsDeployCommand setTargetRepository(String repository);
-
-    String getTargetRepository();
-
-    boolean isOffline();
-
-    boolean isTransitive();
-
-    NutsDeployCommand offline();
-
-    NutsDeployCommand offline(boolean offline);
-
-    NutsDeployCommand setOffline(boolean offline);
-
-    NutsDeployCommand transitive();
-
-    NutsDeployCommand transitive(boolean transitive);
-
-    NutsDeployCommand setTransitive(boolean transitive);
-
+    /**
+     * return content sha1 hash
+     * @return content sha1 hash
+     */
     String getSha1();
 
-    NutsId[] getResult();
+    /**
+     * set content sha1 hash
+     * @param sha1 hash
+     * @return {@code this} instance
+     */
+    NutsDeployCommand sha1(String sha1);
 
-    NutsId[] getIds();
+    /**
+     * set content sha1 hash
+     * @param sha1 hash
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setSha1(String sha1);
 
-    NutsDeployCommand addId(String id);
+    /**
+     * set descriptor sha1 hash
+     * @param descSHA1 descriptor hash
+     * @return {@code this} instance
+     */
+    NutsDeployCommand descSha1(String descSHA1);
 
-    NutsDeployCommand removeId(String id);
+    /**
+     * set descriptor sha1 hash
+     * @param descSHA1 descriptor hash
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setDescSha1(String descSHA1);
 
-    NutsDeployCommand id(String id);
+    /**
+     * set target repository to deploy to
+     * @param repository target repository to deploy to
+     * @return {@code this} instance
+     */
+    NutsDeployCommand repository(String repository);
 
-    NutsDeployCommand removeId(NutsId id);
+    /**
+     * set target repository to deploy to
+     * @param repository target repository to deploy to
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setRepository(String repository);
 
-    NutsDeployCommand addId(NutsId id);
+    /**
+     * set target repository to deploy to
+     * @param repository target repository to deploy to
+     * @return {@code this} instance
+     */
+    NutsDeployCommand setTargetRepository(String repository);
 
-    NutsDeployCommand id(NutsId id);
-
-    NutsDeployCommand clearIds();
-
-    NutsDeployCommand addIds(NutsId... value);
-
-    NutsDeployCommand ids(NutsId... values);
-
-    NutsDeployCommand addIds(String... values);
-
-    NutsDeployCommand ids(String... values);
-
+    /**
+     * set target repository to deploy to
+     * @param repository target repository to deploy to
+     * @return {@code this} instance
+     */
     NutsDeployCommand to(String repository);
 
+    /**
+     * set target repository to deploy to
+     * @param repository target repository to deploy to
+     * @return {@code this} instance
+     */
     NutsDeployCommand targetRepository(String repository);
 
+    /**
+     * return target repository to deploy to
+     * @return target repository to deploy to
+     */
+    String getTargetRepository();
+
+    /**
+     * set source repository to deploy from the given ids
+     * @param repository source repository to deploy from
+     * @return {@code this} instance
+     */
     NutsDeployCommand from(String repository);
 
+    /**
+     * set source repository to deploy from the given ids
+     * @param repository source repository to deploy from
+     * @return {@code this} instance
+     */
     NutsDeployCommand sourceRepository(String repository);
 
+    /**
+     * set source repository to deploy from the given ids
+     * @param repository source repository to deploy from
+     * @return {@code this} instance
+     */
     NutsDeployCommand setSourceRepository(String repository);
+
+    /**
+     * return ids to deploy from source repository
+     * @return return ids to deploy from source repository
+     */
+    NutsId[] getIds();
+
+    /**
+     * add id to deploy from source repository
+     * @param id id to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand addId(String id);
+
+    /**
+     * add id to deploy from source repository
+     * @param id id to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand id(String id);
+
+    /**
+     * add id to deploy from source repository
+     * @param id id to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand addId(NutsId id);
+
+    /**
+     * add id to deploy from source repository
+     * @param id id to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand id(NutsId id);
+
+    /**
+     * add ids to deploy from source repository
+     * @param values ids to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand addIds(NutsId... values);
+
+    /**
+     * add ids to deploy from source repository
+     * @param values ids to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand ids(NutsId... values);
+
+    /**
+     * add ids to deploy from source repository
+     * @param values ids to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand addIds(String... values);
+
+    /**
+     * add ids to deploy from source repository
+     * @param values ids to deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand ids(String... values);
+
+    /**
+     * remove id to deploy from source repository
+     * @param id id to undo deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand removeId(String id);
+
+    /**
+     * remove id to deploy from source repository
+     * @param id id to undo deploy from source repository
+     * @return {@code this} instance
+     */
+    NutsDeployCommand removeId(NutsId id);
+
+    /**
+     * reset ids list to deploy
+     * @return {@code this} instance
+     */
+    NutsDeployCommand clearIds();
+
+
 
     /**
      * update session
@@ -192,5 +412,11 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsDeployCommand run();
+
+    /**
+     * run command (if not yet run) and return result
+     * @return deploy result
+     */
+    NutsId[] getResult();
 
 }

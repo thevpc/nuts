@@ -38,30 +38,88 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- *
+ * Xml Format Helper class
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsXmlFormat extends NutsFormat {
 
+    /**
+     * true if compact xml generated.
+     * @return true if compact xml generated.
+     */
     boolean isCompact();
 
+    /**
+     * set compact xml generated mode.
+     * @return {@code this} instance
+     */
     NutsXmlFormat compact();
 
+    /**
+     * if true compact xml generated. if false, use more versatile/formatted output.
+     * @param compact compact flag
+     * @return {@code this} instance
+     */
     NutsXmlFormat compact(boolean compact);
 
+    /**
+     * if true compact xml generated. if false, sue more versatile/formatted output.
+     * @param compact compact flag
+     * @return {@code this} instance
+     */
     NutsXmlFormat setCompact(boolean compact);
 
+    /**
+     * convert {@code value} to an xml document.
+     * @param value value to convert
+     * @return converted object
+     */
     Document toXmlDocument(Object value);
 
+    /**
+     * convert {@code value} to a valid root element to add to the given {@code xmlDocument}.
+     * if the document is null, a new one will be created.
+     * @param value value to convert
+     * @param xmlDocument target document
+     * @return converted object
+     */
     Element toXmlElement(Object value, Document xmlDocument);
 
+    /**
+     * convert {@code xmlElement} to a valid instance of type {@code clazz}
+     * @param xmlElement xmlElement to convert
+     * @param clazz target class
+     * @param <T> class type
+     * @return converted object
+     */
     <T> T fromXmlElement(Element xmlElement, Class<T> clazz);
 
+    /**
+     * parse url content as xml to the given class
+     * @param url url to parse
+     * @param clazz target class
+     * @param <T> class type
+     * @return parsed instance
+     */
     <T> T parse(URL url, Class<T> clazz);
 
+    /**
+     * parse inputStream as xml to the given class
+     * @param inputStream inputStream to parse
+     * @param clazz target class
+     * @param <T> class type
+     * @return parsed instance
+     */
     <T> T parse(InputStream inputStream, Class<T> clazz);
 
+    /**
+     * parse bytes as xml to the given class
+     * @param bytes bytes to parse
+     * @param clazz target class
+     * @param <T> class type
+     * @return parsed instance
+     */
     <T> T parse(byte[] bytes, Class<T> clazz);
 
     /**
@@ -112,10 +170,24 @@ public interface NutsXmlFormat extends NutsFormat {
     @Override
     NutsXmlFormat setSession(NutsSession session);
 
+    /**
+     * return value to format
+     * @return value to format
+     */
     Object getValue();
 
+    /**
+     * set value to format
+     * @param value value to format
+     * @return value to format
+     */
     NutsXmlFormat value(Object value);
 
+    /**
+     * set value to format
+     * @param value value to format
+     * @return value to format
+     */
     NutsXmlFormat setValue(Object value);
 
     /**
@@ -129,6 +201,6 @@ public interface NutsXmlFormat extends NutsFormat {
      * @return {@code this} instance
      */
     @Override
-    public NutsXmlFormat configure(boolean skipUnsupported, String... args);
+    NutsXmlFormat configure(boolean skipUnsupported, String... args);
 
 }

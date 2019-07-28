@@ -36,12 +36,21 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Execute command.
+ * This class helps executing all types of executables : internal, external, alias and system
  *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
+    NutsExecCommandFormat format();
+
+    /**
+     * set fail fast flag.  An exception will thrown whenever the command returns non zero value.
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand failFast();
 
     /**
@@ -66,129 +75,469 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand failFast(boolean failFast);
 
     /**
-     * failFast value
+     * if true, an exception is thrown whenever the command returns non zero value.
      *
      * @return true if failFast is armed
      */
     boolean isFailFast();
 
+    /**
+     * return command to execute
+     *
+     * @return command to execute
+     */
     String[] getCommand();
 
-    NutsExecCommand command(NutsDefinition definition);
-    
+    /**
+     * append command arguments
+     *
+     * @param command command
+     * @return {@code this} instance
+     */
     NutsExecCommand command(String... command);
 
+    /**
+     * append command arguments
+     *
+     * @param command command
+     * @return {@code this} instance
+     */
     NutsExecCommand addCommand(String... command);
 
+    /**
+     * append command arguments
+     *
+     * @param command command
+     * @return {@code this} instance
+     */
     NutsExecCommand command(Collection<String> command);
 
-    NutsExecCommand clearCommand();
 
+    /**
+     * append command arguments
+     *
+     * @param command command
+     * @return {@code this} instance
+     */
     NutsExecCommand addCommand(Collection<String> command);
 
+    /**
+     * clear command
+     *
+     * @return {@code this} instance
+     */
+    NutsExecCommand clearCommand();
+
+    /**
+     * set command artifact definition.
+     * The definition is expected to include content, dependencies, effective descriptor and install information.
+     *
+     * @param definition definition for the executable
+     * @return {@code this} instance
+     */
+    NutsExecCommand command(NutsDefinition definition);
+
+    /**
+     * append executor options
+     *
+     * @param executorOption executor options
+     * @return {@code this} instance
+     */
     NutsExecCommand addExecutorOption(String executorOption);
 
+    /**
+     * append executor option
+     *
+     * @param executorOption executor option
+     * @return {@code this} instance
+     */
     NutsExecCommand executorOption(String executorOption);
 
+    /**
+     * append executor options
+     *
+     * @param executorOptions executor options
+     * @return {@code this} instance
+     */
     NutsExecCommand executorOptions(String... executorOptions);
 
+    /**
+     * append executor options
+     *
+     * @param executorOptions executor options
+     * @return {@code this} instance
+     */
     NutsExecCommand addExecutorOptions(String... executorOptions);
 
+    /**
+     * append executor options
+     *
+     * @param executorOptions executor options
+     * @return {@code this} instance
+     */
     NutsExecCommand executorOptions(Collection<String> executorOptions);
 
+    /**
+     * append executor options
+     *
+     * @param executorOptions executor options
+     * @return {@code this} instance
+     */
     NutsExecCommand addExecutorOptions(Collection<String> executorOptions);
 
+    /**
+     * clear executor options
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand clearExecutorOptions();
 
-    Map<String,String> getEnv();
+    /**
+     * return env properties
+     *
+     * @return env properties
+     */
+    Map<String, String> getEnv();
 
+    /**
+     * set env properties
+     *
+     * @param env env properties
+     * @return {@code this} instance
+     */
     NutsExecCommand env(Map<String, String> env);
 
+    /**
+     * merge env properties
+     *
+     * @param env env properties
+     * @return {@code this} instance
+     */
     NutsExecCommand addEnv(Map<String, String> env);
 
-    NutsExecCommand env(String k, String val);
+    /**
+     * set or unset env property.
+     * the property is unset if the value is null.
+     *
+     * @param key   env key
+     * @param value env value
+     * @return {@code this} instance
+     */
+    NutsExecCommand env(String key, String value);
 
-    NutsExecCommand setEnv(String k, String val);
+    /**
+     * set or unset env property.
+     * the property is unset if the value is null.
+     *
+     * @param key   env key
+     * @param value env value
+     * @return {@code this} instance
+     */
+    NutsExecCommand setEnv(String key, String value);
 
+    /**
+     * clear existing env and set new env
+     *
+     * @param env new env
+     * @return {@code this} instance
+     */
     NutsExecCommand setEnv(Map<String, String> env);
 
+    /**
+     * clear env
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand clearEnv();
 
+    /**
+     * return execution directory
+     *
+     * @return execution directory
+     */
     String getDirectory();
 
+    /**
+     * set execution directory
+     *
+     * @param directory execution directory
+     * @return {@code this} instance
+     */
     NutsExecCommand setDirectory(String directory);
 
+    /**
+     * set execution directory
+     *
+     * @param directory execution directory
+     * @return {@code this} instance
+     */
     NutsExecCommand directory(String directory);
 
+    /**
+     * return new command input stream (standard input source)
+     *
+     * @return new command input stream (standard input source)
+     */
     InputStream getIn();
 
+    /**
+     * return new command input stream (standard input source)
+     *
+     * @return new command input stream (standard input source)
+     */
     InputStream in();
 
+    /**
+     * set new command input stream (standard input source)
+     *
+     * @param in standard input source
+     * @return {@code this} instance
+     */
     NutsExecCommand in(InputStream in);
 
+    /**
+     * set new command input stream (standard input source)
+     *
+     * @param in standard input source
+     * @return {@code this} instance
+     */
     NutsExecCommand setIn(InputStream in);
 
+    /**
+     * return new command output stream (standard output destination)
+     *
+     * @return new command output stream (standard output destination)
+     */
     PrintStream getOut();
 
+    /**
+     * return new command output stream (standard output destination)
+     *
+     * @return new command output stream (standard output destination)
+     */
     PrintStream out();
 
+    /**
+     * grab to memory standard output
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand grabOutputString();
 
+    /**
+     * grab to memory standard error
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand grabErrorString();
 
+    /**
+     * return grabbed output after command execution
+     *
+     * @return grabbed output after command execution
+     */
     String getOutputString();
 
+    /**
+     * return grabbed error after command execution
+     *
+     * @return grabbed error after command execution
+     */
     String getErrorString();
 
+    /**
+     * set new command output stream (standard output destination)
+     *
+     * @param out standard output destination
+     * @return {@code this} instance
+     */
     NutsExecCommand out(PrintStream out);
 
+    /**
+     * set new command output stream (standard output destination)
+     *
+     * @param out standard output destination
+     * @return {@code this} instance
+     */
     NutsExecCommand setOut(PrintStream out);
 
+    /**
+     * set new command error stream (standard error destination)
+     *
+     * @param err standard error destination
+     * @return {@code this} instance
+     */
     NutsExecCommand err(PrintStream err);
 
+    /**
+     * set new command error stream (standard error destination)
+     *
+     * @param err standard error destination
+     * @return {@code this} instance
+     */
     NutsExecCommand setErr(PrintStream err);
 
+    /**
+     * return new command error stream (standard error destination)
+     *
+     * @return new command error stream (standard error destination)
+     */
     PrintStream getErr();
 
+    /**
+     * return new command error stream (standard error destination)
+     *
+     * @return new command error stream (standard error destination)
+     */
     PrintStream err();
 
+    /**
+     * return execution type
+     *
+     * @return execution type
+     */
     NutsExecutionType getExecutionType();
 
+    /**
+     * return true if standard error is redirected to standard output
+     *
+     * @return true if standard error is redirected to standard output
+     */
     boolean isRedirectErrorStream();
 
+    /**
+     * redirect standard error is redirected to standard output
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand redirectErrorStream();
 
+    /**
+     * if true redirect standard error is redirected to standard output
+     *
+     * @param redirectErrorStream new value
+     * @return {@code this} instance
+     */
     NutsExecCommand setRedirectErrorStream(boolean redirectErrorStream);
 
+    /**
+     * if true redirect standard error is redirected to standard output
+     *
+     * @param redirectErrorStream new value
+     * @return {@code this} instance
+     */
     NutsExecCommand redirectErrorStream(boolean redirectErrorStream);
 
+    /**
+     * set execution type
+     *
+     * @param executionType execution type
+     * @return {@code this} instance
+     */
     NutsExecCommand setExecutionType(NutsExecutionType executionType);
 
+    /**
+     * set execution type
+     *
+     * @param executionType execution type
+     * @return {@code this} instance
+     */
     NutsExecCommand executionType(NutsExecutionType executionType);
 
+    /**
+     * set embedded execution type
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand embedded();
 
-    NutsExecCommand copyFrom(NutsExecCommand other);
-
-    NutsExecCommand copy();
-
-    int getResult();
-
-    String getCommandString();
-
-    NutsExecutableInformation which();
-
-    String[] getExecutorOptions();
-
-    NutsExecutionException getResultException();
-
+    /**
+     * set syscall execution type
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand syscall();
 
+    /**
+     * set spawn execution type
+     *
+     * @return {@code this} instance
+     */
     NutsExecCommand spawn();
 
-    NutsExecCommandFormat getCommandLineFormat();
+    /**
+     * return true if dry execution.
+     *
+     * @return true if dry execution.
+     */
+    boolean isDry();
 
-    NutsExecCommand setCommandLineFormat(NutsExecCommandFormat format);
+    /**
+     * if true set dry execution
+     *
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsExecCommand setDry(boolean value);
+
+    /**
+     * if true set dry execution
+     *
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsExecCommand dry(boolean value);
+
+    /**
+     * set dry execution
+     *
+     * @return {@code this} instance
+     */
+    NutsExecCommand dry();
+
+    /**
+     * copy all field from the given command into {@code this} instance
+     *
+     * @param other command to copy from
+     * @return {@code this} instance
+     */
+    NutsExecCommand copyFrom(NutsExecCommand other);
+
+    /**
+     * create a copy of {@code this} instance
+     *
+     * @return a copy of {@code this} instance
+     */
+    NutsExecCommand copy();
+
+    /**
+     * return result value. if not yet executed, will execute first.
+     *
+     * @return result value
+     */
+    int getResult();
+
+    /**
+     * return executable information
+     *
+     * @return executable information
+     */
+    NutsExecutableInformation which();
+
+    /**
+     * return executor options
+     *
+     * @return executor options
+     */
+    String[] getExecutorOptions();
+
+    /**
+     * return result exception or null
+     *
+     * @return result exception or null
+     */
+    NutsExecutionException getResultException();
+
 
     /**
      * update session
@@ -214,7 +563,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -227,12 +576,4 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsExecCommand run();
-
-    boolean isDry();
-
-    NutsExecCommand setDry(boolean value);
-
-    NutsExecCommand dry(boolean value);
-
-    NutsExecCommand dry();
 }

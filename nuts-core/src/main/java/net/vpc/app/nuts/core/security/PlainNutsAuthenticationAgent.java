@@ -5,6 +5,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @NutsSingleton
 public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsAuthenticationAgentSpi {
@@ -22,7 +23,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, NutsEnvProvider envProvider) {
+    public boolean removeCredentials(char[] credentialsId, Map<String,String> envProvider) {
         extractId(credentialsId);
         return true;
     }
@@ -33,7 +34,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, NutsEnvProvider envProvider) {
+    public void checkCredentials(char[] credentialsId, char[] password, Map<String,String> envProvider) {
         if (CoreStringUtils.isBlank(password)) {
             throw new NutsSecurityException(ws, "Missing old password");
         }
@@ -64,7 +65,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, NutsEnvProvider envProvider) {
+    public char[] getCredentials(char[] credentialsId, Map<String,String> envProvider) {
         return extractId(credentialsId);
     }
 
@@ -73,7 +74,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
             char[] credentials,
             boolean allowRetrieve,
             char[] credentialId,
-            NutsEnvProvider envProvider
+            Map<String,String> envProvider
     ) {
         if (CoreStringUtils.isBlank(credentials)) {
             return null;

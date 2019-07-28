@@ -32,39 +32,65 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- *
+ * Repository Deploy command provided by Repository and used by Workspace.
+ * This class is part of Nuts SPI and is not to be used by end users.
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
+    /**
+     * content to deploy
+     * @return content to deploy
+     */
     Path getContent();
 
+    /**
+     * descriptor to deploy
+     * @return descriptor to deploy
+     */
     NutsDescriptor getDescriptor();
 
+    /**
+     * id to deploy
+     * @return id to deploy
+     */
     NutsId getId();
 
-    String getRepository();
 
-    boolean isOffline();
-
-    boolean isTransitive();
-
+    /**
+     * set content to deploy
+     * @param content content to deploy
+     * @return {@code this} instance
+     */
     NutsDeployRepositoryCommand setContent(Path content);
 
+    /**
+     * set descriptor to deploy
+     * @param descriptor descriptor to deploy
+     * @return {@code this} instance
+     */
     NutsDeployRepositoryCommand setDescriptor(NutsDescriptor descriptor);
 
+    /**
+     * set id to deploy
+     * @param id id to deploy
+     * @return {@code this} instance
+     */
     NutsDeployRepositoryCommand setId(NutsId id);
 
-    NutsDeployRepositoryCommand setOffline(boolean offline);
-
-    NutsDeployRepositoryCommand setRepository(String repository);
-
-    NutsDeployRepositoryCommand setTransitive(boolean transitive);
-
+    /**
+     * session
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsDeployRepositoryCommand setSession(NutsRepositorySession session);
 
+    /**
+     * run deploy command
+     * @return {@code this} instance
+     */
     @Override
     NutsDeployRepositoryCommand run();
 }

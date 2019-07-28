@@ -37,7 +37,7 @@ import java.util.Properties;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsRepositoryConfigManager extends NutsEnvProvider {
+public interface NutsRepositoryConfigManager {
 
     String getUuid();
 
@@ -59,6 +59,10 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
      * @return repository global (workspace independent) name
      */
     String getGlobalName();
+
+    Map<String,String> getEnv();
+
+    String getEnv(String property, String defaultValue);
 
     String getType();
 

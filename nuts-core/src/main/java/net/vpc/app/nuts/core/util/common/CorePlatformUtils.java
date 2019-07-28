@@ -43,6 +43,7 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import net.vpc.app.nuts.core.DefaultNutsExecutionEntry;
 import net.vpc.app.nuts.core.util.io.InputStreamVisitor;
 import net.vpc.app.nuts.core.util.io.ProcessBuilder2;
@@ -54,14 +55,28 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
 public class CorePlatformUtils {
 
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
-    public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
-    private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
-    private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
+    //    public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
+    private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86_32", "x86_64", "itanium_32", "itanium_64"
+            , "sparc_32", "sparc_64", "arm_32","aarch_64","mips_32","mipsel_32","mips_64","mipsel_64"
+            ,"ppc_32","ppcle_32","ppc_64","ppcle_64","s390_32","s390_64"
+    ));
+    private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "macos", "sunos"
+            , "freebsd", "openbsd", "netbsd", "aix", "hpux", "as400", "zos", "unknown"
+    ));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
     private static final WeakHashMap<String, PlatformBeanProperty> cachedPlatformBeanProperties = new WeakHashMap<>();
 
     static {
-        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
+//        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
+    }
+
+    private static String buildUnixOsNameAndVersion(String name) {
+        Map<String, String> m = getOsDistMap();
+        String v = m.get("osVersion");
+        if (CoreStringUtils.isBlank(v)) {
+            return name;
+        }
+        return name + "#" + v;
     }
 
     public static Map<String, String> getOsDistMap() {
@@ -111,6 +126,7 @@ public class CorePlatformUtils {
 //        }
 //        return "/usr/share";
 //    }
+
     /**
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
@@ -254,13 +270,7 @@ public class CorePlatformUtils {
     public static String getPlatformOs() {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
-            Map<String, String> m = getOsDistMap();
-
-            String v = m.get("osVersion");
-            if (CoreStringUtils.isBlank(v)) {
-                return "linux";
-            }
-            return "linux#" + v;
+            return buildUnixOsNameAndVersion("linux");
         }
         if (property.startsWith("win")) {
             if (property.startsWith("windows 10")) {
@@ -287,28 +297,34 @@ public class CorePlatformUtils {
             return "windows";
         }
         if (property.startsWith("mac")) {
-            if (property.startsWith("mac os x")) {
-                return "mac#10";
+            if (property.startsWith("mac os x") || property.startsWith("macosx")) {
+                return "macos#10";
             }
-            return "mac";
+            return buildUnixOsNameAndVersion("macos");
         }
-        if (property.startsWith("sunos")) {
-            Map<String, String> m = getOsDistMap();
-
-            String v = m.get("osVersion");
-            if (CoreStringUtils.isBlank(v)) {
-                return "sunos";
-            }
-            return "sunos#" + v;
+        if (property.startsWith("sunos") || property.startsWith("solaris")) {
+            return buildUnixOsNameAndVersion("sunos");
+        }
+        if (property.startsWith("zos")) {
+            return buildUnixOsNameAndVersion("zos");
         }
         if (property.startsWith("freebsd")) {
-            Map<String, String> m = getOsDistMap();
-
-            String v = m.get("osVersion");
-            if (CoreStringUtils.isBlank(v)) {
-                return "freebsd";
-            }
-            return "freebsd#" + v;
+            return buildUnixOsNameAndVersion("freebsd");
+        }
+        if (property.startsWith("openbsd")) {
+            return buildUnixOsNameAndVersion("openbsd");
+        }
+        if (property.startsWith("netbsd")) {
+            return buildUnixOsNameAndVersion("netbsd");
+        }
+        if (property.startsWith("aix")) {
+            return buildUnixOsNameAndVersion("aix");
+        }
+        if (property.startsWith("hpux")) {
+            return buildUnixOsNameAndVersion("hpux");
+        }
+        if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
+            return buildUnixOsNameAndVersion("os400");
         }
         return "unknown";
 //        return property;
@@ -334,10 +350,95 @@ public class CorePlatformUtils {
         throw new NutsIllegalArgumentException(null, "Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
+    /**
+     * impl-note: list updated from https://github.com/trustin/os-maven-plugin
+     * @return uniform platform architecture
+     */
     public static String getPlatformArch() {
-        String property = System.getProperty("os.arch");
-        String aliased = SUPPORTED_ARCH_ALIASES.get(property);
-        return (aliased == null) ? property : aliased;
+        String property = System.getProperty("os.arch").toLowerCase();
+        switch (property) {
+            case "x8632":
+            case "x86":
+            case "i386":
+            case "i486":
+            case "i586":
+            case "i686":
+            case "ia32":
+            case "x32": {
+                return "x86_32";
+            }
+            case "x8664":
+            case "amd64":
+            case "ia32e":
+            case "em64t":
+            case "x64": {
+                return "x86_64";
+            }
+            case "ia64n": {
+                return "itanium_32";
+            }
+            case "sparc":
+            case "sparc32": {
+                return "sparc_32";
+            }
+            case "sparcv9":
+            case "sparc64": {
+                return "sparc_64";
+            }
+            case "arm":
+            case "arm32": {
+                return "arm_32";
+            }
+            case "arm64": //merged with aarch64
+            case "aarch64":
+                {
+                return "aarch_64";
+            }
+            case "mips":
+            case "mips32": {
+                return "mips_32";
+            }
+            case "mipsel":
+            case "mips32el": {
+                return "mipsel_32";
+            }
+            case "mips64": {
+                return "mips_64";
+            }
+            case "mips64el": {
+                return "mipsel_64";
+            }
+            case "ppc":
+            case "ppc32": {
+                return "ppc_32";
+            }
+            case "ppcle":
+            case "ppc32le": {
+                return "ppcle_32";
+            }
+            case "ppc64": {
+                return "ppc_64";
+            }
+            case "ppc64le": {
+                return "ppcle_64";
+            }
+            case "s390": {
+                return "s390_32";
+            }
+            case "s390x": {
+                return "s390_64";
+            }
+            case "ia64w":
+            case "itanium64": {
+                return "itanium_64";
+            }
+            default: {
+                if (property.startsWith("ia64w") && property.length() == 6) {
+                    return "itanium_64";
+                }
+                return "unknown";
+            }
+        }
     }
 
     public static Boolean getExecutableJar(File file) {
@@ -618,7 +719,7 @@ public class CorePlatformUtils {
         return null;
     }
 
-//    /**
+    //    /**
 //     * @param stream
 //     * @return
 //     * @throws IOException

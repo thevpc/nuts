@@ -196,9 +196,7 @@ public class NutsRepositoryMirroringHelper {
                     .setId(effId)
                     .setContent(local.getPath())
                     .setDescriptor(desc)
-                    .setRepository(repo.config().getName())
-                    .setTransitive(true)
-                    .setOffline(cmd.isOffline())
+//                    .setOffline(cmd.isOffline())
                     .setSession(session)
                     .run();
             NutsRepositoryUtils.Events.fireOnPush(repo,new DefaultNutsContentEvent(local.getPath(), dep, session.getSession(), repo));
