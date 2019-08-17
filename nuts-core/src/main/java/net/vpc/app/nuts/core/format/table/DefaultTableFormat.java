@@ -246,7 +246,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<DefaultCell> cells = new ArrayList<>();
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsAlignFormat a, int columns, NutsTerminalFormat tf) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTerminalFormat tf) {
         int length = tf.textLength(sb.toString());
         switch (a) {
             case FIRST: {
@@ -313,14 +313,14 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         int columns;
         NutsTableCellFormat formatter;
         NutsTerminalFormat metrics;
-        NutsAlignFormat valign;
-        NutsAlignFormat halign;
+        NutsPositionType valign;
+        NutsPositionType halign;
 
         private RenderedCell() {
 
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsAlignFormat valign, NutsAlignFormat halign, NutsTerminalFormat metrics) {
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTerminalFormat metrics) {
             this.formatter = formatter;
             this.metrics = metrics;
             this.valign = valign;

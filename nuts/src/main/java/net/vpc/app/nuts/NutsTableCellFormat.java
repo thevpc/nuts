@@ -40,12 +40,12 @@ public interface NutsTableCellFormat {
         return String.valueOf(value);
     }
 
-    default NutsAlignFormat getHorizontalAlign(int row, int col, Object value) {
-        return NutsAlignFormat.FIRST;
+    default NutsPositionType getHorizontalAlign(int row, int col, Object value) {
+        return NutsPositionType.FIRST;
     }
 
-    default NutsAlignFormat getVerticalAlign(int row, int col, Object value) {
-        return NutsAlignFormat.FIRST;
+    default NutsPositionType getVerticalAlign(int row, int col, Object value) {
+        return NutsPositionType.FIRST;
     }
 
 }

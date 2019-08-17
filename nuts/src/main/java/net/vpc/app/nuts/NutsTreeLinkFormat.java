@@ -36,7 +36,7 @@ package net.vpc.app.nuts;
  */
 public interface NutsTreeLinkFormat {
 
-    String formatMain(NutsAlignFormat type);
+    String formatMain(NutsPositionType type);
 
-    String formatChild(NutsAlignFormat type);
+    String formatChild(NutsPositionType type);
 }

@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.5
  */
-public enum NutsAlignFormat {
+public enum NutsPositionType {
     /**
      * LEFT, TOP
      */
@@ -58,7 +58,7 @@ public enum NutsAlignFormat {
      */
     private final String id;
 
-    NutsAlignFormat() {
+    NutsPositionType() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 

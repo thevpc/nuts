@@ -48,7 +48,7 @@ public class NAdminMain extends NutsApplication {
                 if (cmdLine.hasNext()) {
                     PrintStream out = context.session().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
-                    out.printf("type for more help : config -h%n");
+                    out.printf("type for more help : nadmin -h%n");
                     throw new NutsExecutionException(context.getWorkspace(), "Unexpected " + cmdLine.peek(), 1);
                 }
                 break;

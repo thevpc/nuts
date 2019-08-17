@@ -1,6 +1,6 @@
 package net.vpc.app.nuts.core.format.table;
 
-import net.vpc.app.nuts.NutsAlignFormat;
+import net.vpc.app.nuts.NutsPositionType;
 import net.vpc.app.nuts.NutsTableCellFormat;
 
 /**
@@ -21,8 +21,8 @@ public class DefaultTableHeaderFormat implements NutsTableCellFormat {
     }
 
     @Override
-    public NutsAlignFormat getHorizontalAlign(int row, int col, Object value) {
-        return NutsAlignFormat.HEADER;
+    public NutsPositionType getHorizontalAlign(int row, int col, Object value) {
+        return NutsPositionType.HEADER;
     }
 
 }
