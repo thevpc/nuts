@@ -200,7 +200,7 @@ public class NutsWorkspaceUtils {
                 try {
                     t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
                 } catch (Exception e) {
-                    //ignore...
+                    LOG.log(Level.FINE,"Unable to resolve support level for : "+repository.config().name(),e);
                 }
                 if (t > 0) {
                     repos2.add(new RepoAndLevel(repository, t, postComp));

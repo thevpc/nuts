@@ -9,13 +9,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.impl.def.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
-
+    private static final Logger LOG=Logger.getLogger(ConfigNutsWorkspaceCommandFactory.class.getName());
     private NutsWorkspaceConfigManager configManager;
     private NutsWorkspaceConfigManagerExt configManagerExt;
 
@@ -100,6 +102,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
+                        LOG.log(Level.FINE,"Unable to parse "+file,ex);
                         //
                     }
                     if (c != null) {

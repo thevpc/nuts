@@ -4,6 +4,8 @@ import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.logging.Level;
+
 import net.vpc.app.nuts.core.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 

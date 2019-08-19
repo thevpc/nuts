@@ -33,12 +33,16 @@ import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.NutsIdAndNutsDependencyFilterItem;
 import net.vpc.app.nuts.core.filters.dependency.NutsExclusionDependencyFilter;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class NutsIdGraph {
+    private static final Logger LOG=Logger.getLogger(NutsIdGraph.class.getName());
 
     private NutsIdGraphContext context = new NutsIdGraphContext();
 
@@ -280,7 +284,7 @@ public class NutsIdGraph {
                                         stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
                                     } catch (NutsNotFoundException ex) {
                                         if (dept.isOptional()) {
-                                            //ignore
+                                            LOG.log(Level.FINE,"Unable to resolve optional dependency "+dept.getId()+" for "+curr.id,ex);
                                         } else {
                                             stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
                                         }

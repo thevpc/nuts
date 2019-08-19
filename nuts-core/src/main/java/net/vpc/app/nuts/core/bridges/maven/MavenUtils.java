@@ -495,6 +495,7 @@ public class MavenUtils {
             }
 
         } catch (Exception ex) {
+            LOG.log(Level.FINE, "Failed to loadDependenciesAndRepositoriesFromPomUrl " + url,ex);
             //ignore
         } finally {
             if (xml != null) {
@@ -549,8 +550,9 @@ public class MavenUtils {
                 repoUrl = repoUrl + "/";
             }
             boolean found = false;
+            String mavenMetadataXml = repoUrl + path + "/maven-metadata.xml";
             try {
-                URL runtimeMetadata = new URL(repoUrl + path + "/maven-metadata.xml");
+                URL runtimeMetadata = new URL(mavenMetadataXml);
                 found = true;
                 DocumentBuilderFactory factory
                         = DocumentBuilderFactory.newInstance();
@@ -581,6 +583,7 @@ public class MavenUtils {
                     //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                 }
             } catch (Exception ex) {
+                LOG.log(Level.FINE, "Failed to load and parse " + mavenMetadataXml,ex);
                 // ignore any error
             }
             if (found) {

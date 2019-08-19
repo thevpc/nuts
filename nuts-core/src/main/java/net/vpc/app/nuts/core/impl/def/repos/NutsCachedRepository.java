@@ -116,7 +116,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 //ignore....
             } catch (Exception ex) {
                 //ignore....
-                LOG.log(Level.SEVERE, "Search lateset versions error : " + ex.toString(), ex);
+                LOG.log(Level.SEVERE, "Search latest versions error : " + ex.toString(), ex);
             }
             if (p != null) {
                 li.add(p);

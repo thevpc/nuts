@@ -19,14 +19,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
+
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class MavenMetadataParser {
+    private static final Logger LOG=Logger.getLogger(MavenMetadataParser.class.getName());
 
     public static String toXmlString(MavenMetadata m) {
         ByteArrayOutputStream s = new ByteArrayOutputStream();
@@ -176,7 +180,7 @@ public class MavenMetadataParser {
 
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
-            //ignore!!
+            LOG.log(Level.FINE, "Failed to parse date " + lastUpdated,ex);
         }
         for (String version : versions) {
             info.getVersions().add(version.trim());

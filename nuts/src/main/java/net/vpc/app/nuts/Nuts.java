@@ -52,9 +52,13 @@ public final class Nuts {
                     Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
                     null, false).getProperty("project.version", "0.0.0");
         } catch (Exception ex) {
-            System.err.println("Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
             ex.printStackTrace();
             version = "0.0.0";
+        }
+        if(version==null || version.trim().isEmpty() || version.equals("0.0.0")){
+            System.err.println("**ATTENTION**");
+            System.err.println("Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
+            System.err.println();
         }
     }
 

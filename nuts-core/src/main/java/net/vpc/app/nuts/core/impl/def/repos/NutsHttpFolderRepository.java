@@ -328,10 +328,10 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if(CoreNutsUtils.acceptClassifier(location,id.getClassifier())) {
                     try {
-                        getWorkspace().io().copy().session(session.getSession()).from(location).to(localFile).safeCopy().monitorable().run();
+                        getWorkspace().io().copy().session(session.getSession()).from(location.getUrl()).to(localFile).safeCopy().monitorable().run();
                         return new DefaultNutsContent(localFile, false, false);
                     } catch (Exception ex) {
-                        //ignore!!
+                        LOG.log(Level.FINE,"Unable to download location for id "+id+" : "+location.getUrl(),ex);
                     }
                 }
             }

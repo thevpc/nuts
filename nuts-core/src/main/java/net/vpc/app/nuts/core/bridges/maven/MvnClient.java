@@ -2,8 +2,11 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 
-public class MvnClient {
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+public class MvnClient {
+    private static final Logger LOG=Logger.getLogger(MvnClient.class.getName());
     public static final String NET_VPC_APP_NUTS_MVN = "net.vpc.app.nuts.toolbox:mvn";
     private NutsWorkspace ws;
     private Status status = Status.INIT;
@@ -41,6 +44,7 @@ public class MvnClient {
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
+                    LOG.log(Level.FINE, "Failed to load " + NET_VPC_APP_NUTS_MVN,ex);
                     ex.printStackTrace();
                     status = Status.FAIL;
                     return false;
@@ -71,6 +75,7 @@ public class MvnClient {
                     ).setSession(session).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
+            LOG.log(Level.FINE, "Failed to invoke " + NET_VPC_APP_NUTS_MVN,ex);
             return false;
         }
     }

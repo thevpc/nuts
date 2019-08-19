@@ -47,6 +47,7 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
                     //NutsWorkspace ws = repository.getWorkspace();
                     nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
                 } catch (Exception e) {
+                    LOG.log(Level.FINE, "Failed to resolve effective desc "+ descriptor.getId()+" for "+id,e);
                     //throw new NutsException(e);
                 }
                 descriptor = nutsDescriptor;

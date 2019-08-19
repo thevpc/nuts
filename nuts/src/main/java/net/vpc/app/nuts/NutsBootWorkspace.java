@@ -785,6 +785,7 @@ public final class NutsBootWorkspace {
             try {
                 localFile = PrivateNutsUtils.toFile(new URL(repository));
             } catch (Exception ex) {
+                LOG.log(Level.FINE,"Unable to convert url to file : "+repository,ex);
                 //ignore
             }
         } else {

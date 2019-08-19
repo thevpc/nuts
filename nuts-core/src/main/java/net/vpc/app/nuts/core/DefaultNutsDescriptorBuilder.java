@@ -252,7 +252,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setLocations(NutsIdLocation[] locations) {
-        this.locations = (properties == null)?new ArrayList<>() : new ArrayList<>(Arrays.asList(locations));
+        this.locations = (locations == null)?new ArrayList<>() : new ArrayList<>(Arrays.asList(locations));
         return this;
     }
 

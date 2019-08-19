@@ -33,6 +33,9 @@ import net.vpc.app.nuts.*;
 
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -41,7 +44,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * Created by vpc on 2/21/17.
  */
 class FilesFoldersApiIdIterator implements Iterator<NutsId> {
-
+    private static final Logger LOG=Logger.getLogger(FilesFoldersApiIdIterator.class.getName());
     private final String repository;
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
@@ -110,7 +113,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                             .monitor().source(file.path).session(session.getSession()).create(),
                             session);
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    LOG.log(Level.FINE,"Error parsing url : "+file.path+" : "+e.toString(),e);//e.printStackTrace();
                 }
                 if (t != null) {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
@@ -118,7 +121,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         try {
                             nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
                         } catch (Exception e) {
-                            //throw new NutsException(e);
+                            LOG.log(Level.FINE,"Error resolving effective descriptor for '"+t.getId()+"' in url : "+file.path+" : "+e.toString(),e);//e.printStackTrace();
                         }
                         t = nutsDescriptor;
                     }

@@ -3,6 +3,9 @@ package net.vpc.app.nuts.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsCommandExecOptions;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
@@ -13,7 +16,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
 public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
-
+    private static final Logger LOG=Logger.getLogger(DefaultNutsWorkspaceCommandAlias.class.getName());
     private String name;
     private NutsId owner;
     private String factoryId;
@@ -156,7 +159,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .run()
                         .getOutputString();
             } catch (Exception ex) {
-                //ignore
+                LOG.log(Level.FINE, "Failed to retrieve help for " + getName(),ex);
                 return "Failed to retrieve help for " + getName();
             }
         }

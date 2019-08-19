@@ -370,7 +370,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public NutsIdLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsIdLocationBuilder b = context.deserialize(json, NutsIdLocationBuilder.class);
+            NutsIdLocationBuilder b = context.deserialize(json, DefaultNutsIdLocationBuilder.class);
             return b.build();
         }
 
@@ -389,7 +389,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public NutsClassifierMapping deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsClassifierMappingBuilder b = context.deserialize(json, NutsClassifierMappingBuilder.class);
+            NutsClassifierMappingBuilder b = context.deserialize(json, DefaultNutsClassifierMappingBuilder.class);
             return b.build();
         }
 
@@ -408,7 +408,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public NutsExecutorDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsExecutorDescriptorBuilder b = context.deserialize(json, NutsExecutorDescriptorBuilder.class);
+            NutsExecutorDescriptorBuilder b = context.deserialize(json, DefaultNutsExecutorDescriptorBuilder.class);
             return b.build();
         }
 

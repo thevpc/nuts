@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.*;
@@ -50,7 +52,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  * @author vpc
  */
 public class FormattableNutsId {
-
+    private static Logger LOG=Logger.getLogger(FormattableNutsId.class.getName());
     NutsId id;
     boolean i;
     boolean d;
@@ -528,7 +530,7 @@ public class FormattableNutsId {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                //ignore!!
+                LOG.log(Level.FINE, "Failed to build id format for "+ id,ex);
             }
 
             if (def != null) {

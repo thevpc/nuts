@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -30,7 +33,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  * @author vpc
  */
 public class DefaultSourceControlHelper {
-
+    private static final Logger LOG=Logger.getLogger(DefaultSourceControlHelper.class.getName());
     private NutsWorkspace ws;
 
     public DefaultSourceControlHelper(NutsWorkspace ws) {
@@ -55,6 +58,7 @@ public class DefaultSourceControlHelper {
             try {
                 newVersionFound = ws.fetch().id(d.getId().setVersion(newVersion)).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
+                LOG.log(Level.FINE, "Failed to fetch " + d.getId().setVersion(newVersion),ex);
                 //ignore
             }
             if (newVersionFound == null) {

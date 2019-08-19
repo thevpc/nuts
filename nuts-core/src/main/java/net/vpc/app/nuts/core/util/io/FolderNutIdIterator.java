@@ -37,6 +37,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -45,6 +48,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * Created by vpc on 2/21/17.
  */
 public class FolderNutIdIterator implements Iterator<NutsId> {
+    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
 
     private final String repository;
     private NutsId last;
@@ -97,7 +101,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                             } catch (Exception e) {
-                                //ignore
+                                LOG.log(Level.FINE,"Unable to test desk file "+pathname,e);
                                 return false;
                             }
                         }

@@ -11,11 +11,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.vpc.app.nuts.NutsCommandLine;
 
 public class NutsMvnMain extends NutsApplication {
+    private static final Logger LOG= Logger.getLogger(NutsMvnMain.class.getName());
 //    public static void main(String[] args) {
 //        main0(new String[]{
 //                "--json", "--get", "net.vpc.common:vpc-common-classpath:1.3", "vpc-public-maven"
@@ -132,6 +136,7 @@ public class NutsMvnMain extends NutsApplication {
                 }
                 return r;
             } catch (Exception ex) {
+                LOG.log(Level.FINE,"Error executing mvn command "+ Arrays.toString(args),ex);//e.printStackTrace();
                 appContext.session().out().println("{'result':'error'}");
                 return 1;
             }

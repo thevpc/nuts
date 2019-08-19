@@ -266,6 +266,7 @@ final class PrivateNutsUtils {
                             try {
                                 inputStream.close();
                             } catch (Exception ex) {
+                                LOG.log(Level.FINE,"Unable to close stream",ex);
                                 //
                             }
                         }
@@ -994,7 +995,7 @@ final class PrivateNutsUtils {
                 }
 
             } catch (Exception ex) {
-                //ignore
+                LOG.log(Level.FINE,"Unable to loadDependenciesAndRepositoriesFromPomUrl "+url,ex);
             } finally {
                 if (xml != null) {
                     try {
@@ -1047,9 +1048,10 @@ final class PrivateNutsUtils {
                 if (!repoUrl.endsWith("/")) {
                     repoUrl = repoUrl + "/";
                 }
+                String mavenMetadata = repoUrl + path + "/maven-metadata.xml";
                 boolean found = false;
                 try {
-                    URL runtimeMetadata = new URL(repoUrl + path + "/maven-metadata.xml");
+                    URL runtimeMetadata = new URL(mavenMetadata);
                     found = true;
                     DocumentBuilderFactory factory
                             = DocumentBuilderFactory.newInstance();
@@ -1080,6 +1082,7 @@ final class PrivateNutsUtils {
                         //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                     }
                 } catch (Exception ex) {
+                    LOG.log(Level.FINE,"Unable to parse "+mavenMetadata,ex);
                     // ignore any error
                 }
                 if (found) {

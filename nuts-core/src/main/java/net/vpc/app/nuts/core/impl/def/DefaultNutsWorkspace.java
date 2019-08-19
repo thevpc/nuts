@@ -414,6 +414,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         return d;
                     }
                 } catch (Exception ex) {
+                    LOG.log(Level.FINE, "Failed to parse  "+ eff,ex);
                     //
                 }
             }
@@ -429,6 +430,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             descriptor().value(effectiveDescriptor).print(eff);
         } catch (Exception ex) {
+            LOG.log(Level.FINE, "Failed to print "+ eff,ex);
             //
         }
         return effectiveDescriptor;
@@ -643,6 +645,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         try {
                             getInstalledRepository().uninstall(executionContext.getDefinition().getId(), session);
                         } catch (Exception ex2) {
+                            LOG.log(Level.FINE, "Failed to uninstall  "+ executionContext.getDefinition().getId(),ex);
                             //ignore if we could not uninstall
                         }
                         throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);

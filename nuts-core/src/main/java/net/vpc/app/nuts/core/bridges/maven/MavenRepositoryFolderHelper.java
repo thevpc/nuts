@@ -48,6 +48,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -70,7 +72,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  * @author vpc
  */
 public class MavenRepositoryFolderHelper {
-
+    private static Logger LOG=Logger.getLogger(MavenRepositoryFolderHelper.class.getName());
     private NutsRepository repo;
     private NutsWorkspace ws;
     private Path rootPath;
@@ -232,6 +234,7 @@ public class MavenRepositoryFolderHelper {
                                     old = MavenMetadataParser.parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
+                                LOG.log(Level.FINE, "Failed to parse metadata xml for " + metadataxml,ex);
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();

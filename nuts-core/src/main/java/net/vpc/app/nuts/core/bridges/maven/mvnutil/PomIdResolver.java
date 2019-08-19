@@ -3,7 +3,6 @@ package net.vpc.app.nuts.core.bridges.maven.mvnutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +11,7 @@ import java.util.zip.ZipInputStream;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 public class PomIdResolver {
+    private static final Logger LOG=Logger.getLogger(PomIdResolver.class.getName());
 
     public static PomId[] resolvePomId(URL baseUrl, String referenceResourcePath) {
         List<PomId> all = new ArrayList<PomId>();
@@ -53,11 +53,11 @@ public class PomIdResolver {
                 try {
                     all.add(new PomXmlParser().parse(new URL(s2)).getPomId());
                 } catch (Exception ex) {
-                    //ignore!!
+                    LOG.log(Level.FINE, "Failed to parse pom file " + s2,ex);
                 }
             }
         }
-        return all.toArray(new PomId[all.size()]);
+        return all.toArray(new PomId[0]);
     }
 
     /**

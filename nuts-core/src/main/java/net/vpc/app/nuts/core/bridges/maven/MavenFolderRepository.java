@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
@@ -153,6 +154,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                     try {
                         d = MavenUtils.parsePomXml(f, getWorkspace(), session);
                     } catch (Exception ex) {
+                        LOG.log(Level.FINE, "Failed to parse pom file " + f,ex);
                         //
                     }
                     if (d != null) {

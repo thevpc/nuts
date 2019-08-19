@@ -21,6 +21,7 @@ import java.util.zip.ZipInputStream;
  * @author vpc
  */
 public class ZipSource extends SourceAdapter {
+    private static Logger LOG = Logger.getLogger(ZipSource.class.getName());
 
     public ZipSource(Source source) {
         super(source);
@@ -74,7 +75,7 @@ public class ZipSource extends SourceAdapter {
             try {
                 zip = in == null ? null : new JarInputStream(in);
             } catch (Exception ex) {
-                Logger.getLogger(ZipSource.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, "Error creating input stream", ex);
             }
         }
 

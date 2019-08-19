@@ -33,6 +33,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
@@ -45,6 +48,7 @@ import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
  * @author vpc
  */
 public class NutsDependencyScopes {
+    private static final Logger LOG=Logger.getLogger(NutsDependencyScopes.class.getName());
 
     public static final NutsDependencyFilter SCOPE_RUN = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.RUN), CoreNutsUtils.NON_OPTIONAL);
     public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
@@ -288,7 +292,7 @@ public class NutsDependencyScopes {
             String enumString = value.toUpperCase().replace('-', '_');
             return NutsDependencyScope.valueOf(enumString);
         }catch (Exception ex){
-            //ignore
+            LOG.log(Level.FINE,"Unable to parse NutsDependencyScope : "+value,ex);
         }
         return NutsDependencyScope.OTHER;
     }
@@ -323,7 +327,7 @@ public class NutsDependencyScopes {
             String enumString = value.toUpperCase().replace('-', '_');
             return NutsDependencyScopePattern.valueOf(enumString);
         }catch (Exception ex){
-            //ignore
+            LOG.log(Level.FINE,"Unable to parse NutsDependencyScope : "+value,ex);
         }
         return NutsDependencyScopePattern.OTHER;
     }

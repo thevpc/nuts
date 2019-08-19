@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsSession;
@@ -22,7 +25,7 @@ import net.vpc.toolbox.mysql.util.MysqlUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 
 public class LocalMysql {
-
+    private static final Logger LOG=Logger.getLogger(LocalMysql.class.getName());
     private NutsApplicationContext context;
 
     public LocalMysql(NutsApplicationContext ws) {
@@ -503,6 +506,7 @@ public class LocalMysql {
                         LocalMysqlConfigService c = loadMysqlConfig(file1);
                         all.add(c);
                     } catch (Exception ex) {
+                        LOG.log(Level.FINE,"Error loading config url : "+file1,ex);//e.printStackTrace();
                         //ignore
                     }
                 }

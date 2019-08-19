@@ -120,7 +120,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 try (Reader rr = new InputStreamReader(u.openStream())) {
                     s = ws.json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException e) {
-                    //ignore!
+                    LOG.log(Level.FINE, "Failed to parse NutsExtensionInformation from " + u,e);
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -279,6 +279,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                         try {
                             zipFile.close();
                         } catch (IOException e) {
+                            LOG.log(Level.FINE, "Failed to close zip file " + file.getPath(),e);
                             //ignore return false;
                         }
                     }

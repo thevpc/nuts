@@ -217,7 +217,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
 
         InputStream openedStream = stream.open();
-        if (!monitorable || monitor == null) {
+        if (monitor == null) {
             return openedStream;
         }
         DefaultNutsInputStreamMonitor finalMonitor = monitor;

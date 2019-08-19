@@ -174,7 +174,7 @@ public class NutsApplications {
             try {
                 showTrace = ws.config().getOptions().isDebug();
             } catch (Exception ex2) {
-                //
+                LOG.log(Level.FINE,"Unable to check if option debug",ex2);
             }
         }
 //        if (showTrace) {
@@ -185,6 +185,7 @@ public class NutsApplications {
                 out = ws.io().getSystemTerminal().getOut();
                 m = "@@" + m + "@@";
             } catch (Exception ex2) {
+                LOG.log(Level.FINE,"Unable to get system terminal",ex2);
                 //
             }
         }

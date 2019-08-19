@@ -9,6 +9,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
@@ -21,7 +23,7 @@ import net.vpc.app.nuts.NutsCommandLine;
  * @author vpc
  */
 public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecutableCommand {
-
+    private static final Logger LOG= Logger.getLogger(DefaultNutsHelpInternalExecutable.class.getName());
     public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
         super("help", args, session);
     }
@@ -72,6 +74,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         try {
                             w = getSession().getWorkspace().exec().command(arg).which();
                         } catch (Exception ex) {
+                            LOG.log(Level.FINE, "Failed to execute : "+ arg,ex);
                             //ignore
                         }
                         if (w != null) {
