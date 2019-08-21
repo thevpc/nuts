@@ -32,31 +32,74 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- *
+ * Repository command bound to FetchCommand used to fetch an artifact content from a specific repository.
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand {
 
-    NutsFetchContentRepositoryCommand setId(NutsId id);
-
-    NutsId getId();
-
+    /**
+     * preform command. Should be called after setting all parameters.
+     * Result is retrievable with {@link #getResult()}.
+     * @return {@code this} instance
+     */
     @Override
     NutsFetchContentRepositoryCommand run();
 
+    /**
+     * return fetch result. if the command is not yet executed, it will be executed first.
+     * @return return fetch result.
+     */
+    NutsContent getResult();
 
+    /**
+     * set id to fetch.
+     * @param id id to fetch
+     * @return {@code this} instance
+     */
+    NutsFetchContentRepositoryCommand setId(NutsId id);
+
+    /**
+     * get id to fetch
+     * @return id to fetch
+     */
+    NutsId getId();
+
+
+
+    /**
+     * set current session.
+     * @param session current session
+     * @return {@code this} instance
+     */
     @Override
     NutsFetchContentRepositoryCommand setSession(NutsRepositorySession session);
 
-    NutsContent getResult();
 
+    /**
+     * path to store to
+     * @return path to store to
+     */
     Path getLocalPath();
 
+    /**
+     * set localPath to store to.
+     * @param localPath localPath to store to
+     * @return {@code this} instance
+     */
     NutsFetchContentRepositoryCommand setLocalPath(Path localPath);
 
+    /**
+     * description
+     * @return description
+     */
     NutsDescriptor getDescriptor();
 
+    /**
+     * set descriptor to fetch.
+     * @param descriptor descriptor to fetch
+     * @return {@code this} instance
+     */
     NutsFetchContentRepositoryCommand setDescriptor(NutsDescriptor descriptor);
 
 }

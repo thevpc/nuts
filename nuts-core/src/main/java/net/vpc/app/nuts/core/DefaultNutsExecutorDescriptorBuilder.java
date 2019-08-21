@@ -29,10 +29,9 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsExecutorDescriptor;
+import net.vpc.app.nuts.NutsArtifactCall;
 import net.vpc.app.nuts.NutsExecutorDescriptorBuilder;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -47,15 +46,15 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-    private String[] options = new String[0];
+    private String[] arguments = new String[0];
     private final Map<String,String> properties = new LinkedHashMap<>();
 
     public DefaultNutsExecutorDescriptorBuilder() {
     }
 
-    public DefaultNutsExecutorDescriptorBuilder(NutsExecutorDescriptor value) {
+    public DefaultNutsExecutorDescriptorBuilder(NutsArtifactCall value) {
         setId(value.getId());
-        setOptions(value.getOptions());
+        setArguments(value.getArguments());
         setProperties(value.getProperties());
     }
 
@@ -63,8 +62,8 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
         return id;
     }
 
-    public String[] getOptions() {
-        return options;
+    public String[] getArguments() {
+        return arguments;
     }
 
     public Map<String,String> getProperties() {
@@ -72,8 +71,8 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     }
 
     @Override
-    public DefaultNutsExecutorDescriptorBuilder setOptions(String... options) {
-        this.options = options == null ? new String[0] : options;
+    public DefaultNutsExecutorDescriptorBuilder setArguments(String... arguments) {
+        this.arguments = arguments == null ? new String[0] : arguments;
         return this;
     }
 
@@ -104,10 +103,10 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     }
 
     @Override
-    public NutsExecutorDescriptorBuilder set(NutsExecutorDescriptor value) {
+    public NutsExecutorDescriptorBuilder set(NutsArtifactCall value) {
         if(value!=null){
             setId(value.getId());
-            setOptions(value.getOptions());
+            setArguments(value.getArguments());
             setProperties(value.getProperties());
         }else{
             clear();
@@ -118,7 +117,7 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
     @Override
     public NutsExecutorDescriptorBuilder clear() {
         setId(null);
-        setOptions();
+        setArguments();
         setProperties(null);
         return this;
     }
@@ -130,7 +129,7 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
 
     @Override
     public NutsExecutorDescriptorBuilder options(String... value) {
-        return setOptions(value);
+        return setArguments(value);
     }
 
     @Override
@@ -144,19 +143,19 @@ public class DefaultNutsExecutorDescriptorBuilder implements NutsExecutorDescrip
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsExecutorDescriptorBuilder that = (DefaultNutsExecutorDescriptorBuilder) o;
         return Objects.equals(id, that.id) &&
-                Arrays.equals(options, that.options) &&
+                Arrays.equals(arguments, that.arguments) &&
                 Objects.equals(properties, that.properties);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(id, properties);
-        result = 31 * result + Arrays.hashCode(options);
+        result = 31 * result + Arrays.hashCode(arguments);
         return result;
     }
 
     @Override
-    public NutsExecutorDescriptor build() {
-        return new DefaultNutsExecutorDescriptor(id, options, properties);
+    public NutsArtifactCall build() {
+        return new DefaultNutsArtifactCall(id, arguments, properties);
     }
 }

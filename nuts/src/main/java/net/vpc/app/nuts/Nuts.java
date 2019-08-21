@@ -32,10 +32,8 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 /**
- * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts is
+ * Nuts Top Class. Nuts is a Package manager for Java Applications and this class is
  * it's main class for creating and opening nuts workspaces.
- *
- * Created by vpc on 1/5/17.
  *
  * @since 0.1.0
  */
@@ -45,22 +43,6 @@ public final class Nuts {
      * current Nuts version
      */
     public static String version;
-
-    static {
-        try {
-            version = PrivateNutsUtils.loadURLProperties(
-                    Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
-                    null, false).getProperty("project.version", "0.0.0");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            version = "0.0.0";
-        }
-        if(version==null || version.trim().isEmpty() || version.equals("0.0.0")){
-            System.err.println("**ATTENTION**");
-            System.err.println("Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
-            System.err.println();
-        }
-    }
 
     /**
      * private constructor
@@ -74,6 +56,23 @@ public final class Nuts {
      * @return current nuts version
      */
     public static String getVersion() {
+        if (version == null) {
+            synchronized (Nuts.class) {
+                if (version == null) {
+                    try {
+                        version = PrivateNutsUtils.loadURLProperties(
+                                Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
+                                null, false).getProperty("project.version", "0.0.0");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        version = "0.0.0";
+                    }
+                    if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
+                        throw new NutsException(null, "Unable to detect nuts version. Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
+                    }
+                }
+            }
+        }
         return version;
     }
 
@@ -109,7 +108,7 @@ public final class Nuts {
         NutsBootWorkspace boot;
         String nutsWorkspaceOptions = PrivateNutsUtils.trim(
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
-                + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
+                        + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
         NutsDefaultWorkspaceOptions options;
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
@@ -184,11 +183,11 @@ public final class Nuts {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param folderType folder type to resolve home for
+     * @param folderType          folder type to resolve home for
      * @param storeLocationLayout location layout to resolve home for
-     * @param homeLocations workspace home locations
-     * @param global global workspace
-     * @param workspaceName workspace name or id (discriminator)
+     * @param homeLocations       workspace home locations
+     * @param global              global workspace
+     * @param workspaceName       workspace name or id (discriminator)
      * @return home folder path
      */
     public static String getPlatformHomeFolder(
@@ -197,6 +196,6 @@ public final class Nuts {
             Map<String, String> homeLocations,
             boolean global,
             String workspaceName) {
-        return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout,folderType,homeLocations,global,workspaceName);
+        return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
     }
 }

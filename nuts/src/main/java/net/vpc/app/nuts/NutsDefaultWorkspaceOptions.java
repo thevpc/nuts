@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Created by vpc on 1/23/17.
+ * Workspace creation/opening options class.
  *
  * @since 0.5.4
  */
@@ -159,7 +159,7 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean trace = false;
+    private boolean trace = true;
 
     /**
      * option-type : exported (inherited in child workspaces)

@@ -31,7 +31,7 @@ package net.vpc.app.nuts.core.impl.def.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.core.DefaultNutsExecutorDescriptor;
+import net.vpc.app.nuts.core.DefaultNutsArtifactCall;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.format.json.JsonStringBuffer;
 
@@ -46,6 +46,7 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
+@NutsSingleton
 public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final NutsId NSH = CoreNutsUtils.parseNutsId("nsh");
@@ -127,7 +128,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                 return new DefaultNutsDescriptorBuilder()
                         .setId(CoreNutsUtils.parseNutsId("temp:nsh#1.0"))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsExecutorDescriptor(NSH))
+                        .setExecutor(new DefaultNutsArtifactCall(NSH))
                         .build();
             }
             return ws.descriptor().parse(comment.getValidString());

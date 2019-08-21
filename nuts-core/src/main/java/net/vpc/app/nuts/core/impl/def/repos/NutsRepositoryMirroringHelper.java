@@ -189,7 +189,7 @@ public class NutsRepositoryMirroringHelper {
             repo = this.repo.config().getMirror(repository, false);
         }
         if (repo != null) {
-            NutsId effId = getWorkspace().config().createContentFaceId(id.setProperties(""), desc)
+            NutsId effId = getWorkspace().config().createContentFaceId(id.builder().setProperties("").build(), desc)
 //                    .setAlternative(CoreStringUtils.trim(desc.getAlternative()))
                     ;
             NutsDeployRepositoryCommand dep = repo.deploy()
@@ -222,7 +222,7 @@ public class NutsRepositoryMirroringHelper {
                                     .setCached(session.isCached())
                                     .setSession(session.getSession())
                                     .setTransitive(session.isTransitive())
-                                    .setIndexed(session.isIndexed())).setFaceDescriptor();
+                                    .setIndexed(session.isIndexed())).builder().setFaceDescriptor().build();
                     Path localNutFile = cache.getLongNameIdLocalFile(id2);
                     getWorkspace().descriptor().value(nutsDescriptor).print(localNutFile);
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {

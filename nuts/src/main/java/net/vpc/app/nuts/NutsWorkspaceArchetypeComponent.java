@@ -34,7 +34,6 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-@NutsSingleton
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent<String/*archetype id*/> {
 
     String getName();

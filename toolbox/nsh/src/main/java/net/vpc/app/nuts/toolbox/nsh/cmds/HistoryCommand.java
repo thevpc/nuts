@@ -34,16 +34,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.List;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsExecutionException;
+
+import net.vpc.app.nuts.*;
 import net.vpc.common.javashell.JShellHistory;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class HistoryCommand extends SimpleNshBuiltin {
 
     private static enum Action {

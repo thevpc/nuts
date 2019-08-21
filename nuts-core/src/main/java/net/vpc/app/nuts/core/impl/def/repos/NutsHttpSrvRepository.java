@@ -308,7 +308,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         @Override
         public NutsId next() {
             NutsId nutsId = getWorkspace().id().parseRequired(line);
-            return nutsId.setNamespace(config().getName());
+            return nutsId.builder().setNamespace(config().getName()).build();
         }
     }
 

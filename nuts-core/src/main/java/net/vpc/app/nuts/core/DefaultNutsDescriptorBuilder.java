@@ -23,8 +23,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     //    private String ext;
     private boolean executable;
     private boolean nutsApplication;
-    private NutsExecutorDescriptor executor;
-    private NutsExecutorDescriptor installer;
+    private NutsArtifactCall executor;
+    private NutsArtifactCall installer;
     /**
      * short description
      */
@@ -149,13 +149,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setExecutor(NutsExecutorDescriptor executor) {
+    public NutsDescriptorBuilder setExecutor(NutsArtifactCall executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public NutsDescriptorBuilder setInstaller(NutsExecutorDescriptor installer) {
+    public NutsDescriptorBuilder setInstaller(NutsArtifactCall installer) {
         this.installer = installer;
         return this;
     }
@@ -258,11 +258,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
 
     @Override
-    public NutsDescriptorBuilder addClassifierMapping(NutsClassifierMapping value) {
+    public NutsDescriptorBuilder addClassifierMapping(NutsClassifierMapping mapping) {
         if (this.classifierMappings == null) {
             this.classifierMappings = new ArrayList<>();
         }
-        this.classifierMappings.add(value);
+        this.classifierMappings.add(mapping);
         return this;
     }
 
@@ -291,7 +291,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //    }
 
     @Override
-    public NutsExecutorDescriptor getInstaller() {
+    public NutsArtifactCall getInstaller() {
         return installer;
     }
 
@@ -329,7 +329,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsExecutorDescriptor getExecutor() {
+    public NutsArtifactCall getExecutor() {
         return executor;
     }
 
@@ -591,8 +591,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         boolean n_executable = isExecutable();
         String n_name = getName();
         String n_desc = getDescription();
-        NutsExecutorDescriptor n_executor = getExecutor();
-        NutsExecutorDescriptor n_installer = getInstaller();
+        NutsArtifactCall n_executor = getExecutor();
+        NutsArtifactCall n_installer = getInstaller();
         Map<String, String> n_props = new HashMap<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
             n_props.putAll(parentDescriptor.getProperties());
@@ -662,13 +662,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
         Function<String, String> map = new CoreStringUtils.MapToFunction<>(properties);
 
-        NutsId n_id = getId().apply(map);
+        NutsId n_id = getId().builder().apply(map).build();
 //        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
         String n_desc = CoreNutsUtils.applyStringProperties(getDescription(), map);
-        NutsExecutorDescriptor n_executor = getExecutor();
-        NutsExecutorDescriptor n_installer = getInstaller();
+        NutsArtifactCall n_executor = getExecutor();
+        NutsArtifactCall n_installer = getInstaller();
         Map<String, String> n_props = new HashMap<>();
         Map<String, String> properties1 = getProperties();
         if (properties1 != null) {
@@ -721,16 +721,17 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
-        return new DefaultNutsDependency(
-                CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
-                CoreNutsUtils.applyStringProperties(child.getGroupId(), properties),
-                CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties),
-                CoreNutsUtils.applyStringProperties(child.getClassifier(), properties),
-                CoreNutsUtils.applyStringProperties(child.getVersion(), properties),
-                CoreNutsUtils.applyStringProperties(child.getScope(), properties),
-                CoreNutsUtils.applyStringProperties(child.getOptional(), properties),
-                exclusions
-        );
+        return new DefaultNutsDependencyBuilder()
+                .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
+                .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
+                .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
+                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties))
+                .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
+                .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
+                .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))
+                .setExclusions(exclusions)
+                .setProperties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
+                .build();
     }
 
     @Override
@@ -769,4 +770,103 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
+    @Override
+    public NutsDescriptorBuilder locations(NutsIdLocation[] locations) {
+        return setLocations(locations);
+    }
+
+    @Override
+    public NutsDescriptorBuilder classifierMappings(NutsClassifierMapping[] value) {
+        return setClassifierMappings(value);
+    }
+
+    @Override
+    public NutsDescriptorBuilder installer(NutsArtifactCall installer) {
+        return setInstaller(installer);
+    }
+
+    @Override
+    public NutsDescriptorBuilder description(String description) {
+        return setDescription(description);
+    }
+
+    @Override
+    public NutsDescriptorBuilder executable(boolean executable) {
+        return setExecutable(executable);
+    }
+
+    @Override
+    public NutsDescriptorBuilder nutsApplication(boolean nutsApp) {
+        return setNutsApplication(nutsApp);
+    }
+
+    @Override
+    public NutsDescriptorBuilder executor(NutsArtifactCall executor) {
+        return setExecutor(executor);
+    }
+
+    @Override
+    public NutsDescriptorBuilder property(String name, String value) {
+        return setProperty(name,value);
+    }
+
+    @Override
+    public NutsDescriptorBuilder id(NutsId id) {
+        return setId(id);
+    }
+
+    @Override
+    public NutsDescriptorBuilder descriptor(NutsDescriptor other) {
+        return set(other);
+    }
+
+    @Override
+    public NutsDescriptorBuilder descriptor(NutsDescriptorBuilder other) {
+        return set(other);
+    }
+
+    @Override
+    public NutsDescriptorBuilder dependencies(NutsDependency[] dependencies) {
+        return setDependencies(dependencies);
+    }
+
+    @Override
+    public NutsDescriptorBuilder standardDependencies(NutsDependency[] dependencies) {
+        return setStandardDependencies(dependencies);
+    }
+
+    @Override
+    public NutsDescriptorBuilder properties(Map<String, String> properties) {
+        return setProperties(properties);
+    }
+
+    @Override
+    public NutsDescriptorBuilder name(String name) {
+        return setName(name);
+    }
+
+    @Override
+    public NutsDescriptorBuilder parents(NutsId[] parents) {
+        return setParents(parents);
+    }
+
+    @Override
+    public NutsDescriptorBuilder arch(String[] archs) {
+        return setArch(archs);
+    }
+
+    @Override
+    public NutsDescriptorBuilder os(String[] os) {
+        return setOs(os);
+    }
+
+    @Override
+    public NutsDescriptorBuilder osdist(String[] osdist) {
+        return setOsdist(osdist);
+    }
+
+    @Override
+    public NutsDescriptorBuilder platform(String[] platform) {
+        return setPlatform(platform);
+    }
 }

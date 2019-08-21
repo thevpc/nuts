@@ -263,7 +263,7 @@ public class NutsHttpServletFacade {
                         case "content":
                             contentFile = context.getWorkspace().io().createTempFile(
                                     context.getWorkspace().config().getDefaultIdFilename(
-                                            descriptor.getId().setFaceDescriptor()
+                                            descriptor.getId().builder().setFaceDescriptor().build()
                                     )
                             );
                             context.getWorkspace().io().copy()

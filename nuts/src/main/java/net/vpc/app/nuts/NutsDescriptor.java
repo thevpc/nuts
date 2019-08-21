@@ -31,9 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.*;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 /**
  * Nuts descriptors define an <strong>immutable</strong> image to all information needed to execute an artifact.
@@ -156,13 +153,13 @@ public interface NutsDescriptor extends Serializable {
      * descriptor of artifact responsible of running this artifact
      * @return descriptor of artifact responsible of running this artifact
      */
-    NutsExecutorDescriptor getExecutor();
+    NutsArtifactCall getExecutor();
 
     /**
      * descriptor of artifact responsible of installing this artifact
      * @return descriptor of artifact responsible of installing this artifact
      */
-    NutsExecutorDescriptor getInstaller();
+    NutsArtifactCall getInstaller();
 
     /**
      * custom properties that can be used as place holders (int ${name} form) in other fields.

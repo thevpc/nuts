@@ -31,7 +31,9 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 import net.vpc.app.nuts.core.util.common.MapStringMapper;
 
 import java.io.*;
@@ -97,18 +99,55 @@ public class MavenUtils {
 
     public static NutsDependency toNutsDependency(PomDependency d) {
         String s = d.getScope();
-        if("compile".equals(s)){
-            s="api";
+        if(s==null){
+            s="";
         }
-        return new DefaultNutsDependency(
-                null,
-                d.getGroupId(),
-                d.getArtifactId(),
-                d.getClassifier(),
-                DefaultNutsVersion.valueOf(toNutsVersion((d.getVersion()))), s,
-                d.getOptional(),
-                toNutsId(d.getExclusions())
-        );
+        s=s.trim();
+        NutsDependencyScope nds=NutsDependencyScope.API;
+        switch (s){
+            case "":
+            case "compile":
+                {
+                nds=NutsDependencyScope.API;
+                break;
+            }
+            case "test":{
+                nds=NutsDependencyScope.TEST_COMPILE;
+                break;
+            }
+            case "system":{
+                nds=NutsDependencyScope.SYSTEM;
+                break;
+            }
+            case "runtime":{
+                nds=NutsDependencyScope.RUNTIME;
+                break;
+            }
+            case "provided":{
+                nds=NutsDependencyScope.PROVIDED;
+                break;
+            }
+            case "import":{
+                nds=NutsDependencyScope.IMPORT;
+                break;
+            }
+            default:{
+                nds= NutsDependencyScopes.parseScope(s,true);
+                if(nds==null){
+                    LOG.log(Level.FINER, "[ERROR ] unable to parse maven scope "+s+" for "+d);
+                    nds=NutsDependencyScope.API;
+                }
+            }
+        }
+        return new DefaultNutsDependencyBuilder()
+                .setGroupId(d.getGroupId())
+                .setArtifactId(d.getArtifactId())
+                .setClassifier(d.getClassifier())
+                .setVersion(toNutsVersion((d.getVersion())))
+                .setOptional(d.getOptional())
+                .setScope(nds.id())
+                .setExclusions(toNutsId(d.getExclusions()))
+        .build();
     }
 
     private static boolean testNode(Node n, Predicate<Node> tst) {
@@ -135,7 +174,7 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            Pom pom = new PomXmlParser().parse(new ByteArrayInputStream(bytes));
+            Pom pom = new PomXmlParser().parse(new NamedByteArrayInputStream(bytes,urlDesc));
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
@@ -171,9 +210,9 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                LOG.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.CONFIG, "[SUCCESS] Parse pom    {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                LOG.log(Level.CONFIG, "[SUCCESS] Loading pom file {0}", new Object[]{urlDesc});
+                LOG.log(Level.CONFIG, "[SUCCESS] Parse pom    {0}", new Object[]{urlDesc});
             }
 
             return new DefaultNutsDescriptorBuilder()
@@ -271,10 +310,10 @@ public class MavenUtils {
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
                         if (CoreStringUtils.isBlank(thisId.getGroupId())) {
-                            thisId = thisId.setGroupId(parentId.getGroupId());
+                            thisId = thisId.builder().setGroupId(parentId.getGroupId()).build();
                         }
                         if (CoreStringUtils.isBlank(thisId.getVersion().getValue())) {
-                            thisId = thisId.setVersion(parentId.getVersion().getValue());
+                            thisId = thisId.builder().setVersion(parentId.getVersion().getValue()).build();
                         }
                     }
                     HashMap<NutsId, NutsDescriptor> cache = new HashMap<>();
@@ -296,7 +335,7 @@ public class MavenUtils {
                         }
                         done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
-                            thisId.apply(new MapStringMapper(d.getProperties()));
+                            thisId.builder().apply(new MapStringMapper(d.getProperties())).build();
                         } else {
                             break;
                         }
@@ -593,7 +632,7 @@ public class MavenUtils {
         if (bestVersion == null) {
             return null;
         }
-        return zId.setVersion(bestVersion);
+        return zId.builder().setVersion(bestVersion).build();
     }
 
     public static class DepsAndRepos {

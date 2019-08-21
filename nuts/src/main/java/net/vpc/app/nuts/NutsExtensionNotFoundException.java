@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Exception thrown when extension could not be resolved.
  *
  * @since 0.5.4
  */
@@ -43,6 +43,10 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
         this.missingType = missingType;
     }
 
+    /**
+     * missing type
+     * @return missing type
+     */
     public Class getMissingType() {
         return missingType;
     }

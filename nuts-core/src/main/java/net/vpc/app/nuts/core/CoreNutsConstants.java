@@ -42,6 +42,8 @@ public class CoreNutsConstants {
     }
 
     public static final class Files {
+        public static final String DOT_FILES = ".files";
+        public static final String DOT_FOLDERS = ".folder";
         public static final String WORKSPACE_SECURITY_CONFIG_FILE_NAME = "nuts-security-config.json";
         public static final String WORKSPACE_MAIN_CONFIG_FILE_NAME = "nuts-main-config.json";
     }

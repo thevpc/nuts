@@ -34,19 +34,28 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsIdBuilder extends Serializable {
 
+    NutsIdBuilder groupId(String newGroupId);
+
     NutsIdBuilder setGroupId(String newGroupId);
+
+    NutsIdBuilder namespace(String newNamespace);
 
     NutsIdBuilder setNamespace(String newNamespace);
 
+    NutsIdBuilder version(String newVersion);
+
     NutsIdBuilder setVersion(String newVersion);
 
+    NutsIdBuilder version(NutsVersion version);
+
     NutsIdBuilder setVersion(NutsVersion version);
+
+    NutsIdBuilder artifactId(String newName);
 
     NutsIdBuilder setArtifactId(String newName);
 
@@ -64,37 +73,55 @@ public interface NutsIdBuilder extends Serializable {
 
     String getClassifier();
 
+    NutsIdBuilder faceContent();
+
     NutsIdBuilder setFaceContent();
+
+    NutsIdBuilder faceDescriptor();
 
     NutsIdBuilder setFaceDescriptor();
 
+    NutsIdBuilder face(String value);
+
     NutsIdBuilder setFace(String value);
 
-//    NutsIdBuilder setAlternative(String value);
+    NutsIdBuilder classifier(String value);
 
     NutsIdBuilder setClassifier(String value);
 
-    NutsIdBuilder setScope(String value);
-
-    NutsIdBuilder setOptional(String value);
+    NutsIdBuilder platform(String value);
 
     NutsIdBuilder setPlatform(String value);
 
+    NutsIdBuilder arch(String value);
+
     NutsIdBuilder setArch(String value);
+
+    NutsIdBuilder os(String value);
 
     NutsIdBuilder setOs(String value);
 
+    NutsIdBuilder osdist(String value);
+
     NutsIdBuilder setOsdist(String value);
 
+    NutsIdBuilder property(String property, String value);
+
     NutsIdBuilder setProperty(String property, String value);
+
+    NutsIdBuilder properties(Map<String, String> queryMap);
 
     NutsIdBuilder setProperties(Map<String, String> queryMap);
 
     NutsIdBuilder addProperties(Map<String, String> queryMap);
 
+    NutsIdBuilder properties(String query);
+
     NutsIdBuilder setProperties(String query);
 
     NutsIdBuilder addProperties(String query);
+
+    NutsIdBuilder packaging(String packaging);
 
     NutsIdBuilder setPackaging(String packaging);
 
@@ -118,12 +145,17 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder apply(Function<String, String> properties);
 
+    NutsIdBuilder id(NutsId id);
+
     NutsIdBuilder set(NutsId id);
+
+    NutsIdBuilder id(NutsIdBuilder id);
 
     NutsIdBuilder set(NutsIdBuilder id);
 
     /**
      * clear this instance (set null/default all properties)
+     *
      * @return {@code this instance}
      */
     NutsIdBuilder clear();

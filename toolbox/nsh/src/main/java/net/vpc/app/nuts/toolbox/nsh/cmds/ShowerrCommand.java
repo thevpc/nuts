@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.common.javashell.JShellResult;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
@@ -38,6 +39,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class ShowerrCommand extends SimpleNshBuiltin {
 
     public ShowerrCommand() {

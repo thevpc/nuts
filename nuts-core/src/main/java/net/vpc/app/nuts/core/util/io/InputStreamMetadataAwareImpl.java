@@ -26,4 +26,15 @@ public class InputStreamMetadataAwareImpl extends FilterInputStream implements I
         return metadata;
     }
 
+    @Override
+    public String toString() {
+        InputStreamMetadata md = getMetaData();
+        if(md!=null) {
+            String n = md.getName();
+            if (n != null) {
+                return n;
+            }
+        }
+        return super.toString();
+    }
 }

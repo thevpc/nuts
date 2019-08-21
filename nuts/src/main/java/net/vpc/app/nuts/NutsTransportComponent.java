@@ -30,14 +30,20 @@
 package net.vpc.app.nuts;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
- * Created by vpc on 1/21/17.
- *
+ * Transport component responsible of creating a connexion to remote servers.
+ * Should handle at least valid http connections.
  * @since 0.5.4
  */
-@NutsSingleton
 public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
 
-    NutsHttpConnection open(String url) throws IOException;
+    /**
+     * open url and return a valid {@link NutsTransportConnection}
+     * @param url url to open
+     * @return new instance of {@link NutsTransportConnection}
+     * @throws UncheckedIOException when i/o exception occurs
+     */
+    NutsTransportConnection open(String url) throws UncheckedIOException;
 }

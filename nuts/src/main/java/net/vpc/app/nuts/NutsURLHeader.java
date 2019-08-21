@@ -32,22 +32,40 @@ package net.vpc.app.nuts;
 import java.time.Instant;
 
 /**
- *
+ * url header meaning ful information
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsURLHeader {
 
+    /**
+     * url value
+     * @return url value
+     */
     String getUrl();
 
+    /**
+     * url content length (file size)
+     * @return url content length (file size)
+     */
     long getContentLength();
 
+    /**
+     * url content type (file type)
+     * @return url content type (file type)
+     */
     String getContentType();
 
+    /**
+     * url content encoding
+     * @return url content encoding
+     */
     String getContentEncoding();
 
-    void setContentEncoding(String contentEncoding);
-
+    /**
+     * url content last modified
+     * @return url content last modified
+     */
     Instant getLastModified();
 
 }

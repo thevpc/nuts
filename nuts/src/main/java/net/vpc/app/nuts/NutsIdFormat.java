@@ -210,6 +210,14 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setValue(NutsId id);
 
     /**
+     * id to format
+     * @param id id to format
+     * @return {@code this} instance
+     * @since 0.5.6
+     */
+    NutsIdFormat set(NutsId id);
+
+    /**
      * parse id or error if not valid
      * @param id to parse
      * @return parsed id

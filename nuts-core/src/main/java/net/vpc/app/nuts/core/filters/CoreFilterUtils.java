@@ -217,7 +217,7 @@ public class CoreFilterUtils {
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
-        if (_v.equalsSimpleName(_v2)) {
+        if (_v.equalsShortName(_v2)) {
             if (_v.getVersion().filter().accept(_v2.getVersion(), session)) {
                 return true;
             }
@@ -237,7 +237,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
-                if (y.equalsSimpleName(_v)) {
+                if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
@@ -261,7 +261,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
-                if (y.equalsSimpleName(_v)) {
+                if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
@@ -285,7 +285,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
-                if (y.equalsSimpleName(_v)) {
+                if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }
@@ -314,7 +314,7 @@ public class CoreFilterUtils {
                     //should accept any platform !!!
                     return true;
                 }
-                if (y.equalsSimpleName(_v)) {
+                if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
                     }

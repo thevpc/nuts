@@ -33,19 +33,43 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- *
+ * Fetch strategy defines modes (see {@link NutsFetchMode}) to use when searching for an artifact.
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
-
-    OFFLINE(true, NutsFetchMode.LOCAL),
-    ONLINE(true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
-    ANYWHERE(false, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+    /**
+     * enable search in installed only artifacts (in the pseudo-repository 'installed')
+     */
     INSTALLED(true, NutsFetchMode.INSTALLED),
+
+    /**
+     * enables search within local only artifacts (where installed or not).
+     * Local artifacts include local folder based repositories and cached (fetched) repositories (whether or
+     * not they are physically remote)
+     */
+    OFFLINE(true, NutsFetchMode.LOCAL),
+
+    /**
+     * enables search within local repositories, if not found, search in remote repositories.
+     * If an artifact is found in local repositories, no further seek is allowed in remote repositories.
+     */
+    ONLINE(true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+
+    /**
+     * enables search within local repositories and in remote repositories (whether or not an artifact
+     * is found in local repositories).
+     */
+    ANYWHERE(false, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+
+    /**
+     * search in the remote
+      */
     REMOTE(true, NutsFetchMode.REMOTE);
 
+
     private final boolean stopFast;
+
     private NutsFetchMode[] all;
 
     /**
@@ -67,14 +91,26 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
         this.all = Arrays.copyOf(all, all.length);
     }
 
+    /**
+     * if true, do not consider next Fetch mode if the latter gives at least one result.
+     * @return true if do not consider next Fetch mode if the latter gives at least one result.
+     */
     public boolean isStopFast() {
         return stopFast;
     }
 
+    /**
+     * ordered fetch modes
+     * @return ordered fetch modes
+     */
     public NutsFetchMode[] modes() {
         return Arrays.copyOf(all, all.length);
     }
 
+    /**
+     * ordered fetch modes iterator
+     * @return ordered fetch modes iterator
+     */
     @Override
     public Iterator<NutsFetchMode> iterator() {
         return Arrays.asList(all).iterator();

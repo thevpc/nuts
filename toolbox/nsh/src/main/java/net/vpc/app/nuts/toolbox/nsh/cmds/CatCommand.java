@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
@@ -43,6 +44,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class CatCommand extends SimpleNshBuiltin {
 
     public CatCommand() {

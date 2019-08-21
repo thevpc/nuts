@@ -56,5 +56,5 @@ public interface NutsRepositorySession {
 
     NutsRepositorySession setIndexed(boolean enabledCache);
 
-    public NutsRepositorySession copy();
+    NutsRepositorySession copy();
 }

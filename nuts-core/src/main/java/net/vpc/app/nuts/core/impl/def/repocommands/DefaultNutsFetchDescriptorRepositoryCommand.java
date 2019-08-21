@@ -73,7 +73,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
         queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
         queryMap.remove(NutsConstants.IdProperties.SCOPE);
         queryMap.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.DESCRIPTOR);
-        id = id.setProperties(queryMap);
+        id = id.builder().setProperties(queryMap).build();
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(id, getSession());
         long startTime = System.currentTimeMillis();
@@ -81,22 +81,22 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
             if (DefaultNutsVersion.isBlank(versionString)) {
-                NutsId a = xrepo.searchLatestVersion(id.setVersion(""), null, getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getSession());
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
-                a = a.setFaceDescriptor();
+                a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
             } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
-                id = id.setFaceDescriptor();
+                id = id.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(id, getSession());
             } else {
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), new NutsPatternIdFilter(id), null);
-                NutsId a = xrepo.searchLatestVersion(id.setVersion(""), filter, getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getSession());
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
-                a = a.setFaceDescriptor();
+                a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getSession());
             }
             if (d == null) {

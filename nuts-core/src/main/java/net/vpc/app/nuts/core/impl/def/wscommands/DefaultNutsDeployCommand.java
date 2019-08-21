@@ -82,7 +82,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     }
                     descriptor = characterizedFile.descriptor;
                 }
-                String name = ws.config().getDefaultIdFilename(descriptor.getId().setFaceDescriptor());
+                String name = ws.config().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
                 tempFile = ws.io().createTempFile(name);
                 ws.io().copy().session(getValidSession()).from(contentSource.open()).to(tempFile).safeCopy().run();
                 contentFile2 = tempFile;
@@ -136,7 +136,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         throw new NutsNotFoundException(ws, " at " + contentFile);
                     }
                     //remove workspace
-                    descriptor = descriptor.builder().setId(descriptor.getId().setNamespace(null)).build();
+                    descriptor = descriptor.builder().setId(descriptor.getId().builder().setNamespace(null).build()).build();
                     if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                         throw new NutsIllegalArgumentException(ws, "Invalid Version " + descriptor.getId().getVersion());
                     }
@@ -154,7 +154,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, fetchOptions);
 
-                            effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
+                            effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)
 //                                    .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                             ;
                             repo.deploy()
@@ -173,7 +173,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
                         NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, fetchOptions);
-                        effId = ws.config().createContentFaceId(effId.setProperties(""), descriptor)
+                        effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)
 //                                .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                         ;
                         repo.deploy()

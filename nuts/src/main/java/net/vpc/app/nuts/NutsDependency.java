@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * NutsDependency is an <strong>immutable</strong> object that contains all information about a component's dependency.
@@ -58,24 +59,10 @@ public interface NutsDependency extends Serializable{
     String getOptional();
 
     /**
-     * set optional string value (may be $ var) and return new instance.
-     * @param optional new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property optional.
-     */
-    NutsDependency setOptional(String optional);
-
-    /**
      * get scope string value (may be $ var).
      * @return scope string value (may be $ var)
      */
     String getScope();
-
-    /**
-     * set scope string value (may be $ var) and return new instance.
-     * @param scope new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property scope.
-     */
-    NutsDependency setScope(String scope);
 
     /**
      * get classifier string value (may be $ var)
@@ -84,24 +71,10 @@ public interface NutsDependency extends Serializable{
     String getClassifier();
 
     /**
-     * set classifier string value (may be $ var) and return new instance.
-     * @param classifier new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property classifier.
-     */
-    NutsDependency setClassifier(String classifier);
-
-    /**
      * convert to NutsId
      * @return converted to NutsId
      */
     NutsId getId();
-
-    /**
-     * set id value and return new instance. id updates namespace,group, name and version
-     * @param id new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating id.
-     */
-    NutsDependency setId(NutsId id);
 
     /**
      * return namespace
@@ -109,12 +82,6 @@ public interface NutsDependency extends Serializable{
      */
     String getNamespace();
 
-    /**
-     * set namespace string value and return new instance.
-     * @param namespace new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property namespace.
-     */
-    NutsDependency setNamespace(String namespace);
 
     /**
      * return artifact group id (aka groupId in maven)
@@ -158,19 +125,6 @@ public interface NutsDependency extends Serializable{
      */
     NutsVersion getVersion();
 
-    /**
-     * set version string value and return new instance.
-     * @param version new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property version.
-     */
-    NutsDependency setVersion(String version);
-
-    /**
-     * set version value and return new instance.
-     * @param version new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property version.
-     */
-    NutsDependency setVersion(NutsVersion version);
 
     /**
      * dependency exclusions
@@ -179,10 +133,16 @@ public interface NutsDependency extends Serializable{
     NutsId[] getExclusions();
 
     /**
-     * set exclusions value and return new instance.
-     * @param exclusions new value
-     * @return new instance of NutsDependency copy of  {@code this} while updating property version.
+     * properties in the the url query form
+     * @return properties in the the url query form.
+     * @since 0.5.7
      */
-    NutsDependency setExclusions(NutsId[] exclusions);
+    String getPropertiesQuery();
 
+    /**
+     * properties in the the url query form
+     * @return properties in the the url query form.
+     * @since 0.5.7
+     */
+    Map<String, String> getProperties();
 }

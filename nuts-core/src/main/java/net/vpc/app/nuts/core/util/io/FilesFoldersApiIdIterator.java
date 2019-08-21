@@ -87,20 +87,20 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                String[] childrenFolders = FilesFoldersApi.getFolders(file.path, session.getSession());
-                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session.getSession());
+                FilesFoldersApi.Item[] children = FilesFoldersApi.getFilesAndFolders(true,true,file.path, session.getSession());
+//                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session.getSession());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
-                if (deep && childrenFolders != null) {
-                    for (String child : childrenFolders) {
-                        if (file.depth < maxDepth) {
-                            stack.push(new PathAndDepth(file.path + "/" + child, true, file.depth + 1));
+                for (FilesFoldersApi.Item child : children) {
+                    if(child.isFolder()){
+                        if (deep) {
+                            //this is a folder
+                            if (file.depth < maxDepth) {
+                                stack.push(new PathAndDepth(file.path + "/" + child.getName(), true, file.depth + 1));
+                            }
                         }
-                    }
-                }
-                if (childrenFiles != null) {
-                    for (String child : childrenFiles) {
-                        if (model.isDescFile(child)) {
+                    }else {
+                        if (model.isDescFile(child.getName())) {
                             stack.push(new PathAndDepth(file.path + "/" + child, false, file.depth));
                         }
                     }
@@ -126,7 +126,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         t = nutsDescriptor;
                     }
                     if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
-                        NutsId nutsId = t.getId().setNamespace(repository);
+                        NutsId nutsId = t.getId().builder().setNamespace(repository).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
                         break;

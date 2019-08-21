@@ -23,7 +23,7 @@ public class NutsFrozenIdExtensionFilter implements NutsDescriptorFilter, Simpli
 
     public boolean acceptId(NutsId id, NutsSession session) {
         for (NutsId nutsId : frozen) {
-            if(nutsId.getShortNameId().equalsSimpleName(id.getShortNameId())){
+            if(nutsId.getShortNameId().equalsShortName(id.getShortNameId())){
                 return (id.getVersion().filter().accept(nutsId.getVersion(),session));
             }
         }

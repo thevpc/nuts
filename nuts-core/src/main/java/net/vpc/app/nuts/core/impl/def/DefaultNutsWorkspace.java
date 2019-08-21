@@ -58,6 +58,7 @@ import net.vpc.app.nuts.core.impl.def.wscommands.*;
 /**
  * Created by vpc on 1/6/17.
  */
+@NutsPrototype
 public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsWorkspaceExt {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspace.class.getName());
@@ -257,8 +258,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
+                String[] companionIds = getCompanionIds();
+                out.println("Looking for recommended companion tools to install... detected : "+Arrays.stream(companionIds)
+                        .map(x->id().set(id().parse(x)).format()).collect(Collectors.toList())
+                );
             }
             install().companions().session(session).run();
+            if (session.isPlainTrace()) {
+                PrintStream out = session.out();
+                out.println("Workspace is ##ready##!");
+            }
         }
     }
 
@@ -305,7 +314,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public boolean requiresCoreExtension() {
         boolean coreFound = false;
         for (NutsId ext : extensions().getExtensions()) {
-            if (ext.equalsSimpleName(config().getRuntimeId())) {
+            if (ext.equalsShortName(config().getRuntimeId())) {
                 coreFound = true;
                 break;
             }
@@ -374,7 +383,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v)) {
             Map<String, String> p = descriptor.getProperties();
             NutsId bestId = new DefaultNutsId(null, g, thisId.getArtifactId(), v, "");
-            bestId = bestId.apply(new MapStringMapper(p));
+            bestId = bestId.builder().apply(new MapStringMapper(p)).build();
 //            if (CoreNutsUtils.isEffectiveId(bestId)) {
 //                return bestId.setAlternative(descriptor.getAlternative());
 //            }
@@ -384,7 +393,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             while (!all.isEmpty()) {
                 NutsId parent = all.pop();
                 NutsDescriptor dd = fetch().copyFrom(options).id(parent).setEffective(true).getResultDescriptor();
-                bestId.apply(new MapStringMapper(dd.getProperties()));
+                bestId=bestId.builder().apply(new MapStringMapper(dd.getProperties())).build();
 //                if (CoreNutsUtils.isEffectiveId(bestId)) {
 //                    return bestId.setAlternative(descriptor.getAlternative());
 //                }
@@ -405,7 +414,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         Path eff = null;
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
             Path l = config().getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
-            String nn = config().getDefaultIdFilename(descriptor.getId().setFace("eff-nuts.cache"));
+            String nn = config().getDefaultIdFilename(descriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
                 try {
@@ -424,7 +433,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
         if (eff == null) {
             Path l = config().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
-            String nn = config().getDefaultIdFilename(effectiveDescriptor.getId().setFace("cache-eff-nuts"));
+            String nn = config().getDefaultIdFilename(effectiveDescriptor.getId().builder().setFace("cache-eff-nuts").build());
             eff = l.resolve(nn);
         }
         try {
@@ -437,6 +446,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
+        LOG.log(Level.CONFIG, "[START  ] Resolve Effective {0}", new Object[]{descriptor.getId()});
         session = NutsWorkspaceUtils.validateSession(this, session);
         NutsId[] parents = descriptor.getParents();
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];
@@ -466,17 +476,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (CoreStringUtils.isBlank(d.getScope())
                             && !CoreStringUtils.isBlank(standardDependencyOk.getScope())) {
                         someChange = true;
-                        d = d.setScope(standardDependencyOk.getScope());
+                        d = d.builder().setScope(standardDependencyOk.getScope()).build();
                     }
                     if (CoreStringUtils.isBlank(d.getOptional())
                             && !CoreStringUtils.isBlank(standardDependencyOk.getOptional())) {
                         someChange = true;
-                        d = d.setOptional(standardDependencyOk.getOptional());
+                        d = d.builder().setOptional(standardDependencyOk.getOptional()).build();
                     }
                     if (d.getVersion().isBlank()
                             && !standardDependencyOk.getVersion().isBlank()) {
                         someChange = true;
-                        d = d.setVersion(standardDependencyOk.getVersion());
+                        d = d.builder().setVersion(standardDependencyOk.getVersion()).build();
                     }
                 }
             }
@@ -537,7 +547,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         session = NutsWorkspaceUtils.validateSession(this, session);
         if (nutToInstall != null && nutToInstall.getPath() != null) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
-            NutsExecutorDescriptor installerDescriptor = descriptor.getInstaller();
+            NutsArtifactCall installerDescriptor = descriptor.getInstaller();
             NutsDefinition runnerFile = nutToInstall;
             if (installerDescriptor != null && installerDescriptor.getId() != null) {
                 if (installerDescriptor.getId() != null) {
@@ -590,6 +600,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean updateDefaultVersion, boolean isUpdate) {
         if (def == null) {
             return;
+        }
+        if(session.isPlainTrace()){
+            if(isUpdate){
+                session.out().println("updating "+id().set(def.getId().getLongNameId()).format()+" ...");
+            }else{
+                session.out().println("installing "+id().set(def.getId().getLongNameId()).format()+" ...");
+            }
         }
         def.getContent();
         def.getDependencies();
@@ -683,27 +700,27 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from temporarily file %s.%N%n", id().value(def.getId()).format(), def.getPath(), setAsDefaultString);
+                            out.printf("installed  %N ##successfully## from temporarily file %s.%N%n", id().value(def.getId().getLongNameId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed ##successfully## from remote repository.%N%n", id().value(def.getId()).format(), setAsDefaultString);
+                            out.printf("installed  %N ##successfully## from remote repository.%N%n", id().value(def.getId().getLongNameId()).format(), setAsDefaultString);
                         }
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local temporarily file %s.%N%n", id().value(def.getId()).format(), def.getPath(), setAsDefaultString);
+                            out.printf("installed  %N from local temporarily file %s.%N%n", id().value(def.getId().getLongNameId()).format(), def.getPath(), setAsDefaultString);
                         }
                     } else {
                         if (session.isPlainTrace()) {
-                            out.printf("%N installed from local repository.%N%n", id().value(def.getId()).format(), setAsDefaultString);
+                            out.printf("installed  %N from local repository.%N%n", id().value(def.getId().getLongNameId()).format(), setAsDefaultString);
                         }
                     }
                 }
             } else {
                 if (session.isPlainTrace()) {
-                    out.printf("%N installed ##successfully##.%N%n", id().value(def.getId()).format(), setAsDefaultString);
+                    out.printf("installed  %N ##successfully##.%N%n", id().value(def.getId().getLongNameId()).format(), setAsDefaultString);
                 }
             }
         }
@@ -725,13 +742,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             commandName = resolveCommandName(def.getId());
         }
         NutsDescriptor descriptor = def.getDescriptor();
-        NutsExecutorDescriptor installer = descriptor.getInstaller();
+        NutsArtifactCall installer = descriptor.getInstaller();
         List<String> eargs = new ArrayList<>();
         List<String> aargs = new ArrayList<>();
         Map<String,String> props = null;
         if (installer != null) {
-            if (installer.getOptions() != null) {
-                eargs.addAll(Arrays.asList(installer.getOptions()));
+            if (installer.getArguments() != null) {
+                eargs.addAll(Arrays.asList(installer.getArguments()));
             }
             props = installer.getProperties();
         }
@@ -901,11 +918,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsId id2 = def.getId();
             this.io().copy().session(session).from(def.getPath())
                     .to(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))
-                            .resolve(cfg.getDefaultIdFilename(id2.setFaceContent().setPackaging("jar")))
+                            .resolve(cfg.getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                     ).run();
             this.descriptor().value(this.fetch().id(id2).getResultDescriptor())
                     .print(bootstrapFolder.resolve(cfg.getDefaultIdBasedir(id2))
-                            .resolve(cfg.getDefaultIdFilename(id2.setFaceDescriptor())));
+                            .resolve(cfg.getDefaultIdFilename(id2.builder().setFaceDescriptor().build())));
 
             Map<String, String> pr = new LinkedHashMap<>();
             pr.put("file.updated.date", Instant.now().toString());

@@ -268,7 +268,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        LOG.log(Level.FINEST, "copy {0} to {1}", new Object[]{_source, target});
+        LOG.log(Level.FINEST, "[START  ] Copy {0} to {1}", new Object[]{_source, target});
 //        }
         if (safeCopy) {
             Path temp = null;

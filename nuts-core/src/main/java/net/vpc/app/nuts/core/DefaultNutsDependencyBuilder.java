@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyBuilder;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsVersion;
+import net.vpc.app.nuts.*;
 
-import java.util.Arrays;
+import java.util.*;
+
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
+import net.vpc.app.nuts.core.util.QueryStringMap;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -44,13 +44,44 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     private String namespace;
-    private String group;
-    private String name;
+    private String groupId;
+    private String artifactId;
     private NutsVersion version;
     private String scope;
     private String optional;
     private String classifier;
     private NutsId[] exclusions;
+    private QueryStringMap propertiesQuery = new QueryStringMap(true, (name, value) -> {
+        if (name != null) {
+            switch (name) {
+                case NutsConstants.IdProperties.SCOPE: {
+                    setScope(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.VERSION: {
+                    setVersion(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.OPTIONAL: {
+                    setOptional(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.CLASSIFIER: {
+                    setClassifier(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.NAMESPACE: {
+                    setNamespace(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.EXCLUSIONS: {
+                    setExclusions(value);
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
 
     public DefaultNutsDependencyBuilder() {
     }
@@ -66,7 +97,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-        }else{
+            setProperties(value.getProperties());
+        } else {
             clear();
         }
         return this;
@@ -83,7 +115,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-        }else{
+            setProperties(value.getProperties());
+        } else {
             clear();
         }
         return this;
@@ -94,11 +127,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         setNamespace(null);
         setGroupId(null);
         setArtifactId(null);
-        setVersion((NutsVersion)null);
+        setVersion((NutsVersion) null);
         setScope(null);
         setOptional(null);
-        setExclusions(null);
+        setExclusions((NutsId[]) null);
         setClassifier(null);
+        setProperties((Map<String, String>) null);
         return this;
     }
 
@@ -110,13 +144,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setGroupId(String groupId) {
-        this.group = CoreStringUtils.trimToNull(groupId);
+        this.groupId = CoreStringUtils.trimToNull(groupId);
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setArtifactId(String artifactId) {
-        this.name = CoreStringUtils.trimToNull(artifactId);
+        this.artifactId = CoreStringUtils.trimToNull(artifactId);
         return this;
     }
 
@@ -144,6 +178,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setGroupId(id.getGroupId());
             setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
+            addProperties(id.getProperties());
         }
         return this;
     }
@@ -163,6 +198,19 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependencyBuilder setOptional(String optional) {
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
+        return this;
+    }
+
+    //@Override
+    public NutsDependencyBuilder setExclusions(String exclusions) {
+        if (exclusions == null) {
+            exclusions = "";
+        }
+        List<NutsId> ids = new ArrayList<>();
+        for (String s : exclusions.split(";")) {
+            ids.add(CoreNutsUtils.parseNutsId(s.trim()));
+        }
+        setExclusions(ids.toArray(new NutsId[0]));
         return this;
     }
 
@@ -213,7 +261,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 getVersion(),
                 getScope(),
                 getOptional(),
-                getExclusions()
+                getExclusions(),
+                getPropertiesQuery()
         );
     }
 
@@ -224,20 +273,20 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String getGroupId() {
-        return group;
+        return groupId;
     }
 
     @Override
     public String getArtifactId() {
-        return name;
+        return artifactId;
     }
 
     @Override
     public String getFullName() {
-        if (CoreStringUtils.isBlank(group)) {
-            return CoreStringUtils.trim(name);
+        if (CoreStringUtils.isBlank(groupId)) {
+            return CoreStringUtils.trim(artifactId);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
     }
 
     @Override
@@ -255,4 +304,118 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         return exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
 
+    @Override
+    public NutsDependencyBuilder setProperty(String property, String value) {
+        this.propertiesQuery.setProperty(property, value);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setProperties(Map<String, String> queryMap) {
+        this.propertiesQuery.setProperties(queryMap);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder addProperties(Map<String, String> queryMap) {
+        this.propertiesQuery.addProperties(queryMap);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setProperties(String propertiesQuery) {
+        this.propertiesQuery.setProperties(propertiesQuery);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder addProperties(String propertiesQuery) {
+        this.propertiesQuery.addProperties(propertiesQuery);
+        return this;
+    }
+
+    @Override
+    public String getPropertiesQuery() {
+        return propertiesQuery.getPropertiesQuery();
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return propertiesQuery.getProperties();
+    }
+
+    @Override
+    public NutsDependencyBuilder namespace(String namespace) {
+        return setNamespace(namespace);
+    }
+
+    @Override
+    public NutsDependencyBuilder groupId(String groupId) {
+        return setGroupId(groupId);
+    }
+
+    @Override
+    public NutsDependencyBuilder artifactId(String artifactId) {
+        return setArtifactId(artifactId);
+    }
+
+    @Override
+    public NutsDependencyBuilder version(NutsVersion version) {
+        return setVersion(version);
+    }
+
+    @Override
+    public NutsDependencyBuilder version(String version) {
+        return setVersion(version);
+    }
+
+    @Override
+    public NutsDependencyBuilder id(NutsId id) {
+        return setId(id);
+    }
+
+    @Override
+    public NutsDependencyBuilder scope(String scope) {
+        return setScope(scope);
+    }
+
+    @Override
+    public NutsDependencyBuilder optional(String optional) {
+        return setOptional(optional);
+    }
+
+    @Override
+    public NutsDependencyBuilder classifier(String classifier) {
+        return setClassifier(classifier);
+    }
+
+    @Override
+    public NutsDependencyBuilder exclusions(NutsId[] exclusions) {
+        return setExclusions(exclusions);
+    }
+
+    @Override
+    public NutsDependencyBuilder dependency(NutsDependencyBuilder value) {
+        return set(value);
+    }
+
+    @Override
+    public NutsDependencyBuilder dependency(NutsDependency value) {
+        return set(value);
+    }
+
+    @Override
+    public NutsDependencyBuilder property(String property, String value) {
+        return setProperty(property, value);
+    }
+
+    @Override
+    public NutsDependencyBuilder properties(Map<String, String> propertiesQuery) {
+        return setProperties(propertiesQuery);
+    }
+
+    @Override
+    public NutsDependencyBuilder properties(String propertiesQuery) {
+        return setProperties(propertiesQuery);
+    }
 }

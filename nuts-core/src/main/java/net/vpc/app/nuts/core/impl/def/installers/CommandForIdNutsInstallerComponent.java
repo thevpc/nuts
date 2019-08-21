@@ -80,7 +80,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=update", "--force")
+                    .command(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .failFast().run();
         }

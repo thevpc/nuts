@@ -152,7 +152,7 @@ public class DefaultNutsInstalledRepository {
         }
         Path pp = ws.config().getStoreLocation(id
                 //.setAlternative("")
-                .setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         String defaultVersion = "";
         if (Files.isRegularFile(pp)) {
             try {
@@ -172,7 +172,7 @@ public class DefaultNutsInstalledRepository {
         String version = id.getVersion().getValue();
         Path pp = ws.config().getStoreLocation(id
 //                .setAlternative("")
-                .setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         if (CoreStringUtils.isBlank(version)) {
             if (Files.isRegularFile(pp)) {
                 try {
@@ -264,7 +264,8 @@ public class DefaultNutsInstalledRepository {
         return new LazyIterator<NutsId>() {
             @Override
             protected Iterator<NutsId> iterator() {
-                File installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).toFile().getParentFile();
+                File installFolder = ws.config().getStoreLocation(id
+                        .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).toFile().getParentFile();
                 if (installFolder.isDirectory()) {
                     final NutsVersionFilter filter0 = id.getVersion().filter();
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
@@ -274,8 +275,10 @@ public class DefaultNutsInstalledRepository {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
                                         NutsVersion vv = ws.version().parse(folder.getName());
-                                        if (filter0.accept(vv, session.getSession()) && (filter == null || filter.accept(id.setVersion(vv), session.getSession()))) {
-                                            return id.setVersion(folder.getName());
+                                        if (filter0.accept(vv, session.getSession()) && (filter == null || filter.accept(
+                                                id.builder().setVersion(vv).build()
+                                                , session.getSession()))) {
+                                            return id.builder().setVersion(folder.getName()).build();
                                         }
                                     }
                                     return null;
@@ -291,7 +294,7 @@ public class DefaultNutsInstalledRepository {
     }
 
     public NutsId[] findInstalledVersions(NutsId id, NutsRepositorySession session) {
-        Path installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).getParent();
+        Path installFolder = ws.config().getStoreLocation(id.builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).getParent();
         List<NutsId> ok = new ArrayList<>();
         final NutsVersionFilter filter = id.getVersion().filter();
         if (Files.isDirectory(installFolder)) {
@@ -299,7 +302,7 @@ public class DefaultNutsInstalledRepository {
                 for (Path folder : ds) {
                     if (Files.isDirectory(folder) && Files.isRegularFile(folder.resolve(NUTS_INSTALL_FILE))) {
                         if (filter.accept(ws.version().parse(folder.getFileName().toString()), session.getSession())) {
-                            ok.add(id.setVersion(folder.getFileName().toString()));
+                            ok.add(id.builder().setVersion(folder.getFileName().toString()).build());
                         }
                     }
                 }
@@ -328,7 +331,7 @@ public class DefaultNutsInstalledRepository {
                 if(nutsIds.size()>0){
                     setDefaultVersion(nutsIds.get(0), session);
                 }else{
-                    setDefaultVersion(id.setVersion(""), session);
+                    setDefaultVersion(id.builder().setVersion("").build(), session);
                 }
             }
         } catch (Exception ex) {
@@ -349,7 +352,7 @@ public class DefaultNutsInstalledRepository {
             addJson(id, NUTS_INSTALL_FILE, ii);
         } catch (UncheckedIOException ex) {
             throw new NutsNotInstallableException(ws, id.toString(), "Unable to install "
-                    + id.setNamespace(null) + " : " + ex.getMessage(), ex);
+                    + id.builder().setNamespace(null).build() + " : " + ex.getMessage(), ex);
         }
         return new DefaultNutsInstallInfo(true, isDefaultVersion(id), ws.config().getStoreLocation(id, NutsStoreLocation.APPS), ii.getInstallDate(), ii.getInstallUser());
     }

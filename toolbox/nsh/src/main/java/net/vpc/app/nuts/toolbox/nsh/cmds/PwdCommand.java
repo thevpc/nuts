@@ -30,11 +30,13 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class PwdCommand extends SimpleNshBuiltin {
 
     public PwdCommand() {

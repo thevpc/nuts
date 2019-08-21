@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class CdCommand extends SimpleNshBuiltin {
 
     public CdCommand() {

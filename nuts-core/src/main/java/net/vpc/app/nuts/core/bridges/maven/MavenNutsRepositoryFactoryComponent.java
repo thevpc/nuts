@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/15/17.
  */
+@NutsSingleton
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {

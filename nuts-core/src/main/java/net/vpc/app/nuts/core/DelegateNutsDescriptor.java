@@ -49,7 +49,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsExecutorDescriptor getInstaller() {
+    public NutsArtifactCall getInstaller() {
         return getBase().getInstaller();
     }
 
@@ -84,7 +84,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsExecutorDescriptor getExecutor() {
+    public NutsArtifactCall getExecutor() {
         return getBase().getExecutor();
     }
 

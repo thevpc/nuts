@@ -30,21 +30,45 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Extension information
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsExtensionInformation {
 
+    /**
+     * extension id
+     * @return extension id
+     */
     NutsId getId();
 
+    /**
+     * extension user name
+     * @return extension user name
+     */
     String getName();
 
+    /**
+     * extension long description
+     * @return extension long description
+     */
     String getDescription();
 
+    /**
+     * extension main author(s)
+     * @return extension main author(s)
+     */
     String getAuthor();
 
+    /**
+     * extension category
+     * @return extension category
+     */
     String getCategory();
 
+    /**
+     * extension source
+     * @return extension source
+     */
     String getSource();
 }

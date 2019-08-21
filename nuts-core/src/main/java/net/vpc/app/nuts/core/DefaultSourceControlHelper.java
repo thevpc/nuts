@@ -56,15 +56,15 @@ public class DefaultSourceControlHelper {
             String newVersion = ws.version().parse(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
-                newVersionFound = ws.fetch().id(d.getId().setVersion(newVersion)).setSession(session).getResultDefinition();
+                newVersionFound = ws.fetch().id(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
-                LOG.log(Level.FINE, "Failed to fetch " + d.getId().setVersion(newVersion),ex);
+                LOG.log(Level.FINE, "Failed to fetch " + d.getId().builder().setVersion(newVersion).build(),ex);
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.builder().setId(d.getId().setVersion(newVersion)).build();
+                d = d.builder().setId(d.getId().builder().setVersion(newVersion).build()).build();
             } else {
-                d = d.builder().setId(d.getId().setVersion(oldVersion + ".1")).build();
+                d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().value(d).print(file);
@@ -100,7 +100,7 @@ public class DefaultSourceControlHelper {
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
             NutsDescriptor d = ws.descriptor().parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
-            NutsId newId = d.getId().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION);
+            NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
             ws.descriptor().value(d).print(file);

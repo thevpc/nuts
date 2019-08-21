@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.Scanner;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
+@NutsPrototype
 public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
     protected NutsWorkspace ws;

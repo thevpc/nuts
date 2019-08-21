@@ -32,7 +32,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  *
  * @author vpc
  */
-public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCommand {
+public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
 
     String cmdName;
     String[] args;
@@ -41,7 +41,7 @@ public class DefaultNutsPathComponentExecutable extends AbstractNutsExecutableCo
     NutsSession session;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsPathComponentExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
         super(cmdName,
                 session.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);

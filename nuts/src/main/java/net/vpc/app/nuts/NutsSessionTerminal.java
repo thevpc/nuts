@@ -37,7 +37,6 @@ import java.io.PrintStream;
  *
  * @since 0.5.4
  */
-@NutsPrototype
 public interface NutsSessionTerminal extends NutsSessionTerminalBase, NutsTerminal {
 
     void setIn(InputStream in);

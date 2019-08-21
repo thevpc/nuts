@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core.impl.def.repos;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -31,7 +30,9 @@ import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.impl.def.repocommands.DefaultNutsRepositoryUndeployCommand;
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.NutsRepositoryUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -93,7 +94,7 @@ public class NutsRepositoryFolderHelper {
 
     public Path getShortNameIdLocalFolder(NutsId id) {
         CoreNutsUtils.checkId_GN(id);
-        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id.setVersion("")));
+        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -212,10 +213,10 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         if (id.getVersion().isSingleValue()) {
-            NutsId id1 = id.setFaceDescriptor();
+            NutsId id1 = id.builder().setFaceDescriptor().build();
             Path localFile = getLongNameIdLocalFile(id1);
             if (localFile != null && Files.isRegularFile(localFile)) {
-                return Collections.singletonList(id.setNamespace(repo == null ? null : repo.config().getName())).iterator();
+                return Collections.singletonList(id.builder().setNamespace(repo == null ? null : repo.config().getName()).build()).iterator();
             }
             return null;
         }
@@ -287,7 +288,7 @@ public class NutsRepositoryFolderHelper {
             });
             if (versionFolders != null) {
                 for (File versionFolder : versionFolders) {
-                    NutsId id2 = id.setVersion(versionFolder.getName());
+                    NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                         bestId = id2;
                     }
@@ -315,7 +316,7 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         NutsWorkspaceUtils.checkNutsId(ws, id);
-        Path descFile = getLongNameIdLocalFile(id.setFaceDescriptor());
+        Path descFile = getLongNameIdLocalFile(id.builder().setFaceDescriptor().build());
         if (Files.exists(descFile) && !session.getSession().isYes()) {
             throw new NutsAlreadyDeployedException(ws, id.toString());
         }
@@ -323,7 +324,10 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
         }
         getWorkspace().descriptor().value(desc).print(descFile);
-        getWorkspace().io().copy().session(session.getSession()).from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(new NamedByteArrayInputStream(
+                getWorkspace().io().hash().sha1().source(desc).computeString().getBytes(),
+                "sha1("+desc.getId()+")"
+        )).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         return descFile;
     }
 
@@ -341,7 +345,11 @@ public class NutsRepositoryFolderHelper {
         }
 
         getWorkspace().io().copy().session(session.getSession()).from(content).to(pckFile).safeCopy().run();
-        getWorkspace().io().copy().session(session.getSession()).from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(new NamedByteArrayInputStream(
+                CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
+                "sha1("+id+")"
+                )
+        ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
         return pckFile;
     }
 
@@ -405,15 +413,12 @@ public class NutsRepositoryFolderHelper {
                             }
                         }
                     }
-                    try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
-                        for (String file : files) {
-                            p.println(file);
-                        }
-                    } catch (FileNotFoundException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
+                    try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
+                        p.println("#version="+ws.config().getApiVersion());
                         for (String file : folders) {
+                            p.println(file+"/");
+                        }
+                        for (String file : files) {
                             p.println(file);
                         }
                     } catch (FileNotFoundException e) {

@@ -9,6 +9,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.format.plain.DefaultSearchFormatPlain;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
@@ -24,7 +25,6 @@ import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 
 /**
- *
  * @author vpc
  */
 public class NutsWorkspaceUtils {
@@ -159,7 +159,7 @@ public class NutsWorkspaceUtils {
             if (ws.config().getPlatformOsDist() != null) {
                 qm.put("osdist", ws.config().getPlatformOsDist().toString());
             }
-            return id.setProperties(qm);
+            return id.builder().setProperties(qm).build();
         }
         return id;
     }
@@ -200,7 +200,7 @@ public class NutsWorkspaceUtils {
                 try {
                     t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
                 } catch (Exception e) {
-                    LOG.log(Level.FINE,"Unable to resolve support level for : "+repository.config().name(),e);
+                    LOG.log(Level.FINE, "Unable to resolve support level for : " + repository.config().name(), e);
                 }
                 if (t > 0) {
                     repos2.add(new RepoAndLevel(repository, t, postComp));
@@ -258,7 +258,7 @@ public class NutsWorkspaceUtils {
             for (String nutsId : all) {
                 if (nutsId != null) {
                     NutsId nutsId2 = parseRequiredNutsId(ws, nutsId);
-                    if (nutsId2.equalsSimpleName(id)) {
+                    if (nutsId2.equalsShortName(id)) {
                         return nutsId2;
                     }
                 }
@@ -350,11 +350,12 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
         }
     }
-    public static class Events{
 
-        public static void fireOnInstall(NutsWorkspace ws,NutsInstallEvent event) {
+    public static class Events {
+
+        public static void fireOnInstall(NutsWorkspace ws, NutsInstallEvent event) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[EVENT  ] Installed {0}", new Object[]{event.getDefinition().getId()});
+                LOG.log(Level.FINEST, "[EVENT  ] installed {0}", new Object[]{event.getDefinition().getId()});
             }
             for (NutsInstallListener listener : ws.getInstallListeners()) {
                 listener.onInstall(event);
@@ -364,7 +365,7 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        public static void fireOnUpdate(NutsWorkspace ws,NutsInstallEvent event) {
+        public static void fireOnUpdate(NutsWorkspace ws, NutsInstallEvent event) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "[EVENT  ] Updated {0}", new Object[]{event.getDefinition().getId()});
             }
@@ -376,7 +377,7 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        public static void fireOnUninstall(NutsWorkspace ws,NutsInstallEvent event) {
+        public static void fireOnUninstall(NutsWorkspace ws, NutsInstallEvent event) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "[EVENT  ] Uninstalled {0}", new Object[]{event.getDefinition().getId()});
             }
@@ -388,7 +389,7 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        public static void fireOnAddRepository(NutsWorkspace ws,NutsWorkspaceEvent event) {
+        public static void fireOnAddRepository(NutsWorkspace ws, NutsWorkspaceEvent event) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "[EVENT  ] Added Repo {0}", new Object[]{event.getRepository().config().name()});
             }
@@ -401,7 +402,7 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        public static void fireOnRemoveRepository(NutsWorkspace ws,NutsWorkspaceEvent event) {
+        public static void fireOnRemoveRepository(NutsWorkspace ws, NutsWorkspaceEvent event) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, "[EVENT  ] Removed Repo {0}", new Object[]{event.getRepository().config().name()});
             }

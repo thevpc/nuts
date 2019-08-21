@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by vpc on 1/15/17.
@@ -47,7 +46,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     private final String[] args;
     private final NutsSession session;
     private final NutsWorkspace workspace;
-    private final NutsExecutorDescriptor executorDescriptor;
+    private final NutsArtifactCall executorDescriptor;
     private final String cwd;
     private final String commandName;
     private final boolean failFast;
@@ -148,7 +147,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public NutsExecutorDescriptor getExecutorDescriptor() {
+    public NutsArtifactCall getExecutorDescriptor() {
         return executorDescriptor;
     }
 

@@ -40,12 +40,14 @@ import java.util.*;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.util.BytesSizeFormat;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class LsCommand extends SimpleNshBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();

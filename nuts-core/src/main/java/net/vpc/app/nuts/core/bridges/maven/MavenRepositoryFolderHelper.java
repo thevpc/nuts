@@ -58,6 +58,7 @@ import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsContent;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
@@ -115,10 +116,10 @@ public class MavenRepositoryFolderHelper {
 
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
         if (id.getVersion().isSingleValue()) {
-            NutsId id1 = id.setFaceDescriptor();
+            NutsId id1 = id.builder().setFaceDescriptor().build();
             Path localFile = getIdLocalFile(id1);
             if (localFile != null && Files.isRegularFile(localFile)) {
-                return Collections.singletonList(id.setNamespace(repo == null ? null : repo.config().getName())).iterator();
+                return Collections.singletonList(id.builder().setNamespace(repo == null ? null : repo.config().getName()).build()).iterator();
             }
             return null;
         }
@@ -167,7 +168,7 @@ public class MavenRepositoryFolderHelper {
             });
             if (versionFolders != null) {
                 for (File versionFolder : versionFolders) {
-                    NutsId id2 = id.setVersion(versionFolder.getName());
+                    NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                         bestId = id2;
                     }
@@ -284,15 +285,19 @@ public class MavenRepositoryFolderHelper {
                         }
                     }
                     if (applyRawNavigation) {
-                        try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
-                            for (String file : files) {
-                                p.println(file);
-                            }
-                        } catch (FileNotFoundException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                        try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
+//                        try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
+//                            for (String file : files) {
+//                                p.println(file);
+//                            }
+//                        } catch (FileNotFoundException e) {
+//                            throw new UncheckedIOException(e);
+//                        }
+                        try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
+                            p.println("#version="+ws.config().getApiVersion());
                             for (String file : folders) {
+                                p.println(file+"/");
+                            }
+                            for (String file : files) {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {

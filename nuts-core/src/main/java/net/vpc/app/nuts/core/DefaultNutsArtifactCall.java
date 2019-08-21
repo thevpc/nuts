@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsExecutorDescriptor;
+import net.vpc.app.nuts.NutsArtifactCall;
 import net.vpc.app.nuts.NutsId;
 
 import java.io.Serializable;
@@ -40,7 +40,7 @@ import java.util.*;
  *
  * @since 0.5.4
  */
-public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Serializable {
+public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,15 +48,15 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
     private final String[] options;
     private final Map<String,String> properties;
 
-    public DefaultNutsExecutorDescriptor(NutsId id) {
+    public DefaultNutsArtifactCall(NutsId id) {
         this(id, null, null);
     }
 
-    public DefaultNutsExecutorDescriptor(NutsId id, String[] options) {
+    public DefaultNutsArtifactCall(NutsId id, String[] options) {
         this(id, options, null);
     }
 
-    public DefaultNutsExecutorDescriptor(NutsId id, String[] options, Map<String,String> properties) {
+    public DefaultNutsArtifactCall(NutsId id, String[] options, Map<String,String> properties) {
         this.id = id;
         this.options = options == null ? new String[0] : options;
         this.properties = properties == null ? new HashMap<>() : properties;
@@ -66,7 +66,7 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
         return id;
     }
 
-    public String[] getOptions() {
+    public String[] getArguments() {
         return options;
     }
 
@@ -79,7 +79,7 @@ public class DefaultNutsExecutorDescriptor implements NutsExecutorDescriptor, Se
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DefaultNutsExecutorDescriptor that = (DefaultNutsExecutorDescriptor) o;
+        DefaultNutsArtifactCall that = (DefaultNutsArtifactCall) o;
         return Objects.equals(id, that.id) &&
                 Arrays.equals(options, that.options) &&
                 Objects.equals(properties, that.properties);

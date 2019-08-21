@@ -29,9 +29,7 @@
  */
 package net.vpc.app.nuts.core.impl.def.parsers;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
-import net.vpc.app.nuts.NutsDescriptorContentParserContext;
+import net.vpc.app.nuts.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,13 +38,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsSupportLevelContext;
+
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.
  */
+@NutsSingleton
 public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(

@@ -34,6 +34,7 @@ import net.vpc.app.nuts.*;
 /**
  * Created by vpc on 1/23/17.
  */
+@NutsSingleton
 public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
 
     @Override

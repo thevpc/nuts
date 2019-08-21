@@ -70,7 +70,6 @@ public class NutsComponentController {
                                                                      @RequestParam("osdist") String osdist,
                                                                      @RequestParam("arch") String arch,
                                                                      @RequestParam("face") String face,
-                                                                     @RequestParam("scope") String scope,
 //                                                                     @RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative,
                                                                      @RequestParam("all") Boolean all) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
@@ -89,7 +88,6 @@ public class NutsComponentController {
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
-                        .setScope(scope)
 //                        .setAlternative(alternative)
                         .build();
                 List<Map<String, String>> result;
@@ -113,8 +111,7 @@ public class NutsComponentController {
                                                                     @RequestParam("os") String os,
                                                                     @RequestParam("osdist") String osdist,
                                                                     @RequestParam("arch") String arch,
-                                                                    @RequestParam("face") String face,
-                                                                    @RequestParam("scope") String scope
+                                                                    @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
     ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
@@ -132,7 +129,6 @@ public class NutsComponentController {
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
-                        .setScope(scope)
 //                        .setAlternative(alternative)
                         .build();
                 List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), id);
@@ -153,8 +149,7 @@ public class NutsComponentController {
                                                    @RequestParam("os") String os,
                                                    @RequestParam("osdist") String osdist,
                                                    @RequestParam("arch") String arch,
-                                                   @RequestParam("face") String face,
-                                                   @RequestParam("scope") String scope
+                                                   @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
     ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
@@ -174,7 +169,6 @@ public class NutsComponentController {
                                 .setOs(os)
                                 .setOsdist(osdist)
                                 .setFace(face)
-                                .setScope(scope)
 //                                .setAlternative(alternative)
                                 .build());
                 this.dataService.deleteData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
@@ -194,8 +188,7 @@ public class NutsComponentController {
                                                @RequestParam("os") String os,
                                                @RequestParam("osdist") String osdist,
                                                @RequestParam("arch") String arch,
-                                               @RequestParam("face") String face,
-                                               @RequestParam("scope") String scope
+                                               @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
     ) {
         NutsIndexSubscriber subscriber = subscriberManager.getSubscriber(repositoryUuid);
@@ -214,7 +207,6 @@ public class NutsComponentController {
                         .setOs(os)
                         .setOsdist(osdist)
                         .setFace(face)
-                        .setScope(scope)
 //                        .setAlternative(alternative)
                         .build();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);

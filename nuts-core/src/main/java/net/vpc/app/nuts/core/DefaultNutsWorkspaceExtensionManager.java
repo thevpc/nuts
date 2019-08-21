@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigBoot;
+import net.vpc.app.nuts.core.io.NutsFormattedPrintStream;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedNull;
@@ -95,7 +96,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (version == null) {
             version = ws.config().getApiVersion();
         }
-        NutsId id = ws.config().getApiId().setVersion(version);
+        NutsId id = ws.config().getApiId().builder().setVersion(version).build();
         return findExtensions(id, "extensions", session);
     }
 
@@ -214,7 +215,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 .inlineDependencies().getResultDefinitions().list();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
-            if (nutsDefinition.getId().equalsSimpleName(id)) {
+            if (nutsDefinition.getId().equalsShortName(id)) {
                 if (toWire == null || toWire.getVersion().compareTo(nutsDefinition.getId().getVersion()) < 0) {
                     toWire = nutsDefinition.getId();
                 }
@@ -251,7 +252,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsSimpleName(ws.id().parseRequired(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsShortName(ws.id().parseRequired(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {

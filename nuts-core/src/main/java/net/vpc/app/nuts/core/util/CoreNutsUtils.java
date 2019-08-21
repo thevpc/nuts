@@ -162,11 +162,11 @@ public class CoreNutsUtils {
                     .setOs(new String[]{"linux#4.6"})
                     .setOsdist(new String[]{"opensuse#42"})
                     .setPlatform(new String[]{"java#8"})
-                    .setExecutor(new DefaultNutsExecutorDescriptor(
+                    .setExecutor(new DefaultNutsArtifactCall(
                             new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
-                    .setInstaller(new DefaultNutsExecutorDescriptor(
+                    .setInstaller(new DefaultNutsArtifactCall(
                             new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
@@ -175,10 +175,12 @@ public class CoreNutsUtils {
             })
                     .setDependencies(
                             new NutsDependency[]{
-                                new DefaultNutsDependency(
-                                        "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), null,
-                                        "false", new NutsId[0]
-                                )
+                                 new DefaultNutsDependencyBuilder()
+                                    .namespace("namespace")
+                                    .groupId("group")
+                                    .artifactId("name")
+                                    .version("version")
+                                    .optional("false").build()
                             }
                     )
                     .build();
@@ -189,7 +191,7 @@ public class CoreNutsUtils {
         if (all != null) {
             for (NutsId nutsId : all) {
                 if (nutsId != null) {
-                    if (nutsId.equalsSimpleName(id)) {
+                    if (nutsId.equalsShortName(id)) {
                         return nutsId;
                     }
                 }
@@ -337,16 +339,13 @@ public class CoreNutsUtils {
                 name = group;
                 group = null;
             }
-            return new DefaultNutsDependency(
-                    protocol,
-                    group,
-                    name,
-                    queryMap.get(NutsConstants.IdProperties.CLASSIFIER),
-                    DefaultNutsVersion.valueOf(version),
-                    queryMap.get(NutsConstants.IdProperties.SCOPE),
-                    queryMap.get(NutsConstants.IdProperties.OPTIONAL),
-                    null
-            );
+            return new DefaultNutsDependencyBuilder()
+                    .setNamespace(protocol)
+                    .setGroupId(group)
+                    .setArtifactId(name)
+                    .setVersion(version)
+                    .setProperties(queryMap)
+                    .build();
         }
         return null;
     }
@@ -501,35 +500,37 @@ public class CoreNutsUtils {
 //        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
 //    }
     public static void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
-        String timeMessage = "";
-        if (startTime != 0) {
-            long time = System.currentTimeMillis() - startTime;
-            if (time > 0) {
-                timeMessage = " (" + time + "ms)";
+        if(LOG.isLoggable(Level.FINEST)) {
+            String timeMessage = "";
+            if (startTime != 0) {
+                long time = System.currentTimeMillis() - startTime;
+                if (time > 0) {
+                    timeMessage = " (" + time + "ms)";
+                }
             }
+            String tracePhaseString = "";
+            switch (tracePhase) {
+                case ERROR: {
+                    tracePhaseString = "[ERROR  ] ";
+                    break;
+                }
+                case SUCCESS: {
+                    tracePhaseString = "[SUCCESS] ";
+                    break;
+                }
+                case START: {
+                    tracePhaseString = "[START  ] ";
+                    break;
+                }
+                case CACHED: {
+                    tracePhaseString = "[CACHED ] ";
+                    break;
+                }
+            }
+            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
+            LOG.log(Level.FINEST, tracePhaseString + fetchString
+                    + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
         }
-        String tracePhaseString = "";
-        switch (tracePhase) {
-            case ERROR: {
-                tracePhaseString = "[ERROR  ] ";
-                break;
-            }
-            case SUCCESS: {
-                tracePhaseString = "[SUCCESS] ";
-                break;
-            }
-            case START: {
-                tracePhaseString = "[START  ] ";
-                break;
-            }
-            case CACHED: {
-                tracePhaseString = "[CACHED ] ";
-                break;
-            }
-        }
-        String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-        LOG.log(Level.FINEST, tracePhaseString + fetchString
-                + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
     }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {

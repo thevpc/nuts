@@ -121,7 +121,8 @@ public class NutsIdGraph {
                 NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).setSession(session).getResultId();
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
             } catch (NutsNotFoundException ex) {
-                if (!nutsId.id.isOptional()) {
+                NutsDependency dep = session.workspace().dependency().builder().id(nutsId.id).build();
+                if (!dep.isOptional()) {
                     throw ex;
                 }
             }
@@ -139,11 +140,11 @@ public class NutsIdGraph {
         if (id == null) {
             return null;
         }
-        id = id.setNamespace(null);
+        id = id.builder().setNamespace(null).build();
         Map<String, String> m = id.getProperties();
         if (m != null && !m.isEmpty()) {
             m.remove(NutsConstants.IdProperties.FACE);
-            id = id.setProperties(m);
+            id = id.builder().setProperties(m).build();
         }
         return id;
     }
@@ -256,7 +257,8 @@ public class NutsIdGraph {
                     try {
                         effDescriptor = curr.getEffDescriptor(session);
                     } catch (NutsNotFoundException ex) {
-                        if (!curr.id.id.isOptional() && failFast) {
+                        NutsDependency dep = session.workspace().dependency().builder().id(curr.id.id).build();
+                        if (!dep.isOptional() && failFast) {
                             throw ex;
                         }
                     }
@@ -305,10 +307,10 @@ public class NutsIdGraph {
 
     private NutsId prepareDepId(NutsDependency dept, NutsId item) {
         if (!NutsDependencyScopes.isDefaultScope(dept.getScope())) {
-            item = item.setProperty("scope", dept.getScope());
+            item = item.builder().setProperty("scope", dept.getScope()).build();
         }
         if (dept.isOptional()) {
-            item = item.setProperty(NutsConstants.IdProperties.OPTIONAL, "true");
+            item = item.builder().setProperty(NutsConstants.IdProperties.OPTIONAL, "true").build();
         }
         return item;
     }

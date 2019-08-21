@@ -49,8 +49,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 //    private String ext;
     private boolean executable;
     private boolean nutsApplication;
-    private NutsExecutorDescriptor executor;
-    private NutsExecutorDescriptor installer;
+    private NutsArtifactCall executor;
+    private NutsArtifactCall installer;
     /**
      * short description
      */
@@ -95,12 +95,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean nutsApplication,
-            //                                 String ext,
-            NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-            String[] arch, String[] os, String[] osdist, String[] platform,
-            NutsDependency[] dependencies,
-            NutsDependency[] standardDependencies,
-                                 NutsIdLocation[] locations, Map<String, String> properties,NutsClassifierMapping[] classifierMappings) {
+                                 //                                 String ext,
+                                 NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
+                                 String[] arch, String[] os, String[] osdist, String[] platform,
+                                 NutsDependency[] dependencies,
+                                 NutsDependency[] standardDependencies,
+                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings) {
         if (id == null) {
             throw new NutsIllegalArgumentException(null, "Missing id");
         }
@@ -155,7 +155,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 //    }
 
     @Override
-    public NutsExecutorDescriptor getInstaller() {
+    public NutsArtifactCall getInstaller() {
         return installer;
     }
 
@@ -190,7 +190,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsExecutorDescriptor getExecutor() {
+    public NutsArtifactCall getExecutor() {
         return executor;
     }
 

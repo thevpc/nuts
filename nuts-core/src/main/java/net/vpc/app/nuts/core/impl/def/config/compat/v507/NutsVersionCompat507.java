@@ -50,7 +50,8 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigSecurity parseSecurityConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId().setVersion(NutsConstants.Versions.RELEASE), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId()
+                .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigSecurity c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigSecurity.class);
@@ -59,7 +60,10 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigMain parseMainConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId().setVersion(NutsConstants.Versions.RELEASE), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId()
+                .builder().setVersion(NutsConstants.Versions.RELEASE)
+                .build()
+                , NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigMain c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigMain.class);

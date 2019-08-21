@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.impl.def.parsers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsExecutorDescriptor;
+import net.vpc.app.nuts.core.DefaultNutsArtifactCall;
 import net.vpc.app.nuts.core.bridges.maven.MavenUtils;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -55,6 +55,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
 /**
  * Created by vpc on 1/15/17.
  */
+@NutsSingleton
 public class JarNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
@@ -104,7 +105,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                     .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
                                     .setExecutable(mainClass.isSet())
                                     .setPackaging("jar")
-                                    .setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
+                                    .setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{"-jar"}))
                                     .build();
 
                             metainf.set(d);
@@ -139,7 +140,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
-                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
+                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
                     "--main-class", mainClass.get()})).build();
             }
         } else if (metainf.isSet()) {
@@ -156,7 +157,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (classes.length == 0) {
             return baseNutsDescriptor;
         } else {
-            return baseNutsDescriptor.builder().setExecutor(new DefaultNutsExecutorDescriptor(JAVA, new String[]{
+            return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
                 "--main-class=" + CoreStringUtils.join(":",
                 Arrays.stream(classes)
                 .map(x -> x.getName())

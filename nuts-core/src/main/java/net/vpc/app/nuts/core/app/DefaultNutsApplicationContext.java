@@ -110,7 +110,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         NutsWorkspaceConfigManager cfg = workspace.config();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, cfg.getStoreLocation(this.appId, folder));
-            setSharedFolder(folder, cfg.getStoreLocation(this.appId.setVersion(NutsConstants.Versions.RELEASE), folder));
+            setSharedFolder(folder, cfg.getStoreLocation(this.appId.builder().setVersion(NutsConstants.Versions.RELEASE).build(), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
             this.workspace.io().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);

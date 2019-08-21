@@ -41,6 +41,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class JpsCommand extends SimpleNshBuiltin {
 
     public JpsCommand() {

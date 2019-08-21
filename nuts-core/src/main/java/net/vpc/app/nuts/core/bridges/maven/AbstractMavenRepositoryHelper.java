@@ -37,6 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.CoreNutsConstants;
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
@@ -104,17 +105,19 @@ public abstract class AbstractMavenRepositoryHelper {
         try {
             NutsDescriptor nutsDescriptor = null;
             byte[] bytes = null;
-            NutsId idDesc = id.setFaceDescriptor();
+            String name=null;
+            NutsId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
-                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), repository.getWorkspace(), session, getIdPath(id));
+                name = stream.getName();
+                nutsDescriptor = MavenUtils.parsePomXml(new NamedByteArrayInputStream(bytes, name), repository.getWorkspace(), session, getIdPath(id));
             } finally {
                 if (stream != null) {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH), new ByteArrayInputStream(bytes), session);
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes,name), session);
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
@@ -137,7 +140,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 return ".catalog";
             }
             case NutsConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.setFaceContent()) + ".sha1";
+                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
             }
             case NutsConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NutsConstants.IdProperties.PACKAGING);

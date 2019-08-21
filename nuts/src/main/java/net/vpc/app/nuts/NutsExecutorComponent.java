@@ -35,12 +35,26 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-@NutsSingleton
 public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
 
+    /**
+     * artifact id
+     * @return artifact id
+     */
     NutsId getId();
 
+    /**
+     * execute the artifact
+     * @param executionContext executionContext
+     * @throws NutsExecutionException when execution fails
+     */
     void exec(NutsExecutionContext executionContext) throws NutsExecutionException;
 
+    /**
+     * performs a dry execution (simulation) avoiding any side effect and issuing trace to standard
+     * output in order to log simulation workflow.
+     * @param executionContext executionContext
+     * @throws NutsExecutionException when execution fails
+     */
     void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException;
 }

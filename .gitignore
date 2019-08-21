@@ -2,9 +2,7 @@
 /nuts-tomcat-classloader/target/
 /nuts-servlet/target/
 /nuts-core/nbproject/
-/nuts/nuts-0.log.lck
-/nuts/nuts-0.logtoolbox/worky/target/
-toolbox/nuts-server/target
+/toolbox/nuts-server/target
 /.idea/
 /nuts-core/runtime/
 /deprecated/
@@ -23,12 +21,14 @@ toolbox/nuts-server/target
 /lib/nuts-servlet/target/
 /lib/nuts-tomcat-classloader/target/
 /lib/nuts-ssh-cli/target/
+/lib/vpc-common-nuts-template/target/
+/lib/nuts-lib-template/target/
+/nuts/target/
+/nuts-core/target/
+# Project exclude paths
+/nuts/nuts-0.log.lck
+/nuts/nuts-0.log
 /mk-nuts-bootstrap-pull
 /mk-nuts-bootstrap.nsh
 /mk-nuts-bootstrap-push
 /mk-nuts-bootstrap
-/lib/vpc-common-nuts-template/target/
-/lib/nuts-lib-template/target/
-# Project exclude paths
-/nuts/target/
-/nuts-core/target/

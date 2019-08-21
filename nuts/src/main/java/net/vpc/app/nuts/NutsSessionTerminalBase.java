@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  *
  * @since 0.5.4
  */
-@NutsPrototype
+
 public interface NutsSessionTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
 
 }

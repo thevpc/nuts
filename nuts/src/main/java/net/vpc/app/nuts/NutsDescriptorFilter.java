@@ -44,6 +44,12 @@ public interface NutsDescriptorFilter extends NutsSearchIdFilter {
      */
     boolean accept(NutsDescriptor descriptor, NutsSession session);
 
+    /**
+     * default implementation of {@link NutsSearchIdFilter}
+     * @param sid search id
+     * @param session session
+     * @return true if accepted
+     */
     @Override
     default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
         return accept(sid.getDescriptor(session), session);

@@ -29,40 +29,35 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+
 /**
- * Created by vpc on 1/15/17.
+ * Connection to a remote server.
  *
  * @since 0.5.4
  */
-public class NutsExecutorNotFoundException extends NutsException {
+public interface NutsTransportConnection {
 
-    private final String id;
+    /**
+     * option connection and retrieve input stream
+     * @return a valid stream or throw a {@link UncheckedIOException}
+     * @throws UncheckedIOException if the connection is not valid
+     */
+    InputStream open();
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts) {
-        this(workspace, nuts == null ? null : nuts.toString());
-    }
+    /**
+     * parse connection header and return meaningful information
+     * @return a valid NutsURLHeader instance
+     * @throws UncheckedIOException if the connection is not valid
+     */
+    NutsURLHeader getURLHeader() throws UncheckedIOException;
 
-    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts, Exception ex) {
-        this(workspace, nuts == null ? null : nuts.toString(), null, ex);
-    }
-
-    public NutsExecutorNotFoundException(NutsWorkspace workspace, String nuts) {
-        super(workspace, "No such nuts executor " + (nuts == null ? "<null>" : nuts));
-        this.id = nuts;
-    }
-
-    public NutsExecutorNotFoundException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
-        super(
-                workspace, PrivateNutsUtils.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
-                ex);
-        this.id = nuts;
-    }
-
-    public NutsExecutorNotFoundException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
-        this(workspace, nuts == null ? null : nuts.toString(),msg,ex);
-    }
-
-    public String getId() {
-        return id;
-    }
+    /**
+     * parse connection header and return meaningful information
+     * @param parts parts to upload
+     * @return InputStream stream to the remote server to read returned resource
+     * @throws UncheckedIOException if the connection is not valid
+     */
+    InputStream upload(NutsTransportParamPart... parts) throws UncheckedIOException;
 }

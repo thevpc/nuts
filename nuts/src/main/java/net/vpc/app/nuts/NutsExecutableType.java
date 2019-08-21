@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * executable type returned by which internal command
+ * executable command type returned by which internal command
  * @author vpc
  * @since 0.5.4
  */

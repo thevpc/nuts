@@ -95,12 +95,12 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
         String url = getDescPath(id);
-        if (CoreIOUtils.isPathHttp(url)) {
-            String message = "Downloading maven";//: "Open local file";
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
-            }
-        }
+//        if (CoreIOUtils.isPathHttp(url)) {
+//            String message = "Downloading maven";//: "Open local file";
+//            if (LOG.isLoggable(Level.FINEST)) {
+//                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
+//            }
+//        }
         return openStream(url, id, session);
     }
 
@@ -168,7 +168,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
+                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
@@ -177,7 +177,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
                         String versionName = (String) version.get("name");
-                        final NutsId nutsId = id.setVersion(versionName);
+                        final NutsId nutsId = id.builder().setVersion(versionName).build();
 
                         if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                             continue;
@@ -214,28 +214,22 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String artifactId = id.getArtifactId();
         try {
             String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
-            String[] all = FilesFoldersApi.getFolders(artifactUrl, session.getSession());
+            FilesFoldersApi.Item[] all = FilesFoldersApi.getFilesAndFolders(false,true,artifactUrl, session.getSession());
             List<NutsId> n = new ArrayList<>();
-            if (all != null) {
-                for (String s : all) {
-                    if (!DefaultNutsVersion.isBlank(s)) {
-                        String versionFilesUrl = artifactUrl + "/" + s;
-                        String[] versionFiles = FilesFoldersApi.getFiles(versionFilesUrl, session.getSession());
-                        boolean validVersion = false;
-                        if(versionFiles!=null){
-                        for (String v : versionFiles) {
-                            if ("nuts.properties".equals(v)) {
-                                validVersion = true;
-                                break;
-                            }
-                        }
-                        }
-                        if (validVersion) {
-                            NutsId id2 = id.builder().setVersion(s).build();
-                            if (idFilter == null || idFilter.accept(id2, session.getSession())) {
-                                n.add(id2);
-                            }
-                        }
+            for (FilesFoldersApi.Item s : all) {
+                String versionFilesUrl = artifactUrl + "/" + s.getName();
+                FilesFoldersApi.Item[] versionFiles = FilesFoldersApi.getFilesAndFolders(true,false,versionFilesUrl, session.getSession());
+                boolean validVersion = false;
+                for (FilesFoldersApi.Item v : versionFiles) {
+                    if ("nuts.properties".equals(v.getName())) {
+                        validVersion = true;
+                        break;
+                    }
+                }
+                if (validVersion) {
+                    NutsId id2 = id.builder().setVersion(s.getName()).build();
+                    if (idFilter == null || idFilter.accept(id2, session.getSession())) {
+                        n.add(id2);
                     }
                 }
             }
@@ -258,10 +252,10 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
-                    + getIdFilename(id.setFaceDescriptor())
+                    + getIdFilename(id.builder().setFaceDescriptor().build())
             );
 
-            try (InputStream metadataStream = openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open()) {
+            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {

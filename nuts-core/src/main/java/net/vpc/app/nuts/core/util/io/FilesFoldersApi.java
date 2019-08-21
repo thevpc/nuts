@@ -8,50 +8,110 @@ package net.vpc.app.nuts.core.util.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.Iterator;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.CoreNutsConstants;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
- *
  * @author vpc
  */
 public class FilesFoldersApi {
+    private static final Logger LOG=Logger.getLogger(FilesFoldersApi.class.getName());
+    public static class Item {
+        boolean folder;
+        String name;
 
-    public static String[] getFolders(String baseUrl, NutsSession session) {
-        InputStream foldersFileStream = null;
-        String foldersFileUrl = baseUrl + "/.folders";
-        String[] foldersFileContent = null;
-        try {
-            foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r")
-                    .stream().map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
-        } catch (UncheckedIOException ex) {
-            //
+        public Item(boolean folder, String name) {
+            this.folder = folder;
+            this.name = name;
         }
-        return foldersFileContent;
+
+        public boolean isFolder() {
+            return folder;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
-    public static String[] getFiles(String baseUrl, NutsSession session) {
+    public static Item[] getFilesAndFolders(boolean files, boolean folders, String baseUrl, NutsSession session) {
+        List<Item> all = new ArrayList<>();
+
         InputStream foldersFileStream = null;
-        String foldersFileUrl = baseUrl + "/.files";
-        String[] foldersFileContent = null;
+        String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
+        NutsVersion versionString= DefaultNutsVersion.valueOf("0.5.5");
         try {
-            foldersFileStream = session.workspace().io().monitor().source(foldersFileUrl).session(session).create();
-            foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r")
-                    .stream().map(String::trim).filter(x->x.length()>0).toArray(String[]::new);
+            foldersFileStream = session.workspace().io().monitor().source(dotFilesUrl).session(session).create();
+            List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
+            for (String s : splitted) {
+                s=s.trim();
+                if(s.length()>0) {
+                    if (s.startsWith("#")) {
+                        if (all.isEmpty()) {
+                            s=s.substring(1).trim();
+                            if (s.startsWith("version=")) {
+                                versionString = DefaultNutsVersion.valueOf(s.substring("version=".length()).trim());
+                            }
+                        }
+                    } else {
+                        if(versionString.compareTo("0.5.7")<0){
+                            if(files){
+                                all.add(new Item(false,s));
+                            }else{
+                                //ignore the rest
+                                break;
+                            }
+                        }else{
+                            //version 0.5.7 or later
+                            if(s.endsWith("/")){
+                                s=s.substring(0,s.length()-1);
+                                if(s.length()>0){
+                                    if(folders) {
+                                        all.add(new Item(true, s));
+                                    }
+                                }
+                            }else{
+                                if(files) {
+                                    all.add(new Item(false, s));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } catch (UncheckedIOException ex) {
-            //
+            LOG.log(Level.FINE, "Unable to navigate : file not found : "+dotFilesUrl);
         }
-        return foldersFileContent;
+        if(versionString.compareTo("0.5.7")<0){
+            if (folders) {
+                String[] foldersFileContent = null;
+                String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
+                try (InputStream stream = session.workspace().io().monitor().source(dotFolderUrl)
+                        .session(session).create()){
+                    foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
+                            .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
+                } catch (IOException | UncheckedIOException ex) {
+                    LOG.log(Level.FINE, "Unable to navigate : file not found : "+dotFolderUrl);
+                }
+                if (foldersFileContent != null) {
+                    for (String folder : foldersFileContent) {
+                        all.add(new Item(true, folder));
+                    }
+                }
+            }
+        }
+        return all.toArray(new Item[0]);
     }
+
 
     public static Iterator<NutsId> createIterator(
             NutsWorkspace workspace, String repository, String rootUrl, String basePath, NutsIdFilter filter, NutsRepositorySession session, int maxDepth, IteratorModel model

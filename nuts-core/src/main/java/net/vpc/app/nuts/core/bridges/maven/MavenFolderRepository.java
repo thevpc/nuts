@@ -72,7 +72,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
-            return CoreIOUtils.evalSHA1Hex(getStream(id.setFace(NutsConstants.QueryFaces.CONTENT_HASH), session).open(), true);
+            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), session).open(), true);
         }
 
         @Override
@@ -148,7 +148,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
-                Path f = getIdFile(id.setFaceDescriptor());
+                Path f = getIdFile(id.builder().setFaceDescriptor().build());
                 if (f != null && Files.exists(f)) {
                     NutsDescriptor d = null;
                     try {
@@ -158,7 +158,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                         //
                     }
                     if (d != null) {
-                        return Collections.singletonList(id.setNamespace(config().getName())).iterator();
+                        return Collections.singletonList(id.builder().setNamespace(config().getName()).build()).iterator();
                     }
                 }
 //                return IteratorUtils.emptyIterator();
@@ -189,8 +189,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
             if (Files.isDirectory(file)) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(file, CoreIOUtils.DIR_FILTER)) {
                     for (Path versionPath : stream) {
-                        NutsId id2 = id.setVersion(versionPath.getFileName().toString());
-                        String fn = getIdFilename(id2.setFaceDescriptor());
+                        NutsId id2 = id.builder().setVersion(versionPath.getFileName().toString()).build();
+                        String fn = getIdFilename(id2.builder().setFaceDescriptor().build());
                         if (Files.exists(versionPath.resolve(fn))) {
                             if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                                 bestId = id2;

@@ -29,20 +29,17 @@
  */
 package net.vpc.app.nuts.core.impl.def.executors;
 
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class CustomNutsExecutorComponent implements NutsExecutorComponent {
 
     public static final Logger LOG = Logger.getLogger(CustomNutsExecutorComponent.class.getName());

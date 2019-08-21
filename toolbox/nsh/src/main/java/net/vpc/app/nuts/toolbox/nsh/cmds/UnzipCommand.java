@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
@@ -51,6 +52,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class UnzipCommand extends SimpleNshBuiltin {
 
     public UnzipCommand() {

@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.util.common;
 
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -153,7 +154,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
         public void load() {
             try {
                 byte[] bytes = Files.readAllBytes(file.toPath());
-                try (MyExtendedInputStream is = new MyExtendedInputStream(new ByteArrayInputStream(bytes))) {
+                try (MyExtendedInputStream is = new MyExtendedInputStream(new NamedByteArrayInputStream(bytes,file.getPath()))) {
                     key = keySer.read(is);
                     value = valueSer.read(is);
                     this.exists = true;

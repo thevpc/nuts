@@ -36,6 +36,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/15/17.
  */
+@NutsSingleton
 public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override

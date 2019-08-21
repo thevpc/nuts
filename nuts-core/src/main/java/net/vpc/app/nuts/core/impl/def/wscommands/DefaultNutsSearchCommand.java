@@ -658,14 +658,14 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
                         if (nutsId.getArtifactId().equals("nuts")) {
                             if (nutsId.getVersion().isBlank() || nutsId.getVersion().ge("0.5")) {
-                                nutsId2.add(nutsId.setGroupId("net.vpc.app.nuts"));
+                                nutsId2.add(nutsId.builder().setGroupId("net.vpc.app.nuts").build());
                             } else {
                                 //older versions
-                                nutsId2.add(nutsId.setGroupId("net.vpc.app"));
+                                nutsId2.add(nutsId.builder().setGroupId("net.vpc.app").build());
                             }
                         } else {
                             for (String aImport : ws.config().getImports()) {
-                                nutsId2.add(nutsId.setGroupId(aImport));
+                                nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                             }
                         }
                     } else {
@@ -712,7 +712,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .setFetchStratery(search.getOptions().getFetchStrategy())
                                 .setSession(session);
                         search2.setIdFilter(new NutsIdFilterOr(
-                                new NutsPatternIdFilter(nutsId.setGroupId("*")),
+                                new NutsPatternIdFilter(nutsId.builder().setGroupId("*").build()),
                                 CoreNutsUtils.simplify(search2.getIdFilter())
                         ));
                         coalesce.add(search2.getResultIds().iterator());

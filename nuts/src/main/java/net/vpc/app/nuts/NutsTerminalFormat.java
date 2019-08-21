@@ -49,8 +49,8 @@ public interface NutsTerminalFormat {
     int textLength(String value);
 
     /**
-     * this method removes all {@link NutsFormattedPrintStream}'s special
-     * formatting sequences and returns the raw string to be printed on an
+     * this method removes all special "nuts print format" sequences support
+     * and returns the raw string to be printed on an
      * ordinary {@link PrintStream}
      *
      * @param value input string
@@ -61,12 +61,12 @@ public interface NutsTerminalFormat {
 
     /**
      * This method escapes all special characters that are interpreted by
-     * {@link NutsFormattedPrintStream} so that this exact string is printed on
+     * "nuts print format" o that this exact string is printed on
      * such print streams When str is null, an empty string is return
      *
      * @param value input string
      * @return string with escaped characters so that the text printed correctly
-     * on {@link NutsFormattedPrintStream}
+     * on a "nuts print format" aware print stream
      */
     String escapeText(String value);
 

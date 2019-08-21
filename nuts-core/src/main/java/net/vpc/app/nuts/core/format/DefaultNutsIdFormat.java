@@ -348,6 +348,11 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
+    public NutsIdFormat set(NutsId id) {
+        return setValue(id);
+    }
+
+    @Override
     public NutsId parse(String id) {
         return CoreNutsUtils.parseNutsId(id);
     }

@@ -42,6 +42,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override

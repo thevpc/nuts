@@ -41,12 +41,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsJsonFormat;
-import net.vpc.app.nuts.NutsOutputFormat;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import org.w3c.dom.Document;
@@ -57,6 +53,7 @@ import org.w3c.dom.NodeList;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class JsonCommand extends SimpleNshBuiltin {
 
     public JsonCommand() {

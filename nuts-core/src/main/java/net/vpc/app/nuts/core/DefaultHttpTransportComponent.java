@@ -35,12 +35,14 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/21/17.
  */
+@NutsSingleton
 public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
@@ -52,15 +54,19 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
     }
 
     @Override
-    public NutsHttpConnection open(String url) throws IOException {
-        return new DefaultNutsHttpConnection(new URL(url));
+    public NutsTransportConnection open(String url) throws UncheckedIOException {
+        try {
+            return new DefaultNutsTransportConnection(new URL(url));
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    private static class DefaultNutsHttpConnection implements NutsHttpConnection {
+    private static class DefaultNutsTransportConnection implements NutsTransportConnection {
 
         private final URL url;
 
-        public DefaultNutsHttpConnection(URL url) {
+        public DefaultNutsTransportConnection(URL url) {
             this.url = url;
         }
 

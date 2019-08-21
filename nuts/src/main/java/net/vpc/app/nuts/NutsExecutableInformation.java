@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * class describing executable command.
  * @author vpc
  * @since 0.5.4
  */

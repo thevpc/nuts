@@ -80,7 +80,7 @@ public class Test06_UpateTest {
 
         uws.deploy()
                 .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
-                .setDescriptor(api.getDescriptor().builder().setId(api.getId().setVersion(apiv2)).build())
+                .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
                 //                        .setRepository("local")
                 .run();
 
@@ -89,10 +89,10 @@ public class Test06_UpateTest {
                 .setDescriptor(
                         rt.getDescriptor()
                                 .builder()
-                                .setId(rt.getId().setVersion(rtv2))
+                                .setId(rt.getId().builder().setVersion(rtv2).build())
                                 .replaceDependency(
                                         x -> x.getSimpleName().equals(api.getId().getShortName()),
-                                        x -> x.setVersion(apiv2)
+                                        x -> x.builder().setVersion(apiv2).build()
                                 )
                         .build()
                 )

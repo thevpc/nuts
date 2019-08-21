@@ -41,11 +41,17 @@ public class NdiScriptnfo {
     private NutsId id;
     private final String name;
     private final Path path;
+    private final boolean override;
 
-    public NdiScriptnfo(String name, NutsId id, Path path) {
+    public NdiScriptnfo(String name, NutsId id, Path path,boolean override) {
         this.path = path;
         this.name = name;
         this.id = id;
+        this.override = override;
+    }
+
+    public boolean isOverride() {
+        return override;
     }
 
     public Path getPath() {

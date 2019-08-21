@@ -36,11 +36,13 @@ import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class ChmodCommand extends SimpleNshBuiltin {
 
     public ChmodCommand() {

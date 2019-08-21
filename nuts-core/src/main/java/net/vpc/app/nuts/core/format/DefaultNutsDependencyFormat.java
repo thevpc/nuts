@@ -122,8 +122,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     public String format() {
         NutsIdBuilder id = value.getId().builder();
         Map<String, String> q = id.getProperties();
-        for (Iterator<Map.Entry<String, String>> iterator = q.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<String, String> e = iterator.next();
+        for (Map.Entry<String, String> e : q.entrySet()) {
             switch (e.getKey()) {
                 case NutsConstants.IdProperties.SCOPE:
                 case NutsConstants.IdProperties.OPTIONAL:
@@ -133,8 +132,8 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                     break;
                 }
                 default: {
-                    if(isOmitOtherProperties()) {
-                        iterator.remove();
+                    if (isOmitOtherProperties()) {
+                        id.setProperty(e.getKey(), null);
                     }
                 }
             }

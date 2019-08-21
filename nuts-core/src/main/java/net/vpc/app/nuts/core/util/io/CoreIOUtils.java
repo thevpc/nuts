@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
@@ -996,7 +997,8 @@ public class CoreIOUtils {
         if (source == null) {
             return null;
         }
-        return new InputStreamSource(String.valueOf(source), source);
+        String name=String.valueOf(source);
+        return new InputStreamSource(name, source);
     }
 
     public static InputSource createInputSource(Path source) {
@@ -1091,6 +1093,11 @@ public class CoreIOUtils {
             public OutputStream open() {
                 return (OutputStream) getValue();
             }
+
+            @Override
+            public String toString() {
+                return "OutputStream("+getValue()+")";
+            }
         };
     }
 
@@ -1105,7 +1112,7 @@ public class CoreIOUtils {
             //
         }
         if (basePath != null) {
-            return createTarget(target);
+            return createTarget(basePath);
         }
 
         try {
@@ -1126,7 +1133,7 @@ public class CoreIOUtils {
         if (baseURL != null) {
             return createTarget(baseURL);
         }
-        throw new NutsUnsupportedArgumentException(null, "Unsuported source : " + target);
+        throw new NutsUnsupportedArgumentException(null, "Unsupported source : " + target);
     }
 
     public static TargetItem createTarget(Path target) {
@@ -1146,6 +1153,11 @@ public class CoreIOUtils {
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
+            }
+
+            @Override
+            public String toString() {
+                return getPath().toString();
             }
         };
     }
@@ -1168,6 +1180,10 @@ public class CoreIOUtils {
                     throw new UncheckedIOException(ex);
                 }
             }
+            @Override
+            public String toString() {
+                return getPath().toString();
+            }
         };
     }
 
@@ -1189,17 +1205,13 @@ public class CoreIOUtils {
         }
     }
 
-    public static NutsHttpConnection getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
+    public static NutsTransportConnection getHttpClientFacade(NutsWorkspace ws, String url) throws UncheckedIOException {
         //        System.out.println("getHttpClientFacade "+url);
         NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws, url));
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
-        try {
-            return best.open(url);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        return best.open(url);
     }
 
     public static String urlEncodeString(String s) {
@@ -1488,6 +1500,7 @@ public class CoreIOUtils {
 
         public DefaultMultiReadSourceItem(InputSource base) {
             try {
+                this.base=base;
                 content = CoreIOUtils.loadByteArray(base.open());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -1531,7 +1544,7 @@ public class CoreIOUtils {
 
         @Override
         public InputStream open() {
-            return new ByteArrayInputStream(content);
+            return new NamedByteArrayInputStream(content,base.getName());
         }
 
         @Override
@@ -1685,7 +1698,7 @@ public class CoreIOUtils {
             final OutputStream p = Files.newOutputStream(outPath);
             NutsURLHeader header = null;
             long size = -1;
-            NutsHttpConnection f = CoreIOUtils.getHttpClientFacade(ws, path);
+            NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(ws, path);
             try {
 
                 header = f.getURLHeader();
@@ -1734,7 +1747,7 @@ public class CoreIOUtils {
         @Override
         public InputStream open() {
             byte[] bytes = (byte[]) this.getSource();
-            return new InputStreamMetadataAwareImpl(new ByteArrayInputStream(bytes), new FixedInputStreamMetadata(name, bytes.length));
+            return new InputStreamMetadataAwareImpl(new NamedByteArrayInputStream(bytes,name), new FixedInputStreamMetadata(name, bytes.length));
         }
 
         @Override
@@ -1767,7 +1780,7 @@ public class CoreIOUtils {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
-                        NutsHttpConnection hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
+                        NutsTransportConnection hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
                         cachedNutsURLHeader = hf.getURLHeader();
                     } catch (Exception ex) {
                         //ignore

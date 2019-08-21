@@ -27,21 +27,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core.io;
 
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import net.vpc.app.nuts.NutsComponent;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
- * Created by vpc on 1/21/17.
  *
+ * @author vpc
  * @since 0.5.4
  */
-public interface NutsHttpConnection {
+public interface NutsFormattedPrintStream extends NutsComponent<OutputStream> {
 
-    InputStream open() throws UncheckedIOException;
-
-    NutsURLHeader getURLHeader() throws UncheckedIOException;
-
-    InputStream upload(NutsTransportParamPart... parts) throws UncheckedIOException;
+    PrintStream getUnformattedInstance();
 }

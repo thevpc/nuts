@@ -30,22 +30,24 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Command execution type.
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsExecutionType {
     /**
-     * command will be resolved as an external command. Nuts will resolve
+     * command will be resolved as an external command/artifact. Nuts will resolve
      * relevant executor to run it
      */
     SPAWN,
+
     /**
      * command will be resolved as an external native command. Nuts will
      * delegate running to underlining operating system using standard
      * ProcessBuilder
      */
     SYSCALL,
+
     /**
      * command will resolved as a class to run within the current Virtual
      * Machine

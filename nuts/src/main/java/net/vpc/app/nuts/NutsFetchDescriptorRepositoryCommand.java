@@ -30,22 +30,41 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Repository command used to fetch an artifact descriptor from a specific repository.
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryCommand {
 
+    /**
+     * preform command. Should be called after setting all parameters.
+     * Result is retrievable with {@link #getResult()}.
+     * @return {@code this} instance
+     */
+    @Override
+    NutsFetchDescriptorRepositoryCommand run();
+
+    /**
+     * return fetch result. if the command is not yet executed, it will be executed first.
+     * @return return fetch result.
+     */
+    NutsDescriptor getResult();
+
+    /**
+     * set id to fetch
+     * @param id id to fetch
+     * @return {@code this} instance
+     */
     NutsFetchDescriptorRepositoryCommand setId(NutsId id);
 
+    /**
+     * id to fetch
+     * @return id to fetch
+     */
     NutsId getId();
-
-    @Override
-    public NutsFetchDescriptorRepositoryCommand run();
 
     @Override
     NutsFetchDescriptorRepositoryCommand setSession(NutsRepositorySession session);
 
-    NutsDescriptor getResult();
 
 }

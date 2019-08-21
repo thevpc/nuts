@@ -26,7 +26,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setPackaging("exe")
             .setExecutable(true)
-            .setExecutor(new DefaultNutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
+            .setExecutor(new DefaultNutsArtifactCall(CoreNutsUtils.parseNutsId("exec")))
             .build();
 
 
@@ -121,7 +121,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
         for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class)) {
-            if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)
+            if (nutsExecutorComponent.getId().equalsShortName(nutsId)
                     || nutsExecutorComponent.getId().getArtifactId().equals(nutsId.toString())
                     || nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-" + nutsId.toString())) {
                 return nutsExecutorComponent;
@@ -135,7 +135,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (executorComponent != null) {
             return executorComponent;
         }
-        throw new NutsExecutorNotFoundException(ws, nutsDefinition.getId());
+        throw new NutsNotFoundException(ws, nutsDefinition.getId());
     }
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession session) {
@@ -197,7 +197,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
         }
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            return new DefaultNutsPathComponentExecutable(cmdName, args, executorOptions, executionType, getValidSession(), this);
+            return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, getValidSession(), this);
         } else if (cmdName.contains(":")) {
             return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session);
         } else {
@@ -251,7 +251,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     protected NutsExecutableInformationExt ws_exec0(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
-        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
+        return new DefaultNutsArtifactExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, executionType, this);
     }
 
     public void ws_exec(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType,boolean dry) {
@@ -263,7 +263,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");
 //                throw new NutsNotExecutableException(descriptor.getId());
             }
-            NutsExecutorDescriptor executor = descriptor.getExecutor();
+            NutsArtifactCall executor = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;
             List<String> executorArgs = new ArrayList<>();
             Map<String,String> execProps = null;
@@ -275,7 +275,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 } else {
                     execComponent = resolveNutsExecutorComponent(executor.getId());
                 }
-                executorArgs.addAll(Arrays.asList(executor.getOptions()));
+                executorArgs.addAll(Arrays.asList(executor.getArguments()));
                 execProps = executor.getProperties();
             }
             executorArgs.addAll(Arrays.asList(executorOptions));

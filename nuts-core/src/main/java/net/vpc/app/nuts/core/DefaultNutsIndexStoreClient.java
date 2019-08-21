@@ -44,13 +44,13 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/allVersions"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/, repository.getUuid(),
-                        CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
+                        + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/, repository.getUuid(),
+                        CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getOs()),
                         CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                , CoreStringUtils.trim(id.getAlternative())
         );
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             Map[] array = repository.getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
@@ -69,7 +69,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + repository.getUuid();
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             Map[] array = repository.getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
@@ -104,13 +104,13 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
+                        + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
                         CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
-                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
+                        CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                ,CoreStringUtils.trim(id.getAlternative())
         );
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException e) {
@@ -126,13 +126,13 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
-                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
+                        + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, repository.getUuid(),
                         CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
-                        CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
+                        CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                ,CoreStringUtils.trim(id.getAlternative())
         );
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException e) {
@@ -147,7 +147,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                 + CoreIOUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(repository.getUuid());
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             clientFacade.open();
             return true;
@@ -162,7 +162,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                 + CoreIOUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(repository.getUuid());
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException e) {
@@ -177,7 +177,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                 + CoreIOUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(repository.getUuid());
         try {
-            NutsHttpConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
             return new Scanner(clientFacade.open()).nextBoolean();
         } catch (UncheckedIOException e) {

@@ -193,6 +193,16 @@ public final class NutsConstants {
         public static final String SCOPE = "scope";
 
         /**
+         * id version can be defined as a property
+         */
+        public static final String VERSION = "version";
+
+        /**
+         * id namespace can be defined as a property
+         */
+        public static final String NAMESPACE = "namespace";
+
+        /**
          * dependency exclusions
          */
         public static final String EXCLUSIONS = "exclusions";

@@ -104,17 +104,17 @@ public class Nsh extends NutsApplication {
         }
 
         if (firstInstalled.size() > 0) {
-            LOG.log(Level.FINER, "[Nsh] Installed {0} nsh commands : {1}", new Object[]{firstInstalled.size(), firstInstalled.toString()});
+            LOG.log(Level.FINER, "[Nsh] registered {0} nsh commands : {1}", new Object[]{firstInstalled.size(), firstInstalled.toString()});
         }
         if (reinstalled.size() > 0) {
-            LOG.log(Level.FINER, "[Nsh] Reinstalled {0} nsh commands : {1}", new Object[]{reinstalled.size(), reinstalled.toString()});
+            LOG.log(Level.FINER, "[Nsh] re-registered {0} nsh commands : {1}", new Object[]{reinstalled.size(), reinstalled.toString()});
         }
         if (trace && applicationContext.getSession().isPlainOut()) {
             if (firstInstalled.size() > 0) {
-                applicationContext.session().out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+                applicationContext.session().out().printf("registered ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
             }
             if (reinstalled.size() > 0) {
-                applicationContext.session().out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+                applicationContext.session().out().printf("re-registered ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
             }
         }
         cfg.save(false, applicationContext.getSession());

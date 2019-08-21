@@ -49,7 +49,7 @@ public class LinuxNdi implements SystemNdi {
             boolean exists = Files.exists(ff);
             if (!options.getSession().isYes() && exists) {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("Script already exists ==%s==%n", ff);
+                    context.session().out().printf("Script already exists ==%s==%n", NdiUtils.betterPath(ff.toString()));
                 }
             } else {
                 final NutsId fnutsId = nid;
@@ -83,12 +83,12 @@ public class LinuxNdi implements SystemNdi {
         NutsId nid = context.getWorkspace().id().parse(id);
         Path f = getScriptFile(nid.getArtifactId());
         if (Files.isRegularFile(f)) {
-            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", f.toString())
+            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
                     .defaultValue(true)
                     .getBooleanValue()) {
                 Files.delete(f);
                 if (session.isPlainTrace()) {
-                    session.out().printf("Tool ==%s== removed.%n", f.toString());
+                    session.out().printf("Tool ==%s== removed.%n", NdiUtils.betterPath(f.toString()));
                 }
             }
         }
@@ -103,7 +103,7 @@ public class LinuxNdi implements SystemNdi {
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.session().out().printf("Script already exists ==%s==%n", ff);
+                context.session().out().printf("Script already exists ==%s==%n", NdiUtils.betterPath(ff.toString()));
             }
         } else {
             all.add(
@@ -128,17 +128,16 @@ public class LinuxNdi implements SystemNdi {
                     ));
         }
         Path ff2 = context.getWorkspace().config().getWorkspaceLocation().resolve("nuts");
+        boolean overridden=Files.exists(ff2);
         if (!force && Files.exists(ff2)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.session().out().printf("Script already exists ==%s==%n", ff2);
+                context.session().out().printf("script already exists ==%s==%n", ff2);
             }
         } else {
             if (trace && context.getSession().isPlainTrace()) {
-                if (force) {
-                    context.session().out().printf("Force update script ==%s== %n", ff2.toString());
-                } else {
-                    context.session().out().printf("Update script ==%s== %n", ff2.toString());
-                }
+                context.session().out().printf("installing"+
+                        (Files.exists(ff2)?" (with override)":"")+
+                        " script ==%s== %n", NdiUtils.betterPath(ff2.toString()));
             }
             try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
                 NdiUtils.generateScript("/net/vpc/app/nuts/toolbox/template_body_linux.text", w, x -> {
@@ -146,7 +145,7 @@ public class LinuxNdi implements SystemNdi {
                         case "NUTS_ID":
                             return "BOOT : " + f.getId().toString();
                         case "BODY": {
-                            String s = longuestCommonParent(ff.toString(), ff2.toString());
+                            String s = NdiUtils.longuestCommonParent(ff.toString(), ff2.toString());
                             if (s.length() > 0) {
                                 return ff.toString().substring(s.length());
                             } else {
@@ -158,26 +157,13 @@ public class LinuxNdi implements SystemNdi {
                 });
             }
             NdiUtils.setExecutable(ff2);
-            all.add(new NdiScriptnfo("nuts", b, ff2));
+            all.add(new NdiScriptnfo("nuts", b, ff2,overridden));
         }
         return all.toArray(new NdiScriptnfo[0]);
     }
 
-    public String longuestCommonParent(String path1, String path2) {
-        int latestSlash = -1;
-        final int len = Math.min(path1.length(), path2.length());
-        for (int i = 0; i < len; i++) {
-            if (path1.charAt(i) != path2.charAt(i)) {
-                break;
-            } else if (path1.charAt(i) == '/') {
-                latestSlash = i;
-            }
-        }
-        if (latestSlash <= 0) {
-            return "";
-        }
-        return path1.substring(0, latestSlash + 1);
-    }
+
+
 
     @Override
     public void configurePath(NutsSession session) throws IOException {
@@ -218,7 +204,7 @@ public class LinuxNdi implements SystemNdi {
             updatedBashrc = true;
         }
         if (session.isYes() || updatedBashrc) {
-            IOUtils.saveString(lines.stream().collect(Collectors.joining("\n")) + "\n", bashrc);
+            IOUtils.saveString(String.join("\n", lines) + "\n", bashrc);
         }
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
         StringBuilder goodNdiRc = new StringBuilder();
@@ -232,7 +218,7 @@ public class LinuxNdi implements SystemNdi {
                 .session(context.getSession().copy().trace(false))
                 .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
-        goodNdiRc.append("[[ \":$PATH:\" != *\":" + appsFolder + ":\"* ]] && PATH=\"" + appsFolder + ":${PATH}\"\n");
+        goodNdiRc.append("[[ \":$PATH:\" != *\":").append(appsFolder).append(":\"* ]] && PATH=\"").append(appsFolder).append(":${PATH}\"\n");
         goodNdiRc.append("export PATH NUTS_VERSION NUTS_JAR NUTS_WORKSPACE \n");
 
         String fileContent = (nutsndirc.isFile()) ? IOUtils.loadString(nutsndirc) : "";
@@ -245,16 +231,16 @@ public class LinuxNdi implements SystemNdi {
         if ((session.isYes() || updatedBashrc || updatedNdirc) && session.isTrace()) {
             if (session.isYes()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("Force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                    context.session().out().printf("force updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                 }
             } else {
                 if (context.getSession().isPlainTrace()) {
                     if (updatedNdirc && updatedBashrc) {
-                        context.session().out().printf("Updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("updating ==%s== and ==%s== files to point to workspace ==%s==%n", "~/.nuts-ndirc", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                     } else if (updatedNdirc) {
-                        context.session().out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("updating ==%s== file to point to workspace ==%s==%n", "~/.nuts-ndirc", context.getWorkspace().config().getWorkspaceLocation());
                     } else if (updatedBashrc) {
-                        context.session().out().printf("Updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
+                        context.session().out().printf("updating ==%s== file to point to workspace ==%s==%n", "~/.bashrc", context.getWorkspace().config().getWorkspaceLocation());
                     }
                 }
             }
@@ -315,15 +301,12 @@ public class LinuxNdi implements SystemNdi {
                 Files.createDirectories(script.getParent());
             }
         }
-        if (trace && context.getSession().isPlainTrace()) {
-            context.session().out().printf("Install %s script ==%s== for ==%s== at ==%s==%n", Files.exists(script) ? "(with override)" : "", script.getFileName(), desc, script);
-        }
-
+        boolean _override = Files.exists(script);
         try (BufferedWriter w = Files.newBufferedWriter(script)) {
             NdiUtils.generateScript("/net/vpc/app/nuts/toolbox/template_body_linux.text", w, mapper);
         }
         NdiUtils.setExecutable(script);
-        return new NdiScriptnfo(name, fnutsId, script);
+        return new NdiScriptnfo(name, fnutsId, script,_override);
     }
 
 }

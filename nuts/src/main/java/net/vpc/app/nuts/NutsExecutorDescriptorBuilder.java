@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by vpc on 1/5/17.
@@ -46,11 +45,11 @@ public interface NutsExecutorDescriptorBuilder extends Serializable {
 
     NutsExecutorDescriptorBuilder setId(NutsId value);
 
-    String[] getOptions();
+    String[] getArguments();
 
     NutsExecutorDescriptorBuilder options(String... value);
 
-    NutsExecutorDescriptorBuilder setOptions(String... value);
+    NutsExecutorDescriptorBuilder setArguments(String... value);
 
     Map<String,String> getProperties();
 
@@ -60,9 +59,9 @@ public interface NutsExecutorDescriptorBuilder extends Serializable {
 
     NutsExecutorDescriptorBuilder set(NutsExecutorDescriptorBuilder value);
 
-    NutsExecutorDescriptorBuilder set(NutsExecutorDescriptor value);
+    NutsExecutorDescriptorBuilder set(NutsArtifactCall value);
 
     NutsExecutorDescriptorBuilder clear();
 
-    NutsExecutorDescriptor build();
+    NutsArtifactCall build();
 }

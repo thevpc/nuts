@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 2/19/17.
+ * Standard Execution thrown when an artifact fails to run.
  *
  * @since 0.5.4
  */
@@ -72,6 +72,10 @@ public class NutsExecutionException extends NutsException {
         this.exitCode = exitCode;
     }
 
+    /**
+     * artifact exit code
+     * @return artifact exit code
+     */
     public int getExitCode() {
         return exitCode;
     }

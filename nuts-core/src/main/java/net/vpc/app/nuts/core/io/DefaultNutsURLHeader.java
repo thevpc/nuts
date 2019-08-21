@@ -82,7 +82,6 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return contentEncoding;
     }
 
-    @Override
     public void setContentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
     }

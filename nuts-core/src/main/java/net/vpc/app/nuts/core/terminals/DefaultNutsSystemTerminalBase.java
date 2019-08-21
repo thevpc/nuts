@@ -10,6 +10,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@NutsPrototype
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());

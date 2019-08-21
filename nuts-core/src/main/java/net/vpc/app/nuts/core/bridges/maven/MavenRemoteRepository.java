@@ -75,13 +75,13 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             long startTime = System.currentTimeMillis();
             try {
                 InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
-                if (LOG.isLoggable(Level.FINEST)) {
-                    if (CoreIOUtils.isPathHttp(path)) {
-                        String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
-                        message += " url=" + path;
-                        traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
-                    }
-                }
+//                if (LOG.isLoggable(Level.FINEST)) {
+//                    if (CoreIOUtils.isPathHttp(path)) {
+//                        String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
+//                        message += " url=" + path;
+//                        traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
+//                    }
+//                }
                 return CoreIOUtils.createInputSource(in);
             } catch (RuntimeException ex) {
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -140,10 +140,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
-                    + getIdFilename(id.setFaceDescriptor())
+                    + getIdFilename(id.builder().setFaceDescriptor().build())
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open()) {
+            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -194,7 +194,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
@@ -203,7 +203,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
                         String versionName = (String) version.get("name");
-                        final NutsId nutsId = id.setVersion(versionName);
+                        final NutsId nutsId = id.builder().setVersion(versionName).build();
 
                         if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                             continue;
@@ -248,14 +248,14 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
             } catch (UncheckedIOException ex) {
                 return null;
             }
             MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
                 for (String version : info.getVersions()) {
-                    final NutsId nutsId = id.setVersion(version);
+                    final NutsId nutsId = id.builder().setVersion(version).build();
 
                     if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                         continue;
@@ -294,10 +294,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
-                    + getIdFilename(id.setFaceDescriptor())
+                    + getIdFilename(id.builder().setFaceDescriptor().build())
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open()) {
+            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -324,14 +324,14 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/.folders");
             String[] foldersFileContent = null;
             try {
-                foldersFileStream = helper.openStream(id, foldersFileUrl, id.setFace(CoreNutsConstants.QueryFaces.CATALOG), session).open();
+                foldersFileStream = helper.openStream(id, foldersFileUrl, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
                 foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             if (foldersFileContent != null) {
                 for (String version : foldersFileContent) {
-                    final NutsId nutsId = id.setVersion(version);
+                    final NutsId nutsId = id.builder().setVersion(version).build();
 
                     if (idFilter != null && !idFilter.accept(nutsId, session.getSession())) {
                         continue;
@@ -465,7 +465,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.CONTENT_HASH), in, session);
+                            helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
                         } catch (IOException ex) {
                             return;
                         }
@@ -483,7 +483,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     @Override
                     public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.CONTENT_HASH), in, session);
+                            helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
                         } catch (IOException ex) {
                             throw new NutsPathCopyAction.ValidationException(ex);
                         }

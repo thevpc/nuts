@@ -34,90 +34,109 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- *
+ * Artifact id information.
  * @author vpc
  * @since 0.1.0
  */
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId> {
 
-    boolean equalsSimpleName(NutsId other);
+    /**
+     * true if other has exact shot name than {@code this}
+     * @param other other id
+     * @return true if other has exact shot name than {@code this}
+     */
+    boolean equalsShortName(NutsId other);
 
+    /**
+     * non null group id token
+     * @return non null group id token
+     */
     NutsTokenFilter groupIdToken();
 
+    /**
+     * non null properties query token
+     * @return non null properties query token
+     */
     NutsTokenFilter propertiesToken();
 
+    /**
+     * non null version token
+     * @return non null version token
+     */
     NutsTokenFilter versionToken();
 
+    /**
+     * non null artifact id token
+     * @return non null artifact id token
+     */
     NutsTokenFilter artifactIdToken();
 
+    /**
+     * non null namespace non null namespace token
+     * @return non null namespace non null namespace token
+     */
     NutsTokenFilter namespaceToken();
 
+    /**
+     * non null token filter that searches in all id fields
+     * @return non null token filter that searches in all id fields
+     */
     NutsTokenFilter anyToken();
 
-    NutsId setGroupId(String newGroupId);
-
-    NutsId setNamespace(String newNamespace);
-
-    NutsId setVersion(NutsVersion newVersion);
-
-    NutsId setVersion(String newVersion);
-
-    NutsId setArtifactId(String newName);
-
+    /**
+     * id face define is a release file type selector of the id.
+     * It helps discriminating content (jar) from descriptor, from other (hash,...)
+     * files released for the very same  artifact.
+     * @return id face selector
+     */
     String getFace();
 
-    String getScope();
-
-//    String getAlternative();
-
-    NutsId setScope(String value);
-
-    NutsId setOptional(String value);
-
-//    NutsId setAlternative(String value);
-
-    NutsId setArch(String value);
-
-    NutsId setFace(String value);
-
-    NutsId setPackaging(String value);
-
-    NutsId setPlatform(String value);
-
-    NutsId setOsdist(String value);
-
-    NutsId setOs(String value);
-
+    /**
+     * os supported by the artifact
+     * @return os supported by the artifact
+     */
     String getOs();
 
+    /**
+     * os distribution supported by the artifact
+     * @return os distribution supported by the artifact
+     */
     String getOsdist();
 
+    /**
+     * platform supported by the artifact
+     * @return platform supported by the artifact
+     */
     String getPlatform();
 
+    /**
+     * hardware architecture supported by the artifact
+     * @return hardware architecture supported by the artifact
+     */
     String getArch();
 
-    NutsId setFaceContent();
-
-    NutsId setFaceDescriptor();
-
-    NutsId setProperty(String property, String value);
-
-//    NutsId setProperties(Map<String, String> queryMap, boolean merge);
-
-    NutsId setProperties(Map<String, String> queryMap);
-
-    NutsId addProperties(Map<String, String> queryMap);
-
-    NutsId setProperties(String properties);
-
-    NutsId addProperties(String properties);
-
+    /**
+     * properties in the the url query form
+     * @return properties in the the url query form.
+     */
     String getPropertiesQuery();
 
+    /**
+     * properties as map.
+     * @return properties as map.
+     */
     Map<String, String> getProperties();
 
+    /**
+     * artifact namespace (usually repository name or id)
+     * @return artifact namespace (usually repository name or id)
+     */
     String getNamespace();
 
+    /**
+     * artifact group which identifies uniquely projects and group of projects.
+     * @return artifact group which identifies uniquely projects and group of projects.
+     */
     String getGroupId();
 
     /**
@@ -134,7 +153,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      * ignoring namespace, and queryMap values. An example of long name is
      * <code>my-group:my-artifact#my-version?alt</code>
      *
-     * @return group, name and version only Id instance
+     * @return group id, artifact id and version only Id instance
      */
     String getLongName();
 
@@ -144,7 +163,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      * is returned. Ann null values are trimmed to "" An example of simple name
      * is <code>my-group:my-artifact</code>
      *
-     * @return group and name
+     * @return group id and artifact id
      */
     String getShortName();
 
@@ -171,17 +190,28 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      */
     String getArtifactId();
 
+    /**
+     * tag used to distinguish between different artifacts that were built from the same source code
+     * @return tag used to distinguish between different artifacts that were built from the same source code
+     */
     String getClassifier();
 
+    /**
+     * artifact version (never null)
+     * @return artifact version (never null)
+     */
     NutsVersion getVersion();
 
-    String getOptional();
+    /**
+     * create a filter based on this id
+     * @return a filter based on this id
+     */
+    NutsIdFilter filter();
 
-    NutsId apply(Function<String, String> properties);
-
+    /**
+     * create a builder (mutable id) based on this id
+     * @return a new instance of builder (mutable id) based on this id
+     */
     NutsIdBuilder builder();
 
-    boolean isOptional();
-
-    NutsIdFilter filter();
 }

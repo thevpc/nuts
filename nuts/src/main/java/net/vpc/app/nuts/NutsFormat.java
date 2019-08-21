@@ -35,7 +35,7 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- *
+ * Base Format Interface used to print "things".
  * @author vpc
  * @since 0.5.5
  */

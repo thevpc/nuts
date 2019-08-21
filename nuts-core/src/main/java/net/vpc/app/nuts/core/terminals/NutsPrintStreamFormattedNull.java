@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
-import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.core.io.NutsFormattedPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 
 import java.io.*;

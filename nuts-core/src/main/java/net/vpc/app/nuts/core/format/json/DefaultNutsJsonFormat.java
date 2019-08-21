@@ -39,6 +39,7 @@ import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.format.DefaultFormatBase;
 import net.vpc.app.nuts.core.format.elem.DefaultNutsElementFactoryContext;
 import net.vpc.app.nuts.core.format.elem.NutsElementFactoryContext;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
@@ -259,7 +260,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 .registerTypeHierarchyAdapter(NutsDependency.class, new NutsDependencyJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsIdLocation.class, new NutsIdLocationJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsClassifierMapping.class, new NutsClassifierMappingJsonAdapter())
-                .registerTypeHierarchyAdapter(NutsExecutorDescriptor.class, new NutsExecutorDescriptorAdapter())
+                .registerTypeHierarchyAdapter(NutsArtifactCall.class, new NutsExecutorDescriptorAdapter())
                 .registerTypeHierarchyAdapter(NutsDependencyTreeNode.class, new NutsDependencyTreeNodeJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsElement.class, new NutsElementJsonAdapter())
                 .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter())
@@ -351,14 +352,14 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public NutsDependency deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            DefaultNutsDependencyBuilder b = context.deserialize(json, DefaultNutsDependencyBuilder.class);
-            return b.build();
+            String b = context.deserialize(json, String.class);
+            return CoreNutsUtils.parseNutsDependency(null,b);
         }
 
         @Override
         public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
-                return context.serialize(new DefaultNutsDependencyBuilder().set(src));
+                return context.serialize(src.toString());
             }
             return context.serialize(src);
         }
@@ -403,17 +404,17 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     private static class NutsExecutorDescriptorAdapter implements
-            com.google.gson.JsonSerializer<NutsExecutorDescriptor>,
-            com.google.gson.JsonDeserializer<NutsExecutorDescriptor> {
+            com.google.gson.JsonSerializer<NutsArtifactCall>,
+            com.google.gson.JsonDeserializer<NutsArtifactCall> {
 
         @Override
-        public NutsExecutorDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public NutsArtifactCall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             NutsExecutorDescriptorBuilder b = context.deserialize(json, DefaultNutsExecutorDescriptorBuilder.class);
             return b.build();
         }
 
         @Override
-        public JsonElement serialize(NutsExecutorDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(NutsArtifactCall src, Type typeOfSrc, JsonSerializationContext context) {
             if (src != null) {
                 return context.serialize(new DefaultNutsExecutorDescriptorBuilder(src));
             }

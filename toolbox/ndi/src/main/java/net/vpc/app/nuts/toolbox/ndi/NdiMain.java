@@ -4,9 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class NdiMain extends NutsApplication {
 
@@ -135,7 +133,18 @@ public class NdiMain extends NutsApplication {
                     throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
                 }
                 if (context.getSession().isTrace()) {
-                    context.workspace().object().session(context.session()).value(result).println();
+                    if (context.getSession().isPlainTrace()) {
+                        int namesSize=result.stream().mapToInt(x->x.getName().length()).max().orElse(1);
+                        for (NdiScriptnfo ndiScriptnfo : result) {
+                            context.session().out().printf("installing%s script ==%-"+namesSize+"s== for "+
+                                    context.getWorkspace().id().set(ndiScriptnfo.getId().getLongNameId()).format()
+                                            +" at ==%s==%n", ndiScriptnfo.isOverride() ? " (with override)" : "",
+                                    ndiScriptnfo.getName() , NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
+                        }
+
+                    } else {
+                        context.workspace().object().session(context.session()).value(result).println();
+                    }
                 }
             }
             if (!idsToUninstall.isEmpty()) {
@@ -164,8 +173,8 @@ public class NdiMain extends NutsApplication {
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
                 //
-            } else if((a=cmd.nextBoolean("--skip-init"))!=null){
-                if(a.getBooleanValue()){
+            } else if ((a = cmd.nextBoolean("--skip-init")) != null) {
+                if (a.getBooleanValue()) {
                     return;
                 }
             } else {
@@ -174,48 +183,24 @@ public class NdiMain extends NutsApplication {
         }
         SystemNdi ndi = createNdi(context);
         if (ndi != null) {
+            List<String> args=new ArrayList<>();
+            args.addAll(Arrays.asList("in","-b"));
+            args.addAll(Arrays.asList(COMPANIONS));
             context.getSession().yes();
-            try {
-                ndi.configurePath(context.getSession());
-            } catch (IOException e) {
-                throw new NutsExecutionException(context.getWorkspace(), "ndi: install failed : " + e.toString(), 1);
-            }
-            List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
-            boolean subTrace = context.getSession().isTrace();
-            if (!context.getSession().isPlainOut()) {
-                subTrace = false;
-            }
-            for (String s : COMPANIONS) {
-                try {
-                    result.addAll(Arrays.asList(
-                            ndi.createNutsScript(
-                                    new NdiScriptOptions().setId(s)
-                                            .setSession(context.getSession().copy().trace(subTrace))
-                                            .setForceBoot(false)
-                                            .setFetch(false)
-                                            .setExecType(NutsExecutionType.EMBEDDED)
-                                            .setExecutorOptions(new ArrayList<>()))
-                    ));
-                } catch (IOException e) {
-                    throw new NutsExecutionException(context.getWorkspace(), "ndi: " + s + "install failed : " + e.toString(), 1);
-                }
-            }
-            if (context.getSession().isPlainTrace()) {
-                context.workspace().object().session(context.session()).value(result).println();
-            }
+            run(args.toArray(new String[0]));
         }
     }
 
     @Override
     protected void onInstallApplication(NutsApplicationContext context) {
-        onInstallApplicationOrUpdate(context,false);
+        onInstallApplicationOrUpdate(context, false);
     }
 
     @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
-        onInstallApplicationOrUpdate(applicationContext,true);
+        onInstallApplicationOrUpdate(applicationContext, true);
     }
 
     @Override

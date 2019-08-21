@@ -36,14 +36,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executor;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsComponent;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsSessionTerminal;
-import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsJavaShell;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
@@ -160,6 +154,7 @@ class StopServerBuiltin implements NutsServer, Runnable {
         return "Nuts Admin Server{" + "running=" + running + '}';
     }
 
+    @NutsSingleton
     private static class StopServerBuiltin2 extends SimpleNshBuiltin {
 
         private final ServerSocket socket;

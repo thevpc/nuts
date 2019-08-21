@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 /**
  * Created by vpc on 2/20/17.
  */
+@NutsPrototype
 public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());

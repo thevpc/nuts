@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.URLUtils;
@@ -50,16 +50,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
-import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
+@NutsSingleton
 public class CpCommand extends SimpleNshBuiltin {
 
     public CpCommand() {

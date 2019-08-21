@@ -498,7 +498,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 try {
                     newId = ws.search()
-                            .addId(oldFile != null ? oldFile.getId().setVersion("").toString() : NutsConstants.Ids.NUTS_RUNTIME)
+                            .addId(oldFile != null ? oldFile.getId().builder().setVersion("").build().toString() : NutsConstants.Ids.NUTS_RUNTIME)
                             .runtime()
                             .targetApiVersion(bootApiVersion)
                             .frozenIds(getFrozenIds())
@@ -581,10 +581,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private NutsId toCanonicalForm(NutsId id) {
         if (id != null) {
-            id = id.setNamespace(null);
+            id = id.builder().setNamespace(null).build();
             String oldValue = id.getProperties().get(NutsConstants.IdProperties.FACE);
             if (oldValue != null && oldValue.trim().isEmpty()) {
-                id = id.setProperty(NutsConstants.IdProperties.FACE, null);
+                id = id.builder().setProperty(NutsConstants.IdProperties.FACE, null).build();
             }
         }
         return id;

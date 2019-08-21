@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.io.TextFiles;
 
@@ -46,6 +47,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class HeadCommand extends SimpleNshBuiltin {
 
     public HeadCommand() {

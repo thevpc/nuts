@@ -30,13 +30,44 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 3/19/17.
+ * fetch mode defines if the artifact should be looked for withing the "installed" meta repository, "local" (offline)
+ * machine repositories or over the wire (remote repositories).
  *
+ * <p>
+ * "installed" artifacts are stored in a pseudo-repository called "installed" which include all installed
+ * (using command install) artifacts. Effective storage may (should?) remain in a local repository though.
+ * Actually pseudo-repository "installed" manages references to these storages.
+ * </p>
+ * <p>
+ * local repositories include all local folder based repositories. Semantically they should define machine/node based
+ * storage that is independent from LAN/WAN/Cloud networks. A local database based repository may be considered as local
+ * though not recommended as the server may be down.
+ * Il all ways, local repositories are considered fast according to fetch/deploy commands.
+ * </p>
+ * <p>
+ * remote repositories include all non local repositories which may present slow access and connectivity issues.
+ * Typically this include server based repositories (http, ...).
+ * </p>
+ * <p>
+ * It is important to say that a repository may serve both local and remote artifacts as usually remote repositories
+ * enable cache support; in which case, if the artifact si cached, it will be accessed locally.
+ * </p>
  * @since 0.5.4
  */
 public enum NutsFetchMode {
+    /**
+     * artifacts installed using install command
+     */
     INSTALLED,
+
+    /**
+     * artifacts fetched (locally)
+     */
     LOCAL,
+
+    /**
+     * artifacts not fetched (remote)
+     */
     REMOTE;
 
     /**

@@ -558,7 +558,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             ok = true;
         }
 
-        Path configVersionSpecificLocation = getStoreLocation(getApiId().setVersion(NutsConstants.Versions.RELEASE), NutsStoreLocation.CONFIG);
+        Path configVersionSpecificLocation = getStoreLocation(getApiId().builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG);
         if (force || storeModelSecurityChanged) {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NutsUserConfig[0]));
 
@@ -1184,7 +1184,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         );
         Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id.setFaceContent().setPackaging("jar")));
+                .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
         if(!force && (Files.isRegularFile(configFile) && Files.isRegularFile(jarFile))){
             return;
         }
@@ -1236,7 +1236,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private void downloadId(NutsId id,boolean force,Path path,boolean fetch){
         Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id.setFaceContent().setPackaging("jar")));
+                .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
         if (force || !Files.isRegularFile(jarFile)) {
             if (path != null) {
                 ws.io().copy().from(path).to(jarFile).run();
@@ -1486,7 +1486,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return ".catalog";
             }
             case NutsConstants.QueryFaces.CONTENT_HASH: {
-                return getDefaultIdExtension(id.setFaceContent()) + ".sha1";
+                return getDefaultIdExtension(id.builder().setFaceContent().build()) + ".sha1";
             }
             case NutsConstants.QueryFaces.CONTENT: {
                 return getDefaultIdContentExtension(q.get(NutsConstants.IdProperties.PACKAGING));
@@ -1509,7 +1509,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         q.put(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trim(desc.getPackaging()));
 //        q.put(NutsConstants.QUERY_EXT,CoreStringUtils.trim(descriptor.getExt()));
         q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.CONTENT);
-        return id.setProperties(q);
+        return id.builder().setProperties(q).build();
     }
 
     @Override

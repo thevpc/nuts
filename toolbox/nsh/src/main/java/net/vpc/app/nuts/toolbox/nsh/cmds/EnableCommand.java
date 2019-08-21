@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.common.javashell.JShellBuiltin;
 import net.vpc.app.nuts.NutsCommandLine;
@@ -43,6 +44,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class EnableCommand extends SimpleNshBuiltin {
 
     public EnableCommand() {

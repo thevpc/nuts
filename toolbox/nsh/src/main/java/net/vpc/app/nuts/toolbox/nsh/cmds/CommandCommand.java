@@ -33,12 +33,14 @@ import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.common.javashell.JShellBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class CommandCommand extends SimpleNshBuiltin {
 
     public CommandCommand() {

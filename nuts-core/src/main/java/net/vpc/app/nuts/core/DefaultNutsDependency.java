@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.QueryStringMap;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.*;
@@ -49,12 +50,12 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String classifier;
     private final String optional;
     private final NutsId[] exclusions;
+    private final String properties;
 
-    public DefaultNutsDependency(NutsId id) {
-        this(id.getNamespace(), id.getGroupId(), id.getArtifactId(), id.getClassifier(), id.getVersion(), id.getScope(), id.getOptional(), null);
+    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,Map<String,String> properties) {
+        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions,QueryStringMap.formatSortedPropertiesQuery(properties));
     }
-
-    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions) {
+    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,String properties) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
@@ -63,6 +64,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
+        this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
     }
 
     @Override
@@ -183,7 +185,7 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!CoreStringUtils.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
-        Map<String, String> p = new TreeMap<>();
+        Map<String, String> p = new HashMap<>();
         if (!CoreStringUtils.isBlank(scope)) {
             if (!scope.equals(NutsDependencyScope.API.id())) {
                 p.put(NutsConstants.IdProperties.SCOPE, scope);
@@ -196,18 +198,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!p.isEmpty()) {
             sb.append("?");
-            int i = 0;
-            for (Map.Entry<String, String> e : p.entrySet()) {
-                if (i > 0) {
-                    sb.append('&');
-                }
-                sb.append(CoreStringUtils.simpleQuote(e.getKey(), true, "&="));
-                if (e.getValue() != null) {
-                    sb.append('=');
-                    sb.append(CoreStringUtils.simpleQuote(e.getValue(), true, "&="));
-                }
-                i++;
-            }
+            sb.append(QueryStringMap.formatPropertiesQuery(p));
         }
         return sb.toString();
     }
@@ -223,42 +214,12 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
-    public NutsDependency setOptional(String optional) {
-        return builder().setOptional(optional).build();
+    public String getPropertiesQuery() {
+        return properties;
     }
 
     @Override
-    public NutsDependency setScope(String scope) {
-        return builder().setScope(scope).build();
-    }
-
-    @Override
-    public NutsDependency setId(NutsId id) {
-        return builder().setId(id).build();
-    }
-
-    @Override
-    public NutsDependency setNamespace(String namespace) {
-        return builder().setNamespace(namespace).build();
-    }
-
-    @Override
-    public NutsDependency setExclusions(NutsId[] exclusions) {
-        return builder().setExclusions(exclusions).build();
-    }
-
-    @Override
-    public NutsDependency setVersion(String version) {
-        return builder().setVersion(version).build();
-    }
-
-    @Override
-    public NutsDependency setVersion(NutsVersion version) {
-        return builder().setVersion(version).build();
-    }
-
-    @Override
-    public NutsDependency setClassifier(String classifier) {
-        return builder().setClassifier(classifier).build();
+    public Map<String, String> getProperties() {
+        return QueryStringMap.parseMap(properties);
     }
 }

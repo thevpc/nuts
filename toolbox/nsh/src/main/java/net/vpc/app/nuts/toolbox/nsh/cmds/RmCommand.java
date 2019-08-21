@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import java.io.IOException;
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.ssh.SshXFile;
@@ -48,6 +49,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
+@NutsSingleton
 public class RmCommand extends SimpleNshBuiltin {
 
     public RmCommand() {

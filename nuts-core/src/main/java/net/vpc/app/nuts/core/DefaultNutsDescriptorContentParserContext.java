@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import net.vpc.app.nuts.NutsFetchCommand;
+import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 
@@ -82,7 +83,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
                 throw new UncheckedIOException(e);
             }
         }
-        return new ByteArrayInputStream(bytes);
+        return new NamedByteArrayInputStream(bytes,file.getName());
     }
 
     @Override

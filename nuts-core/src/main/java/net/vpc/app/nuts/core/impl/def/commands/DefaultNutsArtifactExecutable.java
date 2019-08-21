@@ -18,7 +18,7 @@ import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
  *
  * @author vpc
  */
-public class ComponentExecutable extends AbstractNutsExecutableCommand {
+public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand {
 
     NutsDefinition def;
     String commandName;
@@ -32,7 +32,7 @@ public class ComponentExecutable extends AbstractNutsExecutableCommand {
     DefaultNutsExecCommand execCommand;
     boolean autoInstall=true;
 
-    public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
         //all these information areavailable, an exception would be thrown if not!

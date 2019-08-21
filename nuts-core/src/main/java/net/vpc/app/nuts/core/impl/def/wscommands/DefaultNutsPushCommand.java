@@ -134,7 +134,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(ws, "Repository " + repo.config().getName() + " is disabled");
                 }
-                NutsId effId = ws.config().createContentFaceId(id.setProperties(""), file.getDescriptor())
+                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor())
 //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
                         ;
                 repo.deploy().setSession(rsession)

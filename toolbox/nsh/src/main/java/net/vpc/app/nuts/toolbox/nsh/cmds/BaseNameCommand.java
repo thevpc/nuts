@@ -32,6 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgument;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
 import net.vpc.app.nuts.NutsCommandLine;
@@ -39,6 +40,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class BaseNameCommand extends SimpleNshBuiltin {
 
     public BaseNameCommand() {

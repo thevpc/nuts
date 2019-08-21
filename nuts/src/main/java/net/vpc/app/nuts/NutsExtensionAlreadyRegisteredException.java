@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Exception thrown when extension is already registered.
  *
  * @since 0.5.4
  */
@@ -48,6 +48,10 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
         this.installed = installed;
     }
 
+    /**
+     * registered/installed extension
+     * @return registered/installed extension
+     */
     public String getInstalled() {
         return installed;
     }

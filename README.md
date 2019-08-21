@@ -31,80 +31,62 @@ to  install and uninstall artifacts allowing multiple versions of the very same 
 + find              : searche for existing/installable artifacts
 
 ## Download Latest stable version
-+ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar)
++ Linux,Windows,iOS, and Java enabled OS : [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar)
++ On Unix/Linux platforms you may use :
+    + using **wget**
+        ```
+        wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar
+        ```
+    + or using **curl**
+        ```
+        curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar > nuts-0.5.7.jar 
+        ```
 
 ## Requirements
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 
 ## Installation
-
+Nuts needs no installation. It will create all needed configuration upon the very first launch.
+When you type the following line, welcome command will be executed and hence, any pos-install configuration will be triggered:
 ```
 java -jar nuts-0.5.7.jar
 ```
+Yous should then see some log like the following :
 
-You may want to install in more verbose manner:
+![install-log-example](docs/install-log-example.png)
+
+Note that if you are running nuts from within Windows (c) or MacOs, you may not be asked to install all companion tools (Actually Ndi is only 
+supported for linux).
+
+To test installation the simplest way is to type : 
+
 ```
-java -jar nuts-0.5.7.jar --trace
+java -jar nuts-0.5.7.jar --version
 ```
 
-To check if nuts is installed issue this command:
+On linux (as Ndi is supported), companion scripts are installed to make it even simpler to use nuts.
 
 ```
-nuts version 
+nuts --version
 ```
 
-It should show a result like this (nuts-api-version/nuts-impl-version)
+It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
 0.5.7/0.5.7.0
 ```
 
+To run a command just type
+
+```
+nuts <command>
+```
+
+
 # Troubleshooting
 Whenever installation or running fails, it is more likely that there is a misconfiguration or invalid libraries that are used. 
-see [troubleshooting documentation](docs/troubleshooting.md) for more details
+See [troubleshooting documentation](docs/troubleshooting.md) for more details
 
-
-## Examples of usage
-### show version and exit
-```
-nuts version
-```
-
-### show help
-    
-```   
-nuts help
-```
-
-### install tomcat
-
-```    
-nuts install tomcat
-```
-
-### start derby (install first if required)
-
-```
-nuts derby start
-```
-
-### install and run netbeans-launcher (auto-confirm is forced with -y flag)
-
-```    
-nuts -y netbeans-launcher
-```
-
-### update nuts and all installed artifacts
-
-```
-nuts update --all
-```
-
-### run without script nuts [Windows,iOS]
-
-```
-java -jar nuts-0.5.7.jar ...your command here...
-```
 
 ## Releases
 View All releases [here](https://github.com/thevpc/nuts/releases) : 
