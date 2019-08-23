@@ -35,11 +35,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsWorkspace;
+
+import net.vpc.app.nuts.*;
 
 /**
  *
@@ -61,11 +58,11 @@ public class DerbyService {
         if (!Files.exists(targetFile)) {
             appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
             if (appContext.session().isPlainTrace()) {
-                appContext.getSession().getTerminal().out().println("downloading " + id + " to " + targetFile);
+                appContext.getSession().out().println("downloading " + id + " to " + targetFile);
             }
         } else {
             if (appContext.session().isPlainTrace()) {
-                appContext.getSession().getTerminal().out().println("using " + id + " form " + targetFile);
+                appContext.getSession().out().println("using " + id + " form " + targetFile);
             }
         }
         return targetFile;
@@ -77,7 +74,16 @@ public class DerbyService {
         NutsWorkspace ws = appContext.getWorkspace();
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
-            NutsId best = ws.search().addId("org.apache.derby:derbynet").distinct().latest().getResultIds().singleton();
+            NutsId java = appContext.getWorkspace().config().getPlatform();
+            NutsId best = ws.search().addId("org.apache.derby:derbynet").distinct().latest()
+                    .setIdFilter((id, session) -> {
+                        if(java.getVersion().compareTo("1.9")<0){
+                            return id.getVersion().compareTo("10.15.1.3") < 0;
+                        }
+                        return true;
+                    })
+                    .session(appContext.getSession().copy().trace(false))
+                    .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }
 
