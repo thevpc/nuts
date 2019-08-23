@@ -62,4 +62,19 @@ public class NAdminMain extends NutsApplication {
         }
     }
 
+    @Override
+    protected void onInstallApplication(NutsApplicationContext applicationContext) {
+        NutsWorkspace ws = applicationContext.workspace();
+        for (NutsSdkLocation java : ws.config().searchSdkLocations("java", applicationContext.getSession())) {
+            ws.config().addSdk(java,new NutsAddOptions().session(applicationContext.getSession()));
+        }
+    }
+
+    @Override
+    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
+        NutsWorkspace ws = applicationContext.workspace();
+        for (NutsSdkLocation java : ws.config().searchSdkLocations("java", applicationContext.getSession())) {
+            ws.config().addSdk(java,new NutsAddOptions().session(applicationContext.getSession()));
+        }
+    }
 }

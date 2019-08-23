@@ -9,12 +9,8 @@ import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsApplicationContext;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsWorkspaceConfigManager;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsSupportLevelContext;
+
+import net.vpc.app.nuts.*;
 
 /**
  * @author vpc
@@ -40,20 +36,12 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     private void updateStatistics(NutsApplicationContext context, String[] repos) {
         NutsWorkspaceConfigManager cfg = context.getWorkspace().config();
-        if (repos.length == 0) {
-            context.session().out().printf("[[%s]] Updating all indices%n", cfg.getWorkspaceLocation());
-            for (NutsRepository repo : cfg.getRepositories()) {
-                context.session().out().printf("[[%s]] Updating index %s%n", cfg.getWorkspaceLocation(), repo);
-                repo.updateStatistics();
-            }
-        } else {
-            for (String repo : repos) {
-                if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
-                    context.getWorkspace().updateStatistics().addPath(Paths.get(repo)).run();
-                } else {
-                    cfg.getRepository(repo).updateStatistics();
-                }
-            }
+        NutsSession session = context.session();
+        NutsUpdateStatisticsCommand cmd = context.getWorkspace().updateStatistics()
+                .session(session);
+        for (String repo : repos) {
+            cmd.add(repo);
         }
+        cmd.run();
     }
 }
