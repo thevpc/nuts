@@ -560,26 +560,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     NutsFetchCommand setContent(boolean enable);
 
-    /**
-     * enable retrieval of installation info
-     * @return {@code this} instance
-     */
-    NutsFetchCommand installInformation();
-
-    /**
-     * enable/disable retrieval of installation info
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand installInformation(boolean enable);
-
-    /**
-     * enable/disable retrieval of installation info
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setInstallInformation(boolean enable);
-
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
@@ -616,11 +596,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     boolean isContent();
 
-    /**
-     * install info filter
-     * @return install info filter
-     */
-    boolean isInstallInformation();
 
     /**
      * effective filter

@@ -57,7 +57,6 @@ public class RefreshDataService {
             Iterator<NutsDefinition> definitions = ws.search()
                     .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
                     .failFast(false)
-                    .installInformation(false)
                     .content(false)
                     .effective(true)
                     .getResultDefinitions().iterator();

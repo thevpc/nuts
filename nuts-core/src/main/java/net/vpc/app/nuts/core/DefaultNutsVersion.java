@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -44,7 +44,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     private static final long serialVersionUID = 1L;
     public static final NutsVersion EMPTY = new DefaultNutsVersion("");
-
+    private VersionParts parts;
     public static NutsVersion valueOf(String value) {
         value = CoreStringUtils.trim(value);
         if (value.isEmpty()) {
@@ -132,6 +132,61 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         return inc(level, 1);
     }
 
+    public int size() {
+        VersionParts parts = getParts();
+        return parts.size();
+    }
+
+    @Override
+    public int numberSize() {
+        return getParts().getDigitCount();
+    }
+
+    private VersionParts getParts() {
+        if(parts==null){
+            parts=splitVersionParts2(getValue());
+        }
+        return parts;
+    }
+
+    public String get(int level) {
+        VersionParts parts = getParts();
+        int size = parts.size();
+        if (level >= 0) {
+            return parts.get(level).string;
+        }else{
+            int x=size+level;
+            return parts.get(x).string;
+        }
+    }
+
+    public int getNumber(int level) {
+        VersionParts parts = getParts();
+        int size = parts.getDigitCount();
+        if (level >= 0) {
+            return Integer.parseInt(parts.getDigit(level).string);
+        }else{
+            int x=size+level;
+            return Integer.parseInt(parts.getDigit(x).string);
+        }
+    }
+
+    public int getNumber(int level,int defaultValue) {
+        VersionParts parts = getParts();
+        int size = parts.getDigitCount();
+        if (level >= 0) {
+            if(level<size) {
+                return Integer.parseInt(parts.getDigit(level).string);
+            }
+        }else{
+            int x=size+level;
+            if(x<size) {
+                return Integer.parseInt(parts.getDigit(x).string);
+            }
+        }
+        return defaultValue;
+    }
+
     @Override
     public NutsVersion inc(int level, int count) {
         return new DefaultNutsVersion(incVersion(getValue(), level, count));
@@ -184,15 +239,23 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
             parts.addDigit(0, ".");
         }
         digitCount = parts.getDigitCount();
-        if (level <= 0) {
-            level = digitCount;
+        if (level < 0) {
+            level = digitCount-1;
+            while(level<0){
+                parts.addDigit(0, ".");
+                level++;
+            }
+            VersionPart digit = parts.getDigit(level);
+            digit.string = String.valueOf(Long.parseLong(digit.string) + count);
+            return parts.toString();
+        }else {
+            for (int i = digitCount; i < level; i++) {
+                parts.addDigit(0, ".");
+            }
+            VersionPart digit = parts.getDigit(level);
+            digit.string = String.valueOf(Long.parseLong(digit.string) + count);
+            return parts.toString();
         }
-        for (int i = digitCount; i < level; i++) {
-            parts.addDigit(0, ".");
-        }
-        VersionPart digit = parts.getDigit(level);
-        digit.string = String.valueOf(Long.parseLong(digit.string) + count);
-        return parts.toString();
     }
 
     public static int compareVersions(String v1, String v2) {
@@ -261,6 +324,14 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
             this.all = all;
         }
 
+        public VersionPart get(int index) {
+            return all.get(index);
+        }
+
+        public int size() {
+            return all.size();
+        }
+
         public int getDigitCount() {
             int c = 0;
             for (VersionPart s : all) {
@@ -275,13 +346,24 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
             int c = 0;
             for (VersionPart s : all) {
                 if (s.digit) {
-                    c++;
                     if (c == index) {
                         return s;
                     }
+                    c++;
                 }
             }
             return null;
+        }
+
+        public void insertDigit(long val, String sep) {
+            if (all.size() == 0) {
+                all.add(new VersionPart(String.valueOf(val), true));
+            } else if (all.get(0).digit) {
+                all.add(0,new VersionPart(sep, false));
+                all.add(0,new VersionPart(String.valueOf(val), true));
+            } else {
+                all.add(0,new VersionPart(String.valueOf(val), true));
+            }
         }
 
         public void addDigit(long val, String sep) {

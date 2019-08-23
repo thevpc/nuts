@@ -41,7 +41,7 @@ import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
 public class NutsWorkspaceHelper {
 
     public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
-        return new DefaultNutsRepositorySession(session)
+        return new DefaultNutsRepositorySession(null,session)
                 .setTransitive(options.isTransitive())
                 .setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
@@ -50,7 +50,7 @@ public class NutsWorkspaceHelper {
         if (options == null) {
             options = new DefaultNutsFetchCommand(repo.getWorkspace()).setIndexed(true);
         }
-        return new DefaultNutsRepositorySession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+        return new DefaultNutsRepositorySession(repo,session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
     public static NutsFetchMode[] resolveFetchModes(boolean offline) {

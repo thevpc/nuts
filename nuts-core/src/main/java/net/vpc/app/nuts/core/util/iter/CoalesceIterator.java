@@ -75,4 +75,10 @@ public class CoalesceIterator<T> implements Iterator<T> {
         children.peek().remove();
     }
 
+    @Override
+    public String toString() {
+        return "CoalesceIterator(" +
+                children +
+                ')';
+    }
 }

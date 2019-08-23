@@ -116,4 +116,25 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         }
         return false;
     }
-}
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"{" +
+                "failFast=" + isFailFast() +
+                ", transitive=" + isTransitive() +
+                ", cached=" + isCached() +
+                ", indexed=" + getIndexed() +
+                ", fetchStrategy=" + getFetchStrategy() +
+                ", optional=" + getOptional() +
+                ", scope=" + getScope() +
+                ", content=" + isContent() +
+                ", inlineDependencies=" + isInlineDependencies() +
+                ", dependencies=" + isDependencies() +
+                ", dependenciesTree=" + isDependenciesTree() +
+                ", effective=" + isEffective() +
+                ", location=" + getLocation() +
+                ", repos=" + Arrays.toString(getRepositories()) +
+                ", displayOptions=" + getDisplayOptions() +
+                ", id=" + getId() +
+                '}';
+    }}

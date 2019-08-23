@@ -42,6 +42,10 @@ public interface NutsRepositorySession {
 
     NutsRepositorySession setSession(NutsSession session);
 
+    NutsRepository getRepository();
+
+    NutsWorkspace getWorkspace();
+
     NutsSession getSession();
 
     boolean isTransitive();

@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.impl.def.executors;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.nio.file.Path;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public final class JavaExecutorOptions {
 
@@ -126,7 +126,7 @@ public final class JavaExecutorOptions {
                 javaHome = "${java}";
             }
         } else {
-            javaHome = CoreIOUtils.resolveJavaCommand(getJavaHome());
+            javaHome = NutsJavaSdkUtils.resolveJavaCommandByHome(getJavaHome(),session.workspace());
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
@@ -146,7 +146,6 @@ public final class JavaExecutorOptions {
                             .optional(false)
                             .distinct()
                             .content()
-                            .installInformation()
                             .dependencies()
                             .latest()
                             .inlineDependencies()
@@ -283,7 +282,7 @@ public final class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWorkspace()
-                    .search().id(nutsId).setSession(searchSession).installInformation().latest().getResultDefinitions().required();
+                    .search().id(nutsId).setSession(searchSession).latest().getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }

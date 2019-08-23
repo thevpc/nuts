@@ -74,4 +74,12 @@ public class FilteredIterator<T> implements Iterator<T> {
     public void remove() {
         base.remove();
     }
+
+    @Override
+    public String toString() {
+        return "FilteredIterator{" +
+                "base=" + base +
+                ", filter=" + filter +
+                '}';
+    }
 }

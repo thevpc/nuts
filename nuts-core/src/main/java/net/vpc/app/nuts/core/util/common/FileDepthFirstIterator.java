@@ -18,8 +18,10 @@ public class FileDepthFirstIterator implements Iterator<File> {
     private final Stack<File> stack = new Stack<>();
     private File lastFolder = null;
     private File lastFile = null;
+    private File base = null;
 
     public FileDepthFirstIterator(File file) {
+        this.base=file;
         if (file != null) {
             stack.push(file);
         }
@@ -62,4 +64,10 @@ public class FileDepthFirstIterator implements Iterator<File> {
         lastFile.delete();
     }
 
+    @Override
+    public String toString() {
+        return "FileDepthFirstIterator(" +
+                base +
+                ')';
+    }
 }

@@ -93,4 +93,10 @@ public class QueueIterator<T> implements Iterator<T> {
         return children.toArray(new Iterator[0]);
     }
 
+    @Override
+    public String toString() {
+        return "QueueIterator(" +
+                children +
+                ')';
+    }
 }

@@ -60,10 +60,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             return def;
         }
         def = ws.fetch().id(id).session(session.copy().trace(false))
-                .installInformation()
                 .setOptional(false)
                 .content()
-                .installInformation()
                 .effective()
                 .dependencies()
                 .scope(NutsDependencyScopePattern.RUN)

@@ -27,7 +27,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts;
 
 import java.nio.file.Path;
 import net.vpc.app.nuts.NutsContent;
@@ -37,13 +37,13 @@ import net.vpc.app.nuts.NutsContent;
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsContent implements NutsContent {
+public class NutsDefaultContent implements NutsContent {
 
     private final Path file;
     private final boolean cached;
     private final boolean temporary;
 
-    public DefaultNutsContent(Path file, boolean cached, boolean temporary) {
+    public NutsDefaultContent(Path file, boolean cached, boolean temporary) {
         this.file = file;
         this.cached = cached;
         this.temporary = temporary;

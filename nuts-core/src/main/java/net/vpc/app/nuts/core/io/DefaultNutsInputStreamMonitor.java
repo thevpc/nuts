@@ -44,14 +44,14 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
     @Override
     public void onStart(InputStreamEvent event) {
         if (session.isPlainOut()) {
-            onProgress0(event);
+            onProgress0(event,false);
         }
     }
 
     @Override
     public void onComplete(InputStreamEvent event) {
         if (session.isPlainOut()) {
-            onProgress0(event);
+            onProgress0(event,true);
             out.println();
         }
     }
@@ -59,12 +59,12 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
     @Override
     public boolean onProgress(InputStreamEvent event) {
         if (session.isPlainOut()) {
-            return onProgress0(event);
+            return onProgress0(event,false);
         }
         return true;
     }
 
-    public boolean onProgress0(InputStreamEvent event) {
+    public boolean onProgress0(InputStreamEvent event,boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
             NutsTerminalFormat terminalFormat = session.getWorkspace().io().getTerminalFormat();
@@ -76,7 +76,7 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             if (event.getLength() > 0) {
                 percent = (double) (event.getGlobalCount() * 100.0 / event.getLength());
             } else {
-                percent = 0;
+                percent = end?100:0;
             }
             int x = (int) (20.0 / 100.0 * percent);
 

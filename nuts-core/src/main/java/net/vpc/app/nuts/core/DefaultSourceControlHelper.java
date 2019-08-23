@@ -12,16 +12,7 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsUnsupportedOperationException;
-import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -110,7 +101,7 @@ public class DefaultSourceControlHelper {
                     nutToInstall.getRepositoryName(),
                     newId,
                     d,
-                    new DefaultNutsContent(folder,
+                    new NutsDefaultContent(folder,
                             false,
                             false),
                     null,

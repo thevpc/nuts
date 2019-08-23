@@ -42,7 +42,7 @@ import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsContentEvent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
@@ -100,7 +100,7 @@ public class NutsRepositoryFolderHelper {
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
         Path cacheContent = getLongNameIdLocalFile(id);
         if (cacheContent != null && Files.exists(cacheContent)) {
-            return new DefaultNutsContent(cacheContent, true, false);
+            return new NutsDefaultContent(cacheContent, true, false);
         }
         return null;
     }

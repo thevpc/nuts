@@ -101,7 +101,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         }
                     }else {
                         if (model.isDescFile(child.getName())) {
-                            stack.push(new PathAndDepth(file.path + "/" + child, false, file.depth));
+                            stack.push(new PathAndDepth(file.path + "/" + child.getName(), false, file.depth));
                         }
                     }
                 }

@@ -46,7 +46,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository implements NutsRepositoryExt {
+public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository {
 
     private static final long serialVersionUID = 1L;
 
@@ -85,7 +85,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     @Override
-    public boolean acceptNutsId(NutsId id) {
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
         String groups = config().getGroups();
         if (CoreStringUtils.isBlank(groups)) {
             return true;

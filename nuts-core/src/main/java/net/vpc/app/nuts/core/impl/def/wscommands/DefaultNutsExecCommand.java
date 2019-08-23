@@ -39,6 +39,14 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
         terminal.install(ws);
         terminal.setParent(getValidSession().getTerminal());
+        terminal.setOutMode(getValidSession().getTerminal().getOutMode());
+        terminal.setErrMode(getValidSession().getTerminal().getErrMode());
+        if(isGrabOutputString()){
+            terminal.setOutMode(NutsTerminalMode.INHERITED);
+        }
+        if(isGrabErrorString()){
+            terminal.setErrMode(NutsTerminalMode.INHERITED);
+        }
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -51,6 +59,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             } else {
                 terminal.setErr(getValidSession().getTerminal().out());
             }
+            terminal.setErrMode(terminal.getOutMode());
         }
         terminal.out().flush();
         terminal.err().flush();
@@ -244,7 +253,6 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 .failFast()
                 .effective()
                 .content()
-                .installInformation()
                 .scope(NutsDependencyScopePattern.RUN)
                 .getResultDefinition();
         return ws_exec0(def, commandName, appArgs, executorOptions, env, dir, failFast, executionType, session);

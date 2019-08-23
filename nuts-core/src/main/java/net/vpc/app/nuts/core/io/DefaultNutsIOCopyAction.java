@@ -5,11 +5,7 @@
  */
 package net.vpc.app.nuts.core.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -240,6 +236,15 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     public NutsPathCopyAction setSession(NutsSession session) {
         this.session = session;
         return this;
+    }
+
+    @Override
+    public byte[] getByteArrayResult() {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        to(b);
+        safeCopy(false);
+        run();
+        return b.toByteArray();
     }
 
     @Override

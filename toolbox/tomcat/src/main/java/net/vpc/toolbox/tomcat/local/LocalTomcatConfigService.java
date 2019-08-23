@@ -227,7 +227,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.getWorkspace().config().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = context.getWorkspace().config().getOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -280,8 +280,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.session().out().printf("==[%s]== updated catalina base ==%s==\n", getName(), catalinaBase);
             }
         }
-        b.setOutput(context.getSession().getTerminal().out());
-        b.setErr(context.getSession().getTerminal().err());
+        b.setOutput(context.getSession().out());
+        b.setErr(context.getSession().err());
         return b;
     }
 
@@ -332,17 +332,20 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         catalinaVersion = catalinaVersion.trim();
         if (catalinaVersion.isEmpty()) {
-            catalinaVersion = "8.5";
+            NutsVersion javaVersion = context.workspace().config().getPlatform().getVersion();
+            if(javaVersion.compareTo("1.8")<0) {
+                catalinaVersion = "7";
+            }
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            NutsDefinition r = context.getWorkspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .installInformation().session(context.getSession())
+            NutsDefinition r = context.workspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                    .session(context.getSession().copy().trace(false))
                     .getResultDefinitions().first();
             if (r != null && r.getInstallInformation().isInstalled()) {
                 return r;
             } else {
-                catalinaNutsDefinition = context.getWorkspace()
+                catalinaNutsDefinition = context.workspace()
                         .install()
                         .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
                         .setSession(context.getSession().copy().trace().addListener(new NutsInstallListener() {
@@ -397,11 +400,48 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
     }
 
+    public String getJpsJavaHome(String base) {
+        File jh=new File(base);
+        if(new File(jh,"../bin/jps").exists()){
+            return jh.getParent();
+        }
+        if(new File(jh,"bin/jps").exists()){
+            return jh.getPath();
+        }
+        return null;
+    }
+
+    public String getJpsJavaHome() {
+        List<String> detectedJavaHomes=new ArrayList<>();
+        String jh = System.getProperty("java.home");
+        detectedJavaHomes.add(jh);
+        String v=getJpsJavaHome(jh);
+        if(v!=null){
+            return v;
+        }
+        NutsWorkspace ws = context.getWorkspace();
+        for (NutsSdkLocation java : ws.config().getSdks("java")) {
+            if(java.getPackaging().equals("jdk")
+                && ws.version().parse(java.getVersion()).compareTo("1.8")>=0){
+                detectedJavaHomes.add(java.getPath());
+                v=getJpsJavaHome(java.getPath());
+                if(v!=null){
+                    return v;
+                }
+            }
+        }
+        throw new NutsExecutionException(ws,"Unable to resolve a valid jdk installation. " +
+                "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using nadmin tool. " +
+                "All the followings are invalid : \n"
+                +String.join("\n",detectedJavaHomes)
+                ,10);
+    }
+
     public JpsResult getJpsResult() {
         Path catalinaBase = getCatalinaBase();
         JpsResult[] ps;
         try {
-            ps = PosApis.get().findJavaProcessList(null, true, true,
+            ps = PosApis.get().findJavaProcessList(getJpsJavaHome(), true, true,
                     (p) -> {
                         return p.getClassName().equals("org.apache.catalina.startup.Bootstrap")
                         && (catalinaBase == null

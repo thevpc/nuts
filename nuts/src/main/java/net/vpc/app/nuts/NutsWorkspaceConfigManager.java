@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -107,18 +106,20 @@ public interface NutsWorkspaceConfigManager {
 
     NutsSdkLocation[] getSdks(String sdkType);
 
-    NutsSdkLocation[] searchSdkLocations(String sdkType, PrintStream out);
+    NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session);
 
-    NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, PrintStream out);
+    NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, NutsSession session);
 
     /**
      * verify if the path is a valid a
      *
      * @param sdkType sdk type
      * @param path sdk path
+     * @param preferredName
+     * @param session
      * @return null if not a valid jdk path
      */
-    NutsSdkLocation resolveSdkLocation(String sdkType, Path path);
+    NutsSdkLocation resolveSdkLocation(String sdkType, Path path, String preferredName, NutsSession session);
 
     NutsWorkspaceOptions options();
 
@@ -167,6 +168,14 @@ public interface NutsWorkspaceConfigManager {
     void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
 
     boolean isSupportedRepositoryType(String repositoryType);
+
+    /**
+     * add temporary repository
+     * @param repository temporary repository
+     * @param session session
+     * @return repository
+     */
+    NutsRepository addRepository(NutsRepositoryModel repository, NutsSession session);
 
     NutsRepository addRepository(NutsRepositoryDefinition definition);
 
@@ -244,13 +253,15 @@ public interface NutsWorkspaceConfigManager {
 
     boolean isGlobal();
 
-    NutsOsFamily getPlatformOsFamily();
+    NutsOsFamily getOsFamily();
 
-    NutsId getPlatformOs();
+    NutsId getPlatform();
 
-    NutsId getPlatformOsDist();
+    NutsId getOs();
 
-    NutsId getPlatformArch();
+    NutsId getOsDist();
+
+    NutsId getArch();
 
     long getCreationStartTimeMillis();
 

@@ -601,7 +601,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive) {
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
         double result = 0;
-        if (xrepo.acceptNutsId(id)) {
+        if (xrepo.acceptAction(id, supportedAction, mode)) {
             int r = repository.config().getSpeed();
             if (r > 0) {
                 result += 1.0 / r;

@@ -216,7 +216,6 @@ public class NutsComponentController {
                             .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
                             .id(id)
                             .failFast(false)
-                            .installInformation(false)
                             .content(false)
                             .effective(true)
                             .getResultDefinitions().iterator();

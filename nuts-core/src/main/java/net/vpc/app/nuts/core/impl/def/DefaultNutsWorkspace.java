@@ -331,7 +331,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             nutToInstall = search().id(id).setSession(searchSession).setTransitive(false).inlineDependencies(checkDependencies)
                     .installed()
                     .setOptional(false)
-                    .setInstallInformation(true)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
                 return false;
@@ -556,7 +555,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             .setOptional(false)
                             .content()
                             .dependencies()
-                            .setInstallInformation(true)
                             .getResultDefinition();
                 }
             }

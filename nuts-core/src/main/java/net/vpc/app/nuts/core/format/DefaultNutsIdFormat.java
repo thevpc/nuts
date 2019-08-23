@@ -441,4 +441,19 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "NutsIdFormat{" +
+                "omitNamespace=" + omitNamespace +
+                ", omitGroup=" + omitGroup +
+                ", omitImportedGroup=" + omitImportedGroup +
+                ", omitProperties=" + omitProperties +
+                ", highlightImportedGroup=" + highlightImportedGroup +
+                ", highlightScope=" + highlightScope +
+                ", highlightOptional=" + highlightOptional +
+                ", omittedProperties=" + omittedProperties +
+                ", id=" + id +
+                '}';
+    }
 }

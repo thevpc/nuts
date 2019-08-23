@@ -63,7 +63,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         return null;
     }
 

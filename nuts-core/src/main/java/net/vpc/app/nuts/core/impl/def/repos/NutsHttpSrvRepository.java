@@ -40,7 +40,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
@@ -142,7 +142,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
 
         boolean transitive = session.isTransitive();
         InputStream ret = null;
@@ -190,7 +190,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = CoreIOUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return new DefaultNutsContent(localPath, false, temp);
+                return new NutsDefaultContent(localPath, false, temp);
             }
         } catch (UncheckedIOException ex) {
             throw new NutsNotFoundException(getWorkspace(), id, ex);

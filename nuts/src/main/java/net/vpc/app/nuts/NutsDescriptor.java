@@ -72,7 +72,7 @@ public interface NutsDescriptor extends Serializable {
      * true if the artifact is a java executable that implements {@link NutsApplication} interface.
      * @return true if the artifact is a java executable that implements {@link NutsApplication} interface.
      */
-    boolean isNutsApplication();
+    boolean isApplication();
 
     //    String getAlternative();
 

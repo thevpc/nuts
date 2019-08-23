@@ -188,4 +188,8 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         return new FixedInputStreamMetadata(String.valueOf(sourceName), length);
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(sourceName);
+    }
 }

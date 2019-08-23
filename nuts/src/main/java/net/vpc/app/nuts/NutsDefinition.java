@@ -110,8 +110,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     /**
      * return artifact install information.
-     * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available.
      *
      * @return artifact install information
      * @throws NutsElementNotFoundException if the property is not requested
@@ -121,7 +119,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     /**
      * return artifact effective descriptor.
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#installInformation(boolean)} to be available).
+     * It must be requested (see {@link NutsSearchCommand#effective(boolean)} to be available).
      *
      * @return artifact effective descriptor
      * @throws NutsElementNotFoundException if the property is not requested
@@ -189,13 +187,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return true if requested content
      */
     boolean isSetContent();
-
-    /**
-     * true if requested content
-     *
-     * @return true if requested content
-     */
-    boolean isSetInstallInformation();
 
     /**
      * true if requested content

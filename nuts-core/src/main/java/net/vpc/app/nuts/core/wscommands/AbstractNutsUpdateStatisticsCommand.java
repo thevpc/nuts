@@ -122,8 +122,8 @@ public abstract class AbstractNutsUpdateStatisticsCommand extends NutsWorkspaceC
         return this;
     }
 
-    public String[] getPaths() {
-        return repositrories.toArray(new String[0]);
+    public Path[] getPaths() {
+        return paths.toArray(new Path[0]);
     }
 
     @Override

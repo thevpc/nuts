@@ -77,7 +77,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public boolean acceptNutsId(NutsId id) {
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
         String groups = config().getGroups();
         if (CoreStringUtils.isBlank(groups)) {
             return true;

@@ -520,7 +520,6 @@ public class FormattableNutsId {
                     this.defFetched = ws.fetch().id(id).setSession(
                             session.setTrace(false)
                     ).offline()
-                            .setInstallInformation(true)
                             .setContent(true)
                             .setOptional(false)
                             .dependencies(this.checkDependencies)
@@ -535,13 +534,13 @@ public class FormattableNutsId {
 
             if (def != null) {
                 this.executable = def.getDescriptor().isExecutable();
-                this.executableApp = def.getDescriptor().isNutsApplication();
+                this.executableApp = def.getDescriptor().isApplication();
             } else if (this.defFetched != null) {
                 this.executable = this.defFetched.getDescriptor().isExecutable();
-                this.executableApp = this.defFetched.getDescriptor().isNutsApplication();
+                this.executableApp = this.defFetched.getDescriptor().isApplication();
             } else if (desc != null) {
                 this.executable = desc.isExecutable();
-                this.executableApp = desc.isNutsApplication();
+                this.executableApp = desc.isApplication();
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
             if (def != null) {

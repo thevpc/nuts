@@ -8,7 +8,6 @@ package net.vpc.app.nuts.core.filters.id;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 /**
@@ -31,7 +30,7 @@ public class NutsExecStatusIdFilter implements NutsDescriptorFilter, Simplifiabl
             return other.isExecutable() == executable.booleanValue();
         }
         if (nutsApplication != null) {
-            return other.isNutsApplication() == nutsApplication.booleanValue();
+            return other.isApplication() == nutsApplication.booleanValue();
         }
         return true;
     }

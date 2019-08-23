@@ -330,7 +330,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private NutsFetchCommand fetch0() {
-        return ws.fetch().installInformation().content().effective();
+        return ws.fetch().content().effective();
     }
 
     private void applyResult(NutsWorkspaceUpdateResult result) {
@@ -552,7 +552,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 try {
                     newId = ws.search().session(searchSession).addId(id)
-                            .companions()
+                            .companion()
                             .targetApiVersion(bootApiVersion)
                             .frozenIds(getFrozenIds())
                             .anyWhere()

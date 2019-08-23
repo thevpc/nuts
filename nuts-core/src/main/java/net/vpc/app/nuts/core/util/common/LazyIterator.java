@@ -53,4 +53,10 @@ public class LazyIterator<T> implements Iterator<T> {
         iterator.remove();
     }
 
+    @Override
+    public String toString() {
+        return "LazyIterator("
+                +(iterator!=null?iterator.toString():iterable!=null?iterable.toString():"null")
+                +")";
+    }
 }

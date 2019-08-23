@@ -100,4 +100,11 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateStatisticsCommand run();
+
+    /**
+     * add path if repoOrPath is a path (contains path separator or is '.' or '..')
+     * if not add repo name or id
+     * @param repoOrPath repo uuid, name or path
+     */
+    void add(String repoOrPath);
 }

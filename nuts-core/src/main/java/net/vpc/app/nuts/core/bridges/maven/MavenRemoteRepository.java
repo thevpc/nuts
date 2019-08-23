@@ -42,12 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
-import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.MavenMetadata;
@@ -360,7 +359,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -369,11 +368,14 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case FILES_FOLDERS:
             case GITHUB:
             case MAVEN: {
-                List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
                 List<Iterator<NutsId>> li = new ArrayList<>();
-                for (CommonRootsHelper.PathBase root : roots) {
-                    int depth = root.isDeep() ? Integer.MAX_VALUE : 2;
-                    li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root.getName(), filter, session, depth, findModel));
+                for (String root : roots) {
+                    if(root.endsWith("/*")) {
+                        String name = root.substring(0, root.length() - 2);
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), name, filter, session, Integer.MAX_VALUE, findModel));
+                    }else{
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root, filter, session, 2, findModel));
+                    }
                 }
                 return IteratorUtils.concat(li);
             }
@@ -427,6 +429,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id);
+        }
         if (wrapper == null) {
             wrapper = getWrapper();
         }
@@ -445,13 +450,13 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             Path content = getMavenLocalFolderContent(id);
             if (content != null && Files.exists(content)) {
                 if (localPath == null) {
-                    return new DefaultNutsContent(content, true, false);
+                    return new NutsDefaultContent(content, true, false);
                 } else {
                     Path tempFile = getWorkspace().io().createTempFile(content.getFileName().toString(), this);
                     getWorkspace().io().copy()
                             .session(session.getSession())
                             .from(content).to(tempFile).safeCopy().run();
-                    return new DefaultNutsContent(tempFile, true, false);
+                    return new NutsDefaultContent(tempFile, true, false);
                 }
             }
         }
@@ -474,7 +479,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
-            return new DefaultNutsContent(tempFile, false, true);
+            return new NutsDefaultContent(tempFile, false, true);
         } else {
             try {
                 getWorkspace().io().copy()
@@ -493,7 +498,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
-            return new DefaultNutsContent(localPath, false, false);
+            return new NutsDefaultContent(localPath, false, false);
         }
     }
 

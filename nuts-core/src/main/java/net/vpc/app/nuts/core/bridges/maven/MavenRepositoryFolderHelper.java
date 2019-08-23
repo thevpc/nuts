@@ -59,7 +59,7 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.CoreNutsConstants;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -92,7 +92,7 @@ public class MavenRepositoryFolderHelper {
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
         Path cacheContent = getIdLocalFile(id);
         if (cacheContent != null && Files.exists(cacheContent)) {
-            return new DefaultNutsContent(cacheContent, true, false);
+            return new NutsDefaultContent(cacheContent, true, false);
         }
         return null;
     }

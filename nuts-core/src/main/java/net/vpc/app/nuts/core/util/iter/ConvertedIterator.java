@@ -42,10 +42,15 @@ public class ConvertedIterator<F, T> implements Iterator<T> {
 
     private final Iterator<F> base;
     private final Function<F, T> converter;
+    private final String convertName;
 
-    public ConvertedIterator(Iterator<F> base, Function<F, T> converter) {
+    public ConvertedIterator(Iterator<F> base, Function<F, T> converter,String convertName) {
         this.base = base;
         this.converter = converter;
+        if(convertName==null){
+            convertName=this.converter.toString();
+        }
+        this.convertName = convertName;
     }
 
     @Override
@@ -61,5 +66,10 @@ public class ConvertedIterator<F, T> implements Iterator<T> {
     @Override
     public void remove() {
         base.remove();
+    }
+
+    @Override
+    public String toString() {
+        return "ConvertedIterator("+base+","+convertName+")";
     }
 }

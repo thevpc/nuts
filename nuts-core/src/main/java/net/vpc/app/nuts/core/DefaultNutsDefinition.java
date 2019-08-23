@@ -49,7 +49,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private String repositoryUuid;
     private String repositoryName;
 
-    //optional 
     private NutsContent content;
     private NutsInstallInformation installInformation;
     private NutsDependencyTreeNode[] dependencyNodes;
@@ -90,7 +89,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.repositoryName = other.getRepositoryName();
 
             this.content = !other.isSetContent() ? null : other.getContent();
-            this.installInformation = !other.isSetInstallInformation() ? null : other.getInstallInformation();
+            this.installInformation = other.getInstallInformation();
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
             this.dependencyNodes = !other.isSetDependencyNodes() ? null : other.getDependencyNodes();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
@@ -105,11 +104,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public boolean isSetContent() {
         return content != null;
-    }
-
-    @Override
-    public boolean isSetInstallInformation() {
-        return installInformation != null;
     }
 
     @Override
@@ -173,9 +167,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public NutsContent getContent() {
-        if (!isSetContent()) {
-            throw new NutsElementNotFoundException(null, "Unable to get content. You need to call search.content(...) first.");
-        }
         return content;
     }
 
@@ -189,9 +180,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public NutsInstallInformation getInstallInformation() {
-        if (!isSetInstallInformation()) {
-            throw new NutsElementNotFoundException(null, "Unable to get install information. You need to call search.installInformation(...) first.");
-        }
         return installInformation;
     }
 

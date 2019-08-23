@@ -57,7 +57,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setPackaging(null);
         setParents(null);
         setExecutable(false);
-        setNutsApplication(false);
+        setApplication(false);
         setDescription(null);
         setName(null);
         setExecutor(null);
@@ -82,7 +82,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
-            setNutsApplication(other.isNutsApplication());
+            setApplication(other.isNutsApplication());
             setDescription(other.getDescription());
             setName(other.getName());
             setExecutor(other.getExecutor());
@@ -110,7 +110,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
-            setNutsApplication(other.isNutsApplication());
+            setApplication(other.isApplication());
             setDescription(other.getDescription());
             setName(other.getName());
             setExecutor(other.getExecutor());
@@ -179,7 +179,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setNutsApplication(boolean nutsApp) {
+    public NutsDescriptorBuilder setApplication(boolean nutsApp) {
         this.nutsApplication = nutsApp;
         return this;
     }
@@ -276,6 +276,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder setPackaging(String packaging) {
         this.packaging = CoreStringUtils.trim(packaging);
         return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder packaging(String packaging) {
+        return setPackaging(packaging);
     }
 
     public NutsDescriptorBuilder setParents(NutsId[] parents) {
@@ -796,8 +801,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder nutsApplication(boolean nutsApp) {
-        return setNutsApplication(nutsApp);
+    public NutsDescriptorBuilder application(boolean nutsApp) {
+        return setApplication(nutsApp);
     }
 
     @Override

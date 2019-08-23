@@ -248,9 +248,9 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @param nutsApp new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setNutsApplication(boolean nutsApp);
+    NutsDescriptorBuilder setApplication(boolean nutsApp);
 
-    NutsDescriptorBuilder nutsApplication(boolean nutsApp);
+    NutsDescriptorBuilder application(boolean nutsApp);
 
     /**
      * set executor flag
@@ -345,6 +345,14 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setPackaging(String packaging);
+
+    /**
+     * set packaging
+     *
+     * @param packaging new value
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder packaging(String packaging);
 
     /**
      * set id

@@ -141,7 +141,6 @@ public class DataService {
                     .inlineDependencies()
                     .addId(id)
                     .failFast(false)
-                    .installInformation(false)
                     .content(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);

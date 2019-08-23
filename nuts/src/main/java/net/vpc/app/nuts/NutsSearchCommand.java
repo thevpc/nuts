@@ -110,7 +110,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand libs();
+    NutsSearchCommand lib();
 
     /**
      * set lib filter. if true lib (non app) only are retrieved.
@@ -118,7 +118,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand libs(boolean enable);
+    NutsSearchCommand lib(boolean enable);
 
     /**
      * set lib filter. if true lib (non app) only are retrieved.
@@ -126,7 +126,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setLibs(boolean enable);
+    NutsSearchCommand setLib(boolean enable);
 
     /**
      * set extensions filter. extensions only are retrieved.
@@ -152,7 +152,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NutsSearchCommand setExtensions(boolean enable);
+    NutsSearchCommand setExtension(boolean enable);
 
 
     /**
@@ -161,7 +161,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NutsSearchCommand companions();
+    NutsSearchCommand companion();
 
     /**
      * set companions filter. if true companions only are retrieved.
@@ -170,7 +170,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NutsSearchCommand companions(boolean enable);
+    NutsSearchCommand companion(boolean enable);
 
     /**
      * set companions filter. if true companions only are retrieved.
@@ -179,14 +179,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      * @since 0.5.7
      */
-    NutsSearchCommand setCompanions(boolean enable);
+    NutsSearchCommand setCompanion(boolean enable);
 
     /**
      * set app filter. non lib (app) only are retrieved.
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand apps();
+    NutsSearchCommand exec();
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -194,7 +194,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand apps(boolean enable);
+    NutsSearchCommand exec(boolean enable);
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -202,7 +202,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable lib filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setApps(boolean enable);
+    NutsSearchCommand setExec(boolean enable);
 
     NutsSearchCommand runtime();
 
@@ -216,7 +216,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand nutsApps();
+    NutsSearchCommand applications();
 
     /**
      * set nuts app filter. if true nuts app (implementing NutsApplication) only
@@ -225,7 +225,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NutsSearchCommand nutsApps(boolean enable);
+    NutsSearchCommand applications(boolean enable);
 
     /**
      * set nuts app filter. if true nuts app (implementing NutsApplication) only
@@ -234,7 +234,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param enable ap filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setNutsApps(boolean enable);
+    NutsSearchCommand setApplication(boolean enable);
 
     boolean isRuntime();
 
@@ -243,35 +243,35 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return companion filter
      */
-    boolean isCompanions();
+    boolean isCompanion();
 
     /**
      * extension filter
      *
      * @return extension filter
      */
-    boolean isExtensions();
+    boolean isExtension();
 
     /**
      * app filter
      *
      * @return app filter
      */
-    boolean isApps();
+    boolean isExec();
 
     /**
      * nuts app filter
      *
      * @return nuts app filter
      */
-    boolean isNutsApps();
+    boolean isApplication();
 
     /**
      * lib filter
      *
      * @return lib filter
      */
-    boolean isLibs();
+    boolean isLib();
 
     /**
      * add id to search.
@@ -994,29 +994,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setContent(boolean enable);
 
     /**
-     * enable retrieval of installation info
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand installInformation();
-
-    /**
-     * enable/disable retrieval of installation info
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand installInformation(boolean enable);
-
-    /**
-     * enable/disable retrieval of installation info
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setInstallInformation(boolean enable);
-
-    /**
      * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
@@ -1063,8 +1040,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     Boolean getOptional();
 
     boolean isContent();
-
-    boolean isInstallInformation();
 
     boolean isEffective();
 

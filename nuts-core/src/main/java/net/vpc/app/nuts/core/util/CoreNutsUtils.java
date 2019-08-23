@@ -161,13 +161,13 @@ public class CoreNutsUtils {
                     .setArch(new String[]{"64bit"})
                     .setOs(new String[]{"linux#4.6"})
                     .setOsdist(new String[]{"opensuse#42"})
-                    .setPlatform(new String[]{"java#8"})
+                    .setPlatform(new String[]{"java#1.8"})
                     .setExecutor(new DefaultNutsArtifactCall(
-                            new DefaultNutsId(null, null, "java", "8", (String) null),
+                            new DefaultNutsId(null, null, "java", "1.8", (String) null),
                             new String[]{"-jar"}
                     ))
                     .setInstaller(new DefaultNutsArtifactCall(
-                            new DefaultNutsId(null, null, "java", "8", (String) null),
+                            new DefaultNutsId(null, null, "java", "1.8", (String) null),
                             new String[]{"-jar"}
                     ))
                     .setLocations(new NutsIdLocation[]{

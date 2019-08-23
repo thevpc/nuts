@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.impl.def.repos;
 
 import net.vpc.app.nuts.core.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.*;
 
@@ -38,7 +39,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
@@ -104,23 +105,29 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
+        List<String> rootStrings=new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             if (cache.isReadEnabled()) {
                 li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
-            Iterator<NutsId> p = null;
-            try {
-                p = searchImpl2(filter, session);
-            } catch (NutsNotFoundException ex) {
-                //ignore....
-            } catch (Exception ex) {
-                //ignore....
-                LOG.log(Level.SEVERE, "Search latest versions error : " + ex.toString(), ex);
+            if(root.isDeep()){
+                rootStrings.add(root.getName()+"/*");
+            }else{
+                rootStrings.add(root.getName());
             }
-            if (p != null) {
-                li.add(p);
-            }
+        }
+        Iterator<NutsId> p = null;
+        try {
+            p = searchImpl2(filter, rootStrings.toArray(new String[0]), session);
+        } catch (NutsNotFoundException ex) {
+            //ignore....
+        } catch (Exception ex) {
+            //ignore....
+            LOG.log(Level.SEVERE, "Search latest versions error : " + ex.toString(), ex);
+        }
+        if (p != null) {
+            li.add(p);
         }
         return mirroring.search(IteratorBuilder.ofList(li).distinct(NutsId::getLongName).build(), filter, session);
     }
@@ -153,7 +160,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 } else {
                     localPath = cachePath;
                 }
-                return new DefaultNutsContent(localPath, true, false);
+                return new NutsDefaultContent(localPath, true, false);
             }
         } else {
             c = fetchContentImpl2(id, descriptor, localPath, session);
@@ -280,12 +287,19 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return null;
     }
 
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         return null;
     }
 
     public void updateStatistics2() {
 
+    }
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode){
+        String groups = config().getGroups();
+        if (CoreStringUtils.isBlank(groups)) {
+            return true;
+        }
+        return id.getGroupId().matches(CoreStringUtils.simpexpToRegexp(groups));
     }
 
 }

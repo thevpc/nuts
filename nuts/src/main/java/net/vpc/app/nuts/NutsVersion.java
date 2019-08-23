@@ -68,4 +68,53 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, Comparable<N
     NutsVersion inc(int level);
 
     NutsVersion inc(int level, int count);
+
+    /**
+     * number of elements in the version.
+     * <ul>
+     *     <li>size(1.22)=3 {'1','.','22'}</li>
+     *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
+     * </ul>
+     * @return number of elements in the version.
+     */
+    int size();
+
+    /**
+     * number of elements in the version.
+     * <ul>
+     *     <li>numberSize(1.22)=2 {1,22}</li>
+     *     <li>numberSize(1.22_u1)=3 {1,22,1}</li>
+     * </ul>
+     * @return number of elements in the version.
+     */
+    int numberSize();
+
+    /**
+     * element at given index. if the index is negative will return from right.
+     * <ul>
+     *     <li>size(1.22)=3 {'1','.','22'}</li>
+     *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
+     * </ul>
+     * @return element at given index.
+     */
+    String get(int index);
+
+    /**
+     * number element at given index. if the index is negative will return from right.
+     * <ul>
+     *     <li>size(1.22)=3 {'1','.','22'}</li>
+     *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
+     * </ul>
+     * @return element at given index.
+     */
+    int getNumber(int index);
+
+    /**
+     * return number element at position or default value
+     * @param index position
+     * @param defaultValue default value
+     * @return number element at position or default value
+     */
+
+    int getNumber(int index,int defaultValue);
 }

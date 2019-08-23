@@ -114,11 +114,14 @@ public class CompatUtils {
             if (r == null) {
                 list.add(null);
             } else {
-                NutsSdkLocation r2 = new NutsSdkLocation();
-                r2.setName(r.getName());
-                r2.setPath(r.getPath());
-                r2.setType(r.getType());
-                r2.setVersion(r.getVersion());
+                NutsSdkLocation r2 = new NutsSdkLocation(
+                        r.getId(),
+                        r.getProduct(),
+                        r.getName(),
+                        r.getPath(),
+                        r.getVersion(),
+                        r.getPackaging()
+                );
                 list.add(r2);
             }
         }

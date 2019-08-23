@@ -124,7 +124,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         props.put("nuts-runtime-version", configManager.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
+            props.put("os-version", ws.config().getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

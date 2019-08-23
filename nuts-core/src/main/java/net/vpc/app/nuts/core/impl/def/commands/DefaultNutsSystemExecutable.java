@@ -7,7 +7,6 @@ package net.vpc.app.nuts.core.impl.def.commands;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -75,7 +74,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String getHelpText() {
-        switch (session.getWorkspace().config().getPlatformOsFamily()) {
+        switch (session.getWorkspace().config().getOsFamily()) {
             case WINDOWS: {
                 return "No help available. Try " + getName() + " /help";
             }

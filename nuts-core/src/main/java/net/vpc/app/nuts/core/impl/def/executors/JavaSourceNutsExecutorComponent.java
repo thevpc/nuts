@@ -42,7 +42,7 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 
 /**
  * Created by vpc on 1/7/17.
@@ -81,7 +81,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
-        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
+        ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 Paths.get(folder),
                 false,
                 true
@@ -127,7 +127,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
-        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
+        ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder,
                 false,
                 true

@@ -73,8 +73,8 @@ public class Test06_UpateTest {
         NutsDefinition api = nws.fetch().content().nutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().content().nutsRuntime().getResultDefinition();
 
-        NutsVersion apiv2 = api.getId().getVersion().inc(3, 10);
-        NutsVersion rtv2 = rt.getId().getVersion().inc(3, 10);
+        NutsVersion apiv2 = api.getId().getVersion().inc(-1, 10);
+        NutsVersion rtv2 = rt.getId().getVersion().inc(-1, 10);
         FromTo fromToAPI = new FromTo(api.getId().getVersion().toString(), apiv2.toString());
         FromTo fromToImpl = new FromTo(rt.getId().getVersion().toString(), rtv2.toString());
 

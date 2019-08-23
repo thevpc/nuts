@@ -49,10 +49,8 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
-import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.InputSource;
 
 public class NutsHttpFolderRepository extends NutsCachedRepository {
@@ -286,7 +284,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -295,11 +293,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             case FILES_FOLDERS:
             case GITHUB:
             case MAVEN: {
-                List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
                 List<Iterator<NutsId>> li = new ArrayList<>();
-                for (CommonRootsHelper.PathBase root : roots) {
-                    int depth = root.isDeep() ? Integer.MAX_VALUE : 2;
-                    li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root.getName(), filter, session, depth, findModel));
+                for (String root : roots) {
+                    if(root.endsWith("/*")) {
+                        String name = root.substring(0, root.length() - 2);
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), name, filter, session, Integer.MAX_VALUE, findModel));
+                    }else{
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), root, filter, session, 2, findModel));
+                    }
                 }
                 return IteratorUtils.concat(li);
             }
@@ -317,13 +318,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
             getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safeCopy().monitorable().run();
-            return new DefaultNutsContent(localFile, false, false);
+            return new NutsDefaultContent(localFile, false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if(CoreNutsUtils.acceptClassifier(location,id.getClassifier())) {
                     try {
                         getWorkspace().io().copy().session(session.getSession()).from(location.getUrl()).to(localFile).safeCopy().monitorable().run();
-                        return new DefaultNutsContent(localFile, false, false);
+                        return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
                         LOG.log(Level.FINE,"Unable to download location for id "+id+" : "+location.getUrl(),ex);
                     }

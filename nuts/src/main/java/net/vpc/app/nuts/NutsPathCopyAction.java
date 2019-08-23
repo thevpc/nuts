@@ -100,6 +100,8 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction setSession(NutsSession session);
 
+    byte[] getByteArrayResult();
+
     void run();
 
     NutsPathCopyAction monitorable(boolean monitorable);

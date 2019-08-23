@@ -117,11 +117,11 @@ public class IteratorUtils {
         return new FilteredIterator<>(from, filter);
     }
 
-    public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter) {
+    public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter,String name) {
         if (isNullOrEmpty(from)) {
             return emptyIterator();
         }
-        return new ConvertedIterator<>(from, converter);
+        return new ConvertedIterator<>(from, converter,name);
     }
 
     public static <T> List<T> toList(Iterator<T> it) {
@@ -186,6 +186,10 @@ public class IteratorUtils {
             public T next() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
+            @Override
+            public String toString() {
+                return "SortFilter";
+            }
         };
     }
 
@@ -203,6 +207,10 @@ public class IteratorUtils {
                 }
                 visited.add(value);
                 return true;
+            }
+            @Override
+            public String toString() {
+                return "DistinctFilter";
             }
         };
         return new FilteredIterator<>(it, filter);
@@ -223,6 +231,11 @@ public class IteratorUtils {
                 }
                 visited.add(t);
                 return true;
+            }
+
+            @Override
+            public String toString() {
+                return "DistinctConverter";
             }
         };
         return new FilteredIterator<>(it, filter);
@@ -249,6 +262,11 @@ public class IteratorUtils {
         public void forEachRemaining(Consumer<? super E> action) {
             Objects.requireNonNull(action);
         }
+
+        @Override
+        public String toString() {
+            return "EmptyIterator";
+        }
     }
 
     public static class NonNullFilter<T> implements Predicate<T> {
@@ -260,6 +278,10 @@ public class IteratorUtils {
         public boolean test(T value) {
             return value != null;
         }
+        @Override
+        public String toString() {
+            return "NonNullFilter";
+        }
     }
 
     public static class NonBlankFilter implements Predicate<String> {
@@ -270,6 +292,10 @@ public class IteratorUtils {
         @Override
         public boolean test(String value) {
             return value != null && value.trim().length() > 0;
+        }
+        @Override
+        public String toString() {
+            return "NonBlankFilter";
         }
     }
 }

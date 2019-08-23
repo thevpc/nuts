@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
@@ -47,7 +46,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.impl.def.repos.NutsCachedRepository;
@@ -123,12 +122,12 @@ public class MavenFolderRepository extends NutsCachedRepository {
             Path f = getIdFile(id);
             if (f != null && Files.exists(f)) {
                 if (localPath == null) {
-                    return new DefaultNutsContent(f, true, false);
+                    return new NutsDefaultContent(f, true, false);
                 } else {
                     getWorkspace().io().copy()
                             .session(session.getSession())
                             .from(f).to(localPath).safeCopy().run();
-                    return new DefaultNutsContent(localPath, true, false);
+                    return new NutsDefaultContent(localPath, true, false);
                 }
             }
         }
@@ -229,15 +228,18 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, NutsRepositorySession session) {
-        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
-
+    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             Path locationFolder = getLocationAsPath();
             List<Iterator<NutsId>> list = new ArrayList<>();
 
-            for (CommonRootsHelper.PathBase root : roots) {
-                list.add(findInFolder(locationFolder.resolve(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            for (String root : roots) {
+                if(root.endsWith("/*")){
+                    String name = root.substring(0, root.length() - 2);
+                    list.add(findInFolder(locationFolder.resolve(name), filter, Integer.MAX_VALUE, session));
+                }else{
+                    list.add(findInFolder(locationFolder.resolve(root), filter, 2, session));
+                }
             }
 
             return IteratorUtils.concat(list);

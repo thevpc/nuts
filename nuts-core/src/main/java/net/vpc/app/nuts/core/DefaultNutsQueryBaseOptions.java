@@ -45,7 +45,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private boolean dependencies = false;
     private boolean dependenciesTree = false;
     private boolean effective = false;
-    private boolean installInfo = false;
     private Path location = null;
     private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
@@ -68,7 +67,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             this.dependencies = other.isDependencies();
             this.dependenciesTree = other.isDependenciesTree();
             this.effective = other.isEffective();
-            this.installInfo = other.isInstallInformation();
             this.scope = EnumSet.copyOf(other.getScope());
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
@@ -325,27 +323,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     public T content() {
         return (T) setContent(true);
-    }
-
-    //@Override
-    public boolean isInstallInformation() {
-        return installInfo;
-    }
-
-    //@Override
-    public T installInformation() {
-        return installInformation(true);
-    }
-
-    //@Override
-    public T installInformation(boolean includeInstallInfo) {
-        return setInstallInformation(includeInstallInfo);
-    }
-
-    //@Override
-    public T setInstallInformation(boolean includeInstallInfo) {
-        this.installInfo = includeInstallInfo;
-        return (T) this;
     }
 
     //@Override
@@ -613,10 +590,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 this.setContent(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
-            case "--install-info": {
-                this.setInstallInformation(cmdLine.nextBoolean().getBooleanValue());
-                return true;
-            }
             case "--location": {
                 String location = cmdLine.nextString().getStringValue();
                 this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
@@ -626,4 +599,24 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return false;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"(" +
+                "failFast=" + failFast +
+                ", transitive=" + transitive +
+                ", cached=" + cached +
+                ", indexed=" + indexed +
+                ", fetchStrategy=" + fetchStrategy +
+                ", optional=" + optional +
+                ", scope=" + scope +
+                ", content=" + content +
+                ", inlineDependencies=" + inlineDependencies +
+                ", dependencies=" + dependencies +
+                ", dependenciesTree=" + dependenciesTree +
+                ", effective=" + effective +
+                ", location=" + location +
+                ", repos=" + repos +
+                ", displayOptions=" + displayOptions +
+                ')';
+    }
 }

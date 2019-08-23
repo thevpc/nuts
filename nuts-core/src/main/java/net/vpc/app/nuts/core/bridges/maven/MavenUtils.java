@@ -41,6 +41,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +57,8 @@ import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomDependency;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdFilter;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomXmlParser;
+import net.vpc.app.nuts.core.util.iter.ConvertedIterator;
+import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -220,7 +223,7 @@ public class MavenUtils {
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
-                    .setNutsApplication(application)
+                    .setApplication(application)
                     .setName(pom.getArtifactId())
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
@@ -382,17 +385,7 @@ public class MavenUtils {
                 return filter.accept(MavenUtils.toNutsId(id), session);
             }
         }, autoClose);
-        return new Iterator<NutsId>() {
-            @Override
-            public boolean hasNext() {
-                return it.hasNext();
-            }
-
-            @Override
-            public NutsId next() {
-                return MavenUtils.toNutsId(it.next());
-            }
-        };
+        return IteratorBuilder.of(it).convert(pomId -> MavenUtils.toNutsId(pomId),"PomId->NutsId").build();
     }
 
     public static MavenMetadata parseMavenMetaData(InputStream metadataStream) {

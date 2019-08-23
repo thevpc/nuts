@@ -40,7 +40,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     private String getNutsVersion(NutsExecutionContext executionContext){
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isNutsApplication()) {
+        if (descriptor.isApplication()) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 if(dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
                     return dependency.getId().getVersion().getValue();
@@ -60,7 +60,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isNutsApplication()) {
+        if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .command(executionContext.getDefinition())
@@ -78,7 +78,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isNutsApplication()) {
+        if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
                     .command(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())

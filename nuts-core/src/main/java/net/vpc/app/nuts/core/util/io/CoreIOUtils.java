@@ -30,12 +30,12 @@
 package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
+import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.core.util.common.PersistentMap;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsVersion;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -65,6 +65,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
@@ -91,7 +92,7 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Map<String,String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsWorkspace workspace = session.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -114,7 +115,7 @@ public class CoreIOUtils {
         map.put("nuts.id.simpleName", id.getShortName());
         map.put("nuts.id.group", id.getGroupId());
         map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = resolveJavaCommand("", workspace);
+        String defaultJavaCommand = NutsJavaSdkUtils.resolveJavaCommandByVersion("", workspace);
 
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -146,7 +147,7 @@ public class CoreIOUtils {
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return resolveJavaCommand(javaVer, workspace);
+                    return NutsJavaSdkUtils.resolveJavaCommandByVersion(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API).setSession(session).getResultDefinition();
@@ -191,47 +192,6 @@ public class CoreIOUtils {
         return execAndWait(workspace, args, envmap, pdirectory, session.getTerminal(), showCommand, failFast);
     }
 
-    public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
-        String bestJavaPath = resolveJdkLocation(requestedJavaVersion, workspace).getPath();
-        if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-            Path file = workspace.config().getWorkspaceLocation().resolve(bestJavaPath);
-            if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
-                bestJavaPath = file.resolve("bin" + File.separatorChar + "java").toString();
-            }
-        }
-        return bestJavaPath;
-    }
-
-    public static NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsWorkspace workspace) {
-        requestedJavaVersion = CoreStringUtils.trim(requestedJavaVersion);
-        NutsSdkLocation bestJava = workspace.config().getSdk("java", requestedJavaVersion);
-        if (bestJava == null) {
-            NutsSdkLocation current = new NutsSdkLocation(
-                    "java",
-                    "java.home",
-                    System.getProperty("java.home"),
-                    System.getProperty("java.version")
-            );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.version().parse(requestedJavaVersion).filter();
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()), workspace.createSession())) {
-                bestJava = current;
-            }
-            if (bestJava == null) {
-                if (!CoreStringUtils.isBlank(requestedJavaVersion)) {
-                    if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
-                    }
-                } else {
-                    if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
-                    }
-                }
-                bestJava = current;
-            }
-        }
-        return bestJava;
-    }
-
     public static ProcessExecHelper execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
         PrintStream out = terminal.out();
         PrintStream err = terminal.err();
@@ -269,20 +229,21 @@ public class CoreIOUtils {
                 terminal.out().printf("%s%n", pb.getCommandString());
             }
         }
-        return new ProcessExecHelper(pb,ws,out==null?terminal.out():out);
+        return new ProcessExecHelper(pb, ws, out == null ? terminal.out() : out);
     }
-    public static class ProcessExecHelper implements IProcessExecHelper{
+
+    public static class ProcessExecHelper implements IProcessExecHelper {
         ProcessBuilder2 pb;
         NutsWorkspace ws;
         PrintStream out;
 
-        public ProcessExecHelper(ProcessBuilder2 pb,NutsWorkspace ws,PrintStream out) {
+        public ProcessExecHelper(ProcessBuilder2 pb, NutsWorkspace ws, PrintStream out) {
             this.pb = pb;
             this.ws = ws;
             this.out = out;
         }
 
-        public void dryExec(){
+        public void dryExec() {
             if (ws.io().getTerminalFormat().isFormatted(out)) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.getFormattedCommandString(ws));
@@ -291,7 +252,8 @@ public class CoreIOUtils {
                 out.printf("%s%n", pb.getCommandString());
             }
         }
-        public int exec(){
+
+        public int exec() {
             try {
                 return pb.start().waitFor().getResult();
             } catch (IOException ex) {
@@ -429,7 +391,7 @@ public class CoreIOUtils {
         return false;
     }
 
-//    public static Path pathOf(String... s) {
+    //    public static Path pathOf(String... s) {
 //        return Paths.get(s[0], Arrays.copyOfRange(s, 1, s.length));
 //    }
 //    public static Path pathOf(String s) {
@@ -604,18 +566,6 @@ public class CoreIOUtils {
         return sb.toString();
     }
 
-    public static String resolveJavaCommand(String javaHome) {
-        String exe = CoreIOUtils.getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
-        if (javaHome == null || javaHome.isEmpty()) {
-            javaHome = System.getProperty("java.home");
-            if (CoreStringUtils.isBlank(javaHome) || "null".equals(javaHome)) {
-                //this may happen is using a precompiled image (such as with graalvm)
-                return exe;
-            }
-        }
-        return javaHome + File.separator + "bin" + File.separator + exe;
-    }
-
     public static PrintStream resolveOut(NutsSession session) {
         return (session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
     }
@@ -660,7 +610,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      * @throws IOException when IO error
      */
@@ -671,7 +621,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      * @throws IOException when IO error
      */
@@ -682,8 +632,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize
      * @throws IOException when IO error
      */
@@ -700,8 +650,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize
      * @throws IOException when IO error
      */
@@ -997,7 +947,7 @@ public class CoreIOUtils {
         if (source == null) {
             return null;
         }
-        String name=String.valueOf(source);
+        String name = String.valueOf(source);
         return new InputStreamSource(name, source);
     }
 
@@ -1096,7 +1046,7 @@ public class CoreIOUtils {
 
             @Override
             public String toString() {
-                return "OutputStream("+getValue()+")";
+                return "OutputStream(" + getValue() + ")";
             }
         };
     }
@@ -1180,6 +1130,7 @@ public class CoreIOUtils {
                     throw new UncheckedIOException(ex);
                 }
             }
+
             @Override
             public String toString() {
                 return getPath().toString();
@@ -1500,7 +1451,7 @@ public class CoreIOUtils {
 
         public DefaultMultiReadSourceItem(InputSource base) {
             try {
-                this.base=base;
+                this.base = base;
                 content = CoreIOUtils.loadByteArray(base.open());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -1544,7 +1495,7 @@ public class CoreIOUtils {
 
         @Override
         public InputStream open() {
-            return new NamedByteArrayInputStream(content,base.getName());
+            return new NamedByteArrayInputStream(content, base.getName());
         }
 
         @Override
@@ -1747,7 +1698,7 @@ public class CoreIOUtils {
         @Override
         public InputStream open() {
             byte[] bytes = (byte[]) this.getSource();
-            return new InputStreamMetadataAwareImpl(new NamedByteArrayInputStream(bytes,name), new FixedInputStreamMetadata(name, bytes.length));
+            return new InputStreamMetadataAwareImpl(new NamedByteArrayInputStream(bytes, name), new FixedInputStreamMetadata(name, bytes.length));
         }
 
         @Override
@@ -1947,11 +1898,11 @@ public class CoreIOUtils {
     /*
      * Converts unicodes to encoded &#92;uxxxx and escapes
      * special characters with a preceding slash.
-     * This is a modified method from java.util.Properties because the method 
+     * This is a modified method from java.util.Properties because the method
      * is private but we need call it handle special properties files
      */
     public static String escapePropsString(String theString,
-            boolean escapeSpace) {
+                                           boolean escapeSpace) {
         if (theString == null) {
             theString = "";
         }

@@ -79,8 +79,8 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public boolean isNutsApplication() {
-        return getBase().isNutsApplication();
+    public boolean isApplication() {
+        return getBase().isApplication();
     }
 
     @Override

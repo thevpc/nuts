@@ -91,11 +91,19 @@ public class IteratorBuilder<T> {
     }
 
     public <V> IteratorBuilder<V> map(Function<T, V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t));
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,null));
+    }
+
+    public <V> IteratorBuilder<V> map(Function<T, V> t,String name) {
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,name));
     }
 
     public <V> IteratorBuilder<V> convert(Function<T, V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t));
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,null));
+    }
+
+    public <V> IteratorBuilder<V> convert(Function<T, V> t,String name) {
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,name));
     }
 
     public <V> IteratorBuilder<V> mapMulti(Function<T, List<V>> t) {

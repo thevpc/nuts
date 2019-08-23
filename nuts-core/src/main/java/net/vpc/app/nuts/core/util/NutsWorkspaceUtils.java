@@ -30,105 +30,20 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 public class NutsWorkspaceUtils {
     private static final Logger LOG = Logger.getLogger(NutsWorkspaceUtils.class.getName());
 
-    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
-        String[] conf = {};
-        switch (ws.config().getPlatformOsFamily()) {
-            case LINUX:
-            case UNIX:
-            case UNKNOWN: {
-                conf = new String[]{"/usr/java", "/usr/lib64/jvm", "/usr/lib/jvm"};
-                break;
-            }
-            case WINDOWS: {
-                conf = new String[]{CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java", CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"};
-                break;
-            }
-            case MACOS: {
-                conf = new String[]{"/Library/Java/JavaVirtualMachines", "/System/Library/Frameworks/JavaVM.framework"};
-                break;
-            }
+    public static NutsId createSdkId(NutsWorkspace ws, String type, String version) {
+        if (CoreStringUtils.isBlank(type)) {
+            throw new NutsException(ws, "Missing sdk type");
         }
-        List<NutsSdkLocation> all = new ArrayList<>();
-        for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(ws, ws.io().path(s), out)));
+        if (CoreStringUtils.isBlank(version)) {
+            throw new NutsException(ws, "Missing version");
         }
-        return all.toArray(new NutsSdkLocation[0]);
-    }
-
-    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, Path s, PrintStream out) {
-        List<NutsSdkLocation> all = new ArrayList<>();
-        if (Files.isDirectory(s)) {
-            try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
-                for (Path d : it) {
-                    NutsSdkLocation r = resolveJdkLocation(ws, d);
-                    if (r != null) {
-                        all.add(r);
-                        if (out != null) {
-                            out.printf("Detected SDK [[%s]] at ==%s==%n", r.getVersion(), r.getPath());
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        if ("java".equalsIgnoreCase(type)) {
+            return NutsJavaSdkUtils.createJdkId(ws, version);
+        } else {
+            return ws.id().builder().artifactId(type)
+                    .version(version)
+                    .build();
         }
-        return all.toArray(new NutsSdkLocation[0]);
-    }
-
-    public static NutsSdkLocation resolveJdkLocation(NutsWorkspace ws, Path path) {
-        if (path == null) {
-            return null;
-        }
-        if (!Files.isDirectory(path)) {
-            return null;
-        }
-        Path javaExePath = path.resolve("bin").resolve("java");
-        if (!Files.exists(javaExePath)) {
-            return null;
-        }
-        String type = null;
-        String jdkVersion = null;
-        try {
-            NutsExecCommand b = ws.exec().syscall().command(javaExePath.toString(), "-version").redirectErrorStream().grabOutputString().run();
-            if (b.getResult() == 0) {
-                String s = b.getOutputString();
-                if (s.length() > 0) {
-                    String prefix = "java version \"";
-                    int i = s.indexOf(prefix);
-                    if (i >= 0) {
-                        i = i + prefix.length();
-                        int j = s.indexOf("\"", i);
-                        if (i >= 0) {
-                            jdkVersion = s.substring(i, j);
-                            type = "JDK";
-                        }
-                    }
-                    if (jdkVersion == null) {
-                        prefix = "openjdk version \"";
-                        i = s.indexOf(prefix);
-                        if (i >= 0) {
-                            i = i + prefix.length();
-                            int j = s.indexOf("\"", i);
-                            if (i > 0) {
-                                jdkVersion = s.substring(i, j);
-                                type = "OpenJDK";
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(CorePlatformUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (jdkVersion == null) {
-            return null;
-        }
-        NutsSdkLocation loc = new NutsSdkLocation();
-        loc.setType("java");
-        loc.setName(type + " " + jdkVersion);
-        loc.setVersion(jdkVersion);
-        loc.setPath(path.toString());
-        return loc;
     }
 
     public static void checkReadOnly(NutsWorkspace ws) {
@@ -154,10 +69,10 @@ public class NutsWorkspaceUtils {
     public static NutsId configureFetchEnv(NutsWorkspace ws, NutsId id) {
         Map<String, String> qm = id.getProperties();
         if (qm.get(NutsConstants.IdProperties.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.config().getPlatformArch().toString());
-            qm.put("os", ws.config().getPlatformOs().toString());
-            if (ws.config().getPlatformOsDist() != null) {
-                qm.put("osdist", ws.config().getPlatformOsDist().toString());
+            qm.put("arch", ws.config().getArch().toString());
+            qm.put("os", ws.config().getOs().toString());
+            if (ws.config().getOsDist() != null) {
+                qm.put("osdist", ws.config().getOsDist().toString());
             }
             return id.builder().setProperties(qm).build();
         }

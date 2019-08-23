@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.DefaultNutsContent;
+import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -85,7 +85,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     null,
                     c.descriptor.getId(),
                     c.descriptor,
-                    new DefaultNutsContent(c.getContentPath(), false, c.temps.size() > 0),
+                    new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
                     null,
                     false,false,false,false,null
             );

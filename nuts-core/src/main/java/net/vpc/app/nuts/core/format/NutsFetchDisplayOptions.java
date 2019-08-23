@@ -235,4 +235,12 @@ public class NutsFetchDisplayOptions {
         }
         return (all2.toArray(new NutsDisplayProperty[0]));
     }
+
+    @Override
+    public String toString() {
+        return "NutsFetchDisplayOptions{" +
+                "idFormat=" + idFormat +
+                ", displays=" + displays +
+                '}';
+    }
 }

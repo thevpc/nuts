@@ -8,7 +8,6 @@ package net.vpc.app.nuts.core.spi;
 import java.nio.file.Path;
 import java.util.Iterator;
 import net.vpc.app.nuts.NutsContent;
-import net.vpc.app.nuts.NutsContentEvent;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIndexStoreClient;
@@ -18,7 +17,6 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsPushRepositoryCommand;
-import net.vpc.app.nuts.NutsRepositoryEvent;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
@@ -56,5 +54,5 @@ public interface NutsRepositoryExt {
 
     NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
 
-    boolean acceptNutsId(NutsId id);
+    boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode);
 }

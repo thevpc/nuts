@@ -10,9 +10,8 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 
-import net.vpc.app.nuts.core.app.DefaultNutsCommandLine;
+import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -240,15 +239,17 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-skip-companions", options.isSkipCompanions());
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("java-version", stringValue(System.getProperty("java.version")));
-        props.put("java-executable", stringValue(CoreIOUtils.resolveJavaCommand(null)));
+        props.put("platform", idFormat.value(ws.config().getPlatform()).format());
+        props.put("java-home", stringValue(System.getProperty("java.home")));
+        props.put("java-executable", stringValue(NutsJavaSdkUtils.resolveJavaCommandByHome(null,ws)));
         props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
         props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
-        props.put("os-name", ws.config().getPlatformOs().toString());
-        props.put("os-family", stringValue(ws.config().getPlatformOsFamily()));
-        if (ws.config().getPlatformOsDist() != null) {
-            props.put("os-dist", stringValue(ws.config().getPlatformOsDist().toString()));
+        props.put("os-name", ws.config().getOs().toString());
+        props.put("os-family", stringValue(ws.config().getOsFamily()));
+        if (ws.config().getOsDist() != null) {
+            props.put("os-dist", stringValue(ws.config().getOsDist().toString()));
         }
-        props.put("os-arch", stringValue(ws.config().getPlatformArch().toString()));
+        props.put("os-arch", stringValue(ws.config().getArch().toString()));
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", stringValue(System.getProperty("user.home")));
         props.put("user-dir", stringValue(System.getProperty("user.dir")));

@@ -5,11 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsFetchMode;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 /**
  *
@@ -22,9 +18,21 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
     private boolean cached;
     private boolean indexed;
     private boolean transitive;
+    private NutsRepository repository;
 
-    public DefaultNutsRepositorySession(NutsSession session) {
+    public DefaultNutsRepositorySession(NutsRepository repository,NutsSession session) {
         this.session = session;
+        this.repository = repository;
+    }
+
+    @Override
+    public NutsRepository getRepository() {
+        return repository;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return getSession().getWorkspace();
     }
 
     @Override
