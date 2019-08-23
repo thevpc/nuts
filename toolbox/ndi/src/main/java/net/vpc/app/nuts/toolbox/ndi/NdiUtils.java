@@ -47,7 +47,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author vpc
  */
 public class NdiUtils {
@@ -120,7 +119,7 @@ public class NdiUtils {
 
     public static String betterPath(String path1) {
         String home = System.getProperty("user.home");
-        if(path1.startsWith(home+"/")) {
+        if (path1.startsWith(home + "/") || path1.startsWith(home + "\\")) {
             return "~" + path1.substring(home.length());
         }
         return path1;

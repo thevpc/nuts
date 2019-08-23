@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class NdiMain extends NutsApplication {
@@ -20,9 +21,23 @@ public class NdiMain extends NutsApplication {
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
-        NutsOsFamily fam = appContext.getWorkspace().config().getPlatformOsFamily();
-        if (fam == NutsOsFamily.LINUX || fam == NutsOsFamily.UNIX) {
-            ndi = new LinuxNdi(appContext);
+        switch (appContext.getWorkspace().config().getOsFamily()){
+            case LINUX:{
+                ndi = new LinuxNdi(appContext);
+                break;
+            }
+            case UNIX:{
+                ndi = new UnixNdi(appContext);
+                break;
+            }
+            case MACOS:{
+                ndi = new MacosNdi(appContext);
+                break;
+            }
+            case WINDOWS:{
+                ndi = new WindowsNdi(appContext);
+                break;
+            }
         }
         return ndi;
     }
@@ -102,8 +117,9 @@ public class NdiMain extends NutsApplication {
                 context.getSession().yes();
             }
             SystemNdi ndi = createNdi(context);
+            NutsWorkspaceConfigManager config = context.getWorkspace().config();
             if (ndi == null) {
-                throw new NutsExecutionException(context.getWorkspace(), "Platform not supported : " + context.getWorkspace().config().getPlatformOs(), 2);
+                throw new NutsExecutionException(context.getWorkspace(), "Platform not supported : " + config.getOs(), 2);
             }
             boolean subTrace = context.getSession().isTrace();
             if (!context.getSession().isPlainTrace()) {
@@ -134,12 +150,12 @@ public class NdiMain extends NutsApplication {
                 }
                 if (context.getSession().isTrace()) {
                     if (context.getSession().isPlainTrace()) {
-                        int namesSize=result.stream().mapToInt(x->x.getName().length()).max().orElse(1);
+                        int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
                         for (NdiScriptnfo ndiScriptnfo : result) {
-                            context.session().out().printf("installing%s script ==%-"+namesSize+"s== for "+
-                                    context.getWorkspace().id().set(ndiScriptnfo.getId().getLongNameId()).format()
-                                            +" at ==%s==%n", ndiScriptnfo.isOverride() ? " (with override)" : "",
-                                    ndiScriptnfo.getName() , NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
+                            context.session().out().printf("installing%s script ==%-" + namesSize + "s== for " +
+                                            context.getWorkspace().id().set(ndiScriptnfo.getId().getLongNameId()).format()
+                                            + " at ==%s==%n", ndiScriptnfo.isOverride() ? " (with override)" : "",
+                                    ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
                         }
 
                     } else {
@@ -183,11 +199,12 @@ public class NdiMain extends NutsApplication {
         }
         SystemNdi ndi = createNdi(context);
         if (ndi != null) {
-            List<String> args=new ArrayList<>();
-            args.addAll(Arrays.asList("in","-b"));
+            List<String> args = new ArrayList<>();
+            args.addAll(Arrays.asList("in", "-b"));
             args.addAll(Arrays.asList(COMPANIONS));
             context.getSession().yes();
             run(args.toArray(new String[0]));
+
         }
     }
 
