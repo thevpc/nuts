@@ -256,7 +256,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                 NutsDefinition def = ws.search().id(selectedId).effective(true).session(this.getSession().copy().trace(false)).offline().getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
-                if (d.isNutsApplication()
+                if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
                     NutsExecCommand t = ws.exec()

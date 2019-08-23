@@ -146,7 +146,7 @@ public class JpsCommand extends SimpleNshBuiltin {
     }
 
     public static String resolveJavaToolCommand(NutsWorkspace ws,String javaHome, String javaCommand) {
-        String exe = ws.config().getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+        String exe = ws.config().getOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }
