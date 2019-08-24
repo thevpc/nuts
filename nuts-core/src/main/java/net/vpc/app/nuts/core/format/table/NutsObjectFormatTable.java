@@ -26,7 +26,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatTable(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.TABLE.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.TABLE.id() + "-format");
         this.t = NutsOutputFormat.TABLE;
         this.ws = ws;
     }

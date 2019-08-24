@@ -24,7 +24,7 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatJson(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.JSON.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.JSON.id() + "-format");
         this.t = NutsOutputFormat.JSON;
         this.ws = ws;
     }

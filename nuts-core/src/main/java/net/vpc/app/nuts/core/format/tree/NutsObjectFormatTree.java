@@ -26,7 +26,7 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatTree(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.TREE.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.TREE.id() + "-format");
         this.t = NutsOutputFormat.TREE;
         this.ws = ws;
     }

@@ -65,6 +65,10 @@ public class NAdminMain extends NutsApplication {
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
         NutsWorkspace ws = applicationContext.workspace();
+        if(applicationContext.getSession().isPlainTrace()){
+            applicationContext.getSession().out().println("Looking for java installations in default locations...");
+            applicationContext.getSession().out().println("You still be able to add another installation manually using 'nadmin add java' command.");
+        }
         for (NutsSdkLocation java : ws.config().searchSdkLocations("java", applicationContext.getSession())) {
             ws.config().addSdk(java,new NutsAddOptions().session(applicationContext.getSession()));
         }

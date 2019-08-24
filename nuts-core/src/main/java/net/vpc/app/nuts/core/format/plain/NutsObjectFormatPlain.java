@@ -38,7 +38,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatPlain(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.PLAIN.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.PLAIN.id() + "-format");
         this.ws = ws;
     }
 

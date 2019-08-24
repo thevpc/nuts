@@ -225,7 +225,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-global", options.isGlobal());
         props.put("nuts-workspace", stringValue(rt.getWorkspaceLocation().toString()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.name().toLowerCase(), stringValue(rt.getStoreLocation(folderType).toString()));
+            props.put("nuts-workspace-" + folderType.id(), stringValue(rt.getStoreLocation(folderType).toString()));
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure()));
@@ -294,7 +294,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put(key(prefix, "store-location-strategy"), stringValue(repo.config().getStoreLocationStrategy()));
         props.put(key(prefix, "store-location"), stringValue(repo.config().getStoreLocation()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.name().toLowerCase()), stringValue(repo.config().getStoreLocation(value)));
+            props.put(key(prefix, "store-location-" + value.id()), stringValue(repo.config().getStoreLocation(value)));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {

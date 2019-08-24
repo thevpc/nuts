@@ -54,21 +54,22 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params);
 
+
+    String getHintMessage();
+
+    Object[] getHintMessageParameters();
+
     String getMessage();
+
+    Object[] getMessageParameters();
 
     NutsQuestion<T> message(String message, Object... messageParameters);
 
     NutsQuestion<T> setMessage(String message, Object... messageParameters);
 
-    NutsQuestion<T> message(String message);
+    NutsQuestion<T> hintMessage(String message, Object... messageParameters);
 
-    NutsQuestion<T> setMessage(String message);
-
-    Object[] getMessageParameters();
-
-    NutsQuestion<T> messageParameters(Object... messageParameters);
-
-    NutsQuestion<T> setMessageParameters(Object... messageParameters);
+    NutsQuestion<T> setHintMessage(String message, Object... messageParameters);
 
     Object[] getAcceptedValues();
 

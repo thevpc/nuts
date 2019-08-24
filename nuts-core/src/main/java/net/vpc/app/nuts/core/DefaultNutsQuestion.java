@@ -14,6 +14,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private String message;
     private Object[] messageParameters;
     private Object[] acceptedValues;
+    private String hintMessage;
+    private Object[] hintMessageParameters;
     private T defaultValue;
     private Class<T> valueType;
     private NutsQuestionFormat<T> format;
@@ -136,27 +138,35 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 }
                 out.printf("default is ##%s##", ff.format(this.getDefaultValue(),this));
             }
-
-            if (_acceptedValues.length > 0) {
-                if (first) {
-                    first = false;
+            if(getHintMessage()!=null){
+                if(getHintMessage().length()>0) {
                     out.print(" \\(");
-                } else {
-                    out.print(", ");
+                    out.printf(getHintMessage(), getHintMessageParameters());
+                    out.print("\\)");
                 }
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < _acceptedValues.length; i++) {
-                    Object acceptedValue = _acceptedValues[i];
-                    if (i > 0) {
-                        sb.append(", ");
+            }else{
+                if (_acceptedValues.length > 0) {
+                    if (first) {
+                        first = false;
+                        out.print(" \\(");
+                    } else {
+                        out.print(", ");
                     }
-                    sb.append(ff.format(acceptedValue,this));
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < _acceptedValues.length; i++) {
+                        Object acceptedValue = _acceptedValues[i];
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(ff.format(acceptedValue,this));
+                    }
+                    out.printf("accepts [[%s]]", sb.toString());
                 }
-                out.printf("accepts [[%s]]", sb.toString());
+                if (!first) {
+                    out.print("\\)");
+                }
             }
-            if (!first) {
-                out.print("\\)");
-            }
+
             out.flush();
             switch (getValidSession().getConfirm()) {
                 case ERROR: {
@@ -278,6 +288,22 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
+    public Object[] getMessageParameters() {
+        return messageParameters;
+    }
+
+    @Override
+    public String getHintMessage() {
+        return hintMessage;
+    }
+
+    @Override
+    public Object[] getHintMessageParameters() {
+        return hintMessageParameters;
+    }
+
+
+    @Override
     public NutsQuestion<T> message(String message, Object... messageParameters) {
         return setMessage(message, messageParameters);
     }
@@ -289,32 +315,19 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return this;
     }
 
+
     @Override
-    public NutsQuestion<T> message(String message) {
-        return setMessage(message);
+    public NutsQuestion<T> hintMessage(String message, Object... messageParameters) {
+        return setHintMessage(message, messageParameters);
     }
 
     @Override
-    public NutsQuestion<T> setMessage(String message) {
-        this.message = message;
+    public NutsQuestion<T> setHintMessage(String message, Object... messageParameters) {
+        this.hintMessage = message;
+        this.hintMessageParameters = messageParameters;
         return this;
     }
 
-    @Override
-    public Object[] getMessageParameters() {
-        return messageParameters;
-    }
-
-    @Override
-    public NutsQuestion<T> messageParameters(Object... messageParameters) {
-        return setMessageParameters(messageParameters);
-    }
-
-    @Override
-    public NutsQuestion<T> setMessageParameters(Object... messageParameters) {
-        this.messageParameters = messageParameters;
-        return this;
-    }
 
     @Override
     public Object[] getAcceptedValues() {

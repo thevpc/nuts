@@ -29,18 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.ndi;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -82,7 +77,8 @@ public class NdiUtils {
 
     public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(LinuxNdi.class.getResource(resourcePath).openStream()));
+            String lineSeparator = System.getProperty("line.separator");
+            BufferedReader br = new BufferedReader(new InputStreamReader(AnyNixNdi.class.getResource(resourcePath).openStream()));
             String line = null;
             Pattern PATTERN = Pattern.compile("[$][$](?<name>([^$]+))[$][$]");
             while ((line = br.readLine()) != null) {
@@ -97,18 +93,11 @@ public class NdiUtils {
                     matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
                 }
                 matcher.appendTail(sb);
-                String replacement = sb.toString();
-                if (replacement.startsWith("#") && replacement.contains("\n")) {
-                    for (String s : replacement.split("\n")) {
-                        if (!s.startsWith("#")) {
-                            w.write("# ");
-                        }
-                        w.write(s);
-                        w.write('\n');
-                    }
-                } else {
-                    w.write(replacement);
-                    w.write('\n');
+                BufferedReader br2 = new BufferedReader(new StringReader(sb.toString()));
+                String line2 = null;
+                while ((line2 = br2.readLine()) != null) {
+                    w.write(line2);
+                    w.write(lineSeparator);
                 }
             }
             w.flush();
@@ -123,6 +112,40 @@ public class NdiUtils {
             return "~" + path1.substring(home.length());
         }
         return path1;
+    }
+
+    public static String replaceFilePrefixes(String path, Map<String,String> map) {
+        for (Map.Entry<String, String> e : map.entrySet()) {
+            String v = replaceFilePrefix(path, e.getKey(), e.getValue());
+            if(!v.equals(path)){
+                return v;
+            }
+        }
+        return path;
+    }
+
+    public static String replaceFilePrefix(String path, String prefix,String replacement) {
+        String path1=path;
+        String fs = File.separator;
+        if(!prefix.endsWith(fs)){
+            prefix=prefix+fs;
+        }
+        if(!path1.endsWith(fs)){
+            path1=prefix+fs;
+        }
+        if(path1.equals(prefix)){
+            if(replacement==null){
+                return "";
+            }
+            return replacement;
+        }
+        if(path.startsWith(prefix)){
+            if(replacement==null || replacement.equals("")){
+                return path1.substring(prefix.length());
+            }
+            return replacement+fs+path1.substring(prefix.length());
+        }
+        return path;
     }
 
     public static String longuestCommonParent(String path1, String path2) {

@@ -4,7 +4,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class NdiMain extends NutsApplication {

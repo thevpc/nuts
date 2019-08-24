@@ -39,7 +39,7 @@ public class Test04_CreateLoadLinuxTest {
         extraProperties.put("nuts.export.always-show-command", "true");
 //        for (NutsStoreFolder folder : NutsStoreFolder.values()) {
 //            for (NutsStoreLocationLayout layout : NutsStoreLocationLayout.values()) {
-//                extraProperties.put("nuts.export.home." + folder.name().toLowerCase() + "." + layout.name().toLowerCase(), new File(base, folder.name().toLowerCase() + "." + layout.name().toLowerCase()).getPath());
+//                extraProperties.put("nuts.export.home." + folder.id() + "." + layout.id(), new File(base, folder.name().toLowerCase() + "." + layout.name().toLowerCase()).getPath());
 //            }
 //        }
         TestUtils.setSystemProperties(extraProperties);

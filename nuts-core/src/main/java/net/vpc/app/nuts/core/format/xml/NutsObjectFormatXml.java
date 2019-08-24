@@ -26,7 +26,7 @@ public class NutsObjectFormatXml extends NutsObjectFormatBase {
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatXml(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.XML.name().toLowerCase() + "-format");
+        super(ws, NutsOutputFormat.XML.id() + "-format");
         this.ws = ws;
     }
 

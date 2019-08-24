@@ -241,12 +241,12 @@ final class PrivateNutsPlatformUtils {
             storeLocationLayout = PrivateNutsPlatformUtils.getPlatformOsFamily();
         }
         String s = null;
-        String folderTypeName = folderType.name().toLowerCase();
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.home." + folderTypeName + "." + storeLocationLayout.name().toLowerCase()));
+        String folderTypeName = folderType.id();
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.home." + folderTypeName + "." + storeLocationLayout.id()));
         if (!s.isEmpty()) {
             return s + "/" + workspaceName;
         }
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home." + folderTypeName + "." + storeLocationLayout.name().toLowerCase()));
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home." + folderTypeName + "." + storeLocationLayout.id()));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
@@ -284,7 +284,7 @@ final class PrivateNutsPlatformUtils {
                 case LOG: {
                     switch (storeLocationLayout) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + folderTypeName + "/" + workspaceName);
+                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/LocalLow/nuts/" + folderTypeName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {

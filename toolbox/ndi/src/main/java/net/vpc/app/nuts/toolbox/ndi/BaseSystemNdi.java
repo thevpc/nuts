@@ -1,11 +1,8 @@
 package net.vpc.app.nuts.toolbox.ndi;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.IOUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -42,12 +39,24 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public abstract String toCommentLine(String line);
 
-    public boolean addLine(String commentLine, String goodLine, File bashrc, boolean force) throws IOException {
+    public boolean saveFile(Path filePath, String content, boolean force) throws IOException {
+        String fileContent = "";
+        if (Files.isRegularFile(filePath)) {
+            fileContent = new String(Files.readAllBytes(filePath));
+        }
+        if (force || !content.trim().equals(fileContent.trim())) {
+            Files.write(filePath, content.getBytes());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force) throws IOException {
         boolean found = false;
         boolean updatedBashrc = false;
         List<String> lines = new ArrayList<>();
-        if (bashrc.isFile()) {
-            String fileContent = IOUtils.loadString(bashrc);
+        if (Files.isRegularFile(filePath)) {
+            String fileContent = new String(Files.readAllBytes(filePath));
             String[] fileRows = fileContent.split("\n");
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
@@ -76,10 +85,40 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             updatedBashrc = true;
         }
         if (force || updatedBashrc) {
-            IOUtils.saveString(String.join("\n", lines) + "\n", bashrc);
+            Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
         return updatedBashrc;
     }
+
+    public boolean removeFileLine(Path filePath, String commentLine, boolean force) throws IOException {
+        boolean found = false;
+        boolean updatedBashrc = false;
+        List<String> lines = new ArrayList<>();
+        if (Files.isRegularFile(filePath)) {
+            String fileContent = new String(Files.readAllBytes(filePath));
+            String[] fileRows = fileContent.split("\n");
+            for (int i = 0; i < fileRows.length; i++) {
+                String row = fileRows[i];
+                if (row.trim().equals(toCommentLine(commentLine))) {
+                    found = true;
+                    i+=2;
+                    for (; i < fileRows.length; i++) {
+                        lines.add(fileRows[i]);
+                    }
+                } else {
+                    lines.add(row);
+                }
+            }
+        }
+        if (found) {
+            updatedBashrc = true;
+        }
+        if (force || updatedBashrc) {
+            Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
+        }
+        return updatedBashrc;
+    }
+
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
         NutsId nid = context.getWorkspace().id().parse(options.getId());
@@ -121,6 +160,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return r.toArray(new NdiScriptnfo[0]);
         }
     }
+
+    protected abstract String getCallScriptCommand(String path);
 
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
         NutsId b = context.getWorkspace().config().getApiId();
@@ -165,12 +206,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         case "NUTS_ID":
                             return "BOOT : " + f.getId().toString();
                         case "BODY": {
-                            String s = NdiUtils.longuestCommonParent(ff.toString(), ff2.toString());
-                            if (s.length() > 0) {
-                                return ff.toString().substring(s.length());
-                            } else {
-                                return ff.toString();
-                            }
+                            return getCallScriptCommand(NdiUtils.replaceFilePrefix(ff.toString(), ff2.toString(),""));
                         }
                     }
                     return null;
@@ -183,11 +219,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
 
-    protected abstract String getExecFileName(String name) ;
+    protected abstract String getExecFileName(String name);
 
     protected abstract String getTemplateBodyName();
 
-    protected abstract String getTemplateNutsName() ;
+    protected abstract String getTemplateNutsName();
 
     public NdiScriptnfo createScript(String name, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) throws IOException {
         Path script = getScriptFile(name);

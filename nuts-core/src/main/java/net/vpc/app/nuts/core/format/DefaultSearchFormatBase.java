@@ -87,7 +87,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
      */
     @Override
     public NutsIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, args, "search-" + getOutputFormat().name().toLowerCase());
+        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, args, "search-" + getOutputFormat().id());
     }
 
     public NutsWorkspace getWorkspace() {

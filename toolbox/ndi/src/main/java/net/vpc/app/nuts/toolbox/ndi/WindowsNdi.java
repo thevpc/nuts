@@ -2,21 +2,26 @@ package net.vpc.app.nuts.toolbox.ndi;
 
 import mslinks.ShellLink;
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowsNdi extends BaseSystemNdi {
+    private static String CRLF = "\r\n";
+
     public WindowsNdi(NutsApplicationContext appContext) {
         super(appContext);
     }
 
     @Override
     public String toCommentLine(String line) {
-        return "REM " + line;
+        return ":: " + line;
     }
 
     public String getExecFileName(String name) {
@@ -24,11 +29,16 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     protected String getTemplateBodyName() {
-        return "template_body_windows.text";
+        return "windows_template_body.text";
     }
 
     protected String getTemplateNutsName() {
-        return "template_nuts_windows.text";
+        return "windows_template_nuts.text";
+    }
+
+    @Override
+    protected String getCallScriptCommand(String path) {
+        return "@CALL \"" + path + "\"";
     }
 
     @Override
@@ -36,115 +46,120 @@ public class WindowsNdi extends BaseSystemNdi {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ");
         if (options.getExecType() != null) {
-            command.append("--").append(options.getExecType().name().toLowerCase());
+            command.append("--").append(options.getExecType().id());
         }
         command.append(" \"").append(fnutsId).append("\"");
-        command.append(" \"%*\"");
+        command.append(" %*");
         return command.toString();
     }
 
 
-    public void configurePathShortcut(NutsSession session) throws IOException {
-        ShellLink sl = ShellLink.createLink("C:\\Windows\\System32\\cmd.exe /k "+System.getProperty("user.home")+"\\"+getExecFileName(".nutsrc"))
+    public static enum Target{
+        MENU,
+        DESKTOP
+    }
+    public String configurePathShortcut(Target target,boolean latestVersion,NutsSession session) throws IOException {
+        NutsWorkspace ws = context.getWorkspace();
+        NutsWorkspaceConfigManager wsconfig = ws.config();
+        Path apiConfigFolder = wsconfig.getStoreLocation(wsconfig.getApiId(), NutsStoreLocation.APPS);
+        Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
+        ShellLink sl = ShellLink.createLink(startNutsFile.toString())
                 .setWorkingDir(System.getProperty("user.home"))
                 .setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
-        sl.getHeader().setIconIndex(128);
+        sl.getHeader().setIconIndex(148);
         sl.getConsoleData()
                 .setFont(mslinks.extra.ConsoleData.Font.Consolas)
-                .setFontSize(24)
-                .setTextColor(5);
-
-        sl.saveTo(System.getProperty("user.home") + File.separator + "nuts-cmd-" + context.getWorkspace().config().getApiVersion() + ".lnk");
+        //.setFontSize(16)
+        //.setTextColor(5)
+        ;
+        Path desktopFolder = Paths.get(System.getProperty("user.home")).resolve("Desktop");
+        Path menuFolder = Paths.get(System.getProperty("user.home")).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Nuts");
+        Files.createDirectories(desktopFolder);
+        Files.createDirectories(menuFolder);
+        String path = null;
+        switch (target){
+            case DESKTOP:{
+                if (!latestVersion) {
+                    path = desktopFolder + File.separator + "nuts-cmd-" + context.getWorkspace().config().getApiVersion() + ".lnk";
+                    sl.saveTo(path);
+                    return path;
+                }else {
+                    path = desktopFolder + File.separator + "nuts-cmd.lnk";
+                    sl.saveTo(path);
+                    return path;
+                }
+            }
+            case MENU:{
+                if (!latestVersion) {
+                    path = menuFolder + File.separator + "nuts-cmd-" + context.getWorkspace().config().getApiVersion() + ".lnk";
+                    sl.saveTo(path);
+                    return path;
+                }else {
+                    path = menuFolder + File.separator + "nuts-cmd.lnk";
+                    sl.saveTo(path);
+                    return path;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Unsupported");
     }
 
     @Override
     public void configurePath(NutsSession session) throws IOException {
-        boolean updatedNdirc = false;
-        boolean updatedBashrc = addLine("net.vpc.app.nuts.toolbox.ndi configuration",
-                "call %UserProfile%\\"+getExecFileName(".nuts-ndirc"),
-                new File(System.getProperty("user.home"), getExecFileName(".nutsrc")), session.isYes());
-        Path appsFolder = context.getAppsFolder();
-        File nutsndirc = new File(System.getProperty("user.home"), getExecFileName(".nuts-ndirc"));
-        StringBuilder goodNdiRc = new StringBuilder();
-        goodNdiRc.append(toCommentLine("This File is generated by nuts ndi companion tool.\n"));
-        goodNdiRc.append(toCommentLine("Do not edit it manually. All changes will be lost when ndi runs again\n"));
-        goodNdiRc.append(toCommentLine("This file aims to prepare bash environment against current nuts\n"));
-        goodNdiRc.append(toCommentLine("workspace installation.\n"));
-        goodNdiRc.append(toCommentLine("\n"));
-        goodNdiRc.append("SET NUTS_VERSION='").append(context.getWorkspace().config().getApiVersion()).append("'\n");
-        goodNdiRc.append("SET NUTS_JAR='").append(context.getWorkspace().search()
-                .session(context.getSession().copy().trace(false))
-                .id(context.getWorkspace().config().getApiId()).getResultPaths().required()).append("'\n");
-        goodNdiRc.append("SET NUTS_WORKSPACE='").append(context.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
-        goodNdiRc.append("SET PATH=\"").append(appsFolder).append(";%PATH%\"\n");
+        Path ndiAppsFolder = context.getAppsFolder();
+        //Path ndiConfigFolder = context.getConfigFolder();
+        NutsWorkspace ws = context.getWorkspace();
+        NutsWorkspaceConfigManager wsconfig = ws.config();
+        Path apiConfigFolder = wsconfig.getStoreLocation(wsconfig.getApiId(), NutsStoreLocation.APPS);
+        Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
+        Path apiConfigFile = apiConfigFolder.resolve(getExecFileName(".nuts-batrc"));
+        Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".ndi-batrc"));
+        List<String> updatedNames = new ArrayList<>();
+        if (addFileLine(apiConfigFile, "net.vpc.app.nuts.toolbox.ndi configuration",
+                getCallScriptCommand(ndiConfigFile.toString()),
+                session.isYes())) {
+            updatedNames.add(apiConfigFile.getFileName().toString());
+        }
 
-        String fileContent = (nutsndirc.isFile()) ? IOUtils.loadString(nutsndirc) : "";
-        if (!fileContent.trim().equals(goodNdiRc.toString().trim())) {
-            updatedNdirc = true;
+        String goodNdiRc = toCommentLine("This File is generated by nuts ndi companion tool." + CRLF) +
+                toCommentLine("Do not edit it manually. All changes will be lost when ndi runs again" + CRLF) +
+                toCommentLine("This file aims to prepare bash environment against current nuts" + CRLF) +
+                toCommentLine("workspace installation." + CRLF) +
+                toCommentLine("" + CRLF) +
+                "@ECHO OFF" + CRLF +
+                "SET \"NUTS_VERSION=" + wsconfig.getApiVersion() + "\"" + CRLF +
+                "SET \"NUTS_JAR=" + ws.search()
+                .session(context.getSession().copy().trace(false))
+                .id(wsconfig.getApiId()).getResultPaths().required() +
+                "\"" + CRLF +
+                "SET \"NUTS_WORKSPACE=" + wsconfig.getWorkspaceLocation().toString() + "\"" + CRLF +
+                "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;
+        if (saveFile(ndiConfigFile, goodNdiRc, session.isYes())) {
+            updatedNames.add(ndiConfigFile.getFileName().toString());
         }
-        if (session.isYes() || updatedNdirc) {
-            IOUtils.saveString(goodNdiRc.toString(), nutsndirc);
+
+        if (saveFile(startNutsFile,
+                toCommentLine("This File is generated by nuts ndi companion tool." + CRLF) +
+                        toCommentLine("Do not edit it manually. All changes will be lost when ndi runs again" + CRLF) +
+                        toCommentLine("This file aims to run "+getExecFileName(".nuts-batrc")+" file." + CRLF) +
+                        toCommentLine("workspace installation." + CRLF) +
+                        toCommentLine("" + CRLF)+
+                "@ECHO OFF" +CRLF
+                +"cmd.exe /k \"" + apiConfigFile.toString() + "\"", session.isYes())) {
+            updatedNames.add(startNutsFile.getFileName().toString());
         }
-        String ndirc = "~\\" + getExecFileName(".nuts-ndirc");
-        String nutsrc = "~\\" + getExecFileName(".nutsrc");
-        if ((session.isYes() || updatedBashrc || updatedNdirc) && session.isTrace()) {
-            if (session.isYes()) {
-                if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("force updating ==%s== and ==%s== files to point to workspace ==%s==%n", ndirc, nutsrc, context.getWorkspace().config().getWorkspaceLocation());
-                }
-            } else {
-                if (context.getSession().isPlainTrace()) {
-                    if (updatedNdirc && updatedBashrc) {
-                        context.session().out().printf("updating ==%s== and ==%s== files to point to workspace ==%s==%n", ndirc, nutsrc, context.getWorkspace().config().getWorkspaceLocation());
-                    } else if (updatedNdirc) {
-                        context.session().out().printf("updating ==%s== file to point to workspace ==%s==%n", ndirc, context.getWorkspace().config().getWorkspaceLocation());
-                    } else if (updatedBashrc) {
-                        context.session().out().printf("updating ==%s== file to point to workspace ==%s==%n", nutsrc, context.getWorkspace().config().getWorkspaceLocation());
-                    }
-                }
+        if (!updatedNames.isEmpty() && session.isTrace()) {
+            if (context.getSession().isPlainTrace()) {
+                context.session().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
+                        String.join(", ", updatedNames)
+                        , wsconfig.getWorkspaceLocation());
             }
-            if (updatedNdirc || updatedBashrc) {
-                context.session().terminal().ask()
-                        .forBoolean(
-                                "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
-                                        + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                                ". "+nutsrc
-                        )
-                        .session(context.getSession())
-                        .parser(new NutsQuestionParser<Boolean>() {
-                            @Override
-                            public Boolean parse(Object response, Boolean defaultValue, NutsQuestion<Boolean> question) {
-                                if (response instanceof Boolean) {
-                                    return (Boolean) response;
-                                }
-                                if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
-                                    response = defaultValue;
-                                }
-                                if (response == null) {
-                                    throw new NutsValidationException(context.getWorkspace(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
-                                }
-                                String r = response.toString();
-                                if ("ok".equalsIgnoreCase(r)) {
-                                    return true;
-                                }
-                                if ("why".equalsIgnoreCase(r)) {
-                                    PrintStream out = context.session().out();
-                                    out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getExecFileName(".nutsrc"));
-                                    out.print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
-                                    out.print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                                    out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", getExecFileName(".nutsrc"));
-                                    out.print(" - Either to restart the process/terminal (cmd.exe)%n");
-                                    out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading call)%n", "call "+nutsrc);
-                                    throw new NutsValidationException(context.getWorkspace(), "Try again...'");
-                                } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                    throw new NutsUserCancelException(context.getWorkspace());
-                                } else {
-                                    throw new NutsValidationException(context.getWorkspace(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
-                                }
-                            }
-                        })
-                        .getValue();
-            }
+            String desktopGlobalShortcutPath = configurePathShortcut(Target.DESKTOP, true, session);
+            String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, session);
+            String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, session);
+            String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, session);
+            PrintStream out = context.session().out();
+            out.printf("@@ATTENTION@@ To run any nuts command you should use the pre-configured shell at \\\"==%s==\\\".%n", desktopSpecificVersionShortcutPath);
         }
     }
 }

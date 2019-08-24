@@ -301,7 +301,7 @@ public final class NutsBootWorkspace {
                 homes[type.ordinal()] = PrivateNutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                         workspaceInformation.isGlobal(), workspaceInformation.getName());
                 if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
-                    throw new NutsIllegalArgumentException(null, "Missing Home for " + type.name().toLowerCase());
+                    throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
                 }
             }
             NutsStoreLocationStrategy storeLocationStrategy = workspaceInformation.getStoreLocationStrategy();
@@ -326,7 +326,7 @@ public final class NutsBootWorkspace {
                 } else if (!PrivateNutsUtils.isAbsolutePath(_storeLocation)) {
                     switch (storeLocationStrategy) {
                         case STANDALONE: {
-                            storeLocations.put(typeId, (workspace + File.separator + location.name().toLowerCase()));
+                            storeLocations.put(typeId, (workspace + File.separator + location.id()));
                             break;
                         }
                         case EXPLODED: {

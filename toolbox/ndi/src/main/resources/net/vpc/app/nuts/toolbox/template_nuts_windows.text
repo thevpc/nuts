@@ -1,3 +1,0 @@
-SET _java=java
-
-%_java% "%NUTS_JAVA_OPTIONS%" "$$NUTS_JAR$$" "%*"

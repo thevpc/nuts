@@ -55,8 +55,8 @@ Yous should then see some log like the following :
 
 ![install-log-example](docs/install-log-example.png)
 
-Note that if you are running nuts from within Windows (c) or MacOs, you may not be asked to install all companion tools (Actually Ndi is only 
-supported for linux).
+On Unix-like systems, first launch will configure "~/.bashrc" so that **nuts** command will be available in any future terminal instance.
+On Windows systems, first launch will create a shortcut on Desktop to launch a configured command terminal.
 
 To test installation the simplest way is to type : 
 
