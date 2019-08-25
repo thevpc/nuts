@@ -55,16 +55,35 @@ Yous should then see some log like the following :
 
 ![install-log-example](docs/install-log-example.png)
 
-On Unix-like systems, first launch will configure "~/.bashrc" so that **nuts** command will be available in any future terminal instance.
-On Windows systems, first launch will create a shortcut on Desktop to launch a configured command terminal.
+As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools".
+Actually they are recommended helpful tools :
+  + **ndi** (itself) which stands for __Nuts Desktop Environment__ that help configuring the desktop to better 
+    interact with nuts by for instance creating shortcuts.
+  + **nsh** which stands for __Nuts Shell__ , a bash compatible shel implementation program
+  + **nadmin** and administration tool for **nuts** 
 
-To test installation the simplest way is to type : 
 
-```
-java -jar nuts-0.5.7.jar --version
-```
+## Windows Systems
+On Windows systems, first launch will create a new Nuts Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
+  + **nuts-cmd-0.5.7** : this shortcut will open a preconfigured command terminal. **nuts** command will be available as well 
+                         several nuts companion tools installed by **ndi** by default
+  + **nuts-cmd**       : this shortcut will point to the last installed nuts version, here 0.5.7  
 
-On linux (as Ndi is supported), companion scripts are installed to make it even simpler to use nuts.
+Any of these shortcuts will launch a nuts-aware terminal.
+
+Supported Windows systems include Window 7 and later.
+
+## Unix-Like systems (Linux,MacOS,Unix)
+Unix-like Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be 
+available in any future terminal instance.
+Using nuts on unix-like system should be seamless. A simple bash terminal (MacOs Terminal App, Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
+
+All Linux versions and distributions should work with or without XWindow (or equivalent). Graphical system is required only if you plan to run a 
+gui application using **nuts**.
+All tests where performed on OpenSuse Tumbleweed.
+
+## Test Installation
+To test installation the simplest way is to open a nuts-aware terminal and type : 
 
 ```
 nuts --version
@@ -76,29 +95,25 @@ It should show a result in the format : nuts-api-version/nuts-impl-version
 0.5.7/0.5.7.0
 ```
 
-To run a command just type
+## Run a command
+
+To run a command using **nuts** just type
 
 ```
 nuts <command>
 ```
 
+Several commands are available, and you still be able to run any java and non java applications. More info in the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
 
 # Troubleshooting
 Whenever installation or running fails, it is more likely that there is a misconfiguration or invalid libraries that are used. 
 See [troubleshooting documentation](docs/troubleshooting.md) for more details
 
 
-## Releases
-View All releases [here](https://github.com/thevpc/nuts/releases) : 
-+ 2019/07/23 	nuts 0.5.7.0 released [download nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.7.0.md))
-+ 2019/06/23 	nuts 0.5.6.0 released [download nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md))
-+ 2019/06/08 	nuts 0.5.5.0 released [download nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.5.0.md))
-+ 2019/04/21 	nuts 0.5.4.0 released [download nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.4.0.md))
-+ 2019/01/05 	nuts 0.5.3.0 released [download nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.3.0.md))
-+ 2018/12/28 	nuts 0.5.2.0 released [download nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.2.0.md))
-+ 2018/12/18 	nuts 0.5.1.0 released [download nuts-0.5.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.1/nuts-0.5.1.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.1.0.md))
-+ 2018/11/25 	nuts 0.5.0.0 released [download nuts-0.5.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.0/nuts-0.5.0.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.0.0.md))
-
 ## Getting started
-
  You may consider browsing the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+
+## Releases
+View stable releases in [official releases page](https://github.com/thevpc/nuts/releases).
+
+View all releases in [release details page](docs/change-log/release-details.md).
