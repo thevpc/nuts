@@ -32,17 +32,17 @@ What makes **nuts** very helpful is that it simplifies application deployments b
         ```
         wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar
         ```
-    + or using **curl**
+    + or **curl**
         ```
         curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar > nuts-0.5.7.jar 
         ```
-
-## Requirements
-Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
+    Note that you will need a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or later to run **nuts**.
 
 ## Installation
-Nuts needs no installation. It will create all needed configuration files upon the very first launch.
-When you type the following line, welcome command will be executed and hence, any pos-install configuration will be triggered:
+Nuts needs no installation. 
+It will create all needed configuration files upon the very first launch. 
+More details are available at [wiki installation page](https://github.com/thevpc/nuts/wiki/Installation)
+
 ```
 java -jar nuts-0.5.7.jar
 ```
