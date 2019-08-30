@@ -65,13 +65,14 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         terminal.err().flush();
         String[] ts = command.toArray(new String[0]);
         NutsExecutableInformationExt exec = null;
+        NutsSession session2 = getValidSession().setTerminal(terminal);
         switch (executionType) {
             case SYSCALL: {
                 if (commandDefinition != null) {
                     throw new NutsIllegalArgumentException(ws, "Unable to run nuts as syscall");
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
-                        getValidSession().copy().setTerminal(terminal),
+                        session2,
                         this
                 );
                 break;
@@ -79,9 +80,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             case SPAWN:
             case EMBEDDED: {
                 if (commandDefinition != null) {
-                    return ws_exec0(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), env, directory, failFast, executionType, getValidSession());
+                    return ws_exec0(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), env, directory, failFast, executionType, session2);
                 } else {
-                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getValidSession().copy().setTerminal(terminal));
+                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), session2);
                 }
                 break;
             }

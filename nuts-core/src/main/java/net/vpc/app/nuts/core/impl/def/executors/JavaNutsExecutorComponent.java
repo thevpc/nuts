@@ -123,7 +123,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         joptions.getJvmArgs().add("-D" + sk + "=" + sysProperties.getProperty(sk));
                     }
                 }
-                // fix infinite recusion
+                // fix infinite recursion
                 int maxDepth = Math.abs(CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
                 if (maxDepth > 512) {
                     maxDepth = 512;

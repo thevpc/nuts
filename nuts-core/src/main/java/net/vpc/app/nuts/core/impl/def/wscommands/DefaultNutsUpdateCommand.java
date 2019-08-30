@@ -287,7 +287,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             throw new NutsIllegalArgumentException(ws, d0Id + " installation is broken and cannot be updated.");
         }
         //search latest parse
-        NutsId d1Id = ws.search().id(id).setSession(searchSession)
+        NutsId d1Id = ws.search().id(d0Id.getShortNameId()).setSession(searchSession)
                 .failFast(false)
                 .anyWhere()
                 .latest()

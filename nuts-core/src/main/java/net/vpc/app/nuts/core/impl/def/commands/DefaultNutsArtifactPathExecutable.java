@@ -14,9 +14,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
+import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
@@ -33,7 +37,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  * @author vpc
  */
 public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
-
+    private static final Logger LOG=Logger.getLogger(DefaultNutsArtifactPathExecutable.class.getName());
     String cmdName;
     String[] args;
     String[] executorOptions;
@@ -47,10 +51,23 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 NutsExecutableType.ARTIFACT);
         this.cmdName = cmdName;
         this.args = args;
-        this.executorOptions = executorOptions;
         this.executionType = executionType;
         this.session = session;
         this.execCommand = execCommand;
+        List<String> executorOptionsList=new ArrayList<>();
+        for (String option : executorOptions) {
+            NutsArgument a = session.getWorkspace().commandLine().createArgument(option);
+            if(a.getStringKey().equals("--nuts-auto-install")){
+                if(a.isKeyValue()){
+//                    autoInstall= a.isNegated() != a.getBooleanValue();
+                }else{
+//                    autoInstall=true;
+                }
+            }else{
+                executorOptionsList.add(option);
+            }
+        }
+        this.executorOptions=executorOptionsList.toArray(new String[0]);
     }
 
     @Override
@@ -73,23 +90,35 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     }
 
     public void executeHelper(boolean dry) {
-        NutsFetchCommand p = session.getWorkspace().fetch();
+        NutsWorkspace ws = session.getWorkspace();
+        NutsFetchCommand p = ws.fetch();
         p.setTransitive(true);
         try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
             if (c.descriptor == null) {
-                //this is a native file?
-                c.descriptor = DefaultNutsExecCommand.TEMP_DESC;
+                throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
+            Path tempFolder = ws.io().createTempFolder("exec-path-");
             NutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
                     c.descriptor.getId(),
                     c.descriptor,
                     new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
-                    null,
+                    new DefaultNutsInstallInfo(false,false,
+                            tempFolder
+                            ,null,ws.security().getCurrentUsername()
+                            ),
                     false,false,false,false,null
             );
-            execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType,dry);
+            try {
+                execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType, dry);
+            }finally {
+                try {
+                    CoreIOUtils.delete(tempFolder);
+                } catch (IOException e) {
+                    LOG.log(Level.FINEST, "Unable to delete temp folder created for execution : "+tempFolder);
+                }
+            }
         }
     }
 

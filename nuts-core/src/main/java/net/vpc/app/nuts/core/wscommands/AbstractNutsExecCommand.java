@@ -280,6 +280,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public String getOutputString() {
+        if (!executed) {
+            run();
+        }
         PrintStream o = getOut();
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
@@ -289,6 +292,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public String getErrorString() {
+        if (!executed) {
+            run();
+        }
         if (isRedirectErrorStream()) {
             return getOutputString();
         }
