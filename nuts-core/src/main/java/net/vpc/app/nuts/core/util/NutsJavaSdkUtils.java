@@ -26,7 +26,7 @@ public class NutsJavaSdkUtils {
         if (bestJava == null) {
             String appSuffix = ws.config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
-            if (new File(System.getProperty("java.home"), "bin"+File.separator+"javac" + (appSuffix)).isFile()) {
+            if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 packaging = "jdk";
             }
             String product = "JDK";
@@ -191,21 +191,29 @@ public class NutsJavaSdkUtils {
                 .build();
     }
 
-    public static String resolveJavaCommandByVersion(String requestedJavaVersion, NutsWorkspace workspace) {
+    public static String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NutsWorkspace workspace) {
         String bestJavaPath = resolveJdkLocation(workspace, requestedJavaVersion).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
             Path file = workspace.config().getWorkspaceLocation().resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
-                String appSuffix = workspace.config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
-                bestJavaPath = file.resolve("bin" + File.separatorChar + "java"+appSuffix).toString();
+                boolean winOs = workspace.config().getOsFamily() == NutsOsFamily.WINDOWS;
+                if (winOs) {
+                    if (javaw) {
+                        bestJavaPath = file.resolve("bin" + File.separatorChar + "javaw.exe").toString();
+                    } else {
+                        bestJavaPath = file.resolve("bin" + File.separatorChar + "java.exe").toString();
+                    }
+                } else {
+                    bestJavaPath = file.resolve("bin" + File.separatorChar + "java").toString();
+                }
             }
         }
         return bestJavaPath;
     }
 
-    public static String resolveJavaCommandByHome(String javaHome,NutsWorkspace workspace) {
+    public static String resolveJavaCommandByHome(String javaHome, NutsWorkspace workspace) {
         String appSuffix = workspace.config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
-        String exe = "java"+appSuffix;
+        String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (CoreStringUtils.isBlank(javaHome) || "null".equals(javaHome)) {

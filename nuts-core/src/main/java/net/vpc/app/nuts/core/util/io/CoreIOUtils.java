@@ -115,7 +115,7 @@ public class CoreIOUtils {
         map.put("nuts.id.simpleName", id.getShortName());
         map.put("nuts.id.group", id.getGroupId());
         map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = NutsJavaSdkUtils.resolveJavaCommandByVersion("", workspace);
+        String defaultJavaCommand = NutsJavaSdkUtils.resolveJavaCommandByVersion("", false,workspace);
 
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -147,7 +147,13 @@ public class CoreIOUtils {
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.resolveJavaCommandByVersion(javaVer, workspace);
+                    return NutsJavaSdkUtils.resolveJavaCommandByVersion(javaVer, false,workspace);
+                }else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
+                    String javaVer = skey.substring(4);
+                    if (CoreStringUtils.isBlank(javaVer)) {
+                        return defaultJavaCommand;
+                    }
+                    return NutsJavaSdkUtils.resolveJavaCommandByVersion(javaVer, true, workspace);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API).setSession(session).getResultDefinition();
@@ -800,15 +806,15 @@ public class CoreIOUtils {
         }
     }
 
-    public static InputStream monitor(URL from, InputStreamMonitor monitor) throws IOException {
-        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor);
+    public static InputStream monitor(URL from, NutsInputStreamProgressMonitor monitor, NutsSession session) throws IOException {
+        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, InputStreamMonitor monitor) {
-        return new MonitoredInputStream(from, source, sourceName, length, monitor);
+    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, NutsInputStreamProgressMonitor monitor, NutsSession session) {
+        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, InputStreamMonitor monitor) {
+    public static InputStream monitor(InputStream from, Object source, NutsInputStreamProgressMonitor monitor, NutsSession session) {
         String sourceName = null;
         long length = -1;
         if (from instanceof InputStreamMetadataAware) {
@@ -816,7 +822,7 @@ public class CoreIOUtils {
             sourceName = m.getMetaData().getName();
             length = m.getMetaData().getLength();
         }
-        return new MonitoredInputStream(from, source, sourceName, length, monitor);
+        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
     }
 
     public static void delete(File file) throws IOException {
