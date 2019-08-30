@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.5.7.0
+/_/ |_/\__,_/\__/____/   version 0.5.8.0
 </pre>
 
 **nuts** stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote artifacts, installing these  artifacts to the current machine and executing such  artifacts on need. Each managed artifact  is also called a **nuts** which  is a **Network Updatable Thing Service** . Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may also be a proxy repository so that remote artifacts are fetched and cached locally to save network resources.
@@ -26,15 +26,15 @@ What makes **nuts** very helpful is that it simplifies application deployments b
 + welcome            : a command that does nothing but bootstrapping nuts and showing a welcome message.
 
 ## Download Latest stable version
-+ Linux,Windows,iOS, and Java enabled OS : [nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar)
++ Linux,Windows,iOS, and Java enabled OS : [nuts-0.5.8.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.8/nuts-0.5.8.jar)
 + On Unix/Linux platforms you may use :
     + using **wget**
         ```
-        wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar
+        wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.8/nuts-0.5.8.jar
         ```
     + or **curl**
         ```
-        curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar > nuts-0.5.7.jar 
+        curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.8/nuts-0.5.8.jar > nuts-0.5.8.jar 
         ```
     Note that you will need a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or later to run **nuts**.
 
@@ -44,7 +44,7 @@ It will create all needed configuration files upon the very first launch.
 More details are available at [wiki installation page](https://github.com/thevpc/nuts/wiki/Installation)
 
 ```
-java -jar nuts-0.5.7.jar
+java -jar nuts-0.5.8.jar
 ```
 Yous should then see some log like the following :
 
@@ -69,9 +69,9 @@ All tests where performed on OpenSuse Tumbleweed.
 
 ## Windows Systems
 On Windows systems, first launch will create a new Nuts Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-  + **nuts-cmd-0.5.7** : this shortcut will open a preconfigured command terminal. **nuts** command will be available as well 
+  + **nuts-cmd-0.5.8** : this shortcut will open a preconfigured command terminal. **nuts** command will be available as well 
                          several nuts companion tools installed by **ndi** by default
-  + **nuts-cmd**       : this shortcut will point to the last installed nuts version, here 0.5.7  
+  + **nuts-cmd**       : this shortcut will point to the last installed nuts version, here 0.5.8  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -87,7 +87,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.5.7/0.5.7.0
+0.5.8/0.5.8.0
 ```
 
 ## Run a command
