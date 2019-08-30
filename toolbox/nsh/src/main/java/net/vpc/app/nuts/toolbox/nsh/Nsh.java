@@ -64,8 +64,8 @@ public class Nsh extends NutsApplication {
         if (trace || force) {
             LOG.log(Level.FINER, "[Nsh] Activating options trace={0} force={1}", new Object[]{trace, force});
         }
-
-        String nshIdStr = applicationContext.getAppId().toString();
+        //id will not include version or
+        String nshIdStr = applicationContext.getAppId().getShortName();
         NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("list", nshIdStr + " --no-color -c find-command");
