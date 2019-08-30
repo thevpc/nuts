@@ -7,7 +7,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-indexer</artifactId>
     <name>net.vpc.app.nuts.nuts-indexer</name>
-    <version>0.5.7.0</version>
+    <version>0.5.8.0</version>
     <packaging>war</packaging>
 
     <parent>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.7</version>
+            <version>0.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
