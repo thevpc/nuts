@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ *            vpc-common-io : common reusable library for
+ *                          input/output
  *
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -29,59 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.InputStream;
-
 /**
  *
  * @author vpc
+ * @since 0.5.8
  */
-public interface NutsMonitorCommand {
+public interface NutsInputStreamProgressFactory {
 
-    NutsMonitorCommand session(NutsSession s);
+    NutsInputStreamProgressMonitor create(Object source, Object sourceOrigin, String sourceName,NutsSession session);
 
-    NutsMonitorCommand setSession(NutsSession s);
-
-    NutsSession getSession();
-
-    NutsMonitorCommand name(String s);
-
-    NutsMonitorCommand setName(String s);
-
-    String getName();
-
-    NutsMonitorCommand origin(Object s);
-
-    NutsMonitorCommand setOrigin(Object s);
-
-    Object getOrigin();
-
-    NutsMonitorCommand length(long len);
-
-    NutsMonitorCommand setLength(long len);
-
-    long getLength();
-
-    NutsMonitorCommand source(String path);
-
-    NutsMonitorCommand setSource(String path);
-
-    NutsMonitorCommand source(InputStream path);
-
-    NutsMonitorCommand setSource(InputStream path);
-
-    InputStream create();
-
-    boolean isIncludeDefaultFactory();
-
-    NutsMonitorCommand setIncludeDefaultFactory(boolean value);
-
-    NutsMonitorCommand includeDefaultFactory(boolean value);
-
-    NutsMonitorCommand includeDefaultFactory();
-
-    NutsInputStreamProgressFactory getProgressFactory();
-
-    NutsMonitorCommand setProgressFactory(NutsInputStreamProgressFactory value);
-
-    NutsMonitorCommand progressFactory(NutsInputStreamProgressFactory value);
 }

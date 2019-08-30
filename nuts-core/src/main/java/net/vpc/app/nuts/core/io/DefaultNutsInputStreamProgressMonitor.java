@@ -5,69 +5,64 @@
  */
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 import net.vpc.app.nuts.NutsTerminalFormat;
-import net.vpc.app.nuts.NutsWorkspace;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import net.vpc.app.nuts.NutsSession;
 
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.io.InputStreamEvent;
-import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
+import net.vpc.app.nuts.NutsInputStreamEvent;
+import net.vpc.app.nuts.NutsInputStreamProgressMonitor;
 import net.vpc.app.nuts.core.util.common.BytesSizeFormat;
 import net.vpc.app.nuts.core.util.fprint.FPrintCommands;
 
 /**
  * @author vpc
  */
-public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOutputStreamTransparentAdapter {
+public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private PrintStream out;
     private int minLength;
-    private NutsSession session;
 
-    public DefaultNutsInputStreamMonitor(NutsSession session) {
-        this.out = session.getTerminal().out();
-        this.session = session;
+    public DefaultNutsInputStreamProgressMonitor() {
+//        this.session = session;
     }
 
-    @Override
-    public OutputStream baseOutputStream() {
-        return out;
-    }
+//    @Override
+//    public OutputStream baseOutputStream() {
+//        return out;
+//    }
 
     @Override
-    public void onStart(InputStreamEvent event) {
-        if (session.isPlainOut()) {
-            onProgress0(event,false);
+    public void onStart(NutsInputStreamEvent event) {
+        this.out = event.getSession().getTerminal().out();
+        if (event.getSession().isPlainOut()) {
+            onProgress0(event, false);
         }
     }
 
     @Override
-    public void onComplete(InputStreamEvent event) {
-        if (session.isPlainOut()) {
-            onProgress0(event,true);
+    public void onComplete(NutsInputStreamEvent event) {
+        if (event.getSession().isPlainOut()) {
+            onProgress0(event, true);
             out.println();
         }
     }
 
     @Override
-    public boolean onProgress(InputStreamEvent event) {
-        if (session.isPlainOut()) {
-            return onProgress0(event,false);
+    public boolean onProgress(NutsInputStreamEvent event) {
+        if (event.getSession().isPlainOut()) {
+            return onProgress0(event, false);
         }
         return true;
     }
 
-    public boolean onProgress0(InputStreamEvent event,boolean end) {
+    public boolean onProgress0(NutsInputStreamEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
-            NutsTerminalFormat terminalFormat = session.getWorkspace().io().getTerminalFormat();
+            NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().getTerminalFormat();
             out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             double globalSeconds = event.getGlobalMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);
@@ -76,7 +71,7 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             if (event.getLength() > 0) {
                 percent = (double) (event.getGlobalCount() * 100.0 / event.getLength());
             } else {
-                percent = end?100:0;
+                percent = end ? 100 : 0;
             }
             int x = (int) (20.0 / 100.0 * percent);
 

@@ -114,6 +114,40 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction to(Object target);
 
+    boolean isIncludeDefaultMonitorFactory();
+
+    NutsPathCopyAction setIncludeDefaultMonitorFactory(boolean value);
+
+    NutsPathCopyAction includeDefaultMonitorFactory(boolean value);
+
+    NutsPathCopyAction includeDefaultMonitorFactory();
+
+    /**
+     * return progress factory responsible of creating progress monitor
+     *
+     * @return progress factory responsible of creating progress monitor
+     * @since 0.5.8
+     */
+    NutsInputStreamProgressFactory getProgressMonitorFactory();
+
+    /**
+     * set progress factory responsible of creating progress monitor
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsPathCopyAction setProgressMonitorFactory(NutsInputStreamProgressFactory value);
+
+    /**
+     * set progress factory responsible of creating progress monitor
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsPathCopyAction progressMonitorFactory(NutsInputStreamProgressFactory value);
+
     class ValidationException extends RuntimeException {
 
         public ValidationException() {
@@ -133,7 +167,7 @@ public interface NutsPathCopyAction {
 
     }
 
-    public static interface Validator {
+    interface Validator {
 
         void validate(Path path) throws ValidationException;
     }

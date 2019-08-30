@@ -27,64 +27,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.util.io;
+package net.vpc.app.nuts;
 
 /**
  *
  * @author vpc
+ * @since 0.5.8
  */
-public class InputStreamEvent {
+public interface NutsInputStreamProgressMonitor {
 
-    private final Object source;
-    private final String sourceName;
-    private final long globalCount;
-    private final long globalMillis;
-    private final long partialCount;
-    private final long partialMillis;
-    private final long length;
-    private final Throwable exception;
+    void onStart(NutsInputStreamEvent event);
 
-    public InputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception) {
-        this.source = source;
-        this.length = length;
-        this.sourceName = sourceName;
-        this.globalCount = globalCount;
-        this.globalMillis = globalMillis;
-        this.partialCount = partialCount;
-        this.partialMillis = partialMillis;
-        this.exception = exception;
-    }
+    void onComplete(NutsInputStreamEvent event);
 
-    public Throwable getException() {
-        return exception;
-    }
-
-    public long getLength() {
-        return length;
-    }
-
-    public Object getSource() {
-        return source;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public long getGlobalCount() {
-        return globalCount;
-    }
-
-    public long getGlobalMillis() {
-        return globalMillis;
-    }
-
-    public long getPartialCount() {
-        return partialCount;
-    }
-
-    public long getPartialMillis() {
-        return partialMillis;
-    }
+    boolean onProgress(NutsInputStreamEvent event);
 
 }
