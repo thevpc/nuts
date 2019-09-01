@@ -161,49 +161,55 @@ final class PrivateNutsLogUtils {
             boolean consoleAdded = false;
             try {
                 if (!consoleOnly && acceptConsole) {
-                    handler = new NutsLogFileHandler(pattern, maxSize * MEGA, count, true);
-                    rootLogger.addHandler(handler);
+                    //REMOVE ME
+                    //handler = new NutsLogFileHandler(pattern, maxSize * MEGA, count, true);
+                    //rootLogger.addHandler(handler);
                 }
             } catch (Exception ex) {
                 if (!loggedToConsole) {
-                    handler = new NutsLogConsoleHandler();
-                    handler.setFormatter(LOG_FORMATTER);
-                    rootLogger.setUseParentHandlers(false);
-                    rootLogger.addHandler(handler);
-                    rootLogger.log(Level.SEVERE, "Unable to set log File. Fallback to console log : {0}", ex.toString());
-                    consoleAdded = true;
+                    //REMOVE ME
+                    //handler = new NutsLogConsoleHandler();
+                    //handler.setFormatter(LOG_FORMATTER);
+                    //rootLogger.setUseParentHandlers(false);
+                    //rootLogger.addHandler(handler);
+                    //rootLogger.log(Level.SEVERE, "Unable to set log File. Fallback to console log : {0}", ex.toString());
+                    //consoleAdded = true;
                 }
             }
             if (!loggedToConsole && !consoleAdded && (Level.FINEST.equals(level) || Level.ALL.equals(level))) {
-                handler = new NutsLogConsoleHandler();
-                handler.setFormatter(LOG_FORMATTER);
-                rootLogger.setUseParentHandlers(false);
-                rootLogger.addHandler(handler);
+                //REMOVE ME
+                //handler = new NutsLogConsoleHandler();
+                //handler.setFormatter(LOG_FORMATTER);
+                //rootLogger.setUseParentHandlers(false);
+                //rootLogger.addHandler(handler);
             }
         }
 
-        if (updatedHandler) {
-            Level oldLevel = rootLogger.getLevel();
-            if (oldLevel == null || !oldLevel.equals(level)) {
-                updatedLoglevel = true;
-                rootLogger.setLevel(level);
-            }
-            for (Handler handler : rootLogger.getHandlers()) {
-                if (handler instanceof NutsLogFileHandler || handler instanceof NutsLogConsoleHandler) {
-                    oldLevel = handler.getLevel();
-                    if (oldLevel == null || !oldLevel.equals(level)) {
-                        updatedLoglevel = true;
-                        handler.setLevel(level);
-                    }
-                    setFormatter(handler);
-                    Filter oldFilter = handler.getFilter();
-                    if (oldFilter == null || oldFilter != NUTS_LOG_FILTER) {
-                        updatedLoglevel = true;
-                        handler.setFilter(NUTS_LOG_FILTER);
-                    }
-                }
-            }
-        }
+        //REMOVE ME
+//        if (updatedHandler) {
+//            Level oldLevel = rootLogger.getLevel();
+//            if (oldLevel == null || !oldLevel.equals(level)) {
+//                updatedLoglevel = true;
+//                rootLogger.setLevel(level);
+//            }
+//            for (Handler handler : rootLogger.getHandlers()) {
+//                if (handler instanceof NutsLogFileHandler || handler instanceof NutsLogConsoleHandler) {
+//                    oldLevel = handler.getLevel();
+//                    if (oldLevel == null || !oldLevel.equals(level)) {
+//                        updatedLoglevel = true;
+//                        handler.setLevel(level);
+//                    }
+//                    setFormatter(handler);
+//                    Filter oldFilter = handler.getFilter();
+//                    if (oldFilter == null || oldFilter != NUTS_LOG_FILTER) {
+//                        updatedLoglevel = true;
+//                        handler.setFilter(NUTS_LOG_FILTER);
+//                    }
+//                }
+//            }
+//        }
+
+
 //        if (updatedHandler || updatedLoglevel) {
 //            olderLog.log(Level.CONFIG, "[SUCCESS] Switching log to file {0}", new Object[]{pattern});
 //        }

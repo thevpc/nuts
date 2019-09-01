@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.StringReader;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,7 +69,7 @@ final class PrivateNutsBootConfigLoader {
         PrivateNutsWorkspaceInitInformation c = new PrivateNutsWorkspaceInitInformation();
         String configVersion = (String) jsonObject.get("configVersion");
 
-        //TODO this supported in 0.5.4, should be removed ifd that version is no more supported
+        //TODO this supported in 0.5.4, should be removed if that version is no more supported
         if (configVersion == null) {
             configVersion = (String) jsonObject.get("createApiVersion");
         }

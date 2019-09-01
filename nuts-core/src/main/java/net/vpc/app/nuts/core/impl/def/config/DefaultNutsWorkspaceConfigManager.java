@@ -85,7 +85,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private boolean storeModelSecurityChanged = false;
     private boolean storeModelMainChanged = false;
     private final List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
-    private final ConfigNutsWorkspaceCommandFactory defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
+    private final ConfigNutsWorkspaceCommandFactory defaultCommandFactory;
     private Path workspaceLocation;
     private NutsWorkspaceOptions options;
     private NutsWorkspaceInitInformation initOptions;
@@ -102,7 +102,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace ws, NutsWorkspaceInitInformation initOptions) {
         this.ws = ws;
-        LOG=ws.log().of(DefaultNutsWorkspaceConfigManager.class);
+        defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
+        LOG = ws.log().of(DefaultNutsWorkspaceConfigManager.class);
         repositoryRegistryHelper = new NutsRepositoryRegistryHelper(ws);
         try {
             indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
@@ -558,7 +559,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             return false;
         }
         NutsWorkspaceUtils.of(ws).checkReadOnly();
-        session = NutsWorkspaceUtils.of(ws).validateSession( session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         boolean ok = false;
         ws.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
         Path apiVersionSpecificLocation = getStoreLocation(getApiId(), NutsStoreLocation.CONFIG);
@@ -837,18 +838,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
-    @Override
-    public void setLogLevel(Level level, NutsUpdateOptions options) {
-        options = CoreNutsUtils.validate(options, ws);
-        Logger rootLogger = Logger.getLogger("");
-        if (level == null) {
-            level = Level.WARNING;
-        }
-        rootLogger.setLevel(level);
-        for (Handler handler : rootLogger.getHandlers()) {
-            handler.setLevel(level);
-        }
-    }
+
 
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session) {
@@ -1419,7 +1409,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public String getDefaultIdBasedir(NutsId id) {
-        NutsWorkspaceUtils.of(ws).checkSimpleNameNutsId( id);
+        NutsWorkspaceUtils.of(ws).checkSimpleNameNutsId(id);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
@@ -1535,7 +1525,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean loadWorkspace(NutsSession session) {
         try {
-            session = NutsWorkspaceUtils.of(ws).validateSession( session);
+            session = NutsWorkspaceUtils.of(ws).validateSession(session);
             NutsWorkspaceConfigBoot _config = parseBootConfig();
             if (_config == null) {
                 return false;
@@ -1889,11 +1879,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsRepositoryConfig config = new NutsRepositoryConfig();
         String name = repository.getName();
         String uuid = repository.getUuid();
-        if(CoreStringUtils.isBlank(name)){
-            name="custom";
+        if (CoreStringUtils.isBlank(name)) {
+            name = "custom";
         }
-        if(CoreStringUtils.isBlank(uuid)){
-            uuid=UUID.randomUUID().toString();
+        if (CoreStringUtils.isBlank(uuid)) {
+            uuid = UUID.randomUUID().toString();
         }
         config.setName(name);
         config.setType("custom");
@@ -2421,7 +2411,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsId createSdkId(String type, String version) {
-        return NutsWorkspaceUtils.of(ws).createSdkId( type, version);
+        return NutsWorkspaceUtils.of(ws).createSdkId(type, version);
     }
 
     public enum ConfigEventType {

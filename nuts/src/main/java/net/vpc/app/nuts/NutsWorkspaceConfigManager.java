@@ -86,8 +86,6 @@ public interface NutsWorkspaceConfigManager {
 
     void save(NutsSession session);
 
-    void setLogLevel(Level levek, NutsUpdateOptions options);
-
     String[] getSdkTypes();
 
     boolean addSdk(NutsSdkLocation location, NutsAddOptions options);

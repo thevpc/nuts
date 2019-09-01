@@ -5,10 +5,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsLogger;
 
 import java.util.function.Supplier;
-import java.util.logging.Filter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class DefaultNutsLogger implements NutsLogger {
     private NutsWorkspace ws;
@@ -60,7 +57,7 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new LogRecord(level, msg);
+        LogRecord lr = new NutsLogRecord(ws, level, msg);
         lr.setThrown(thrown);
         doLog(lr);
     }
@@ -69,7 +66,7 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new LogRecord(level, msg);
+        LogRecord lr = new NutsLogRecord(ws, level, msg);
         doLog(lr);
     }
 
@@ -77,19 +74,19 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new LogRecord(level, msgSupplier.get());
+        LogRecord lr = new NutsLogRecord(ws, level, msgSupplier.get());
         doLog(lr);
     }
 
     public void log(Level level, String msg, Object params) {
-        log(level,msg,new Object[]{params});
+        log(level, msg, new Object[]{params});
     }
 
     public void log(Level level, String msg, Object[] params) {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new LogRecord(level, msg);
+        LogRecord lr = new NutsLogRecord(ws, level, msg);
         lr.setParameters(params);
         doLog(lr);
     }
@@ -117,6 +114,17 @@ public class DefaultNutsLogger implements NutsLogger {
         Filter theFilter = getFilter();
         if (theFilter != null && !theFilter.isLoggable(record)) {
             return;
+        }
+        Handler ch = ws.log().getConsoleHandler();
+        if (ch != null) {
+            ch.publish(record);
+        }
+        Handler fh = ws.log().getFileHandler();
+        if (fh != null) {
+            fh.publish(record);
+        }
+        for (Handler handler : ws.log().getHandlers()) {
+            handler.publish(record);
         }
         log.log(record);
     }

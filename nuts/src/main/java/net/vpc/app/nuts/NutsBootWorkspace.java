@@ -655,12 +655,14 @@ public final class NutsBootWorkspace {
             }
             factories.sort(new PrivateNutsBootWorkspaceFactoryComparator(options));
             NutsBootWorkspaceFactory factoryInstance = null;
+            List<Exception> exceptions=new ArrayList<>();
             for (NutsBootWorkspaceFactory a : factories) {
                 factoryInstance = a;
                 try {
                     workspaceInformation.setBootWorkspaceFactory(factoryInstance);
                     nutsWorkspace = a.createWorkspace(workspaceInformation);
                 } catch (Exception ex) {
+                    exceptions.add(ex);
                     LOG.log(Level.SEVERE, "[ERROR  ] Unable to create workspace using factory " + a, ex);
                 }
                 if (nutsWorkspace != null) {
@@ -669,12 +671,18 @@ public final class NutsBootWorkspace {
             }
             if (nutsWorkspace == null) {
                 //should never happen
-                System.err.print("Unable to load Workspace \"" + options.getWorkspace() + "\" from ClassPath : \n");
+                System.err.print("Unable to load Workspace \"" + workspaceInformation.getName() + "\" from ClassPath : \n");
                 for (URL url : bootClassWorldURLs) {
                     System.err.printf("\t %s%n", PrivateNutsUtils.formatURL(url));
                 }
+                for (Exception exception : exceptions) {
+                    exception.printStackTrace(System.err);
+                }
                 LOG.log(Level.SEVERE, "[ERROR  ] Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs));
-                throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs));
+
+                throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(),
+                        "Unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs)
+                );
             }
             LOG.log(Level.FINE, "[BOOT   ] End Initialize Workspace");
             return nutsWorkspace;

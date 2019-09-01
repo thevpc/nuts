@@ -20,42 +20,43 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         NutsUpdateOptions updateOptions = new NutsUpdateOptions().session(context.getSession());
         if (cmdLine.next("set loglevel", "sll") != null) {
-            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
+//            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
+            NutsLogManager lm=context.getWorkspace().log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.FINEST, updateOptions);
+                    lm.setLogLevel(Level.FINEST, updateOptions);
                 }
             } else if (cmdLine.next("fine") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.FINE, updateOptions);
+                    lm.setLogLevel(Level.FINE, updateOptions);
                 }
             } else if (cmdLine.next("finer") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.FINER, updateOptions);
+                    lm.setLogLevel(Level.FINER, updateOptions);
                 }
             } else if (cmdLine.next("info") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.INFO, updateOptions);
+                    lm.setLogLevel(Level.INFO, updateOptions);
                 }
             } else if (cmdLine.next("warning") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.WARNING, updateOptions);
+                    lm.setLogLevel(Level.WARNING, updateOptions);
                 }
             } else if (cmdLine.next("severe", "error") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.SEVERE, updateOptions);
+                    lm.setLogLevel(Level.SEVERE, updateOptions);
                 }
             } else if (cmdLine.next("config") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.CONFIG, updateOptions);
+                    lm.setLogLevel(Level.CONFIG, updateOptions);
                 }
             } else if (cmdLine.next("off") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.OFF, updateOptions);
+                    lm.setLogLevel(Level.OFF, updateOptions);
                 }
             } else if (cmdLine.next("all") != null) {
                 if (cmdLine.isExecMode()) {
-                    configManager.setLogLevel(Level.ALL, updateOptions);
+                    lm.setLogLevel(Level.ALL, updateOptions);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

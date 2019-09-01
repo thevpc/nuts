@@ -64,13 +64,13 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
-        securityManager = new DefaultNutsRepositorySecurityManager(this);
         NutsRepositoryConfig optionsConfig = options.getConfig();
         if (optionsConfig == null) {
             throw new NutsIllegalArgumentException(workspace, "Null Config");
         }
         this.workspace = workspace;
         this.parentRepository = parent;
+        securityManager = new DefaultNutsRepositorySecurityManager(this);
         if(options.getSession()==null){
             options.setSession(workspace.createSession());
         }

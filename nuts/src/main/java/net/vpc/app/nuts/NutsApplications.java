@@ -43,7 +43,6 @@ import java.util.logging.Logger;
  */
 public class NutsApplications {
 
-//    private static final Logger LOG = Logger.getLogger(NutsApplications.class.getName());
     private static final ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
 
     /**
