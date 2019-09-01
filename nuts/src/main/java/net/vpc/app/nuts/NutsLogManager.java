@@ -10,7 +10,7 @@ public interface NutsLogManager {
 
     void addHandler(Handler handler);
 
-    Handler getConsoleHandler();
+    Handler getTermHandler();
 
     Handler getFileHandler();
 
@@ -18,7 +18,11 @@ public interface NutsLogManager {
 
     NutsLogger of(Class clazz);
 
-    Level getLogLevel();
+    Level getTermLevel();
 
-    void setLogLevel(Level level, NutsUpdateOptions options);
+    void setTermLevel(Level level, NutsUpdateOptions options);
+
+    Level getFileLevel();
+
+    void setFileLevel(Level level, NutsUpdateOptions options);
 }

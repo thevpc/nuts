@@ -1,6 +1,8 @@
 package net.vpc.app.nuts.core.log;
 
 
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
@@ -76,12 +78,12 @@ public class NutsLogFormatter extends Formatter {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord=(NutsLogRecord)record;
             StringBuilder sb = new StringBuilder();
-            String date = Instant.ofEpochMilli(wRecord.getMillis()).toString().replace(":", "");
+            String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
             sb.append(date);
-            for (int i = 22 - date.length() - 1; i >= 0; i--) {
-                sb.append(' ');
-            }
+//            for (int i = 22 - date.length() - 1; i >= 0; i--) {
+//                sb.append(' ');
+//            }
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
                 sb.append(" ");

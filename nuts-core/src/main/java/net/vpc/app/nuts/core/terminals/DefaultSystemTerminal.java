@@ -11,6 +11,11 @@ public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
     }
 
     @Override
+    public void install(NutsWorkspace workspace) {
+        super.install(workspace);
+    }
+
+    @Override
     public NutsSystemTerminalBase getParent() {
         return base;
     }

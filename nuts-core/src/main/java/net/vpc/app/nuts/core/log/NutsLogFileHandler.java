@@ -5,6 +5,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -15,14 +16,14 @@ public class NutsLogFileHandler extends FileHandler {
     int limit;
     int count;
 
-    public static NutsLogFileHandler create(NutsWorkspace ws, NutsLogConfig config, boolean append) throws IOException, SecurityException {
-        Level level = config.getLogLevel();
-        String folder = config.getLogFolder();
-        String name = config.getLogName();
-        int maxSize = config.getLogSize();
-        int count = config.getLogCount();
+    public static NutsLogFileHandler create(NutsWorkspace ws, NutsLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
+        Level level = config.getLogFileLevel();
+        String folder = config.getLogFileBase();
+        String name = config.getLogFileName();
+        int maxSize = config.getLogFileSize();
+        int count = config.getLogFileCount();
 //        boolean inheritLog = config.isLogInherited();
-        String rootPackage = "net.vpc.app.nuts";
+//        String rootPackage = "net.vpc.app.nuts";
         if (level == null) {
             level = Level.INFO;
         }
@@ -31,7 +32,7 @@ public class NutsLogFileHandler extends FileHandler {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || CoreStringUtils.isBlank(folder)) {
-            folder = ws.config().getStoreLocation(NutsStoreLocation.LOG) + "/net/vpc/app/nuts/nuts/" + ws.config().getApiVersion();
+            folder = logFolder + "/net/vpc/app/nuts/nuts/" + ws.config().getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
@@ -44,10 +45,9 @@ public class NutsLogFileHandler extends FileHandler {
         if (parentFile != null) {
             parentFile.mkdirs();
         }
-        if (maxSize <= 0) {
-            maxSize = 5;
-        }
-        return new NutsLogFileHandler(pattern, maxSize * MEGA, count, append);
+        NutsLogFileHandler handler = new NutsLogFileHandler(pattern, maxSize * MEGA, count, append);
+        handler.setLevel(level);
+        return handler;
     }
 
     private NutsLogFileHandler(String pattern, int limit, int count, boolean append) throws IOException, SecurityException {

@@ -194,8 +194,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         }
         NutsInputStreamProgressMonitor monitor = createProgressMonitor(path, source, sourceName, session);
         boolean verboseMode
-                = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false)
-                || ws.config().options().getLogConfig() != null && ws.config().options().getLogConfig().getLogLevel() == Level.FINEST;
+                = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false);
         InputSource stream = null;
         long size = -1;
         try {

@@ -567,7 +567,10 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(NutsLogger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+    public static void traceMessage(NutsLogger log, Level lvl,String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+        if(!log.isLoggable(lvl)){
+            return;
+        }
         String timeMessage = "";
         if (startTime != 0) {
             long time = System.currentTimeMillis() - startTime;
@@ -595,7 +598,7 @@ public class CoreNutsUtils {
             }
         }
         String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
+        log.log(lvl, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
@@ -850,6 +853,26 @@ public class CoreNutsUtils {
         String c0 = CoreStringUtils.trim(classifier);
         String c1 = CoreStringUtils.trim(location.getClassifier());
         return c0.equals(c1);
+    }
+
+    public static String formatLogValue(Object unresolved, Object resolved) {
+        String a = desc(unresolved);
+        String b = desc(resolved);
+        if (a.equals(b)) {
+            return a;
+        } else {
+            return a + " => " + b;
+        }
+    }
+
+    public static String desc(Object s) {
+        if (s == null) {
+            return "<EMPTY>";
+        }
+        String ss
+                = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
+                : s.toString().trim();
+        return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
 }

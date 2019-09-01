@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
+import java.util.logging.Level;
 
 import net.vpc.app.nuts.core.security.DefaultNutsRepositorySecurityManager;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -140,8 +141,8 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
-        CoreNutsUtils.traceMessage(LOG, config().name(), session, id, tracePhase, title, startTime);
+    protected void traceMessage(NutsRepositorySession session, Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime) {
+        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, id, tracePhase, title, startTime);
     }
 
     @Override

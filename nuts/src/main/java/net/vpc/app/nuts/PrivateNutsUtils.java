@@ -488,11 +488,11 @@ final class PrivateNutsUtils {
         void ignore(File directory);
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session) {
-        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session);
+    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
+        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session,LOG);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session) {
+    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
         int count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -510,7 +510,7 @@ final class PrivateNutsUtils {
                             }
                         }
                     }
-                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session)) {
+                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session,LOG)) {
                         count++;
                     }
                 }
@@ -519,7 +519,7 @@ final class PrivateNutsUtils {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session) {
+    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
@@ -543,13 +543,11 @@ final class PrivateNutsUtils {
             }
             Path directoryPath = Paths.get(directory.getPath());
             try {
-                if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.log(Level.CONFIG, "[SUCCESS] Deleting folder : {0}", directory.getPath());
-                }
                 Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);
+                        LOG.log(Level.FINEST, "[SUCCESS] Deleting file   : {0}", file);
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -560,6 +558,7 @@ final class PrivateNutsUtils {
                         return FileVisitResult.CONTINUE;
                     }
                 });
+                LOG.log(Level.FINEST, "[SUCCESS] Deleting folder : {0}", directory);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -854,7 +853,7 @@ final class PrivateNutsUtils {
                 if (file == null) {
                     try {
                         copy(new URL(path), cachedFile);
-                        LOG.log(Level.CONFIG, "[CACHED ] Cached jar file {0}", new Object[]{cachedFile.getPath()});
+                        LOG.log(Level.CONFIG, "[CACHED ] Cache jar file {0}", new Object[]{cachedFile.getPath()});
                         return cachedFile;
                     } catch (Exception ex) {
                         LOG.log(Level.SEVERE, "[ERROR  ] Unable to load {0} from {1}.\n", new Object[]{nutsId, r});

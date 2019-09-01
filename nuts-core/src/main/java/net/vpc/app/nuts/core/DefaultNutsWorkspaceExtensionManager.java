@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 
@@ -61,9 +62,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private final NutsBootWorkspaceFactory bootFactory;
     private final NutsWorkspaceFactory objectFactory;
 
-    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory,String[] excludedExtensions) {
+    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory, String[] excludedExtensions) {
         this.ws = ws;
-        LOG=ws.log().of(DefaultNutsWorkspaceExtensionManager.class);
+        LOG = ws.log().of(DefaultNutsWorkspaceExtensionManager.class);
         this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
         this.bootFactory = bootFactory;
         setExcludedExtensions(excludedExtensions);
@@ -87,12 +88,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
     }
 
-//    @Override
+    //    @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(NutsSession session) {
         return findWorkspaceExtensions(ws.config().getApiVersion(), session);
     }
 
-  //  @Override
+    //  @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
             version = ws.config().getApiVersion();
@@ -106,7 +107,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return findExtensions(ws.id().parseRequired(id), extensionType, session);
     }
 
-   // @Override
+    // @Override
     public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException(ws, "Missing version");
@@ -122,7 +123,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 try (Reader rr = new InputStreamReader(u.openStream())) {
                     s = ws.json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException e) {
-                    LOG.log(Level.FINE, "Failed to parse NutsExtensionInformation from " + u,e);
+                    LOG.log(Level.FINE, "Failed to parse NutsExtensionInformation from " + u, e);
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -139,18 +140,50 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return ret;
     }
 
-    public void onInitializeWorkspace(ClassLoader bootClassLoader) {
-        //now will iterate over Extension classes to wire them ...
-        discoverTypes(bootClassLoader);
+    public static class RegInfo {
+        Class extensionPointType;
+        Class extensionTypeImpl;
+
+        public RegInfo(Class extensionPointType, Class extensionTypeImpl) {
+            this.extensionPointType = extensionPointType;
+            this.extensionTypeImpl = extensionTypeImpl;
+        }
+
+        public Class getExtensionPointType() {
+            return extensionPointType;
+        }
+
+        public Class getExtensionTypeImpl() {
+            return extensionTypeImpl;
+        }
+    }
+
+    public List<RegInfo> buildRegInfos() {
+        List<RegInfo> a = new ArrayList<>();
         List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class);
         for (Class extensionImpl : loadedExtensions) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
-                if (registerType(extensionPointType, extensionImpl)) {
-                    defaultWiredComponents.add(extensionPointType.getName(), ((Class<? extends NutsComponent>) extensionImpl).getName());
-                }
+                a.add(new RegInfo(extensionPointType, extensionImpl));
             }
         }
+        return a;
+    }
+
+    public void onInitializeWorkspace(ClassLoader bootClassLoader) {
+        //now will iterate over Extension classes to wire them ...
+        discoverTypes(bootClassLoader);
         this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], bootClassLoader);
+    }
+
+    public void registerType(RegInfo regInfo) {
+        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl)) {
+            defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
+        }
+    }
+    public void registerTypes(List<RegInfo> all) {
+        for (RegInfo regInfo : all) {
+            registerType(regInfo);
+        }
     }
 
 //    @Override
@@ -191,13 +224,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         throw new ClassCastException(NutsComponent.class.getName());
     }
 
-//    @Override
+    //    @Override
     public NutsWorkspaceExtension[] getWorkspaceExtensions() {
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
-        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( options.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(options.getSession());
         NutsSession searchSession = session.trace(false);
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");
@@ -281,7 +314,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                         try {
                             zipFile.close();
                         } catch (IOException e) {
-                            LOG.log(Level.FINE, "Failed to close zip file " + file.getPath(),e);
+                            LOG.log(Level.FINE, "Failed to close zip file " + file.getPath(), e);
                             //ignore return false;
                         }
                     }
@@ -316,22 +349,22 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public List<Class> resolveComponentTypes(Class o) {
         List<Class> a = new ArrayList<>();
         if (o != null) {
-            HashSet<Class> v=new HashSet<>();
-            Stack<Class> s=new Stack<>();
+            HashSet<Class> v = new HashSet<>();
+            Stack<Class> s = new Stack<>();
             s.push(o);
-            while(!s.isEmpty()){
-                Class c=s.pop();
+            while (!s.isEmpty()) {
+                Class c = s.pop();
                 v.add(c);
-                if(SUPPORTED_EXTENSION_TYPES.contains(c)){
+                if (SUPPORTED_EXTENSION_TYPES.contains(c)) {
                     a.add(c);
                 }
                 for (Class aa : c.getInterfaces()) {
-                    if(!v.contains(aa)){
+                    if (!v.contains(aa)) {
                         s.push(aa);
                     }
                 }
                 Class sc = c.getSuperclass();
-                if(sc!=null && !v.contains(sc)){
+                if (sc != null && !v.contains(sc)) {
                     s.push(sc);
                 }
             }
@@ -361,7 +394,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     public NutsSessionTerminal createTerminal(Class ignoredClass) {
-        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, new DefaultNutsSupportLevelContext<>(ws,ignoredClass));
+        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, new DefaultNutsSupportLevelContext<>(ws, ignoredClass));
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminalBase.class, "TerminalBase");
         } else {
@@ -438,17 +471,17 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return new DefaultNutsServiceLoader<T, B>(serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NutsComponent<V>,V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria){
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
         return objectFactory.createSupported(type, supportCriteria);
     }
 
     @Override
-    public <T extends NutsComponent<V>,V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
         return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters);
     }
 
     @Override
-    public <T extends NutsComponent<V>,V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
+    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
         return objectFactory.createAllSupported(type, supportCriteria);
     }
 

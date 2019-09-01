@@ -88,7 +88,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     if (CoreIOUtils.isPathHttp(path)) {
                         String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
                         message += " url=" + path;
-                        traceMessage(session, id, TraceResult.ERROR, message, startTime);
+                        traceMessage(session, Level.FINEST, id, TraceResult.ERROR, message, startTime);
                     }
                 }
                 throw ex;

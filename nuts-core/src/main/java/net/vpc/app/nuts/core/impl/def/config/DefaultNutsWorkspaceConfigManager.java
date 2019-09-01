@@ -105,6 +105,15 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
         LOG = ws.log().of(DefaultNutsWorkspaceConfigManager.class);
         repositoryRegistryHelper = new NutsRepositoryRegistryHelper(ws);
+        this.workspaceLocation = ws.io().path(initOptions.getWorkspaceLocation());
+        this.initOptions = initOptions;
+        this.options = this.initOptions.getOptions();
+        this.bootClassLoader = initOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : initOptions.getClassWorldLoader();
+        this.bootClassWorldURLs = initOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(initOptions.getClassWorldURLs(), initOptions.getClassWorldURLs().length);
+        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
+    }
+
+    public void onExtensionsPrepared(){
         try {
             indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
         } catch (Exception ex) {
@@ -113,12 +122,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (indexStoreClientFactory == null) {
             indexStoreClientFactory = new DummyNutsIndexStoreClientFactory();
         }
-        this.workspaceLocation = ws.io().path(initOptions.getWorkspaceLocation());
-        this.initOptions = initOptions;
-        this.options = this.initOptions.getOptions();
-        this.bootClassLoader = initOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : initOptions.getClassWorldLoader();
-        this.bootClassWorldURLs = initOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(initOptions.getClassWorldURLs(), initOptions.getClassWorldURLs().length);
-        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
     @Override

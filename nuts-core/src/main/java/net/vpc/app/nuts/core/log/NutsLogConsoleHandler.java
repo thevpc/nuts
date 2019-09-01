@@ -1,14 +1,33 @@
 package net.vpc.app.nuts.core.log;
 
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsIOManager;
+import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
+import java.util.logging.StreamHandler;
 
-public class NutsLogConsoleHandler extends ConsoleHandler {
-    public NutsLogConsoleHandler() {
+public class NutsLogConsoleHandler extends StreamHandler {
+    private OutputStream out;
+
+    public NutsLogConsoleHandler(PrintStream out,boolean closeable) {
+        setOutputStream(out,closeable);
+    }
+
+    protected synchronized void setOutputStream(OutputStream out,boolean closable) throws SecurityException {
+        this.out=out;
+        if(closable) {
+            super.setOutputStream(out);
+        }else{
+            super.setOutputStream(new PrintStream(out){
+                @Override
+                public void close() {
+                    //
+                }
+            });
+        }
     }
 
     public synchronized void publish(LogRecord record) {
@@ -17,16 +36,10 @@ public class NutsLogConsoleHandler extends ConsoleHandler {
         }
         if (record instanceof NutsLogRecord) {
             NutsLogRecord rr = (NutsLogRecord) record;
-            NutsSession session = rr.getSession();
             NutsWorkspace ws = rr.getWorkspace();
-            PrintStream out = null;
-            if (session != null) {
-                out = session.out();
-            } else {
-                out = ws.io().terminal().out();
-            }
-            setOutputStream(out);
-            if (ws.io().terminalFormat().isFormatted(out)) {
+            NutsIOManager io = ws.io();
+            NutsTerminalFormat tf = io==null?null:io.terminalFormat();
+            if (tf!=null && tf.isFormatted(out)) {
                 setFormatter(NutsLogRichFormatter.RICH);
             } else {
                 setFormatter(NutsLogPlainFormatter.PLAIN);
@@ -35,5 +48,6 @@ public class NutsLogConsoleHandler extends ConsoleHandler {
             setOutputStream(System.err);
         }
         super.publish(record);
+//        flush();
     }
 }

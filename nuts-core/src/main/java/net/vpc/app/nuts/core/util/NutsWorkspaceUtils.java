@@ -345,8 +345,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "[EVENT  ] Added Repo {0}", new Object[]{event.getRepository().config().name()});
+            if (u.LOG.isLoggable(Level.CONFIG)) {
+                u.LOG.log(Level.CONFIG, "[EVENT  ] Added Repo {0}", new Object[]{event.getRepository().config().name()});
             }
 
             for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {

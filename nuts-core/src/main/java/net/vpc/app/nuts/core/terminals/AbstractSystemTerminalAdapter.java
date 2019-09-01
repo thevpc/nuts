@@ -17,6 +17,8 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         getParent().install(this.ws = workspace);
     }
 
+
+
     public abstract NutsSystemTerminalBase getParent();
 
     @Override

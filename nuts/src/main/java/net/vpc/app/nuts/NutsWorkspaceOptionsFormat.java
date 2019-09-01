@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -128,21 +127,25 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             if (!(omitDefaults && options.getTerminalMode() == null)) {
                 fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
             }
-            if (options.getLogConfig() != null) {
-                if (options.getLogConfig().getLogLevel() != null) {
-                    if (options.getLogConfig().getLogLevel() == Level.FINEST) {
-                        fillOption("--verbose", null, true, arguments, false);
-                    } else {
-                        fillOption("--log-" + options.getLogConfig().getLogLevel().toString().toLowerCase(), null, true, arguments, false);
+            NutsLogConfig logConfig = options.getLogConfig();
+            if (logConfig != null) {
+                if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel()== logConfig.getLogFileLevel()) {
+                    fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, arguments, false);
+                }else {
+                    if (logConfig.getLogTermLevel() != null) {
+                        fillOption("--log-term-" + logConfig.getLogTermLevel().toString().toLowerCase(), null, true, arguments, false);
+                    }
+                    if (logConfig.getLogFileLevel() != null) {
+                        fillOption("--log-file-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, arguments, false);
                     }
                 }
-                if (options.getLogConfig().getLogCount() > 0) {
-                    fillOption("--log-count", null, String.valueOf(options.getLogConfig().getLogCount()), arguments, false);
+                if (logConfig.getLogFileCount() > 0) {
+                    fillOption("--log-file-count", null, String.valueOf(logConfig.getLogFileCount()), arguments, false);
                 }
-                fillOption("--log-size", null, options.getLogConfig().getLogSize(), arguments, false);
-                fillOption("--log-folder", null, options.getLogConfig().getLogFolder(), arguments, false);
-                fillOption("--log-name", null, options.getLogConfig().getLogName(), arguments, false);
-                fillOption("--log-inherited", null, options.getLogConfig().isLogInherited(), arguments, false);
+                fillOption("--log-file-size", null, logConfig.getLogFileSize(), arguments, false);
+                fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
+                fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
+                fillOption("--log-inherited", null, logConfig.isLogInherited(), arguments, false);
             }
             fillOption("--exclude-extension", null, options.getExcludedExtensions(), ";", arguments, false);
             fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments, false);

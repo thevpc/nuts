@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.log;
 
 
 import net.vpc.app.nuts.NutsTerminalFormat;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -83,12 +84,13 @@ public class NutsLogRichFormatter extends Formatter {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTerminalFormat tf = wRecord.getWorkspace().io().terminalFormat();
             StringBuilder sb = new StringBuilder();
-            String date = Instant.ofEpochMilli(wRecord.getMillis()).toString().replace(":", "");
+            String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
+//                    Instant.ofEpochMilli(wRecord.getMillis()).toString().replace(":", "");
 
-            sb.append(date);
-            for (int i = 22 - date.length() - 1; i >= 0; i--) {
-                sb.append(' ');
-            }
+            sb.append("<<").append(tf.escapeText(date)).append(">>");
+//            for (int i = 22 - date.length() - 1; i >= 0; i--) {
+//                sb.append(' ');
+//            }
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
                 sb.append(" ");
@@ -118,10 +120,28 @@ public class NutsLogRichFormatter extends Formatter {
                     sb.append("##");
                     break;
                 }
-                case 70: {//Level.CONFIG
+                case 700: {//Level.CONFIG
                     sb.append("^^");
                     sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
                     sb.append("^^");
+                    break;
+                }
+                case 500: {//Level.FINE
+                    sb.append("**");
+                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append("**");
+                    break;
+                }
+                case 400: {//Level.FINER
+                    sb.append("[[");
+                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append("]]");
+                    break;
+                }
+                case 300: {//Level.FINEST
+                    sb.append("<<");
+                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(">>");
                     break;
                 }
                 default: {

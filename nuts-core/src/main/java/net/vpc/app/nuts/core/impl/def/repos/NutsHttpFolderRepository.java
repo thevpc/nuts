@@ -134,11 +134,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         long startTime = System.currentTimeMillis();
         try {
             InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
-            if (LOG.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINER)) {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
                     message += " url=" + path;
-                    traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
+                    traceMessage(session, Level.FINER, id, TraceResult.SUCCESS, message, startTime);
                 }
             }
             return CoreIOUtils.createInputSource(in);
@@ -147,7 +147,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
                     message += " url=" + path;
-                    traceMessage(session, id, TraceResult.ERROR, message, startTime);
+                    traceMessage(session,Level.FINEST, id, TraceResult.ERROR, message, startTime);
                 }
             }
             throw ex;

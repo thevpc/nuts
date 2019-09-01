@@ -65,7 +65,7 @@ final class PrivateNutsArgumentsParser {
      * nuts options
      *
      * @param bootArguments input arguments to parse
-     * @param options options instance to fill
+     * @param options       options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsDefaultWorkspaceOptions options) {
         List<String> showError = new ArrayList<>();
@@ -499,8 +499,7 @@ final class PrivateNutsArgumentsParser {
                     }
 
                     case "--dry":
-                    case "-D":
-                        {
+                    case "-D": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setDry(a.getBooleanValue());
@@ -517,18 +516,44 @@ final class PrivateNutsArgumentsParser {
                     }
 
                     case "--verbose":
+
+                    case "--log-verbose":
                     case "--log-finest":
                     case "--log-finer":
                     case "--log-fine":
                     case "--log-info":
                     case "--log-warning":
                     case "--log-severe":
+                    case "--log-config":
                     case "--log-all":
                     case "--log-off":
-                    case "--log-size":
-                    case "--log-name":
-                    case "--log-folder":
-                    case "--log-count":
+
+                    case "--log-term-verbose":
+                    case "--log-term-finest":
+                    case "--log-term-finer":
+                    case "--log-term-fine":
+                    case "--log-term-info":
+                    case "--log-term-warning":
+                    case "--log-term-severe":
+                    case "--log-term-config":
+                    case "--log-term-all":
+                    case "--log-term-off":
+
+                    case "--log-file-verbose":
+                    case "--log-file-finest":
+                    case "--log-file-finer":
+                    case "--log-file-fine":
+                    case "--log-file-info":
+                    case "--log-file-warning":
+                    case "--log-file-severe":
+                    case "--log-file-config":
+                    case "--log-file-all":
+                    case "--log-file-off":
+
+                    case "--log-file-size":
+                    case "--log-file-name":
+                    case "--log-file-base":
+                    case "--log-file-count":
                     case "--log-inherited": {
                         if (enabled) {
                             logConfig = new NutsLogConfig();
@@ -830,37 +855,37 @@ final class PrivateNutsArgumentsParser {
     private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled) {
         NutsArgument a = cmdLine.peek();
         switch (a.getStringKey()) {
-            case "--log-size": {
+            case "--log-file-size": {
                 a = cmdLine.nextString();
                 String v = a.getStringValue();
                 if (enabled) {
-                    logConfig.setLogSize(Integer.parseInt(v));
+                    logConfig.setLogFileSize(Integer.parseInt(v));
                 }
                 break;
             }
 
-            case "--log-count": {
+            case "--log-file-count": {
                 a = cmdLine.nextString();
                 if (enabled) {
-                    logConfig.setLogCount(a.getArgumentValue().getInt());
+                    logConfig.setLogFileCount(a.getArgumentValue().getInt());
                 }
                 break;
             }
 
-            case "--log-name": {
+            case "--log-file-name": {
                 a = cmdLine.nextString();
                 String v = a.getStringValue();
                 if (enabled) {
-                    logConfig.setLogName(v);
+                    logConfig.setLogFileName(v);
                 }
                 break;
             }
 
-            case "--log-folder": {
+            case "--log-file-base": {
                 a = cmdLine.nextString();
                 String v = a.getStringValue();
                 if (enabled) {
-                    logConfig.setLogFolder(v);
+                    logConfig.setLogFileBase(v);
                 }
                 break;
             }
@@ -872,72 +897,66 @@ final class PrivateNutsArgumentsParser {
                 }
                 break;
             }
-            case "--verbose":
+            case "--log-file-verbose":
+            case "--log-file-finest":
+            case "--log-file-finer":
+            case "--log-file-fine":
+            case "--log-file-info":
+            case "--log-file-warning":
+            case "--log-file-config":
+            case "--log-file-severe":
+            case "--log-file-all":
+            case "--log-file-off": {
+                cmdLine.skip();
+                if (enabled) {
+                    String id = a.getStringKey();
+                    logConfig.setLogFileLevel(parseLevel(id.substring("--log-file-".length())));
+                }
+                break;
+            }
+
+            case "--log-term-verbose":
+            case "--log-term-finest":
+            case "--log-term-finer":
+            case "--log-term-fine":
+            case "--log-term-info":
+            case "--log-term-warning":
+            case "--log-term-config":
+            case "--log-term-severe":
+            case "--log-term-all":
+            case "--log-term-off": {
+                cmdLine.skip();
+                if (enabled) {
+                    String id = a.getStringKey();
+                    logConfig.setLogTermLevel(parseLevel(id.substring("--log-term-".length())));
+                }
+                break;
+            }
+
+            case "--verbose": {
+                cmdLine.skip();
+                if (enabled) {
+                    logConfig.setLogTermLevel(Level.FINEST);
+                    logConfig.setLogFileLevel(Level.FINEST);
+                }
+                break;
+            }
+            case "--log-verbose":
             case "--log-finest":
             case "--log-finer":
             case "--log-fine":
             case "--log-info":
             case "--log-warning":
+            case "--log-config":
             case "--log-severe":
             case "--log-all":
             case "--log-off": {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getStringKey();
-                    if (a.getStringKey().startsWith("--log-")) {
-                        id = id.substring("--log-".length());
-                    } else if (a.getStringKey().equals("--log")) {
-                        id = a.getStringValue();
-                        if (id == null) {
-                            id = "";
-                        }
-                    } else if (id.startsWith("--")) {
-                        id = a.getStringKey().substring(2);
-                    } else {
-                        id = a.getStringKey();
-                    }
-                    switch (id.toLowerCase()) {
-                        case "verbose": {
-                            logConfig.setLogLevel(Level.FINEST);
-                            break;
-                        }
-                        case "finest": {
-                            logConfig.setLogLevel(Level.FINEST);
-                            break;
-                        }
-                        case "finer": {
-                            logConfig.setLogLevel(Level.FINER);
-                            break;
-                        }
-                        case "fine": {
-                            logConfig.setLogLevel(Level.FINE);
-                            break;
-                        }
-                        case "info": {
-                            logConfig.setLogLevel(Level.INFO);
-                            break;
-                        }
-                        case "warning": {
-                            logConfig.setLogLevel(Level.WARNING);
-                            break;
-                        }
-                        case "config": {
-                            logConfig.setLogLevel(Level.CONFIG);
-                            break;
-                        }
-                        case "all": {
-                            logConfig.setLogLevel(Level.ALL);
-                            break;
-                        }
-                        case "off": {
-                            logConfig.setLogLevel(Level.OFF);
-                            break;
-                        }
-                        default: {
-                            logConfig.setLogLevel(Level.INFO);
-                            break;
-                        }
-                    }
+                    Level lvl = parseLevel(id.substring("--log-".length()));
+                    logConfig.setLogTermLevel(lvl);
+                    logConfig.setLogFileLevel(lvl);
                 }
                 break;
             }
@@ -1044,5 +1063,39 @@ final class PrivateNutsArgumentsParser {
             }
         }
         throw new IllegalArgumentException("Unable to parse value for NutsWorkspaceOpenMode : " + s0);
+    }
+
+    private static Level parseLevel(String s) {
+        switch (s.trim().toLowerCase()) {
+            case "off": {
+                return Level.OFF;
+            }
+            case "verbose":
+            case "finest": {
+                return Level.FINEST;
+            }
+            case "finer": {
+                return Level.FINER;
+            }
+            case "fine": {
+                return Level.FINE;
+            }
+            case "info": {
+                return Level.INFO;
+            }
+            case "all": {
+                return Level.ALL;
+            }
+            case "warning": {
+                return Level.WARNING;
+            }
+            case "severe": {
+                return Level.SEVERE;
+            }
+            case "config": {
+                return Level.CONFIG;
+            }
+        }
+        return Level.INFO;
     }
 }

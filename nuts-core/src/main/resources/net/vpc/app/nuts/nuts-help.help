@@ -320,25 +320,35 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--read-only** or **-R** 
       read only mode. All changes to the workspace - if ever - are not persisted.
 
- **--verbose** , **--log-finest**  , **--log-info** , **--log-fine** ,
- **--log-finer** , **--log-severe** , **--log-warning** ,
+ **--verbose** , **--log-verbose**  , **--log-finest**  , **--log-info** , **--log-fine** ,
+ **--log-finer** , **--log-severe** , **--log-warning** , **--log-config** ,
  **--log-off** , **--log-off**
-      apply logging level
+      apply logging level to both terminal and file
 
- **--log-size**       <size>
+ **--log-term-verbose**  , **--log-term-finest**  , **--log-term-info** , **--log-term-fine** ,
+ **--log-term-finer** , **--log-term-severe** , **--log-term-warning** , **--log-term-config** ,
+ **--log-term-off** , **--log-term-off**
+      apply logging level to terminal
+
+ **--log-file-verbose**  , **--log-file-finest**  , **--log-file-info** , **--log-file-fine** ,
+ **--log-file-finer** , **--log-file-severe** , **--log-file-warning** , **--log-file-config** ,
+ **--log-file-off** , **--log-file-off**
+      apply logging level to terminal
+
+ **--log-file-size**       <size>
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
       supported units are :
         [[k]] or [[kb]] : for kilo-bytes (example 10k)
         [[m]] or [[mb]] : for mega-bytes (example 10m)
         [[g]] or [[gb]] : for giga-bytes (example 10g)
 
- **--log-folder**     <log-folder-path>
+ **--log-file-base**     <log-folder-path>
       define log file folder path
 
- **--log-name**       <log-file-name-pattern>
+ **--log-file-name**       <log-file-name-pattern>
       define log file name pattern. this defaults to "nuts-%g.log"
 
- **--log-count**      <number>
+ **--log-file-count**      <number>
       define the number of files to use (in rotating log)
 
  **--log-inherited** 

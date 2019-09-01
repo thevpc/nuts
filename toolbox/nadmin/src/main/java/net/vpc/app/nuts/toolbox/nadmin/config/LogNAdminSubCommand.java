@@ -24,39 +24,39 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
             NutsLogManager lm=context.getWorkspace().log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.FINEST, updateOptions);
+                    lm.setTermLevel(Level.FINEST, updateOptions);
                 }
             } else if (cmdLine.next("fine") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.FINE, updateOptions);
+                    lm.setTermLevel(Level.FINE, updateOptions);
                 }
             } else if (cmdLine.next("finer") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.FINER, updateOptions);
+                    lm.setTermLevel(Level.FINER, updateOptions);
                 }
             } else if (cmdLine.next("info") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.INFO, updateOptions);
+                    lm.setTermLevel(Level.INFO, updateOptions);
                 }
             } else if (cmdLine.next("warning") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.WARNING, updateOptions);
+                    lm.setTermLevel(Level.WARNING, updateOptions);
                 }
             } else if (cmdLine.next("severe", "error") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.SEVERE, updateOptions);
+                    lm.setTermLevel(Level.SEVERE, updateOptions);
                 }
             } else if (cmdLine.next("config") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.CONFIG, updateOptions);
+                    lm.setTermLevel(Level.CONFIG, updateOptions);
                 }
             } else if (cmdLine.next("off") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.OFF, updateOptions);
+                    lm.setTermLevel(Level.OFF, updateOptions);
                 }
             } else if (cmdLine.next("all") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setLogLevel(Level.ALL, updateOptions);
+                    lm.setTermLevel(Level.ALL, updateOptions);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

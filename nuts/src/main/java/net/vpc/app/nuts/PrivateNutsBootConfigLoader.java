@@ -42,20 +42,19 @@ import java.util.logging.Logger;
  * @since 0.5.6
  */
 final class PrivateNutsBootConfigLoader {
-    public static final Logger LOG = Logger.getLogger(NutsBootWorkspace.class.getName());
 
-    static PrivateNutsWorkspaceInitInformation loadBootConfig(String workspaceLocation) {
+    static PrivateNutsWorkspaceInitInformation loadBootConfig(String workspaceLocation,PrivateNutsLog LOG) {
         File versionFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (versionFile.isFile()) {
-                LOG.log(Level.FINEST,"[BOOT   ] Loading boot file : {0}",versionFile.getPath());
+                LOG.log(Level.FINEST,"[START  ] Loading boot file : {0}",versionFile.getPath());
                 String json = PrivateNutsUtils.readStringFromFile(versionFile).trim();
                 if (json.length() > 0) {
-                    return loadBootConfigJSON(json);
+                    return loadBootConfigJSON(json,LOG);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[BOOT   ] Previous Workspace Config not found at {0}", versionFile.getPath());
+                LOG.log(Level.FINEST, "[ERROR ] Previous Workspace Config not found at {0}", versionFile.getPath());
             }
         } catch (Exception ex) {
             LOG.log(Level.CONFIG, "[ERROR  ] Unable to load nuts version file " + versionFile + ".\n", ex);
@@ -63,7 +62,7 @@ final class PrivateNutsBootConfigLoader {
         return null;
     }
 
-    private static PrivateNutsWorkspaceInitInformation loadBootConfigJSON(String json) {
+    private static PrivateNutsWorkspaceInitInformation loadBootConfigJSON(String json,PrivateNutsLog LOG) {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         PrivateNutsWorkspaceInitInformation c = new PrivateNutsWorkspaceInitInformation();
@@ -83,13 +82,13 @@ final class PrivateNutsBootConfigLoader {
             LOG.log(Level.FINEST,"[SUCCESS] Detected config version "+configVersion+" ( considered as 0.5.1, very old config, ignored)");
         }else if (buildNumber <= 505) {
             LOG.log(Level.FINEST,"[SUCCESS] Detected config version "+configVersion+" ( best effort to load 0.5.2 config file )");
-            loadConfigVersion502(c, jsonObject);
+            loadConfigVersion502(c, jsonObject,LOG);
         }else if (buildNumber <= 506) {
             LOG.log(Level.FINEST,"[SUCCESS] Detected config version "+configVersion+" ( best effort to load 0.5.6 config file )");
-            loadConfigVersion506(c, jsonObject);
+            loadConfigVersion506(c, jsonObject,LOG);
         } else {
             LOG.log(Level.FINEST,"[SUCCESS] Detected config version "+configVersion+" ( best effort to load 0.5.7 config file )");
-            loadConfigVersion507(c, jsonObject);
+            loadConfigVersion507(c, jsonObject,LOG);
         }
         return c;
     }
@@ -113,7 +112,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject,PrivateNutsLog LOG) {
         LOG.log(Level.FINEST,"[SUCCESS] Effective load config version : 0.5.7");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
@@ -159,7 +158,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject,PrivateNutsLog LOG) {
         LOG.log(Level.FINEST,"[SUCCESS] Effective load config version : 0.5.6");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
@@ -191,7 +190,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject) {
+    private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject,PrivateNutsLog LOG) {
         LOG.log(Level.FINEST,"[SUCCESS] Effective load config version : 0.5.2");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));

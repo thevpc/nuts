@@ -227,9 +227,9 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                LOG.log(Level.CONFIG, "[SUCCESS] Parse pom    {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.FINEST, "[SUCCESS] Parse pom    {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                LOG.log(Level.CONFIG, "[SUCCESS] Parse pom    {0}", new Object[]{urlDesc});
+                LOG.log(Level.FINEST, "[SUCCESS] Parse pom    {0}", new Object[]{urlDesc});
             }
 
             return new DefaultNutsDescriptorBuilder()
@@ -248,9 +248,9 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.FINEST, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
+                LOG.log(Level.FINEST, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
             }
             throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
         }

@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.core.log;
 
-import net.vpc.app.nuts.NutsLogConfig;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsLogger;
 
@@ -25,32 +24,35 @@ public class DefaultNutsLogger implements NutsLogger {
         this.log = log;
     }
 
-    public int getLogLevelValue() {
-        return getLogLevel().intValue();
-    }
-
     public Filter getFilter() {
         //may have a filter ?
         return null;
     }
 
-    public Level getLogLevel() {
-        NutsLogConfig l = ws.config().options().getLogConfig();
-        if (l != null) {
-            Level lv = l.getLogLevel();
-            if (lv != null) {
-                return lv;
+    private boolean isLoggable(Level level,Level current) {
+        int levelValue = current.intValue();
+        if (!(level.intValue() < levelValue || levelValue == offValue)) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isLoggable(Level level) {
+        if(isLoggable(level,ws.log().getTermLevel())){
+            return true;
+        }
+        if(isLoggable(level,ws.log().getFileLevel())){
+            return true;
+        }
+        for (Handler handler : ws.log().getHandlers()) {
+            if(isLoggable(level,handler.getLevel())){
+                return true;
             }
         }
-        return Level.OFF;
-    }
 
-    public boolean isLoggable(Level level) {
-        int levelValue = getLogLevelValue();
-        if (level.intValue() < levelValue || levelValue == offValue) {
-            return false;
+        if(log.isLoggable(level)){
+            return true;
         }
-        return log.isLoggable(level);
+        return false;
     }
 
     public void log(Level level, String msg, Throwable thrown) {
@@ -115,17 +117,26 @@ public class DefaultNutsLogger implements NutsLogger {
         if (theFilter != null && !theFilter.isLoggable(record)) {
             return;
         }
-        Handler ch = ws.log().getConsoleHandler();
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager)ws.log();
+        logManager.updateHandlers(record);
+        Handler ch = logManager.getTermHandler();
         if (ch != null) {
-            ch.publish(record);
+            if(ch.isLoggable(record)) {
+                ch.publish(record);
+                ch.flush();
+            }
         }
-        Handler fh = ws.log().getFileHandler();
+        Handler fh = logManager.getFileHandler();
         if (fh != null) {
-            fh.publish(record);
+            if(fh.isLoggable(record)) {
+                fh.publish(record);
+            }
         }
-        for (Handler handler : ws.log().getHandlers()) {
-            handler.publish(record);
+        for (Handler handler : logManager.getHandlers()) {
+            if(handler.isLoggable(record)) {
+                handler.publish(record);
+            }
         }
-        log.log(record);
+        this.log.log(record);
     }
 }
