@@ -556,7 +556,9 @@ final class PrivateNutsArgumentsParser {
                     case "--log-file-count":
                     case "--log-inherited": {
                         if (enabled) {
-                            logConfig = new NutsLogConfig();
+                            if(logConfig==null) {
+                                logConfig = new NutsLogConfig();
+                            }
                         }
                         parseLogLevel(logConfig, cmdLine, enabled);
                         break;
