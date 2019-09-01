@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
@@ -49,10 +48,11 @@ import net.vpc.app.nuts.core.util.common.TraceResult;
  */
 public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFetchDescriptorRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsFetchDescriptorRepositoryCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsFetchDescriptorRepositoryCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
     @Override
     public NutsFetchDescriptorRepositoryCommand run() {
         NutsWorkspace ws = getRepo().getWorkspace();
-        NutsWorkspaceUtils.checkLongNameNutsId(ws,id);
-        NutsWorkspaceUtils.checkSession(ws, getSession());
+        NutsWorkspaceUtils.of(ws).checkLongNameNutsId(id);
+        NutsWorkspaceUtils.of(ws).checkSession(getSession());
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();
         queryMap.remove(NutsConstants.IdProperties.OPTIONAL);

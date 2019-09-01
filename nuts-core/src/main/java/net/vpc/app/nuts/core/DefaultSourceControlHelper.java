@@ -10,9 +10,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -24,16 +24,17 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  * @author vpc
  */
 public class DefaultSourceControlHelper {
-    private static final Logger LOG=Logger.getLogger(DefaultSourceControlHelper.class.getName());
+    private final NutsLogger LOG;
     private NutsWorkspace ws;
 
     public DefaultSourceControlHelper(NutsWorkspace ws) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultSourceControlHelper.class);
     }
 
 //    @Override
     public NutsId commit(Path folder, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         ws.security().checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NutsIllegalArgumentException(ws, "Not a directory " + folder);
@@ -60,7 +61,7 @@ public class DefaultSourceControlHelper {
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().value(d).print(file);
             try {
-                CoreIOUtils.delete(folder);
+                CoreIOUtils.delete(ws,folder);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -77,13 +78,13 @@ public class DefaultSourceControlHelper {
 
 //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
         NutsDefinition nutToInstall = ws.fetch().id(id).setSession(session).setOptional(false).dependencies().getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(nutToInstall.getPath().toString(), ws.io().expandPath(folder), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(ws,nutToInstall.getPath().toString(), ws.io().expandPath(folder), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

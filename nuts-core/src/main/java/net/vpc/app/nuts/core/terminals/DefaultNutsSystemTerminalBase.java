@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.fprint.AnsiPrintStreamSupport;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
@@ -8,12 +9,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @NutsPrototype
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
+    private NutsLogger LOG;
     private Scanner scanner;
     private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
     private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
@@ -23,6 +23,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void install(NutsWorkspace workspace) {
+        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
         NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
         if (terminalMode == null) {
             terminalMode = NutsTerminalMode.FORMATTED;
@@ -61,7 +62,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        LOG.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
+        if(LOG!=null) {
+            LOG.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
+        }
         FPrint.installStdOut(convertMode(this.outMode = mode));
         return this;
     }
@@ -71,7 +74,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        LOG.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
+        if(LOG!=null) {
+            LOG.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
+        }
         FPrint.installStdErr(convertMode(this.errMode = mode));
         return this;
     }

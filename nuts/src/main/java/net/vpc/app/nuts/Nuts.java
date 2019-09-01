@@ -198,4 +198,12 @@ public final class Nuts {
             String workspaceName) {
         return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
     }
+
+    /**
+     * default OS family, resolvable before booting nuts workspace
+     * @return default OS family, resolvable before booting nuts workspace
+     */
+    public static NutsOsFamily getPlatformOsFamily() {
+        return PrivateNutsPlatformUtils.getPlatformOsFamily();
+    }
 }

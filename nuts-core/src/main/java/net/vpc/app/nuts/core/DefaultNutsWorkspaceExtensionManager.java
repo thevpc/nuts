@@ -11,6 +11,7 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedNull;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.*;
@@ -18,7 +19,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
@@ -34,7 +34,7 @@ import net.vpc.app.nuts.core.util.common.ListMap;
  */
 public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceExtensionManager.class.getName());
+    private final NutsLogger LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(//order is important!!because autowiring should follow this very order
                     NutsPrintStreamFormattedNull.class,
@@ -63,6 +63,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory,String[] excludedExtensions) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceExtensionManager.class);
         this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
         this.bootFactory = bootFactory;
         setExcludedExtensions(excludedExtensions);
@@ -196,7 +197,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
-        NutsSession session = NutsWorkspaceUtils.validateSession(ws, options.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( options.getSession());
         NutsSession searchSession = session.trace(false);
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");

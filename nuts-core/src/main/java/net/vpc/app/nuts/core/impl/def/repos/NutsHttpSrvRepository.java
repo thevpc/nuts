@@ -51,13 +51,14 @@ import net.vpc.app.nuts.core.util.iter.IteratorUtils;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 
-    private static final Logger LOG = Logger.getLogger(NutsHttpSrvRepository.class.getName());
+    private final NutsLogger LOG;
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
+        LOG=workspace.log().of(NutsHttpSrvRepository.class);
         try {
-            remoteId = NutsWorkspaceUtils.parseRequiredNutsId(workspace, httpGetString(options.getLocation() + "/version"));
+            remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
         } catch (Exception ex) {
             LOG.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
@@ -70,7 +71,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsId getRemoteId() {
         if (remoteId == null) {
             try {
-                remoteId = NutsWorkspaceUtils.parseRequiredNutsId(getWorkspace(), httpGetString(getUrl("/version")));
+                remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version")));
             } catch (Exception ex) {
                 LOG.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
@@ -85,7 +86,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (content == null || desc == null) {
             throw new NutsNotFoundException(getWorkspace(), command.getId());
         }
-        NutsWorkspaceUtils.checkSession(getWorkspace(), command.getSession());
+        NutsWorkspaceUtils.of(getWorkspace()).checkSession(command.getSession());
         if (command.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
         }

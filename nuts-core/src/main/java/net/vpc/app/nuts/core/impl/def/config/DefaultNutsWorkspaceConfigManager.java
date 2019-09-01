@@ -67,7 +67,7 @@ import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
+    public static NutsLogger LOG;
 
     private final DefaultNutsWorkspace ws;
     private DefaultNutsWorkspaceCurrentConfig currentConfig;
@@ -102,6 +102,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace ws, NutsWorkspaceInitInformation initOptions) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceConfigManager.class);
         repositoryRegistryHelper = new NutsRepositoryRegistryHelper(ws);
         try {
             indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
@@ -556,8 +557,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (!force && !isConfigurationChanged()) {
             return false;
         }
-        NutsWorkspaceUtils.checkReadOnly(ws);
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         boolean ok = false;
         ws.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
         Path apiVersionSpecificLocation = getStoreLocation(getApiId(), NutsStoreLocation.CONFIG);
@@ -852,7 +853,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session) {
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.searchJdkLocations(ws, session);
+            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(ws, session);
         }
         return new NutsSdkLocation[0];
     }
@@ -860,7 +861,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, NutsSession session) {
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.searchJdkLocations(ws, path, session);
+            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(ws, path, session);
         }
         return new NutsSdkLocation[0];
     }
@@ -868,7 +869,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsSdkLocation resolveSdkLocation(String sdkType, Path path, String preferredName, NutsSession session) {
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.resolveJdkLocation(ws, path, null);
+            return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(ws, path, null);
         }
         return null;
     }
@@ -1166,7 +1167,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         .failFast(false).latest().getResultIds().first();
             }
             if (runtimeId == null) {
-                runtimeId = MavenUtils.resolveLatestMavenId(ws.id().parse(NutsConstants.Ids.NUTS_RUNTIME),
+                runtimeId = MavenUtils.of(ws).resolveLatestMavenId(ws.id().parse(NutsConstants.Ids.NUTS_RUNTIME),
                         (rtVersion) -> rtVersion.startsWith(apiId.getVersion().getValue() + ".")
                 );
             }
@@ -1213,7 +1214,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (def == null) {
             //selected repositories cannot reach runtime component
             //fallback to default
-            MavenUtils.DepsAndRepos dd = MavenUtils.loadDependenciesAndRepositoriesFromPomPath(id);
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id);
             if (dd == null) {
                 throw new NutsNotFoundException(ws, id);
             }
@@ -1418,7 +1419,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public String getDefaultIdBasedir(NutsId id) {
-        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(), id);
+        NutsWorkspaceUtils.of(ws).checkSimpleNameNutsId( id);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
@@ -1534,7 +1535,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean loadWorkspace(NutsSession session) {
         try {
-            session = NutsWorkspaceUtils.validateSession(ws, session);
+            session = NutsWorkspaceUtils.of(ws).validateSession( session);
             NutsWorkspaceConfigBoot _config = parseBootConfig();
             if (_config == null) {
                 return false;
@@ -1745,7 +1746,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
             fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
-            NutsWorkspaceUtils.Events.fireOnRemoveRepository(ws, new DefaultNutsWorkspaceEvent(options.getSession(), repository, "repository", repository, null));
+            NutsWorkspaceUtils.of(ws).events().fireOnRemoveRepository(new DefaultNutsWorkspaceEvent(options.getSession(), repository, "repository", repository, null));
         }
         return this;
     }
@@ -2005,7 +2006,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         repositoryRegistryHelper.addRepository(ref, repo);
         if (repo != null) {
             fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
-            NutsWorkspaceUtils.Events.fireOnAddRepository(ws,
+            NutsWorkspaceUtils.of(ws).events().fireOnAddRepository(
                     new DefaultNutsWorkspaceEvent(options.getSession(), repo, "repository", null, repo)
             );
         }
@@ -2420,7 +2421,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsId createSdkId(String type, String version) {
-        return NutsWorkspaceUtils.createSdkId(ws, type, version);
+        return NutsWorkspaceUtils.of(ws).createSdkId( type, version);
     }
 
     public enum ConfigEventType {

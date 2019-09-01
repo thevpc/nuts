@@ -30,14 +30,11 @@
 package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsRepository;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsDeployRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 
 /**
  *
@@ -45,10 +42,11 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
  */
 public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsDeployRepositoryCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsDeployRepositoryCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsDeployRepositoryCommand.class);
     }
 
 

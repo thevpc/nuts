@@ -34,7 +34,6 @@ import net.vpc.app.nuts.*;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
 import net.vpc.app.nuts.core.filters.NutsIdAndNutsDependencyFilterItem;
@@ -42,7 +41,7 @@ import net.vpc.app.nuts.core.filters.dependency.NutsExclusionDependencyFilter;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class NutsIdGraph {
-    private static final Logger LOG=Logger.getLogger(NutsIdGraph.class.getName());
+    private final NutsLogger LOG;
 
     private NutsIdGraphContext context = new NutsIdGraphContext();
 
@@ -55,6 +54,7 @@ public class NutsIdGraph {
     public NutsIdGraph(NutsSession session, boolean failFast) {
         this.session = session;
         this.failFast = failFast;
+        LOG=session.workspace().log().of(NutsIdGraph.class);
     }
 
     private void reset(){

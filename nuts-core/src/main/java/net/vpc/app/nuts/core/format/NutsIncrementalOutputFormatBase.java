@@ -99,7 +99,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
 
     public PrintWriter getValidOut() {
         if (out == null) {
-            PrintStream out = NutsWorkspaceUtils.validateSession(ws, getValidSession()).getTerminal().getOut();
+            PrintStream out = NutsWorkspaceUtils.of(ws).validateSession( getValidSession()).getTerminal().getOut();
             this.out = ws.io().getTerminalFormat().prepare(new PrintWriter(out));
         }
         this.out = ws.io().getTerminalFormat().prepare(out);

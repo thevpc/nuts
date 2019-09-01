@@ -47,6 +47,8 @@ public interface NutsInputStreamEvent {
 
     String getSourceName();
 
+    float getPercent();
+
     long getGlobalCount();
 
     long getGlobalMillis();
@@ -54,5 +56,7 @@ public interface NutsInputStreamEvent {
     long getPartialCount();
 
     long getPartialMillis();
+
+    boolean isIndeterminate();
 
 }

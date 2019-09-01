@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,14 +26,32 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
+import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class MavenMetadataParser {
-    private static final Logger LOG=Logger.getLogger(MavenMetadataParser.class.getName());
+    private final NutsLogger LOG;
 
-    public static String toXmlString(MavenMetadata m) {
+    private NutsWorkspace ws;
+    public static MavenMetadataParser of(NutsWorkspace ws) {
+        Map<String, Object> up = ws.userProperties();
+        MavenMetadataParser wp = (MavenMetadataParser) up.get(MavenMetadataParser.class.getName());
+        if (wp == null) {
+            wp = new MavenMetadataParser(ws);
+            up.put(MavenMetadataParser.class.getName(), wp);
+        }
+        return wp;
+    }
+
+    public MavenMetadataParser(NutsWorkspace ws) {
+        this.ws = ws;
+        LOG=ws.log().of(MavenMetadataParser.class);
+    }
+
+    public String toXmlString(MavenMetadata m) {
         ByteArrayOutputStream s = new ByteArrayOutputStream();
         try (Writer w = new OutputStreamWriter(s)) {
             writeMavenMetaData(m, new StreamResult(s));
@@ -45,7 +64,7 @@ public class MavenMetadataParser {
         return new String(s.toByteArray());
     }
 
-    public static void writeMavenMetaData(MavenMetadata m, Path path) {
+    public void writeMavenMetaData(MavenMetadata m, Path path) {
         try (Writer w = Files.newBufferedWriter(path)) {
             writeMavenMetaData(m, new StreamResult(path.toFile()));
         } catch (TransformerException | ParserConfigurationException e) {
@@ -55,7 +74,7 @@ public class MavenMetadataParser {
         }
     }
 
-    public static void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
+    public void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
         Document document = NutsXmlUtils.createDocument();
 
         Element metadata = document.createElement("metadata");
@@ -106,7 +125,7 @@ public class MavenMetadataParser {
         NutsXmlUtils.writeDocument(document, writer, false);
     }
 
-    public static MavenMetadata parseMavenMetaData(Path stream) {
+    public MavenMetadata parseMavenMetaData(Path stream) {
         try (InputStream s = Files.newInputStream(stream)) {
             return parseMavenMetaData(s);
         } catch (IOException ex) {
@@ -114,7 +133,7 @@ public class MavenMetadataParser {
         }
     }
 
-    public static MavenMetadata parseMavenMetaData(InputStream stream) {
+    public MavenMetadata parseMavenMetaData(InputStream stream) {
         MavenMetadata info = new MavenMetadata();
         StringBuilder ver = new StringBuilder();
         StringBuilder latest = new StringBuilder();
@@ -188,7 +207,7 @@ public class MavenMetadataParser {
         return info;
     }
 
-    private static boolean isStackPath(Stack<String> stack, String... path) {
+    private boolean isStackPath(Stack<String> stack, String... path) {
         if (stack.size() != path.length) {
             return false;
         }
@@ -200,7 +219,7 @@ public class MavenMetadataParser {
         return true;
     }
 
-    public static boolean isBlank(String str) {
+    public boolean isBlank(String str) {
         return str == null || str.trim().length() == 0;
     }
 }

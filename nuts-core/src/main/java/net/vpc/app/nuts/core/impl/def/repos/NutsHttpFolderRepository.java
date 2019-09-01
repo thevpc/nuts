@@ -55,7 +55,7 @@ import net.vpc.app.nuts.core.util.io.InputSource;
 
 public class NutsHttpFolderRepository extends NutsCachedRepository {
 
-    private static final Logger LOG = Logger.getLogger(NutsHttpFolderRepository.class.getName());
+    private final NutsLogger LOG;
 
     private RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
     private RemoteRepoApi findApi = RemoteRepoApi.DEFAULT;
@@ -81,15 +81,17 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
     };
 
+    public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
+        LOG=workspace.log().of(NutsHttpFolderRepository.class);
+    }
+
     private boolean isDescFile0(String pathname) {
         return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
                 || pathname.endsWith("/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)
                 || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
     }
 
-    public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
-    }
 
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
         String url = getDescPath(id);

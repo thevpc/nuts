@@ -60,8 +60,6 @@ public class CoreNutsUtils {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone( ZoneId.systemDefault() )
             ;
-    private static final Logger LOG = Logger.getLogger(CoreNutsUtils.class.getName());
-//    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
@@ -499,39 +497,6 @@ public class CoreNutsUtils {
 //        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
 //        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
 //    }
-    public static void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
-        if(LOG.isLoggable(Level.FINEST)) {
-            String timeMessage = "";
-            if (startTime != 0) {
-                long time = System.currentTimeMillis() - startTime;
-                if (time > 0) {
-                    timeMessage = " (" + time + "ms)";
-                }
-            }
-            String tracePhaseString = "";
-            switch (tracePhase) {
-                case ERROR: {
-                    tracePhaseString = "[ERROR  ] ";
-                    break;
-                }
-                case SUCCESS: {
-                    tracePhaseString = "[SUCCESS] ";
-                    break;
-                }
-                case START: {
-                    tracePhaseString = "[START  ] ";
-                    break;
-                }
-                case CACHED: {
-                    tracePhaseString = "[CACHED ] ";
-                    break;
-                }
-            }
-            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.log(Level.FINEST, tracePhaseString + fetchString
-                    + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
-        }
-    }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
         NutsIdFormat idFormat = ws.id();
@@ -574,7 +539,7 @@ public class CoreNutsUtils {
         if (def.getDescriptor() != null) {
             x.put("descriptor", ws.descriptor().value(def.getDescriptor()).format());
             x.put("effective-descriptor", ws.descriptor().value(
-                    NutsWorkspaceUtils.getEffectiveDescriptor(ws, def)
+                    NutsWorkspaceUtils.of(ws).getEffectiveDescriptor(def)
             ).format());
         }
         return x;
@@ -602,7 +567,7 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(Logger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+    public static void traceMessage(NutsLogger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
         String timeMessage = "";
         if (startTime != 0) {
             long time = System.currentTimeMillis() - startTime;

@@ -57,7 +57,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
@@ -75,7 +75,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void update(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
@@ -90,7 +90,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
         NutsSession session = executionContext.getSession();
         NutsWorkspace ws = executionContext.getWorkspace();
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
             NutsExecutionEntry[] executionEntries = ws.io().parseExecutionEntries(executionContext.getDefinition().getPath());

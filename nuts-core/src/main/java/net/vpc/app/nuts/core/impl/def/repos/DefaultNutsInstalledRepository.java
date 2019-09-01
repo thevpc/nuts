@@ -315,8 +315,8 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void uninstall(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.checkReadOnly(ws);
-        session=NutsWorkspaceUtils.validateSession(ws,session);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         if(!contains(id, NUTS_INSTALL_FILE)){
             throw new NutsNotInstalledException(ws, id);
         }
@@ -342,7 +342,7 @@ public class DefaultNutsInstalledRepository {
     public NutsInstallInformation install(NutsId id) {
         Instant now = Instant.now();
         String user = ws.security().getCurrentUsername();
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
         InstallInfoConfig ii;
         try {
             ii = new InstallInfoConfig();

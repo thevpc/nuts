@@ -43,7 +43,7 @@ public final class JavaExecutorOptions {
             }
             id = descriptor.getId();
         } else {
-            descriptor = NutsWorkspaceUtils.getEffectiveDescriptor(getWorkspace(), def);
+            descriptor = NutsWorkspaceUtils.of(getWorkspace()).getEffectiveDescriptor( def);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -140,7 +140,7 @@ public final class JavaExecutorOptions {
                 }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.resolveJavaCommandByHome(getJavaHome(),session.workspace());
+            javaHome = NutsJavaSdkUtils.of(session.workspace()).resolveJavaCommandByHome(getJavaHome());
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();

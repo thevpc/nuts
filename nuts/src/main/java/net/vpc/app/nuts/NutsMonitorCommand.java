@@ -73,15 +73,73 @@ public interface NutsMonitorCommand {
 
     boolean isIncludeDefaultFactory();
 
+    /**
+     * when true, will include default factory (console) even if progressFactory is defined
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
     NutsMonitorCommand setIncludeDefaultFactory(boolean value);
 
+    /**
+     * when true, will include default factory (console) even if progressFactory is defined
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
     NutsMonitorCommand includeDefaultFactory(boolean value);
 
+    /**
+     * will include default factory (console) even if progressFactory is defined
+     *
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
     NutsMonitorCommand includeDefaultFactory();
 
+    /**
+     * return progress factory responsible of creating progress monitor
+     *
+     * @return progress factory responsible of creating progress monitor
+     * @since 0.5.8
+     */
     NutsInputStreamProgressFactory getProgressFactory();
 
+    /**
+     * set progress factory responsible of creating progress monitor
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
     NutsMonitorCommand setProgressFactory(NutsInputStreamProgressFactory value);
 
+    /**
+     * set progress factory responsible of creating progress monitor
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
     NutsMonitorCommand progressFactory(NutsInputStreamProgressFactory value);
+
+    /**
+     * set progress monitor. Will create a singleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsMonitorCommand setProgressMonitor(NutsInputStreamProgressMonitor value);
+
+    /**
+     * set progress monitor. Will create a singleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsMonitorCommand progressMonitor(NutsInputStreamProgressMonitor value);
 }

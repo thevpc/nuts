@@ -35,9 +35,9 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
 
     @Override
     public NutsUninstallCommand run() {
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( this.getSession());
         ws.security().checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
         NutsSession searchSession = session.copy().trace(false);
         List<NutsDefinition> defs = new ArrayList<>();
@@ -70,12 +70,12 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             }
             try {
                 dws.getInstalledRepository().uninstall(id, session);
-                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
-                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
-                CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
+                CoreIOUtils.delete(ws,ws.config().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
+                CoreIOUtils.delete(ws,ws.config().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
+                CoreIOUtils.delete(ws,ws.config().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
                 if (this.isErase()) {
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
-                    CoreIOUtils.delete(ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
+                    CoreIOUtils.delete(ws,ws.config().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
+                    CoreIOUtils.delete(ws,ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -91,7 +91,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             if (getValidSession().isPlainTrace()) {
                 out.printf("%N uninstalled ##successfully##%n", ws.id().value(id).format());
             }
-            NutsWorkspaceUtils.Events.fireOnUninstall(ws,new DefaultNutsInstallEvent(def, session, isErase()));
+            NutsWorkspaceUtils.of(ws).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, isErase()));
         }
         return this;
     }

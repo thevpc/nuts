@@ -7,17 +7,12 @@ package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsRepository;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsSearchRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsSearchRepositoryCommand;
 
 /**
  *
@@ -25,15 +20,16 @@ import net.vpc.app.nuts.NutsSearchRepositoryCommand;
  */
 public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsSearchRepositoryCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsSearchRepositoryCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsSearchRepositoryCommand.class);
     }
 
     @Override
     public NutsSearchRepositoryCommand run() {
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(null, getSession());

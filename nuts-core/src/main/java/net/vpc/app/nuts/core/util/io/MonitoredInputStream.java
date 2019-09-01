@@ -165,7 +165,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
                 this.lastTime = now;
                 this.lastCount = 0;
                 this.count = 0;
-                monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, length, null,session));
+                monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, length, null,session,length<0));
             }
         }
     }
@@ -174,7 +174,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             long now = System.currentTimeMillis();
             this.count += count;
-            if (monitor.onProgress(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null,session))) {
+            if (monitor.onProgress(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null,session,length<0))) {
                 this.lastCount = this.count;
                 this.lastTime = now;
             }
@@ -185,7 +185,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             completed = true;
             long now = System.currentTimeMillis();
-            monitor.onComplete(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex,session));
+            monitor.onComplete(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex,session,length<0));
         }
     }
 

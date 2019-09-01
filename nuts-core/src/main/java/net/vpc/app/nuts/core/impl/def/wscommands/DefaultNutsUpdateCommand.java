@@ -38,10 +38,11 @@ import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
  */
 public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsUpdateCommand.class.getName());
+    public final NutsLogger LOG;
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
         super(ws);
+        LOG=ws.log().of(DefaultNutsUpdateCommand.class);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
-        NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getSession());
         Map<String, NutsUpdateResult> allUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> regularUpdates = new HashMap<>();
@@ -339,7 +340,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
         boolean requireSave = false;
         final PrintStream out = CoreIOUtils.resolveOut(getValidSession());
         boolean accept = ws.io().getTerminal().ask()
@@ -451,7 +452,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     public NutsUpdateResult checkCoreUpdate(NutsId id, String bootApiVersion, NutsSession session,String type) {
         //disable trace so that search do not write to stream
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         NutsSession searchSession = session.copy().trace(false);
         NutsId oldId = null;
         NutsDefinition oldFile = null;

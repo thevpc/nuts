@@ -41,6 +41,7 @@ import net.vpc.app.nuts.core.format.tree.DefaultTreeFormat;
 import net.vpc.app.nuts.core.format.xml.DefaultNutsXmlFormat;
 import net.vpc.app.nuts.core.impl.def.wscommands.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.core.util.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.util.common.ObservableMap;
 
 import java.util.*;
@@ -61,6 +62,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     protected ObservableMap<String, Object> userProperties;
 
     public AbstractNutsWorkspace() {
+        userProperties = new DefaultObservableMap<>();
     }
 
     @Override

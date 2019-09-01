@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import org.junit.Assert;
 import static net.vpc.app.nuts.core.test.utils.TestUtils.*;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -41,7 +40,7 @@ public class Test03_CreateLayoutLinuxTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         System.setProperty("nuts.export.debug", "true");
-        CoreIOUtils.delete(base);
+        CoreIOUtils.delete(null,base);
         resetLinuxFolders();
         NutsWorkspace ws=Nuts.openWorkspace(new String[]{
             "--system-apps-home", new File(base, "system.apps").getPath(),
@@ -106,7 +105,7 @@ public class Test03_CreateLayoutLinuxTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         System.setProperty("nuts.export.debug", "true");
-        CoreIOUtils.delete(base);
+        CoreIOUtils.delete(null,base);
         resetLinuxFolders();
         NutsWorkspace ws1=Nuts.openWorkspace(new String[]{
             "--system-apps-home", new File(base, "system.apps").getPath(),
@@ -167,9 +166,9 @@ public class Test03_CreateLayoutLinuxTest {
     public void customLayout_use_standalone() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         System.out.println("Deleting " + base);
-        CoreIOUtils.delete(base);
+        CoreIOUtils.delete(null,base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
         NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--reset", "-b","--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info"});
         NutsId ndiId = ws.search().installed().id("ndi").getResultIds().singleton();
@@ -205,7 +204,7 @@ public class Test03_CreateLayoutLinuxTest {
     @Test
     public void customLayout_use_standard() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--verbose", "--yes", "info"});
         NutsId ndiId = ws.search().installed().id("ndi").getResultIds().singleton();
         Assert.assertTrue(ndiId.getVersion().getValue().startsWith(NUTS_VERSION+"."));
@@ -243,7 +242,7 @@ public class Test03_CreateLayoutLinuxTest {
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         File stash = new File(System.getProperty("user.home"), "stash/nuts");
         stash.mkdirs();
         TestUtils.resetLinuxFolders();

@@ -154,7 +154,7 @@ public class NutsRepositoryMirroringHelper {
 
     public void push(NutsPushRepositoryCommand cmd) {
         NutsRepositorySession session = cmd.getSession();
-        NutsWorkspaceUtils.checkSession(repo.getWorkspace(), session);
+        NutsWorkspaceUtils.of(getWorkspace()).checkSession( session);
         NutsId id = cmd.getId();
         String repository = cmd.getRepository();
         NutsRepositorySession nonTransitiveSession = session.copy().setTransitive(false);
@@ -199,7 +199,7 @@ public class NutsRepositoryMirroringHelper {
 //                    .setOffline(cmd.isOffline())
                     .setSession(session)
                     .run();
-            NutsRepositoryUtils.Events.fireOnPush(repo,new DefaultNutsContentEvent(local.getPath(), dep, session.getSession(), repo));
+            NutsRepositoryUtils.of(repo).events().fireOnPush(new DefaultNutsContentEvent(local.getPath(), dep, session.getSession(), repo));
         } else {
             throw new NutsRepositoryNotFoundException(repo.getWorkspace(), repository);
         }

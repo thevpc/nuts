@@ -5,6 +5,7 @@ import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.impl.def.commands.*;
 import net.vpc.app.nuts.core.impl.def.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
+import net.vpc.app.nuts.core.impl.def.repos.NutsHttpSrvRepository;
 import net.vpc.app.nuts.core.spi.NutsExecutableInformationExt;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsExecCommand.class.getName());
+    public final NutsLogger LOG;
     public static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setPackaging("exe")
@@ -32,6 +33,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws);
+        LOG=ws.log().of(DefaultNutsExecCommand.class);
     }
 
     @Override
@@ -265,7 +267,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     public void ws_exec(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, boolean temporary, NutsSession session, NutsExecutionType executionType,boolean dry) {
         ws.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         if (def != null && def.getPath() != null) {
             NutsDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {

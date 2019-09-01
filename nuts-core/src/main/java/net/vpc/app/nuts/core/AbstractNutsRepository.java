@@ -33,6 +33,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepoConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.DefaultObservableMap;
+import net.vpc.app.nuts.core.util.common.ObservableMap;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -44,7 +46,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(AbstractNutsRepository.class.getName());
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
     protected Map<String, String> extensions = new HashMap<>();
     protected NutsRepository parentRepository;
@@ -52,8 +53,10 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected NutsRepositorySecurityManager securityManager;
     protected DefaultNutsRepoConfigManager configManager;
     protected NutsIndexStoreClient nutsIndexStoreClient;
+    protected ObservableMap<String, Object> userProperties;
 
     public AbstractNutsRepository() {
+        userProperties = new DefaultObservableMap<>();
     }
 
     @Override
@@ -184,6 +187,24 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     public NutsRepository parentRepository() {
         return getParentRepository();
     }
-    
-    
+
+    @Override
+    public Map<String, Object> userProperties() {
+        return userProperties;
+    }
+
+    @Override
+    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
+        userProperties.addListener(listener);
+    }
+
+    @Override
+    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
+        userProperties.removeListener(listener);
+    }
+
+    @Override
+    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+        return userProperties.getListeners();
+    }
 }

@@ -50,7 +50,6 @@ import net.vpc.app.nuts.NutsDefaultContent;
 @NutsSingleton
 public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final Logger LOG = Logger.getLogger(JavaSourceNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-java-src");
 
     @Override

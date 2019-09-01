@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.*;
@@ -44,6 +43,7 @@ import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -52,7 +52,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  * @author vpc
  */
 public class FormattableNutsId {
-    private static Logger LOG=Logger.getLogger(FormattableNutsId.class.getName());
+    private NutsLogger LOG;
     NutsId id;
     boolean i;
     boolean d;
@@ -118,6 +118,7 @@ public class FormattableNutsId {
     }
 
     private FormattableNutsId(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
+        LOG=session.getWorkspace().log().of(FormattableNutsId.class);
         if (id == null) {
             if (def != null) {
                 id = def.getId();

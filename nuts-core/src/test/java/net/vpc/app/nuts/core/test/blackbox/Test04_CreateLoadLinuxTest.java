@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.test.blackbox;
 
+import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
@@ -156,7 +157,7 @@ public class Test04_CreateLoadLinuxTest {
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.resetLinuxFolders();
         TestUtils.unsetNutsSystemProperties();
     }

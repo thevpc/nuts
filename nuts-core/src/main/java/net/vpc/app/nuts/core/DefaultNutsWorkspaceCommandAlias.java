@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.NutsCommandExecOptions;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
 public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
-    private static final Logger LOG=Logger.getLogger(DefaultNutsWorkspaceCommandAlias.class.getName());
+    private final NutsLogger LOG;
     private String name;
     private NutsId owner;
     private String factoryId;
@@ -28,6 +28,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
 
     public DefaultNutsWorkspaceCommandAlias(NutsWorkspace ws) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceCommandAlias.class);
     }
 
     @Override

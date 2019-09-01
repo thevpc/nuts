@@ -16,8 +16,6 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractNutsSearchRepositoryCommand extends NutsRepositoryCommandBase<NutsSearchRepositoryCommand> implements NutsSearchRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(AbstractNutsSearchRepositoryCommand.class.getName());
-
     protected NutsIdFilter filter;
     protected Iterator<NutsId> result;
 

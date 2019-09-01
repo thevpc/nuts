@@ -48,7 +48,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
  * Created by vpc on 2/21/17.
  */
 public class FolderNutIdIterator implements Iterator<NutsId> {
-    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
+//    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
 
     private final String repository;
     private NutsId last;
@@ -101,7 +101,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                             } catch (Exception e) {
-                                LOG.log(Level.FINE,"Unable to test desk file "+pathname,e);
+                                session.getWorkspace().log().of(FolderNutIdIterator.class).log(Level.FINE,"Unable to test desk file "+pathname,e);
                                 return false;
                             }
                         }

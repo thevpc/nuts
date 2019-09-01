@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
+import net.vpc.app.nuts.NutsWorkspace;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -46,9 +48,9 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtils {
 
-    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
+//    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
 
-    public static void zip(String target, ZipOptions options, String... source) throws IOException {
+    public static void zip(NutsWorkspace ws,String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
         }
@@ -190,7 +192,7 @@ public class ZipUtils {
      * @param zipFile input zip file
      * @param outputFolder zip file output folder
      */
-    public static void unzip(String zipFile, String outputFolder, UnzipOptions options) throws IOException {
+    public static void unzip(NutsWorkspace ws,String zipFile, String outputFolder, UnzipOptions options) throws IOException {
         if (options == null) {
             options = new UnzipOptions();
         }
@@ -232,7 +234,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    LOG.log(Level.FINEST, "file unzip : " + newFile.getAbsoluteFile());
+                    ws.log().of(ZipUtils.class).log(Level.FINEST, "file unzip : " + newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

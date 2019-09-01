@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.*;
@@ -15,14 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author vpc
  */
 public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsMonitorCommand.class.getName());
+    private final NutsLogger LOG;
     private final NutsWorkspace ws;
     private String sourceType;
     private Object source;
@@ -35,6 +35,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
 
     public DefaultNutsMonitorCommand(NutsWorkspace ws) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultNutsMonitorCommand.class);
     }
 
     @Override
@@ -199,13 +200,13 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         long size = -1;
         try {
             if (verboseMode && monitor != null) {
-                monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null, session));
+                monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null, session,true));
             }
             stream = CoreIOUtils.createInputSource(path);
             size = stream.length();
         } catch (UncheckedIOException e) {
             if (verboseMode && monitor != null) {
-                monitor.onComplete(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e, session));
+                monitor.onComplete(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e, session,true));
             }
             throw e;
         }
@@ -219,11 +220,10 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         if (monitor == null) {
             return openedStream;
         }
-        NutsInputStreamProgressMonitor finalMonitor = monitor;
         if (!verboseMode) {
-            monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null, session));
+            monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null, session,size<0));
         }
-        return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(finalMonitor, path), session);
+        return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws,monitor, path), session);
 
     }
 
@@ -358,32 +358,29 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         return setProgressFactory(value);
     }
 
-    private static class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsInputStreamProgressMonitor {
-        private final NutsInputStreamProgressMonitor finalMonitor;
-        private final String path;
-
-        public SilentStartNutsInputStreamProgressMonitorAdapter(NutsInputStreamProgressMonitor finalMonitor, String path) {
-            this.finalMonitor = finalMonitor;
-            this.path = path;
-        }
-
-        @Override
-        public void onStart(NutsInputStreamEvent event) {
-        }
-
-        @Override
-        public void onComplete(NutsInputStreamEvent event) {
-            finalMonitor.onComplete(event);
-            if (event.getException() != null) {
-                LOG.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
-            } else {
-                LOG.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
-            }
-        }
-
-        @Override
-        public boolean onProgress(NutsInputStreamEvent event) {
-            return finalMonitor.onProgress(event);
-        }
+    /**
+     * set progress monitor. Will create a singleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    @Override
+    public NutsMonitorCommand setProgressMonitor(NutsInputStreamProgressMonitor value) {
+        this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
+        return this;
     }
+
+    /**
+     * set progress monitor. Will create a singleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    @Override
+    public NutsMonitorCommand progressMonitor(NutsInputStreamProgressMonitor value) {
+        return setProgressMonitor(value);
+    }
+
 }

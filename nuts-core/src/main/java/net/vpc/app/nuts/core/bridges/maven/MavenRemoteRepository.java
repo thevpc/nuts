@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsId;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import java.io.*;
 import java.nio.file.Files;
@@ -41,7 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
@@ -58,7 +59,7 @@ import net.vpc.app.nuts.core.impl.def.repos.NutsCachedRepository;
  */
 public class MavenRemoteRepository extends NutsCachedRepository {
 
-    private static final Logger LOG = Logger.getLogger(MavenRemoteRepository.class.getName());
+    private final NutsLogger LOG;
     private MvnClient wrapper;
 
     private RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
@@ -109,16 +110,18 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
-            return MavenUtils.parsePomXml(in, getWorkspace(), session, pathname);
+            return MavenUtils.of(session.getWorkspace()).parsePomXml(in, session, pathname);
         }
     };
 
     public MavenRemoteRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.MAVEN);
+        LOG=workspace.log().of(MavenRemoteRepository.class);
     }
 
     protected MavenRemoteRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, String repoType) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, repoType);
+        LOG=workspace.log().of(MavenRemoteRepository.class);
     }
 
     @Override
@@ -251,7 +254,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException ex) {
                 return null;
             }
-            MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
+            MavenMetadata info = MavenUtils.of(session.getWorkspace()).parseMavenMetaData(metadataStream);
             if (info != null) {
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.builder().setVersion(version).build();

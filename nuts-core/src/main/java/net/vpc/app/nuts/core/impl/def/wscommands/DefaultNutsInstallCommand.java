@@ -48,11 +48,13 @@ import net.vpc.app.nuts.core.util.NutsCollectionSearchResult;
  */
 public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsInstallCommand.class.getName());
+    public final NutsLogger LOG;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         super(ws);
+        LOG=ws.log().of(DefaultNutsInstallCommand.class);
     }
+
     private NutsDefinition _loadIdContent(NutsId id,NutsSession session,boolean includeDeps,Map<NutsId,NutsDefinition> loaded){
         NutsId longNameId = id.getLongNameId();
         NutsDefinition def = loaded.get(longNameId);

@@ -241,7 +241,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("java-version", stringValue(System.getProperty("java.version")));
         props.put("platform", idFormat.value(ws.config().getPlatform()).format());
         props.put("java-home", stringValue(System.getProperty("java.home")));
-        props.put("java-executable", stringValue(NutsJavaSdkUtils.resolveJavaCommandByHome(null,ws)));
+        props.put("java-executable", stringValue(NutsJavaSdkUtils.of(getWorkspace()).resolveJavaCommandByHome(null)));
         props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
         props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
         props.put("os-name", ws.config().getOs().toString());

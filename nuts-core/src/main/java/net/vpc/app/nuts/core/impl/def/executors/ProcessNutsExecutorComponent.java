@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.impl.def.executors;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -46,7 +47,6 @@ import net.vpc.app.nuts.core.util.io.IProcessExecHelper;
 @NutsSingleton
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
-    private static final Logger LOG = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-native");
 
     @Override
@@ -102,7 +102,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         String directory = CoreStringUtils.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
-        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getSession(), executionContext.getExecutorProperties(),
+        return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(nutMainFile, executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),
                 osEnv, directory, showCommand, true
         );

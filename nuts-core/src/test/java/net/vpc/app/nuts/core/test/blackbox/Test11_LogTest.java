@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.test.blackbox;
 
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
@@ -17,14 +16,14 @@ import org.junit.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
  * @author vpc
  */
-public class Test10_ExecURLTest {
+public class Test11_LogTest {
 
     private static String baseFolder;
 
@@ -40,6 +39,7 @@ public class Test10_ExecURLTest {
             "--yes",
             "--skip-companions"
         });
+
         System.out.println(ws.version().format());
         String result = ws.exec().command(
                 "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",

@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsInputStreamEvent;
 import net.vpc.app.nuts.NutsSession;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
@@ -47,8 +46,10 @@ public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
     private final long length;
     private final Throwable exception;
     private final NutsSession session;
+    private final float percent;
+    private final boolean indeterminate;
 
-    public DefaultNutsInputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session) {
+    public DefaultNutsInputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
         this.source = source;
         this.length = length;
         this.sourceName = sourceName;
@@ -58,6 +59,12 @@ public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
         this.partialMillis = partialMillis;
         this.exception = exception;
         this.session = session;
+        this.indeterminate = indeterminate;
+        if (length > 0) {
+            percent = (float) (globalCount * 100.0 / length);
+        } else {
+            percent = 100;
+        }
     }
 
     public NutsSession getSession() {
@@ -96,4 +103,14 @@ public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
         return partialMillis;
     }
 
+
+    @Override
+    public float getPercent() {
+        return percent;
+    }
+
+    @Override
+    public boolean isIndeterminate() {
+        return indeterminate;
+    }
 }

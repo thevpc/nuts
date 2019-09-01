@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.test.blackbox;
 
+import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class Test07_AppTypeTest {
 
     @Test
     public void testUpdate() throws Exception {
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
@@ -59,17 +60,17 @@ public class Test07_AppTypeTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

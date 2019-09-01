@@ -5,15 +5,13 @@
  */
 package net.vpc.app.nuts.core.test.blackbox;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import org.junit.After;
@@ -143,17 +141,17 @@ public class Test01_CreateTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

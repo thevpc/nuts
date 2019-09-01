@@ -40,10 +40,11 @@ import java.util.logging.Logger;
  */
 public class NutsFolderRepository extends NutsCachedRepository {
 
-    public static final Logger LOG = Logger.getLogger(NutsFolderRepository.class.getName());
+    public final NutsLogger LOG;
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
+        LOG=workspace.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
     }
 

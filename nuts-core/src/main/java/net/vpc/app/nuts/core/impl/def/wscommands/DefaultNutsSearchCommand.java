@@ -298,7 +298,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     private Iterator<NutsId> applyTraceDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean trace) {
-        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getValidSession(), getDisplayOptions()) : curr;
+        return trace ? NutsWorkspaceUtils.of(ws).decorateTrace( curr, getValidSession(), getDisplayOptions()) : curr;
     }
 
     private NutsCollectionSearchResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean trace) {
@@ -428,7 +428,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             a = a.sort(null, isDistinct());
         }
         if (getValidSession().isTrace()) {
-            a = IteratorBuilder.of(NutsWorkspaceUtils.decorateTrace(ws, a.build(), getValidSession(), getDisplayOptions()));
+            a = IteratorBuilder.of(NutsWorkspaceUtils.of(ws).decorateTrace( a.build(), getValidSession(), getDisplayOptions()));
         }
         return new NutsCollectionSearchResult<>(ws, resolveFindIdBase(),
                 a.build()
@@ -647,7 +647,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             if (!trace) {
                 return ii;
             }
-            return NutsWorkspaceUtils.decorateTrace(ws, ii, getValidSession(), getDisplayOptions());
+            return NutsWorkspaceUtils.of(ws).decorateTrace( ii, getValidSession(), getDisplayOptions());
         }
 
     }
@@ -656,7 +656,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
         List<Iterator<NutsId>> allResults = new ArrayList<>();
 
-        NutsSession session = NutsWorkspaceUtils.validateSession(ws, search.getOptions().getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( search.getOptions().getSession());
         NutsIdFilter sIdFilter = search.getIdFilter();
         NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
@@ -697,7 +697,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                                     .getInstalledRepository().findVersions(nutsId1, filter, rsession);
                                         }).safeIgnore().iterator());
                             } else {
-                                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, search.getOptions())) {
+                                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, search.getOptions())) {
                                     if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
                                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter));
                                         all.add(
@@ -745,7 +745,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     coalesce.add(NutsWorkspaceExt.of(ws).getInstalledRepository().findAll(filter, rsession));
                 } else {
                     List<Iterator<NutsId>> all = new ArrayList<>();
-                    for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, search.getOptions())) {
+                    for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, search.getOptions())) {
                         if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions());
                             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter));

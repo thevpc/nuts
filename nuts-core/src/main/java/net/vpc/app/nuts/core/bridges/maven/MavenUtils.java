@@ -41,7 +41,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +56,6 @@ import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomDependency;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomId;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomIdFilter;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.PomXmlParser;
-import net.vpc.app.nuts.core.util.iter.ConvertedIterator;
 import net.vpc.app.nuts.core.util.iter.IteratorBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,9 +70,25 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class MavenUtils {
 
-    private static final Logger LOG = Logger.getLogger(MavenUtils.class.getName());
+    private final NutsLogger LOG;
+    private NutsWorkspace ws;
 
-    public static NutsId[] toNutsId(PomId[] ids) {
+    public static MavenUtils of(NutsWorkspace ws) {
+        Map<String, Object> up = ws.userProperties();
+        MavenUtils wp = (MavenUtils) up.get(MavenUtils.class.getName());
+        if (wp == null) {
+            wp = new MavenUtils(ws);
+            up.put(MavenUtils.class.getName(), wp);
+        }
+        return wp;
+    }
+
+    private MavenUtils(NutsWorkspace ws) {
+        this.ws = ws;
+        LOG=ws.log().of(MavenUtils.class);
+    }
+
+    public NutsId[] toNutsId(PomId[] ids) {
         NutsId[] a = new NutsId[ids.length];
         for (int i = 0; i < ids.length; i++) {
             a[i] = toNutsId(ids[i]);
@@ -82,7 +96,7 @@ public class MavenUtils {
         return a;
     }
 
-    public static NutsDependency[] toNutsDependencies(PomDependency[] deps) {
+    public NutsDependency[] toNutsDependencies(PomDependency[] deps) {
         NutsDependency[] a = new NutsDependency[deps.length];
         for (int i = 0; i < deps.length; i++) {
             a[i] = toNutsDependency(deps[i]);
@@ -90,7 +104,7 @@ public class MavenUtils {
         return a;
     }
 
-    public static NutsId toNutsId(PomId d) {
+    public NutsId toNutsId(PomId d) {
         return new DefaultNutsId(
                 null,
                 d.getGroupId(),
@@ -100,7 +114,7 @@ public class MavenUtils {
         );
     }
 
-    public static NutsDependency toNutsDependency(PomDependency d) {
+    public NutsDependency toNutsDependency(PomDependency d) {
         String s = d.getScope();
         if(s==null){
             s="";
@@ -153,7 +167,7 @@ public class MavenUtils {
         .build();
     }
 
-    private static boolean testNode(Node n, Predicate<Node> tst) {
+    private boolean testNode(Node n, Predicate<Node> tst) {
         if (tst.test(n)) {
             return true;
         }
@@ -170,7 +184,7 @@ public class MavenUtils {
         return false;
     }
 
-    public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
+    public NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
         long startTime = System.currentTimeMillis();
         try {
             if (stream == null) {
@@ -242,16 +256,16 @@ public class MavenUtils {
         }
     }
 
-    public static String toNutsVersion(String version) {
+    public String toNutsVersion(String version) {
         /// maven : [cc] [co) (oc] (oo)
         /// nuts  : [cc] [co[ ]oc] ]oo[
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public static NutsDescriptor parsePomXml(Path path, NutsWorkspace ws, NutsRepositorySession session) throws IOException {
+    public NutsDescriptor parsePomXml(Path path, NutsRepositorySession session) throws IOException {
         try {
             try (InputStream is = Files.newInputStream(path)) {
-                NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(is, ws, session, path.toString());
+                NutsDescriptor nutsDescriptor = parsePomXml(is, session, path.toString());
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
@@ -266,7 +280,7 @@ public class MavenUtils {
         }
     }
 
-    public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsRepositorySession session, String urlDesc) {
+    public NutsDescriptor parsePomXml(InputStream stream, NutsRepositorySession session, String urlDesc) {
         NutsDescriptor nutsDescriptor = null;
 //        if (session == null) {
 //            session = ws.createSession();
@@ -274,7 +288,7 @@ public class MavenUtils {
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = MavenUtils.parsePomXml(stream, urlDesc);
+                nutsDescriptor = parsePomXml(stream, urlDesc);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsId parentId = null;
                 for (NutsId nutsId : nutsDescriptor.getParents()) {
@@ -378,18 +392,18 @@ public class MavenUtils {
         return nutsDescriptor;
     }
 
-    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NutsSession session) {
+    public Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose, NutsSession session) {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
-                return filter.accept(MavenUtils.toNutsId(id), session);
+                return filter.accept(toNutsId(id), session);
             }
         }, autoClose);
-        return IteratorBuilder.of(it).convert(pomId -> MavenUtils.toNutsId(pomId),"PomId->NutsId").build();
+        return IteratorBuilder.of(it).convert(pomId -> toNutsId(pomId),"PomId->NutsId").build();
     }
 
-    public static MavenMetadata parseMavenMetaData(InputStream metadataStream) {
-        MavenMetadata s = MavenMetadataParser.parseMavenMetaData(metadataStream);
+    public MavenMetadata parseMavenMetaData(InputStream metadataStream) {
+        MavenMetadata s = MavenMetadataParser.of(ws).parseMavenMetaData(metadataStream);
         if (s == null) {
             return s;
         }
@@ -403,12 +417,12 @@ public class MavenUtils {
     }
 
 
-    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath);
     }
 
-    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
             File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
@@ -430,7 +444,7 @@ public class MavenUtils {
         return depsAndRepos;
     }
 
-    public static DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;
@@ -548,7 +562,7 @@ public class MavenUtils {
      * @param filter filter
      * @return latest runtime version
      */
-    public static NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {
+    public NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {
         String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
         String bestVersion = null;
 //        if (!NO_M2) {

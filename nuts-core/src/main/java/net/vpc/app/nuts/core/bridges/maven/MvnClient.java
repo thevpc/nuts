@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MvnClient {
-    private static final Logger LOG=Logger.getLogger(MvnClient.class.getName());
+    private final NutsLogger LOG;
     public static final String NET_VPC_APP_NUTS_MVN = "net.vpc.app.nuts.toolbox:mvn";
     private NutsWorkspace ws;
     private Status status = Status.INIT;
@@ -20,6 +20,7 @@ public class MvnClient {
 
     public MvnClient(NutsWorkspace ws) {
         this.ws = ws;
+        LOG=ws.log().of(MvnClient.class);
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {

@@ -29,26 +29,25 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import java.lang.reflect.Modifier;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.ClassClassMap;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.ListMap;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceFactory.class.getName());
+    private final NutsLogger LOG;
 
     private final ListMap<Class, Class> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
@@ -59,6 +58,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     public DefaultNutsWorkspaceFactory(NutsWorkspace ws) {
         this.workspace = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceFactory.class);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class DefaultNutsInputStreamProgressFactory implements NutsInputStreamPro
         }
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = session.getWorkspace().commandLine().create(new String[]{String.valueOf(o)}).next().getBoolean();
+            o = session.getWorkspace().commandLine().create(String.valueOf(o)).next().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {
@@ -56,6 +56,9 @@ public class DefaultNutsInputStreamProgressFactory implements NutsInputStreamPro
             monitorable = false;
         }
         if (!LOG.isLoggable(Level.INFO)) {
+            monitorable = false;
+        }
+        if (!session.isPlainOut()) {
             monitorable = false;
         }
         return monitorable;

@@ -10,20 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.impl.def.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
-    private static final Logger LOG=Logger.getLogger(ConfigNutsWorkspaceCommandFactory.class.getName());
+    private final NutsLogger LOG;
     private NutsWorkspaceConfigManager configManager;
     private NutsWorkspaceConfigManagerExt configManagerExt;
 
     public ConfigNutsWorkspaceCommandFactory(NutsWorkspaceConfigManager cnf) {
         this.configManager = cnf;
         this.configManagerExt = NutsWorkspaceConfigManagerExt.of(cnf);
+        LOG=configManagerExt.getWorkspace().log().of(ConfigNutsWorkspaceCommandFactory.class);
     }
 
     @Override

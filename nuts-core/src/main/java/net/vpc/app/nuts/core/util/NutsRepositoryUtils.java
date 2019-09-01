@@ -1,40 +1,65 @@
 package net.vpc.app.nuts.core.util;
 
-import net.vpc.app.nuts.NutsContentEvent;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryEvent;
-import net.vpc.app.nuts.NutsRepositoryListener;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
+import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class NutsRepositoryUtils {
-    private static final Logger LOG = Logger.getLogger(NutsRepositoryUtils.class.getName());
+    private final NutsLogger LOG;
+
+    private NutsRepository repo;
+
+    public static NutsRepositoryUtils of(NutsRepository repo) {
+        Map<String, Object> up = repo.userProperties();
+        NutsRepositoryUtils wp = (NutsRepositoryUtils) up.get(NutsRepositoryUtils.class.getName());
+        if (wp == null) {
+            wp = new NutsRepositoryUtils(repo);
+            up.put(NutsRepositoryUtils.class.getName(), wp);
+        }
+        return wp;
+    }
+
+    private NutsRepositoryUtils(NutsRepository repo) {
+        this.repo = repo;
+        LOG=repo.workspace().log().of(NutsRepositoryUtils.class);
+    }
+
+    public Events events(){
+        return new Events(this);
+    }
+
     public static class Events{
-        public static void fireOnUndeploy(NutsRepository repo,NutsContentEvent evt) {
-            for (NutsRepositoryListener listener : repo.getRepositoryListeners()) {
+        private NutsRepositoryUtils u;
+
+        public Events(NutsRepositoryUtils u) {
+            this.u = u;
+        }
+
+        public void fireOnUndeploy(NutsContentEvent evt) {
+            for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NutsRepositoryListener listener : repo.getWorkspace().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
 
-        public static void fireOnDeploy(NutsRepository repo,NutsContentEvent file) {
-            for (NutsRepositoryListener listener : repo.getRepositoryListeners()) {
+        public void fireOnDeploy(NutsContentEvent file) {
+            for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onDeploy(file);
             }
-            for (NutsRepositoryListener listener : repo.getWorkspace().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onDeploy(file);
             }
         }
 
-        public static void fireOnPush(NutsRepository repo,NutsContentEvent event) {
-            for (NutsRepositoryListener listener : repo.getRepositoryListeners()) {
+        public void fireOnPush(NutsContentEvent event) {
+            for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NutsRepositoryListener listener : repo.getWorkspace().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onPush(event);
             }
             for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
@@ -42,15 +67,15 @@ public class NutsRepositoryUtils {
             }
         }
 
-        public static void fireOnAddRepository(NutsRepository repo, NutsRepositoryEvent event) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(repo.config().getName(), 20), event
+        public void fireOnAddRepository(NutsRepositoryEvent event) {
+            if (u.LOG.isLoggable(Level.FINEST)) {
+                u.LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
                         .getRepository().config().name()});
             }
-            for (NutsRepositoryListener listener : repo.getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NutsRepositoryListener listener : repo.getWorkspace().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
             for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
@@ -58,18 +83,18 @@ public class NutsRepositoryUtils {
             }
         }
 
-        public static void fireOnRemoveRepository(NutsRepository repo,NutsRepositoryEvent event) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(repo.config().getName(), 20), event
+        public void fireOnRemoveRepository(NutsRepositoryEvent event) {
+            if (u.LOG.isLoggable(Level.FINEST)) {
+                u.LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
                         .getRepository().config().name()});
             }
-            for (NutsRepositoryListener listener : repo.getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NutsRepositoryListener listener : repo.getWorkspace().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }

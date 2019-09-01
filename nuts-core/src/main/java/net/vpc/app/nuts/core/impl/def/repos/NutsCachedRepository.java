@@ -50,7 +50,7 @@ import net.vpc.app.nuts.core.util.iter.IteratorUtils;
  */
 public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
-    public static final Logger LOG = Logger.getLogger(NutsCachedRepository.class.getName());
+    public final NutsLogger LOG;
 
     protected final NutsRepositoryFolderHelper lib;
     protected final NutsRepositoryFolderHelper cache;
@@ -58,6 +58,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public NutsCachedRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType);
+        LOG=workspace.log().of(DefaultNutsRepoConfigManager.class);
         cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE));
         lib = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.LIB));
         mirroring = new NutsRepositoryMirroringHelper(this, cache);

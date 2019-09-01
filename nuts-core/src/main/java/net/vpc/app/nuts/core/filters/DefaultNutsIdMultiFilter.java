@@ -17,7 +17,6 @@
 //
 //public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 //
-//    private static final Logger LOG = Logger.getLogger(DefaultNutsIdMultiFilter.class.getName());
 //    private final NutsIdFilter idFilter;
 //
 //

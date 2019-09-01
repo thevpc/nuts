@@ -38,9 +38,8 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.security.DefaultNutsRepositorySecurityManager;
-import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -50,11 +49,12 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(AbstractNutsRepositoryBase.class.getName());
+    private final NutsLogger LOG;
 
     public AbstractNutsRepositoryBase(NutsCreateRepositoryOptions options,
                                       NutsWorkspace workspace, NutsRepository parentRepository,
                                       int speed, boolean supportedMirroring, String repositoryType) {
+        LOG=workspace.log().of(AbstractNutsRepositoryBase.class);
         init(options, workspace, parentRepository, speed, supportedMirroring, repositoryType);
     }
 

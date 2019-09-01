@@ -6,15 +6,12 @@
 package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsRepository;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
 
 /**
  *
@@ -22,15 +19,16 @@ import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
  */
 public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepositoryUndeployCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsRepositoryUndeployCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsRepositoryUndeployCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsRepositoryUndeployCommand.class);
     }
 
     @Override
     public NutsRepositoryUndeployCommand run() {
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession( getSession());
         getRepo().security().checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());

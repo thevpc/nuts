@@ -54,7 +54,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  */
 public class CorePlatformUtils {
 
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
+//    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
     //    public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86_32", "x86_64", "itanium_32", "itanium_64"
             , "sparc_32", "sparc_64", "arm_32","aarch_64","mips_32","mipsel_32","mips_64","mipsel_64"
@@ -580,80 +580,6 @@ public class CorePlatformUtils {
         }
     }
 
-    public static NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
-        MainClassType mainClass = null;
-        try {
-            mainClass = getMainClassType(classStream);
-        } catch (Exception ex) {
-            LOG.log(Level.FINEST, "Invalid file format " + sourceName, ex);
-        }
-        if (mainClass != null) {
-            return new DefaultNutsExecutionEntry(
-                    mainClass.getName(),
-                    false,
-                    mainClass.isApp() && mainClass.isMain()
-            );
-        }
-        return null;
-    }
-
-    public static NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
-        if (!(jarStream instanceof BufferedInputStream)) {
-            jarStream = new BufferedInputStream(jarStream);
-        }
-        final List<NutsExecutionEntry> classes = new ArrayList<>();
-        final List<String> manifestClass = new ArrayList<>();
-        try {
-            ZipUtils.visitZipStream(jarStream, new Predicate<String>() {
-                @Override
-                public boolean test(String path) {
-                    return path.endsWith(".class")
-                            || path.equals("META-INF/MANIFEST.MF");
-                }
-            }, new InputStreamVisitor() {
-                @Override
-                public boolean visit(String path, InputStream inputStream) throws IOException {
-                    if (path.endsWith(".class")) {
-                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path);
-                        if (mainClass != null) {
-                            classes.add(mainClass);
-                        }
-                    } else {
-                        Manifest manifest = new Manifest(inputStream);
-                        Attributes a = manifest.getMainAttributes();
-                        if (a != null && a.containsKey("Main-Class")) {
-                            String v = a.getValue("Main-Class");
-                            if (!CoreStringUtils.isBlank(v)) {
-                                manifestClass.add(v);
-                            }
-                        }
-                    }
-                    return true;
-                }
-            });
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        List<NutsExecutionEntry> entries = new ArrayList<>();
-        String defaultEntry = null;
-        if (manifestClass.size() > 0) {
-            defaultEntry = manifestClass.get(0);
-        }
-        boolean defaultFound = false;
-        for (NutsExecutionEntry entry : classes) {
-            if (defaultEntry != null && defaultEntry.equals(entry.getName())) {
-                entries.add(new DefaultNutsExecutionEntry(entry.getName(), true, entry.isApp()));
-                defaultFound = true;
-            } else {
-                entries.add(entry);
-            }
-        }
-        if (defaultEntry != null && !defaultFound) {
-            LOG.log(Level.SEVERE, "Invalid default entry " + defaultEntry + " in " + sourceName);
-//            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
-        }
-        return entries.toArray(new NutsExecutionEntry[0]);
-    }
 
     public static class MainClassType {
 
@@ -757,24 +683,5 @@ public class CorePlatformUtils {
 //        return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
 //    }
 //
-    public static String getPlatformOsFamily() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return "linux";
-        }
-        if (property.startsWith("win")) {
-            return "windows";
-        }
-        if (property.startsWith("mac")) {
-            return "mac";
-        }
-        if (property.startsWith("sunos")) {
-            return "unix";
-        }
-        if (property.startsWith("freebsd")) {
-            return "unix";
-        }
-        return "unknown";
-    }
 
 }

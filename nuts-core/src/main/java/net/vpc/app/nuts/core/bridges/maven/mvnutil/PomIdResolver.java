@@ -8,12 +8,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.NutsWorkspace;
 
 public class PomIdResolver {
-    private static final Logger LOG=Logger.getLogger(PomIdResolver.class.getName());
+    private final NutsLogger LOG;
+    private NutsWorkspace ws;
 
-    public static PomId[] resolvePomId(URL baseUrl, String referenceResourcePath) {
+    public static PomIdResolver of(NutsWorkspace ws) {
+        Map<String, Object> up = ws.userProperties();
+        PomIdResolver wp = (PomIdResolver) up.get(PomIdResolver.class.getName());
+        if (wp == null) {
+            wp = new PomIdResolver(ws);
+            up.put(PomIdResolver.class.getName(), wp);
+        }
+        return wp;
+    }
+
+    private PomIdResolver(NutsWorkspace ws) {
+        this.ws = ws;
+        LOG=ws.log().of(PomIdResolver.class);
+    }
+
+    public PomId[] resolvePomId(URL baseUrl, String referenceResourcePath) {
         List<PomId> all = new ArrayList<PomId>();
         final URLParts aa = new URLParts(baseUrl);
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
@@ -53,7 +72,7 @@ public class PomIdResolver {
                 try {
                     all.add(new PomXmlParser().parse(new URL(s2)).getPomId());
                 } catch (Exception ex) {
-                    LOG.log(Level.FINE, "Failed to parse pom file " + s2,ex);
+                    LOG.log(Level.FINE, "Failed to parse pom file " + s2, ex);
                 }
             }
         }
@@ -67,7 +86,7 @@ public class PomIdResolver {
      * @param clazz
      * @return artifacts array in the form groupId:artfcatId#version
      */
-    public static PomId[] resolvePomIds(Class clazz) {
+    public PomId[] resolvePomIds(Class clazz) {
         List<PomId> all = new ArrayList<PomId>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
@@ -76,16 +95,16 @@ public class PomIdResolver {
                 all.addAll(Arrays.asList(resolvePomId(url, n)));
             }
         } catch (IOException ex) {
-            Logger.getLogger(PomIdResolver.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
         return all.toArray(new PomId[0]);
     }
 
-    public static PomId resolvePomId(Class clazz) {
+    public PomId resolvePomId(Class clazz) {
         return resolvePomId(clazz, new PomId("dev", "dev", "dev"));
     }
 
-    public static PomId resolvePomId(Class clazz, PomId defaultValue) {
+    public PomId resolvePomId(Class clazz, PomId defaultValue) {
         PomId[] pomIds = resolvePomIds(clazz);
 //        if(pomIds.length>1){
 //            System.out.println("==== Multiple ids found : "+Arrays.asList(pomIds));
@@ -106,14 +125,14 @@ public class PomIdResolver {
         return defaultValue;
     }
 
-    public static PomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
+    public PomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
         String ver = resolvePomVersion(clazz, groupId, artifactId, defaultValue);
         return new PomId(
                 groupId, artifactId, ver
         );
     }
 
-    public static String resolvePomVersion(String groupId, String artifactId, String defaultValue) {
+    public String resolvePomVersion(String groupId, String artifactId, String defaultValue) {
         URL url = Thread.currentThread().getContextClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
@@ -131,11 +150,11 @@ public class PomIdResolver {
         return defaultValue;
     }
 
-    public static String resolvePomVersion(Class clazz, String groupId, String artifactId, String defaultValue) {
+    public String resolvePomVersion(Class clazz, String groupId, String artifactId, String defaultValue) {
         URL url = clazz.getClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
-            System.out.println("== "+url);
+            System.out.println("== " + url);
             Properties p = new Properties();
             try {
                 p.load(url.openStream());
@@ -152,7 +171,7 @@ public class PomIdResolver {
         return defaultValue;
     }
 
-    public static PomId resolvePropertiesPomId(InputStream stream) {
+    public PomId resolvePropertiesPomId(InputStream stream) {
         Properties prop = new Properties();
         try {
             prop.load(stream);
@@ -176,7 +195,7 @@ public class PomIdResolver {
         }
     }
 
-    public static PomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
+    public PomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
         final List<PomId> list = new ArrayList<>();
         visitZipStream(jarStream, new InputStreamVisitor() {
             @Override
@@ -196,11 +215,11 @@ public class PomIdResolver {
                 return true;
             }
         });
-        return list.toArray(new PomId[list.size()]);
+        return list.toArray(new PomId[0]);
     }
 
-    public static PomId resolveJarPomId(InputStream jarStream) throws IOException {
-        PomId[] v = PomIdResolver.resolveJarPomIds(jarStream);
+    public PomId resolveJarPomId(InputStream jarStream) throws IOException {
+        PomId[] v = resolveJarPomIds(jarStream);
         if (v.length == 0) {
             return null;
         }
@@ -210,7 +229,7 @@ public class PomIdResolver {
         return v[0];
     }
 
-    private static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor) throws IOException {
+    private boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor) throws IOException {
         //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content

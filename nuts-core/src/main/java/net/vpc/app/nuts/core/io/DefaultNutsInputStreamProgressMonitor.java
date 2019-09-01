@@ -67,10 +67,8 @@ public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamPro
             double globalSeconds = event.getGlobalMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
-            double percent = 0;
-            if (event.getLength() > 0) {
-                percent = (double) (event.getGlobalCount() * 100.0 / event.getLength());
-            } else {
+            double percent = event.getPercent();
+            if (event.isIndeterminate()) {
                 percent = end ? 100 : 0;
             }
             int x = (int) (20.0 / 100.0 * percent);

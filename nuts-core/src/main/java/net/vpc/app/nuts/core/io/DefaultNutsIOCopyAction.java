@@ -11,19 +11,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
+import net.vpc.app.nuts.core.util.io.SingletonNutsInputStreamProgressFactory;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsIOCopyAction.class.getName());
+    private final NutsLogger LOG;
 
     private Validator checker;
     private boolean safeCopy = true;
@@ -37,6 +37,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     public DefaultNutsIOCopyAction(DefaultNutsIOManager iom) {
         this.iom = iom;
+        LOG=iom.getWorkspace().log().of(DefaultNutsIOCopyAction.class);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         return target;
     }
 
-//    @Override
+    //    @Override
     public DefaultNutsIOCopyAction setTarget(Object target) {
 
         return this;
@@ -261,7 +262,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         if (checker != null && !_target_isPath && !safeCopy) {
             throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported validation if neither safeCopy is armed nor path is defined");
         }
-        if (isMonitorable() || getProgressMonitorFactory()!=null) {
+        if (isMonitorable() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session)
                         .progressFactory(getProgressMonitorFactory())
@@ -374,6 +375,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     /**
      * when true, will include default factory (console) even if progressMonitorFactory is defined
+     *
      * @return true if always include default factory
      * @since 0.5.8
      */
@@ -408,7 +410,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     /**
-     *always include default factory (console) even if progressMonitorFactory is defined
+     * always include default factory (console) even if progressMonitorFactory is defined
      *
      * @return {@code this} instance
      * @since 0.5.8
@@ -453,4 +455,30 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     public NutsPathCopyAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
         return setProgressMonitorFactory(value);
     }
+
+    /**
+     * set progress monitor. Will create a singeleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    @Override
+    public NutsPathCopyAction setProgressMonitor(NutsInputStreamProgressMonitor value) {
+        this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
+        return this;
+    }
+
+    /**
+     * set progress monitor. Will create a singeleton progress monitor factory
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    @Override
+    public NutsPathCopyAction progressMonitor(NutsInputStreamProgressMonitor value) {
+        return setProgressMonitor(value);
+    }
+
 }
