@@ -14,7 +14,7 @@ One manages a set of repositories called a **workspace**. Managed **nuts**  (art
 
 **nuts** is a swiss army knife tool as it acts like (and supports) **maven** build tool to have an abstract view of the the  artifacts dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools to  install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
 
-What makes **nuts** very helpful is that it simplifies application deployments by not including dependencies in the release bundle. All dependencies will be downloaded at installation time. Offline deployment is still supported though. Besides, multiple versions of the same application can in installed simultaneously.
+What makes **nuts** very helpful is that it simplifies application deployments by not including dependencies in the release bundle. All dependencies will be downloaded at installation time. Offline deployment is still supported though. Besides, multiple versions of the same application can be installed simultaneously.
 
 ## COMMON VERBS:
 + exec               : execute an artifact or a command
@@ -54,8 +54,8 @@ As you can see, installation upon first launch, will also trigger installation o
 Actually they are recommended helpful tools :
   + **ndi** which stands for __Nuts Desktop Integration__ that helps configuring the desktop to better 
     interact with nuts by for instance creating shortcuts.
-  + **nsh** which stands for __Nuts Shell__ , a bash compatible shel implementation program
-  + **nadmin** and administration tool for **nuts** 
+  + **nsh** which stands for __Nuts Shell__ , a bash compatible shell implementation program that will run equally on linux an windows systems.
+  + **nadmin** an administration tool for **nuts** 
 
 
 ## Unix-Like Systems (Linux,MacOS,Unix)
@@ -69,9 +69,9 @@ All tests where performed on OpenSuse Tumbleweed.
 
 ## Windows Systems
 On Windows systems, first launch will create a new Nuts Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-  + **nuts-cmd-0.5.8** : this shortcut will open a preconfigured command terminal. **nuts** command will be available as well 
-                         several nuts companion tools installed by **ndi** by default
-  + **nuts-cmd**       : this shortcut will point to the last installed nuts version, here 0.5.8  
+  + **nuts-cmd-0.5.8** : this shortcut will open a configured command terminal. **nuts** command will be available as well 
+                         as several nuts companion tools installed by **ndi** by default
+  + **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.5.8  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -98,7 +98,7 @@ To run a command using **nuts** just type
 nuts <command>
 ```
 
-Several commands are available, and you still be able to run any java and non java applications. More info in the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+Several commands are available, and you still be able to run any java and non java application. More info is available in the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
 
 # Troubleshooting
 Whenever installation or running fails, it is more likely that there is a misconfiguration or invalid libraries that are used. 
@@ -106,7 +106,7 @@ See [troubleshooting documentation](docs/troubleshooting.md) for more details
 
 
 ## Getting started
- You may consider browsing the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+You may consider browsing the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
 
 ## Releases
 View stable releases in [official releases page](https://github.com/thevpc/nuts/releases).
