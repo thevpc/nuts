@@ -323,10 +323,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             return a.basePrintStream();
                         }
                         case INHERITED: {
-                            return (PrintStream) ws.extensions().createSupported(
+                            PrintStream supported = (PrintStream) ws.extensions().createSupported(
                                     NutsFormattedPrintStream.class,
                                     new DefaultNutsSupportLevelContext<>(ws, out),
                                     new Class[]{OutputStream.class}, new Object[]{out});
+                            if(supported==null){
+                                throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                            }
+                            return supported;
                         }
                         default: {
                             throw new NutsUnexpectedEnumException(ws, am);
@@ -369,10 +373,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
         } else {
             switch (mode) {
                 case FORMATTED: {
-                    return (PrintStream) ws.extensions().createSupported(
+                    PrintStream supported = (PrintStream) ws.extensions().createSupported(
                             NutsFormattedPrintStream.class,
                             new DefaultNutsSupportLevelContext<>(ws, out),
                             new Class[]{OutputStream.class}, new Object[]{out});
+                    if(supported==null){
+                        throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                    }
+                    return supported;
                 }
                 case FILTERED: {
                     return (PrintStream) out;
@@ -396,7 +404,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
-            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "Terminal");
+            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
         try {
             NutsSessionTerminal term = null;

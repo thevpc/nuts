@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.impl.def.wscommands;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigRuntime;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.wscommands.AbstractNutsUpdateCommand;
 import net.vpc.app.nuts.core.DefaultNutsUpdateResult;
 import net.vpc.app.nuts.core.DefaultNutsWorkspaceUpdateResult;
@@ -22,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -411,7 +411,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         if (ws.config().save(requireSave, getValidSession())) {
             if (LOG.isLoggable(Level.INFO)) {
-                LOG.log(Level.INFO, "Workspace is updated. Nuts should be restarted for changes to take effect.");
+                LOG.log(Level.INFO, NutsLogVerb.WARNING, "Workspace is updated. Nuts should be restarted for changes to take effect.");
             }
             if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
                 if (getValidSession().isPlainTrace()) {

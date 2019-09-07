@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsDependencyScopes;
 import net.vpc.app.nuts.core.util.common.MapStringMapper;
@@ -43,7 +44,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -151,7 +151,7 @@ public class MavenUtils {
             default:{
                 nds= NutsDependencyScopes.parseScope(s,true);
                 if(nds==null){
-                    LOG.log(Level.FINER, "[ERROR ] unable to parse maven scope "+s+" for "+d);
+                    LOG.log(Level.FINER, NutsLogVerb.ERROR, "unable to parse maven scope "+s+" for "+d);
                     nds=NutsDependencyScope.API;
                 }
             }
@@ -227,9 +227,9 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                LOG.log(Level.FINEST, "[SUCCESS] Parse pom    {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "Parse pom    {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                LOG.log(Level.FINEST, "[SUCCESS] Parse pom    {0}", new Object[]{urlDesc});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "Parse pom    {0}", new Object[]{urlDesc});
             }
 
             return new DefaultNutsDescriptorBuilder()
@@ -248,9 +248,9 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                LOG.log(Level.FINEST, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                LOG.log(Level.FINEST, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
+                LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Caching pom file {0}", new Object[]{urlDesc});
             }
             throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
         }
@@ -269,7 +269,7 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
+                        LOG.log(Level.FINE, NutsLogVerb.ERROR, "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
                     }
                     return null;
                 }

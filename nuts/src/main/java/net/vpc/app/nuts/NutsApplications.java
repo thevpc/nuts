@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class for Nuts Applications
@@ -86,7 +85,7 @@ public class NutsApplications {
         if(appClass==null){
             appClass=lifeCycle.getClass();
         }
-        ws.log().of(NutsApplications.class).log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
+        ws.log().of(NutsApplications.class).log(Level.FINE, "START", "Running Application {0}: {1} {2}", new Object[]{
             inherited ? "(inherited)" : "",
             lifeCycle, ws.commandLine().create(args).toString()});
         NutsApplicationContext applicationContext = null;

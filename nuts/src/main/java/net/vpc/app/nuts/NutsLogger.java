@@ -9,13 +9,15 @@ public interface NutsLogger {
 
     void log(Level level, String msg, Throwable thrown);
 
-    void log(Level level, String msg);
+    void log(Level level, String verb, String msg);
 
-    void log(Level level, Supplier<String> msgSupplier);
+    void log(Level level, String verb, Supplier<String> msgSupplier);
 
-    void log(Level level, String msg, Object params);
+    void log(Level level, String verb, String msg, Object params);
 
-    void log(Level level, String msg, Object[] params);
+    void log(Level level, String verb, String msg, Object[] params);
+
+    NutsLogOp withLevel(Level level);
 
     /**
      * Log a LogRecord.

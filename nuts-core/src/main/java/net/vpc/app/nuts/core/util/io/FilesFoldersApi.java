@@ -12,13 +12,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  * @author vpc
@@ -89,7 +88,7 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException ex) {
-            session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, "Unable to navigate : file not found : "+dotFilesUrl);
+            session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, NutsLogVerb.ERROR, "Unable to navigate : file not found : "+dotFilesUrl);
         }
         if(versionString.compareTo("0.5.7")<0){
             if (folders) {
@@ -100,7 +99,7 @@ public class FilesFoldersApi {
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException ex) {
-                    session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, "Unable to navigate : file not found : "+dotFolderUrl);
+                    session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, NutsLogVerb.ERROR, "Unable to navigate : file not found : "+dotFolderUrl);
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {

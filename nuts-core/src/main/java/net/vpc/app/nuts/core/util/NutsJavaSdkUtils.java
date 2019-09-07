@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.File;
@@ -61,11 +62,11 @@ public class NutsJavaSdkUtils {
             if (bestJava == null) {
                 if (!CoreStringUtils.isBlank(requestedJavaVersion)) {
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
+                        LOG.log(Level.FINE, NutsLogVerb.WARNING, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
                     }
                 } else {
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
+                        LOG.log(Level.FINE, NutsLogVerb.WARNING, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
                     }
                 }
                 bestJava = current;

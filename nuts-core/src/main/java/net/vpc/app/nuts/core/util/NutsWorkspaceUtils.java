@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.util;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsExecutionEntry;
 import net.vpc.app.nuts.core.format.plain.DefaultSearchFormatPlain;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -310,7 +311,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnInstall( NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "[EVENT  ] installed {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Installed {0}", new Object[]{event.getDefinition().getId()});
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onInstall(event);
@@ -322,7 +323,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUpdate(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "[EVENT  ] Updated {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Updated {0}", new Object[]{event.getDefinition().getId()});
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onUpdate(event);
@@ -334,7 +335,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "[EVENT  ] Uninstalled {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Uninstalled {0}", new Object[]{event.getDefinition().getId()});
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onUninstall(event);
@@ -346,7 +347,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.CONFIG)) {
-                u.LOG.log(Level.CONFIG, "[EVENT  ] Added Repo {0}", new Object[]{event.getRepository().config().name()});
+                u.LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Added Repo {0}", new Object[]{event.getRepository().config().name()});
             }
 
             for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
@@ -359,7 +360,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "[EVENT  ] Removed Repo {0}", new Object[]{event.getRepository().config().name()});
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Removed Repo {0}", new Object[]{event.getRepository().config().name()});
             }
             for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
@@ -380,27 +381,8 @@ public class NutsWorkspaceUtils {
                     timeMessage = " (" + time + "ms)";
                 }
             }
-            String tracePhaseString = "";
-            switch (tracePhase) {
-                case ERROR: {
-                    tracePhaseString = "[ERROR  ] ";
-                    break;
-                }
-                case SUCCESS: {
-                    tracePhaseString = "[SUCCESS] ";
-                    break;
-                }
-                case START: {
-                    tracePhaseString = "[START  ] ";
-                    break;
-                }
-                case CACHED: {
-                    tracePhaseString = "[CACHED ] ";
-                    break;
-                }
-            }
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.log(Level.FINEST, tracePhaseString + fetchString
+            LOG.log(Level.FINEST, tracePhase.toString(), fetchString
                     + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
         }
     }
@@ -431,7 +413,7 @@ public class NutsWorkspaceUtils {
         }
 
         if (LOG.isLoggable(Level.FINE)) {
-            LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
+            LOG.withLevel(Level.FINE).withVerb(NutsLogVerb.START).formatted().log("[exec] "+ pb.getFormattedCommandString(ws));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
@@ -621,7 +603,7 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.log(Level.SEVERE, "Invalid default entry " + defaultEntry + " in " + sourceName);
+            LOG.log(Level.SEVERE, NutsLogVerb.ERROR, "Invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);

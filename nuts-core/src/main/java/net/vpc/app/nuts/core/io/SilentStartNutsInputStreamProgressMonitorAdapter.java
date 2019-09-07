@@ -4,6 +4,7 @@ import net.vpc.app.nuts.NutsInputStreamEvent;
 import net.vpc.app.nuts.NutsInputStreamProgressMonitor;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 
 import java.util.logging.Level;
 
@@ -26,9 +27,9 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsInputStrea
     public void onComplete(NutsInputStreamEvent event) {
         finalMonitor.onComplete(event);
         if (event.getException() != null) {
-            LOG.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
+            LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Download Failed    : {0}", new Object[]{path});
         } else {
-            LOG.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
+            LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "Download Succeeded : {0}", new Object[]{path});
         }
     }
 

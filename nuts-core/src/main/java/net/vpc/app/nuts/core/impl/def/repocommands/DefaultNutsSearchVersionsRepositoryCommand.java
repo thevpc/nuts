@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsSearchVersionsRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -44,7 +45,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStoreClient().searchVersions(id, getSession());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Error find version operation with Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
                 if (d != null && !d.isEmpty() && filter != null) {
                     result = IteratorBuilder.of(d.iterator()).filter(x -> filter.accept(x, getSession().getSession())).iterator();
@@ -59,7 +60,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{CoreStringUtils.alignLeft(getSession().getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id});
+                LOG.log(Level.FINEST, NutsLogVerb.ERROR, "[{0}] {1} {2} {3}", new Object[]{CoreStringUtils.alignLeft(getSession().getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id});
             }
             throw ex;
         }

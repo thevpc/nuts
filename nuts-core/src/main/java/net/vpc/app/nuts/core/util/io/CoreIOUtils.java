@@ -30,8 +30,7 @@
 package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
-import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.core.util.common.PersistentMap;
@@ -62,9 +61,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
@@ -714,12 +711,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(file);
                     if(LOG!=null) {
-                        LOG.log(Level.FINEST, "Delete file " + file);
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file " + file);
                     }
                     deleted[0]++;
                 } catch (IOException e) {
                     if(LOG!=null) {
-                        LOG.log(Level.FINEST, "Delete file Failed : " + file);
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file Failed : " + file);
                     }
                     deleted[2]++;
                 }
@@ -736,12 +733,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(dir);
                     if(LOG!=null) {
-                        LOG.log(Level.FINEST, "Delete folder " + dir);
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder " + dir);
                     }
                     deleted[1]++;
                 } catch (IOException e) {
                     if(LOG!=null) {
-                        LOG.log(Level.FINEST, "Delete folder Failed : " + dir);
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder Failed : " + dir);
                     }
                     deleted[2]++;
                 }

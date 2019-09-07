@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.security;
 
 import net.vpc.app.nuts.core.impl.def.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigSecurity;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -116,7 +117,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.log(Level.CONFIG, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));

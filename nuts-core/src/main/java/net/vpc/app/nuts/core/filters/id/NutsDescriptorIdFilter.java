@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.bridges.maven.MavenRepositoryFolderHelper;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
@@ -59,7 +60,7 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.log(Level.FINER, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                LOG.log(Level.FINER, NutsLogVerb.ERROR, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
             }
             return false;
         }

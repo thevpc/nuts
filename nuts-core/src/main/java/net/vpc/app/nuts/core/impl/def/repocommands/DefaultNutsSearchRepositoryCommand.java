@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsSearchRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -35,14 +36,14 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
         xrepo.checkAllowedFetch(null, getSession());
         try {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             if (getSession().isIndexed() && xrepo.getIndexStoreClient() != null && xrepo.getIndexStoreClient().isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = xrepo.getIndexStoreClient().search(filter, getSession());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Error find operation using Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
 
                 if (o != null) {
@@ -54,12 +55,12 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
             result = xrepo.searchImpl(filter, getSession());
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.FINEST, NutsLogVerb.ERROR, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.log(Level.SEVERE, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.SEVERE, NutsLogVerb.ERROR, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         }

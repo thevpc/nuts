@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.impl.def.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.nio.file.Files;
@@ -374,9 +375,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;

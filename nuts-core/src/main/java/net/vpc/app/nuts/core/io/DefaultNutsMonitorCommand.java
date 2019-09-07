@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.io;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.*;
@@ -210,9 +211,9 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             throw e;
         }
         if (path.toLowerCase().startsWith("file://")) {
-            LOG.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
+            LOG.log(Level.FINE, NutsLogVerb.START, "Downloading file {0}", new Object[]{path});
         } else {
-            LOG.log(Level.FINEST, "[START  ] Download url {0}", new Object[]{path});
+            LOG.log(Level.FINEST, NutsLogVerb.START, "Download url {0}", new Object[]{path});
         }
 
         InputStream openedStream = stream.open();

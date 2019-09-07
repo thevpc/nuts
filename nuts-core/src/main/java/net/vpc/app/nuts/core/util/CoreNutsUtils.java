@@ -31,6 +31,8 @@ package net.vpc.app.nuts.core.util;
 
 import java.io.File;
 import java.io.IOException;
+
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -45,7 +47,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -578,27 +579,8 @@ public class CoreNutsUtils {
                 timeMessage = " (" + time + "ms)";
             }
         }
-        String tracePhaseString = "";
-        switch (tracePhase) {
-            case ERROR: {
-                tracePhaseString = "[ERROR  ] ";
-                break;
-            }
-            case SUCCESS: {
-                tracePhaseString = "[SUCCESS] ";
-                break;
-            }
-            case START: {
-                tracePhaseString = "[START  ] ";
-                break;
-            }
-            case CACHED: {
-                tracePhaseString = "[CACHED ] ";
-                break;
-            }
-        }
-        String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        log.log(lvl, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
+        String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
+        log.log(lvl, tracePhase.name(), "{0}{1} {2} {3}{4}", new Object[]{fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {

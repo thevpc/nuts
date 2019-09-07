@@ -3,6 +3,7 @@ package net.vpc.app.nuts.core.log;
 
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,68 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NutsLogRichFormatter extends Formatter {
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    private final Map<Level, String> logLevelCache = new HashMap<>();
-    private final Map<String, String> classNameCache = new HashMap<>();
     private long lastMillis = -1;
     public static final NutsLogRichFormatter RICH = new NutsLogRichFormatter();
 
     public NutsLogRichFormatter() {
-    }
-
-    private String logLevel(Level l) {
-        String v = logLevelCache.get(l);
-        if (v == null) {
-            StringBuilder sb = new StringBuilder(l.getName());
-            ensureSize(sb, 6);
-            v = sb.toString();
-            logLevelCache.put(l, v);
-        }
-        return v;
-    }
-
-    private void ensureSize(StringBuilder sb, int size) {
-        sb.ensureCapacity(size);
-        int length = size - sb.length();
-        while (length > 0) {
-            if (length >= 16) {
-                sb.append("                ");
-                length -= 16;
-            } else if (length >= 8) {
-                sb.append("        ");
-                length -= 8;
-            } else if (length >= 4) {
-                sb.append("    ");
-                length -= 4;
-            } else if (length >= 2) {
-                sb.append("  ");
-                length -= 2;
-            } else {
-                sb.append(' ');
-                length--;
-            }
-        }
-    }
-
-    private String formatClassName(String className) {
-        if (className == null) {
-            return "";
-        }
-        String v = classNameCache.get(className);
-        if (v == null) {
-            int maxSize = 47;
-            StringBuilder sb = new StringBuilder(maxSize);
-            int pos = 0, end;
-            while ((end = className.indexOf('.', pos)) >= 0) {
-                sb.append(className.charAt(pos)).append('.');
-                pos = end + 1;
-            }
-            sb.append(className.substring(pos));
-            ensureSize(sb, maxSize);
-            v = sb.toString();
-            classNameCache.put(className, v);
-        }
-        return v;
     }
 
     @Override
@@ -85,12 +28,7 @@ public class NutsLogRichFormatter extends Formatter {
             NutsTerminalFormat tf = wRecord.getWorkspace().io().terminalFormat();
             StringBuilder sb = new StringBuilder();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
-//                    Instant.ofEpochMilli(wRecord.getMillis()).toString().replace(":", "");
-
             sb.append("<<").append(tf.escapeText(date)).append(">>");
-//            for (int i = 22 - date.length() - 1; i >= 0; i--) {
-//                sb.append(' ');
-//            }
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
                 sb.append(" ");
@@ -98,74 +36,127 @@ public class NutsLogRichFormatter extends Formatter {
                 if (lastMillis > 0) {
                     sb.append(wRecord.getMillis() - lastMillis);
                 }
-                ensureSize(sb, len);
+                NutsLogFormatHelper.ensureSize(sb, len);
             }
             sb.append(" ");
             switch (wRecord.getLevel().intValue()) {
                 case 1000: {//Level.SEVERE
                     sb.append("@@");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("@@");
                     break;
                 }
                 case 900: {//Level.WARNING
                     sb.append("{{");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("}}");
                     break;
                 }
                 case 800: {//Level.INFO
                     sb.append("##");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("##");
                     break;
                 }
                 case 700: {//Level.CONFIG
                     sb.append("^^");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("^^");
                     break;
                 }
                 case 500: {//Level.FINE
                     sb.append("**");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("**");
                     break;
                 }
                 case 400: {//Level.FINER
                     sb.append("[[");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append("]]");
                     break;
                 }
                 case 300: {//Level.FINEST
                     sb.append("<<");
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
                     sb.append(">>");
                     break;
                 }
                 default: {
-                    sb.append(tf.escapeText(logLevel(wRecord.getLevel())));
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
+                    break;
+                }
+            }
+
+            sb.append(" ");
+            switch (CoreStringUtils.trim(wRecord.getVerb()).toUpperCase()) {
+                case NutsLogVerb.ERROR: {//Level.SEVERE
+                    sb.append("@@");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("@@");
+                    break;
+                }
+                case NutsLogVerb.UPDATE:
+                case NutsLogVerb.WARNING:
+                case NutsLogVerb.START:
+                    {//Level.WARNING
+                    sb.append("{{");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("}}");
+                    break;
+                }
+                case NutsLogVerb.SUCCESS:
+                    {//Level.INFO
+                    sb.append("##");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("##");
+                    break;
+                }
+                case NutsLogVerb.CONFIG:
+                case NutsLogVerb.BIND:
+                    {//Level.CONFIG
+                    sb.append("^^");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("^^");
+                    break;
+                }
+                case NutsLogVerb.RESOLVE: {//Level.FINE
+                    sb.append("**");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("**");
+                    break;
+                }
+                case NutsLogVerb.INIT: {//Level.FINER
+                    sb.append("[[");
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.append("]]");
+                    break;
+                }
+//                case NutsLogVerb.START: {//Level.FINEST
+//                    sb.append("<<");
+//                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
+//                    sb.append(">>");
+//                    break;
+//                }
+                default: {
+                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
                     break;
                 }
             }
 
             sb.append(" ")
-                    .append(tf.escapeText(formatClassName(wRecord.getSourceClassName())))
-                    .append(": ")
-                    .append(tf.escapeText(formatMessage(wRecord)))
-                    .append(LINE_SEPARATOR);
+                    .append(tf.escapeText(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName())))
+                    .append(": ");
+            String msgStr = formatMessage(wRecord);
+            if(wRecord.isFormatted()) {
+                sb.append(msgStr);
+            }else{
+                sb.append(tf.escapeText(msgStr));
+            }
+            sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();
             if (wRecord.getThrown() != null) {
-                try {
-                    StringWriter sw = new StringWriter();
-                    try (PrintWriter pw = new PrintWriter(sw)) {
-                        wRecord.getThrown().printStackTrace(pw);
-                    }
-                    sb.append(tf.escapeText(sw.toString()));
-                } catch (Exception ex) {
-                    // ignore
-                }
+                sb.append(NutsLogFormatHelper.stacktrace(wRecord.getThrown()));
             }
             return sb.toString();
         } else {
@@ -183,30 +174,23 @@ public class NutsLogRichFormatter extends Formatter {
                 if (lastMillis > 0) {
                     sb.append(record.getMillis() - lastMillis);
                 }
-                ensureSize(sb, len);
+                NutsLogFormatHelper.ensureSize(sb, len);
             }
             sb
                     .append(" ")
-                    .append(logLevel(record.getLevel()))
+                    .append(NutsLogFormatHelper.logLevel(record.getLevel()))
                     .append(" ")
-                    .append(formatClassName(record.getSourceClassName()))
+                    .append(NutsLogFormatHelper.logVerb(""))
+                    .append(" ")
+                    .append(NutsLogFormatHelper.formatClassName(record.getSourceClassName()))
                     .append(": ")
                     .append(formatMessage(record))
-                    .append(LINE_SEPARATOR);
+                    .append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = record.getMillis();
             if (record.getThrown() != null) {
-                try {
-                    StringWriter sw = new StringWriter();
-                    try (PrintWriter pw = new PrintWriter(sw)) {
-                        record.getThrown().printStackTrace(pw);
-                    }
-                    sb.append(sw.toString());
-                } catch (Exception ex) {
-                    // ignore
-                }
+                sb.append(NutsLogFormatHelper.stacktrace(record.getThrown()));
             }
             return sb.toString();
         }
     }
-
 }

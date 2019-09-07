@@ -21,6 +21,7 @@ import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
@@ -117,7 +118,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 try {
                     CoreIOUtils.delete(ws,tempFolder);
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, "Unable to delete temp folder created for execution : "+tempFolder);
+                    LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Unable to delete temp folder created for execution : "+tempFolder);
                 }
             }
         }

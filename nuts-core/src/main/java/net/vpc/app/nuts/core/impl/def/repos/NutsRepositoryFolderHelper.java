@@ -27,6 +27,7 @@ import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.impl.def.repocommands.DefaultNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.core.impl.def.repocommands.DefaultNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.NutsRepositoryUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -315,7 +316,7 @@ public class NutsRepositoryFolderHelper {
             throw new NutsAlreadyDeployedException(ws, id.toString());
         }
         if (Files.exists(descFile)) {
-            LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
+            LOG.log(Level.FINE, NutsLogVerb.WARNING, "Nuts descriptor file Overridden {0}", descFile);
         }
         getWorkspace().descriptor().value(desc).print(descFile);
         getWorkspace().io().copy().session(session.getSession()).from(new NamedByteArrayInputStream(
@@ -335,7 +336,7 @@ public class NutsRepositoryFolderHelper {
             throw new NutsAlreadyDeployedException(ws, id.toString());
         }
         if (Files.exists(pckFile)) {
-            LOG.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
+            LOG.log(Level.FINE, NutsLogVerb.WARNING, "Nuts component  file Overridden {0}", pckFile);
         }
 
         getWorkspace().io().copy().session(session.getSession()).from(content).to(pckFile).safeCopy().run();

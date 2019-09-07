@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.util.io.SingletonNutsInputStreamProgressFactory;
@@ -284,7 +285,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        LOG.log(Level.FINEST, "[START  ] Copy {0} to {1}", new Object[]{_source, target});
+        LOG.log(Level.FINEST, NutsLogVerb.START, "Copy {0} to {1}", new Object[]{_source, target});
 //        }
         if (safeCopy) {
             Path temp = null;
@@ -328,7 +329,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, NutsLogVerb.ERROR, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         } else {
@@ -367,7 +368,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, NutsLogVerb.ERROR, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         }

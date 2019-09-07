@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Map;
@@ -69,7 +70,7 @@ public class NutsRepositoryUtils {
 
         public void fireOnAddRepository(NutsRepositoryEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "{0} add    repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
                         .getRepository().config().name()});
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
@@ -85,7 +86,7 @@ public class NutsRepositoryUtils {
 
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.config().getName(), 20), event
                         .getRepository().config().name()});
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {

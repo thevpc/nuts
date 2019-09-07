@@ -9,15 +9,30 @@ import java.util.logging.LogRecord;
 public class NutsLogRecord extends LogRecord {
     private NutsWorkspace workspace;
     private NutsSession session;
+    private String verb;
+    private boolean formatted;
 
-    public NutsLogRecord(NutsSession session,Level level, String msg) {
+    public NutsLogRecord(NutsWorkspace ws,NutsSession session,Level level, String verb,String msg,Object[] objects,boolean formatted) {
         super(level, msg);
-        this.session=session;
-        this.workspace=session.getWorkspace();
-    }
-    public NutsLogRecord(NutsWorkspace ws,Level level, String msg) {
-        super(level, msg);
+        this.verb=verb;
         this.workspace=ws;
+        this.session=session;
+        this.formatted=formatted;
+        setParameters(objects);
+    }
+
+//    public NutsLogRecord(NutsWorkspace ws,Level level, String verb, String msg) {
+//        super(level, msg);
+//        this.verb=verb;
+//        this.workspace=ws;
+//    }
+
+    public boolean isFormatted() {
+        return formatted;
+    }
+
+    public String getVerb() {
+        return verb;
     }
 
     public NutsWorkspace getWorkspace() {

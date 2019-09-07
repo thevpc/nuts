@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.impl.def.repocommands;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsRepositoryUndeployCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -37,15 +38,15 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
                 try {
                     xrepo.getIndexStoreClient().invalidate(this.getId());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.ERROR, "Error invalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.ERROR, "{0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
             }
         }
         return this;

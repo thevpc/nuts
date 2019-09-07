@@ -45,6 +45,7 @@ public class NutsLogConsoleHandler extends StreamHandler {
                 setFormatter(NutsLogPlainFormatter.PLAIN);
             }
         } else {
+            setFormatter(NutsLogPlainFormatter.PLAIN);
             setOutputStream(System.err);
         }
         super.publish(record);

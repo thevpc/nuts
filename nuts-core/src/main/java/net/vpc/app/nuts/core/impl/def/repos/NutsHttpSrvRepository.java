@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.impl.def.repos;
 
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -60,7 +61,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
         } catch (Exception ex) {
-            LOG.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.log(Level.WARNING, NutsLogVerb.ERROR, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -73,7 +74,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.log(Level.WARNING, NutsLogVerb.ERROR, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;
@@ -201,12 +202,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String httpGetString(String url) {
-        LOG.log(Level.FINEST, "Get URL{0}", url);
+        LOG.log(Level.FINEST, NutsLogVerb.START, "Get URL{0}", url);
         return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
     }
 
     private InputStream httpUpload(String url, NutsTransportParamPart... parts) {
-        LOG.log(Level.FINEST, "Uploading URL {0}", url);
+        LOG.log(Level.FINEST, NutsLogVerb.START, "Uploading URL {0}", url);
         return CoreIOUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
     }
 

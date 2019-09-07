@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -37,7 +38,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -234,7 +234,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    ws.log().of(ZipUtils.class).log(Level.FINEST, "file unzip : " + newFile.getAbsoluteFile());
+                    ws.log().of(ZipUtils.class).log(Level.FINEST, NutsLogVerb.WARNING, "file unzip : " + newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

@@ -33,6 +33,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import java.io.*;
 import java.nio.file.Files;
@@ -498,7 +499,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
-                LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
+                LOG.log(Level.SEVERE, NutsLogVerb.ERROR, id.toString() + " : " + ex.getMessage());
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);
