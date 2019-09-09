@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -26,6 +28,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
+    private Predicate<String> filter = s -> true;
     private boolean lenient=false;
 
     public DefaultNutsInfoFormat(NutsWorkspace ws) {
@@ -102,11 +105,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
         m.configure(true, args.toArray(new String[0]));
 
-        LinkedHashMap<String, Object> r = null;
+        Map<String, Object> r = null;
         if (requests.isEmpty()) {
             r = buildWorkspaceMap(isShowRepositories());
         } else if(requests.size()==1){
-            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
+            final Map<String, Object> t = buildWorkspaceMap(true);
             String key = requests.get(0);
             Object v = t.get(key);
             if(v!=null){
@@ -118,7 +121,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             }
             return;
         } else {
-            final LinkedHashMap<String, Object> t = buildWorkspaceMap(true);
+            final Map<String, Object> t = buildWorkspaceMap(true);
             r = new LinkedHashMap<>();
             for (String request : requests) {
                 if (t.containsKey(request)) {
@@ -157,6 +160,36 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 extraProperties.put(r.getStringKey(), r.getStringValue());
                 return true;
             }
+            case "--locations": {
+                requests.add("nuts-workspace");
+                for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
+                    requests.add("nuts-workspace-" + folderType.id());
+                }
+                requests.add("user-home");
+                requests.add("user-dir");
+                return true;
+            }
+            case "--env": {
+                requests.add("platform");
+                requests.add("java-version");
+                requests.add("java-home");
+                requests.add("java-executable");
+                requests.add("java-classpath");
+                requests.add("os-name");
+                requests.add("os-family");
+                requests.add("os-dist");
+                requests.add("os-arch");
+                requests.add("user-name");
+                return true;
+            }
+            case "--cmd": {
+                requests.add("command-line-long");
+                requests.add("command-line-short");
+                requests.add("inherited");
+                requests.add("inherited-nuts-boot-args");
+                requests.add("inherited-nuts-args");
+                return true;
+            }
             case "--get": {
                 String r = cmdLine.nextString().getStringValue();
                 requests.add(r);
@@ -188,9 +221,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
 //    @Override
-    private LinkedHashMap<String, Object> buildWorkspaceMap(boolean deep) {
+    private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
-        LinkedHashMap<String, Object> props = new LinkedHashMap<>();
+        FilteredMap props = new FilteredMap(filter);
         NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.config().getOptions();
         Set<String> extraKeys = new TreeSet<>();
@@ -273,11 +306,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             }
         }
 
-        return props;
+        return props.build();
     }
 
     private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, String prefix) {
-        LinkedHashMap<String, Object> props = new LinkedHashMap<>();
+        FilteredMap props = new FilteredMap(filter);
         props.put(key(prefix, "name"), stringValue(repo.config().getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
         props.put(key(prefix, "uuid"), stringValue(repo.config().getUuid()));
@@ -309,7 +342,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        return props;
+        return props.build();
     }
 
     private String stringValue(Object s) {
@@ -323,5 +356,36 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     public NutsInfoFormat setLenient(boolean lenient) {
         this.lenient = lenient;
         return this;
+    }
+    private static class FilteredMap{
+        private Predicate<String> filter;
+        private LinkedHashMap<String,Object> data=new LinkedHashMap<>();
+
+        public FilteredMap(Predicate<String> filter) {
+            this.filter = filter;
+        }
+
+        public boolean accept(String s){
+            return filter.test(s);
+        }
+
+        public void put(String s, Supplier<Object> v){
+            if(filter.test(s)){
+                data.put(s,v.get());
+            }
+        }
+
+        public void putAnyway(String s,Object v){
+            data.put(s,v);
+        }
+        public void put(String s,Object v){
+            if(filter.test(s)){
+                data.put(s,v);
+            }
+        }
+
+        public Map<String,Object> build(){
+            return data;
+        }
     }
 }
