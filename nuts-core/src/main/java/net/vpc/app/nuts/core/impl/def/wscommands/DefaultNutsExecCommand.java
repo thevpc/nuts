@@ -211,38 +211,53 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (cmdName.contains("/") || cmdName.contains("\\")) {
             return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, getValidSession(), this);
         } else if (cmdName.contains(":")) {
-            return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session);
+            boolean forceInstalled=false;
+            if(cmdName.endsWith("!")){
+                cmdName=cmdName.substring(0,cmdName.length()-1);
+                forceInstalled=true;
+            }
+            return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session,forceInstalled);
         } else {
             NutsWorkspaceCommandAlias command = null;
+            boolean forceInstalled=false;
+            if(cmdName.endsWith("!")){
+                cmdName=cmdName.substring(0,cmdName.length()-1);
+                forceInstalled=true;
+            }
             command = ws.config().findCommandAlias(cmdName);
             if (command != null) {
                 NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                         .setExecutionType(executionType).setEnv(env);
                 return new DefaultNutsAliasExecutable(command, o, session, args);
             } else {
-                return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session);
+                return ws_exec(cmdName, args, executorOptions, env, directory, failFast, executionType, session,forceInstalled);
             }
         }
     }
 
-    protected NutsExecutableInformationExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session) {
+    protected NutsExecutableInformationExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsSession session,boolean forceInstalled) {
         NutsDefinition def = null;
         NutsId nid = ws.id().parse(commandName);
+        if(nid==null){
+            throw new NutsNotFoundException(ws, commandName);
+        }
         NutsSession searchSession = session.copy().trace(false);
         List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
                 .defaultVersions()
                 .installed().getResultIds().list();
         if (ff.isEmpty()) {
-            //retest whithout checking it the parseVersion is default or not
+            //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
-            ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
-                    .installed().getResultIds().list();
+                ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+                        .installed().getResultIds().list();
         }
         if (ff.isEmpty()) {
-            //now search online
-            // this helps recovering from "invalid default parseVersion" issue
-            ff = ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
-                    .getResultIds().list();
+            if(!forceInstalled) {
+                //now search online
+                // this helps recovering from "invalid default parseVersion" issue
+                ff = ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
+                        .getResultIds().list();
+            }
         }
         if (ff.isEmpty()) {
             throw new NutsNotFoundException(ws, nid);
