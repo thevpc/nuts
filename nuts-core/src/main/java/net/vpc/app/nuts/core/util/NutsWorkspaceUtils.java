@@ -603,7 +603,7 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.log(Level.SEVERE, NutsLogVerb.ERROR, "Invalid default entry " + defaultEntry + " in " + sourceName);
+            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);

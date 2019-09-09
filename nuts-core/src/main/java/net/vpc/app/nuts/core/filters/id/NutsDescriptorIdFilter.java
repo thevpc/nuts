@@ -60,7 +60,7 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.log(Level.FINER, NutsLogVerb.ERROR, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                LOG.log(Level.FINER, NutsLogVerb.FAIL, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
             }
             return false;
         }

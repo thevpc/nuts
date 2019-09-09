@@ -29,11 +29,11 @@ public class NutsLogFormatHelper {
         }
         String v = logVerbCache.get(l);
         if (v == null) {
-            StringBuilder sb = new StringBuilder(9);
-            sb.append("[");
+            StringBuilder sb = new StringBuilder(7/*9*/);
+//            sb.append("[");
             sb.append(l);
-            ensureSize(sb, 8);
-            sb.append("]");
+            ensureSize(sb, 7/*8*/);
+//            sb.append("]");
             v = sb.toString();
             logVerbCache.put(l, v);
         }

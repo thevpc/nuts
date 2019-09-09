@@ -185,7 +185,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             } catch (Exception ex) {
                 //ignore
                 if (LOG.isLoggable(Level.FINEST)) {
-                    NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch def", startTime);
+                    NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
                 }
             }
         }
@@ -209,7 +209,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 } catch (Exception ex) {
                     //ignore
                     if (LOG.isLoggable(Level.FINEST)) {
-                        NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch def", startTime);
+                        NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
                     }
                 } finally {
                     options.setSession(session);
@@ -378,7 +378,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                         if (!contentSuccessful && includedRemote) {
 //                            foundDefinition.setMissingContent(true);
-                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
+                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch Component", startTime);
 //                            foundDefinition = null;
 //                        } else if (escalateMode) {
 //                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
@@ -396,10 +396,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
         } catch (NutsNotFoundException ex) {
-            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetch definition", startTime);
+            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "[Unexpected] Fetch definition", startTime);
+            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "[Unexpected] Fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {

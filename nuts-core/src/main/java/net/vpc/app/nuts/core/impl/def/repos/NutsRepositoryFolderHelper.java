@@ -111,6 +111,12 @@ public class NutsRepositoryFolderHelper {
         return NutsRepositoryExt.of(repo).getIdFilename(id);
     }
 
+    public Path getGoodPath(NutsId id) {
+        String idFilename = getIdFilename(id);
+        Path versionFolder = getLongNameIdLocalFolder(id);
+        return versionFolder.resolve(idFilename);
+    }
+
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         if (!isReadEnabled()) {
             return null;

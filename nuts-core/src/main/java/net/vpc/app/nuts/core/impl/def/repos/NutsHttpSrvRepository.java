@@ -40,7 +40,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
@@ -61,7 +61,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
         } catch (Exception ex) {
-            LOG.log(Level.WARNING, NutsLogVerb.ERROR, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.log(Level.WARNING, NutsLogVerb.FAIL, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -74,7 +74,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, NutsLogVerb.ERROR, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.log(Level.WARNING, NutsLogVerb.FAIL, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;

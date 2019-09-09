@@ -5,13 +5,8 @@ import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Formatter;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NutsLogRichFormatter extends Formatter {
@@ -90,7 +85,7 @@ public class NutsLogRichFormatter extends Formatter {
 
             sb.append(" ");
             switch (CoreStringUtils.trim(wRecord.getVerb()).toUpperCase()) {
-                case NutsLogVerb.ERROR: {//Level.SEVERE
+                case NutsLogVerb.FAIL: {//Level.SEVERE
                     sb.append("@@");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
                     sb.append("@@");
@@ -112,26 +107,26 @@ public class NutsLogRichFormatter extends Formatter {
                     sb.append("##");
                     break;
                 }
-                case NutsLogVerb.CONFIG:
-                case NutsLogVerb.BIND:
-                    {//Level.CONFIG
-                    sb.append("^^");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("^^");
-                    break;
-                }
-                case NutsLogVerb.RESOLVE: {//Level.FINE
+//                case NutsLogVerb.BIND:
+//                    {//Level.CONFIG
+//                    sb.append("^^");
+//                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+//                    sb.append("^^");
+//                    break;
+//                }
+                case NutsLogVerb.READ:
+                    {//Level.FINE
                     sb.append("**");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
                     sb.append("**");
                     break;
                 }
-                case NutsLogVerb.INIT: {//Level.FINER
-                    sb.append("[[");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("]]");
-                    break;
-                }
+//                case NutsLogVerb.INIT: {//Level.FINER
+//                    sb.append("[[");
+//                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+//                    sb.append("]]");
+//                    break;
+//                }
 //                case NutsLogVerb.START: {//Level.FINEST
 //                    sb.append("<<");
 //                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));

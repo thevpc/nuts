@@ -239,18 +239,19 @@ public class DefaultNutsInstalledRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                Map<String, Object> m = ws.json().parse(pathname, Map.class);
-                if (m != null) {
-                    String id = (String) m.get("id");
-                    if (id != null) {
-                        return ws.fetch().id(id).offline().session(session.getSession().copy().trace(false))
-                                .setTransitive(session.isTransitive())
-                                .setIndexed(session.isIndexed())
-                                .setCached(session.isCached())
-                                .getResultDescriptor();
-                    }
-                }
-                return null;
+                return ws.descriptor().parse(pathname);
+//                Map<String, Object> m = ws.json().parse(pathname, Map.class);
+//                if (m != null) {
+//                    String id = (String) m.get("id");
+//                    if (id != null) {
+//                        return ws.fetch().id(id).offline().session(session.getSession().copy().trace(false))
+//                                .setTransitive(session.isTransitive())
+//                                .setIndexed(session.isIndexed())
+//                                .setCached(session.isCached())
+//                                .getResultDescriptor();
+//                    }
+//                }
+//                return null;
             }
         }, maxDepth);
     }

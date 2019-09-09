@@ -210,11 +210,11 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             }
             throw e;
         }
-        if (path.toLowerCase().startsWith("file://")) {
-            LOG.log(Level.FINE, NutsLogVerb.START, "Downloading file {0}", new Object[]{path});
-        } else {
-            LOG.log(Level.FINEST, NutsLogVerb.START, "Download url {0}", new Object[]{path});
-        }
+//        if (path.toLowerCase().startsWith("file://")) {
+//            LOG.log(Level.FINE, NutsLogVerb.START, "Downloading file {0}", new Object[]{path});
+//        } else {
+//            LOG.log(Level.FINEST, NutsLogVerb.START, "Download url {0}", new Object[]{path});
+//        }
 
         InputStream openedStream = stream.open();
         if (monitor == null) {

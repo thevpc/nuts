@@ -123,7 +123,7 @@ public abstract class AbstractMavenRepositoryHelper {
         } catch (IOException ex) {
             throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
         } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(), id, ex);
         }
     }
 

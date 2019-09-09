@@ -78,7 +78,14 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 }
             }
         }
-        NutsDescriptor c = fetchDescriptorImpl2(id, session);
+        RuntimeException impl2Ex=null;
+        RuntimeException mirrorsEx=null;
+        NutsDescriptor c = null;
+        try {
+            c = fetchDescriptorImpl2(id, session);
+        }catch (RuntimeException ex){
+            impl2Ex=ex;
+        }
         if (c != null) {
             if (cache.isWriteEnabled()) {
                 NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(c, new DefaultNutsFetchCommand(getWorkspace()).session(session.getSession()));
@@ -89,7 +96,22 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             }
             return c;
         }
-        return mirroring.fetchDescriptorImplInMirrors(id, session);
+        NutsDescriptor m = null;
+        try {
+            m=mirroring.fetchDescriptorImplInMirrors(id, session);
+        }catch (RuntimeException ex){
+            mirrorsEx=ex;
+        }
+        if(m!=null){
+            return m;
+        }
+        if(impl2Ex!=null){
+            throw impl2Ex;
+        }
+        if(mirrorsEx!=null){
+            throw mirrorsEx;
+        }
+        return m;
     }
 
     @Override
@@ -147,6 +169,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 }
             }
         }
+        RuntimeException impl2Ex=null;
+        RuntimeException mirrorsEx=null;
         NutsContent c = null;
         if (cache.isWriteEnabled()) {
             Path cachePath = cache.getLongNameIdLocalFile(id);
@@ -164,14 +188,28 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 return new NutsDefaultContent(localPath, true, false);
             }
         } else {
-            c = fetchContentImpl2(id, descriptor, localPath, session);
+            try {
+                c = fetchContentImpl2(id, descriptor, localPath, session);
+            }catch (RuntimeException ex){
+                impl2Ex=ex;
+            }
             if (c != null) {
                 return c;
             }
         }
-        c = mirroring.fetchContent(id, descriptor, localPath, session);
+        try {
+            c = mirroring.fetchContent(id, descriptor, localPath, session);
+        }catch (RuntimeException ex){
+            mirrorsEx=ex;
+        }
         if (c != null) {
             return c;
+        }
+        if(impl2Ex!=null){
+            throw new NutsNotFoundException(getWorkspace(), id,impl2Ex);
+        }
+        if(mirrorsEx!=null){
+            throw new NutsNotFoundException(getWorkspace(), id,mirrorsEx);
         }
         throw new NutsNotFoundException(getWorkspace(), id);
     }

@@ -41,6 +41,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;
 
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -568,9 +569,14 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(NutsLogger log, Level lvl,String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+    public static void traceMessage(NutsLogger log, Level lvl,String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMsg) {
         if(!log.isLoggable(lvl)){
             return;
+        }
+        if(extraMsg==null){
+            extraMsg="";
+        }else{
+            extraMsg=" : "+extraMsg;
         }
         String timeMessage = "";
         if (startTime != 0) {
@@ -579,8 +585,8 @@ public class CoreNutsUtils {
                 timeMessage = " (" + time + "ms)";
             }
         }
-        String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        log.log(lvl, tracePhase.name(), "{0}{1} {2} {3}{4}", new Object[]{fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
+        String fetchString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
+        log.log(lvl, tracePhase.name(), "[{0}] {1} {2} {3}{4}{5}", new Object[]{fetchString, CoreStringUtils.alignLeft(name, 20), CoreStringUtils.alignLeft(title, 18), id == null ? "" : id.toString(), timeMessage,extraMsg});
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
@@ -856,5 +862,19 @@ public class CoreNutsUtils {
                 : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
-
+    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Exception ex){
+        String msg=null;
+        if(ex instanceof NutsNotFoundException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof UncheckedIOException) {
+                    ex2 = ex.getCause();
+                }
+                msg = ex2.getMessage();
+            }
+        }else{
+            msg=ex.getMessage();
+        }
+        return msg;
+    }
 }

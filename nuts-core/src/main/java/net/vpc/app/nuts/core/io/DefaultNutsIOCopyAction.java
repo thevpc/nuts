@@ -329,7 +329,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                LOG.log(Level.CONFIG, NutsLogVerb.ERROR, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         } else {
@@ -368,7 +368,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                LOG.log(Level.CONFIG, NutsLogVerb.ERROR, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         }

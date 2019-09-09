@@ -113,27 +113,31 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id);
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
         }
         return helper.fetchDescriptorImpl(id, session);
     }
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            Path f = getIdFile(id);
-            if (f != null && Files.exists(f)) {
-                if (localPath == null) {
-                    return new NutsDefaultContent(f, true, false);
-                } else {
-                    getWorkspace().io().copy()
-                            .session(session.getSession())
-                            .from(f).to(localPath).safeCopy().run();
-                    return new NutsDefaultContent(localPath, true, false);
-                }
-            }
+        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
         }
-        throw new NutsNotFoundException(getWorkspace(), id);
+        Path f = getIdFile(id);
+        if(f==null){
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Invalid id"));
+        }
+        if(!Files.exists(f)){
+            throw new NutsNotFoundException(getWorkspace(), id,new IOException("File not found : "+f));
+        }
+        if (localPath == null) {
+            return new NutsDefaultContent(f, true, false);
+        } else {
+            getWorkspace().io().copy()
+                    .session(session.getSession())
+                    .from(f).to(localPath).safeCopy().run();
+            return new NutsDefaultContent(localPath, true, false);
+        }
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
@@ -275,17 +279,17 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
             }
             );

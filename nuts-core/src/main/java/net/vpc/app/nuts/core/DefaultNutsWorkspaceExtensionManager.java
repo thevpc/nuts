@@ -240,7 +240,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (wired != null) {
             throw new NutsExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
-        LOG.log(Level.FINE, NutsLogVerb.CONFIG, "Installing extension {0}", id);
+        LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .session(searchSession)
@@ -276,10 +276,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         extensions.put(id, workspaceExtension);
-        LOG.log(Level.FINE, NutsLogVerb.CONFIG, "Extension {0} installed successfully", id);
+        LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Extension {0} installed successfully", id);
         NutsSessionTerminal newTerminal = createTerminal(session.getTerminal() == null ? null : session.getTerminal().getClass());
         if (newTerminal != null) {
-            LOG.log(Level.FINE, NutsLogVerb.CONFIG, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
+            LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -333,7 +333,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
-        LOG.log(Level.FINE, NutsLogVerb.CONFIG, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
+        LOG.log(Level.FINE, NutsLogVerb.WARNING, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
         return false;
     }
 
@@ -343,7 +343,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerType(extensionPointType, extensionType);
             return true;
         }
-        LOG.log(Level.FINE, NutsLogVerb.CONFIG, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
+        LOG.log(Level.FINE, NutsLogVerb.WARNING, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
         return false;
     }
 
@@ -398,16 +398,15 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, new DefaultNutsSupportLevelContext<>(ws, ignoredClass));
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminalBase.class, "TerminalBase");
-        } else {
-            if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
-                return null;
-            }
-            NutsSessionTerminal term = new DefaultNutsSessionTerminal();
-            //termb, true
-            term.install(ws);
-            term.setParent(termb);
-            return term;
         }
+        if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
+            return null;
+        }
+        NutsSessionTerminal term = new DefaultNutsSessionTerminal();
+        term.install(ws);
+        term.setParent(termb);
+        return term;
+
     }
 
     //@Override

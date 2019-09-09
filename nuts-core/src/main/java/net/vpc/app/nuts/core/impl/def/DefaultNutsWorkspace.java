@@ -86,50 +86,50 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOG.log(Level.CONFIG, NutsLogVerb.START, " = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " Start Nuts {0} at {1}", new Object[]{Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime()))});
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, " Using Location : {0}", info.getWorkspaceLocation());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, " Open Nuts Workspace : {0}", info.getOptions().format().getBootCommandLine());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, " Open Nuts Workspace (compact) : {0}", info.getOptions().format().compact().getBootCommandLine());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Using Location : {0}", info.getWorkspaceLocation());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Nuts Workspace : {0}", info.getOptions().format().getBootCommandLine());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Nuts Workspace (compact) : {0}", info.getOptions().format().compact().getBootCommandLine());
 
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, " Open Workspace with command line  : {0}", info.getOptions().format().getBootCommandLine());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, " Open Workspace with config        : ");
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-api-version               : {0}", Nuts.getVersion());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-runtime-dependencies      : {0}", CoreNutsUtils.desc(info.getRuntimeDependenciesSet()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-extension-dependencies    : {0}", CoreNutsUtils.desc(info.getExtensionDependenciesSet()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Workspace with command line  : {0}", info.getOptions().format().getBootCommandLine());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Workspace with config        : ");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-api-version               : {0}", Nuts.getVersion());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-runtime-dependencies      : {0}", CoreNutsUtils.desc(info.getRuntimeDependenciesSet()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-extension-dependencies    : {0}", CoreNutsUtils.desc(info.getExtensionDependenciesSet()));
 //            if (hasUnsatisfiedRequirements()) {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
 //            } else {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
 //            }
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getWorkspace(), info.getWorkspaceLocation()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-log                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LOG), info.getStoreLocation(NutsStoreLocation.LOG)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-temp                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.TEMP), info.getStoreLocation(NutsStoreLocation.TEMP)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-cache               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CACHE), info.getStoreLocation(NutsStoreLocation.CACHE)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-run                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.RUN), info.getStoreLocation(NutsStoreLocation.RUN)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-lib                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LIB), info.getStoreLocation(NutsStoreLocation.LIB)));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-strategy            : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationStrategy(), info.getStoreLocationStrategy()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-repos-store-strategy      : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getRepositoryStoreLocationStrategy(), info.getRepositoryStoreLocationStrategy()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    nuts-store-layout              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationLayout(), info.getStoreLocationLayout() == null ? "system" : info.getStoreLocationLayout().id()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    option-read-only               : {0}", info.getOptions().isReadOnly());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    option-trace                   : {0}", info.getOptions().isTrace());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    inherited                      : {0}", info.getOptions().isInherited());
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    inherited-nuts-boot-args       : {0}", CoreNutsUtils.desc(System.getProperty("nuts.boot.args")));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    inherited-nuts-args            : {0}", CoreNutsUtils.desc(System.getProperty("nuts.args")));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    option-open-mode               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    java-home                      : {0}", System.getProperty("java.home"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    java-classpath                 : {0}", System.getProperty("java.class.path"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    java-library-path              : {0}", System.getProperty("java.library.path"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    os-name                        : {0}", System.getProperty("os.name"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    os-arch                        : {0}", System.getProperty("os.arch"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    os-version                     : {0}", System.getProperty("os.version"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    user-name                      : {0}", System.getProperty("user.name"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    user-dir                       : {0}", System.getProperty("user.dir"));
-            LOG.log(Level.CONFIG, NutsLogVerb.CONFIG, "    user-home                      : {0}", System.getProperty("user.home"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getWorkspace(), info.getWorkspaceLocation()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-log                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LOG), info.getStoreLocation(NutsStoreLocation.LOG)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-temp                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.TEMP), info.getStoreLocation(NutsStoreLocation.TEMP)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-cache               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CACHE), info.getStoreLocation(NutsStoreLocation.CACHE)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-run                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.RUN), info.getStoreLocation(NutsStoreLocation.RUN)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-lib                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LIB), info.getStoreLocation(NutsStoreLocation.LIB)));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-strategy            : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationStrategy(), info.getStoreLocationStrategy()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-repos-store-strategy      : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getRepositoryStoreLocationStrategy(), info.getRepositoryStoreLocationStrategy()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-store-layout              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationLayout(), info.getStoreLocationLayout() == null ? "system" : info.getStoreLocationLayout().id()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    option-read-only               : {0}", info.getOptions().isReadOnly());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    option-trace                   : {0}", info.getOptions().isTrace());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    inherited                      : {0}", info.getOptions().isInherited());
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    inherited-nuts-boot-args       : {0}", CoreNutsUtils.desc(System.getProperty("nuts.boot.args")));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    inherited-nuts-args            : {0}", CoreNutsUtils.desc(System.getProperty("nuts.args")));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    option-open-mode               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    java-home                      : {0}", System.getProperty("java.home"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    java-classpath                 : {0}", System.getProperty("java.class.path"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    java-library-path              : {0}", System.getProperty("java.library.path"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    os-name                        : {0}", System.getProperty("os.name"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    os-arch                        : {0}", System.getProperty("os.arch"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    os-version                     : {0}", System.getProperty("os.version"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    user-name                      : {0}", System.getProperty("user.name"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    user-dir                       : {0}", System.getProperty("user.dir"));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "    user-home                      : {0}", System.getProperty("user.home"));
         }
         securityManager=new DefaultNutsWorkspaceSecurityManager(this);
         String workspaceLocation=info.getWorkspaceLocation();
@@ -279,7 +279,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
             if (configManager.getRepositoryRefs().length == 0) {
-                LOG.log(Level.CONFIG, NutsLogVerb.ERROR, "Workspace has no repositories. Will re-create defaults");
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Workspace has no repositories. Will re-create defaults");
                 initializeWorkspace(uoptions.getArchetype(), session);
             }
             List<String> transientRepositoriesSet = uoptions.getTransientRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getTransientRepositories()));
@@ -731,7 +731,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to update : %s.%n", id().value(def.getId()).format(), ex.toString());
+                            out.printf(id().value(def.getId()).format()+" @@Failed@@ to update : %s.%n", ex.toString());
                         }
                         throw new NutsExecutionException(this, "Unable to update " + def.getId().toString(), ex);
                     }
@@ -743,7 +743,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("%N @@Failed@@ to install : %s.%n", id().value(def.getId()).format(), ex.toString());
+                            out.printf(id().value(def.getId()).format()+" @@Failed@@ to install : %s.%n", ex.toString());
                         }
                         try {
                             getInstalledRepository().uninstall(executionContext.getDefinition().getId(), session);
@@ -900,7 +900,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Users.ADMIN);
             if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.ERROR, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                    LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
                 }
                 security().updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray()).session(session).run();
             }
@@ -908,7 +908,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 try {
                     config().addCommandAliasFactory(commandFactory, new NutsAddOptions().session(session));
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, NutsLogVerb.ERROR, "Unable to instantiate Command Factory {0}", commandFactory);
+                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Unable to instantiate Command Factory {0}", commandFactory);
                 }
             }
             DefaultNutsWorkspaceEvent worksppaeReloadedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);

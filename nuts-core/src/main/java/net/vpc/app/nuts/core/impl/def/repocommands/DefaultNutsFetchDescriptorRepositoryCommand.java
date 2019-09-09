@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.impl.def.repocommands;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -102,10 +104,10 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             if (d == null) {
                 throw new NutsNotFoundException(ws, id.getLongNameId());
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime,null);
             result = d;
-        } catch (RuntimeException ex) {
-            CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.ERROR, "Fetch descriptor", startTime);
+        } catch (Exception ex) {
+            CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch descriptor", startTime,CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
             throw ex;
         }
         return this;

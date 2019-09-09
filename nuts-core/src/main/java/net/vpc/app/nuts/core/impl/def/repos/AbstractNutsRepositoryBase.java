@@ -141,8 +141,8 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsRepositorySession session, Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime) {
-        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, id, tracePhase, title, startTime);
+    protected void traceMessage(NutsRepositorySession session, Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMessage) {
+        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, id, tracePhase, title, startTime,extraMessage);
     }
 
     @Override

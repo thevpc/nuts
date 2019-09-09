@@ -71,7 +71,7 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session,level,NutsLogVerb.ERROR, msg,DefaultNutsLogOp.OBJECTS0,formatted);
+        LogRecord lr = new NutsLogRecord(workspace, session,level,NutsLogVerb.FAIL, msg,DefaultNutsLogOp.OBJECTS0,formatted);
         lr.setThrown(thrown);
         doLog(lr);
     }

@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
@@ -126,32 +125,34 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         try (InputStream stream = getDescStream(id, session)) {
             return getWorkspace().descriptor().parse(stream);
         } catch (IOException ex) {
-            return null;
+            throw new NutsNotFoundException(getWorkspace(),id,ex);
+        } catch (UncheckedIOException ex) {
+            throw new NutsNotFoundException(getWorkspace(),id,ex);
         }
     }
 
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-        long startTime = System.currentTimeMillis();
-        try {
+//        long startTime = System.currentTimeMillis();
+//        try {
             InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
-            if (LOG.isLoggable(Level.FINER)) {
-                if (CoreIOUtils.isPathHttp(path)) {
-                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-                    message += " url=" + path;
-                    traceMessage(session, Level.FINER, id, TraceResult.SUCCESS, message, startTime);
-                }
-            }
+//            if (LOG.isLoggable(Level.FINER)) {
+//                if (CoreIOUtils.isPathHttp(path)) {
+//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
+//                    message += " url=" + path;
+//                    traceMessage(session, Level.FINER, id, TraceResult.SUCCESS, message, startTime,null);
+//                }
+//            }
             return CoreIOUtils.createInputSource(in);
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                if (CoreIOUtils.isPathHttp(path)) {
-                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-                    message += " url=" + path;
-                    traceMessage(session,Level.FINEST, id, TraceResult.ERROR, message, startTime);
-                }
-            }
-            throw ex;
-        }
+//        } catch (RuntimeException ex) {
+//            if (LOG.isLoggable(Level.FINEST)) {
+//                if (CoreIOUtils.isPathHttp(path)) {
+//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
+//                    message += " url=" + path;
+//                    traceMessage(session,Level.FINEST, id, TraceResult.FAIL, message, startTime,ex.getMessage());
+//                }
+//            }
+//            throw ex;
+//        }
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
