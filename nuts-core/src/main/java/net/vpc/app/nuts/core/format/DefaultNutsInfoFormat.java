@@ -143,7 +143,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             return false;
         }
         switch (a.getStringKey()) {
-            case "--show-repos": {
+            case "--repos": {
                 this.setShowRepositories(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
@@ -161,6 +161,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 return true;
             }
             case "--locations": {
+                cmdLine.skip();
                 requests.add("nuts-workspace");
                 for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
                     requests.add("nuts-workspace-" + folderType.id());
@@ -170,6 +171,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 return true;
             }
             case "--env": {
+                cmdLine.skip();
                 requests.add("platform");
                 requests.add("java-version");
                 requests.add("java-home");
@@ -183,6 +185,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 return true;
             }
             case "--cmd": {
+                cmdLine.skip();
                 requests.add("command-line-long");
                 requests.add("command-line-short");
                 requests.add("inherited");
