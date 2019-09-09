@@ -370,6 +370,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
+                case "-f":
                 case "--force":{
                     a = cmdLine.nextBoolean();
                     if (enabled) {
@@ -377,8 +378,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
-                case "--yes":
-                case "-y": {
+                case "-y":
+                case "--yes":{
                     if (enabled) {
                         this.setConfirm(NutsConfirmationMode.YES);
                     }
@@ -392,8 +393,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     cmdLine.skip();
                     return true;
                 }
-                case "--no":
-                case "-n": {
+                case "-n":
+                case "--no":{
                     if (enabled) {
                         this.setConfirm(NutsConfirmationMode.NO);
                     }
