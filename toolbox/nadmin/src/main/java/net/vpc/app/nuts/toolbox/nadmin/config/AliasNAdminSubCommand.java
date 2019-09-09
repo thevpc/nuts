@@ -5,8 +5,11 @@
  */
 package net.vpc.app.nuts.toolbox.nadmin.config;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsAddOptions;
 import net.vpc.app.nuts.NutsApplicationContext;
@@ -23,7 +26,6 @@ import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
  * @author vpc
  */
 public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
-
     public static class AliasInfo {
 
         public String name;
@@ -73,10 +75,41 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list aliases") != null) {
-            cmdLine.setCommandName("nadmin list aliases").unexpectedArgument();
+            System.out.println(cmdLine);
+            cmdLine.setCommandName("nadmin list aliases");
+            List<String> toList=new ArrayList<>();
+            while (cmdLine.hasNext()) {
+                if (!cmdLine.peek().isOption()) {
+                    NutsArgument a = cmdLine.next();
+                    toList.add(a.toString());
+                } else {
+                    cmdLine.unexpectedArgument();
+                }
+            }
             if (cmdLine.isExecMode()) {
                 List<NutsWorkspaceCommandAlias> r = context.getWorkspace().config().findCommandAliases()
-                        .stream().sorted((x, y) -> x.getName().compareTo(y.getName()))
+                        .stream()
+                        .filter(new Predicate<NutsWorkspaceCommandAlias>() {
+                            @Override
+                            public boolean test(NutsWorkspaceCommandAlias nutsWorkspaceCommandAlias) {
+                                if(toList.isEmpty()){
+                                    return true;
+                                }
+                                for (String s : toList) {
+                                    if(s.contains("*")){
+                                        if(Pattern.compile(s.replace("*",".*")).matcher(nutsWorkspaceCommandAlias.getName()).matches()){
+                                            return true;
+                                        }
+                                    }else{
+                                        if(s.equals(nutsWorkspaceCommandAlias.getName())){
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;
+                            }
+                        })
+                        .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (context.session().isPlainOut()) {
                     context.getWorkspace().props()
