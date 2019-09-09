@@ -75,7 +75,6 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list aliases") != null) {
-            System.out.println(cmdLine);
             cmdLine.setCommandName("nadmin list aliases");
             List<String> toList=new ArrayList<>();
             while (cmdLine.hasNext()) {
