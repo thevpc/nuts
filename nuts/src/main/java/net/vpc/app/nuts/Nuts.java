@@ -62,7 +62,7 @@ public final class Nuts {
                     try {
                         version = PrivateNutsUtils.loadURLProperties(
                                 Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
-                                null, false).getProperty("project.version", "0.0.0");
+                                null, false,new PrivateNutsLog()).getProperty("project.version", "0.0.0");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         version = "0.0.0";

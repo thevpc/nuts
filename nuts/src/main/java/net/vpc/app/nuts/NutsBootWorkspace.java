@@ -63,7 +63,6 @@ import java.util.zip.ZipFile;
  */
 public final class NutsBootWorkspace {
 
-    //    public static final Logger LOG = Logger.getLogger(NutsBootWorkspace.class.getName());
     private final long creationTime = System.currentTimeMillis();
     private NutsDefaultWorkspaceOptions options;
     private Supplier<ClassLoader> contextClassLoaderSupplier;
@@ -161,7 +160,7 @@ public final class NutsBootWorkspace {
         ));
         File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
-                workspaceInformation.getCacheBoot()
+                workspaceInformation.getCacheBoot(),LOG
         );
         if (file == null) {
             errors.append("Unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
@@ -350,7 +349,7 @@ public final class NutsBootWorkspace {
             //after eventual clean up
             if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                     || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
-                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null);
+                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null,LOG);
                 if (s == null) {
                     throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
                 }
@@ -397,9 +396,9 @@ public final class NutsBootWorkspace {
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
                     String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
-                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."));
+                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."),LOG);
                     if (runtimeId != null) {
-                        LOG.log(Level.FINEST, "[SUCCESS] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
+                        //LOG.log(Level.FINEST, "[SUCCESS] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
                         LOG.log(Level.FINEST, "[ERROR  ] Unable to resolve latest runtime-id (is connection ok?)", new Object[0]);
                     }
@@ -437,7 +436,7 @@ public final class NutsBootWorkspace {
                             cacheLoaded = true;
                         }
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()));
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()),LOG);
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
                                 extraBootRepositories = String.join(";", depsAndRepos.repos);
@@ -496,7 +495,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid);
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid,LOG);
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
@@ -751,7 +750,7 @@ public final class NutsBootWorkspace {
             }
             urlPath += path;
             try {
-                PrivateNutsUtils.copy(new URL(urlPath), to);
+                PrivateNutsUtils.copy(new URL(urlPath), to,LOG);
                 LOG.log(Level.CONFIG, "[SUCCESS] Loading  {0}", new Object[]{urlPath});
                 ok = to;
             } catch (IOException ex) {
@@ -794,10 +793,10 @@ public final class NutsBootWorkspace {
                         ext = "jar";
                     }
                     if (to.isFile()) {
-                        PrivateNutsUtils.copy(ff, to);
+                        PrivateNutsUtils.copy(ff, to,LOG);
                         LOG.log(Level.CONFIG, "[RECOV. ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
-                        PrivateNutsUtils.copy(ff, to);
+                        PrivateNutsUtils.copy(ff, to,LOG);
                         LOG.log(Level.CONFIG, "[CACHED ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;

@@ -49,6 +49,9 @@ public class PrivateNutsLog {
     }
 
     public boolean isLoggable(Level lvl) {
+        if(options==null){
+            return false;
+        }
         if (/*options.isDebug() && */options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue()) {
             return true;
         }
