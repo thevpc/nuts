@@ -669,7 +669,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
                         if (nutsId.getArtifactId().equals("nuts")) {
-                            if (nutsId.getVersion().isBlank() || nutsId.getVersion().ge("0.5")) {
+                            if (nutsId.getVersion().isBlank() || nutsId.getVersion().compareTo("0.5")>=0) {
                                 nutsId2.add(nutsId.builder().setGroupId("net.vpc.app.nuts").build());
                             } else {
                                 //older versions
