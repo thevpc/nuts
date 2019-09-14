@@ -54,7 +54,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 if (version.compareTo("4.1.32") < 0) {
                     prefix = "jakarta-tomcat-";
                 }
-                if (version.eq("4.1.27")) {
+                if (version.compareTo("4.1.27")==0){
                     bin = "binaries";
                 }
                 boolean checkBin=false;
@@ -98,7 +98,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         if (version.compareTo("4.1.32") < 0) {
             prefix = "jakarta-tomcat-";
         }
-        if (version.eq("4.1.27")) {
+        if (version.compareTo("4.1.27")==0) {
             bin = "binaries";
         }
         return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0) + "/v" + version + "/" + bin + "/" + prefix + version + extension;
