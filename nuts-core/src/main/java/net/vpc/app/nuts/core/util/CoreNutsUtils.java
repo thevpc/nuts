@@ -32,7 +32,6 @@ package net.vpc.app.nuts.core.util;
 import java.io.File;
 import java.io.IOException;
 
-import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -578,15 +577,14 @@ public class CoreNutsUtils {
         }else{
             extraMsg=" : "+extraMsg;
         }
-        String timeMessage = "";
-        if (startTime != 0) {
-            long time = System.currentTimeMillis() - startTime;
-            if (time > 0) {
-                timeMessage = " (" + time + "ms)";
-            }
-        }
-        String fetchString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
-        log.log(lvl, tracePhase.name(), "[{0}] {1} {2} {3}{4}{5}", new Object[]{fetchString, CoreStringUtils.alignLeft(name, 20), CoreStringUtils.alignLeft(title, 18), id == null ? "" : id.toString(), timeMessage,extraMsg});
+        long time = (startTime != 0)?(System.currentTimeMillis() - startTime):0;
+        String modeString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
+        log.withLevel(lvl).withVerb(tracePhase.name()).withTime(time).formatted()
+                .log("[{0}] {1} {2}"+(id == null ? "" : (" "+(session.getWorkspace().id().set(id).format())))+" {3}",
+                modeString,
+                CoreStringUtils.alignLeft(name, 20),
+                CoreStringUtils.alignLeft(title, 18),
+                extraMsg);
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
@@ -862,7 +860,24 @@ public class CoreNutsUtils {
                 : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
-    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Exception ex){
+
+    public static boolean isUnsupportedFetchModeException(Throwable ex){
+        String msg=null;
+        if(ex instanceof NutsFetchModeNotSupportedException) {
+            return true;
+        }
+        if(ex instanceof NutsNotFoundException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof NutsFetchModeNotSupportedException) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Throwable ex){
         String msg=null;
         if(ex instanceof NutsNotFoundException) {
             if (ex.getCause() != null) {

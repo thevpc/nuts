@@ -71,7 +71,9 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
                 CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime,null);
             result = f;
         } catch (RuntimeException ex) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch component", startTime,CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+            if(!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+            }
             throw ex;
         }
         return this;

@@ -45,7 +45,6 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFetchDescriptorRepositoryCommand {
@@ -104,10 +103,12 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             if (d == null) {
                 throw new NutsNotFoundException(ws, id.getLongNameId());
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime,null);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
-            CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch descriptor", startTime,CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+            if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch descriptor", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+            }
             throw ex;
         }
         return this;

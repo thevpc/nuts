@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import java.lang.reflect.Modifier;
@@ -59,7 +60,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     public DefaultNutsWorkspaceFactory(NutsWorkspace ws) {
         this.workspace = ws;
-        LOG=ws.log().of(DefaultNutsWorkspaceFactory.class);
+        LOG= ((DefaultNutsWorkspace)ws).LOG;
     }
 
     @Override

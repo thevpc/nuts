@@ -227,17 +227,11 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().id(), 7) + "] ";
-            if (time > 0) {
-                LOG.log(Level.FINEST,NutsLogVerb.SUCCESS, "{0}{1} Parse pom    {2} (time {3})", new Object[]{fetchString
-                        , CoreStringUtils.alignLeft(session.getRepository().config().name(), 20)
-                        ,urlDesc, CoreCommonUtils.formatPeriodMilli(time)
-                        });
-            } else {
-                LOG.log(Level.FINEST,NutsLogVerb.SUCCESS, "{0}{1} Parse pom    {2}", new Object[]{fetchString
-                        , CoreStringUtils.alignLeft(session.getRepository().config().name(), 20)
-                        ,urlDesc
-                });
-            }
+            LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.SUCCESS).withTime(time).formatted()
+                    .log("{0}{1} Parse pom    {2}", fetchString
+                            , CoreStringUtils.alignLeft(session.getRepository().config().name(), 20)
+                            ,urlDesc
+                    );
 
             return new DefaultNutsDescriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
@@ -254,11 +248,8 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            if (time > 0) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
-            } else {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Caching pom file {0}", new Object[]{urlDesc});
-            }
+            LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.FAIL).withTime(time).formatted()
+                    .log("Caching pom file {0}", urlDesc);
             throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
         }
     }

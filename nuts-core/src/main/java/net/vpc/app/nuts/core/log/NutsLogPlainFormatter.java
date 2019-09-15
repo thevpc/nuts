@@ -3,6 +3,7 @@ package net.vpc.app.nuts.core.log;
 
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -50,6 +51,9 @@ public class NutsLogPlainFormatter extends Formatter {
                 sb.append(wRecord.getWorkspace().io().terminalFormat().filterText(msgStr));
             }else{
                 sb.append(msgStr);
+            }
+            if(wRecord.getTime()>0){
+                sb.append(" (").append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime())).append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();

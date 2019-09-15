@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.fprint.AnsiPrintStreamSupport;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
@@ -24,7 +25,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void install(NutsWorkspace workspace) {
-        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
+        LOG= ((DefaultNutsWorkspace)workspace).LOG;
+//        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
         NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
         if (terminalMode == null) {
             terminalMode = NutsTerminalMode.FORMATTED;
@@ -64,7 +66,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Changing terminal Out mode : {0}", mode.id());
+            LOG.withLevel(Level.CONFIG).withVerb( NutsLogVerb.UPDATE).formatted().log("Changing terminal Out mode : ##{0}##", mode.id());
         }
         FPrint.installStdOut(convertMode(this.outMode = mode));
         return this;
@@ -76,7 +78,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Changing terminal Err mode : {0}", mode.id());
+            LOG.withLevel(Level.CONFIG).withVerb( NutsLogVerb.UPDATE).formatted().log("Changing terminal Err mode : ##{0}##", mode.id());
         }
         FPrint.installStdErr(convertMode(this.errMode = mode));
         return this;

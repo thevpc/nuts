@@ -210,7 +210,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             PrintStream out = CoreIOUtils.resolveOut(getValidSession());
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
-                out.printf("All components are [[up-to-date]]. You are running latest version.%n");
+                out.printf("All components are [[up-to-date]]. You are running latest version%s.%n",result.getAllResults().length>1?"s":"");
             } else {
                 out.printf("Workspace has ##%s## component%s to update.%n", updates.length, (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;

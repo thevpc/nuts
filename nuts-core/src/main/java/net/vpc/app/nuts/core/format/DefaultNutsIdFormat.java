@@ -223,9 +223,10 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         if (!isOmitGroup()) {
             if (!CoreStringUtils.isBlank(id.getGroupId())) {
+                boolean importedGroup2 = "net.vpc.app.nuts".equals(id.getGroupId());
                 boolean importedGroup = ws.config().getImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroup())) {
-                    if (importedGroup) {
+                    if (importedGroup || importedGroup2) {
                         sb.append("<<");
                         sb.append(tf.escapeText(id.getGroupId()));
                         sb.append(">>");

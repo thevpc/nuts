@@ -3,6 +3,7 @@ package net.vpc.app.nuts.core.log;
 
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.time.Instant;
@@ -66,9 +67,11 @@ public class NutsLogRichFormatter extends Formatter {
                     break;
                 }
                 case 400: {//Level.FINER
-                    sb.append("[[");
+//                    sb.append("[[");
+                    sb.append("<<");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("]]");
+                    sb.append(">>");
+//                    sb.append("]]");
                     break;
                 }
                 case 300: {//Level.FINEST
@@ -147,6 +150,9 @@ public class NutsLogRichFormatter extends Formatter {
                 sb.append(msgStr);
             }else{
                 sb.append(tf.escapeText(msgStr));
+            }
+            if(wRecord.getTime()>0){
+                sb.append(" (@@").append(tf.escapeText(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()))).append("@@)");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();

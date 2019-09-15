@@ -107,7 +107,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return null;
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         boolean transitive = session.isTransitive();
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
@@ -126,6 +126,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     @Override
     public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+        }
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
@@ -145,6 +148,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     @Override
     public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            return null;
+        }
 
         boolean transitive = session.isTransitive();
         InputStream ret = null;
@@ -178,6 +184,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+        }
         boolean transitive = session.isTransitive();
         boolean temp = false;
         if (localPath == null) {

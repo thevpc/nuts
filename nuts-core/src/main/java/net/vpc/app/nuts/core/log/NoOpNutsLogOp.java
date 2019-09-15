@@ -37,4 +37,9 @@ public class NoOpNutsLogOp implements NutsLogOp {
     public NutsLogOp formatted() {
         return this;
     }
+
+    @Override
+    public NutsLogOp withTime(long time) {
+        return this;
+    }
 }

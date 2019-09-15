@@ -206,9 +206,15 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             return c;
         }
         if(impl2Ex!=null){
+            if(impl2Ex instanceof NutsNotFoundException){
+                throw impl2Ex;
+            }
             throw new NutsNotFoundException(getWorkspace(), id,impl2Ex);
         }
         if(mirrorsEx!=null){
+            if(mirrorsEx instanceof NutsNotFoundException){
+                throw mirrorsEx;
+            }
             throw new NutsNotFoundException(getWorkspace(), id,mirrorsEx);
         }
         throw new NutsNotFoundException(getWorkspace(), id);
@@ -284,10 +290,10 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
-            } catch (NutsNotFoundException ex) {
+            } catch (NutsNotFoundException|NutsFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Search lateset versions error : " + ex.toString(), ex);
+                LOG.log(Level.SEVERE, "Search latest versions error : " + ex.toString(), ex);
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, session);

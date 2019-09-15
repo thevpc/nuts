@@ -37,6 +37,7 @@ import net.vpc.app.nuts.core.io.DefaultNutsIOManager;
 import net.vpc.app.nuts.core.log.DefaultNutsLogManager;
 import net.vpc.app.nuts.NutsLogManager;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.log.DefaultNutsLogger;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.security.DefaultNutsWorkspaceSecurityManager;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
@@ -69,28 +70,44 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     private DefaultNutsInstalledRepository installedRepository;
     private NutsLogManager logCmd;
 
+    private static String escapeText0(String s){
+        StringBuffer sb=new StringBuffer(s.length());
+        for (char c : s.toCharArray()) {
+            switch (c){
+                case '\\':
+                case '_':{
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default:{
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     public DefaultNutsWorkspace(NutsWorkspaceInitInformation info) {
         logCmd=new DefaultNutsLogManager(this,info);
         LOG=logCmd.of(DefaultNutsWorkspace.class);
+        ((DefaultNutsLogger)LOG).suspendTerminal();
         installedRepository = new DefaultNutsInstalledRepository(this);
         ioManager = new DefaultNutsIOManager(this);
         configManager = new DefaultNutsWorkspaceConfigManager(this,info);
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ===============================================================================");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, "     _   __      __                                            ");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, "    / | / /_  __/ /______    Network Updatable Things Services");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, "   /  |/ / / / / __/ ___/    The Open Source Package Manager for Java (TM)");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, "  / /|  / /_/ / /_(__  )     and other Things ... by vpc");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " /_/ |_/\\__,_/\\__/____/      http://github.com/thevpc/nuts");
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log("=="+escapeText0("     _   __      __         ")+"==                                   ");
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log("=="+escapeText0("    / | / /_  __/ /______   ")+"== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log("=="+escapeText0("   /  |/ / / / / __/ ___/   ")+"== <<The Open Source Package Manager for __Java__ (TM)>>");
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log("=="+escapeText0("  / /|  / /_/ / /_(__  )    ")+"== <<and other Things>> ... by ==vpc==");
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log("=="+escapeText0(" /_/ |_/\\__,_/\\__/____/   ")+"==   __http://github.com/thevpc/nuts__");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " Start Nuts {0} at {1}", new Object[]{Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime()))});
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Using Location : {0}", info.getWorkspaceLocation());
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Nuts Workspace : {0}", info.getOptions().format().getBootCommandLine());
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Nuts Workspace (compact) : {0}", info.getOptions().format().compact().getBootCommandLine());
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.START).formatted().log(" Start Nuts =={0}== at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.READ).formatted().log(" Open Nuts Workspace               : {0}", info.getOptions().format().getBootCommandLine());
+            LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.READ).formatted().log(" Open Nuts Workspace (compact)     : {0}", info.getOptions().format().compact().getBootCommandLine());
 
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Workspace with command line  : {0}", info.getOptions().format().getBootCommandLine());
             LOG.log(Level.CONFIG, NutsLogVerb.READ, " Open Workspace with config        : ");
             LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
             LOG.log(Level.CONFIG, NutsLogVerb.READ, "    nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
@@ -198,6 +215,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         io().setSystemTerminal(termb);
         io().setTerminal(io().createTerminal());
         NutsSession session = createSession();
+        ((DefaultNutsLogger)LOG).resumeTerminal();
 
         for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
             DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
@@ -308,9 +326,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 this.security().login(uoptions.getUserName(), password);
             }
-            LOG.log(Level.FINE,NutsLogVerb.SUCCESS, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
+            LOG.withLevel(Level.FINE).withVerb(NutsLogVerb.SUCCESS)
+                    .formatted().log("==Nuts== Workspace loaded in @@{0}@@",
+                    CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
+            );
+
             if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
-                session.out().printf("**Nuts** Workspace loaded in [[%s]]%n",
+                session.out().printf("==Nuts== Workspace loaded in [[%s]]%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
             }
@@ -551,7 +573,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "Resolve Effective {0}", new Object[]{descriptor.getId()});
+        LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.START).formatted()
+                .log("Resolve effective "+ id().set(descriptor.getId()).format());
         session = NutsWorkspaceUtils.of(this).validateSession( session);
         NutsId[] parents = descriptor.getParents();
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];

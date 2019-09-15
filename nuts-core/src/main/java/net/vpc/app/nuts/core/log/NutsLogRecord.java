@@ -11,21 +11,21 @@ public class NutsLogRecord extends LogRecord {
     private NutsSession session;
     private String verb;
     private boolean formatted;
+    private long time;
 
-    public NutsLogRecord(NutsWorkspace ws,NutsSession session,Level level, String verb,String msg,Object[] objects,boolean formatted) {
+    public NutsLogRecord(NutsWorkspace ws,NutsSession session,Level level, String verb,String msg,Object[] objects,boolean formatted,long time) {
         super(level, msg);
         this.verb=verb;
         this.workspace=ws;
         this.session=session;
         this.formatted=formatted;
+        this.time=time;
         setParameters(objects);
     }
 
-//    public NutsLogRecord(NutsWorkspace ws,Level level, String verb, String msg) {
-//        super(level, msg);
-//        this.verb=verb;
-//        this.workspace=ws;
-//    }
+    public long getTime() {
+        return time;
+    }
 
     public boolean isFormatted() {
         return formatted;

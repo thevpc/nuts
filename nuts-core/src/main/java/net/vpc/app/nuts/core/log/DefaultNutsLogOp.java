@@ -12,6 +12,7 @@ public class DefaultNutsLogOp implements NutsLogOp {
     private Level level;
     private String verb;
     private String msg;
+    private long time;
     private boolean formatted;
     private Supplier<String> msgSupplier;
     private Throwable error;
@@ -59,6 +60,12 @@ public class DefaultNutsLogOp implements NutsLogOp {
         run();
     }
 
+    @Override
+    public NutsLogOp withTime(long time) {
+        this.time=time;
+        return this;
+    }
+
     private void run(){
         String m=msg;
         if(msgSupplier!=null){
@@ -70,7 +77,7 @@ public class DefaultNutsLogOp implements NutsLogOp {
                 level,
                 verb,
                 m,
-                params,formatted
+                params,formatted,time
         );
         if(error!=null){
             record.setThrown(error);

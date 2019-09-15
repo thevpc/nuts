@@ -113,7 +113,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         return helper.fetchDescriptorImpl(id, session);
     }
@@ -121,7 +121,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         Path f = getIdFile(id);
         if(f==null){

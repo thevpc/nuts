@@ -309,9 +309,9 @@ public class NutsWorkspaceUtils {
             this.u = u;
         }
 
-        public void fireOnInstall( NutsInstallEvent event) {
+        public void fireOnInstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Installed {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.UPDATE).log("Installed ##{0}##", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onInstall(event);
@@ -323,9 +323,15 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUpdate(NutsUpdateEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Updated {0} (old is {1})", new Object[]{
-                        event.getOldValue()==null?null:event.getOldValue().getId(),
-                        event.getNewValue().getId()});
+                if (event.getOldValue() == null) {
+                    u.LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.UPDATE).formatted()
+                            .log("Updated ##{0}##", event.getNewValue().getId());
+                } else {
+                    u.LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.UPDATE).formatted()
+                            .log("Updated ##{0}## (old is @@{1}@@)",
+                                    event.getOldValue().getId(),
+                                    event.getNewValue().getId());
+                }
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onUpdate(event);
@@ -337,7 +343,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Uninstalled {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.UPDATE).formatted()
+                        .log("Uninstalled ##{0}##", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onUninstall(event);
@@ -349,7 +356,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.CONFIG)) {
-                u.LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Added Repo {0}", new Object[]{event.getRepository().config().name()});
+                u.LOG.withLevel(Level.CONFIG).withVerb(NutsLogVerb.UPDATE).formatted()
+                        .log("Added Repo ##{0}##", event.getRepository().config().name());
             }
 
             for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
@@ -362,7 +370,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Removed Repo {0}", new Object[]{event.getRepository().config().name()});
+                u.LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.UPDATE).formatted()
+                        .log("Removed Repo ##{0}##", event.getRepository().config().name());
             }
             for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
@@ -375,17 +384,21 @@ public class NutsWorkspaceUtils {
     }
 
     public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
-        if(LOG.isLoggable(Level.FINEST)) {
+        if (LOG.isLoggable(Level.FINEST)) {
             String timeMessage = "";
             if (startTime != 0) {
                 long time = System.currentTimeMillis() - startTime;
                 if (time > 0) {
-                    timeMessage = " (" + time + "ms)";
+                    timeMessage = " @@(" + time + "ms)@@";
                 }
             }
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.log(Level.FINEST, tracePhase.toString(), fetchString
-                    + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
+            LOG.withLevel(Level.FINEST)
+                    .withVerb(tracePhase.toString()).formatted()
+                    .log("{0}{1} " + (ws.id().set(id).format()) + "{2}",
+                            fetchString,
+                            CoreStringUtils.alignLeft(message, 18)
+                            , timeMessage);
         }
     }
 
@@ -415,7 +428,7 @@ public class NutsWorkspaceUtils {
         }
 
         if (LOG.isLoggable(Level.FINE)) {
-            LOG.withLevel(Level.FINE).withVerb(NutsLogVerb.START).formatted().log("[exec] "+ pb.getFormattedCommandString(ws));
+            LOG.withLevel(Level.FINE).withVerb(NutsLogVerb.START).formatted().log("[exec] " + pb.getFormattedCommandString(ws));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
@@ -485,7 +498,7 @@ public class NutsWorkspaceUtils {
                         return defaultJavaCommand;
                     }
                     return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false);
-                }else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
+                } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(4);
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;

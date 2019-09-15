@@ -8,6 +8,7 @@ public interface NutsLogOp {
     NutsLogOp formatted();
     NutsLogOp withVerb(String verb);
     NutsLogOp withError(Throwable throwable);
+    NutsLogOp withTime(long time);
     void log(String msg, Object... params);
     void log(Supplier<String> msgSupplier);
 }

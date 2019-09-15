@@ -122,6 +122,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+        }
         try (InputStream stream = getDescStream(id, session)) {
             return getWorkspace().descriptor().parse(stream);
         } catch (IOException ex) {
@@ -230,7 +233,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     @Override
     public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            return null;
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         if (id.getVersion().isSingleValue()) {
             String groupId = id.getGroupId();
@@ -302,6 +305,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localFile, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+        }
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
             getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safeCopy().monitorable().run();
@@ -323,6 +329,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+        }
         Iterator<NutsId> allVersions = searchVersionsImpl2(id, filter, session);
         NutsId a = null;
         while (allVersions != null && allVersions.hasNext()) {

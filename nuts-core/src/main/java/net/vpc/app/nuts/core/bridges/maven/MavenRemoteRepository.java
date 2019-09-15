@@ -34,7 +34,7 @@ import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
-import net.vpc.app.nuts.core.util.common.TraceResult;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -128,7 +128,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         return helper.fetchDescriptorImpl(id, session);
     }
@@ -434,7 +434,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         if (wrapper == null) {
             wrapper = getWrapper();
