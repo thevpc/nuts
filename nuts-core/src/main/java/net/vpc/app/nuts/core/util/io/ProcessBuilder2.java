@@ -680,7 +680,7 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        sb.append("pwd=@@").append(enforceDoubleQuote(ff.getPath(), ws)).append("@@");
+        sb.append("cwd=@@").append(enforceDoubleQuote(ff.getPath(), ws)).append("@@");
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
