@@ -171,7 +171,7 @@ public class CoreNutsUtils {
                             new String[]{"-jar"}
                     ))
                     .setLocations(new NutsIdLocation[]{
-                new DefaultNutsIdLocation("http://server/somelink",null)
+                new DefaultNutsIdLocation("http://server/somelink",null,null)
             })
                     .setDependencies(
                             new NutsDependency[]{
