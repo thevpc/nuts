@@ -215,6 +215,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             FilesFoldersApi.Item[] all = FilesFoldersApi.getFilesAndFolders(false,true,artifactUrl, session.getSession());
             List<NutsId> n = new ArrayList<>();
             for (FilesFoldersApi.Item s : all) {
+                if(s.isFolder() && s.getName().equals("LATEST")){
+                    continue;
+                }
                 String versionFilesUrl = artifactUrl + "/" + s.getName();
                 FilesFoldersApi.Item[] versionFiles = FilesFoldersApi.getFilesAndFolders(true,false,versionFilesUrl, session.getSession());
                 boolean validVersion = false;

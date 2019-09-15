@@ -45,6 +45,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             fileContent = new String(Files.readAllBytes(filePath));
         }
         if (force || !content.trim().equals(fileContent.trim())) {
+            Files.createDirectories(filePath.getParent());
             Files.write(filePath, content.getBytes());
             return true;
         }
@@ -85,6 +86,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             updatedBashrc = true;
         }
         if (force || updatedBashrc) {
+            Files.createDirectories(filePath.getParent());
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
         return updatedBashrc;
@@ -114,6 +116,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             updatedBashrc = true;
         }
         if (force || updatedBashrc) {
+            Files.createDirectories(filePath.getParent());
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
         return updatedBashrc;

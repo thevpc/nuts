@@ -437,7 +437,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setSorted(boolean sort);
 
     /**
-     * latest version only
+     * search must return only latest versions for each artifact id
      *
      * @return {@code this} instance
      */
@@ -582,6 +582,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     boolean isMain();
 
+    /**
+     * true if search must return only latest versions for each artifact id
+     * @return true if search must return only latest versions for each artifact id
+     */
     boolean isLatest();
 
     NutsFetchCommand toFetch();
