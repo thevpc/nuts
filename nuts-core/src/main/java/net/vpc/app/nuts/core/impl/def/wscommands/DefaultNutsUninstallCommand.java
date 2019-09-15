@@ -80,7 +80,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            if(def.isExtension()){
+            if(def.getType()==NutsIdType.EXTENSION){
                 NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
                 NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getStoredConfigBoot().getExtensions())
                         .save();

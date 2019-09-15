@@ -40,8 +40,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     @Override
     public NutsDefinition getResultDefinition() {
         try {
-            NutsDefinition def = fetchDefinition(getId(), this,true,true);
-            return def;
+            return fetchDefinition(getId(), this,true,true);
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -171,9 +170,6 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
         }
-//        if (LOG.isLoggable(Level.FINEST)) {
-//            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.START, "Fetch definition", 0);
-//        }
         for (NutsFetchMode mode : nutsFetchModes) {
             try {
                 result = fetchDescriptorAsDefinition(id, options, mode);
@@ -369,19 +365,11 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                     break;
                                 }
                             } catch (NutsNotFoundException ex) {
-//                                if (mode.ordinal() < modeForSuccessfulDescRetrieval.ordinal()) {
-//                                    //ignore because actually there is more chance to find it in later modes!
-//                                } else {
-//                                    escalateMode = true;
-//                                }
+                                //
                             }
                         }
                         if (!contentSuccessful && includedRemote) {
-//                            foundDefinition.setMissingContent(true);
                             NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch Component", startTime);
-//                            foundDefinition = null;
-//                        } else if (escalateMode) {
-//                            CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
                         }
                     }
                     if (foundDefinition != null && includeInstallInfo) {
@@ -403,20 +391,6 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             throw ex;
         }
         if (foundDefinition != null) {
-//            if (LOG.isLoggable(Level.FINEST)) {
-//                CoreNutsUtils.traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.SUCCESS, "Fetch definition", startTime);
-//            }
-//            if (isInlineDependencies()) {
-//                Set<NutsDependencyScope> s = getScope();
-//                if (s == null || s.isEmpty()) {
-//                    s = NutsDependencyScopePattern.RUN.expand();
-//                }
-//                ws.search().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
-//                        .addScopes(s.toArray(new NutsDependencyScope[0]))
-//                        .setOptional(getOptional())
-//                        .main(false).inlineDependencies().getResultDefinitions();
-//
-//            }
             if (getValidSession().isTrace()) {
                 NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getValidSession())
                         .session(getValidSession());
@@ -568,15 +542,12 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     }
                     NutsId newId = newIdBuilder.build();
 
-                    boolean api = false;
-                    boolean runtime = false;
-                    boolean extension = false;
-                    boolean companion = false;
+                    NutsIdType idType = NutsIdType.REGULAR;
                     NutsId apiId0 = null;
                     NutsId apiId = null;
 
                     if (getId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
-                        api = true;
+                        idType = NutsIdType.API;
                     } else {
                         apiId = null;
                         for (NutsDependency dependency : descriptor.getDependencies()) {
@@ -588,19 +559,20 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                         if (apiId0 != null) {
                             if (getId().getShortName().equals(NutsConstants.Ids.NUTS_RUNTIME)) {
-                                runtime = true;
+                                idType = NutsIdType.RUNTIME;
                                 apiId = apiId0;
                             } else {
-                                runtime = CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-runtime"), false);
-                                if (!runtime) {
-                                    extension = CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-extension"), false);
+                                if(CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-runtime"), false)){
+                                    idType = NutsIdType.RUNTIME;
+                                }else if(CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-extension"), false)){
+                                    idType = NutsIdType.EXTENSION;
                                     apiId = apiId0;
                                 }
                             }
-                            if (!runtime && !extension) {
+                            if (idType==NutsIdType.REGULAR) {
                                 for (String companionTool : NutsWorkspaceExt.of(ws).getCompanionIds()) {
                                     if (companionTool.equals(getId().getShortName())) {
-                                        companion = true;
+                                        idType=NutsIdType.COMPANION;
                                         apiId = apiId0;
                                     }
                                 }
@@ -615,7 +587,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             descriptor,
                             null,
                             null,
-                            api, runtime, extension, companion, apiId
+                            idType, apiId
                     );
                 }
             } catch (NutsNotFoundException exc) {

@@ -22,6 +22,7 @@ import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
@@ -100,17 +101,19 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
             Path tempFolder = ws.io().createTempFolder("exec-path-");
+            NutsId _id = c.descriptor.getId();
+            NutsIdType idType=NutsWorkspaceExt.of(ws).resolveNutsIdType(_id);
             NutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
-                    c.descriptor.getId(),
+                    _id,
                     c.descriptor,
                     new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
                     new DefaultNutsInstallInfo(false,false,
                             tempFolder
                             ,null,ws.security().getCurrentUsername()
                             ),
-                    false,false,false,false,null
+                    idType, null
             );
             try {
                 execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType, dry);

@@ -8,6 +8,7 @@ import java.util.Objects;
 public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     private String url;
     private String classifier;
+    private String region;
 
     public DefaultNutsIdLocationBuilder() {
     }
@@ -36,6 +37,17 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     @Override
     public DefaultNutsIdLocationBuilder setClassifier(String classifier) {
         this.classifier = classifier;
+        return this;
+    }
+
+    @Override
+    public String getRegion() {
+        return region;
+    }
+
+    @Override
+    public DefaultNutsIdLocationBuilder setRegion(String region) {
+        this.region = region;
         return this;
     }
 
@@ -79,8 +91,13 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     }
 
     @Override
+    public NutsIdLocationBuilder region(String value) {
+        return setRegion(value);
+    }
+
+    @Override
     public NutsIdLocation build() {
-        return new DefaultNutsIdLocation(url, classifier);
+        return new DefaultNutsIdLocation(url, classifier,region);
     }
 
     @Override
@@ -89,11 +106,13 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsIdLocationBuilder that = (DefaultNutsIdLocationBuilder) o;
         return Objects.equals(url, that.url) &&
-                Objects.equals(classifier, that.classifier);
+                Objects.equals(classifier, that.classifier)&&
+                Objects.equals(region, that.region)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, classifier);
+        return Objects.hash(url, classifier,region);
     }
 }

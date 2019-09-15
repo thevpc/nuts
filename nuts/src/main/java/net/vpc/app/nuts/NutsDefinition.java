@@ -47,42 +47,10 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsId getId();
 
     /**
-     * true if this definition denoted a nuts api id artifact.
-     * an artifact is a valid nuts api if it corresponds to {@link NutsConstants.Ids#NUTS_API}
-     *
-     * @return true if this definition denoted a nuts api id artifact.
+     * return artifact type
+     * @return return artifact type
      */
-    boolean isApi();
-
-    /**
-     * true if this definition denoted a nuts runtime id artifact.
-     * a artifact is nuts runtime if it contains a property "nuts-runtime" equal to true.
-     * Default Nuts runtime id is {@link NutsConstants.Ids#NUTS_RUNTIME}
-     *
-     * @return true if this definition denoted a nuts runtime id artifact.
-     */
-    boolean isRuntime();
-
-    /**
-     * true if this definition denoted a nuts extension id artifact.
-     * an artifact is a valid nuts extension if it contains a property "nuts-extension" equal to true.
-     *
-     * @return true if this definition denoted a nuts extension id artifact.
-     */
-    boolean isExtension();
-
-    /**
-     * true if this definition denoted a nuts companion id artifact.
-     * Default companions are
-     * <ul>
-     *     <li>net.vpc.app.nuts.toolbox:nsh</li>
-     *     <li>net.vpc.app.nuts.toolbox:nadmin</li>
-     *     <li>net.vpc.app.nuts.toolbox:ndi</li>
-     * </ul>
-     *
-     * @return true if this definition denoted a nuts extension id artifact.
-     */
-    boolean isCompanion();
+    NutsIdType getType();
 
     /**
      * return artifact descriptor
@@ -180,13 +148,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      */
     String getRepositoryName();
 
-
-    /**
-     * true if requested content
-     *
-     * @return true if requested content
-     */
-    boolean isSetContent();
 
     /**
      * true if requested content

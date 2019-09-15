@@ -5,17 +5,7 @@
  */
 package net.vpc.app.nuts.core.spi;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutionType;
-import net.vpc.app.nuts.NutsFetchCommand;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsInstallEvent;
-import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceEvent;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsInstalledRepository;
 
 /**
@@ -46,6 +36,8 @@ public interface NutsWorkspaceExt {
      * @return installed version
      */
     String[] getInstalledVersions(NutsId id, NutsSession session);
+
+    NutsIdType resolveNutsIdType(NutsId id);
 
     String[] getCompanionIds();
 

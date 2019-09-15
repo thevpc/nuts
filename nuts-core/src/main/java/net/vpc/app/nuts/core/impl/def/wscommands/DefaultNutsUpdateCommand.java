@@ -351,45 +351,52 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
-        NutsWorkspaceConfigApi aconfig = null;
-        NutsWorkspaceConfigRuntime rconfig = null;
-        if (apiUpdate!=null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
-            aconfig = wcfg.getStoredConfigApi();
-            aconfig.setApiVersion(apiUpdate.getAvailable().getId().getVersion().toString());
-//            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), apiUpdate.getAvailable().getId(), false);
+//        NutsWorkspaceConfigApi aconfig = null;
+//        NutsWorkspaceConfigRuntime rconfig = null;
+//        if (apiUpdate != null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
+//            aconfig = wcfg.getStoredConfigApi(apiUpdate.getAvailable().getId().getVersion().toString());
+////            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), apiUpdate.getAvailable().getId(), false);
+//            ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
+//            traceSingleUpdate(apiUpdate);
+//            requireSave = true;
+//        }
+//        if (runtimeUpdate != null && runtimeUpdate.isUpdateAvailable() && !runtimeUpdate.isUpdateApplied()) {
+////            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), runtimeUpdate.getAvailable().getId(), true);
+//            if (aconfig == null) {
+//                aconfig = wcfg.getStoredConfigApi(runtimeUpdate.getAvailable().getApiId().getVersion().toString());
+//            }
+//            aconfig.setRuntimeId(runtimeUpdate.getAvailable().getId().getLongName());
+//
+//            rconfig = wcfg.getStoredConfigRuntime();
+//            rconfig.setDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
+//            ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
+//            traceSingleUpdate(runtimeUpdate);
+//            requireSave = true;
+//        }
+        boolean apiUpdateAvailable = apiUpdate != null && apiUpdate.getAvailable() != null && !apiUpdate.isUpdateApplied();
+        boolean runtimeUpdateAvailable = runtimeUpdate != null && runtimeUpdate.getAvailable() != null && !runtimeUpdate.isUpdateApplied();
+        boolean apiUpdateApplicable = apiUpdateAvailable && !apiUpdate.isUpdateApplied();
+        boolean runtimeUpdateApplicable = runtimeUpdateAvailable && !runtimeUpdate.isUpdateApplied();
+        NutsId finalApiId = apiUpdateAvailable ? apiUpdate.getAvailable().getId() : ws.config().getApiId();
+        NutsId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.getAvailable().getId() : ws.config().getRuntimeId();
+        if (apiUpdateApplicable || runtimeUpdateApplicable) {
+            wcfg.prepareBootApi(finalApiId, finalRuntimeId, true);
+        }
+        if (apiUpdateApplicable) {
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
-            requireSave = true;
         }
-        if (runtimeUpdate!=null && runtimeUpdate.isUpdateAvailable() && !runtimeUpdate.isUpdateApplied()) {
-//            NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), runtimeUpdate.getAvailable().getId(), true);
-            aconfig = wcfg.getStoredConfigApi();
-            aconfig.setRuntimeId(runtimeUpdate.getAvailable().getId().getLongName());
-
-            rconfig = wcfg.getStoredConfigRuntime();
-            rconfig.setDependencies(Arrays.stream(runtimeUpdate.getDependencies()).map(NutsId::getLongName).collect(Collectors.joining(";")));
+        if (runtimeUpdateApplicable) {
+            wcfg.prepareBootRuntime(finalRuntimeId, true);
+        }
+        if (runtimeUpdateApplicable) {
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
             traceSingleUpdate(runtimeUpdate);
-            requireSave = true;
         }
-        NutsId finalApiId = (apiUpdate==null || apiUpdate.getAvailable()==null)?ws.config().getApiId():apiUpdate.getAvailable().getId();
-        NutsId finalRuntimeId = (runtimeUpdate==null || runtimeUpdate.getAvailable()==null)?ws.config().getRuntimeId():runtimeUpdate.getAvailable().getId();
-        wcfg.prepareBootApi(finalApiId,finalRuntimeId, true);
-        wcfg.prepareBootRuntime(finalRuntimeId, true);
         for (NutsUpdateResult extension : result.getExtensions()) {
-            NutsId finalExtensionId = extension.getAvailable()==null?extension.getLocal().getId():extension.getAvailable().getId();
+            NutsId finalExtensionId = extension.getAvailable() == null ? extension.getLocal().getId() : extension.getAvailable().getId();
             wcfg.prepareBootExtension(finalExtensionId, true);
         }
-        if (aconfig != null) {
-            wcfg.setConfigApi(aconfig, new NutsUpdateOptions().session(getValidSession()));
-            requireSave = true;
-        }
-        if (rconfig != null) {
-            wcfg.setConfigRuntime(rconfig, new NutsUpdateOptions().session(getValidSession()));
-            requireSave = true;
-        }
-        wcfg.save(false, getValidSession());
-        boolean extensionsChanged = false;
         NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getStoredConfigBoot().getExtensions())
                 .save();
         for (NutsUpdateResult extension : result.getExtensions()) {
@@ -398,7 +405,6 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     h.add(extension.getAvailable().getId());
                     if (h.hasChanged()) {
                         NutsWorkspaceExt.of(ws).deployBoot(getValidSession(), extension.getAvailable().getId(), true);
-                        extensionsChanged = true;
                     }
                 }
                 ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
@@ -413,7 +419,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (LOG.isLoggable(Level.INFO)) {
                 LOG.log(Level.INFO, NutsLogVerb.WARNING, "Workspace is updated. Nuts should be restarted for changes to take effect.");
             }
-            if (apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
+            if (apiUpdate!=null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
                 if (getValidSession().isPlainTrace()) {
                     out.println("Workspace is updated. Nuts should be restarted for changes to take effect.");
                 }

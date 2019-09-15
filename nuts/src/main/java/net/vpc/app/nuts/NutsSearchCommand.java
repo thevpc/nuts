@@ -437,14 +437,24 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setSorted(boolean sort);
 
     /**
-     * latest version only
+     * search must return only latest versions for each artifact id
      *
      * @return {@code this} instance
      */
     NutsSearchCommand latest();
 
+    /**
+     * if true search must return only latest versions for each artifact id
+     * @param enable enable latest artifact id filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand latest(boolean enable);
 
+    /**
+     * if true search must return only latest versions for each artifact id
+     * @param enable enable latest artifact id filter
+     * @return {@code this} instance
+     */
     NutsSearchCommand setLatest(boolean enable);
 
     NutsSearchCommand dependencyFilter(NutsDependencyFilter filter);
@@ -582,6 +592,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     boolean isMain();
 
+    /**
+     * true if search must return only latest versions for each artifact id
+     * @return true if search must return only latest versions for each artifact id
+     */
     boolean isLatest();
 
     NutsFetchCommand toFetch();

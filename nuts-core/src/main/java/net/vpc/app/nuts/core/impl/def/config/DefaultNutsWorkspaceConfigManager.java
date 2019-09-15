@@ -1149,6 +1149,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force) {
+        if (apiId == null) {
+            throw new NutsNotFoundException(ws, apiId);
+        }
         Path apiConfigFile = getStoreLocation(apiId, NutsStoreLocation.CONFIG).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         if (force || !Files.isRegularFile(apiConfigFile)) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -1166,6 +1169,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (runtimeId == null) {
                 throw new NutsNotFoundException(ws, runtimeId);
             }
+            m.put("configVersion", apiId.getVersion().getValue());
+            m.put("apiVersion", apiId.getVersion().getValue());
             m.put("runtimeId", runtimeId.getLongName());
             String javaCommand = getStoredConfigApi().getJavaCommand();
             String javaOptions = getStoredConfigApi().getJavaOptions();
@@ -1193,6 +1198,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (!force && (Files.isRegularFile(configFile) && Files.isRegularFile(jarFile))) {
             return;
         }
+        List<NutsId> deps = new ArrayList<>();
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id", id.getLongName());
+
         NutsDefinition def = ws.fetch().id(id).dependencies()
                 .optional(false)
                 .scope(NutsDependencyScopePattern.RUN)
@@ -1200,9 +1209,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 .failFast(false)
                 .session(ws.createSession().trace(false))
                 .getResultDefinition();
-        List<NutsId> deps = new ArrayList<>();
-        Map<String, Object> m = new LinkedHashMap<>();
-        m.put("id", id.getLongName());
         if (def == null) {
             //selected repositories cannot reach runtime component
             //fallback to default
@@ -1230,6 +1236,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 m.put("bootRepositories", def.getDescriptor().getProperties().get("nuts-runtime-repositories"));
             }
         }
+
         if (force || !Files.isRegularFile(configFile)) {
             ws.json().value(m).print(configFile);
         }
@@ -2141,6 +2148,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     //    @Override
     public NutsWorkspaceConfigApi getStoredConfigApi() {
+        if (storeModelApi.getApiVersion()==null) {
+            storeModelApi.setApiVersion(Nuts.getVersion());
+        }
         return storeModelApi;
     }
 

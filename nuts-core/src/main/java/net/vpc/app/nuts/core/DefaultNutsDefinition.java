@@ -31,13 +31,8 @@ package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
 import java.util.Objects;
-import javax.swing.JOptionPane;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.NutsDependencyScopes;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 /**
  * Created by vpc on 1/6/17.
@@ -54,30 +49,21 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsDependencyTreeNode[] dependencyNodes;
     private NutsDependency[] dependencies;
     private NutsDescriptor effectiveDescriptor;
-    private boolean api = false;
-    private boolean runtime = false;
-    private boolean extension = false;
-    private boolean companion = false;
+    private NutsIdType type;
     private NutsId apiId = null;
 
     public DefaultNutsDefinition() {
     }
 
     public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install,
-                                 boolean api, boolean runtime,
-                                 boolean extension,
-                                 boolean companion,
-                                 NutsId apiId) {
+                                 NutsIdType type, NutsId apiId) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
-        this.api = api;
-        this.runtime = runtime;
-        this.extension = extension;
-        this.companion = companion;
+        this.type = type==null?NutsIdType.REGULAR : type;
         this.apiId = apiId;
     }
 
@@ -88,22 +74,19 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.repositoryUuid = other.getRepositoryUuid();
             this.repositoryName = other.getRepositoryName();
 
-            this.content = !other.isSetContent() ? null : other.getContent();
+            this.content = other.getContent();
             this.installInformation = other.getInstallInformation();
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
             this.dependencyNodes = !other.isSetDependencyNodes() ? null : other.getDependencyNodes();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
+            this.type=other.getType()==null?NutsIdType.REGULAR : other.getType();
             this.apiId=other.getApiId();
-            this.api=other.isApi();
-            this.runtime=other.isRuntime();
-            this.extension=other.isExtension();
-            this.companion=other.isCompanion();
         }
     }
 
     @Override
-    public boolean isSetContent() {
-        return content != null;
+    public NutsIdType getType() {
+        return type;
     }
 
     @Override
@@ -268,27 +251,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     public void setDependencies(NutsDependency[] dependencies) {
         this.dependencies = dependencies;
-    }
-
-
-    @Override
-    public boolean isApi() {
-        return api;
-    }
-
-    @Override
-    public boolean isRuntime() {
-        return runtime;
-    }
-
-    @Override
-    public boolean isExtension() {
-        return extension;
-    }
-
-    @Override
-    public boolean isCompanion() {
-        return companion;
     }
 
     @Override

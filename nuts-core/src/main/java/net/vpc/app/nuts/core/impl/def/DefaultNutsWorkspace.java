@@ -360,6 +360,24 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
+    public NutsIdType resolveNutsIdType(NutsId id) {
+        NutsIdType idType=NutsIdType.REGULAR;
+        String shortName = id.getShortName();
+        if (shortName.equals(NutsConstants.Ids.NUTS_API)) {
+            idType = NutsIdType.API;
+        }else if (shortName.equals(NutsConstants.Ids.NUTS_RUNTIME)) {
+            idType = NutsIdType.RUNTIME;
+        }else{
+            for (String companionTool : getCompanionIds()) {
+                if (companionTool.equals(shortName)) {
+                    idType=NutsIdType.COMPANION;
+                }
+            }
+        }
+        return idType;
+    }
+
+    @Override
     public String[] getCompanionIds() {
         return new String[]{
             "net.vpc.app.nuts.toolbox:nsh",
@@ -709,12 +727,19 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean reinstall = def.getInstallInformation().isInstalled();
         PrintStream out = session.out();
         out.flush();
-        if(def.isApi()) {
-            configManager.prepareBootApi(def.getId(), null, true);
-        }else if(def.isRuntime()){
-            configManager.prepareBootRuntime(def.getId(), true);
-        }else if(def.isExtension()){
-            configManager.prepareBootExtension(def.getId(), true);
+        switch (def.getType()){
+            case API:{
+                configManager.prepareBootApi(def.getId(), null, true);
+                break;
+            }
+            case RUNTIME:{
+                configManager.prepareBootRuntime(def.getId(), true);
+                break;
+            }
+            case EXTENSION:{
+                configManager.prepareBootExtension(def.getId(), true);
+                break;
+            }
         }
         if (installerComponent != null) {
             if (def.getPath() != null) {
@@ -767,7 +792,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             getInstalledRepository().setDefaultVersion(def.getId(), session);
         }
 
-        if(def.isExtension()){
+        if(def.getType()==NutsIdType.EXTENSION){
             NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config());
             NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getStoredConfigBoot().getExtensions())
                     .save();

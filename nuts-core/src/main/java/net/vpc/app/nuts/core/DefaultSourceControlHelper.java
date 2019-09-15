@@ -13,6 +13,7 @@ import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -97,6 +98,7 @@ public class DefaultSourceControlHelper {
 
             ws.descriptor().value(d).print(file);
 
+            NutsIdType idType= NutsWorkspaceExt.of(ws).resolveNutsIdType(newId);
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
@@ -106,7 +108,7 @@ public class DefaultSourceControlHelper {
                             false,
                             false),
                     null,
-                    false,false,false,false,null
+                    idType, null
             );
         } else {
             throw new NutsUnsupportedOperationException(ws, "Checkout not supported");

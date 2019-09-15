@@ -545,11 +545,32 @@ public class FormattableNutsId {
             }
             this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
             if (def != null) {
-                this.status_e = def.isApi() ? 'a'
-                        : def.isRuntime() ? 'r'
-                        : def.isExtension() ? 'e'
-                        : def.isCompanion() ? 'c'
-                        : '-';
+                switch (def.getType()){
+                    case API:{
+                        this.status_e = 'a';
+                        break;
+                    }
+                    case RUNTIME:{
+                        this.status_e = 'r';
+                        break;
+                    }
+                    case EXTENSION:{
+                        this.status_e = 'e';
+                        break;
+                    }
+                    case COMPANION:{
+                        this.status_e = 'c';
+                        break;
+                    }
+                    case REGULAR:{
+                        this.status_e = '-';
+                        break;
+                    }
+                    default:{
+                        this.status_e = '?';
+                        break;
+                    }
+                }
             }
             this.status_i = buildComponentAppStatus();
             this.status_s = '-';
