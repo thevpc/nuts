@@ -43,7 +43,7 @@ import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 public class NutsIdGraph {
     private final NutsLogger LOG;
 
-    private NutsIdGraphContext context = new NutsIdGraphContext();
+    private NutsIdGraphContext context;
 
     private final Set<NutsId> visited = new LinkedHashSet<>();
     private final Set<NutsIdNode> wildIds = new LinkedHashSet<>();
@@ -54,6 +54,7 @@ public class NutsIdGraph {
     public NutsIdGraph(NutsSession session, boolean failFast) {
         this.session = session;
         this.failFast = failFast;
+        context=new NutsIdGraphContext(session);
         LOG=session.workspace().log().of(NutsIdGraph.class);
     }
 
@@ -119,6 +120,7 @@ public class NutsIdGraph {
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
                 NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).setSession(session).getResultId();
+                context.getNutsIdInfo(nutsId.id,true).refTo=context.getNutsIdInfo(nutsId1,true);
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
             } catch (NutsNotFoundException ex) {
                 NutsDependency dep = session.workspace().dependency().builder().id(nutsId.id).build();
@@ -182,7 +184,7 @@ public class NutsIdGraph {
     public NutsId[] collect(Collection<NutsId> ids, Collection<NutsId> exclude) {
         Set<NutsIdInfo> collected = new HashSet<>();
         for (NutsId id : ids) {
-            visit(context.getNutsIdInfo(id, true), collected);
+            visit(context.getNutsIdInfoResult(id), collected);
         }
         Set<NutsId> excludeSet = new HashSet<>();
         if (exclude != null) {
@@ -296,6 +298,7 @@ public class NutsIdGraph {
                         }
                     }
                 } else {
+                    processed++;
                     wildIds.add(curr.id);
                 }
             }
@@ -348,6 +351,7 @@ public class NutsIdGraph {
         private Set<NutsIdNode> nodes = new HashSet<>();
         public List<NutsIdInfo> input = new ArrayList<>();
         public List<NutsIdInfo> output = new ArrayList<>();
+        public NutsIdInfo refTo;
 
         public NutsIdInfo(NutsId id) {
             this.id = id;
@@ -421,6 +425,11 @@ public class NutsIdGraph {
         private Set<NutsIdNode> nodes = new HashSet<>();
         private Map<NutsId, NutsIdInfo> nutsIds = new HashMap<>();
         private Map<String, SimpleNutsIdInfo> snutsIds = new HashMap<>();
+        private NutsSession session;
+
+        public NutsIdGraphContext(NutsSession session) {
+            this.session = session;
+        }
 
         SimpleNutsIdInfo getSimpleNutsIdInfo(NutsId id, boolean create) {
             String ii = id.getShortName();
@@ -430,6 +439,17 @@ public class NutsIdGraph {
                     p = new SimpleNutsIdInfo(ii);
                     snutsIds.put(ii, p);
                 }
+            }
+            return p;
+        }
+
+        NutsIdInfo getNutsIdInfoResult(NutsId id) {
+            NutsIdInfo p = getNutsIdInfo(id, false);
+            if(p==null){
+                throw new NutsNotFoundException(session.workspace(),id);
+            }
+            if(p.refTo!=null){
+                return p.refTo;
             }
             return p;
         }
