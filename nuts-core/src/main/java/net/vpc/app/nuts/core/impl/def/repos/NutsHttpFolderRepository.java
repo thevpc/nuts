@@ -132,27 +132,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-//        long startTime = System.currentTimeMillis();
-//        try {
             InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
-//            if (LOG.isLoggable(Level.FINER)) {
-//                if (CoreIOUtils.isPathHttp(path)) {
-//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-//                    message += " url=" + path;
-//                    traceMessage(session, Level.FINER, id, TraceResult.SUCCESS, message, startTime,null);
-//                }
-//            }
             return CoreIOUtils.createInputSource(in);
-//        } catch (RuntimeException ex) {
-//            if (LOG.isLoggable(Level.FINEST)) {
-//                if (CoreIOUtils.isPathHttp(path)) {
-//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-//                    message += " url=" + path;
-//                    traceMessage(session,Level.FINEST, id, TraceResult.FAIL, message, startTime,ex.getMessage());
-//                }
-//            }
-//            throw ex;
-//        }
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
@@ -218,6 +199,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             FilesFoldersApi.Item[] all = FilesFoldersApi.getFilesAndFolders(false,true,artifactUrl, session.getSession());
             List<NutsId> n = new ArrayList<>();
             for (FilesFoldersApi.Item s : all) {
+                if(s.isFolder() && s.getName().equals("LATEST")){
+                    continue;
+                }
                 String versionFilesUrl = artifactUrl + "/" + s.getName();
                 FilesFoldersApi.Item[] versionFiles = FilesFoldersApi.getFilesAndFolders(true,false,versionFilesUrl, session.getSession());
                 boolean validVersion = false;
