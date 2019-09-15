@@ -27,21 +27,52 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
+
+import net.vpc.app.nuts.*;
 
 /**
  *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.3
  */
-public interface NutsInstallListener extends NutsListener {
+public class DefaultNutsUpdateEvent implements NutsUpdateEvent {
 
-    default void onInstall(NutsInstallEvent event) {
+    private final NutsDefinition oldDefinition;
+    private final NutsDefinition definition;
+    private final NutsSession session;
+    private final boolean force;
+
+    public DefaultNutsUpdateEvent(NutsDefinition oldDefinition,NutsDefinition definition, NutsSession session, boolean force) {
+        this.oldDefinition = oldDefinition;
+        this.definition = definition;
+        this.session = session;
+        this.force = force;
     }
 
-    default void onUninstall(NutsInstallEvent event) {
+    @Override
+    public NutsSession getSession() {
+        return session;
     }
 
-    default void onUpdate(NutsUpdateEvent event) {
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return getSession().getWorkspace();
     }
+
+    @Override
+    public NutsDefinition getNewValue() {
+        return definition;
+    }
+
+    @Override
+    public NutsDefinition getOldValue() {
+        return oldDefinition;
+    }
+
+    @Override
+    public boolean isForce() {
+        return force;
+    }
+
 }

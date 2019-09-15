@@ -32,16 +32,17 @@ package net.vpc.app.nuts;
 /**
  *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.6
  */
-public interface NutsInstallListener extends NutsListener {
+public interface NutsUpdateEvent {
 
-    default void onInstall(NutsInstallEvent event) {
-    }
+    NutsDefinition getOldValue();
 
-    default void onUninstall(NutsInstallEvent event) {
-    }
+    NutsDefinition getNewValue();
 
-    default void onUpdate(NutsUpdateEvent event) {
-    }
+    NutsWorkspace getWorkspace();
+
+    NutsSession getSession();
+    
+    boolean isForce();
 }

@@ -723,6 +723,23 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         }
+        NutsDefinition oldDef=null;
+        if (isUpdate) {
+            switch (def.getType()){
+                case API:{
+                    oldDef=fetch().id(NutsConstants.Ids.NUTS_API+"#"+Nuts.getVersion()).online().failFast().getResultDefinition();
+                    break;
+                }
+                case RUNTIME:{
+                    oldDef=fetch().id(config().getRuntimeId()).online().failFast().getResultDefinition();
+                    break;
+                }
+                default:{
+                    oldDef=fetch().id(config().getRuntimeId()).installed().failFast().getResultDefinition();
+                    break;
+                }
+            }
+        }
         session = NutsWorkspaceUtils.of(this).validateSession( session);
         boolean reinstall = def.getInstallInformation().isInstalled();
         PrintStream out = session.out();
@@ -783,7 +800,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         if (isUpdate) {
-            NutsWorkspaceUtils.of(this).events().fireOnUpdate(new DefaultNutsInstallEvent(def, session, reinstall));
+            NutsWorkspaceUtils.of(this).events().fireOnUpdate(new DefaultNutsUpdateEvent(oldDef,def, session, reinstall));
         } else {
             NutsWorkspaceUtils.of(this).events().fireOnInstall(new DefaultNutsInstallEvent(def, session, reinstall));
         }

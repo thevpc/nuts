@@ -321,9 +321,11 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        public void fireOnUpdate(NutsInstallEvent event) {
+        public void fireOnUpdate(NutsUpdateEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Updated {0}", new Object[]{event.getDefinition().getId()});
+                u.LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Updated {0} (old is {1})", new Object[]{
+                        event.getOldValue()==null?null:event.getOldValue().getId(),
+                        event.getNewValue().getId()});
             }
             for (NutsInstallListener listener : u.ws.getInstallListeners()) {
                 listener.onUpdate(event);
