@@ -1,17 +1,25 @@
 package net.vpc.app.nuts.core.util.fprint;
 
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
 import java.io.*;
 import java.util.Locale;
 
-public class UnformattedPrintStream extends PrintStream {
+public class UnformattedPrintStream extends PrintStream implements NutsWorkspaceAware {
 
+    private NutsWorkspace ws;
     private FormattedPrintStream fout;
 
     public UnformattedPrintStream(FormattedPrintStream out) {
         super(out);
         this.fout = fout;
+    }
+
+    @Override
+    public void setWorkspace(NutsWorkspace workspace) {
+        this.ws=workspace;
     }
 
     @Override
@@ -29,7 +37,7 @@ public class UnformattedPrintStream extends PrintStream {
     }
 
     public PrintStream format(String format, Object... args) {
-        print(FormattedPrintStreamUtils.format(Locale.getDefault(), format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args));
         return this;
     }
 

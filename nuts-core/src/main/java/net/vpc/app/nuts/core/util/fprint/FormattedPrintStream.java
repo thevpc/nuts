@@ -1,5 +1,7 @@
 package net.vpc.app.nuts.core.util.fprint;
 
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.renderer.AnsiUnixTermPrintRenderer;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
@@ -16,7 +18,7 @@ import net.vpc.app.nuts.core.util.fprint.parser.TextNodePlain;
 import net.vpc.app.nuts.core.util.fprint.parser.TextNodeStyled;
 import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
-public abstract class FormattedPrintStream extends PrintStream implements NutsPrintStreamExt {
+public abstract class FormattedPrintStream extends PrintStream implements NutsPrintStreamExt , NutsWorkspaceAware {
 
     private boolean formatEnabled = true;
     private FormattedPrintStreamParser parser;
@@ -26,6 +28,7 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
     private boolean enableBuffering = false;
     private OutputStream base;
     private PrintStream ps;
+    private NutsWorkspace ws;
 //    private FormattedPrintStreamNodePartialParser partialParser = new FormattedPrintStreamNodePartialParser();
 
     public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
@@ -43,7 +46,12 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
         init(renderer, parser, out);
     }
 
-//    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
+    @Override
+    public void setWorkspace(NutsWorkspace workspace) {
+        this.ws=workspace;
+    }
+
+    //    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
 //        super(fileName);
 //        init(renderer, parser);
 //    }
@@ -200,13 +208,13 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
 
     @Override
     public FormattedPrintStream format(Locale l, String format, Object... args) {
-        print(FormattedPrintStreamUtils.format(l, format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(ws,l, format, args));
         return this;
     }
 
     @Override
     public PrintStream format(String format, Object... args) {
-        print(FormattedPrintStreamUtils.format(Locale.getDefault(), format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args));
         return this;
     }
 

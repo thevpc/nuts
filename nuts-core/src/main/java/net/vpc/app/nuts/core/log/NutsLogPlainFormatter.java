@@ -1,14 +1,18 @@
 package net.vpc.app.nuts.core.log;
 
 
+import net.vpc.app.nuts.NutsString;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -46,12 +50,38 @@ public class NutsLogPlainFormatter extends Formatter {
                     .append(" ")
                     .append(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName()))
                     .append(": ");
-            String msgStr = formatMessage(wRecord);
-            if(((NutsLogRecord) record).isFormatted()) {
-                sb.append(wRecord.getWorkspace().io().terminalFormat().filterText(msgStr));
-            }else{
-                sb.append(msgStr);
+            Object[] parameters2 = wRecord.getParameters();
+            if(parameters2==null){
+                parameters2=new Object[0];
             }
+            String msgStr=null;
+            if(wRecord.isFormatted()){
+                msgStr =wRecord.getWorkspace().io().terminalFormat().formatText(
+                        wRecord.getFormatStyle(), wRecord.getMessage(),
+                        parameters2
+                );
+                msgStr=wRecord.getWorkspace().io().terminalFormat().filterText(msgStr);
+            }else{
+                parameters2= Arrays.copyOf(parameters2,parameters2.length);
+                for (int i = 0; i < parameters2.length; i++) {
+                    if(parameters2[i] instanceof NutsString){
+                        parameters2[i]=wRecord.getWorkspace().io().terminalFormat().filterText(((NutsString)parameters2[i]).getValue());
+                    }
+                }
+                switch (wRecord.getFormatStyle()){
+                    case POSITIONAL:{
+                        msgStr=MessageFormat.format(wRecord.getMessage(),parameters2);
+                        break;
+                    }
+                    case CSTYLE:{
+                        StringBuilder sb2=new StringBuilder();
+                        new java.util.Formatter(sb2, Locale.getDefault()).format(wRecord.getMessage(),parameters2);
+                        msgStr=sb2.toString();
+                        break;
+                    }
+                }
+            }
+            sb.append(msgStr);
             if(wRecord.getTime()>0){
                 sb.append(" (").append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime())).append(")");
             }
@@ -63,7 +93,6 @@ public class NutsLogPlainFormatter extends Formatter {
             return sb.toString();
 
         } else {
-
             StringBuilder sb = new StringBuilder();
             String date = Instant.ofEpochMilli(record.getMillis()).toString().replace(":", "");
 

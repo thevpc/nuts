@@ -35,7 +35,7 @@ import net.vpc.app.nuts.NutsWorkspace;
  *
  * @author vpc
  */
-public interface NutsAuthenticationAgentSpi {
+public interface NutsWorkspaceAware {
 
     void setWorkspace(NutsWorkspace workspace);
 

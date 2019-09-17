@@ -27,6 +27,15 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
         return setValue(value);
     }
 
+    @Override
+    public NutsCommandLineFormat value(String[] args) {
+        return value(args==null?null:create(args));
+    }
+
+    @Override
+    public NutsCommandLineFormat value(String args) {
+        return value(args==null?null:parse(args));
+    }
 
     @Override
     public NutsCommandLine getValue() {

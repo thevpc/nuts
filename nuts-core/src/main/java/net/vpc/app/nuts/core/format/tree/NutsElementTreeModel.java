@@ -143,7 +143,6 @@ class NutsElementTreeModel implements NutsTreeModel {
     }
 
     public String stringValue(Object o) {
-        String a = CoreCommonUtils.stringValueFormatted(o, false, session);
-        return a;
+        return CoreCommonUtils.stringValueFormatted(o, false, session);
     }
 }

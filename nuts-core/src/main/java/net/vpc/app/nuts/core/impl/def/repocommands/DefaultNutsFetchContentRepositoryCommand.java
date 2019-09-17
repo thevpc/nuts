@@ -68,11 +68,11 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
             if (f == null) {
                 throw new NutsNotFoundException(getRepo().getWorkspace(), id);
             }
-                CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "Fetch component", startTime,null);
+                CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime,null);
             result = f;
         } catch (RuntimeException ex) {
             if(!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "Fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
             }
             throw ex;
         }

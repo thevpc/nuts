@@ -10,6 +10,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
+
+import net.vpc.app.nuts.NutsTextFormatStyle;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAware;
@@ -18,10 +22,15 @@ import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAwarePrintWriter;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 
 /**
- *
  * @author vpc
  */
-public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
+public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorkspaceAware {
+    private NutsWorkspace ws;
+
+    @Override
+    public void setWorkspace(NutsWorkspace workspace) {
+        this.ws=workspace;
+    }
 
     @Override
     public int textLength(String value) {
@@ -42,20 +51,28 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
     }
 
     /**
-     *
+     * @param style
      * @param locale
      * @param format
      * @param args
      * @return
      */
     @Override
-    public String formatText(Locale locale, String format, Object... args) {
-        return FormattedPrintStreamUtils.format(locale, format, args);
+    public String formatText(NutsTextFormatStyle style, Locale locale, String format, Object... args) {
+        if (style == NutsTextFormatStyle.CSTYLE) {
+            return FormattedPrintStreamUtils.formatCStyle(ws,locale, format, args);
+        } else {
+            return FormattedPrintStreamUtils.formatPositionalStyle(ws,locale, format, args);
+        }
     }
 
     @Override
-    public String formatText(String format, Object... args) {
-        return FormattedPrintStreamUtils.format(Locale.getDefault(), format, args);
+    public String formatText(NutsTextFormatStyle style, String format, Object... args) {
+        if (style == NutsTextFormatStyle.CSTYLE) {
+            return FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args);
+        } else {
+            return FormattedPrintStreamUtils.formatPositionalStyle(ws,Locale.getDefault(), format, args);
+        }
     }
 
     @Override
@@ -63,7 +80,9 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
         if (out instanceof ExtendedFormatAware) {
             return out;
         }
-        return new ExtendedFormatAwarePrintStream(out);
+        ExtendedFormatAwarePrintStream s = new ExtendedFormatAwarePrintStream(out);
+        s.setWorkspace(ws);
+        return s;
     }
 
     @Override
@@ -71,7 +90,9 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat {
         if (out instanceof ExtendedFormatAware) {
             return out;
         }
-        return new ExtendedFormatAwarePrintWriter(out);
+        ExtendedFormatAwarePrintWriter w = new ExtendedFormatAwarePrintWriter(out);
+        w.setWorkspace(ws);
+        return w;
     }
 
     @Override

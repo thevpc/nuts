@@ -30,33 +30,67 @@
 package net.vpc.app.nuts;
 
 /**
- *
- * @author vpc
+ * Thrown by Nuts Workspace to indicate a security violation.
  * @since 0.5.4
  */
 public class NutsSecurityException extends SecurityException {
 
+    /**
+     * workspace
+     */
     private NutsWorkspace workspace;
 
+    /**
+     * Constructs a <code>NutsSecurityException</code> with the specified
+     * parameters.
+     *
+     * @param   workspace workspace
+     */
     public NutsSecurityException(NutsWorkspace workspace) {
         this.workspace = workspace;
     }
 
-    public NutsSecurityException(NutsWorkspace workspace, String s) {
-        super(s);
+    /**
+     * Constructs a <code>NutsSecurityException</code> with the specified
+     * parameters.
+     *
+     * @param   workspace workspace
+     * @param   message   the detail message.
+     */
+    public NutsSecurityException(NutsWorkspace workspace, String message) {
+        super(message);
         this.workspace = workspace;
     }
 
+    /**
+     * Constructs a <code>NutsSecurityException</code> with the specified
+     * parameters.
+     *
+     * @param   workspace workspace
+     * @param   message message
+     * @param   cause cause
+     */
     public NutsSecurityException(NutsWorkspace workspace, String message, Throwable cause) {
         super(message, cause);
         this.workspace = workspace;
     }
 
+    /**
+     * Constructs a <code>NutsSecurityException</code> with the specified
+     * parameters.
+     *
+     * @param   workspace workspace
+     * @param   cause cause
+     */
     public NutsSecurityException(NutsWorkspace workspace, Throwable cause) {
         super(cause);
         this.workspace = workspace;
     }
 
+    /**
+     * current workspace
+     * @return current workspace
+     */
     public NutsWorkspace getWorkspace() {
         return workspace;
     }

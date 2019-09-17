@@ -85,9 +85,10 @@ public class NutsApplications {
         if(appClass==null){
             appClass=lifeCycle.getClass();
         }
-        ws.log().of(NutsApplications.class).log(Level.FINE, "START", "Running Application {0}: {1} {2}", new Object[]{
-            inherited ? "(inherited)" : "",
-            lifeCycle, ws.commandLine().create(args).toString()});
+        ws.log().of(NutsApplications.class).with().level(Level.FINE).verb("START").formatted()
+                .log("Running Application {0}: {1} {2}", inherited ? "(inherited)" : "",
+                lifeCycle, new NutsString(ws.commandLine().value(ws.commandLine().create(args)).format())
+        );
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {

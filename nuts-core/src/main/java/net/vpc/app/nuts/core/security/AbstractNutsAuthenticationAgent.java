@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.security;
 
-import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
-public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsAuthenticationAgentSpi {
+public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware {
 
     private final String name;
     private NutsWorkspace ws;

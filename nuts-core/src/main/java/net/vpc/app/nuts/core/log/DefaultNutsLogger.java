@@ -1,9 +1,6 @@
 package net.vpc.app.nuts.core.log;
 
-import net.vpc.app.nuts.NutsLogOp;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.*;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,6 +12,7 @@ public class DefaultNutsLogger implements NutsLogger {
     private NutsSession session;
     private boolean defaultFormatted;
     private long defaultTime;
+    private NutsTextFormatStyle defaultStyle=NutsTextFormatStyle.POSITIONAL;
     private Logger log;
     private static final int offValue = Level.OFF.intValue();
     private LinkedList<LogRecord> suspendedTerminalRecords = new LinkedList<>();
@@ -78,7 +76,7 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, NutsLogVerb.FAIL, msg, DefaultNutsLogOp.OBJECTS0, defaultFormatted, defaultTime);
+        LogRecord lr = new NutsLogRecord(workspace, session, level, NutsLogVerb.FAIL, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         lr.setThrown(thrown);
         doLog(lr);
     }
@@ -87,7 +85,7 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msg, DefaultNutsLogOp.OBJECTS0, defaultFormatted, defaultTime);
+        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         doLog(lr);
     }
 
@@ -95,19 +93,15 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msgSupplier.get(), DefaultNutsLogOp.OBJECTS0, defaultFormatted, defaultTime);
+        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msgSupplier.get(), DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         doLog(lr);
-    }
-
-    public void log(Level level, String verb, String msg, Object params) {
-        log(level, verb, msg, new Object[]{params});
     }
 
     public void log(Level level, String verb, String msg, Object[] params) {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, null, level, verb, msg, params, defaultFormatted, defaultTime);
+        LogRecord lr = new NutsLogRecord(workspace, null, level, verb, msg, params, defaultFormatted, defaultTime,defaultStyle);
         lr.setParameters(params);
         doLog(lr);
     }
@@ -123,11 +117,8 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     @Override
-    public NutsLogOp withLevel(Level level) {
-        if (!isLoggable(level)) {
-            return NoOpNutsLogOp.INSTANCE;
-        }
-        return new DefaultNutsLogOp(this, level);
+    public NutsLoggerOp with() {
+        return new DefaultNutsLoggerOp(this);
     }
 
     private boolean isLoggable(LogRecord record) {
@@ -145,6 +136,8 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(record)) {
             return;
         }
+        //compile for once the parameter based text!
+        //record=NutsLogRichFormatter.compile(record);
         log0(record);
     }
 

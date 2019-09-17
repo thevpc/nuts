@@ -2,6 +2,8 @@ package net.vpc.app.nuts.core.log;
 
 
 import net.vpc.app.nuts.NutsTerminalFormat;
+import net.vpc.app.nuts.NutsTextFormatStyle;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -17,10 +19,46 @@ public class NutsLogRichFormatter extends Formatter {
     public NutsLogRichFormatter() {
     }
 
+    public static LogRecord compile(LogRecord record) {
+        LogRecord h=null;
+        if (record instanceof NutsLogRecord) {
+            NutsLogRecord wRecord = (NutsLogRecord) record;
+            Object[] p = wRecord.getParameters();
+            NutsWorkspace ws = wRecord.getWorkspace();
+            String msgStr = ws.io().terminalFormat().formatText(
+                    wRecord.getFormatStyle(), wRecord.getMessage(),
+                    p
+            );
+            h = new NutsLogRecord(
+                    ws,
+                    wRecord.getSession(),
+                    wRecord.getLevel(),
+                    wRecord.getVerb(),
+                    msgStr,
+                    null,
+                    wRecord.isFormatted(),
+                    wRecord.getTime(),
+                    wRecord.getFormatStyle()
+            );
+        }else{
+            return record;
+        }
+        h.setResourceBundle(record.getResourceBundle());
+        h.setResourceBundleName(record.getResourceBundleName());
+        h.setSequenceNumber(record.getSequenceNumber());
+        h.setMillis(record.getMillis());
+        h.setSourceClassName(record.getSourceClassName());
+        h.setLoggerName(record.getLoggerName());
+        h.setSourceMethodName(record.getSourceMethodName());
+        h.setThreadID(record.getThreadID());
+        h.setThrown(record.getThrown());
+        return h;
+    }
     @Override
     public String format(LogRecord record) {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord = (NutsLogRecord) record;
+            NutsTextFormatStyle style = wRecord.getFormatStyle();
             NutsTerminalFormat tf = wRecord.getWorkspace().io().terminalFormat();
             StringBuilder sb = new StringBuilder();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
@@ -145,11 +183,19 @@ public class NutsLogRichFormatter extends Formatter {
             sb.append(" ")
                     .append(tf.escapeText(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName())))
                     .append(": ");
-            String msgStr = formatMessage(wRecord);
+            Object[] parameters2 = wRecord.getParameters();
+            if(parameters2==null){
+                parameters2=new Object[0];
+            }
+            String msgStr =wRecord.getWorkspace().io().terminalFormat().formatText(
+                    style, wRecord.getMessage(),
+                    parameters2
+            );
+//                    formatMessage(wRecord);
             if(wRecord.isFormatted()) {
                 sb.append(msgStr);
             }else{
-                sb.append(tf.escapeText(msgStr));
+                sb.append(tf.filterText(msgStr));
             }
             if(wRecord.getTime()>0){
                 sb.append(" (@@").append(tf.escapeText(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()))).append("@@)");

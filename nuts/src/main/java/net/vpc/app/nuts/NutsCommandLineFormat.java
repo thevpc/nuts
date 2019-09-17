@@ -55,6 +55,20 @@ public interface NutsCommandLineFormat extends NutsFormat{
     NutsCommandLineFormat value(NutsCommandLine value);
 
     /**
+     * set command line from string array
+     * @param args args
+     * @return {@code this} instance
+     */
+    NutsCommandLineFormat value(String[] args);
+
+    /**
+     * set command line from parsed string
+     * @param args args
+     * @return {@code this} instance
+     */
+    NutsCommandLineFormat value(String args);
+
+    /**
      * return current command line
      *
      * @return current command line

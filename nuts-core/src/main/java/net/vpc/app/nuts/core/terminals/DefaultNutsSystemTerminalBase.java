@@ -66,7 +66,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.withLevel(Level.CONFIG).withVerb( NutsLogVerb.UPDATE).formatted().log("Changing terminal Out mode : ##{0}##", mode.id());
+            LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : ##{0}##", mode.id());
         }
         FPrint.installStdOut(convertMode(this.outMode = mode));
         return this;
@@ -78,7 +78,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.withLevel(Level.CONFIG).withVerb( NutsLogVerb.UPDATE).formatted().log("Changing terminal Err mode : ##{0}##", mode.id());
+            LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : ##{0}##", mode.id());
         }
         FPrint.installStdErr(convertMode(this.errMode = mode));
         return this;

@@ -1,14 +1,14 @@
 package net.vpc.app.nuts.core.security;
 
-import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
 
 @NutsSingleton
-public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsAuthenticationAgentSpi {
+public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware {
 
     private NutsWorkspace ws;
 

@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -32,7 +33,7 @@ import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
-    private final NutsLogger LOG;
+    //    private final NutsLogger LOG;
     private NutsWorkspace ws;
     private NutsTerminalFormat terminalMetrics = new DefaultNutsTerminalFormat();
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
@@ -109,8 +110,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
-        LOG=ws.log().of(DefaultNutsIOManager.class);
+//        LOG = ws.log().of(DefaultNutsIOManager.class);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
+        ((NutsWorkspaceAware) terminalMetrics).setWorkspace(workspace);
     }
 
     @Override
@@ -327,8 +329,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                                     NutsFormattedPrintStream.class,
                                     new DefaultNutsSupportLevelContext<>(ws, out),
                                     new Class[]{OutputStream.class}, new Object[]{out});
-                            if(supported==null){
+                            if (supported == null) {
                                 throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                            }
+                            if (supported instanceof NutsWorkspaceAware) {
+                                ((NutsWorkspaceAware) supported).setWorkspace(ws);
                             }
                             return supported;
                         }
@@ -377,8 +382,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             NutsFormattedPrintStream.class,
                             new DefaultNutsSupportLevelContext<>(ws, out),
                             new Class[]{OutputStream.class}, new Object[]{out});
-                    if(supported==null){
+                    if (supported == null) {
                         throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                    }
+                    if (supported instanceof NutsWorkspaceAware) {
+                        ((NutsWorkspaceAware) supported).setWorkspace(ws);
                     }
                     return supported;
                 }
@@ -405,6 +413,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
+        }
+        if (termb instanceof NutsWorkspaceAware) {
+            ((NutsWorkspaceAware) termb).setWorkspace(ws);
         }
         try {
             NutsSessionTerminal term = null;

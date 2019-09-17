@@ -30,7 +30,12 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Tree Format handles terminal output in Tree format.
+ * It is one of the many formats supported bu nuts such as plain,table, xml, json.
+ * To use Tree format, given an instance ws of Nuts Workspace you can :
+ * <pre>
+ *     ws.
+ * </pre>
  * @author vpc
  * @since 0.5.5
  */
@@ -66,16 +71,64 @@ public interface NutsTreeFormat extends NutsFormat {
     @Override
     NutsTreeFormat configure(boolean skipUnsupported, String... args);
 
+    /**
+     * return node format
+     * @return node format
+     */
     NutsTreeNodeFormat getNodeFormat();
 
+    /**
+     * update node format
+     * @param nodeFormat new node format
+     * @return {@code this} instance
+     */
     NutsTreeFormat setNodeFormat(NutsTreeNodeFormat nodeFormat);
 
+    /**
+     * update node format
+     * @param nodeFormat new node format
+     * @return {@code this} instance
+     */
+    NutsTreeFormat nodeFormat(NutsTreeNodeFormat nodeFormat);
+
+    /**
+     * return linkFormat
+     * @return linkFormat
+     */
     NutsTreeLinkFormat getLinkFormat();
 
+    /**
+     * update link format
+     * @param linkFormat new link format
+     * @return {@code this} instance
+     */
     NutsTreeFormat setLinkFormat(NutsTreeLinkFormat linkFormat);
 
+    /**
+     * update link format
+     * @param linkFormat new link format
+     * @return {@code this} instance
+     */
+    NutsTreeFormat linkFormat(NutsTreeLinkFormat linkFormat);
+
+    /**
+     * return tree model
+     * @return tree model
+     */
     NutsTreeModel getModel();
 
+    /**
+     * update tree model
+     * @param tree new tree model
+     * @return {@code this} instance
+     */
     NutsTreeFormat setModel(NutsTreeModel tree);
+
+    /**
+     * update tree model
+     * @param tree new tree model
+     * @return {@code this} instance
+     */
+    NutsTreeFormat model(NutsTreeModel tree);
 
 }

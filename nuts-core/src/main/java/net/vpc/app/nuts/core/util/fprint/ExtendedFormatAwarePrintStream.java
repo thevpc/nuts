@@ -1,12 +1,14 @@
 package net.vpc.app.nuts.core.util.fprint;
 
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
 import java.io.*;
 import java.util.Locale;
 
-public class ExtendedFormatAwarePrintStream extends PrintStream implements ExtendedFormatAware {
-
+public class ExtendedFormatAwarePrintStream extends PrintStream implements ExtendedFormatAware, NutsWorkspaceAware {
+    private NutsWorkspace ws;
     public ExtendedFormatAwarePrintStream(OutputStream out) {
         super(out);
     }
@@ -36,14 +38,19 @@ public class ExtendedFormatAwarePrintStream extends PrintStream implements Exten
     }
 
     @Override
+    public void setWorkspace(NutsWorkspace workspace) {
+        this.ws=workspace;
+    }
+
+    @Override
     public ExtendedFormatAwarePrintStream format(Locale l, String format, Object... args) {
-        print(FormattedPrintStreamUtils.format(l, format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(ws,l, format, args));
         return this;
     }
 
     @Override
     public PrintStream format(String format, Object... args) {
-        print(FormattedPrintStreamUtils.format(Locale.getDefault(), format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args));
         return this;
     }
 

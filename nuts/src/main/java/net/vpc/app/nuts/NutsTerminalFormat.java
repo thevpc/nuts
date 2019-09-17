@@ -73,32 +73,36 @@ public interface NutsTerminalFormat {
     /**
      * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)
      * }
-     * pattern format and adds %N special format to print unfiltered strings.
+     * pattern format and adds NutsString special format to print unfiltered strings.
      *
+     *
+     * @param style style
      * @param locale locale
-     * @param format %N aware format
+     * @param format format
      * @param args arguments
      * @return formatted string
      */
-    String formatText(Locale locale, String format, Object... args);
+    String formatText(NutsTextFormatStyle style, Locale locale, String format, Object... args);
 
     /**
      * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...)
      * }
-     * pattern format and adds %N special format to print unfiltered strings.
+     * pattern format and adds NutsString special format to print unfiltered strings.
      *
-     * @param format %N aware format
+     *
+     * @param style format style
+     * @param format format
      * @param args arguments
      * @return formatted string
      */
-    String formatText(String format, Object... args);
+    String formatText(NutsTextFormatStyle style, String format, Object... args);
 
     /**
-     * prepare PrintStream to handle %N (escape) format pattern. If the instance
+     * prepare PrintStream to handle NutsString aware format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintStream to check
-     * @return %N pattern format capable PrintStream
+     * @return NutsString pattern format capable PrintStream
      */
     PrintStream prepare(PrintStream out);
 

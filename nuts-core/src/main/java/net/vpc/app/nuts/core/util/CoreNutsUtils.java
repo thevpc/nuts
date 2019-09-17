@@ -579,7 +579,7 @@ public class CoreNutsUtils {
         }
         long time = (startTime != 0)?(System.currentTimeMillis() - startTime):0;
         String modeString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
-        log.withLevel(lvl).withVerb(tracePhase.name()).withTime(time).formatted()
+        log.with().level(lvl).verb(tracePhase.name()).time(time).formatted()
                 .log("[{0}] {1} {2}"+(id == null ? "" : (" "+(session.getWorkspace().id().set(id).format())))+" {3}",
                 modeString,
                 CoreStringUtils.alignLeft(name, 20),

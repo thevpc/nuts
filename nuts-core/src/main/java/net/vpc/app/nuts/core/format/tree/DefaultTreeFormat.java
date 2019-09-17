@@ -109,6 +109,21 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     }
 
     @Override
+    public NutsTreeFormat nodeFormat(NutsTreeNodeFormat nodeFormat) {
+        return setNodeFormat(nodeFormat);
+    }
+
+    @Override
+    public NutsTreeFormat linkFormat(NutsTreeLinkFormat linkFormat) {
+        return setLinkFormat(linkFormatter);
+    }
+
+    @Override
+    public NutsTreeFormat model(NutsTreeModel tree) {
+        return setModel(tree);
+    }
+
+    @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(b);
@@ -138,17 +153,18 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             out.println();
             out.flush();
         }
-        Iterator<Object> children = tree.getChildren(o).iterator();
+        List<Object> children = tree.getChildren(o);
         if (children == null) {
-            children = IteratorUtils.emptyIterator();
+            children = Collections.EMPTY_LIST;
         }
+        Iterator<Object> childrenIter = children.iterator();
         Object last = null;
-        if (children.hasNext()) {
-            last = children.next();
+        if (childrenIter.hasNext()) {
+            last = childrenIter.next();
         }
-        while (children.hasNext()) {
+        while (childrenIter.hasNext()) {
             Object c = last;
-            last = children.next();
+            last = childrenIter.next();
             print(prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1);
         }
         if (last != null) {

@@ -69,8 +69,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         break;
                     }
                     case ALIAS: {
-                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg, p.getId() == null ? null : ws.id().value(p.getId()).format(),
-                                ws.commandLine().create(ws.config().findCommandAlias(p.getName()).getCommand()).toString()
+                        out.printf("[[%s]] : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : new NutsString(ws.id().value(p.getId()).format()),
+                                new NutsString(ws.commandLine().create(ws.config().findCommandAlias(p.getName()).getCommand()).toString())
                         );
                         break;
                     }
@@ -78,7 +78,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.id().value(p.getId()).format(), p.getDescription());
+                        out.printf("[[%s]] : ==nuts component== %s%n", arg, new NutsString(ws.id().value(p.getId()).format())/*, p.getDescription()*/);
                         break;
                     }
                     case INTERNAL: {
@@ -87,7 +87,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                 }
                 if (showDesc) {
-                    out.printf("\t %N%n", arg, p.getDescription());
+                    out.printf("\t %s%n", arg/*, p.getDescription()*/);
                 }
             } catch (NutsNotFoundException ex) {
                 out.printf("[[%s]] : @@not found@@%n", arg);

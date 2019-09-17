@@ -32,13 +32,23 @@ package net.vpc.app.nuts;
 import java.util.List;
 
 /**
- *
+ * Tree Model to use in tree format
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsTreeModel {
 
+    /**
+     * tree node
+     * @return tree node
+     */
     Object getRoot();
 
-    List getChildren(Object o);
+    /**
+     * return children of the given {@code node}
+     * @param node node to retrieve children for
+     * @param <T> children type
+     * @return node children
+     */
+    <T> List<T> getChildren(Object node);
 }

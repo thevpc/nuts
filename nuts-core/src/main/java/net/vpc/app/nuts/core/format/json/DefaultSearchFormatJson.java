@@ -6,10 +6,8 @@
 package net.vpc.app.nuts.core.format.json;
 
 import java.io.PrintWriter;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsSession;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
@@ -53,7 +51,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (index > 0) {
             getWriter().print(", ");
         }
-        getWriter().printf("%N%n", getWorkspace().json().compact(isCompact()).value(object).format());
+        getWriter().printf("%s%n", new NutsString(getWorkspace().json().compact(isCompact()).value(object).format()));
         getWriter().flush();
     }
 

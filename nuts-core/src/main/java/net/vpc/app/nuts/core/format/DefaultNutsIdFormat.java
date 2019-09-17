@@ -241,7 +241,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         sb.append(tf.escapeText(id.getArtifactId()));
         sb.append("]]");
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
-            sb.append("#");
+            sb.append("\\#");
             sb.append(tf.escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;

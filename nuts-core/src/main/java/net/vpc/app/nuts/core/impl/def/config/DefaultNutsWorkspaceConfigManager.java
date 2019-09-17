@@ -39,6 +39,7 @@ import net.vpc.app.nuts.core.impl.def.config.compat.v507.NutsVersionCompat507;
 import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.impl.def.repos.NutsSimpleRepositoryWrapper;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -59,7 +60,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.core.impl.def.repos.NutsRepositoryRegistryHelper;
-import net.vpc.app.nuts.core.spi.NutsAuthenticationAgentSpi;
 
 /**
  * @author vpc
@@ -1336,7 +1336,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (supported == null) {
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
-        ((NutsAuthenticationAgentSpi) supported).setWorkspace(ws);
+        if(supported instanceof NutsWorkspaceAware) {
+            ((NutsWorkspaceAware) supported).setWorkspace(ws);
+        }
         return supported;
     }
 

@@ -45,7 +45,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.bridges.maven.mvnutil.ArchetypeCatalogParser;
@@ -227,8 +226,8 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().id(), 7) + "] ";
-            LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.SUCCESS).withTime(time).formatted()
-                    .log("{0}{1} Parse pom    {2}", fetchString
+            LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
+                    .log("{0}{1} parse pom    {2}", fetchString
                             , CoreStringUtils.alignLeft(session.getRepository().config().name(), 20)
                             ,urlDesc
                     );
@@ -248,7 +247,7 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.withLevel(Level.FINEST).withVerb(NutsLogVerb.FAIL).withTime(time).formatted()
+            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
                     .log("Caching pom file {0}", urlDesc);
             throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
         }
