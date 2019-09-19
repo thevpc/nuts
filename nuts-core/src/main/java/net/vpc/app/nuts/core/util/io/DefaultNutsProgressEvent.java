@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
-import net.vpc.app.nuts.NutsInputStreamEvent;
+import net.vpc.app.nuts.NutsProgressEvent;
 import net.vpc.app.nuts.NutsSession;
 
 /**
  * @author vpc
  */
-public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
+public class DefaultNutsProgressEvent implements NutsProgressEvent {
 
     private final Object source;
     private final String sourceName;
@@ -49,7 +49,7 @@ public class DefaultNutsInputStreamEvent implements NutsInputStreamEvent {
     private final float percent;
     private final boolean indeterminate;
 
-    public DefaultNutsInputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
+    public DefaultNutsProgressEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
         this.source = source;
         this.length = length;
         this.sourceName = sourceName;

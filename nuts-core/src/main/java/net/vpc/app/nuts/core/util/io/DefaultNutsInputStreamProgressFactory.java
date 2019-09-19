@@ -2,7 +2,7 @@ package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
-import net.vpc.app.nuts.core.io.DefaultNutsInputStreamProgressMonitor;
+import net.vpc.app.nuts.core.io.DefaultNutsProgressMonitor;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.util.logging.Level;
@@ -12,11 +12,11 @@ public class DefaultNutsInputStreamProgressFactory implements NutsInputStreamPro
     private static final Logger LOG = Logger.getLogger(DefaultNutsInputStreamProgressFactory.class.getName());
 
     @Override
-    public NutsInputStreamProgressMonitor create(Object source, Object sourceOrigin, String sourceName, NutsSession session) {
+    public NutsProgressMonitor create(Object source, Object sourceOrigin, String sourceName, NutsSession session) {
         if (!acceptMonitoring(source, sourceOrigin, sourceName, session)) {
             return null;
         }
-        return new DefaultNutsInputStreamProgressMonitor();
+        return new DefaultNutsProgressMonitor();
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin, String sourceName, NutsSession session) {

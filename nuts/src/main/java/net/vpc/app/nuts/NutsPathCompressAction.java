@@ -31,82 +31,70 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @author vpc
+ * @since 0.5.4
  */
-public interface NutsMonitorCommand {
+public interface NutsPathCompressAction {
 
-    NutsMonitorCommand session(NutsSession s);
+    List<Object> getSources();
 
-    NutsMonitorCommand setSession(NutsSession s);
+    NutsPathCompressAction addSource(InputStream source);
+
+    NutsPathCompressAction addSource(File source);
+
+    NutsPathCompressAction addSource(Path source);
+
+    NutsPathCompressAction addSource(URL source);
+
+    Object getTarget();
+
+    NutsPathCompressAction setTarget(OutputStream target);
+
+    NutsPathCompressAction setTarget(Path target);
+
+    NutsPathCompressAction setTarget(File target);
+
+    NutsPathCompressAction to(OutputStream target);
+
+    NutsPathCompressAction to(String target);
+
+    NutsPathCompressAction to(Path target);
+
+    NutsPathCompressAction to(File target);
+
+    NutsPathCompressAction setTarget(String target);
+
+    NutsPathCompressAction to(Object target);
 
     NutsSession getSession();
 
-    NutsMonitorCommand name(String s);
+    NutsPathCompressAction session(NutsSession session);
 
-    NutsMonitorCommand setName(String s);
+    NutsPathCompressAction setSession(NutsSession session);
 
-    String getName();
+    void run();
 
-    NutsMonitorCommand origin(Object s);
+    NutsPathCompressAction monitorable(boolean monitorable);
 
-    NutsMonitorCommand setOrigin(Object s);
+    NutsPathCompressAction monitorable();
 
-    Object getOrigin();
+    boolean isMonitorable();
 
-    NutsMonitorCommand length(long len);
+    NutsPathCompressAction setMonitorable(boolean monitorable);
 
-    NutsMonitorCommand setLength(long len);
+    boolean isIncludeDefaultMonitorFactory();
 
-    long getLength();
+    NutsPathCompressAction setIncludeDefaultMonitorFactory(boolean value);
 
-    NutsMonitorCommand source(String path);
+    NutsPathCompressAction includeDefaultMonitorFactory(boolean value);
 
-    NutsMonitorCommand source(Path path);
-
-    NutsMonitorCommand source(File path);
-
-    NutsMonitorCommand source(InputStream path);
-
-    NutsMonitorCommand setSource(String path);
-
-    NutsMonitorCommand setSource(Path path);
-
-    NutsMonitorCommand setSource(File path);
-
-    NutsMonitorCommand setSource(InputStream path);
-
-    InputStream create();
-
-    boolean isIncludeDefaultFactory();
-
-    /**
-     * when true, will include default factory (console) even if progressFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorCommand setIncludeDefaultFactory(boolean value);
-
-    /**
-     * when true, will include default factory (console) even if progressFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorCommand includeDefaultFactory(boolean value);
-
-    /**
-     * will include default factory (console) even if progressFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorCommand includeDefaultFactory();
+    NutsPathCompressAction includeDefaultMonitorFactory();
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -114,7 +102,7 @@ public interface NutsMonitorCommand {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NutsInputStreamProgressFactory getProgressFactory();
+    NutsInputStreamProgressFactory getProgressMonitorFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -123,7 +111,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand setProgressFactory(NutsInputStreamProgressFactory value);
+    NutsPathCompressAction setProgressMonitorFactory(NutsInputStreamProgressFactory value);
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -132,7 +120,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand progressFactory(NutsInputStreamProgressFactory value);
+    NutsPathCompressAction progressMonitorFactory(NutsInputStreamProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -141,7 +129,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand setProgressMonitor(NutsProgressMonitor value);
+    NutsPathCompressAction setProgressMonitor(NutsProgressMonitor value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -150,5 +138,21 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand progressMonitor(NutsProgressMonitor value);
+    NutsPathCompressAction progressMonitor(NutsProgressMonitor value);
+
+    boolean isSafeCopy();
+
+    NutsPathCompressAction setSafeCopy(boolean safeCopy);
+
+    NutsPathCompressAction safeCopy();
+
+    NutsPathCompressAction safeCopy(boolean safeCopy);
+
+    NutsPathCompressAction skipRoot(boolean value);
+
+    NutsPathCompressAction skipRoot();
+
+    boolean isSkipRoot();
+
+    NutsPathCompressAction setSkipRoot(boolean value);
 }

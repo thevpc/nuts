@@ -657,15 +657,15 @@ public class CoreIOUtils {
         }
     }
 
-    public static InputStream monitor(URL from, NutsInputStreamProgressMonitor monitor, NutsSession session) throws IOException {
+    public static InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) throws IOException {
         return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, NutsInputStreamProgressMonitor monitor, NutsSession session) {
+    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, NutsInputStreamProgressMonitor monitor, NutsSession session) {
+    public static InputStream monitor(InputStream from, Object source, NutsProgressMonitor monitor, NutsSession session) {
         String sourceName = null;
         long length = -1;
         if (from instanceof InputStreamMetadataAware) {
@@ -1880,4 +1880,16 @@ public class CoreIOUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    public static Path toPath(Object lockedObject) {
+        if (lockedObject instanceof Path) {
+            return (Path) lockedObject;
+        } else if (lockedObject instanceof File) {
+            return ((File) lockedObject).toPath();
+        } else if (lockedObject instanceof String) {
+            return Paths.get((String) lockedObject);
+        }
+        return null;
+    }
+
 }

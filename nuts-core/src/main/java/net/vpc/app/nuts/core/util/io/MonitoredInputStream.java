@@ -29,8 +29,7 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
-import net.vpc.app.nuts.NutsInputStreamEvent;
-import net.vpc.app.nuts.NutsInputStreamProgressMonitor;
+import net.vpc.app.nuts.NutsProgressMonitor;
 import net.vpc.app.nuts.NutsSession;
 
 import java.io.IOException;
@@ -47,13 +46,13 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     private long startTime;
     private long lastTime;
     private final long length;
-    private final NutsInputStreamProgressMonitor monitor;
+    private final NutsProgressMonitor monitor;
     private final Object source;
     private final String sourceName;
     private boolean completed = false;
     private NutsSession session;
 
-    public MonitoredInputStream(InputStream base, Object source, String sourceName, long length, NutsInputStreamProgressMonitor monitor, NutsSession session) {
+    public MonitoredInputStream(InputStream base, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         this.base = base;
         this.session = session;
         if (monitor == null) {
@@ -165,7 +164,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
                 this.lastTime = now;
                 this.lastCount = 0;
                 this.count = 0;
-                monitor.onStart(new DefaultNutsInputStreamEvent(source, sourceName, 0, 0, 0, 0, length, null,session,length<0));
+                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, length, null,session,length<0));
             }
         }
     }
@@ -174,7 +173,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             long now = System.currentTimeMillis();
             this.count += count;
-            if (monitor.onProgress(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null,session,length<0))) {
+            if (monitor.onProgress(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null,session,length<0))) {
                 this.lastCount = this.count;
                 this.lastTime = now;
             }
@@ -185,7 +184,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             completed = true;
             long now = System.currentTimeMillis();
-            monitor.onComplete(new DefaultNutsInputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex,session,length<0));
+            monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex,session,length<0));
         }
     }
 

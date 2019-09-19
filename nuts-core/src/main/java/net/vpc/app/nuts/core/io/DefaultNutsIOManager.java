@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -26,7 +25,7 @@ import net.vpc.app.nuts.core.app.DefaultNutsApplicationContext;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.terminals.UnmodifiableTerminal;
-import net.vpc.app.nuts.core.util.NutsUnexpectedEnumException;
+import net.vpc.app.nuts.NutsUnsupportedEnumException;
 import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
@@ -334,7 +333,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             return supported;
                         }
                         default: {
-                            throw new NutsUnexpectedEnumException(ws, am);
+                            throw new NutsUnsupportedEnumException(ws, am);
                         }
                     }
                 }
@@ -350,12 +349,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             return (PrintStream) a;
                         }
                         default: {
-                            throw new NutsUnexpectedEnumException(ws, am);
+                            throw new NutsUnsupportedEnumException(ws, am);
                         }
                     }
                 }
                 default: {
-                    throw new NutsUnexpectedEnumException(ws, mode);
+                    throw new NutsUnsupportedEnumException(ws, mode);
                 }
             }
         } else if (out instanceof NutsFormattedPrintStream) {
@@ -368,7 +367,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return a.getUnformattedInstance();
                 }
                 default: {
-                    throw new NutsUnexpectedEnumException(ws, mode);
+                    throw new NutsUnsupportedEnumException(ws, mode);
                 }
             }
         } else {
@@ -388,7 +387,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return (PrintStream) out;
                 }
                 default: {
-                    throw new NutsUnexpectedEnumException(ws, mode);
+                    throw new NutsUnsupportedEnumException(ws, mode);
                 }
             }
         }
@@ -515,6 +514,21 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsPathCopyAction copy() {
         return new DefaultNutsIOCopyAction(this);
+    }
+
+    @Override
+    public NutsDeleteAction delete() {
+        return new DefaultNutsDeleteAction(ws);
+    }
+
+    @Override
+    public NutsPathCompressAction compress() {
+        return new DefaultNutsIOCompressAction(this);
+    }
+
+    @Override
+    public NutsPathUncompressAction uncompress() {
+        return new DefaultNutsIOUncompressAction(this);
     }
 
     @Override
@@ -660,4 +674,27 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return workspace.io().getSystemTerminal();
         }
     }
+
+    public DefaultNutsLockBuilder lock() {
+        return new DefaultNutsLockBuilder(ws);
+    }
+
+//    @Override
+//    public void invokeLocked(Runnable r, Runnable rollback, NutsLock lock) {
+//        lock.acquire();
+//        try {
+//            r.run();
+//        } catch (Exception ex) {
+//            rollback.run();
+//        }
+//        if (Files.exists(lockPath)) {
+//            throw new NutsLockBarrierException(ws, lockedObject, lockPath);
+//        }
+//        try {
+//            Files.newOutputStream(lockPath).close();
+//        } catch (IOException ex) {
+//            throw new NutsLockException(ws, "Unable to acquire lock " + lockedObject, lockPath, ex);
+//        }
+//    }
+
 }

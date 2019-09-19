@@ -11,22 +11,22 @@ import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsInputStreamEvent;
-import net.vpc.app.nuts.NutsInputStreamProgressMonitor;
+import net.vpc.app.nuts.NutsProgressEvent;
+import net.vpc.app.nuts.NutsProgressMonitor;
 import net.vpc.app.nuts.core.util.common.BytesSizeFormat;
 import net.vpc.app.nuts.core.util.fprint.FPrintCommands;
 
 /**
  * @author vpc
  */
-public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
+public class DefaultNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private PrintStream out;
     private int minLength;
 
-    public DefaultNutsInputStreamProgressMonitor() {
+    public DefaultNutsProgressMonitor() {
 //        this.session = session;
     }
 
@@ -36,7 +36,7 @@ public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamPro
 //    }
 
     @Override
-    public void onStart(NutsInputStreamEvent event) {
+    public void onStart(NutsProgressEvent event) {
         this.out = event.getSession().getTerminal().out();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
@@ -44,7 +44,7 @@ public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamPro
     }
 
     @Override
-    public void onComplete(NutsInputStreamEvent event) {
+    public void onComplete(NutsProgressEvent event) {
         if (event.getSession().isPlainOut()) {
             onProgress0(event, true);
             out.println();
@@ -52,14 +52,14 @@ public class DefaultNutsInputStreamProgressMonitor implements NutsInputStreamPro
     }
 
     @Override
-    public boolean onProgress(NutsInputStreamEvent event) {
+    public boolean onProgress(NutsProgressEvent event) {
         if (event.getSession().isPlainOut()) {
             return onProgress0(event, false);
         }
         return true;
     }
 
-    public boolean onProgress0(NutsInputStreamEvent event, boolean end) {
+    public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
             NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().getTerminalFormat();

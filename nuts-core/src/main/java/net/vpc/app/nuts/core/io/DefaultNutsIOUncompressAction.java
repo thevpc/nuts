@@ -5,28 +5,29 @@
  */
 package net.vpc.app.nuts.core.io;
 
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.core.util.io.*;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
-
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.NutsLogger;
-import net.vpc.app.nuts.core.log.NutsLogVerb;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.io.InputSource;
-import net.vpc.app.nuts.core.util.io.SingletonNutsInputStreamProgressFactory;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author vpc
  */
-public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
+public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
 
     private final NutsLogger LOG;
 
-    private Validator checker;
+    private boolean skipRoot = false;
     private boolean safeCopy = true;
     private boolean monitorable = false;
     private InputSource source;
@@ -36,9 +37,9 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     private boolean includeDefaultMonitorFactory;
     private NutsInputStreamProgressFactory progressMonitorFactory;
 
-    public DefaultNutsIOCopyAction(DefaultNutsIOManager iom) {
+    public DefaultNutsIOUncompressAction(DefaultNutsIOManager iom) {
         this.iom = iom;
-        LOG = iom.getWorkspace().log().of(DefaultNutsIOCopyAction.class);
+        LOG = iom.getWorkspace().log().of(DefaultNutsIOUncompressAction.class);
     }
 
     @Override
@@ -47,72 +48,72 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction setSource(InputStream source) {
+    public NutsPathUncompressAction setSource(InputStream source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(File source) {
+    public NutsPathUncompressAction setSource(File source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(Path source) {
+    public NutsPathUncompressAction setSource(Path source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(URL source) {
+    public NutsPathUncompressAction setSource(URL source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(OutputStream target) {
+    public NutsPathUncompressAction setTarget(Path target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(Path target) {
+    public NutsPathUncompressAction setTarget(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(File target) {
+    public NutsPathUncompressAction setTarget(File target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
-    public DefaultNutsIOCopyAction setSource(Object source) {
+    public DefaultNutsIOUncompressAction setSource(Object source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction from(String source) {
+    public NutsPathUncompressAction from(String source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction to(String target) {
+    public NutsPathUncompressAction to(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction from(Object source) {
+    public NutsPathUncompressAction from(Object source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction to(Object target) {
+    public NutsPathUncompressAction to(Object target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -123,19 +124,8 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     //    @Override
-    public DefaultNutsIOCopyAction setTarget(Object target) {
+    public DefaultNutsIOUncompressAction setTarget(Object target) {
         this.target = CoreIOUtils.createTarget(target);
-        return this;
-    }
-
-    @Override
-    public Validator getChecker() {
-        return checker;
-    }
-
-    @Override
-    public DefaultNutsIOCopyAction setValidator(Validator checker) {
-        this.checker = checker;
         return this;
     }
 
@@ -145,49 +135,39 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public DefaultNutsIOCopyAction setMonitorable(boolean monitorable) {
+    public DefaultNutsIOUncompressAction setMonitorable(boolean monitorable) {
         this.monitorable = monitorable;
         return this;
     }
 
     @Override
-    public NutsPathCopyAction from(InputStream source) {
+    public NutsPathUncompressAction from(InputStream source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(File source) {
+    public NutsPathUncompressAction from(File source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(Path source) {
+    public NutsPathUncompressAction from(Path source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(URL source) {
+    public NutsPathUncompressAction from(URL source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction to(File target) {
+    public NutsPathUncompressAction to(File target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCopyAction to(OutputStream target) {
+    public NutsPathUncompressAction to(Path target) {
         return setTarget(target);
-    }
-
-    @Override
-    public NutsPathCopyAction to(Path target) {
-        return setTarget(target);
-    }
-
-    @Override
-    public NutsPathCopyAction validator(Validator validationVerifier) {
-        return setValidator(validationVerifier);
     }
 
     @Override
@@ -196,31 +176,31 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public DefaultNutsIOCopyAction setSafeCopy(boolean safeCopy) {
+    public DefaultNutsIOUncompressAction setSafeCopy(boolean safeCopy) {
         this.safeCopy = safeCopy;
         return this;
     }
 
     @Override
-    public NutsPathCopyAction safeCopy() {
+    public NutsPathUncompressAction safeCopy() {
         setSafeCopy(true);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction safeCopy(boolean safeCopy) {
+    public NutsPathUncompressAction safeCopy(boolean safeCopy) {
         setSafeCopy(safeCopy);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction monitorable() {
+    public NutsPathUncompressAction monitorable() {
         setMonitorable(true);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction monitorable(boolean safeCopy) {
+    public NutsPathUncompressAction monitorable(boolean safeCopy) {
         setMonitorable(safeCopy);
         return this;
     }
@@ -231,23 +211,23 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction session(NutsSession session) {
+    public NutsPathUncompressAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsPathCopyAction setSession(NutsSession session) {
+    public NutsPathUncompressAction setSession(NutsSession session) {
         this.session = session;
         return this;
     }
 
-    @Override
-    public byte[] getByteArrayResult() {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        to(b);
-        safeCopy(false);
-        run();
-        return b.toByteArray();
+    /**
+     * Unzip it
+     *
+     * @param zipFile      input zip file
+     * @param outputFolder zip file output folder
+     */
+    public static void unzip(NutsWorkspace ws, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
     }
 
     @Override
@@ -258,10 +238,6 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         }
         if (target == null) {
             throw new UnsupportedOperationException("Missing Target");
-        }
-        boolean _target_isPath = target.isPath();
-        if (checker != null && !_target_isPath && !safeCopy) {
-            throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported validation if neither safeCopy is armed nor path is defined");
         }
         if (isMonitorable() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
@@ -287,82 +263,71 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 //        } else {
         LOG.log(Level.FINEST, NutsLogVerb.START, "Copy {0} to {1}", _source, target);
 //        }
+        List<Path> created = new ArrayList<>();
         try {
-            if (safeCopy) {
-                Path temp = null;
-                if (_target_isPath) {
-                    Path to = target.getPath();
-                    CoreIOUtils.mkdirs(to.getParent());
-                    temp = to.resolveSibling(to.getFileName() + "~");
-                } else {
-                    temp = iom.createTempFile("temp~");
-                }
-                try {
-                    if (_source.isPath()) {
-                        Files.copy(_source.getPath(), temp, StandardCopyOption.REPLACE_EXISTING);
-                    } else {
-                        try (InputStream ins = _source.open()) {
-                            Files.copy(ins, temp, StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    }
-                    _validate(temp);
-                    if (_target_isPath) {
-                        Files.move(temp, target.getPath(), StandardCopyOption.REPLACE_EXISTING);
-                        temp = null;
-                    } else {
-                        try (OutputStream ops = target.open()) {
-                            Files.copy(temp, ops);
-                        }
-                    }
-                } finally {
-                    if (temp != null) {
-                        Files.delete(temp);
-                    }
-                }
-            } else {
-                if (_target_isPath) {
-                    Path to = target.getPath();
-                    CoreIOUtils.mkdirs(to.getParent());
-                    if (_source.isPath()) {
-                        Files.copy(_source.getPath(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
-                    } else {
-                        try (InputStream ins = _source.open()) {
-                            Files.copy(ins, target.getPath(), StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    }
-                } else {
-                    if (_source.isPath()) {
-                        try (OutputStream ops = target.open()) {
-                            Files.copy(_source.getPath(), ops);
-                        }
-                    } else {
-                        try (InputStream ins = _source.open()) {
-                            try (OutputStream ops = target.open()) {
-                                CoreIOUtils.copy(ins, ops);
-                            }
-                        }
-                    }
-                }
-                _validate(target.getPath());
+
+            byte[] buffer = new byte[1024];
+
+            //create output directory is not exists
+            Path folder = target.getPath();
+            if (!Files.exists(folder)) {
+                Files.createDirectories(folder);
             }
 
+            //get the zip file content
+            InputStream _in = _source.open();
+            try {
+                try (ZipInputStream zis = new ZipInputStream(_in)) {
+                    //get the zipped file list entry
+                    ZipEntry ze = zis.getNextEntry();
+                    String root = null;
+                    while (ze != null) {
 
+                        String fileName = ze.getName();
+                        if (skipRoot) {
+                            if (root == null) {
+                                if (fileName.endsWith("/")) {
+                                    root = fileName;
+                                    ze = zis.getNextEntry();
+                                    continue;
+                                } else {
+                                    throw new IOException("tot a single root zip");
+                                }
+                            }
+                            if (fileName.startsWith(root)) {
+                                fileName = fileName.substring(root.length());
+                            } else {
+                                throw new IOException("tot a single root zip");
+                            }
+                        }
+                        if (fileName.endsWith("/")) {
+                            Path newFile = folder.resolve(fileName);
+                            Files.createDirectories(newFile);
+                        } else {
+                            Path newFile = folder.resolve(fileName);
+                            iom.getWorkspace().log().of(ZipUtils.class).log(Level.FINEST, NutsLogVerb.WARNING, "file unzip : " + newFile);
+                            //create all non exists folders
+                            //else you will hit FileNotFoundException for compressed folder
+                            if (newFile.getParent() != null) {
+                                Files.createDirectories(newFile.getParent());
+                            }
+                            try (OutputStream fos = Files.newOutputStream(newFile)) {
+                                int len;
+                                while ((len = zis.read(buffer)) > 0) {
+                                    fos.write(buffer, 0, len);
+                                }
+                            }
+                        }
+                        ze = zis.getNextEntry();
+                    }
+                    zis.closeEntry();
+                }
+            }finally {
+                _in.close();
+            }
         } catch (IOException ex) {
             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
-        }
-    }
-
-    private void _validate(Path temp) {
-        if (checker != null) {
-            try {
-                checker.validate(temp);
-            } catch (Exception ex) {
-                if (ex instanceof ValidationException) {
-                    throw ex;
-                }
-                throw new ValidationException("Validate file " + temp + " failed", ex);
-            }
         }
     }
 
@@ -385,7 +350,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction setIncludeDefaultMonitorFactory(boolean value) {
+    public NutsPathUncompressAction setIncludeDefaultMonitorFactory(boolean value) {
         this.includeDefaultMonitorFactory = value;
         return this;
     }
@@ -398,7 +363,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction includeDefaultMonitorFactory(boolean value) {
+    public NutsPathUncompressAction includeDefaultMonitorFactory(boolean value) {
         return setIncludeDefaultMonitorFactory(value);
     }
 
@@ -409,7 +374,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction includeDefaultMonitorFactory() {
+    public NutsPathUncompressAction includeDefaultMonitorFactory() {
         return includeDefaultMonitorFactory(true);
     }
 
@@ -432,7 +397,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction setProgressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsPathUncompressAction setProgressMonitorFactory(NutsInputStreamProgressFactory value) {
         this.progressMonitorFactory = value;
         return this;
     }
@@ -445,7 +410,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsPathUncompressAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
         return setProgressMonitorFactory(value);
     }
 
@@ -457,7 +422,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction setProgressMonitor(NutsProgressMonitor value) {
+    public NutsPathUncompressAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -470,8 +435,28 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction progressMonitor(NutsProgressMonitor value) {
+    public NutsPathUncompressAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
     }
 
+    @Override
+    public NutsPathUncompressAction skipRoot(boolean value) {
+        return setSkipRoot(value);
+    }
+
+    @Override
+    public NutsPathUncompressAction skipRoot() {
+        return skipRoot(true);
+    }
+
+    @Override
+    public boolean isSkipRoot() {
+        return skipRoot;
+    }
+
+    @Override
+    public NutsPathUncompressAction setSkipRoot(boolean value) {
+        this.skipRoot=true;
+        return this;
+    }
 }

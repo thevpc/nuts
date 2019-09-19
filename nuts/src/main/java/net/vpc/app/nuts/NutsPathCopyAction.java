@@ -36,7 +36,6 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- *
  * @author vpc
  * @since 0.5.4
  */
@@ -155,7 +154,7 @@ public interface NutsPathCopyAction {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsPathCopyAction setProgressMonitor(NutsInputStreamProgressMonitor value);
+    NutsPathCopyAction setProgressMonitor(NutsProgressMonitor value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -164,7 +163,7 @@ public interface NutsPathCopyAction {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsPathCopyAction progressMonitor(NutsInputStreamProgressMonitor value);
+    NutsPathCopyAction progressMonitor(NutsProgressMonitor value);
 
     class ValidationException extends RuntimeException {
 

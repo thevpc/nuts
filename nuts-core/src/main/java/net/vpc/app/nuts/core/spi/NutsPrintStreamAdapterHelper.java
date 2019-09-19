@@ -34,8 +34,7 @@ import java.io.PrintStream;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedUnixAnsi;
-import net.vpc.app.nuts.core.util.NutsUnexpectedEnumException;
-import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.NutsUnsupportedEnumException;
 
 /**
  *
@@ -63,7 +62,7 @@ public class NutsPrintStreamAdapterHelper {
                             return new NutsPrintStreamFormattedUnixAnsi(out);
                         }
                         default: {
-                            throw new NutsUnexpectedEnumException(ws, am);
+                            throw new NutsUnsupportedEnumException(ws, am);
                         }
                     }
                 }
@@ -79,7 +78,7 @@ public class NutsPrintStreamAdapterHelper {
                             return new NutsPrintStreamFormattedUnixAnsi(out);
                         }
                         default: {
-                            throw new NutsUnexpectedEnumException(ws, am);
+                            throw new NutsUnsupportedEnumException(ws, am);
                         }
                     }
                 }
