@@ -112,6 +112,8 @@ public interface NutsTerminal extends NutsTerminalBase {
      * @throws java.io.UncheckedIOException
      *         If an I/O error occurs.
      *
+     * @param promptFormat prompt message format (cstyle)
+     * @param params prompt message parameters
      * @return  A string containing the line read from the terminal's input stream, not
      *          including any line-termination characters, or <tt>null</tt>
      *          if an end of stream has been reached.
@@ -124,11 +126,13 @@ public interface NutsTerminal extends NutsTerminalBase {
      * @throws java.io.UncheckedIOException
      *         If an I/O error occurs.
      *
+     * @param promptFormat prompt message format (cstyle)
+     * @param params prompt message parameters
      * @return  A string containing the line read from the terminal's input stream, not
      *          including any line-termination characters, or <tt>null</tt>
      *          if an end of stream has been reached.
      */
-    char[] readPassword(String prompt, Object... params);
+    char[] readPassword(String promptFormat, Object... params);
 
     /**
      * create a {@link NutsQuestion} to write a question to the terminal's output stream

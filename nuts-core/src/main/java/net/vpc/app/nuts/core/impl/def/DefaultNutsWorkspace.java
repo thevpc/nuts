@@ -371,7 +371,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
                 String[] companionIds = getCompanionIds();
-                out.println("Looking for recommended companion tools to install... detected : "+Arrays.stream(companionIds)
+                out.println("looking for recommended companion tools to install... detected : "+Arrays.stream(companionIds)
                         .map(x->id().set(id().parse(x)).format()).collect(Collectors.toList())
                 );
             }

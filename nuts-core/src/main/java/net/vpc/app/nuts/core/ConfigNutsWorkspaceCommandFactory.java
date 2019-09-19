@@ -103,7 +103,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
-                        LOG.log(Level.FINE,"Unable to parse "+file,ex);
+                        LOG.log(Level.FINE,"unable to parse "+file,ex);
                         //
                     }
                     if (c != null) {
