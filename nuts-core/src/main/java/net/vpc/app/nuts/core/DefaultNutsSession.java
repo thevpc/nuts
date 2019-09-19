@@ -365,7 +365,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--xml": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.XML);
+                        this.outputFormat(NutsOutputFormat.XML);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -374,21 +374,21 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--force":{
                     a = cmdLine.nextBoolean();
                     if (enabled) {
-                        this.setForce(a.getBooleanValue());
+                        this.force(a.getBooleanValue());
                     }
                     return true;
                 }
                 case "-y":
                 case "--yes":{
                     if (enabled) {
-                        this.setConfirm(NutsConfirmationMode.YES);
+                        this.confirm(NutsConfirmationMode.YES);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--ask": {
                     if (enabled) {
-                        this.setConfirm(NutsConfirmationMode.ASK);
+                        this.confirm(NutsConfirmationMode.ASK);
                     }
                     cmdLine.skip();
                     return true;
@@ -396,14 +396,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-n":
                 case "--no":{
                     if (enabled) {
-                        this.setConfirm(NutsConfirmationMode.NO);
+                        this.confirm(NutsConfirmationMode.NO);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--error": {
                     if (enabled) {
-                        this.setConfirm(NutsConfirmationMode.ERROR);
+                        this.confirm(NutsConfirmationMode.ERROR);
                     }
                     cmdLine.skip();
                     return true;
@@ -411,7 +411,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--trace": {
                     NutsArgument v = cmdLine.nextBoolean();
                     if (enabled) {
-                        this.setTrace(v.getBooleanValue());
+                        this.trace(v.getBooleanValue());
                     }
                     return true;
                 }

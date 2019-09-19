@@ -727,15 +727,15 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
         return new DefaultNutsDependencyBuilder()
-                .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
-                .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
-                .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
-                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties))
-                .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
-                .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
-                .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))
-                .setExclusions(exclusions)
-                .setProperties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
+                .namespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
+                .groupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
+                .artifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
+                .version(CoreNutsUtils.applyStringProperties(child.getVersion(), properties))
+                .classifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
+                .scope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
+                .optional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))
+                .exclusions(exclusions)
+                .properties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
                 .build();
     }
 

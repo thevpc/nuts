@@ -94,26 +94,27 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         installedRepository = new DefaultNutsInstalledRepository(this);
         ioManager = new DefaultNutsIOManager(this);
         configManager = new DefaultNutsWorkspaceConfigManager(this,info);
+        NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted();
+        NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted();
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ===============================================================================");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("=="+escapeText0("     _   __      __         ")+"==                                   ");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("=="+escapeText0("    / | / /_  __/ /______   ")+"== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("=="+escapeText0("   /  |/ / / / / __/ ___/   ")+"== <<The Open Source Package Manager for __Java__ (TM)>>");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("=="+escapeText0("  / /|  / /_/ / /_(__  )    ")+"== <<and other Things>> ... by ==vpc==");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("=="+escapeText0(" /_/ |_/\\__,_/\\__/____/   ")+"==   __http://github.com/thevpc/nuts__");
+            LOGCSF.log("=="+escapeText0("     _   __      __         ")+"==                                   ");
+            LOGCSF.log("=="+escapeText0("    / | / /_  __/ /______   ")+"== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
+            LOGCSF.log("=="+escapeText0("   /  |/ / / / / __/ ___/   ")+"== <<The Open Source Package Manager for __Java__ (TM)>>");
+            LOGCSF.log("=="+escapeText0("  / /|  / /_/ / /_(__  )    ")+"== <<and other Things>> ... by ==vpc==");
+            LOGCSF.log("=="+escapeText0(" /_/ |_/\\__,_/\\__/____/   ")+"==   __http://github.com/thevpc/nuts__");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
             LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().log("start ==Nuts== **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
-            NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted();
+            LOGCSF.log("start ==Nuts== **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().value(info.getOptions().format().getBootCommand()).format()));
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().value(info.getOptions().format().compact().getBootCommand()).format()));
 
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "open Workspace with config        : ");
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-api-version               : {0}", Nuts.getVersion());
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
+            LOGCRF.log("open Workspace with config        : ");
+            LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
+            LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
+            LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
+            LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
             LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(info.getRuntimeDependenciesSet().stream().map(x->id().set(id().parse(x)).format()).collect(Collectors.joining(";"))));
             LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(info.getExtensionDependenciesSet().stream().map(x->id().set(id().parse(x)).format()).collect(Collectors.joining(";"))));
 //            if (hasUnsatisfiedRequirements()) {
@@ -121,33 +122,33 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            } else {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
 //            }
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getWorkspace(), info.getWorkspaceLocation()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-log                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LOG), info.getStoreLocation(NutsStoreLocation.LOG)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-temp                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.TEMP), info.getStoreLocation(NutsStoreLocation.TEMP)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-cache               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CACHE), info.getStoreLocation(NutsStoreLocation.CACHE)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-run                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.RUN), info.getStoreLocation(NutsStoreLocation.RUN)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-lib                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LIB), info.getStoreLocation(NutsStoreLocation.LIB)));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-strategy            : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationStrategy(), info.getStoreLocationStrategy()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-repos-store-strategy      : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getRepositoryStoreLocationStrategy(), info.getRepositoryStoreLocationStrategy()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   nuts-store-layout              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationLayout(), info.getStoreLocationLayout() == null ? "system" : info.getStoreLocationLayout().id()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   option-read-only               : {0}", info.getOptions().isReadOnly());
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   option-trace                   : {0}", info.getOptions().isTrace());
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   inherited                      : {0}", info.getOptions().isInherited());
+            LOGCRF.log("   nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getWorkspace(), info.getWorkspaceLocation()));
+            LOGCRF.log("   nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS)));
+            LOGCRF.log("   nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG)));
+            LOGCRF.log("   nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR)));
+            LOGCRF.log("   nuts-store-log                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LOG), info.getStoreLocation(NutsStoreLocation.LOG)));
+            LOGCRF.log("   nuts-store-temp                : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.TEMP), info.getStoreLocation(NutsStoreLocation.TEMP)));
+            LOGCRF.log("   nuts-store-cache               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.CACHE), info.getStoreLocation(NutsStoreLocation.CACHE)));
+            LOGCRF.log("   nuts-store-run                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.RUN), info.getStoreLocation(NutsStoreLocation.RUN)));
+            LOGCRF.log("   nuts-store-lib                 : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocation(NutsStoreLocation.LIB), info.getStoreLocation(NutsStoreLocation.LIB)));
+            LOGCRF.log("   nuts-store-strategy            : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationStrategy(), info.getStoreLocationStrategy()));
+            LOGCRF.log("   nuts-repos-store-strategy      : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getRepositoryStoreLocationStrategy(), info.getRepositoryStoreLocationStrategy()));
+            LOGCRF.log("   nuts-store-layout              : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getStoreLocationLayout(), info.getStoreLocationLayout() == null ? "system" : info.getStoreLocationLayout().id()));
+            LOGCRF.log("   option-read-only               : {0}", info.getOptions().isReadOnly());
+            LOGCRF.log("   option-trace                   : {0}", info.getOptions().isTrace());
+            LOGCRF.log("   inherited                      : {0}", info.getOptions().isInherited());
             LOGCRF.log("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args")==null?"<EMPTY>":new NutsString(commandLine().value(System.getProperty("nuts.boot.args")).format()));
             LOGCRF.log("   inherited-nuts-args            : {0}", System.getProperty("nuts.args")==null?"<EMPTY>":new NutsString(commandLine().value(System.getProperty("nuts.args")).format()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   java-home                      : {0}", System.getProperty("java.home"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   java-classpath                 : {0}", System.getProperty("java.class.path"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   java-library-path              : {0}", System.getProperty("java.library.path"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   os-name                        : {0}", System.getProperty("os.name"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   os-arch                        : {0}", System.getProperty("os.arch"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   os-version                     : {0}", System.getProperty("os.version"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   user-name                      : {0}", System.getProperty("user.name"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   user-dir                       : {0}", System.getProperty("user.dir"));
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "   user-home                      : {0}", System.getProperty("user.home"));
+            LOGCRF.log("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
+            LOGCRF.log("   java-home                      : {0}", System.getProperty("java.home"));
+            LOGCRF.log("   java-classpath                 : {0}", System.getProperty("java.class.path"));
+            LOGCRF.log("   java-library-path              : {0}", System.getProperty("java.library.path"));
+            LOGCRF.log("   os-name                        : {0}", System.getProperty("os.name"));
+            LOGCRF.log("   os-arch                        : {0}", System.getProperty("os.arch"));
+            LOGCRF.log("   os-version                     : {0}", System.getProperty("os.version"));
+            LOGCRF.log("   user-name                      : {0}", System.getProperty("user.name"));
+            LOGCRF.log("   user-dir                       : {0}", System.getProperty("user.dir"));
+            LOGCRF.log("   user-home                      : {0}", System.getProperty("user.home"));
         }
         securityManager=new DefaultNutsWorkspaceSecurityManager(this);
         String workspaceLocation=info.getWorkspaceLocation();
@@ -457,9 +458,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsSession searchSession = session.copy().trace(false);
         NutsDefinition nutToInstall;
         try {
-            nutToInstall = search().id(id).setSession(searchSession).setTransitive(false).inlineDependencies(checkDependencies)
+            nutToInstall = search().id(id).session(searchSession).transitive(false)
+                    .inlineDependencies(checkDependencies)
                     .installed()
-                    .setOptional(false)
+                    .optional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
                 return false;
@@ -493,7 +495,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if ((CoreStringUtils.isBlank(g)) || (CoreStringUtils.isBlank(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
-                NutsId p = fetch().copyFrom(options).id(parent).setEffective(true).setSession(options.getSession()).getResultId();
+                NutsId p = fetch().copyFrom(options).id(parent).setEffective(true).session(options.getSession()).getResultId();
                 if (CoreStringUtils.isBlank(g)) {
                     g = p.getGroupId();
                 }
@@ -581,7 +583,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];
         for (int i = 0; i < parentDescriptors.length; i++) {
             parentDescriptors[i] = resolveEffectiveDescriptor(
-                    fetch().id(parents[i]).setEffective(false).setSession(session).getResultDescriptor(),
+                    fetch().id(parents[i]).setEffective(false).session(session).getResultDescriptor(),
                     session
             );
         }
@@ -605,24 +607,24 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (CoreStringUtils.isBlank(d.getScope())
                             && !CoreStringUtils.isBlank(standardDependencyOk.getScope())) {
                         someChange = true;
-                        d = d.builder().setScope(standardDependencyOk.getScope()).build();
+                        d = d.builder().scope(standardDependencyOk.getScope()).build();
                     }
                     if (CoreStringUtils.isBlank(d.getOptional())
                             && !CoreStringUtils.isBlank(standardDependencyOk.getOptional())) {
                         someChange = true;
-                        d = d.builder().setOptional(standardDependencyOk.getOptional()).build();
+                        d = d.builder().optional(standardDependencyOk.getOptional()).build();
                     }
                     if (d.getVersion().isBlank()
                             && !standardDependencyOk.getVersion().isBlank()) {
                         someChange = true;
-                        d = d.builder().setVersion(standardDependencyOk.getVersion()).build();
+                        d = d.builder().version(standardDependencyOk.getVersion()).build();
                     }
                 }
             }
 
             if ("import".equals(d.getScope())) {
                 someChange = true;
-                newDeps.addAll(Arrays.asList(fetch().id(d.getId()).setEffective(true).setSession(session).getResultDescriptor().getDependencies()));
+                newDeps.addAll(Arrays.asList(fetch().id(d.getId()).effective().session(session).getResultDescriptor().getDependencies()));
             } else {
                 newDeps.add(d);
             }
@@ -680,9 +682,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsDefinition runnerFile = nutToInstall;
             if (installerDescriptor != null && installerDescriptor.getId() != null) {
                 if (installerDescriptor.getId() != null) {
-                    runnerFile = fetch().id(installerDescriptor.getId()).setSession(session)
-                            .setTransitive(false)
-                            .setOptional(false)
+                    runnerFile = fetch().id(installerDescriptor.getId()).session(session)
+                            .transitive(false)
+                            .optional(false)
                             .content()
                             .dependencies()
                             .getResultDefinition();
@@ -759,7 +761,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default:{
-                    oldDef=search().id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
+                    oldDef=search().session(session.copy().trace(false)).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
                     break;
                 }
             }
@@ -956,8 +958,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 NutsSession sessionCopy = session.copy();
                 extensionManager.wireExtension(extensionId,
-                        fetch().session(sessionCopy).setFetchStratery(NutsFetchStrategy.ONLINE)
-                                .setTransitive(true)
+                        fetch().session(sessionCopy)
+                                .fetchStrategy(NutsFetchStrategy.ONLINE)
+                                .transitive()
                 );
                 if (sessionCopy.getTerminal() != session.getTerminal()) {
                     session.setTerminal(sessionCopy.getTerminal());

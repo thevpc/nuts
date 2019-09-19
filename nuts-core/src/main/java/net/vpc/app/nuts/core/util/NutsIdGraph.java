@@ -119,7 +119,7 @@ public class NutsIdGraph {
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
-                NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).setSession(session).getResultId();
+                NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).session(session).getResultId();
                 context.getNutsIdInfo(nutsId.id,true).refTo=context.getNutsIdInfo(nutsId1,true);
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
             } catch (NutsNotFoundException ex) {

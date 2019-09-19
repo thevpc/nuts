@@ -219,10 +219,10 @@ public class NutsRepositoryMirroringHelper {
                     NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                     NutsId id2 = dws.resolveEffectiveId(nutsDescriptor,
                             getWorkspace().fetch()
-                                    .setCached(session.isCached())
-                                    .setSession(session.getSession())
-                                    .setTransitive(session.isTransitive())
-                                    .setIndexed(session.isIndexed())).builder().setFaceDescriptor().build();
+                                    .cached(session.isCached())
+                                    .session(session.getSession())
+                                    .transitive(session.isTransitive())
+                                    .indexed(session.isIndexed())).builder().setFaceDescriptor().build();
                     Path localNutFile = cache.getLongNameIdLocalFile(id2);
                     getWorkspace().descriptor().value(nutsDescriptor).print(localNutFile);
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {

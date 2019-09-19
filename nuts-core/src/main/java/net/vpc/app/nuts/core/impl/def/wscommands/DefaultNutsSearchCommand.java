@@ -239,7 +239,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsFetchCommand toFetch() {
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .setSession(evalSession(true));
+                .session(evalSession(true));
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -348,7 +348,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
     private NutsCollectionSearchResult<NutsId> getResultIdsBase(boolean trace, boolean sort) {
         DefaultNutsSearch build = build();
-        build.getOptions().setSession(build.getOptions().getSession().copy().trace(trace));
+        build.getOptions().session(build.getOptions().getSession().copy().trace(trace));
         Iterator<NutsId> base0 = findIterator(build);
         if (base0 == null) {
             return new NutsCollectionSearchResult<NutsId>(ws, resolveFindIdBase());
@@ -719,10 +719,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         //now will look with *:artifactId pattern
                         NutsSearchCommand search2 = ws.search()
                                 .copyFrom(search.getOptions())
-                                .setRepositoryFilter(search.getRepositoryFilter())
-                                .setDescriptorFilter(search.getDescriptorFilter())
-                                .setFetchStratery(search.getOptions().getFetchStrategy())
-                                .setSession(session);
+                                .repositoryFilter(search.getRepositoryFilter())
+                                .descriptorFilter(search.getDescriptorFilter())
+                                .fetchStrategy(search.getOptions().getFetchStrategy())
+                                .session(session);
                         search2.setIdFilter(new NutsIdFilterOr(
                                 new NutsPatternIdFilter(nutsId.builder().setGroupId("*").build()),
                                 CoreNutsUtils.simplify(search2.getIdFilter())

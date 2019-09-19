@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.util.fprint;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
+import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.renderer.AnsiUnixTermPrintRenderer;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 

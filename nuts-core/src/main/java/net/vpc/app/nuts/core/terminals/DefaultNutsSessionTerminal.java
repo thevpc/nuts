@@ -20,10 +20,12 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     protected NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
 
     @Override
-    public void install(NutsWorkspace workspace) {
+    public void setWorkspace(NutsWorkspace workspace) {
         this.ws = workspace;
-        this.out.session = this;
-        this.err.session = this;
+        if(this.ws!=null) {
+            this.out.session = this;
+            this.err.session = this;
+        }
     }
 
     @Override
@@ -245,11 +247,6 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public void uninstall() {
-
     }
 
     protected static class OutInfo {

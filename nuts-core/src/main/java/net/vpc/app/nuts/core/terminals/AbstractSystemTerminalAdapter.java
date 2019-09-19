@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import net.vpc.app.nuts.core.DefaultNutsQuestion;
+import net.vpc.app.nuts.NutsWorkspaceAware;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
@@ -13,19 +15,15 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     private NutsWorkspace ws;
 
     @Override
-    public void install(NutsWorkspace workspace) {
-        getParent().install(this.ws = workspace);
+    public void setWorkspace(NutsWorkspace workspace) {
+        this.ws = workspace;
+        NutsSystemTerminalBase parent = getParent();
+        NutsWorkspaceUtils.of(ws).setWorkspace(parent);
     }
 
 
 
     public abstract NutsSystemTerminalBase getParent();
-
-    @Override
-    public void uninstall() {
-        getParent().uninstall();
-    }
-    
 
     @Override
     public NutsSystemTerminal setMode(NutsTerminalMode mode) {

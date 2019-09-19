@@ -42,8 +42,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NutsId nutsId : ws.search().setSession(getSession().copy().trace(false)).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
-                NutsDefinition fetched = ws.fetch().content().id(nutsId).setSession(getSession()).getResultDefinition();
+            for (NutsId nutsId : ws.search().session(getSession().copy().trace(false)).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
+                NutsDefinition fetched = ws.fetch().content().id(nutsId).session(getSession()).getResultDefinition();
                 if (fetched.getPath() != null) {
                     runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
                 }
@@ -75,7 +75,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             Path contentFile2 = null;
             try {
                 if (descriptor == null) {
-                    NutsFetchCommand p = ws.fetch().setTransitive(true).setSession(getValidSession());
+                    NutsFetchCommand p = ws.fetch().transitive().session(getValidSession());
                     characterizedFile = characterizeForDeploy(ws, contentSource, p, getValidSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "Missing descriptor");
@@ -93,7 +93,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsWorkspaceUtils.of(ws).checkReadOnly();
                 Path contentFile = contentFile0;
                 Path tempFile2 = null;
-                NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true);
+                NutsFetchCommand fetchOptions = ws.fetch().transitive();
                 try {
                     if (Files.isDirectory(contentFile)) {
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -141,7 +141,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         throw new NutsIllegalArgumentException(ws, "Invalid Version " + descriptor.getId().getVersion());
                     }
 
-                    NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(getValidSession()));
+                    NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().transitive().session(getValidSession()));
                     for (String os : descriptor.getOs()) {
                         CorePlatformUtils.checkSupportedOs(ws.id().parseRequired(os).getShortName());
                     }

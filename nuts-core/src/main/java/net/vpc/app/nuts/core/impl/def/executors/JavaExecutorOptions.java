@@ -288,7 +288,7 @@ public final class JavaExecutorOptions {
     private void npToCp(List<String> classPath, String value) {
         NutsSession searchSession = this.session.copy().trace(false);
         NutsSearchCommand ns = getWorkspace().search().latest()
-                .setSession(searchSession);
+                .session(searchSession);
         for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!CoreStringUtils.isBlank(n)) {
                 ns.addId(n);
@@ -296,7 +296,7 @@ public final class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWorkspace()
-                    .search().id(nutsId).setSession(searchSession).latest().getResultDefinitions().required();
+                    .search().id(nutsId).session(searchSession).latest().getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }

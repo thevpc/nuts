@@ -269,11 +269,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
-        NutsId d0Id = ws.search().id(id).setSession(searchSession).installed().setOptional(false).failFast(false).defaultVersions()
+        NutsId d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).defaultVersions()
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
-            d0Id = ws.search().id(id).setSession(searchSession).installed().setOptional(false).failFast(false).latest()
+            d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).latest()
                     .getResultIds().first();
             if (d0Id != null) {
                 shouldUpdateDefault = true;
@@ -282,19 +282,22 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if(d0Id==null) {
             throw new NutsIllegalArgumentException(ws, id + " is not yet installed to be updated.");
         }
-        NutsDefinition d0 = fetch0().id(d0Id).setSession(searchSession).installed().setOptional(false).failFast(false)
+        NutsDefinition d0 = fetch0().id(d0Id)
+                .session(searchSession).installed().optional(false).failFast(false)
                 .getResultDefinition();
         if (d0 == null) {
             throw new NutsIllegalArgumentException(ws, d0Id + " installation is broken and cannot be updated.");
         }
         //search latest parse
-        NutsId d1Id = ws.search().id(d0Id.getShortNameId()).setSession(searchSession)
+        NutsId d1Id = ws.search().id(d0Id.getShortNameId())
+                .session(searchSession)
                 .failFast(false)
                 .anyWhere()
                 .latest()
                 .getResultIds().first();
         //then fetch its definition!
-        NutsDefinition d1 = d1Id == null ? null : latestOnlineDependencies(fetch0().id(d1Id).setSession(searchSession))
+        NutsDefinition d1 = d1Id == null ? null : latestOnlineDependencies(fetch0().id(d1Id)
+                .session(searchSession))
                 .failFast(false)
                 .getResultDefinition();
         r.setLocal(d0);
@@ -525,9 +528,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             }
             case "extension":{
                 try {
-                    oldId = ws.search().id(id).setEffective(true).setSession(searchSession)
+                    oldId = ws.search().id(id).effective().session(searchSession)
                             .offline().getResultIds().first();
-                    oldFile = fetch0().id(oldId).setSession(searchSession).getResultDefinition();
+                    oldFile = fetch0().id(oldId).session(searchSession).getResultDefinition();
                 } catch (Exception ex) {
                     LOG.log(Level.SEVERE, "Error " + ex, ex);
                     //ignore
@@ -550,9 +553,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             }
             case "companion":{
                 try {
-                    oldId = ws.search().id(id).setEffective(true).setSession(searchSession)
+                    oldId = ws.search().id(id).effective().session(searchSession)
                             .offline().getResultIds().first();
-                    oldFile = fetch0().id(oldId).setSession(searchSession).getResultDefinition();
+                    oldFile = fetch0().id(oldId).session(searchSession).getResultDefinition();
                 } catch (Exception ex) {
                     LOG.log(Level.SEVERE, "Error " + ex, ex);
                     //ignore

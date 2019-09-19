@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.security;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
+import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.Arrays;

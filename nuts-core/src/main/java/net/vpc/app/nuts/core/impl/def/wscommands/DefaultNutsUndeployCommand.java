@@ -16,7 +16,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
     public NutsUndeployCommand run() {
         NutsWorkspaceUtils.of(ws).checkReadOnly();
 
-        NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
+        NutsFetchCommand fetchOptions = ws.fetch().transitive(this.isTransitive());
         if (ids.isEmpty()) {
             throw new NutsExecutionException(ws, "No component to undeploy", 1);
         }
@@ -26,8 +26,8 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .session(searchSession)
                     .ids(id)
                     .repositories(getRepository())
-                    .setTransitive(isTransitive())
-                    .setFetchStratery(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
+                    .transitive(isTransitive())
+                    .fetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     .distinct()
                     .failFast()
                     .getResultDefinitions().required();

@@ -170,7 +170,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsId b = context.getWorkspace().config().getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .session(context.getSession().copy().trace(false))
-                .id(b).setOptional(false).latest().content().getResultDefinitions().required();
+                .id(b).optional(false).latest().content().getResultDefinitions().required();
         Path ff = getScriptFile("nuts");
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(ff)) {

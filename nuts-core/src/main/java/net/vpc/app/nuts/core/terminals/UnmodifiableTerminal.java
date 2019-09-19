@@ -91,8 +91,8 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
-    public void install(NutsWorkspace workspace) {
-        //
+    public void setWorkspace(NutsWorkspace workspace) {
+        //do nothing, it is unmodifiable!
     }
 
     @Override
@@ -138,11 +138,6 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         return getBase().getSupportLevel(criteria);
-    }
-
-    @Override
-    public void uninstall() {
-
     }
 
     public NutsSessionTerminal getBase() {

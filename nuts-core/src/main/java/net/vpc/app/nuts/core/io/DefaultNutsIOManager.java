@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.NutsLogger;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
+import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -28,7 +27,6 @@ import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.terminals.UnmodifiableTerminal;
 import net.vpc.app.nuts.core.util.NutsUnexpectedEnumException;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
@@ -112,7 +110,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         this.ws = workspace;
 //        LOG = ws.log().of(DefaultNutsIOManager.class);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
-        ((NutsWorkspaceAware) terminalMetrics).setWorkspace(workspace);
+        NutsWorkspaceUtils.of(ws).setWorkspace(terminalMetrics);
     }
 
     @Override
@@ -332,9 +330,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             if (supported == null) {
                                 throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
                             }
-                            if (supported instanceof NutsWorkspaceAware) {
-                                ((NutsWorkspaceAware) supported).setWorkspace(ws);
-                            }
+                            NutsWorkspaceUtils.of(ws).setWorkspace(supported);
                             return supported;
                         }
                         default: {
@@ -385,9 +381,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     if (supported == null) {
                         throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
                     }
-                    if (supported instanceof NutsWorkspaceAware) {
-                        ((NutsWorkspaceAware) supported).setWorkspace(ws);
-                    }
+                    NutsWorkspaceUtils.of(ws).setWorkspace(supported);
                     return supported;
                 }
                 case FILTERED: {
@@ -414,24 +408,22 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
-        if (termb instanceof NutsWorkspaceAware) {
-            ((NutsWorkspaceAware) termb).setWorkspace(ws);
-        }
+        NutsWorkspaceUtils.of(ws).setWorkspace(termb);
         try {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
-                term.install(ws);
+                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
-                term.install(ws);
+                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
-            c.install(ws);
+            NutsWorkspaceUtils.of(ws).setWorkspace(c);
             c.setParent(parent);
             return c;
         }
@@ -554,15 +546,15 @@ public class DefaultNutsIOManager implements NutsIOManager {
         } else {
             try {
                 syst = new DefaultSystemTerminal(term);
-                syst.install(getWorkspace());
+                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             } catch (Exception ex) {
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
-                syst.install(getWorkspace());
+                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
 
             }
         }
         if (this.systemTerminal != null) {
-            this.systemTerminal.uninstall();
+            NutsWorkspaceUtils.of(ws).unsetWorkspace(this.systemTerminal);
         }
         NutsSystemTerminal old = this.systemTerminal;
         this.systemTerminal = syst;

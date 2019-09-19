@@ -75,8 +75,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        NutsFetchCommand p = session.getWorkspace().fetch();
-        p.setTransitive(true);
+        NutsFetchCommand p = session.getWorkspace().fetch().transitive();
         try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
@@ -94,8 +93,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public void executeHelper(boolean dry) {
         NutsWorkspace ws = session.getWorkspace();
-        NutsFetchCommand p = ws.fetch();
-        p.setTransitive(true);
+        NutsFetchCommand p = ws.fetch().transitive();
         try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);

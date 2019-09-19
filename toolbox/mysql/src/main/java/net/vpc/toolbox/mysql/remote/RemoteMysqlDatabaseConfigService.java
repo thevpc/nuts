@@ -83,7 +83,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .command("nsh",
                         "cp",
                         "--no-color",
-                        remoteFullFilePath, localPath).setSession(context.getSession())
+                        remoteFullFilePath, localPath).session(context.getSession())
                 .redirectErrorStream()
                 .grabOutputString()
                 .failFast()
@@ -139,7 +139,7 @@ public class RemoteMysqlDatabaseConfigService {
                         "--no-color",
                         localPath,
                         remoteFullFilePath
-                ).setSession(context.getSession())
+                ).session(context.getSession())
                 .redirectErrorStream()
                 .grabOutputString()
                 .failFast()
@@ -170,7 +170,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
-                .setSession(context.getSession());
+                .session(context.getSession());
         b.addCommand("nsh", "-c", "ssh");
         b.addCommand("--nuts");
         b.addCommand(this.config.getServer());

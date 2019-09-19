@@ -156,13 +156,13 @@ public class MavenUtils {
             }
         }
         return new DefaultNutsDependencyBuilder()
-                .setGroupId(d.getGroupId())
-                .setArtifactId(d.getArtifactId())
-                .setClassifier(d.getClassifier())
-                .setVersion(toNutsVersion((d.getVersion())))
-                .setOptional(d.getOptional())
-                .setScope(nds.id())
-                .setExclusions(toNutsId(d.getExclusions()))
+                .groupId(d.getGroupId())
+                .artifactId(d.getArtifactId())
+                .classifier(d.getClassifier())
+                .version(toNutsVersion((d.getVersion())))
+                .optional(d.getOptional())
+                .scope(nds.id())
+                .exclusions(toNutsId(d.getExclusions()))
         .build();
     }
 
@@ -296,9 +296,9 @@ public class MavenUtils {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
                             parentDescriptor = ws.fetch().id(parentId).setEffective(true)
-                                    .setSession(session.getSession())
-                                    .setTransitive(true)
-                                    .setFetchStratery(
+                                    .session(session.getSession())
+                                    .transitive(true)
+                                    .fetchStrategy(
                                             session.getFetchMode() == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
                                             : NutsFetchStrategy.OFFLINE
                                     ).getResultDescriptor();
@@ -340,7 +340,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetch().id(pid).setEffective(true).setSession(session.getSession()).getResultDescriptor();
+                                d = ws.fetch().id(pid).effective().session(session.getSession()).getResultDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {

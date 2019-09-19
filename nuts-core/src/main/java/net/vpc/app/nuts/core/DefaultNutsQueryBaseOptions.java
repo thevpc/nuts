@@ -120,39 +120,39 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    public T fetchStratery(NutsFetchStrategy mode) {
-        return setFetchStratery(mode);
+    public T fetchStrategy(NutsFetchStrategy mode) {
+        return setFetchStrategy(mode);
     }
 
     //@Override
-    public T setFetchStratery(NutsFetchStrategy mode) {
+    public T setFetchStrategy(NutsFetchStrategy mode) {
         this.fetchStrategy = mode;
         return (T) this;
     }
 
     //@Override
     public T remote() {
-        return setFetchStratery(NutsFetchStrategy.REMOTE);
+        return setFetchStrategy(NutsFetchStrategy.REMOTE);
     }
 
     //@Override
     public T offline() {
-        return setFetchStratery(NutsFetchStrategy.OFFLINE);
+        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
     }
 
     //@Override
     public T online() {
-        return setFetchStratery(NutsFetchStrategy.ONLINE);
+        return setFetchStrategy(NutsFetchStrategy.ONLINE);
     }
 
     //@Override
     public T installed() {
-        return setFetchStratery(NutsFetchStrategy.INSTALLED);
+        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
     }
 
     //@Override
     public T anyWhere() {
-        return setFetchStratery(NutsFetchStrategy.ANYWHERE);
+        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
     }
 
     //@Override
@@ -519,7 +519,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             }
             case "-f":
             case "--fetch": {
-                this.setFetchStratery(NutsFetchStrategy.valueOf(cmdLine.nextString().getStringValue().toUpperCase().replace("-", "_")));
+                this.setFetchStrategy(NutsFetchStrategy.valueOf(cmdLine.nextString().getStringValue().toUpperCase().replace("-", "_")));
                 return true;
             }
             case "--dependencies": {
@@ -538,35 +538,35 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--anywhere": 
             {
                 cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
+                this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
                 return true;
             }
             case "-i": 
             case "--installed": 
             {
                 cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.INSTALLED);
+                this.setFetchStrategy(NutsFetchStrategy.INSTALLED);
                 return true;
             }
             case "-F":
             case "--offline":
             {
                 cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.OFFLINE);
+                this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
                 return true;
             }
             case "-O": 
             case "--online": 
             {
                 cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.ONLINE);
+                this.setFetchStrategy(NutsFetchStrategy.ONLINE);
                 return true;
             }
             case "-R": 
             case "--remote": 
             {
                 cmdLine.skip();
-                this.setFetchStratery(NutsFetchStrategy.REMOTE);
+                this.setFetchStrategy(NutsFetchStrategy.REMOTE);
                 return true;
             }
             case "--optional": {

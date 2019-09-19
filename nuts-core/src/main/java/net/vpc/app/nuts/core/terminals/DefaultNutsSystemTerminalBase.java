@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.util.fprint.AnsiPrintStreamSupport;
 import net.vpc.app.nuts.core.util.fprint.FPrint;
 
@@ -13,7 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 
 @NutsPrototype
-public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
+public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsWorkspaceAware {
 
     private NutsLogger LOG;
     private Scanner scanner;
@@ -24,20 +25,24 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     private InputStream in;
 
     @Override
-    public void install(NutsWorkspace workspace) {
-        LOG= ((DefaultNutsWorkspace)workspace).LOG;
+    public void setWorkspace(NutsWorkspace workspace) {
+        if(workspace!=null) {
+            LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
-        NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
-        if (terminalMode == null) {
-            terminalMode = NutsTerminalMode.FORMATTED;
+            NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
+            if (terminalMode == null) {
+                terminalMode = NutsTerminalMode.FORMATTED;
+            }
+            setOutMode(terminalMode);
+            setErrMode(terminalMode);
+            NutsIOManager ioManager = workspace.io();
+            this.out = ioManager.createPrintStream(FPrint.out(), NutsTerminalMode.FORMATTED);
+            this.err = ioManager.createPrintStream(FPrint.err(), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+            this.in = System.in;
+            this.scanner = new Scanner(this.in);
+        }else{
+            //on uninstall do nothing
         }
-        setOutMode(terminalMode);
-        setErrMode(terminalMode);
-        NutsIOManager ioManager = workspace.io();
-        this.out = ioManager.createPrintStream(FPrint.out(), NutsTerminalMode.FORMATTED);
-        this.err = ioManager.createPrintStream(FPrint.err(), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
-        this.in = System.in;
-        this.scanner = new Scanner(this.in);
     }
 
     private AnsiPrintStreamSupport.Type convertMode(NutsTerminalMode outMode) {
@@ -142,11 +147,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     @Override
     public PrintStream getErr() {
         return this.err;
-    }
-
-    @Override
-    public void uninstall() {
-
     }
 
     @Override

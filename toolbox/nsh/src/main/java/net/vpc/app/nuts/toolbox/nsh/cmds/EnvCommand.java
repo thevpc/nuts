@@ -176,10 +176,10 @@ public class EnvCommand extends SimpleNshBuiltin {
                     .env(env)
                     .failFast();
             if (options.dir != null) {
-                e.setDirectory(options.dir);
+                e.directory(options.dir);
             }
             if (options.executionType != null) {
-                e.setExecutionType(options.executionType);
+                e.executionType(options.executionType);
             }
             e.run();
         }

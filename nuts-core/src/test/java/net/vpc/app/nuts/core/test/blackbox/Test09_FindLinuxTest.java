@@ -47,7 +47,7 @@ public class Test09_FindLinuxTest {
             "--skip-companions"
         });
 
-        List<NutsId> def = ws.search().id("nuts").setOptional(false).latest().failFast(false)
+        List<NutsId> def = ws.search().id("nuts").optional(false).latest().failFast(false)
 //                .repository("maven-local")
                 .defaultVersions()
                 .installed()

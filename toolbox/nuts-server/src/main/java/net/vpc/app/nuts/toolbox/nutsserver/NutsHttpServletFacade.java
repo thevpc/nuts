@@ -79,7 +79,8 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDefinition fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDefinition();
+                    fetch = context.getWorkspace().fetch().id(id).session(context.getSession()).transitive(transitive)
+                            .getResultDefinition();
                 } catch (Exception exc) {
                     //
                 }
@@ -98,7 +99,8 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDescriptor fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDescriptor();
+                    fetch = context.getWorkspace().fetch().id(id).session(context.getSession())
+                            .transitive(transitive).getResultDescriptor();
                 } catch (Exception exc) {
                     //
                 }
@@ -117,7 +119,8 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultContentHash();
+                    hash = context.getWorkspace().fetch().id(id).session(context.getSession())
+                            .transitive(transitive).getResultContentHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -136,7 +139,9 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDescriptorHash();
+                    hash = context.getWorkspace().fetch().id(id)
+                            .session(context.getSession()).transitive(transitive)
+                            .getResultDescriptorHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -156,7 +161,8 @@ public class NutsHttpServletFacade {
                 List<NutsId> fetch = null;
                 try {
                     NutsWorkspace ws = context.getWorkspace();
-                    fetch = ws.search().setSession(context.getSession()).setTransitive(transitive).addId(id).getResultIds().list();
+                    fetch = ws.search().session(context.getSession())
+                            .transitive(transitive).addId(id).getResultIds().list();
                 } catch (Exception exc) {
                     //
                 }
@@ -175,7 +181,9 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsId fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession().copy()).setTransitive(transitive).getResultId();
+                    fetch = context.getWorkspace().fetch().id(id)
+                            .session(context.getSession().copy())
+                            .transitive(transitive).getResultId();
                 } catch (Exception exc) {
                     //
                 }
@@ -218,8 +226,8 @@ public class NutsHttpServletFacade {
                     }
                 }
                 Iterator<NutsId> it = context.getWorkspace().search()
-                        .setSession(context.getSession())
-                        .setTransitive(transitive)
+                        .session(context.getSession())
+                        .transitive(transitive)
                         .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                 context.sendResponseText(200, iteratorNutsIdToString(it));
@@ -277,10 +285,10 @@ public class NutsHttpServletFacade {
                 if (contentFile == null) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
                 }
-                NutsId id = context.getWorkspace().deploy().setContent(contentFile)
-                        .setSha1(receivedContentHash)
-                        .setDescriptor(descriptor)
-                        .setSession(context.getSession().copy())
+                NutsId id = context.getWorkspace().deploy().content(contentFile)
+                        .sha1(receivedContentHash)
+                        .descriptor(descriptor)
+                        .session(context.getSession().copy())
                         .getResult()[0];
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());

@@ -244,7 +244,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .session(searchSession)
-                .addId(id).setSession(session)
+                .addId(id).session(session)
                 .addScope(NutsDependencyScopePattern.RUN)
                 .optional(false)
                 .inlineDependencies().getResultDefinitions().list();
@@ -403,7 +403,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             return null;
         }
         NutsSessionTerminal term = new DefaultNutsSessionTerminal();
-        term.install(ws);
+        NutsWorkspaceUtils.of(ws).setWorkspace(term);
         term.setParent(termb);
         return term;
 

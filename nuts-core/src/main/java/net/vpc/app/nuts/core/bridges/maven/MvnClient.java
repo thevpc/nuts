@@ -33,14 +33,14 @@ public class MvnClient {
                 status = Status.DIRTY;
                 try {
                     NutsDefinition ff = ws.search()
-                            .id(NET_VPC_APP_NUTS_MVN).setSession(searchSession)
+                            .id(NET_VPC_APP_NUTS_MVN).session(searchSession)
                             .online()
-                            .setOptional(false)
+                            .optional(false)
                             .inlineDependencies().latest().getResultDefinitions().required();
                     for (NutsId nutsId : ws.search().id(ff.getId()).inlineDependencies().getResultIds()) {
-                        ws.fetch().id(nutsId).setSession(searchSession)
+                        ws.fetch().id(nutsId).session(searchSession)
                                 .online()
-                                .setOptional(false)
+                                .optional(false)
                                 .dependencies().getResultDefinition();
                     }
                     status = Status.SUCCESS;
@@ -73,7 +73,7 @@ public class MvnClient {
                             "get",
                             id.toString(),
                             repoURL == null ? "" : repoURL
-                    ).setSession(session).run();
+                    ).session(session).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
             LOG.log(Level.FINE, "Failed to invoke " + NET_VPC_APP_NUTS_MVN,ex);

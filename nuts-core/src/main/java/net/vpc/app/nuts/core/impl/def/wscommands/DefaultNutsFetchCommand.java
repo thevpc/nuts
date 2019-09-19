@@ -194,7 +194,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             //that said, will search remote!
             for (NutsFetchMode mode : NutsFetchStrategy.REMOTE) {
                 NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( options.getSession());
-                options.setSession(session.copy().yes());
+                options.session(session.copy().yes());
                 try {
                     result = fetchDescriptorAsDefinition(id, options, mode);
                     if (result != null) {
@@ -208,7 +208,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
                     }
                 } finally {
-                    options.setSession(session);
+                    options.session(session);
                 }
             }
         }

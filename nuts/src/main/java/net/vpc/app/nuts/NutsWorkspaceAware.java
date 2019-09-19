@@ -27,16 +27,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.spi;
+package net.vpc.app.nuts;
 
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
- *
+ * classes that implement this class will have their method {@link #setWorkspace(NutsWorkspace)}
+ * called upon its creation (by factory) with a non <tt>null</tt> argument to <strong>initialize</strong>.
+ * They <strong>may</strong> accept a call with a <tt>null</tt>
+ * argument later to <strong>dispose</strong> the instance.
  * @author vpc
  */
 public interface NutsWorkspaceAware {
 
+    /**
+     * initialize or dispose the instance.
+     * when workspace is not null, the instance should initialize it values
+     * accordingly.
+     * when workspace is null, the instance should dispose resources.
+     * @param workspace workspace reference or null
+     */
     void setWorkspace(NutsWorkspace workspace);
 
 }

@@ -39,7 +39,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
-        terminal.install(ws);
+        NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
         terminal.setParent(getValidSession().getTerminal());
         terminal.setOutMode(getValidSession().getTerminal().getOutMode());
         terminal.setErrMode(getValidSession().getTerminal().getErrMode());
@@ -242,20 +242,20 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             throw new NutsNotFoundException(ws, commandName);
         }
         NutsSession searchSession = session.copy().trace(false);
-        List<NutsId> ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+        List<NutsId> ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
                 .defaultVersions()
                 .installed().getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
-                ff = ws.search().id(nid).session(searchSession).setOptional(false).latest().failFast(false)
+                ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
                         .installed().getResultIds().list();
         }
         if (ff.isEmpty()) {
             if(!forceInstalled) {
                 //now search online
                 // this helps recovering from "invalid default parseVersion" issue
-                ff = ws.search().id(nid).session(searchSession).setOptional(false).failFast(false).online().latest()
+                ff = ws.search().id(nid).session(searchSession).optional(false).failFast(false).online().latest()
                         .getResultIds().list();
             }
         }
@@ -267,7 +267,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsId goodId = ff.get(0);
         def = ws.fetch().id(goodId)
                 .session(searchSession)
-                .setOptional(false).dependencies()
+                .optional(false).dependencies()
                 .failFast()
                 .effective()
                 .content()

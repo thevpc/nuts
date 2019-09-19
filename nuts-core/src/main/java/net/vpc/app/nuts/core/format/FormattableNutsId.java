@@ -518,11 +518,11 @@ public class FormattableNutsId {
 
             try {
                 if (!this.i || def == null) {
-                    this.defFetched = ws.fetch().id(id).setSession(
-                            session.setTrace(false)
+                    this.defFetched = ws.fetch().id(id).session(
+                            session.trace(false)
                     ).offline()
-                            .setContent(true)
-                            .setOptional(false)
+                            .content(true)
+                            .optional(false)
                             .dependencies(this.checkDependencies)
                             .getResultDefinition();
                     this.fetched = true;

@@ -813,7 +813,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsFetchCommand toFetch() {
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .setSession(evalSession(true));
+                .session(evalSession(true));
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -1000,7 +1000,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--optional": {
                 NutsArgument s = cmdLine.nextString();
-                this.setOptional(CoreCommonUtils.parseBoolean(s.getStringValue(), null));
+                this.optional(CoreCommonUtils.parseBoolean(s.getStringValue(), null));
                 return true;
             }
             case "--script": {

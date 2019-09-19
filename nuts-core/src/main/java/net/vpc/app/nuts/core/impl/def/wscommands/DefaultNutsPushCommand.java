@@ -76,13 +76,13 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(ws, "Invalid Version " + id.getVersion());
             }
-            NutsDefinition file = ws.fetch().id(id).setSession(session).content().setTransitive(false).getResultDefinition();
+            NutsDefinition file = ws.fetch().id(id).session(session).content().transitive(false).getResultDefinition();
             if (file == null) {
                 throw new NutsIllegalArgumentException(ws, "Nothing to push");
             }
             toProcess.put(id, file);
         }
-        NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true).setSession(session);
+        NutsFetchCommand fetchOptions = ws.fetch().transitive().session(session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
             throw new NutsIllegalArgumentException(ws, "Missing component to push");
@@ -105,7 +105,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
                         NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr,
-                                ws.fetch().setTransitive(true).session(session)), descr);
+                                ws.fetch().transitive().session(session)), descr);
                         try {
 
                             repo.push().id(id2)

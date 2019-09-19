@@ -39,7 +39,7 @@ import net.vpc.app.nuts.core.impl.def.config.compat.v507.NutsVersionCompat507;
 import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.impl.def.repos.NutsSimpleRepositoryWrapper;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
+import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -112,7 +112,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
-    public void onExtensionsPrepared(){
+    public void onExtensionsPrepared() {
         try {
             indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
         } catch (Exception ex) {
@@ -841,7 +841,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
 
-
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session) {
         if ("java".equals(sdkType)) {
@@ -1336,9 +1335,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (supported == null) {
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
-        if(supported instanceof NutsWorkspaceAware) {
-            ((NutsWorkspaceAware) supported).setWorkspace(ws);
-        }
+        NutsWorkspaceUtils.of(ws).setWorkspace(supported);
         return supported;
     }
 
@@ -2150,7 +2147,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     //    @Override
     public NutsWorkspaceConfigApi getStoredConfigApi() {
-        if (storeModelApi.getApiVersion()==null) {
+        if (storeModelApi.getApiVersion() == null) {
             storeModelApi.setApiVersion(Nuts.getVersion());
         }
         return storeModelApi;

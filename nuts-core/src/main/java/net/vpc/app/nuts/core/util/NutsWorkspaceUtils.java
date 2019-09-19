@@ -79,7 +79,7 @@ public class NutsWorkspaceUtils {
 
     public NutsFetchCommand validateSession(NutsFetchCommand fetch) {
         if (fetch.getSession() == null) {
-            fetch = fetch.setSession(ws.createSession());
+            fetch = fetch.session(ws.createSession());
         }
         return fetch;
     }
@@ -506,7 +506,8 @@ public class NutsWorkspaceUtils {
                     return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
-                    nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API).setSession(session).getResultDefinition();
+                    nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API)
+                            .session(session).getResultDefinition();
                     if (nutsDefinition.getPath() != null) {
                         return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
                     }
@@ -624,4 +625,18 @@ public class NutsWorkspaceUtils {
         return entries.toArray(new NutsExecutionEntry[0]);
     }
 
+    public boolean setWorkspace(Object o){
+        if(o instanceof NutsWorkspaceAware){
+            ((NutsWorkspaceAware) o).setWorkspace(ws);
+            return true;
+        }
+        return false;
+    }
+    public boolean unsetWorkspace(Object o){
+        if(o instanceof NutsWorkspaceAware){
+            ((NutsWorkspaceAware) o).setWorkspace(null);
+            return true;
+        }
+        return false;
+    }
 }

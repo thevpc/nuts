@@ -18,15 +18,15 @@ public class NutsIdAndNutsDependencyFilterItem {
         if (effDescriptor == null) {
             effDescriptor = session.getWorkspace().fetch().id(id.id)
                     .effective()
-                    .setSession(session.copy().trace(false))
-                    .setEffective(true).getResultDescriptor();
+                    .session(session.copy().trace(false))
+                    .effective().getResultDescriptor();
         }
         return effDescriptor;
     }
 
     public NutsDescriptor getDescriptor(NutsSession session) {
         if (descriptor == null) {
-            descriptor = session.getWorkspace().fetch().id(id.id).setSession(session).getResultDescriptor();
+            descriptor = session.getWorkspace().fetch().id(id.id).session(session).getResultDescriptor();
         }
         return descriptor;
     }

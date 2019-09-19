@@ -249,7 +249,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                     .addScope(NutsDependencyScopePattern.RUN)
                     .optional(false)
                     .offline()
-                    .setSession(this.getSession().copy().trace(false))
+                    .session(this.getSession().copy().trace(false))
                     .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);

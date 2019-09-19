@@ -13,7 +13,8 @@ import java.util.Locale;
 
 import net.vpc.app.nuts.NutsTextFormatStyle;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.spi.NutsWorkspaceAware;
+import net.vpc.app.nuts.NutsWorkspaceAware;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.core.util.fprint.ExtendedFormatAware;
@@ -81,7 +82,7 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorksp
             return out;
         }
         ExtendedFormatAwarePrintStream s = new ExtendedFormatAwarePrintStream(out);
-        s.setWorkspace(ws);
+        NutsWorkspaceUtils.of(ws).setWorkspace(s);
         return s;
     }
 
@@ -91,7 +92,7 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorksp
             return out;
         }
         ExtendedFormatAwarePrintWriter w = new ExtendedFormatAwarePrintWriter(out);
-        w.setWorkspace(ws);
+        NutsWorkspaceUtils.of(ws).setWorkspace(w);
         return w;
     }
 

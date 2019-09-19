@@ -49,17 +49,17 @@ public class DefaultSourceControlHelper {
             String newVersion = ws.version().parse(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
-                newVersionFound = ws.fetch().id(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
+                newVersionFound = ws.fetch().id(d.getId().builder().setVersion(newVersion).build()).session(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 LOG.log(Level.FINE, "Failed to fetch " + d.getId().builder().setVersion(newVersion).build(),ex);
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.builder().setId(d.getId().builder().setVersion(newVersion).build()).build();
+                d = d.builder().id(d.getId().builder().version(newVersion).build()).build();
             } else {
-                d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
+                d = d.builder().id(d.getId().builder().version(oldVersion + ".1").build()).build();
             }
-            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
+            NutsId newId = ws.deploy().content(folder).descriptor(d).session(session).getResult()[0];
             ws.descriptor().value(d).print(file);
             try {
                 CoreIOUtils.delete(ws,folder);
@@ -81,7 +81,7 @@ public class DefaultSourceControlHelper {
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession( session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
-        NutsDefinition nutToInstall = ws.fetch().id(id).setSession(session).setOptional(false).dependencies().getResultDefinition();
+        NutsDefinition nutToInstall = ws.fetch().id(id).session(session).optional(false).dependencies().getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
@@ -93,7 +93,7 @@ public class DefaultSourceControlHelper {
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
             NutsDescriptor d = ws.descriptor().parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
-            NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
+            NutsId newId = d.getId().builder().version(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
             ws.descriptor().value(d).print(file);
