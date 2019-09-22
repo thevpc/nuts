@@ -46,7 +46,7 @@ public final class NutsHttpServerConfig extends ServerConfig {
     private int port;
     private int backlog;
     private Executor executor;
-    private boolean ssh;
+    private boolean tls;
     private byte[] sslKeystoreCertificate;
     private char[] sslKeystorePassphrase;
     private Map<String, NutsWorkspace> workspaces = new HashMap<>();
@@ -69,8 +69,8 @@ public final class NutsHttpServerConfig extends ServerConfig {
         return workspaces;
     }
 
-    public boolean isSsh() {
-        return ssh;
+    public boolean isTls() {
+        return tls;
     }
 
     public byte[] getSslKeystoreCertificate() {
@@ -91,8 +91,8 @@ public final class NutsHttpServerConfig extends ServerConfig {
         return this;
     }
 
-    public NutsHttpServerConfig setSsh(boolean ssh) {
-        this.ssh = ssh;
+    public NutsHttpServerConfig setTls(boolean tls) {
+        this.tls = tls;
         return this;
     }
 

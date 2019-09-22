@@ -375,7 +375,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         .map(x->id().set(id().parse(x)).format()).collect(Collectors.toList())
                 );
             }
-            install().companions().session(session).run();
+            try {
+                install().companions().session(session).run();
+            }catch (Exception ex){
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Unable to install companions",ex);
+                if (session.isPlainTrace()) {
+                    PrintStream out = session.out();
+                    out.printf("Unable to install companion tools. This happens when none of the the following repositories are able to locate them : %s\n",
+                            Arrays.stream(config().getRepositories()).map(x->x.config().name()).collect(Collectors.joining(","))
+                            );
+                }
+            }
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
                 out.println("Workspace is ##ready##!");

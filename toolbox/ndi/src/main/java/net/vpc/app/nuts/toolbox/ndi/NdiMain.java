@@ -20,20 +20,20 @@ public class NdiMain extends NutsApplication {
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
-        switch (appContext.getWorkspace().config().getOsFamily()){
-            case LINUX:{
+        switch (appContext.getWorkspace().config().getOsFamily()) {
+            case LINUX: {
                 ndi = new LinuxNdi(appContext);
                 break;
             }
-            case UNIX:{
+            case UNIX: {
                 ndi = new UnixNdi(appContext);
                 break;
             }
-            case MACOS:{
+            case MACOS: {
                 ndi = new MacosNdi(appContext);
                 break;
             }
-            case WINDOWS:{
+            case WINDOWS: {
                 ndi = new WindowsNdi(appContext);
                 break;
             }
@@ -43,7 +43,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsCommandLine cmd = context.commandLine()
+        NutsCommandLine cmdLine = context.commandLine()
                 .setCommandName("ndi")
                 .required();
         List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
@@ -54,64 +54,65 @@ public class NdiMain extends NutsApplication {
         ArrayList<String> executorOptions = new ArrayList<>();
         NutsExecutionType execType = null;
         NutsArgument a;
-        while (cmd.hasNext()) {
-            if (context.configureFirst(cmd)) {
+        while (cmdLine.hasNext()) {
+            if (context.configureFirst(cmdLine)) {
                 // ignore
-            } else if ((a = cmd.next("in", "install")) != null) {
-                while (cmd.hasNext()) {
-                    if (context.configureFirst(cmd)) {
-                    } else if ((a = cmd.nextBoolean("-F", "--force-all")) != null) {
+            } else if ((a = cmdLine.next("in", "install")) != null) {
+                while (cmdLine.hasNext()) {
+                    if (context.configureFirst(cmdLine)) {
+
+                    } else if ((a = cmdLine.nextBoolean("-F", "--force-all")) != null) {
                         forceAll = a.getBooleanValue();
-                    } else if ((a = cmd.nextBoolean("-t", "--fetch")) != null) {
+                    } else if ((a = cmdLine.nextBoolean("-t", "--fetch")) != null) {
                         fetch = a.getBooleanValue();
-                    } else if ((a = cmd.nextBoolean("-x", "--external", "--spawn")) != null) {
+                    } else if ((a = cmdLine.nextBoolean("-x", "--external", "--spawn")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SPAWN;
                         }
-                    } else if ((a = cmd.nextBoolean("-b", "--embedded")) != null) {
+                    } else if ((a = cmdLine.nextBoolean("-b", "--embedded")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
-                    } else if ((a = cmd.nextBoolean("-s", "--native", "--syscall")) != null) {
+                    } else if ((a = cmdLine.nextBoolean("-s", "--native", "--syscall")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SYSCALL;
                         }
-                    } else if ((a = cmd.nextString("-X", "--exec-options")) != null) {
+                    } else if ((a = cmdLine.nextString("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getStringValue());
-                    } else if ((a = cmd.nextString("-i", "--installed")) != null) {
+                    } else if ((a = cmdLine.nextString("-i", "--installed")) != null) {
                         forceAll = true;
                         for (NutsId resultId : context.getWorkspace().search().installed().getResultIds()) {
                             idsToInstall.add(resultId.getLongName());
                         }
-                    } else if ((a = cmd.nextString("-c", "--companions")) != null) {
+                    } else if ((a = cmdLine.nextString("-c", "--companions")) != null) {
                         forceAll = true;
                         for (String companion : COMPANIONS) {
                             idsToInstall.add(context.getWorkspace().search().id(companion).latest().getResultIds().required().getLongName());
                         }
-                    } else if (cmd.peek().isOption()) {
-                        cmd.unexpectedArgument();
+                    } else if (cmdLine.peek().isOption()) {
+                        cmdLine.unexpectedArgument();
                     } else {
-                        idsToInstall.add(cmd.next().getString());
+                        idsToInstall.add(cmdLine.next().getString());
                     }
                 }
-            } else if ((a = cmd.next("un", "uninstall")) != null) {
-                while (cmd.hasNext()) {
-                    if (context.configureFirst(cmd)) {
-                    } else if (cmd.peek().isOption()) {
-                        cmd.unexpectedArgument();
+            } else if ((a = cmdLine.next("un", "uninstall")) != null) {
+                while (cmdLine.hasNext()) {
+                    if (context.configureFirst(cmdLine)) {
+                    } else if (cmdLine.peek().isOption()) {
+                        cmdLine.unexpectedArgument();
                     } else {
-                        idsToUninstall.add(cmd.next().getString());
+                        idsToUninstall.add(cmdLine.next().getString());
                     }
                 }
             } else {
-                cmd.unexpectedArgument();
+                cmdLine.unexpectedArgument();
             }
         }
 
         if (idsToInstall.isEmpty() && idsToUninstall.isEmpty()) {
-            cmd.required();
+            cmdLine.required();
         }
-        if (cmd.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             if (forceAll) {
                 context.getSession().yes();
             }

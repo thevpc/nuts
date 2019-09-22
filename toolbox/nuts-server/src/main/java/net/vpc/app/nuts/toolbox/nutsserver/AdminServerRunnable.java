@@ -45,7 +45,7 @@ import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
  *
  * @author vpc
  */
-class StopServerBuiltin implements NutsServer, Runnable {
+class AdminServerRunnable implements NutsServer, Runnable {
 
     private final String serverId;
     int finalPort;
@@ -57,7 +57,7 @@ class StopServerBuiltin implements NutsServer, Runnable {
     ServerSocket serverSocket = null;
     NutsSession session = null;
 
-    public StopServerBuiltin(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSession session) {
+    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSession session) {
         this.serverId = serverId;
         this.finalPort = finalPort;
         this.finalBacklog = finalBacklog;
@@ -126,11 +126,11 @@ class StopServerBuiltin implements NutsServer, Runnable {
                                     terminal.setErr(eout);
                                     session.setTerminal(terminal);
                                     cli = new NutsJavaShell(invokerWorkspace, session,
-                                            invokerWorkspace.id().resolveId(StopServerBuiltin.class),
+                                            invokerWorkspace.id().resolveId(AdminServerRunnable.class),
                                             serverId);
                                     cli.getRootContext().builtins().unset("connect");
                                     cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
-                                    cli.executeCommand(args);
+                                    cli.executeShell(new String[0]);
                                 } finally {
                                     finalAccept.close();
                                 }
