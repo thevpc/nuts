@@ -5,13 +5,13 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.nio.file.Path;
 
-public abstract class AbstractNutsDeleteAction implements NutsDeleteAction {
+public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
     private NutsWorkspace ws;
     private Object target;
     private NutsSession session;
     private boolean failFast;
 
-    public AbstractNutsDeleteAction(NutsWorkspace ws) {
+    public AbstractNutsIODeleteAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -21,12 +21,12 @@ public abstract class AbstractNutsDeleteAction implements NutsDeleteAction {
     }
 
     @Override
-    public NutsDeleteAction session(NutsSession session) {
+    public NutsIODeleteAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsDeleteAction setSession(NutsSession session) {
+    public NutsIODeleteAction setSession(NutsSession session) {
         this.session = session;
         return this;
     }
@@ -41,7 +41,7 @@ public abstract class AbstractNutsDeleteAction implements NutsDeleteAction {
     }
 
     @Override
-    public NutsDeleteAction setTarget(Object target) {
+    public NutsIODeleteAction setTarget(Object target) {
         if (target == null) {
             this.target = null;
             return this;
@@ -56,19 +56,19 @@ public abstract class AbstractNutsDeleteAction implements NutsDeleteAction {
     }
 
     @Override
-    public NutsDeleteAction setTarget(File target) {
+    public NutsIODeleteAction setTarget(File target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NutsDeleteAction setTarget(Path target) {
+    public NutsIODeleteAction setTarget(Path target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public NutsDeleteAction target(Object target) {
+    public NutsIODeleteAction target(Object target) {
         return setTarget(target);
     }
 
@@ -78,13 +78,13 @@ public abstract class AbstractNutsDeleteAction implements NutsDeleteAction {
     }
 
     @Override
-    public NutsDeleteAction setFailFast(boolean failFast) {
+    public NutsIODeleteAction setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
     }
 
     @Override
-    public NutsDeleteAction failFast(boolean failFast) {
+    public NutsIODeleteAction failFast(boolean failFast) {
         return setFailFast(false);
     }
 }

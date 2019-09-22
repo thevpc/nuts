@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,16 +44,16 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             runningFolder = context.getVarFolder().resolve("archive").toString();
         }
         String packaging = "war";
-        return context.getWorkspace().io().path(runningFolder).resolve(name + "-" + version + "." + packaging);
+        return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
     }
 
     public Path getRunningFile() {
         String s = getConfig().getSourceFilePath();
         if (!TomcatUtils.isBlank(s)) {
-            return context.getWorkspace().io().path(s);
+            return Paths.get(s);
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
-        Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : context.getWorkspace().io().path(_runningFolder);
+        Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : Paths.get(_runningFolder);
         if (runningFolder == null) {
             runningFolder = context.getVarFolder().resolve("running");
         }
@@ -145,7 +146,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatAppConfigService install(String version, String file, boolean setVersion) {
         try {
-            Path f = context.getWorkspace().io().path(file);
+            Path f = Paths.get(file);
             if (!Files.isRegularFile(f)) {
                 throw new UncheckedIOException(new IOException("File not found " + f));
             }

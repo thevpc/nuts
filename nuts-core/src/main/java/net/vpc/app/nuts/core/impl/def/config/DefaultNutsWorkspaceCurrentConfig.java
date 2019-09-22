@@ -153,7 +153,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         this.effStoreLocationsMap.clear();
         this.effStoreLocationsMap.putAll(storeLocations);
         for (int i = 0; i < effStoreLocationPath.length; i++) {
-            effStoreLocationPath[i] = ws.io().path(effStoreLocationsMap.get(NutsStoreLocation.values()[i].id()));
+            effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i].id()));
         }
         if (apiId == null) {
             apiId = CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
@@ -333,12 +333,12 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
         String path = new NutsHomeLocationsMap(homeLocations).get(layout, folderType);
-        return path == null ? null : ws.io().path(path);
+        return path == null ? null : Paths.get(path);
     }
 
 
     public Path getHomeLocation(NutsStoreLocation folderType) {
-        return ws.io().path(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
+        return Paths.get(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()

@@ -220,6 +220,11 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
+    public NutsStringFormat str() {
+        return new DefaultNutsStringFormat(this);
+    }
+
+    @Override
     public NutsVersionFormat version() {
         return new DefaultVersionFormat(this);
     }

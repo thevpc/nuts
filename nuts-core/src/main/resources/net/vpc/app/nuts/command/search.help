@@ -64,11 +64,17 @@ search for artifacts/==nuts==
                                                      **i** : means 'installed' and is not default
                                                      **f** : means 'fetched' locally but not installed
                                                      **r** : means 'remote' (not fetched)
-                                      char \#2    : show application status
+                                      char \#2    : show package type
+                                                     **a** : nuts 'api' package
+                                                     **r** : nuts 'runtime' package
+                                                     **e** : nuts 'extension' package
+                                                     **c** : nuts 'companion' package
+                                                     **-** : other package
+                                      char \#3    : show application status
                                                      **X** : means executable nuts application (implementing NutsApplication)
                                                      **x** : means executable regular application
                                                      **-** : means non executable or unknown
-                                      char \#3    : show scope status
+                                      char \#4    : show scope status (when applicable)
                                                      **c** : compile/api scope
                                                      **i** : implementation scope
                                                      **r** : runtime scope

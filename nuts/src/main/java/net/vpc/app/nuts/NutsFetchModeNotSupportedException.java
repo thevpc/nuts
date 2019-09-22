@@ -41,34 +41,67 @@ public class NutsFetchModeNotSupportedException extends NutsException {
     private final String repositoryUuid;
     private final NutsFetchMode fetchMode;
 
-    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String msg, Exception ex) {
-        super(workspace, PrivateNutsUtils.isBlank(msg) ? ("Unsupported Fetch Mode " + fetchMode.id()) : msg, ex);
+    /**
+     * Constructs a new NutsFetchModeNotSupportedException exception
+     * @param workspace workspace
+     * @param repo repository
+     * @param fetchMode fetch mode
+     * @param id artifact id
+     * @param message message
+     * @param cause cause
+     */
+    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message, Exception cause) {
+        super(workspace, PrivateNutsUtils.isBlank(message) ? ("Unsupported Fetch Mode " + fetchMode.id()) : message, cause);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.config().name();
         this.repositoryUuid = repo == null ? null : repo.config().uuid();
         this.fetchMode = fetchMode;
     }
 
-    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String msg) {
-        super(workspace, PrivateNutsUtils.isBlank(msg) ? ("Unsupported Fetch Mode " + fetchMode.id()) : msg);
+    /**
+     * Constructs a new NutsFetchModeNotSupportedException exception
+     * @param workspace workspace
+     * @param repo repository
+     * @param fetchMode fetch mode
+     * @param id artifact id
+     * @param message message
+     */
+    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message) {
+        super(workspace, PrivateNutsUtils.isBlank(message) ? ("Unsupported Fetch Mode " + fetchMode.id()) : message);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.config().name();
         this.repositoryUuid = repo == null ? null : repo.config().uuid();
         this.fetchMode = fetchMode;
     }
 
+    /**
+     * repository name
+     * @return repository name
+     */
     public String getRepositoryName() {
         return repositoryName;
     }
 
+    /**
+     * repository uuid
+     * @return repository uuid
+     */
     public String getRepositoryUuid() {
         return repositoryUuid;
     }
 
+    /**
+     * fetch mode
+     * @return fetch mode
+     */
     public NutsFetchMode getFetchMode() {
         return fetchMode;
     }
 
+    /**
+     * artifact id
+     * @return artifact id
+     */
     public String getId() {
         return id;
     }

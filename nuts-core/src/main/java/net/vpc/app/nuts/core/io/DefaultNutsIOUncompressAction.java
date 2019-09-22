@@ -7,13 +7,13 @@ package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.*;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,23 +23,41 @@ import java.util.zip.ZipInputStream;
 /**
  * @author vpc
  */
-public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
+public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     private final NutsLogger LOG;
 
     private boolean skipRoot = false;
-    private boolean safeCopy = true;
-    private boolean monitorable = false;
+    private boolean safe = true;
+    private boolean logProgress = false;
+    private String format = "zip";
     private InputSource source;
     private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
     private NutsSession session;
-    private boolean includeDefaultMonitorFactory;
-    private NutsInputStreamProgressFactory progressMonitorFactory;
+    private NutsProgressFactory progressMonitorFactory;
 
     public DefaultNutsIOUncompressAction(DefaultNutsIOManager iom) {
         this.iom = iom;
         LOG = iom.getWorkspace().log().of(DefaultNutsIOUncompressAction.class);
+    }
+
+    @Override
+    public String getFormat() {
+        return format;
+    }
+
+    @Override
+    public NutsIOUncompressAction setFormat(String format) {
+        if (CoreStringUtils.isBlank(format)) {
+            format = "zip";
+        }
+        if ("zip".equals(format)) {
+            this.format = format;
+        } else {
+            throw new NutsUnsupportedArgumentException(iom.getWorkspace(), "Unsupported compression format " + format);
+        }
+        return this;
     }
 
     @Override
@@ -48,43 +66,43 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
     }
 
     @Override
-    public NutsPathUncompressAction setSource(InputStream source) {
+    public NutsIOUncompressAction setSource(InputStream source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setSource(File source) {
+    public NutsIOUncompressAction setSource(File source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setSource(Path source) {
+    public NutsIOUncompressAction setSource(Path source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setSource(URL source) {
+    public NutsIOUncompressAction setSource(URL source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setTarget(Path target) {
+    public NutsIOUncompressAction setTarget(Path target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setTarget(String target) {
+    public NutsIOUncompressAction setTarget(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction setTarget(File target) {
+    public NutsIOUncompressAction setTarget(File target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -95,25 +113,25 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
     }
 
     @Override
-    public NutsPathUncompressAction from(String source) {
+    public NutsIOUncompressAction from(String source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction to(String target) {
+    public NutsIOUncompressAction to(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction from(Object source) {
+    public NutsIOUncompressAction from(Object source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction to(Object target) {
+    public NutsIOUncompressAction to(Object target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -130,78 +148,78 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
     }
 
     @Override
-    public boolean isMonitorable() {
-        return monitorable;
+    public boolean isLogProgress() {
+        return logProgress;
     }
 
     @Override
-    public DefaultNutsIOUncompressAction setMonitorable(boolean monitorable) {
-        this.monitorable = monitorable;
+    public DefaultNutsIOUncompressAction setLogProgress(boolean value) {
+        this.logProgress = value;
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction from(InputStream source) {
+    public NutsIOUncompressAction from(InputStream source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathUncompressAction from(File source) {
+    public NutsIOUncompressAction from(File source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathUncompressAction from(Path source) {
+    public NutsIOUncompressAction from(Path source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathUncompressAction from(URL source) {
+    public NutsIOUncompressAction from(URL source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathUncompressAction to(File target) {
+    public NutsIOUncompressAction to(File target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathUncompressAction to(Path target) {
+    public NutsIOUncompressAction to(Path target) {
         return setTarget(target);
     }
 
     @Override
-    public boolean isSafeCopy() {
-        return safeCopy;
+    public boolean isSafe() {
+        return safe;
     }
 
     @Override
-    public DefaultNutsIOUncompressAction setSafeCopy(boolean safeCopy) {
-        this.safeCopy = safeCopy;
+    public DefaultNutsIOUncompressAction setSafe(boolean value) {
+        this.safe = value;
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction safeCopy() {
-        setSafeCopy(true);
+    public NutsIOUncompressAction safe() {
+        setSafe(true);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction safeCopy(boolean safeCopy) {
-        setSafeCopy(safeCopy);
+    public NutsIOUncompressAction safe(boolean value) {
+        setSafe(value);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction monitorable() {
-        setMonitorable(true);
+    public NutsIOUncompressAction logProgress() {
+        setLogProgress(true);
         return this;
     }
 
     @Override
-    public NutsPathUncompressAction monitorable(boolean safeCopy) {
-        setMonitorable(safeCopy);
+    public NutsIOUncompressAction logProgress(boolean value) {
+        setLogProgress(value);
         return this;
     }
 
@@ -211,27 +229,31 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
     }
 
     @Override
-    public NutsPathUncompressAction session(NutsSession session) {
+    public NutsIOUncompressAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsPathUncompressAction setSession(NutsSession session) {
+    public NutsIOUncompressAction setSession(NutsSession session) {
         this.session = session;
         return this;
     }
 
-    /**
-     * Unzip it
-     *
-     * @param zipFile      input zip file
-     * @param outputFolder zip file output folder
-     */
-    public static void unzip(NutsWorkspace ws, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
+    @Override
+    public NutsIOUncompressAction run() {
+        switch (getFormat()){
+            case "zip":{
+                runZip();
+                break;
+            }
+            default:{
+                throw new NutsUnsupportedArgumentException(iom.getWorkspace(),"Unsupported format "+getFormat());
+            }
+        }
+        return this;
     }
 
-    @Override
-    public void run() {
+    private void runZip(){
         InputSource _source = source;
         if (_source == null) {
             throw new UnsupportedOperationException("Missing Source");
@@ -239,21 +261,21 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
         if (target == null) {
             throw new UnsupportedOperationException("Missing Target");
         }
-        if (isMonitorable() || getProgressMonitorFactory() != null) {
+        if (isLogProgress() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             } else if (_source.isURL()) {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             } else {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             }
         }
@@ -261,9 +283,8 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "Copy {0} to {1}", _source, target);
+        LOG.log(Level.FINEST, NutsLogVerb.START, "uncompress {0} to {1}", _source, target);
 //        }
-        List<Path> created = new ArrayList<>();
         try {
 
             byte[] buffer = new byte[1024];
@@ -305,7 +326,7 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
                             Files.createDirectories(newFile);
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            iom.getWorkspace().log().of(ZipUtils.class).log(Level.FINEST, NutsLogVerb.WARNING, "file unzip : " + newFile);
+                            LOG.log(Level.FINEST, NutsLogVerb.WARNING, "file unzip : " + newFile);
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -322,60 +343,13 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
                     }
                     zis.closeEntry();
                 }
-            }finally {
+            } finally {
                 _in.close();
             }
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error uncompressing {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
         }
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return true if always include default factory
-     * @since 0.5.8
-     */
-    @Override
-    public boolean isIncludeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathUncompressAction setIncludeDefaultMonitorFactory(boolean value) {
-        this.includeDefaultMonitorFactory = value;
-        return this;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathUncompressAction includeDefaultMonitorFactory(boolean value) {
-        return setIncludeDefaultMonitorFactory(value);
-    }
-
-    /**
-     * always include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathUncompressAction includeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory(true);
     }
 
     /**
@@ -385,7 +359,7 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsInputStreamProgressFactory getProgressMonitorFactory() {
+    public NutsProgressFactory getProgressMonitorFactory() {
         return progressMonitorFactory;
     }
 
@@ -397,7 +371,7 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathUncompressAction setProgressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOUncompressAction setProgressMonitorFactory(NutsProgressFactory value) {
         this.progressMonitorFactory = value;
         return this;
     }
@@ -410,7 +384,7 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathUncompressAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOUncompressAction progressMonitorFactory(NutsProgressFactory value) {
         return setProgressMonitorFactory(value);
     }
 
@@ -422,7 +396,7 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathUncompressAction setProgressMonitor(NutsProgressMonitor value) {
+    public NutsIOUncompressAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -435,17 +409,17 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathUncompressAction progressMonitor(NutsProgressMonitor value) {
+    public NutsIOUncompressAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
     }
 
     @Override
-    public NutsPathUncompressAction skipRoot(boolean value) {
+    public NutsIOUncompressAction skipRoot(boolean value) {
         return setSkipRoot(value);
     }
 
     @Override
-    public NutsPathUncompressAction skipRoot() {
+    public NutsIOUncompressAction skipRoot() {
         return skipRoot(true);
     }
 
@@ -455,8 +429,18 @@ public class DefaultNutsIOUncompressAction implements NutsPathUncompressAction {
     }
 
     @Override
-    public NutsPathUncompressAction setSkipRoot(boolean value) {
-        this.skipRoot=true;
+    public NutsIOUncompressAction setSkipRoot(boolean value) {
+        this.skipRoot = true;
         return this;
+    }
+
+    @Override
+    public NutsIOUncompressAction setFormatOption(String option, Object value) {
+        return this;
+    }
+
+    @Override
+    public Object getFormatOption(String option) {
+        return null;
     }
 }

@@ -1,19 +1,19 @@
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.NutsLockBuilder;
+import net.vpc.app.nuts.NutsIOLockAction;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
 
-public abstract class AbstractNutsLockBuilder implements NutsLockBuilder {
+public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     private NutsWorkspace ws;
     private Object source;
     private Object resource;
     private NutsSession session;
 
-    public AbstractNutsLockBuilder(NutsWorkspace ws) {
+    public AbstractNutsIOLockAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -28,30 +28,30 @@ public abstract class AbstractNutsLockBuilder implements NutsLockBuilder {
     }
 
     @Override
-    public NutsLockBuilder source(Object source) {
+    public NutsIOLockAction source(Object source) {
         return setSource(source);
     }
 
     @Override
-    public NutsLockBuilder setSource(Object source) {
+    public NutsIOLockAction setSource(Object source) {
         this.source=source;
         return this;
     }
 
     @Override
-    public NutsLockBuilder setLockResource(File source) {
+    public NutsIOLockAction setResource(File source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NutsLockBuilder setLockResource(Path source) {
+    public NutsIOLockAction setResource(Path source) {
         this.resource=source;
         return this;
     }
 
     @Override
-    public NutsLockBuilder lockResource(Object source) {
+    public NutsIOLockAction resource(Object source) {
         this.resource=source;
         return this;
     }
@@ -62,12 +62,12 @@ public abstract class AbstractNutsLockBuilder implements NutsLockBuilder {
     }
 
     @Override
-    public NutsLockBuilder session(NutsSession session) {
+    public NutsIOLockAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsLockBuilder setSession(NutsSession session) {
+    public NutsIOLockAction setSession(NutsSession session) {
         this.session=session;
         return this;
     }

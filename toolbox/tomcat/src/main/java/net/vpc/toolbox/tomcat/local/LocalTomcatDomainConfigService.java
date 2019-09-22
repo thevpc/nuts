@@ -5,6 +5,8 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import net.vpc.app.nuts.NutsApplicationContext;
 
 public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
@@ -38,7 +40,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         if (b == null) {
             b = tomcat.getCatalinaHome();
         }
-        Path p = context.getWorkspace().io().path(config.getDeployPath());
+        Path p = Paths.get(config.getDeployPath());
         if (p == null) {
             p = tomcat.getDefaulDeployFolder(name);
         }

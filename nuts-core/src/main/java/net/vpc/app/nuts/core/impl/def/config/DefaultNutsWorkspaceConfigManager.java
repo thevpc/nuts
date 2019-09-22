@@ -104,7 +104,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
         LOG = ws.log().of(DefaultNutsWorkspaceConfigManager.class);
         repositoryRegistryHelper = new NutsRepositoryRegistryHelper(ws);
-        this.workspaceLocation = ws.io().path(initOptions.getWorkspaceLocation());
+        this.workspaceLocation = Paths.get(initOptions.getWorkspaceLocation());
         this.initOptions = initOptions;
         this.options = this.initOptions.getOptions();
         this.bootClassLoader = initOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : initOptions.getClassWorldLoader();
@@ -2024,7 +2024,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public Path resolveRepositoryPath(String repositoryLocation) {
         Path root = this.getRepositoriesRoot();
         NutsWorkspaceConfigManager configManager = this.ws.config();
-        return ws.io().path(ws.io().expandPath(repositoryLocation,
+        return Paths.get(ws.io().expandPath(repositoryLocation,
                 root != null ? root.toString() : configManager.getStoreLocation(NutsStoreLocation.CONFIG)
                         .resolve(NutsConstants.Folders.REPOSITORIES).toString()));
     }
@@ -2096,7 +2096,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             NutsRepositoryConfig conf = options.getConfig();
             if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
-                conf = loadRepository(ws.io().path(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), ws);
+                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), ws);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;

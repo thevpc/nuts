@@ -16,7 +16,7 @@ import net.vpc.app.nuts.NutsDependencyTreeNode;
 import net.vpc.app.nuts.NutsTreeFormat;
 import net.vpc.app.nuts.NutsTreeModel;
 import net.vpc.app.nuts.NutsTreeNodeFormat;
-import net.vpc.app.nuts.core.format.FormattableNutsId;
+import net.vpc.app.nuts.core.format.NutsIdFormatHelper;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
@@ -73,7 +73,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         tree.setNodeFormat(new NutsTreeNodeFormat() {
             @Override
             public String format(Object o, int depth) {
-                FormattableNutsId fid = FormattableNutsId.of(o, getSession());
+                NutsIdFormatHelper fid = NutsIdFormatHelper.of(o, getSession());
                 if (fid != null) {
                     return format(fid);
                 } else {
@@ -81,7 +81,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 }
             }
 
-            public String format(FormattableNutsId id) {
+            public String format(NutsIdFormatHelper id) {
                 return id.getSingleColumnRow(getDisplayOptions());
             }
         });

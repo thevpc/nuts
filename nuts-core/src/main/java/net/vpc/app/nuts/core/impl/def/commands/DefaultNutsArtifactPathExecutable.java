@@ -11,6 +11,7 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -145,7 +146,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
+                        Path zipFilePath = Paths.get(ws.io().expandPath(fileSource.toString() + ".zip"));
                         ZipUtils.zip(session.getWorkspace(),fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);

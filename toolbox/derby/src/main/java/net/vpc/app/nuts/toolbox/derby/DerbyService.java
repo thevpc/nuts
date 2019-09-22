@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class DerbyService {
             derbyDataHome = appContext.getVarFolder();
         } else {
             if (options.derbyDataHomeRoot != null) {
-                derbyDataHome = ws.io().path(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()))
+                derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()))
                         .resolve("derby-db");
             } else {
                 derbyDataHome = appContext.getVarFolder().resolve("derby-db");

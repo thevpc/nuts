@@ -37,6 +37,7 @@ import net.vpc.common.strings.StringUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
@@ -102,11 +103,11 @@ public class WgetCommand extends SimpleNshBuiltin {
         if (!StringUtils.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = context.getWorkspace().io().path(context.getGlobalContext().getAbsolutePath(StringUtils.isBlank(output2) ? urlName : output2));
+        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(StringUtils.isBlank(output2) ? urlName : output2));
         context.getWorkspace().io()
                 .copy()
                 .session(context.getSession())
                 .from(path).to(file).setSession(context.getSession())
-                .monitorable().run();
+                .logProgress().run();
     }
 }

@@ -328,7 +328,7 @@ public class NutsRepositoryFolderHelper {
         getWorkspace().io().copy().session(session.getSession()).from(new NamedByteArrayInputStream(
                 getWorkspace().io().hash().sha1().source(desc).computeString().getBytes(),
                 "sha1("+desc.getId()+")"
-        )).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
+        )).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safe().run();
         return descFile;
     }
 
@@ -345,12 +345,12 @@ public class NutsRepositoryFolderHelper {
             LOG.log(Level.FINE, NutsLogVerb.WARNING, "Nuts component  file Overridden {0}", pckFile);
         }
 
-        getWorkspace().io().copy().session(session.getSession()).from(content).to(pckFile).safeCopy().run();
+        getWorkspace().io().copy().session(session.getSession()).from(content).to(pckFile).safe().run();
         getWorkspace().io().copy().session(session.getSession()).from(new NamedByteArrayInputStream(
                 CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
                 "sha1("+id+")"
                 )
-        ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
+        ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safe().run();
         return pckFile;
     }
 

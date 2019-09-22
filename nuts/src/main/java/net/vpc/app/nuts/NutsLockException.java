@@ -48,7 +48,8 @@ public class NutsLockException extends NutsException {
     /**
      * Constructs a new ock exception.
      * @param workspace workspace
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
         this(workspace,null,lockedObject,lockObject);
@@ -58,7 +59,8 @@ public class NutsLockException extends NutsException {
      * Constructs a new ock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
@@ -73,7 +75,8 @@ public class NutsLockException extends NutsException {
      * Constructs a new ock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      * @param cause cause
      */
     public NutsLockException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {

@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.StringTokenizer;
 import java.util.function.Function;
 
-import net.vpc.app.nuts.core.DefaultNutsHashCommand;
+import net.vpc.app.nuts.core.DefaultNutsHashAction;
 import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
 
@@ -118,13 +118,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsMonitorCommand monitor() {
-        return new DefaultNutsMonitorCommand(ws);
-    }
-
-    @Override
-    public String expandPath(Path path) {
-        return expandPath(path.toString());
+    public NutsMonitorAction monitor() {
+        return new DefaultNutsMonitorAction(ws);
     }
 
     @Override
@@ -139,7 +134,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (CoreIOUtils.isURL(path)) {
                 return path;
             }
-            Path ppath = path(path);
+            Path ppath = Paths.get(path);
 //            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
 //                return path;
 //            }
@@ -158,7 +153,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     if (CoreIOUtils.isURL(baseFolder)) {
                         return baseFolder + "/" + path;
                     }
-                    return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
+                    return Paths.get(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
                 } else {
                     if (CoreIOUtils.isURL(path)) {
                         return path;
@@ -171,7 +166,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 if (CoreIOUtils.isURL(baseFolder)) {
                     return baseFolder + "/" + path;
                 }
-                return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
+                return Paths.get(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
             } else {
                 return ppath.toAbsolutePath().normalize().toString();
             }
@@ -179,7 +174,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (CoreIOUtils.isURL(baseFolder)) {
             return baseFolder;
         }
-        return path(baseFolder).toAbsolutePath().normalize().toString();
+        return Paths.get(baseFolder).toAbsolutePath().normalize().toString();
     }
 
     @Override
@@ -270,29 +265,29 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED);
     }
 
-    @Override
-    public PrintStream createPrintStream(Path out) {
-        if (out == null) {
-            return null;
-        }
-        try {
-            return new PrintStream(Files.newOutputStream(out));
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    @Override
-    public PrintStream createPrintStream(File out) {
-        if (out == null) {
-            return null;
-        }
-        try {
-            return new PrintStream(out);
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
+//    @Override
+//    public PrintStream createPrintStream(Path out) {
+//        if (out == null) {
+//            return null;
+//        }
+//        try {
+//            return new PrintStream(Files.newOutputStream(out));
+//        } catch (IOException ex) {
+//            throw new IllegalArgumentException(ex);
+//        }
+//    }
+//
+//    @Override
+//    public PrintStream createPrintStream(File out) {
+//        if (out == null) {
+//            return null;
+//        }
+//        try {
+//            return new PrintStream(out);
+//        } catch (IOException ex) {
+//            throw new IllegalArgumentException(ex);
+//        }
+//    }
 
     @Override
     public PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode) {
@@ -446,6 +441,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         } else {
             folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }
+        folder.mkdirs();
         final File temp;
         if (CoreStringUtils.isBlank(name)) {
             name = "temp-";
@@ -503,8 +499,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsHashCommand hash() {
-        return new DefaultNutsHashCommand(ws);
+    public NutsHashAction hash() {
+        return new DefaultNutsHashAction(ws);
     }
 
     public NutsWorkspace getWorkspace() {
@@ -512,31 +508,23 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsPathCopyAction copy() {
+    public NutsIOCopyAction copy() {
         return new DefaultNutsIOCopyAction(this);
     }
 
     @Override
-    public NutsDeleteAction delete() {
-        return new DefaultNutsDeleteAction(ws);
+    public NutsIODeleteAction delete() {
+        return new DefaultNutsIODeleteAction(ws);
     }
 
     @Override
-    public NutsPathCompressAction compress() {
+    public NutsIOCompressAction compress() {
         return new DefaultNutsIOCompressAction(this);
     }
 
     @Override
-    public NutsPathUncompressAction uncompress() {
+    public NutsIOUncompressAction uncompress() {
         return new DefaultNutsIOUncompressAction(this);
-    }
-
-    @Override
-    public Path path(String first, String... more) {
-        if ((first == null || first.isEmpty()) && more.length == 0) {
-            return null;
-        }
-        return Paths.get(first, more);
     }
 
     @Override
@@ -550,16 +538,16 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase term) {
-        if (term == null) {
+    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal) {
+        if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
         NutsSystemTerminal syst;
-        if ((term instanceof NutsSystemTerminal)) {
-            syst = (NutsSystemTerminal) term;
+        if ((terminal instanceof NutsSystemTerminal)) {
+            syst = (NutsSystemTerminal) terminal;
         } else {
             try {
-                syst = new DefaultSystemTerminal(term);
+                syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             } catch (Exception ex) {
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
@@ -675,8 +663,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
     }
 
-    public DefaultNutsLockBuilder lock() {
-        return new DefaultNutsLockBuilder(ws);
+    public DefaultNutsIOLockAction lock() {
+        return new DefaultNutsIOLockAction(ws);
     }
 
 //    @Override

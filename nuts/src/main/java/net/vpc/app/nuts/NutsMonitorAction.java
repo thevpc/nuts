@@ -36,51 +36,51 @@ import java.nio.file.Path;
 /**
  * @author vpc
  */
-public interface NutsMonitorCommand {
+public interface NutsMonitorAction {
 
-    NutsMonitorCommand session(NutsSession s);
+    NutsMonitorAction session(NutsSession s);
 
-    NutsMonitorCommand setSession(NutsSession s);
+    NutsMonitorAction setSession(NutsSession s);
 
     NutsSession getSession();
 
-    NutsMonitorCommand name(String s);
+    NutsMonitorAction name(String s);
 
-    NutsMonitorCommand setName(String s);
+    NutsMonitorAction setName(String s);
 
     String getName();
 
-    NutsMonitorCommand origin(Object s);
+    NutsMonitorAction origin(Object s);
 
-    NutsMonitorCommand setOrigin(Object s);
+    NutsMonitorAction setOrigin(Object s);
 
     Object getOrigin();
 
-    NutsMonitorCommand length(long len);
+    NutsMonitorAction length(long len);
 
-    NutsMonitorCommand setLength(long len);
+    NutsMonitorAction setLength(long len);
 
     long getLength();
 
-    NutsMonitorCommand source(String path);
+    NutsMonitorAction source(String path);
 
-    NutsMonitorCommand source(Path path);
+    NutsMonitorAction source(Path path);
 
-    NutsMonitorCommand source(File path);
+    NutsMonitorAction source(File path);
 
-    NutsMonitorCommand source(InputStream path);
+    NutsMonitorAction source(InputStream path);
 
-    NutsMonitorCommand setSource(String path);
+    NutsMonitorAction setSource(String path);
 
-    NutsMonitorCommand setSource(Path path);
+    NutsMonitorAction setSource(Path path);
 
-    NutsMonitorCommand setSource(File path);
+    NutsMonitorAction setSource(File path);
 
-    NutsMonitorCommand setSource(InputStream path);
+    NutsMonitorAction setSource(InputStream path);
 
     InputStream create();
 
-    boolean isIncludeDefaultFactory();
+    boolean isLogProgress();
 
     /**
      * when true, will include default factory (console) even if progressFactory is defined
@@ -89,7 +89,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand setIncludeDefaultFactory(boolean value);
+    NutsMonitorAction setLogProgress(boolean value);
 
     /**
      * when true, will include default factory (console) even if progressFactory is defined
@@ -98,7 +98,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand includeDefaultFactory(boolean value);
+    NutsMonitorAction logProgress(boolean value);
 
     /**
      * will include default factory (console) even if progressFactory is defined
@@ -106,7 +106,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand includeDefaultFactory();
+    NutsMonitorAction logProgress();
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -114,7 +114,7 @@ public interface NutsMonitorCommand {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NutsInputStreamProgressFactory getProgressFactory();
+    NutsProgressFactory getProgressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -123,7 +123,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand setProgressFactory(NutsInputStreamProgressFactory value);
+    NutsMonitorAction setProgressFactory(NutsProgressFactory value);
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -132,7 +132,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand progressFactory(NutsInputStreamProgressFactory value);
+    NutsMonitorAction progressFactory(NutsProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -141,7 +141,7 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand setProgressMonitor(NutsProgressMonitor value);
+    NutsMonitorAction setProgressMonitor(NutsProgressMonitor value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -150,5 +150,5 @@ public interface NutsMonitorCommand {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsMonitorCommand progressMonitor(NutsProgressMonitor value);
+    NutsMonitorAction progressMonitor(NutsProgressMonitor value);
 }

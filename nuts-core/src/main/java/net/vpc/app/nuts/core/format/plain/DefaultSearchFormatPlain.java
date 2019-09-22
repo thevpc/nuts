@@ -7,7 +7,7 @@ package net.vpc.app.nuts.core.format.plain;
 
 import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.core.format.FormattableNutsId;
+import net.vpc.app.nuts.core.format.NutsIdFormatHelper;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
@@ -42,7 +42,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, getSession());
+        NutsIdFormatHelper fid = NutsIdFormatHelper.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {
@@ -52,7 +52,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
         }
     }
 
-    private void formatElement(FormattableNutsId id, long index) {
+    private void formatElement(NutsIdFormatHelper id, long index) {
         getWriter().printf(id.getSingleColumnRow(getDisplayOptions()));
         getWriter().println();
         getWriter().flush();

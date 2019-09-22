@@ -36,6 +36,9 @@ package net.vpc.app.nuts;
  */
 public abstract class NutsExtensionException extends NutsException {
 
+    /**
+     * id
+     */
     private final String id;
 
     /**
@@ -61,6 +64,10 @@ public abstract class NutsExtensionException extends NutsException {
         this.id = extensionId;
     }
 
+    /**
+     * extension id
+     * @return extension id
+     */
     public String getId() {
         return id;
     }

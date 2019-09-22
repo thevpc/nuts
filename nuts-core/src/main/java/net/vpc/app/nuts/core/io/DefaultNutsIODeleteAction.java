@@ -1,6 +1,6 @@
 package net.vpc.app.nuts.core.io;
 
-import net.vpc.app.nuts.NutsDeleteAction;
+import net.vpc.app.nuts.NutsIODeleteAction;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -17,10 +17,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 
-public class DefaultNutsDeleteAction extends AbstractNutsDeleteAction {
+public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
     private Exception error;
 
-    public DefaultNutsDeleteAction(NutsWorkspace ws) {
+    public DefaultNutsIODeleteAction(NutsWorkspace ws) {
         super(ws);
     }
 
@@ -32,7 +32,7 @@ public class DefaultNutsDeleteAction extends AbstractNutsDeleteAction {
     }
 
     @Override
-    public NutsDeleteAction run() {
+    public NutsIODeleteAction run() {
         Path t = CoreIOUtils.toPath(getTarget());
         if (t == null) {
             if (getTarget() == null) {

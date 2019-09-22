@@ -67,7 +67,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-            return CoreIOUtils.createInputSource(getWorkspace().io().path(path));
+            return CoreIOUtils.createInputSource(Paths.get(path));
         }
 
         @Override
@@ -95,7 +95,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     private Path getLocationAsPath() {
-        return getWorkspace().io().path(config().getLocation(true));
+        return Paths.get(config().getLocation(true));
     }
 
 //    @Override
@@ -135,7 +135,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         } else {
             getWorkspace().io().copy()
                     .session(session.getSession())
-                    .from(f).to(localPath).safeCopy().run();
+                    .from(f).to(localPath).safe().run();
             return new NutsDefaultContent(localPath, true, false);
         }
     }

@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.core.filters.CoreFilterUtils;
-import net.vpc.app.nuts.core.format.FormattableNutsId;
+import net.vpc.app.nuts.core.format.NutsIdFormatHelper;
 import net.vpc.app.nuts.core.format.NutsDisplayProperty;
 import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
@@ -481,7 +481,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     public NutsSearchResult<String> getResultStatuses() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .map(x
-                        -> FormattableNutsId.of(x, getValidSession())
+                        -> NutsIdFormatHelper.of(x, getValidSession())
                         .buildLong().getStatusString()
                 )
                 .notBlank());
@@ -494,7 +494,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         oo.setIdFormat(getDisplayOptions().getIdFormat());
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .map(x
-                        -> FormattableNutsId.of(x, getValidSession())
+                        -> NutsIdFormatHelper.of(x, getValidSession())
                         .buildLong().getMultiColumnRow(oo)
                 ));
     }

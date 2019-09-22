@@ -8,13 +8,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultNutsLockBuilder extends AbstractNutsLockBuilder{
-    public DefaultNutsLockBuilder(NutsWorkspace ws) {
+public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
+    public DefaultNutsIOLockAction(NutsWorkspace ws) {
         super(ws);
     }
 
     @Override
-    public NutsLock build() {
+    public NutsLock create() {
         Object s = getSource();
         Object lr = getLockResource();
         Path lrPath=null;

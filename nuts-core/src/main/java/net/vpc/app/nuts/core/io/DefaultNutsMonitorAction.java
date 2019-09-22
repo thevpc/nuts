@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -17,12 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.logging.Level;
 
 /**
  * @author vpc
  */
-public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
+public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     private final NutsLogger LOG;
     private final NutsWorkspace ws;
@@ -32,21 +30,21 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     private String sourceName;
     private long length = -1;
     private NutsSession session;
-    private boolean includeDefaultFactory;
-    private NutsInputStreamProgressFactory progressFactory;
+    private boolean logProgress;
+    private NutsProgressFactory progressFactory;
 
-    public DefaultNutsMonitorCommand(NutsWorkspace ws) {
+    public DefaultNutsMonitorAction(NutsWorkspace ws) {
         this.ws = ws;
-        LOG=ws.log().of(DefaultNutsMonitorCommand.class);
+        LOG = ws.log().of(DefaultNutsMonitorAction.class);
     }
 
     @Override
-    public NutsMonitorCommand session(NutsSession s) {
+    public NutsMonitorAction session(NutsSession s) {
         return setSession(s);
     }
 
     @Override
-    public NutsMonitorCommand setSession(NutsSession s) {
+    public NutsMonitorAction setSession(NutsSession s) {
         this.session = s;
         return this;
     }
@@ -57,12 +55,12 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     }
 
     @Override
-    public NutsMonitorCommand name(String s) {
+    public NutsMonitorAction name(String s) {
         return setName(s);
     }
 
     @Override
-    public NutsMonitorCommand setName(String s) {
+    public NutsMonitorAction setName(String s) {
         this.sourceName = s;
         return this;
     }
@@ -73,12 +71,12 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     }
 
     @Override
-    public NutsMonitorCommand origin(Object s) {
+    public NutsMonitorAction origin(Object s) {
         return setOrigin(s);
     }
 
     @Override
-    public NutsMonitorCommand setOrigin(Object s) {
+    public NutsMonitorAction setOrigin(Object s) {
         this.sourceOrigin = s;
         return this;
     }
@@ -89,12 +87,12 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     }
 
     @Override
-    public NutsMonitorCommand length(long len) {
+    public NutsMonitorAction length(long len) {
         return setLength(len);
     }
 
     @Override
-    public NutsMonitorCommand setLength(long len) {
+    public NutsMonitorAction setLength(long len) {
         this.length = len;
         return this;
     }
@@ -105,48 +103,48 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
     }
 
     @Override
-    public NutsMonitorCommand source(String path) {
+    public NutsMonitorAction source(String path) {
         return setSource(path);
     }
 
     @Override
-    public NutsMonitorCommand source(Path path) {
+    public NutsMonitorAction source(Path path) {
         return setSource(path);
     }
 
     @Override
-    public NutsMonitorCommand source(File path) {
+    public NutsMonitorAction source(File path) {
         return setSource(path);
     }
 
     @Override
-    public NutsMonitorCommand setSource(String path) {
+    public NutsMonitorAction setSource(String path) {
         this.source = path;
         this.sourceType = "string";
         return this;
     }
 
     @Override
-    public NutsMonitorCommand setSource(Path path) {
+    public NutsMonitorAction setSource(Path path) {
         this.source = path;
         this.sourceType = "path";
         return this;
     }
 
     @Override
-    public NutsMonitorCommand setSource(File path) {
+    public NutsMonitorAction setSource(File path) {
         this.source = path;
         this.sourceType = "file";
         return this;
     }
 
     @Override
-    public NutsMonitorCommand source(InputStream inputStream) {
+    public NutsMonitorAction source(InputStream inputStream) {
         return setSource(inputStream);
     }
 
     @Override
-    public NutsMonitorCommand setSource(InputStream path) {
+    public NutsMonitorAction setSource(InputStream path) {
         this.source = path;
         this.sourceType = "stream";
         return this;
@@ -158,57 +156,21 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             throw new NutsIllegalArgumentException(ws, "Missing Source");
         }
         switch (sourceType) {
+            case "stream": {
+                return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);
+            }
             case "string": {
                 return monitorInputStream((String) source, sourceOrigin, sourceName, session);
             }
-            case "stream": {
-                return monitorInputStream((InputStream) source, length, sourceName, session);
-            }
             case "path": {
-                return monitorInputStream(((Path) source).toString(), length, sourceName, session);
+                return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName, session);
             }
             case "file": {
-                return monitorInputStream(((File) source).getPath(), length, sourceName, session);
+                return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName, session);
             }
             default:
                 throw new NutsUnsupportedArgumentException(ws, sourceType);
         }
-    }
-
-    public boolean acceptMonitoring(String path, Object source, String sourceName, NutsSession session) {
-        Object o = session.getProperty("monitor-allowed");
-        if (o != null) {
-            o = ws.commandLine().create(new String[]{String.valueOf(o)}).next().getBoolean();
-        }
-        boolean monitorable = true;
-        if (o instanceof Boolean) {
-            monitorable = ((Boolean) o).booleanValue();
-        }
-        if (monitorable) {
-            if (source instanceof NutsId) {
-                NutsId d = (NutsId) source;
-                if (NutsConstants.QueryFaces.CONTENT_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-                if (NutsConstants.QueryFaces.DESCRIPTOR_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-            }
-            if (monitorable) {
-                if (path.endsWith("/" + CoreNutsConstants.Files.DOT_FOLDERS) || path.endsWith("/" + CoreNutsConstants.Files.DOT_FILES)
-                        || path.endsWith(".pom") || path.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION)
-                        || path.endsWith(".xml") || path.endsWith(".json")) {
-                    monitorable = false;
-                }
-            }
-        }
-        if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
-            monitorable = false;
-        }
-        if (!LOG.isLoggable(Level.INFO)) {
-            monitorable = false;
-        }
-        return monitorable;
     }
 
     public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
@@ -224,22 +186,25 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
         if (session == null) {
             session = ws.createSession();
         }
-        NutsProgressMonitor monitor = createProgressMonitor(path, source, sourceName, session);
+        NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, path, source, session, isLogProgress(),getProgressFactory());
         boolean verboseMode
                 = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false);
         InputSource stream = null;
         long size = -1;
         try {
             if (verboseMode && monitor != null) {
-                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session,true));
+                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
             }
             stream = CoreIOUtils.createInputSource(path);
             size = stream.length();
         } catch (UncheckedIOException e) {
             if (verboseMode && monitor != null) {
-                monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, e, session,true));
+                monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, e, session, true));
             }
             throw e;
+        }
+        if(size<0){
+            size=getLength();
         }
 //        if (path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, NutsLogVerb.START, "Downloading file {0}", new Object[]{path});
@@ -252,69 +217,47 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
             return openedStream;
         }
         if (!verboseMode) {
-            monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session,size<0));
+            monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, size < 0));
         }
-        return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws,monitor, path), session);
+        return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, path), session);
 
     }
 
-    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session) {
+    public InputStream monitorInputStream(InputStream stream,Object sourceOrigin, long length, String name, NutsSession session) {
         if (length > 0) {
             if (session == null) {
                 session = ws.createSession();
             }
-            NutsProgressMonitor m = createProgressMonitor(stream, stream, name, session);
+            NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
             if (m == null) {
                 return stream;
             }
-            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, m, session);
+            return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? "Stream" : name), length, m, session);
         } else {
             if (stream instanceof InputStreamMetadataAware) {
                 if (session == null) {
                     session = ws.createSession();
                 }
-                NutsProgressMonitor m = createProgressMonitor(stream, stream, name, session);
+                NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
                 if (m == null) {
                     return stream;
                 }
-                return CoreIOUtils.monitor(stream, null, m, session);
+                return CoreIOUtils.monitor(stream, sourceOrigin, m, session);
             } else {
                 return stream;
             }
         }
     }
 
-    private NutsProgressMonitor createProgressMonitor(Object source, Object sourceOrigin, String sourceName, NutsSession session) {
-        if (!isIncludeDefaultFactory()) {
-            if (progressFactory != null) {
-                return progressFactory.create(source, sourceOrigin, sourceName, session);
-            }
-            return new DefaultNutsInputStreamProgressFactory().create(source, sourceOrigin, sourceName, session);
-        } else {
-            NutsProgressMonitor m0 = new DefaultNutsInputStreamProgressFactory().create(source, sourceOrigin, sourceName, session);
-            NutsProgressMonitor m1 = null;
-            if (progressFactory != null) {
-                m1 = progressFactory.create(source, sourceOrigin, sourceName, session);
-            }
-            if (m1 == null) {
-                return m0;
-            }
-            if (m0 == null) {
-                return m1;
-            }
-            ;
-            return new NutsProgressMonitorList(new NutsProgressMonitor[]{m0, m1});
-        }
-    }
-
     /**
      * when true, will include default factory (console) even if progressFactory is defined
+     *
      * @return true if always include default factory
      * @since 0.5.8
      */
     @Override
-    public boolean isIncludeDefaultFactory() {
-        return includeDefaultFactory;
+    public boolean isLogProgress() {
+        return logProgress;
     }
 
     /**
@@ -325,8 +268,8 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand setIncludeDefaultFactory(boolean value) {
-        this.includeDefaultFactory = value;
+    public NutsMonitorAction setLogProgress(boolean value) {
+        this.logProgress = value;
         return this;
     }
 
@@ -338,19 +281,19 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand includeDefaultFactory(boolean value) {
-        return setIncludeDefaultFactory(value);
+    public NutsMonitorAction logProgress(boolean value) {
+        return setLogProgress(value);
     }
 
     /**
-     *always include default factory (console) even if progressFactory is defined
+     * always include default factory (console) even if progressFactory is defined
      *
      * @return {@code this} instance
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand includeDefaultFactory() {
-        return includeDefaultFactory(true);
+    public NutsMonitorAction logProgress() {
+        return logProgress(true);
     }
 
     /**
@@ -360,7 +303,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsInputStreamProgressFactory getProgressFactory() {
+    public NutsProgressFactory getProgressFactory() {
         return progressFactory;
     }
 
@@ -372,7 +315,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand setProgressFactory(NutsInputStreamProgressFactory value) {
+    public NutsMonitorAction setProgressFactory(NutsProgressFactory value) {
         this.progressFactory = value;
         return this;
     }
@@ -385,7 +328,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand progressFactory(NutsInputStreamProgressFactory value) {
+    public NutsMonitorAction progressFactory(NutsProgressFactory value) {
         return setProgressFactory(value);
     }
 
@@ -397,7 +340,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand setProgressMonitor(NutsProgressMonitor value) {
+    public NutsMonitorAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -410,7 +353,7 @@ public class DefaultNutsMonitorCommand implements NutsMonitorCommand {
      * @since 0.5.8
      */
     @Override
-    public NutsMonitorCommand progressMonitor(NutsProgressMonitor value) {
+    public NutsMonitorAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
     }
 

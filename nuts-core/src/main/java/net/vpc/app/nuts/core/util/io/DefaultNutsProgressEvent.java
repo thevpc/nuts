@@ -38,7 +38,7 @@ import net.vpc.app.nuts.NutsSession;
 public class DefaultNutsProgressEvent implements NutsProgressEvent {
 
     private final Object source;
-    private final String sourceName;
+    private final String message;
     private final long globalCount;
     private final long globalMillis;
     private final long partialCount;
@@ -49,10 +49,10 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
     private final float percent;
     private final boolean indeterminate;
 
-    public DefaultNutsProgressEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
+    public DefaultNutsProgressEvent(Object source, String message, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
         this.source = source;
         this.length = length;
-        this.sourceName = sourceName;
+        this.message = message;
         this.globalCount = globalCount;
         this.globalMillis = globalMillis;
         this.partialCount = partialCount;
@@ -71,11 +71,11 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
         return session;
     }
 
-    public Throwable getException() {
+    public Throwable getError() {
         return exception;
     }
 
-    public long getLength() {
+    public long getMaxValue() {
         return length;
     }
 
@@ -83,19 +83,19 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
         return source;
     }
 
-    public String getSourceName() {
-        return sourceName;
+    public String getMessage() {
+        return message;
     }
 
-    public long getGlobalCount() {
+    public long getCurrentValue() {
         return globalCount;
     }
 
-    public long getGlobalMillis() {
+    public long getTimeMillis() {
         return globalMillis;
     }
 
-    public long getPartialCount() {
+    public long getPartialValue() {
         return partialCount;
     }
 

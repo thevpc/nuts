@@ -30,19 +30,32 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * This Exception is thrown when the workspace fails to initialize.
  *
  * @since 0.5.4
  */
 public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
 
+    /**
+     * workspace location
+     */
     private final String workspaceLocation;
 
+    /**
+     * Constructs a new NutsInvalidWorkspaceException exception
+     * @param workspace workspace
+     * @param workspaceLocation workspaceLocation
+     * @param errorMessage errorMessage
+     */
     public NutsInvalidWorkspaceException(NutsWorkspace workspace, String workspaceLocation, String errorMessage) {
         super(workspace, "Invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage, null);
         this.workspaceLocation = workspaceLocation;
     }
 
+    /**
+     * workspace location
+     * @return workspace location
+     */
     public String getWorkspaceLocation() {
         return workspaceLocation;
     }

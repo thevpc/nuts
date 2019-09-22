@@ -30,12 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * This exception is thrown when a repository location could no be loaded because
+ * the repository config files are missing.
  *
  * @since 0.5.4
  */
 public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 
+    /**
+     * Constructs a new NutsRepositoryNotFoundException exception
+     * @param workspace  workspace
+     * @param repository repository
+     */
     public NutsRepositoryNotFoundException(NutsWorkspace workspace, String repository) {
         super(workspace, repository, "No such repository " + (repository == null ? "<null>" : repository), null);
     }

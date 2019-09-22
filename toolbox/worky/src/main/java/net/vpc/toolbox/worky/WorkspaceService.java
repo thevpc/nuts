@@ -13,6 +13,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import net.vpc.app.nuts.NutsCommandLine;
@@ -98,7 +99,7 @@ public class WorkspaceService {
             } else {
                 String expression = cmd.next().getString();
                 if (cmd.isExecMode()) {
-                    setScanEnabled(context.getWorkspace().io().path(expression), enable);
+                    setScanEnabled(Paths.get(expression), enable);
                     count++;
                 }
             }

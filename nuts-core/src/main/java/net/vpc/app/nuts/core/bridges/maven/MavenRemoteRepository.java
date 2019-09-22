@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.log.NutsLogVerb;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -408,7 +409,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
                     && nutsRepository.config().getLocation(true) != null
                     && nutsRepository.config().getLocation(true).equals(
-                            getWorkspace().io().path(getWorkspace().io().expandPath("~/.m2")).toString()
+                    Paths.get(getWorkspace().io().expandPath("~/.m2")).toString()
                     )) {
                 return nutsRepository;
             }
@@ -419,7 +420,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     protected Path getMavenLocalFolderContent(NutsId id) {
         String p = getIdRelativePath(id);
         if (p != null) {
-            return getWorkspace().io().path(System.getProperty("user.home"), ".m2", p);
+            return Paths.get(System.getProperty("user.home"), ".m2", p);
         }
         return null;
     }
@@ -459,7 +460,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     Path tempFile = getWorkspace().io().createTempFile(content.getFileName().toString(), this);
                     getWorkspace().io().copy()
                             .session(session.getSession())
-                            .from(content).to(tempFile).safeCopy().run();
+                            .from(content).to(tempFile).safe().run();
                     return new NutsDefaultContent(tempFile, true, false);
                 }
             }
@@ -470,14 +471,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             try {
                 getWorkspace().io().copy()
                         .session(session.getSession())
-                        .from(helper.getStream(id, session)).to(tempFile).validator(new NutsPathCopyAction.Validator() {
+                        .from(helper.getStream(id, session)).to(tempFile).validator(new NutsIOCopyValidator() {
                     @Override
-                    public void validate(Path path) {
-                        try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
-                        } catch (IOException ex) {
-                            return;
-                        }
+                    public void validate(InputStream in) throws IOException {
+                        helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
@@ -488,14 +485,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             try {
                 getWorkspace().io().copy()
                         .session(session.getSession())
-                        .from(helper.getStream(id, session)).to(localPath).validator(new NutsPathCopyAction.Validator() {
+                        .from(helper.getStream(id, session)).to(localPath).validator(new NutsIOCopyValidator() {
                     @Override
-                    public void validate(Path path) {
-                        try (InputStream in = Files.newInputStream(path)) {
-                            helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
-                        } catch (IOException ex) {
-                            throw new NutsPathCopyAction.ValidationException(ex);
-                        }
+                    public void validate(InputStream in) throws IOException {
+                        helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, session);
                     }
                 }).run();
             } catch (UncheckedIOException ex) {

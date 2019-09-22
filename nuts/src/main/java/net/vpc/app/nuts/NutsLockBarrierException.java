@@ -35,19 +35,21 @@ package net.vpc.app.nuts;
  */
 public class NutsLockBarrierException extends NutsLockException {
     /**
-     * Constructs a new ock exception.
+     * Constructs a new lock exception.
      * @param workspace workspace
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockBarrierException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
         this(workspace,null,lockedObject,lockObject);
     }
 
     /**
-     * Constructs a new ock exception.
+     * Constructs a new lock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
@@ -57,16 +59,17 @@ public class NutsLockBarrierException extends NutsLockException {
     }
 
     /**
-     * Constructs a new ock exception.
+     * Constructs a new lock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      * @param cause cause
      */
     public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
                 message == null ? ("Item Already Locked" + lockedObject)
-                        : message,cause
+                        : message,lockObject,cause
         );
     }
 }

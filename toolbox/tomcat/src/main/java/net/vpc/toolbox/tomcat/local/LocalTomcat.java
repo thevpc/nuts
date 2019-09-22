@@ -9,6 +9,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsApplicationContext;
@@ -619,7 +620,7 @@ public class LocalTomcat {
             throw new NutsExecutionException(context.getWorkspace(), "tomcat deploy: Missing File", 2);
         }
         LocalTomcatConfigService c = loadTomcatConfig(instance);
-        c.deployFile(getContext().getWorkspace().io().path(file), contextName, domain);
+        c.deployFile(Paths.get(file), contextName, domain);
     }
 
     public void deployApp(NutsCommandLine args) {

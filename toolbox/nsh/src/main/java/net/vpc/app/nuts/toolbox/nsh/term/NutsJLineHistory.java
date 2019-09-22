@@ -79,7 +79,7 @@ class NutsJLineHistory implements History {
         } else if (obj instanceof File) {
             return ((File) obj).toPath();
         } else if (obj != null) {
-            return ws.io().path(obj.toString());
+            return Paths.get(obj.toString());
         } else {
             return null;
         }

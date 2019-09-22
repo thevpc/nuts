@@ -704,8 +704,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     /**
      * return installed parse
      *
-     * @param id
-     * @return
+     * @param id artifact id
+     * @return installed versions
      */
     @Override
     public String[] getInstalledVersions(NutsId id, NutsSession session) {

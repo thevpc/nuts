@@ -37,7 +37,8 @@ public class NutsLockReleaseException extends NutsLockException {
     /**
      * Constructs a new ock exception.
      * @param workspace workspace
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockReleaseException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
         this(workspace,null,lockedObject,lockObject);
@@ -47,7 +48,8 @@ public class NutsLockReleaseException extends NutsLockException {
      * Constructs a new ock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      */
     public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
@@ -60,13 +62,14 @@ public class NutsLockReleaseException extends NutsLockException {
      * Constructs a new ock exception.
      * @param workspace workspace
      * @param message message or null
-     * @param lockObject lockObject
+     * @param lockedObject locked Object
+     * @param lockObject lock Object
      * @param cause cause
      */
     public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
                 message == null ? ("Unable to release lock for " + lockedObject)
-                        : message,cause
+                        : message,lockObject,cause
         );
     }
 }

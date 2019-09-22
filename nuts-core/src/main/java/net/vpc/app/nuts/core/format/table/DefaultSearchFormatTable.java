@@ -11,7 +11,7 @@ import java.util.Arrays;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.core.format.FormattableNutsId;
+import net.vpc.app.nuts.core.format.NutsIdFormatHelper;
 import net.vpc.app.nuts.core.format.DefaultSearchFormatBase;
 import net.vpc.app.nuts.core.format.NutsFetchDisplayOptions;
 
@@ -65,7 +65,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        FormattableNutsId fid = FormattableNutsId.of(object, getSession());
+        NutsIdFormatHelper fid = NutsIdFormatHelper.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {
@@ -74,7 +74,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         getWriter().flush();
     }
 
-    public void formatElement(FormattableNutsId id, long index) {
+    public void formatElement(NutsIdFormatHelper id, long index) {
         getTableModel(getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 

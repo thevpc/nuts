@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -126,11 +127,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public Path getCatalinaBase() {
         LocalTomcatConfig c = getConfig();
-        Path catalinaBase = getContext().getWorkspace().io().path(c.getCatalinaBase());
+        Path catalinaBase = Paths.get(c.getCatalinaBase());
         Path catalinaHome = getCatalinaHome();
         if (TomcatUtils.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
-            catalinaBase = getContext().getWorkspace().io().path(getName());
+            catalinaBase = Paths.get(getName());
         }
         if (catalinaBase == null) {
             catalinaBase = catalinaHome;
@@ -159,7 +160,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsDefinition f = getCatalinaNutsDefinition();
             return f.getInstallInformation().getInstallFolder();
         } else {
-            return getContext().getWorkspace().io().path(h);
+            return Paths.get(h);
         }
     }
 

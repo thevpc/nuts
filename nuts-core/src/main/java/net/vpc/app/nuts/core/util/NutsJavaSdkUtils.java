@@ -11,6 +11,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,7 +96,7 @@ public class NutsJavaSdkUtils {
         }
         List<NutsSdkLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(ws, ws.io().path(s), session)));
+            all.addAll(Arrays.asList(searchJdkLocations(ws, Paths.get(s), session)));
         }
         return all.toArray(new NutsSdkLocation[0]);
     }

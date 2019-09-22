@@ -49,7 +49,6 @@ import net.vpc.app.nuts.core.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.core.util.RemoteRepoApi;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.iter.IteratorUtils;
-import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.io.InputSource;
 
 public class NutsHttpFolderRepository extends NutsCachedRepository {
@@ -310,13 +309,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
-            getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safeCopy().monitorable().run();
+            getWorkspace().io().copy().session(session.getSession()).from(path).to(localFile).safe().logProgress().run();
             return new NutsDefaultContent(localFile, false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if(CoreNutsUtils.acceptClassifier(location,id.getClassifier())) {
                     try {
-                        getWorkspace().io().copy().session(session.getSession()).from(location.getUrl()).to(localFile).safeCopy().monitorable().run();
+                        getWorkspace().io().copy().session(session.getSession()).from(location.getUrl()).to(localFile).safe().logProgress().run();
                         return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
                         LOG.log(Level.FINE,"Unable to download location for id "+id+" : "+location.getUrl(),ex);

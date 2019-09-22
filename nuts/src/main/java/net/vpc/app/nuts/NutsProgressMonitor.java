@@ -30,16 +30,32 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Monitor handles events from copy, compress and delete actions
  * @author vpc
  * @since 0.5.8
  */
 public interface NutsProgressMonitor {
 
+    /**
+     * called when the action starts
+     * @param event event
+     */
     void onStart(NutsProgressEvent event);
 
+    /**
+     * called when the action terminates
+     * @param event event
+     */
     void onComplete(NutsProgressEvent event);
 
+    /**
+     * called when the action does a step forward and return
+     * true if the progress was handled of false otherwise.
+     *
+     * @param event event
+     * @return true if the progress was handled. In that case, a
+     * mark point is registered to compute partial time and speed.
+     */
     boolean onProgress(NutsProgressEvent event);
 
 }

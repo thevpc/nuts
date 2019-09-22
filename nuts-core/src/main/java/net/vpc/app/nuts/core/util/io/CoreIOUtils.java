@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
+import net.vpc.app.nuts.core.io.DefaultNutsInputStreamProgressFactory;
+import net.vpc.app.nuts.core.io.DefaultNutsProgressFactory;
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -75,7 +77,7 @@ public class CoreIOUtils {
 
     public static String newLineString = null;
     public static final int DEFAULT_BUFFER_SIZE = 1024;
-//    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
+    //    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
     public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
         @Override
         public boolean accept(Path pathname) throws IOException {
@@ -658,11 +660,11 @@ public class CoreIOUtils {
     }
 
     public static InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) throws IOException {
-        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor,session);
+        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
     }
 
     public static InputStream monitor(InputStream from, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
-        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
+        return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
 
     public static InputStream monitor(InputStream from, Object source, NutsProgressMonitor monitor, NutsSession session) {
@@ -673,18 +675,19 @@ public class CoreIOUtils {
             sourceName = m.getMetaData().getName();
             length = m.getMetaData().getLength();
         }
-        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
+        return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
 
     public static void delete(File file) throws IOException {
-        delete(null,file);
-    }
-    public static void delete(NutsWorkspace ws,File file) throws IOException {
-        delete(ws,file.toPath());
+        delete(null, file);
     }
 
-    public static void delete( Path file) throws IOException {
-        delete(null,file);
+    public static void delete(NutsWorkspace ws, File file) throws IOException {
+        delete(ws, file.toPath());
+    }
+
+    public static void delete(Path file) throws IOException {
+        delete(null, file);
     }
 
     public static void delete(NutsWorkspace ws, Path file) throws IOException {
@@ -699,7 +702,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG=ws==null?null:ws.log().of(CoreIOUtils.class);
+        NutsLogger LOG = ws == null ? null : ws.log().of(CoreIOUtils.class);
         Files.walkFileTree(file, new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -710,12 +713,12 @@ public class CoreIOUtils {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try {
                     Files.delete(file);
-                    if(LOG!=null) {
+                    if (LOG != null) {
                         LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file " + file);
                     }
                     deleted[0]++;
                 } catch (IOException e) {
-                    if(LOG!=null) {
+                    if (LOG != null) {
                         LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file Failed : " + file);
                     }
                     deleted[2]++;
@@ -732,12 +735,12 @@ public class CoreIOUtils {
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 try {
                     Files.delete(dir);
-                    if(LOG!=null) {
+                    if (LOG != null) {
                         LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder " + dir);
                     }
                     deleted[1]++;
                 } catch (IOException e) {
-                    if(LOG!=null) {
+                    if (LOG != null) {
                         LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder Failed : " + dir);
                     }
                     deleted[2]++;
@@ -1892,4 +1895,37 @@ public class CoreIOUtils {
         return null;
     }
 
+
+    public enum MonitorType {
+        STREAM,
+        DEFAULT,
+    }
+
+    public static NutsProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
+        switch (mt) {
+            case STREAM:
+                new DefaultNutsInputStreamProgressFactory();
+            case DEFAULT:
+                new DefaultNutsProgressFactory();
+        }
+        return new DefaultNutsProgressFactory();
+    }
+
+    public static NutsProgressMonitor createProgressMonitor(MonitorType mt, Object source, Object sourceOrigin, NutsSession session, boolean logProgress, NutsProgressFactory progressFactory) {
+        NutsProgressMonitor m0 = null;
+        NutsProgressMonitor m1 = null;
+        if(logProgress){
+            m0 = createLogProgressMonitorFactory(mt).create(source, sourceOrigin, session);
+        }
+        if (progressFactory != null) {
+            m1 = progressFactory.create(source, sourceOrigin, session);
+        }
+        if (m1 == null) {
+            return m0;
+        }
+        if (m0 == null) {
+            return m1;
+        }
+        return new NutsProgressMonitorList(new NutsProgressMonitor[]{m0, m1});
+    }
 }

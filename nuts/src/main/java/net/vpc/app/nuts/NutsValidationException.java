@@ -38,26 +38,59 @@ import java.io.IOException;
  */
 public class NutsValidationException extends NutsException {
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     */
     public NutsValidationException(NutsWorkspace workspace) {
         super(workspace, "Invalid value");
     }
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     * @param message message
+     */
     public NutsValidationException(NutsWorkspace workspace, String message) {
         super(workspace, message);
     }
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     */
     public NutsValidationException(NutsWorkspace workspace, String message, Throwable cause) {
         super(workspace, message, cause);
     }
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     * @param cause cause
+     */
     public NutsValidationException(NutsWorkspace workspace, Throwable cause) {
         super(workspace, cause);
     }
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     * @param cause cause
+     */
     public NutsValidationException(NutsWorkspace workspace, IOException cause) {
         super(workspace, cause);
     }
 
+    /**
+     * Constructs a new NutsValidationException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
+     */
     public NutsValidationException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(workspace, message, cause, enableSuppression, writableStackTrace);
     }

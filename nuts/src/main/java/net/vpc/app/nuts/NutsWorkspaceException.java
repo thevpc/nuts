@@ -30,12 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * NutsWorkspaceException is the base class for Workspace related exceptions.
  *
  * @since 0.5.4
  */
 public abstract class NutsWorkspaceException extends NutsException {
 
+    /**
+     * Constructs a new NutsWorkspaceException exception
+     * @param workspace workspace
+     * @param message message
+     * @param ex exception
+     */
     public NutsWorkspaceException(NutsWorkspace workspace, String message, Throwable ex) {
         super(workspace,
                 PrivateNutsUtils.isBlank(message)

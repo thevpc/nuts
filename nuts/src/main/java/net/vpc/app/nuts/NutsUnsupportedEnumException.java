@@ -47,7 +47,7 @@ public class NutsUnsupportedEnumException extends NutsException {
      * @param enumValue enumeration instance (cannot be null)
      */
     public NutsUnsupportedEnumException(NutsWorkspace workspace, Enum enumValue) {
-        this(workspace,null,enumValue);
+        this(workspace, null, enumValue);
     }
 
     /**
@@ -55,6 +55,7 @@ public class NutsUnsupportedEnumException extends NutsException {
      *
      * @param workspace workspace
      * @param enumValue enumeration instance (cannot be null)
+     * @param message   message
      */
     public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, Enum enumValue) {
         super(workspace,
@@ -62,6 +63,22 @@ public class NutsUnsupportedEnumException extends NutsException {
                         "Unexpected/Unsupported enum " + enumValue + " of type " + enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
+    }
+
+    /**
+     * create new instance of NutsUnexpectedEnumException
+     *
+     * @param workspace   workspace
+     * @param enumValue   enumeration instance (cannot be null)
+     * @param stringValue invalid value
+     * @param message message
+     */
+    public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, String stringValue, Enum enumValue) {
+        super(workspace,
+                message == null ? (
+                        "Unexpected/Unsupported value " + stringValue + " of type " + enumValue.getClass().getName())
+                        : message
+        );
     }
 
     /**
@@ -73,18 +90,5 @@ public class NutsUnsupportedEnumException extends NutsException {
         return enumValue;
     }
 
-    /**
-     * create new instance of NutsUnexpectedEnumException
-     *
-     * @param workspace workspace
-     * @param e         enumeration instance (cannot be null)
-     */
-    public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, String stringValue, Enum e) {
-        super(workspace,
-                message == null ? (
-                        "Unexpected/Unsupported value " + stringValue + " of type " + e.getClass().getName())
-                        : message
-        );
-    }
 
 }

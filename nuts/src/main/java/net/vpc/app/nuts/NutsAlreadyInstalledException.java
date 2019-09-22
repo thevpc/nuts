@@ -62,11 +62,11 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      *
      * @param workspace workspace
      * @param id nuts id
-     * @param msg message
-     * @param ex exception
+     * @param message message
+     * @param cause exception
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id, String message, Exception cause) {
+        this(workspace, id == null ? null : id.toString(), message, cause);
     }
 
     /**
@@ -75,10 +75,10 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      * @param workspace workspace
      * @param id nuts id
      * @param msg message
-     * @param ex exception
+     * @param cause exception
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already installed " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception cause) {
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already installed " + (id == null ? "<null>" : id) : msg, cause);
     }
 
 }

@@ -30,25 +30,49 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * This Exception is fired when an artifact fails to be uninstalled for the artifact not being installed yet.
  *
  * @since 0.5.4
  */
 public class NutsNotInstalledException extends NutsInstallationException {
 
-    public NutsNotInstalledException(NutsWorkspace workspace, NutsId nuts) {
-        this(workspace, nuts == null ? null : nuts.toString());
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace workspace
+     * @param id artifact
+     */
+    public NutsNotInstalledException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
     }
 
-    public NutsNotInstalledException(NutsWorkspace workspace, String nuts) {
-        this(workspace, nuts, null, null);
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace workspace
+     * @param id artifact
+     */
+    public NutsNotInstalledException(NutsWorkspace workspace, String id) {
+        this(workspace, id, null, null);
     }
 
-    public NutsNotInstalledException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
-        this(workspace, nuts == null ? null : nuts.toString(), msg, ex);
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace workspace
+     * @param id artifact
+     * @param msg message
+     * @param ex error
+     */
+    public NutsNotInstalledException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+        this(workspace, id == null ? null : id.toString(), msg, ex);
     }
 
-    public NutsNotInstalledException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
-        super(workspace, nuts, PrivateNutsUtils.isBlank(msg) ? "Not installed " + (nuts == null ? "<null>" : nuts) : msg, ex);
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace workspace
+     * @param id artifact
+     * @param msg message
+     * @param ex exception
+     */
+    public NutsNotInstalledException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Not installed " + (id == null ? "<null>" : id) : msg, ex);
     }
 }

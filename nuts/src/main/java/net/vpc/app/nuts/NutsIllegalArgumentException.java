@@ -36,22 +36,50 @@ package net.vpc.app.nuts;
  */
 public class NutsIllegalArgumentException extends NutsException {
 
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     * @param workspace workspace
+     */
     public NutsIllegalArgumentException(NutsWorkspace workspace) {
         super(workspace);
     }
 
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     * @param workspace workspace
+     * @param message message
+     */
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message) {
         super(workspace, message);
     }
 
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     */
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause) {
         super(workspace, message, cause);
     }
 
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     * @param workspace workspace
+     * @param cause cause
+     */
     public NutsIllegalArgumentException(NutsWorkspace workspace, Throwable cause) {
         super(workspace, cause);
     }
 
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
+     */
     public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(workspace, message, cause, enableSuppression, writableStackTrace);
     }

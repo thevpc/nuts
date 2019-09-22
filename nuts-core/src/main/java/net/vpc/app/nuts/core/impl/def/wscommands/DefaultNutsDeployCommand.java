@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -84,7 +85,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 String name = ws.config().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
                 tempFile = ws.io().createTempFile(name);
-                ws.io().copy().session(getValidSession()).from(contentSource.open()).to(tempFile).safeCopy().run();
+                ws.io().copy().session(getValidSession()).from(contentSource.open()).to(tempFile).safe().run();
                 contentFile2 = tempFile;
 
                 Path contentFile0 = contentFile2;
@@ -114,7 +115,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         }
                         if (descriptor != null) {
                             if ("zip".equals(descriptor.getPackaging())) {
-                                Path zipFilePath = ws.io().path(ws.io().expandPath(contentFile.toString() + ".zip"));
+                                Path zipFilePath = Paths.get(ws.io().expandPath(contentFile.toString() + ".zip"));
                                 try {
                                     ZipUtils.zip(ws,contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                                 } catch (IOException ex) {
@@ -325,7 +326,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
+                        Path zipFilePath = Paths.get(ws.io().expandPath(fileSource.toString() + ".zip"));
                         ZipUtils.zip(ws,fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);

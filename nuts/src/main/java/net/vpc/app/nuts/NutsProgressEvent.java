@@ -29,34 +29,78 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsSession;
-
 /**
+ * Progress event
  * @author vpc
  * @since 0.5.8
  */
 public interface NutsProgressEvent {
 
+    /**
+     * Nuts Session
+     * @return Nuts Session
+     */
     NutsSession getSession();
 
-    Throwable getException();
+    /**
+     * error or null
+     * @return error or null
+     */
+    Throwable getError();
 
-    long getLength();
+    /**
+     * progress max value or -1 if intermediate
+     * @return progress max value
+     */
+    long getMaxValue();
 
+    /**
+     * progress current value
+     * @return progress current value
+     */
+    long getCurrentValue();
+
+    /**
+     * progress value from the last mark point.
+     * Mark point occurs when {@link NutsProgressMonitor#onProgress(NutsProgressEvent)} return false.
+     * @return progress value from the last mark point.
+     */
+    long getPartialValue();
+
+    /**
+     * progress source object
+     * @return progress source object
+     */
     Object getSource();
 
-    String getSourceName();
+    /**
+     * event message
+     * @return event message
+     */
+    String getMessage();
 
+    /**
+     * progress percentage ([0..100])
+     * @return progress percentage ([0..100])
+     */
     float getPercent();
 
-    long getGlobalCount();
+    /**
+     * progress time from the starting of the progress.
+     * @return progress time from the starting of the progress.
+     */
+    long getTimeMillis();
 
-    long getGlobalMillis();
-
-    long getPartialCount();
-
+    /**
+     * progress time from the starting of the last mark point.
+     * @return progress time from the starting of the last mark point.
+     */
     long getPartialMillis();
 
+    /**
+     * when true, max value is unknown, and the progress is indeterminate
+     * @return true when max value is unknown, and the progress is indeterminate
+     */
     boolean isIndeterminate();
 
 }

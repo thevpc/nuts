@@ -38,6 +38,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -105,7 +106,7 @@ public class NutsURLClassLoader extends URLClassLoader {
 
     public void addPath(String path) {
         try {
-            super.addURL(ws.io().path(path).toUri().toURL());
+            super.addURL(Paths.get(path).toUri().toURL());
         } catch (MalformedURLException e) {
             throw new NutsIllegalArgumentException(ws, path);
         }

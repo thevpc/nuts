@@ -7,34 +7,33 @@ package net.vpc.app.nuts.core.io;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.DefaultNutsProgressEvent;
 import net.vpc.app.nuts.core.util.io.InputSource;
-import net.vpc.app.nuts.core.util.io.SingletonNutsInputStreamProgressFactory;
 
 /**
  * @author vpc
  */
-public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
+public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     private final NutsLogger LOG;
 
-    private Validator checker;
-    private boolean safeCopy = true;
-    private boolean monitorable = false;
+    private NutsIOCopyValidator checker;
+    private boolean skipRoot = false;
+    private boolean safe = true;
+    private boolean logProgress = false;
     private InputSource source;
     private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
     private NutsSession session;
-    private boolean includeDefaultMonitorFactory;
-    private NutsInputStreamProgressFactory progressMonitorFactory;
+    private NutsProgressFactory progressMonitorFactory;
 
     public DefaultNutsIOCopyAction(DefaultNutsIOManager iom) {
         this.iom = iom;
@@ -47,43 +46,49 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction setSource(InputStream source) {
+    public NutsIOCopyAction setSource(String source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(File source) {
+    public NutsIOCopyAction setSource(InputStream source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(Path source) {
+    public NutsIOCopyAction setSource(File source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setSource(URL source) {
+    public NutsIOCopyAction setSource(Path source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(OutputStream target) {
+    public NutsIOCopyAction setSource(URL source) {
+        this.source = CoreIOUtils.createInputSource(source);
+        return this;
+    }
+
+    @Override
+    public NutsIOCopyAction setTarget(OutputStream target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(Path target) {
+    public NutsIOCopyAction setTarget(Path target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction setTarget(File target) {
+    public NutsIOCopyAction setTarget(File target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -94,25 +99,25 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction from(String source) {
+    public NutsIOCopyAction from(String source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction to(String target) {
+    public NutsIOCopyAction to(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction from(Object source) {
+    public NutsIOCopyAction from(Object source) {
         this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction to(Object target) {
+    public NutsIOCopyAction to(Object target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -129,99 +134,99 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public Validator getChecker() {
+    public NutsIOCopyValidator getValidator() {
         return checker;
     }
 
     @Override
-    public DefaultNutsIOCopyAction setValidator(Validator checker) {
+    public DefaultNutsIOCopyAction setValidator(NutsIOCopyValidator checker) {
         this.checker = checker;
         return this;
     }
 
     @Override
-    public boolean isMonitorable() {
-        return monitorable;
+    public boolean isLogProgress() {
+        return logProgress;
     }
 
     @Override
-    public DefaultNutsIOCopyAction setMonitorable(boolean monitorable) {
-        this.monitorable = monitorable;
+    public DefaultNutsIOCopyAction setLogProgress(boolean value) {
+        this.logProgress = value;
         return this;
     }
 
     @Override
-    public NutsPathCopyAction from(InputStream source) {
+    public NutsIOCopyAction from(InputStream source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(File source) {
+    public NutsIOCopyAction from(File source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(Path source) {
+    public NutsIOCopyAction from(Path source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction from(URL source) {
+    public NutsIOCopyAction from(URL source) {
         return setSource(source);
     }
 
     @Override
-    public NutsPathCopyAction to(File target) {
+    public NutsIOCopyAction to(File target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCopyAction to(OutputStream target) {
+    public NutsIOCopyAction to(OutputStream target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCopyAction to(Path target) {
+    public NutsIOCopyAction to(Path target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCopyAction validator(Validator validationVerifier) {
+    public NutsIOCopyAction validator(NutsIOCopyValidator validationVerifier) {
         return setValidator(validationVerifier);
     }
 
     @Override
-    public boolean isSafeCopy() {
-        return safeCopy;
+    public boolean isSafe() {
+        return safe;
     }
 
     @Override
-    public DefaultNutsIOCopyAction setSafeCopy(boolean safeCopy) {
-        this.safeCopy = safeCopy;
+    public DefaultNutsIOCopyAction setSafe(boolean value) {
+        this.safe = value;
         return this;
     }
 
     @Override
-    public NutsPathCopyAction safeCopy() {
-        setSafeCopy(true);
+    public NutsIOCopyAction safe() {
+        setSafe(true);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction safeCopy(boolean safeCopy) {
-        setSafeCopy(safeCopy);
+    public NutsIOCopyAction safe(boolean value) {
+        setSafe(value);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction monitorable() {
-        setMonitorable(true);
+    public NutsIOCopyAction logProgress() {
+        setLogProgress(true);
         return this;
     }
 
     @Override
-    public NutsPathCopyAction monitorable(boolean safeCopy) {
-        setMonitorable(safeCopy);
+    public NutsIOCopyAction logProgress(boolean value) {
+        setLogProgress(value);
         return this;
     }
 
@@ -231,12 +236,12 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction session(NutsSession session) {
+    public NutsIOCopyAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsPathCopyAction setSession(NutsSession session) {
+    public NutsIOCopyAction setSession(NutsSession session) {
         this.session = session;
         return this;
     }
@@ -245,13 +250,13 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     public byte[] getByteArrayResult() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         to(b);
-        safeCopy(false);
+        safe(false);
         run();
         return b.toByteArray();
     }
 
     @Override
-    public void run() {
+    public NutsIOCopyAction run() {
         InputSource _source = source;
         if (_source == null) {
             throw new UnsupportedOperationException("Missing Source");
@@ -259,36 +264,182 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         if (target == null) {
             throw new UnsupportedOperationException("Missing Target");
         }
+        if (_source.isPath()) {
+            if (Files.isDirectory(_source.getPath())) {
+                // this is a directory!!!
+                if (!target.isPath()) {
+                    throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported copy of directory to " + target);
+                }
+                Path toPath = target.getPath();
+                CopyData cd = new CopyData();
+                if (isLogProgress() || getProgressMonitorFactory() != null) {
+                    prepareCopyFolder(_source.getPath(), cd);
+                    copyFolderWithMonitor(_source.getPath(), toPath, cd);
+                } else {
+                    copyFolderNoMonitor(_source.getPath(), toPath, cd);
+                }
+                return this;
+            }
+        }
+        copyStream();
+        return this;
+    }
+
+    private static class CopyData {
+        long files;
+        long folders;
+        long doneFiles;
+        long doneFolders;
+    }
+
+    private static void prepareCopyFolder(Path d, CopyData f) {
+        try {
+            Files.walkFileTree(d, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    f.folders++;
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    f.files++;
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException exc) {
+            throw new UncheckedIOException(exc);
+        }
+    }
+
+    private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
+        NutsSession session = getSession();
+        if (session == null) {
+            session = iom.getWorkspace().createSession();
+        }
+        long start = System.currentTimeMillis();
+        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase,  session, isLogProgress(), getProgressMonitorFactory());
+        m.onStart(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), 0, 0, 0, 0, f.files + f.folders, null, session, false));
+        try {
+            NutsSession finalSession = session;
+            Files.walkFileTree(srcBase, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    f.doneFolders++;
+                    Files.createDirectories(transformPath(dir, srcBase, targetBase));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    f.doneFiles++;
+                    Files.copy(file, transformPath(file, srcBase, targetBase));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException exc) {
+            throw new UncheckedIOException(exc);
+        } finally {
+            m.onComplete(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.files + f.folders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, session, false));
+        }
+    }
+
+    private static Path transformPath(Path f, Path sourceBase, Path targetBase) {
+        String fs = f.toString();
+        String bs = sourceBase.toString();
+        if (fs.startsWith(bs)) {
+            String relative=fs.substring(bs.length());
+            if(!relative.startsWith(File.separator)){
+                relative=File.separator+relative;
+            }
+            String x=targetBase+relative;
+            return Paths.get(x);
+        }
+        throw new RuntimeException("Invalid path " + f);
+    }
+
+    private static void copyFolderNoMonitor(Path srcBase, Path targetBase, CopyData f) {
+        try {
+            Files.walkFileTree(srcBase, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    f.doneFolders++;
+                    Files.createDirectories(transformPath(dir, srcBase, targetBase));
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    f.doneFiles++;
+                    Files.copy(file, transformPath(file, srcBase, targetBase));
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException exc) {
+            throw new UncheckedIOException(exc);
+        }
+    }
+
+    private void copyStream() {
+        InputSource _source = source;
         boolean _target_isPath = target.isPath();
-        if (checker != null && !_target_isPath && !safeCopy) {
+        if (checker != null && !_target_isPath && !safe) {
             throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported validation if neither safeCopy is armed nor path is defined");
         }
-        if (isMonitorable() || getProgressMonitorFactory() != null) {
+        if (isLogProgress() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             } else if (_source.isURL()) {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             } else {
                 _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(session)
                         .progressFactory(getProgressMonitorFactory())
-                        .includeDefaultFactory(isIncludeDefaultMonitorFactory())
+                        .logProgress(isLogProgress())
                         .create());
             }
         }
-        //boolean _source_isPath = _source.isPath();
-//        if (!path.toLowerCase().startsWith("file://")) {
-//            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
-//        } else {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "Copy {0} to {1}", _source, target);
-//        }
+        LOG.log(Level.FINEST, NutsLogVerb.START, "copy {0} to {1}", _source, target);
         try {
-            if (safeCopy) {
+            if (safe) {
                 Path temp = null;
                 if (_target_isPath) {
                     Path to = target.getPath();
@@ -330,87 +481,65 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                             Files.copy(ins, target.getPath(), StandardCopyOption.REPLACE_EXISTING);
                         }
                     }
+                    _validate(target.getPath());
                 } else {
-                    if (_source.isPath()) {
-                        try (OutputStream ops = target.open()) {
-                            Files.copy(_source.getPath(), ops);
+                    ByteArrayOutputStream bos = null;
+                    if (checker != null) {
+                        bos = new ByteArrayOutputStream();
+                        if (_source.isPath()) {
+                            Files.copy(_source.getPath(), bos);
+                        } else {
+                            try (InputStream ins = _source.open()) {
+                                CoreIOUtils.copy(ins, bos);
+                            }
                         }
+                        try (OutputStream ops = target.open()) {
+                            CoreIOUtils.copy(new ByteArrayInputStream(bos.toByteArray()), ops);
+                        }
+                        _validate(bos.toByteArray());
                     } else {
-                        try (InputStream ins = _source.open()) {
+                        if (_source.isPath()) {
                             try (OutputStream ops = target.open()) {
-                                CoreIOUtils.copy(ins, ops);
+                                Files.copy(_source.getPath(), ops);
+                            }
+                        } else {
+                            try (InputStream ins = _source.open()) {
+                                try (OutputStream ops = target.open()) {
+                                    CoreIOUtils.copy(ins, ops);
+                                }
                             }
                         }
                     }
                 }
-                _validate(target.getPath());
             }
-
-
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }
 
     private void _validate(Path temp) {
         if (checker != null) {
-            try {
-                checker.validate(temp);
+            try (InputStream in = Files.newInputStream(temp)) {
+                checker.validate(in);
+            } catch (NutsIOCopyValidationException ex) {
+                throw ex;
             } catch (Exception ex) {
-                if (ex instanceof ValidationException) {
-                    throw ex;
-                }
-                throw new ValidationException("Validate file " + temp + " failed", ex);
+                throw new NutsIOCopyValidationException("Validate file " + temp + " failed", ex);
             }
         }
     }
 
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return true if always include default factory
-     * @since 0.5.8
-     */
-    @Override
-    public boolean isIncludeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCopyAction setIncludeDefaultMonitorFactory(boolean value) {
-        this.includeDefaultMonitorFactory = value;
-        return this;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCopyAction includeDefaultMonitorFactory(boolean value) {
-        return setIncludeDefaultMonitorFactory(value);
-    }
-
-    /**
-     * always include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCopyAction includeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory(true);
+    private void _validate(byte[] temp) {
+        if (checker != null) {
+            try (InputStream in = new ByteArrayInputStream(temp)) {
+                checker.validate(in);
+            } catch (NutsIOCopyValidationException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                throw new NutsIOCopyValidationException("Validate file failed", ex);
+            }
+        }
     }
 
     /**
@@ -420,7 +549,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsInputStreamProgressFactory getProgressMonitorFactory() {
+    public NutsProgressFactory getProgressMonitorFactory() {
         return progressMonitorFactory;
     }
 
@@ -432,7 +561,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction setProgressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOCopyAction setProgressMonitorFactory(NutsProgressFactory value) {
         this.progressMonitorFactory = value;
         return this;
     }
@@ -445,7 +574,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOCopyAction progressMonitorFactory(NutsProgressFactory value) {
         return setProgressMonitorFactory(value);
     }
 
@@ -457,7 +586,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction setProgressMonitor(NutsProgressMonitor value) {
+    public NutsIOCopyAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -470,8 +599,28 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCopyAction progressMonitor(NutsProgressMonitor value) {
+    public NutsIOCopyAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
     }
 
+    @Override
+    public NutsIOCopyAction skipRoot(boolean value) {
+        return setSkipRoot(value);
+    }
+
+    @Override
+    public NutsIOCopyAction skipRoot() {
+        return skipRoot(true);
+    }
+
+    @Override
+    public NutsIOCopyAction setSkipRoot(boolean value) {
+        this.skipRoot=skipRoot;
+        return this;
+    }
+
+    @Override
+    public boolean isSkipRoot() {
+        return skipRoot;
+    }
 }

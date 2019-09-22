@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.io;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.log.NutsLogVerb;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.*;
 
 import java.io.*;
@@ -24,19 +25,19 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author vpc
  */
-public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
+public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     private final NutsLogger LOG;
 
-    private boolean safeCopy = true;
-    private boolean monitorable = false;
+    private boolean safe = true;
+    private boolean logProgress = false;
     private List<InputSource> sources = new ArrayList<>();
     private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
     private NutsSession session;
-    private boolean includeDefaultMonitorFactory;
     private boolean skipRoot;
-    private NutsInputStreamProgressFactory progressMonitorFactory;
+    private NutsProgressFactory progressMonitorFactory;
+    private String format="zip";
 
     public DefaultNutsIOCompressAction(DefaultNutsIOManager iom) {
         this.iom = iom;
@@ -49,65 +50,70 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
     }
 
     @Override
-    public NutsPathCompressAction addSource(InputStream source) {
+    public NutsIOCompressAction addSource(InputStream source) {
         this.sources.add(CoreIOUtils.createInputSource(source));
         return this;
     }
 
     @Override
-    public NutsPathCompressAction addSource(File source) {
+    public NutsIOCompressAction addSource(File source) {
         this.sources.add(CoreIOUtils.createInputSource(source));
         return this;
     }
 
     @Override
-    public NutsPathCompressAction addSource(Path source) {
+    public NutsIOCompressAction addSource(Path source) {
         this.sources.add(CoreIOUtils.createInputSource(source));
         return this;
     }
 
     @Override
-    public NutsPathCompressAction addSource(URL source) {
+    public NutsIOCompressAction addSource(URL source) {
         this.sources.add(CoreIOUtils.createInputSource(source));
         return this;
     }
 
     @Override
-    public NutsPathCompressAction setTarget(OutputStream target) {
+    public NutsIOCompressAction setTarget(OutputStream target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCompressAction setTarget(Path target) {
+    public NutsIOCompressAction setTarget(Path target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCompressAction setTarget(File target) {
+    public NutsIOCompressAction setTarget(File target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsPathCompressAction setTarget(String target) {
+    public NutsIOCompressAction setTarget(String target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
-    public NutsPathCompressAction addSource(Object source) {
+    public NutsIOCompressAction addSource(Object source) {
+        this.sources.add(CoreIOUtils.createInputSource(source));
+        return this;
+    }
+
+    public NutsIOCompressAction addSource(String source) {
         this.sources.add(CoreIOUtils.createInputSource(source));
         return this;
     }
 
     @Override
-    public NutsPathCompressAction to(Object target) {
+    public NutsIOCompressAction to(Object target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCompressAction to(String target) {
+    public NutsIOCompressAction to(String target) {
         return setTarget(target);
     }
 
@@ -116,46 +122,46 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
         return target;
     }
 
-    public NutsPathCompressAction setTarget(Object target) {
+    public NutsIOCompressAction setTarget(Object target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public boolean isMonitorable() {
-        return monitorable;
+    public boolean isLogProgress() {
+        return logProgress;
     }
 
     @Override
-    public DefaultNutsIOCompressAction setMonitorable(boolean monitorable) {
-        this.monitorable = monitorable;
+    public DefaultNutsIOCompressAction setLogProgress(boolean value) {
+        this.logProgress = value;
         return this;
     }
 
     @Override
-    public NutsPathCompressAction to(File target) {
+    public NutsIOCompressAction to(File target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCompressAction to(OutputStream target) {
+    public NutsIOCompressAction to(OutputStream target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCompressAction to(Path target) {
+    public NutsIOCompressAction to(Path target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsPathCompressAction monitorable() {
-        setMonitorable(true);
+    public NutsIOCompressAction logProgress() {
+        setLogProgress(true);
         return this;
     }
 
     @Override
-    public NutsPathCompressAction monitorable(boolean safeCopy) {
-        setMonitorable(safeCopy);
+    public NutsIOCompressAction logProgress(boolean value) {
+        setLogProgress(value);
         return this;
     }
 
@@ -165,25 +171,38 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
     }
 
     @Override
-    public NutsPathCompressAction session(NutsSession session) {
+    public NutsIOCompressAction session(NutsSession session) {
         return setSession(session);
     }
 
     @Override
-    public NutsPathCompressAction setSession(NutsSession session) {
+    public NutsIOCompressAction setSession(NutsSession session) {
         this.session = session;
         return this;
     }
 
     @Override
-    public void run() {
+    public NutsIOCompressAction run() {
+        switch (getFormat()){
+            case "zip":{
+                runZip();
+                break;
+            }
+            default:{
+                throw new NutsUnsupportedArgumentException(iom.getWorkspace(),"Unsupported format "+getFormat());
+            }
+        }
+        return this;
+    }
+
+    public void runZip() {
         if (sources.isEmpty()) {
             throw new UnsupportedOperationException("Missing Source");
         }
         if (target == null) {
             throw new UnsupportedOperationException("Missing Target");
         }
-        if (isMonitorable() || getProgressMonitorFactory() != null) {
+        if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
         LOG.log(Level.FINEST, NutsLogVerb.START, "compress {0} to {1}", sources, target);
@@ -192,7 +211,7 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
             ZipOutputStream zip = null;
             if (this.target.isPath()) {
                 Path tempPath = null;
-                if (isSafeCopy()) {
+                if (isSafe()) {
                     tempPath = iom.createTempFile("zip");
                 }
                 Path path = this.target.getPath();
@@ -246,60 +265,13 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
     }
 
     /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return true if always include default factory
-     * @since 0.5.8
-     */
-    @Override
-    public boolean isIncludeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCompressAction setIncludeDefaultMonitorFactory(boolean value) {
-        this.includeDefaultMonitorFactory = value;
-        return this;
-    }
-
-    /**
-     * when true, will include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCompressAction includeDefaultMonitorFactory(boolean value) {
-        return setIncludeDefaultMonitorFactory(value);
-    }
-
-    /**
-     * always include default factory (console) even if progressMonitorFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsPathCompressAction includeDefaultMonitorFactory() {
-        return includeDefaultMonitorFactory(true);
-    }
-
-    /**
      * return progress factory responsible of creating progress monitor
      *
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
     @Override
-    public NutsInputStreamProgressFactory getProgressMonitorFactory() {
+    public NutsProgressFactory getProgressMonitorFactory() {
         return progressMonitorFactory;
     }
 
@@ -311,7 +283,7 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCompressAction setProgressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOCompressAction setProgressMonitorFactory(NutsProgressFactory value) {
         this.progressMonitorFactory = value;
         return this;
     }
@@ -324,7 +296,7 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCompressAction progressMonitorFactory(NutsInputStreamProgressFactory value) {
+    public NutsIOCompressAction progressMonitorFactory(NutsProgressFactory value) {
         return setProgressMonitorFactory(value);
     }
 
@@ -336,7 +308,7 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCompressAction setProgressMonitor(NutsProgressMonitor value) {
+    public NutsIOCompressAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -349,7 +321,7 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
      * @since 0.5.8
      */
     @Override
-    public NutsPathCompressAction progressMonitor(NutsProgressMonitor value) {
+    public NutsIOCompressAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
     }
 
@@ -365,25 +337,25 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
 //    }
 
     @Override
-    public boolean isSafeCopy() {
-        return safeCopy;
+    public boolean isSafe() {
+        return safe;
     }
 
     @Override
-    public NutsPathCompressAction setSafeCopy(boolean safeCopy) {
-        this.safeCopy = safeCopy;
+    public NutsIOCompressAction setSafe(boolean value) {
+        this.safe = value;
         return this;
     }
 
     @Override
-    public NutsPathCompressAction safeCopy() {
-        setSafeCopy(true);
+    public NutsIOCompressAction safe() {
+        setSafe(true);
         return this;
     }
 
     @Override
-    public NutsPathCompressAction safeCopy(boolean safeCopy) {
-        setSafeCopy(safeCopy);
+    public NutsIOCompressAction safe(boolean value) {
+        setSafe(value);
         return this;
     }
 
@@ -553,12 +525,12 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
     }
 
     @Override
-    public NutsPathCompressAction skipRoot(boolean value) {
+    public NutsIOCompressAction skipRoot(boolean value) {
         return setSkipRoot(value);
     }
 
     @Override
-    public NutsPathCompressAction skipRoot() {
+    public NutsIOCompressAction skipRoot() {
         return skipRoot(true);
     }
 
@@ -568,9 +540,36 @@ public class DefaultNutsIOCompressAction implements NutsPathCompressAction {
     }
 
     @Override
-    public NutsPathCompressAction setSkipRoot(boolean value) {
+    public NutsIOCompressAction setSkipRoot(boolean value) {
         this.skipRoot=true;
         return this;
     }
 
+    @Override
+    public NutsIOCompressAction setFormatOption(String option, Object value) {
+        return this;
+    }
+
+    @Override
+    public Object getFormatOption(String option) {
+        return null;
+    }
+
+    @Override
+    public String getFormat() {
+        return format;
+    }
+
+    @Override
+    public NutsIOCompressAction setFormat(String format) {
+        if (CoreStringUtils.isBlank(format)) {
+            format = "zip";
+        }
+        if ("zip".equals(format)) {
+            this.format = format;
+        } else {
+            throw new NutsUnsupportedArgumentException(iom.getWorkspace(), "Unsupported compression format " + format);
+        }
+        return this;
+    }
 }

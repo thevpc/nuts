@@ -38,30 +38,64 @@ public class NutsNotFoundException extends NutsException {
 
     private final String id;
 
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId nuts) {
-        this(workspace, nuts == null ? null : nuts.toString());
+    /**
+     * Constructs a new NutsNotFoundException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
+    public NutsNotFoundException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
     }
 
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId nuts, Exception ex) {
-        this(workspace, nuts == null ? null : nuts.toString(), null, ex);
+    /**
+     * Constructs a new NutsNotFoundException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param cause cause
+     */
+    public NutsNotFoundException(NutsWorkspace workspace, NutsId id, Exception cause) {
+        this(workspace, id == null ? null : id.toString(), null, cause);
     }
 
-    public NutsNotFoundException(NutsWorkspace workspace, String nuts) {
-        super(workspace, "No such nuts : " + (nuts == null ? "<null>" : nuts));
-        this.id = nuts;
+    /**
+     * Constructs a new NutsNotFoundException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
+    public NutsNotFoundException(NutsWorkspace workspace, String id) {
+        super(workspace, "No such nuts : " + (id == null ? "<null>" : id));
+        this.id = id;
     }
 
-    public NutsNotFoundException(NutsWorkspace workspace, String nuts, String msg, Exception ex) {
+    /**
+     * Constructs a new NutsNotFoundException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     * @param cause cause
+     */
+    public NutsNotFoundException(NutsWorkspace workspace, String id, String message, Exception cause) {
         super(
-                workspace, PrivateNutsUtils.isBlank(msg) ? "No such nuts : " + (nuts == null ? "<null>" : nuts) : msg,
-                ex);
-        this.id = nuts;
+                workspace, PrivateNutsUtils.isBlank(message) ? "No such nuts : " + (id == null ? "<null>" : id) : message,
+                cause);
+        this.id = id;
     }
 
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId nuts, String msg, Exception ex) {
-        this(workspace, nuts == null ? null : nuts.toString(),msg,ex);
+    /**
+     * Constructs a new NutsNotFoundException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     * @param cause cause
+     */
+    public NutsNotFoundException(NutsWorkspace workspace, NutsId id, String message, Exception cause) {
+        this(workspace, id == null ? null : id.toString(),message,cause);
     }
 
+    /**
+     * artifact id
+     * @return artifact id
+     */
     public String getId() {
         return id;
     }

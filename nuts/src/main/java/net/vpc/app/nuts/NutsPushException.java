@@ -36,33 +36,76 @@ package net.vpc.app.nuts;
  */
 public class NutsPushException extends NutsException {
 
+    /**
+     * artifact id
+     */
     private final String id;
 
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
     public NutsPushException(NutsWorkspace workspace, String id) {
         this(workspace, id, null, null);
     }
 
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     */
     public NutsPushException(NutsWorkspace workspace, String id, String message) {
         this(workspace, id, message, null);
     }
 
-    public NutsPushException(NutsWorkspace workspace, String id, String message, Throwable th) {
-        super(workspace, message == null ? ("Unable to push " + id) : message, th);
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     * @param cause cause
+     */
+    public NutsPushException(NutsWorkspace workspace, String id, String message, Throwable cause) {
+        super(workspace, message == null ? ("Unable to push " + id) : message, cause);
         this.id = id == null ? "<null>" : id;
     }
 
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
     public NutsPushException(NutsWorkspace workspace, NutsId id) {
         this(workspace, id, null, null);
     }
 
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     */
     public NutsPushException(NutsWorkspace workspace, NutsId id, String message) {
         this(workspace, id, message, null);
     }
 
-    public NutsPushException(NutsWorkspace workspace, NutsId id, String message, Throwable th) {
-        this(workspace, id == null ? null : id.toString(), message, th);
+    /**
+     * Constructs a new NutsPushException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param message message
+     * @param cause cause
+     */
+    public NutsPushException(NutsWorkspace workspace, NutsId id, String message, Throwable cause) {
+        this(workspace, id == null ? null : id.toString(), message, cause);
     }
 
+    /**
+     * artifact id
+     * @return artifact id
+     */
     public String getId() {
         return id;
     }

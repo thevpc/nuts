@@ -40,35 +40,35 @@ import java.security.MessageDigest;
  * @author vpc
  * @since 0.5.5
  */
-public interface NutsHashCommand {
+public interface NutsHashAction {
 
     /**
      * source stream to  hash
      * @param input source stream to  hash
      * @return {@code this} instance
      */
-    NutsHashCommand source(InputStream input);
+    NutsHashAction source(InputStream input);
 
     /**
      * file to  hash
      * @param file source file to  hash
      * @return {@code this} instance
      */
-    NutsHashCommand source(File file);
+    NutsHashAction source(File file);
 
     /**
      * file to  hash
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NutsHashCommand source(Path path);
+    NutsHashAction source(Path path);
 
     /**
      * source stream to  hash
      * @param descriptor source descriptor to  hash
      * @return {@code this} instance
      */
-    NutsHashCommand source(NutsDescriptor descriptor);
+    NutsHashAction source(NutsDescriptor descriptor);
 
     /**
      * compute hash digest and return it as hexadecimal string
@@ -87,19 +87,19 @@ public interface NutsHashCommand {
      * @param out output stream
      * @return {@code this} instance
      */
-    NutsHashCommand writeHash(OutputStream out);
+    NutsHashAction writeHash(OutputStream out);
 
     /**
      * select MD5 hash algorithm
      * @return {@code this} instance
      */
-    NutsHashCommand md5();
+    NutsHashAction md5();
 
     /**
      * select MD5 hash algorithm
      * @return {@code this} instance
      */
-    NutsHashCommand sha1();
+    NutsHashAction sha1();
 
     /**
      * select hash algorithm.
@@ -108,7 +108,7 @@ public interface NutsHashCommand {
      *             including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsHashCommand setAlgorithm(String algorithm);
+    NutsHashAction setAlgorithm(String algorithm);
 
     /**
      * select hash algorithm.
@@ -117,7 +117,7 @@ public interface NutsHashCommand {
      *             including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsHashCommand algorithm(String algorithm);
+    NutsHashAction algorithm(String algorithm);
 
     /**
      *

@@ -51,7 +51,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  *
  * @author vpc
  */
-public class FormattableNutsId {
+public class NutsIdFormatHelper {
     private NutsLogger LOG;
     NutsId id;
     boolean i;
@@ -75,50 +75,50 @@ public class FormattableNutsId {
     //    String display;
     boolean built = false;
 
-    public static FormattableNutsId of(Object object, NutsSession session) {
+    public static NutsIdFormatHelper of(Object object, NutsSession session) {
         if (object instanceof NutsId) {
             NutsId v = (NutsId) object;
-            return (new FormattableNutsId(v, session));
+            return (new NutsIdFormatHelper(v, session));
         } else if (object instanceof NutsDescriptor) {
             NutsDescriptor v = (NutsDescriptor) object;
-            return (new FormattableNutsId(v, session));
+            return (new NutsIdFormatHelper(v, session));
         } else if (object instanceof NutsDefinition) {
             NutsDefinition v = (NutsDefinition) object;
-            return (new FormattableNutsId(v, session));
+            return (new NutsIdFormatHelper(v, session));
         } else if (object instanceof NutsDependency) {
             NutsDependency v = (NutsDependency) object;
-            return (new FormattableNutsId(v, session));
+            return (new NutsIdFormatHelper(v, session));
         } else if (object instanceof NutsDependencyTreeNode) {
             NutsDependencyTreeNode v = (NutsDependencyTreeNode) object;
-            return (new FormattableNutsId(v, session));
+            return (new NutsIdFormatHelper(v, session));
         } else {
             return null;
         }
 
     }
 
-    public FormattableNutsId(NutsDependencyTreeNode id, NutsSession session) {
+    public NutsIdFormatHelper(NutsDependencyTreeNode id, NutsSession session) {
         this(null, null, null, id.getDependency(), session);
     }
 
-    public FormattableNutsId(NutsId id, NutsSession session) {
+    public NutsIdFormatHelper(NutsId id, NutsSession session) {
         this(id, null, null, null, session);
     }
 
-    public FormattableNutsId(NutsDescriptor desc, NutsSession session) {
+    public NutsIdFormatHelper(NutsDescriptor desc, NutsSession session) {
         this(null, desc, null, null, session);
     }
 
-    public FormattableNutsId(NutsDefinition def, NutsSession session) {
+    public NutsIdFormatHelper(NutsDefinition def, NutsSession session) {
         this(null, null, def, null, session);
     }
 
-    public FormattableNutsId(NutsDependency dep, NutsSession session) {
+    public NutsIdFormatHelper(NutsDependency dep, NutsSession session) {
         this(null, null, null, dep, session);
     }
 
-    private FormattableNutsId(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
-        LOG=session.getWorkspace().log().of(FormattableNutsId.class);
+    private NutsIdFormatHelper(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
+        LOG=session.getWorkspace().log().of(NutsIdFormatHelper.class);
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -498,7 +498,7 @@ public class FormattableNutsId {
         }
     }
 
-    public FormattableNutsId buildLong() {
+    public NutsIdFormatHelper buildLong() {
         if (!built) {
             built = true;
             NutsWorkspace ws = session.getWorkspace();

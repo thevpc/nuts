@@ -150,6 +150,14 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsIdFormat id();
 
     /**
+     * create string format instance
+     *
+     * @since 0.5.5
+     * @return string format
+     */
+    NutsStringFormat str();
+
+    /**
      * create version format instance
      *
      * @since 0.5.5

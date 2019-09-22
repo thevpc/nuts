@@ -36,17 +36,34 @@ package net.vpc.app.nuts;
  */
 public class NutsNotExecutableException extends NutsExecutionException {
 
+    /**
+     * artifact id
+     */
     private final String id;
 
-    public NutsNotExecutableException(NutsWorkspace workspace, NutsId nuts) {
-        this(workspace, nuts == null ? null : nuts.toString());
+    /**
+     * Constructs a new NutsNotExecutableException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
+    public NutsNotExecutableException(NutsWorkspace workspace, NutsId id) {
+        this(workspace, id == null ? null : id.toString());
     }
 
-    public NutsNotExecutableException(NutsWorkspace workspace, String nuts) {
-        super(workspace, "Not executable " + (nuts == null ? "<null>" : nuts), -1);
-        this.id = nuts;
+    /**
+     * Constructs a new NutsNotExecutableException exception
+     * @param workspace workspace
+     * @param id artifact id
+     */
+    public NutsNotExecutableException(NutsWorkspace workspace, String id) {
+        super(workspace, "Not executable " + (id == null ? "<null>" : id), -1);
+        this.id = id;
     }
 
+    /**
+     * artifact id
+     * @return artifact id
+     */
     public String getId() {
         return id;
     }

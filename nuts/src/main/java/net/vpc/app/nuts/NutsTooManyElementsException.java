@@ -38,26 +38,59 @@ import java.io.IOException;
  */
 public class NutsTooManyElementsException extends NutsException {
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace) {
         this(workspace, "Too many Elements");
     }
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     * @param message message
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace, String message) {
         super(workspace, message);
     }
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause) {
         super(workspace, message, cause);
     }
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     * @param cause cause
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace, Throwable cause) {
         super(workspace, cause);
     }
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     * @param cause cause
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace, IOException cause) {
         super(workspace, cause);
     }
 
+    /**
+     * Constructs a new NutsTooManyElementsException exception
+     * @param workspace workspace
+     * @param message message
+     * @param cause cause
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
+     */
     public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(workspace, message, cause, enableSuppression, writableStackTrace);
     }

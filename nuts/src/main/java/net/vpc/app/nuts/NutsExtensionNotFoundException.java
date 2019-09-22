@@ -36,11 +36,26 @@ package net.vpc.app.nuts;
  */
 public class NutsExtensionNotFoundException extends NutsExtensionException {
 
+    /**
+     * missing type
+     */
     private final Class missingType;
 
+    /**
+     * extension name
+     */
+    private final String extensionName;
+
+    /**
+     * Constructs a new NutsExtensionNotFoundException exception
+     * @param workspace workspace
+     * @param missingType missing type
+     * @param extensionName extension name
+     */
     public NutsExtensionNotFoundException(NutsWorkspace workspace, Class missingType, String extensionName) {
         super(workspace, null, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.", null);
         this.missingType = missingType;
+        this.extensionName = extensionName;
     }
 
     /**
@@ -51,4 +66,12 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
         return missingType;
     }
 
+
+    /**
+     * extension name
+     * @return extension name
+     */
+    public String getExtensionName() {
+        return extensionName;
+    }
 }

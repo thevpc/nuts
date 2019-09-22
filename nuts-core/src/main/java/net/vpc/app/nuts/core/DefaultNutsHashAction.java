@@ -36,7 +36,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsHashCommand;
+import net.vpc.app.nuts.NutsHashAction;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -47,14 +47,14 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
  *
  * @author vpc
  */
-public class DefaultNutsHashCommand implements NutsHashCommand {
+public class DefaultNutsHashAction implements NutsHashAction {
 
     private Object value;
     private String type;
     private String algorithm;
     private NutsWorkspace ws;
 
-    public DefaultNutsHashCommand(NutsWorkspace ws) {
+    public DefaultNutsHashAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -64,12 +64,12 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
     }
 
     @Override
-    public NutsHashCommand algorithm(String algorithm) {
+    public NutsHashAction algorithm(String algorithm) {
         return setAlgorithm(algorithm);
     }
 
     @Override
-    public NutsHashCommand setAlgorithm(String algorithm) {
+    public NutsHashAction setAlgorithm(String algorithm) {
         if (CoreStringUtils.isBlank(algorithm)) {
             algorithm = null;
         }
@@ -83,38 +83,38 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
     }
 
     @Override
-    public NutsHashCommand sha1() {
+    public NutsHashAction sha1() {
         return setAlgorithm("SHA1");
     }
 
     @Override
-    public NutsHashCommand md5() {
+    public NutsHashAction md5() {
         return setAlgorithm("MD5");
     }
 
     @Override
-    public NutsHashCommand source(InputStream input) {
+    public NutsHashAction source(InputStream input) {
         this.value = input;
         this.type = "stream";
         return this;
     }
 
     @Override
-    public NutsHashCommand source(File file) {
+    public NutsHashAction source(File file) {
         this.value = file;
         this.type = "file";
         return this;
     }
 
     @Override
-    public NutsHashCommand source(Path path) {
+    public NutsHashAction source(Path path) {
         this.value = path;
         this.type = "path";
         return this;
     }
 
     @Override
-    public NutsHashCommand source(NutsDescriptor descriptor) {
+    public NutsHashAction source(NutsDescriptor descriptor) {
         this.value = descriptor;
         this.type = "desc";
         return this;
@@ -133,7 +133,7 @@ public class DefaultNutsHashCommand implements NutsHashCommand {
     }
 
     @Override
-    public NutsHashCommand writeHash(OutputStream out) {
+    public NutsHashAction writeHash(OutputStream out) {
         if (type == null || value == null) {
             throw new NutsIllegalArgumentException(ws, "Missing Source");
         }

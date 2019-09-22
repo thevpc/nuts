@@ -197,7 +197,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart());
-            getWorkspace().io().copy().session(session.getSession()).from(location).to(localPath).safeCopy().monitorable().run();
+            getWorkspace().io().copy().session(session.getSession()).from(location).to(localPath).safe().logProgress().run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = CoreIOUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {

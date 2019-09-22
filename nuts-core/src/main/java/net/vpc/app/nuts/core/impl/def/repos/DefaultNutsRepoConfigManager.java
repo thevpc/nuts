@@ -6,6 +6,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -50,7 +51,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (CoreStringUtils.isBlank(storeLocation)) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing folder");
         }
-        Path pfolder = repository.getWorkspace().io().path(storeLocation);
+        Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
             throw new NutsInvalidRepositoryException(repository.getWorkspace(), storeLocation, "Unable to resolve root as a valid folder " + storeLocation);
         }
@@ -163,7 +164,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     @Override
     public Path getStoreLocation() {
-        return repository.getWorkspace().io().path(storeLocation);
+        return Paths.get(storeLocation);
     }
 
     @Override

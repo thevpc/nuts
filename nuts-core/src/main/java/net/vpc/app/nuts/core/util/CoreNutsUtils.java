@@ -32,6 +32,7 @@ package net.vpc.app.nuts.core.util;
 import java.io.File;
 import java.io.IOException;
 
+import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -891,5 +892,29 @@ public class CoreNutsUtils {
             msg=ex.getMessage();
         }
         return msg;
+    }
+
+    public static boolean acceptMonitoring(NutsSession session) {
+        Object o = session.getProperty("monitor-allowed");
+        NutsWorkspace ws = session.getWorkspace();
+        if (o != null) {
+            o = ws.commandLine().create(String.valueOf(o)).next().getBoolean();
+        }
+        boolean monitorable = true;
+        if (o instanceof Boolean) {
+            monitorable = ((Boolean) o).booleanValue();
+        }
+        if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
+            monitorable = false;
+        }
+        if(ws instanceof DefaultNutsWorkspace){
+            if (!((DefaultNutsWorkspace) ws).LOG.isLoggable(Level.INFO)) {
+                monitorable = false;
+            }
+        }
+        if (!session.isPlainOut()) {
+            monitorable = false;
+        }
+        return monitorable;
     }
 }
