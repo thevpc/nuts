@@ -10,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 public class NutsIndexerApplication extends NutsApplication {
+    private static NutsApplicationContext __bootApplicationContext;
 
     public static void main(String[] args) {
         new NutsIndexerApplication().runAndExit(args);
@@ -17,10 +18,11 @@ public class NutsIndexerApplication extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext applicationContext) {
+        __bootApplicationContext =applicationContext;
         ConfigurableApplicationContext c = SpringApplication.run(Config.class, new String[0]);
         final Config cc = c.getBean(Config.class);
         cc.applicationContext = applicationContext;
-        Object lock = new Object();
+        final Object lock = new Object();
         synchronized (lock) {
             try {
                 lock.wait();
@@ -29,7 +31,6 @@ public class NutsIndexerApplication extends NutsApplication {
             }
         }
     }
-
     @SpringBootApplication
     @EnableScheduling
     public static class Config {
@@ -37,12 +38,11 @@ public class NutsIndexerApplication extends NutsApplication {
         private NutsApplicationContext applicationContext;
 
         public NutsApplicationContext getApplicationContext() {
-            while (applicationContext == null) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(NutsIndexerApplication.class.getName()).log(Level.SEVERE, null, ex);
+            if (applicationContext == null) {
+                if(__bootApplicationContext ==null){
+                    throw new IllegalStateException("Missing Boot Application context");
                 }
+                applicationContext= __bootApplicationContext;
             }
             return applicationContext;
         }

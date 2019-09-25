@@ -41,8 +41,7 @@ public class NutsIndexSubscriberListManager {
                 .config()
                 .getStoreLocation(
                         this.defaultWorkspace
-                                .id().resolveId(NutsIndexSubscriberListManager.class)
-                                .getShortNameId(),
+                                .id().resolveId(NutsIndexSubscriberListManager.class),
                         NutsStoreLocation.CONFIG).resolve(
                         name + "-nuts-subscriber-list.json");
     }
