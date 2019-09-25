@@ -1928,4 +1928,8 @@ public class CoreIOUtils {
         }
         return new NutsProgressMonitorList(new NutsProgressMonitor[]{m0, m1});
     }
+
+    public static Path toPath(String path){
+        return CoreStringUtils.isBlank(path)?null:Paths.get(path);
+    }
 }

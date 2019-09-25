@@ -40,7 +40,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         if (b == null) {
             b = tomcat.getCatalinaHome();
         }
-        Path p = Paths.get(config.getDeployPath());
+        Path p = config.getDeployPath()==null ?null:Paths.get(config.getDeployPath());
         if (p == null) {
             p = tomcat.getDefaulDeployFolder(name);
         }

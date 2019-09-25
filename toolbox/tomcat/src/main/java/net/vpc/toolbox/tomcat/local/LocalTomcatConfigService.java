@@ -127,7 +127,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public Path getCatalinaBase() {
         LocalTomcatConfig c = getConfig();
-        Path catalinaBase = Paths.get(c.getCatalinaBase());
+        Path catalinaBase = c.getCatalinaBase()==null?null:Paths.get(c.getCatalinaBase());
         Path catalinaHome = getCatalinaHome();
         if (TomcatUtils.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
@@ -334,21 +334,34 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaVersion = catalinaVersion.trim();
         if (catalinaVersion.isEmpty()) {
             NutsVersion javaVersion = context.workspace().config().getPlatform().getVersion();
-            if(javaVersion.compareTo("1.8")<0) {
-                catalinaVersion = "7";
+            //  http://tomcat.apache.org/whichversion.html
+            if(javaVersion.compareTo("1.8")>=0) {
+                catalinaVersion = "[9,[";
+            }else if(javaVersion.compareTo("1.7")>=0) {
+                catalinaVersion = "[8.5,9[";
+            }else if(javaVersion.compareTo("1.6")>=0) {
+                catalinaVersion = "[7,8[";
+            }else if(javaVersion.compareTo("1.5")<0) {
+                catalinaVersion = "[6,7[";
+            }else if(javaVersion.compareTo("1.4")<0) {
+                catalinaVersion = "[5.5,6[";
+            }else if(javaVersion.compareTo("1.3")<0) {
+                catalinaVersion = "[4.1,5[";
+            }else {
+                catalinaVersion = "[3.3,4[";
             }
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            NutsDefinition r = context.workspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .session(context.getSession().copy().trace(false))
-                    .getResultDefinitions().first();
-            if (r != null && r.getInstallInformation().isInstalled()) {
+            NutsDefinition r = context.workspace().search().id("org.apache.catalina:apache-tomcat#" + catalinaVersion)
+                    .session(context.getSession().copy().trace(false)).latest()
+                    .getResultDefinitions().required();
+            if (r.getInstallInformation().isInstalled()) {
                 return r;
             } else {
                 catalinaNutsDefinition = context.workspace()
                         .install()
-                        .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                        .id(r.getId())
                         .session(context.getSession().copy().trace().addListener(new NutsInstallListener() {
                             @Override
                             public void onInstall(NutsInstallEvent event) {

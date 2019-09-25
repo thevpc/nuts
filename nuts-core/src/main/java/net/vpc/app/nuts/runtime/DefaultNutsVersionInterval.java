@@ -99,7 +99,7 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
 
     @Override
     public String toString() {
-        if (lowerBound != null && upperBound != null && lowerBound.equals(upperBound) && includeLowerBound && includeUpperBound) {
+        if (lowerBound != null && lowerBound.equals(upperBound) && includeLowerBound && includeUpperBound) {
             return "[" + lowerBound + "]";
         }
         return (includeLowerBound ? "[" : "]")

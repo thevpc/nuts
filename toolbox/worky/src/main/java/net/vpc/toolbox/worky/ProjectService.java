@@ -162,7 +162,7 @@ public class ProjectService {
                                         .setReadOnly(true)
                                         .setWorkspace(a.getNutsWorkspace())
                         );
-                        NutsSession s = ws2.createSession();
+                        NutsSession s = ws2.createSession().trace(false);
                         List<NutsId> found = ws2.search()
                                 .id(g.getGroupId() + ":" + g.getArtifactId())
                                 .repository(nutsRepository)

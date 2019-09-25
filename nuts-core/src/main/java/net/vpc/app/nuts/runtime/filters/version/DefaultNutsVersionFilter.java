@@ -94,7 +94,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public static NutsVersionFilter parse(String version) {
-        if (DefaultNutsVersion.isBlank(version)) {
+        if (DefaultNutsVersion.isBlank(version) || "*".equals(version)) {
             return AllNutsVersionFilter.INSTANCE;
         }
         ParseHelper pp = new ParseHelper();
@@ -203,8 +203,12 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         void addNextValue(String sval) {
             if (sval.endsWith("*")) {
                 String min = sval.substring(0, sval.length() - 1);
-                String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
-                dd.add(new DefaultNutsVersionInterval(true, false, min, max));
+                if(min.equals("")){
+                    dd.add(new DefaultNutsVersionInterval(false, false, min, null));
+                }else {
+                    String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
+                    dd.add(new DefaultNutsVersionInterval(true, false, min, max));
+                }
             } else {
                 dd.add(new DefaultNutsVersionInterval(true, true, sval, sval));
             }

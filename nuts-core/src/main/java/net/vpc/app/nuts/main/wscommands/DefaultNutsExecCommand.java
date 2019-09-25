@@ -263,7 +263,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (ff.isEmpty()) {
             throw new NutsNotFoundException(ws, nid);
         } else if (ff.size() > 1) {
-            throw new NutsTooManyElementsException(ws, nid.toString());
+            throw new NutsTooManyElementsException(ws, nid.toString()+" can be resolved to all of "+ff);
         }
         NutsId goodId = ff.get(0);
         def = ws.fetch().id(goodId)

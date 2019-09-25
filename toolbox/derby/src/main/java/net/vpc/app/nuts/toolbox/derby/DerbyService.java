@@ -85,7 +85,7 @@ public class DerbyService {
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
             NutsId java = appContext.getWorkspace().config().getPlatform();
-            NutsId best = ws.search().addId("org.apache.derby:derbynet").distinct().latest()
+            NutsId best = ws.search().session(appContext.getSession().copy().trace(false)).addId("org.apache.derby:derbynet").distinct().latest()
                     .setIdFilter((id, session) -> {
                         if(java.getVersion().compareTo("1.9")<0){
                             return id.getVersion().compareTo("10.15.1.3") < 0;

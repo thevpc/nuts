@@ -235,7 +235,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (properties == null || properties.isEmpty()) {
             //do nothing
         } else {
-            HashMap<String, String> p = new HashMap<>(this.properties);
+            HashMap<String, String> p = new HashMap<>();
+            if(this.properties!=null){
+                p.putAll(this.properties);
+            }
             p.putAll(properties);
             this.properties = p;
         }
@@ -433,8 +436,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder setProperty(String name, String value) {
         if(value==null){
-            properties.remove(name);
+            if(properties!=null) {
+                properties.remove(name);
+            }
         }else {
+            if(properties==null){
+                properties=new HashMap<>();
+            }
             properties.put(name, value);
         }
         return this;
