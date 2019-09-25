@@ -34,6 +34,7 @@ import java.io.InputStream;
 
 /**
  * classes implementing this interface should check the validity of the stream that was copied.
+ * @since 0.5.8
  */
 public interface NutsIOCopyValidator {
 

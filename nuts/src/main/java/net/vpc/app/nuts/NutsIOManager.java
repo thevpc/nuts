@@ -264,10 +264,10 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     NutsMonitorAction monitor();
 
     /**
-     * create new {@link NutsHashAction} instance that helps
+     * create new {@link NutsIOHashAction} instance that helps
      * hashing streams and files.
-     * @return create new {@link NutsHashAction} instance
+     * @return create new {@link NutsIOHashAction} instance
      */
-    NutsHashAction hash();
+    NutsIOHashAction hash();
 
 }

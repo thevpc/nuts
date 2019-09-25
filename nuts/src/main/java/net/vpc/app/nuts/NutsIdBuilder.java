@@ -34,124 +34,403 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * Mutable Artifact id information used to create instance of {@link NutsId}
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsIdBuilder extends Serializable {
 
-    NutsIdBuilder groupId(String newGroupId);
+    /**
+     * update groupId
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder groupId(String value);
 
-    NutsIdBuilder setGroupId(String newGroupId);
+    /**
+     * update groupId
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder setGroupId(String value);
 
-    NutsIdBuilder namespace(String newNamespace);
+    /**
+     * update namespace
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder namespace(String value);
 
-    NutsIdBuilder setNamespace(String newNamespace);
+    /**
+     * update namespace
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder setNamespace(String value);
 
-    NutsIdBuilder version(String newVersion);
+    /**
+     * update version
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder version(String value);
 
-    NutsIdBuilder setVersion(String newVersion);
+    /**
+     * update version
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder setVersion(String value);
 
-    NutsIdBuilder version(NutsVersion version);
+    /**
+     * update setVersion
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder version(NutsVersion value);
 
-    NutsIdBuilder setVersion(NutsVersion version);
+    /**
+     * update setVersion
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder setVersion(NutsVersion value);
 
-    NutsIdBuilder artifactId(String newName);
+    /**
+     * update artifactId
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder artifactId(String value);
 
-    NutsIdBuilder setArtifactId(String newName);
+    /**
+     * update artifactId
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdBuilder setArtifactId(String value);
 
+    /**
+     * id face define is a release file type selector of the id.
+     * It helps discriminating content (jar) from descriptor, from other (hash,...)
+     * files released for the very same  artifact.
+     * @return id face selector
+     */
     String getFace();
 
-//    String getAlternative();
-
+    /**
+     * os supported by the artifact
+     * @return os supported by the artifact
+     */
     String getOs();
 
+    /**
+     * os distribution supported by the artifact
+     * @return os distribution supported by the artifact
+     */
     String getOsdist();
 
+    /**
+     * platform supported by the artifact
+     * @return platform supported by the artifact
+     */
     String getPlatform();
 
+    /**
+     * hardware architecture supported by the artifact
+     * @return hardware architecture supported by the artifact
+     */
     String getArch();
 
+    /**
+     * tag used to distinguish between different artifacts that were built from the same source code
+     * @return tag used to distinguish between different artifacts that were built from the same source code
+     */
     String getClassifier();
 
+    /**
+     * equivalent to {@code setFace(NutsConstants.QueryFaces.CONTENT)}
+     * @return this instance
+     */
     NutsIdBuilder faceContent();
 
+    /**
+     * equivalent to {@code setFace(NutsConstants.QueryFaces.CONTENT)}
+     * @return this instance
+     */
     NutsIdBuilder setFaceContent();
 
+    /**
+     * equivalent to {@code setFace(NutsConstants.QueryFaces.DESCRIPTOR)}
+     * @return this instance
+     */
     NutsIdBuilder faceDescriptor();
 
+    /**
+     * equivalent to {@code setFace(NutsConstants.QueryFaces.DESCRIPTOR)}
+     * @return {@code this} instance
+     */
     NutsIdBuilder setFaceDescriptor();
 
+    /**
+     * update id face which defines is a release file type selector
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder face(String value);
 
+    /**
+     * update id face which defines is a release file type selector
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setFace(String value);
 
+    /**
+     * update classifier
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder classifier(String value);
 
+    /**
+     * update classifier
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setClassifier(String value);
 
+    /**
+     * update platform
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder platform(String value);
 
+    /**
+     * update platform
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setPlatform(String value);
 
+    /**
+     * update arch
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder arch(String value);
 
+    /**
+     * update arch
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setArch(String value);
 
+    /**
+     * update os
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder os(String value);
 
+    /**
+     * update os
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setOs(String value);
 
+    /**
+     * update osdist
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder osdist(String value);
 
+    /**
+     * update osdist
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setOsdist(String value);
 
+    /**
+     * update property.
+     * When {@code value} is null, property will be removed.
+     * @param property name
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder property(String property, String value);
 
+    /**
+     * update property.
+     * When {@code value} is null, property will be removed.
+     * @param property name
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setProperty(String property, String value);
 
+    /**
+     * update all properties property.
+     * @param queryMap new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder properties(Map<String, String> queryMap);
 
+    /**
+     * update all properties property.
+     * @param queryMap new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setProperties(Map<String, String> queryMap);
 
+    /**
+     * update all properties property while retaining old,
+     * non overridden properties.
+     * @param queryMap new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder addProperties(Map<String, String> queryMap);
 
+    /**
+     * update all properties property.
+     * @param query new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder properties(String query);
 
+    /**
+     * update all properties property.
+     * @param query new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setProperties(String query);
 
+    /**
+     * update all properties property while retaining old,
+     * non overridden properties.
+     * @param query new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder addProperties(String query);
 
+    /**
+     * update packaging
+     * @param packaging new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder packaging(String packaging);
 
+    /**
+     * update packaging
+     * @param packaging new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder setPackaging(String packaging);
 
+    /**
+     * properties in the the url query form
+     * @return properties in the the url query form.
+     */
     String getPropertiesQuery();
 
+    /**
+     * properties as map.
+     * @return properties as map.
+     */
     Map<String, String> getProperties();
 
+    /**
+     * artifact namespace (usually repository name or id)
+     * @return artifact namespace (usually repository name or id)
+     */
     String getNamespace();
 
+    /**
+     * artifact group which identifies uniquely projects and group of projects.
+     * @return artifact group which identifies uniquely projects and group of projects.
+     */
     String getGroupId();
 
+    /**
+     * return a string concatenation of group, name and version,
+     * ignoring namespace, and queryMap values. An example of long name is
+     * <code>my-group:my-artifact#my-version?alt</code>
+     *
+     * @return group id, artifact id and version only Id instance
+     */
     String getLongName();
 
+    /**
+     * returns a string concatenation of group and name (':' separated) ignoring
+     * version,namespace, and queryMap values. In group is empty or null, name
+     * is returned. Ann null values are trimmed to "" An example of simple name
+     * is <code>my-group:my-artifact</code>
+     *
+     * @return group id and artifact id
+     */
     String getShortName();
 
+    /**
+     * return a string representation of this id. All of group, name, version,
+     * namespace, queryMap values are printed. This method is equivalent to
+     * {@link Object#toString()}
+     *
+     * @return string representation of this id
+     */
     String getFullName();
 
+    /**
+     * return name part of this id
+     *
+     * @return return name part of this id
+     */
     String getArtifactId();
 
+    /**
+     * artifact version (never null)
+     * @return artifact version (never null)
+     */
     NutsVersion getVersion();
 
-    NutsIdBuilder apply(Function<String, String> properties);
-
+    /**
+     * update artifact id
+     * @param id new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder id(NutsId id);
 
+    /**
+     * update all arguments
+     * @param id new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder set(NutsId id);
 
+    /**
+     * update all arguments
+     * @param id new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder id(NutsIdBuilder id);
 
+    /**
+     * update all arguments
+     * @param id new value
+     * @return {@code this} instance
+     */
     NutsIdBuilder set(NutsIdBuilder id);
+
+    /**
+     * replace dollar based variables with the given properties
+     * @param properties to replace
+     * @return {@code this} instance
+     */
+    NutsIdBuilder apply(Function<String, String> properties);
 
     /**
      * clear this instance (set null/default all properties)
@@ -160,5 +439,9 @@ public interface NutsIdBuilder extends Serializable {
      */
     NutsIdBuilder clear();
 
+    /**
+     * create new instance of {@link NutsId} initialized with this builder values.
+     * @return new instance of {@link NutsId} initialized with this builder values.
+     */
     NutsId build();
 }

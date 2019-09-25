@@ -1047,6 +1047,11 @@ public final class NutsBootWorkspace {
     }
 
 
+    /**
+     * build and return unsatisfied requirements
+     * @param unsatisfiedOnly when true return requirements for new instance
+     * @return unsatisfied requirements
+     */
     private int checkRequirements(boolean unsatisfiedOnly) {
         int req = 0;
         if (!PrivateNutsUtils.isBlank(workspaceInformation.getApiVersion())) {
@@ -1063,6 +1068,11 @@ public final class NutsBootWorkspace {
         return req;
     }
 
+    /**
+     * return a string representing unsatisfied contrains
+     * @param unsatisfiedOnly when true return requirements for new instance
+     * @return a string representing unsatisfied contrains
+     */
     public String getRequirementsHelpString(boolean unsatisfiedOnly) {
         int req = unsatisfiedOnly ? newInstanceRequirements : checkRequirements(false);
         StringBuilder sb = new StringBuilder();

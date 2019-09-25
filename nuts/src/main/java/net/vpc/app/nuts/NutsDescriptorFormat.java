@@ -156,7 +156,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * create executor builder.
      * @return new instance of NutsExecutorDescriptorBuilder
      */
-    NutsExecutorDescriptorBuilder executorBuilder();
+    NutsArtifactCallBuilder callBuilder();
 
     /**
      * configure the current command with the given arguments. This is an

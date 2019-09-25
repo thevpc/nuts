@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Lock builder to create mainly File based Locks
@@ -110,7 +111,7 @@ public interface NutsIOLockAction {
 
     /**
      * create lock object for the given source and resource
-     * @return new {@link NutsLock} instance
+     * @return new {@link Lock} instance
      */
     NutsLock create();
 }
