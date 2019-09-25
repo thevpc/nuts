@@ -47,6 +47,8 @@ public class DerbyMain extends NutsApplication {
                 options.cmd = Command.sysinfo;
             } else if ((a = cmdLine.next("ping")) != null) {
                 options.cmd = Command.ping;
+            } else if ((a = cmdLine.next("status")) != null) {
+                options.cmd = Command.ping;
             } else if ((a = cmdLine.next("rt", "runtime")) != null) {
                 options.cmd = Command.runtimeinfo;
             } else if ((a = cmdLine.nextString("trace")) != null) {
