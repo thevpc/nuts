@@ -7,12 +7,11 @@ package net.vpc.app.nuts.core.test.blackbox;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

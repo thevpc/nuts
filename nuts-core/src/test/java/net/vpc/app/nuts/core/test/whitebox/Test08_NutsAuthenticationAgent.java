@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.NutsAuthenticationAgent;
-import net.vpc.app.nuts.core.security.DefaultNutsAuthenticationAgent;
-import net.vpc.app.nuts.core.security.PlainNutsAuthenticationAgent;
+import net.vpc.app.nuts.runtime.security.DefaultNutsAuthenticationAgent;
+import net.vpc.app.nuts.runtime.security.PlainNutsAuthenticationAgent;
 import org.junit.Assert;
 import org.junit.Test;
 

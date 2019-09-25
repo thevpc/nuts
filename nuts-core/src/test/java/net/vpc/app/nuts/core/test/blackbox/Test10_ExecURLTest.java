@@ -6,18 +6,15 @@
 package net.vpc.app.nuts.core.test.blackbox;
 
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

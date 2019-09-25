@@ -24,7 +24,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-e java -classpath %classpath net.vpc.app.nuts.core.terminals.NutsAnsiUnixTermPrintStream</exec.args>
+            <exec.args>-e java -classpath %classpath net.vpc.app.nuts.runtime.terminals.NutsAnsiUnixTermPrintStream</exec.args>
             <exec.executable>konsole</exec.executable>
         </properties>
     </action>

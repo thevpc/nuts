@@ -5,8 +5,8 @@
  */
 package net.vpc.app.nuts.core.test.whitebox.utilities;
 
-import net.vpc.app.nuts.core.terminals.NutsPrintStreamFormattedUnixAnsi;
-import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
+import net.vpc.app.nuts.runtime.terminals.NutsPrintStreamFormattedUnixAnsi;
+import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 import org.junit.Test;
 
 /**

@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import static net.vpc.app.nuts.core.test.utils.TestUtils.*;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;

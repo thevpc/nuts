@@ -1,8 +1,6 @@
 package net.vpc.app.nuts.core.app;
 
 import java.io.*;
-import java.util.LinkedHashSet;
-import java.util.Map;
 
 public interface CommandHistory {
 

@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
+import net.vpc.app.nuts.runtime.filters.version.DefaultNutsVersionFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
