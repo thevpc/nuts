@@ -487,7 +487,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //            other = new NutsBootConfig();
 //        }
 //        if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
-//            NutsSession searchSession = ws.createSession().trace(false);
+//            NutsSession searchSession = ws.createSession().silent();
 //            other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
 //                    .scope(NutsDependencyScopePattern.RUN)
 //                    .inlineDependencies()
@@ -1208,7 +1208,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 .scope(NutsDependencyScopePattern.RUN)
                 .content()
                 .failFast(false)
-                .session(ws.createSession().trace(false))
+                .session(ws.createSession().silent())
                 .getResultDefinition();
         if (def == null) {
             //selected repositories cannot reach runtime component
@@ -1260,7 +1260,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                             .optional(false)
                             .scope(NutsDependencyScopePattern.RUN)
                             .content()
-                            .session(ws.createSession().trace(false))
+                            .session(ws.createSession().silent())
                             .failFast(false)
                             .getResultDefinition();
                     if (def != null) {

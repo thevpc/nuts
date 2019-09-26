@@ -48,7 +48,7 @@ public class NutsWorkspaceHelper {
 
     public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
         if (options == null) {
-            options = new DefaultNutsFetchCommand(repo.getWorkspace()).setIndexed(true);
+            options = new DefaultNutsFetchCommand(repo.getWorkspace()).indexed();
         }
         return new DefaultNutsRepositorySession(repo,session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }

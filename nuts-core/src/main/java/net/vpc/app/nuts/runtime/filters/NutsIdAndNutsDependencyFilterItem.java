@@ -17,7 +17,7 @@ public class NutsIdAndNutsDependencyFilterItem {
         if (effDescriptor == null) {
             effDescriptor = session.getWorkspace().fetch().id(id.id)
                     .effective()
-                    .session(session.copy().trace(false))
+                    .session(session.copy().silent())
                     .effective().getResultDescriptor();
         }
         return effDescriptor;

@@ -567,6 +567,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsSession silent() {
+        return trace(false);
+    }
+
+    @Override
     public NutsSession trace() {
         return trace(true);
     }

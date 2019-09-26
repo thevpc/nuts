@@ -55,7 +55,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     @Override
     public NutsContent getResultContent() {
         try {
-            NutsDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false),true,false);
+            NutsDefinition def = fetchDefinition(getId(), copy().content().setEffective(false),true,false);
             return def.getContent();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
@@ -125,7 +125,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     @Override
     public Path getResultPath() {
         try {
-            NutsDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false),true,false);
+            NutsDefinition def = fetchDefinition(getId(), copy().content().setEffective(false),true,false);
             Path p = def.getPath();
             if (getLocation() != null) {
                 return getLocation();
@@ -279,7 +279,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             NutsDependencyFilter scope = getScope().isEmpty() ? null : new NutsDependencyScopeFilter().addScopes(getScope());
                             tree = buildTreeNode(null,
                                     ws.dependency().builder().id(id).build(),
-                                    foundDefinition, new HashSet<NutsId>(), getSession().copy().trace(false), scope).getChildren();
+                                    foundDefinition, new HashSet<NutsId>(), getSession().copy().silent(), scope).getChildren();
                             try {
                                 cache.dependencies = tree;
                                 ws.json().setValue(cache).print(cachePath);
@@ -425,7 +425,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             for (NutsDependency nutsDependency : d) {
                 if (dependencyFilter == null || dependencyFilter.accept(null, nutsDependency, session)) {
                     NutsDefinition def2 = ws.search()
-                            .id(nutsDependency.getId()).session(session.copy().trace(false).setProperty("monitor-allowed", false)).effective()
+                            .id(nutsDependency.getId()).session(session.copy().silent().setProperty("monitor-allowed", false)).effective()
                             .content(shouldIncludeContent(this))
                             .latest().getResultDefinitions().first();
                     if (def2 != null) {

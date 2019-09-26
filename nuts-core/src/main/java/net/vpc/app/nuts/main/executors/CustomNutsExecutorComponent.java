@@ -68,7 +68,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
                 .session(executionContext.getSession())
                 .env(executionContext.getEnv())
                 .directory(executionContext.getCwd())
-                .failFast(true)
+                .failFast()
                 .run();
     }
 
@@ -83,7 +83,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
                 .session(executionContext.getSession())
                 .env(executionContext.getEnv())
                 .directory(executionContext.getCwd())
-                .failFast(true)
+                .failFast()
                 .dry()
                 .run();
     }

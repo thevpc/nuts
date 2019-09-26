@@ -128,11 +128,11 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
             }
             if (comment.toString().trim().isEmpty()) {
                 return new DefaultNutsDescriptorBuilder()
-                        .setId(CoreNutsUtils.parseNutsId("temp:sh#1.0"))
-                        .setExecutable(true)
+                        .id(CoreNutsUtils.parseNutsId("temp:sh#1.0"))
+                        .executable()
                         //                        .setExt("sh")
-                        .setPackaging("sh")
-                        .setExecutor(new DefaultNutsArtifactCall(BASH))
+                        .packaging("sh")
+                        .executor(new DefaultNutsArtifactCall(BASH))
                         .build();
             }
             return ws.descriptor().parse(comment.getValidString());

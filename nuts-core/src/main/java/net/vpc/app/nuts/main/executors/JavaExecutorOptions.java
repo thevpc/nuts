@@ -53,7 +53,7 @@ public final class JavaExecutorOptions {
         this.dir = dir;
         this.execArgs = executorOptions;
         List<String> classPath0 = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = getWorkspace().id().setOmitNamespace(true);
+        NutsIdFormat nutsIdFormat = getWorkspace().id().omitNamespace();
         //will accept all -- and - based options!
         NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs());
         NutsArgument a;
@@ -144,7 +144,7 @@ public final class JavaExecutorOptions {
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = getWorkspace().search().session(session.copy().trace(false));
+        NutsSearchCommand se = getWorkspace().search().session(session.copy().silent());
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.getId());
@@ -286,7 +286,7 @@ public final class JavaExecutorOptions {
     }
 
     private void npToCp(List<String> classPath, String value) {
-        NutsSession searchSession = this.session.copy().trace(false);
+        NutsSession searchSession = this.session.copy().silent();
         NutsSearchCommand ns = getWorkspace().search().latest()
                 .session(searchSession);
         for (String n : CoreStringUtils.split(value, ";, ")) {

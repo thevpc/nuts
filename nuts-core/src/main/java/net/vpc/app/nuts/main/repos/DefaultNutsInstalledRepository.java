@@ -250,7 +250,7 @@ public class DefaultNutsInstalledRepository implements NutsInstalledRepository {
 //                if (m != null) {
 //                    String id = (String) m.get("id");
 //                    if (id != null) {
-//                        return ws.fetch().id(id).offline().session(session.getSession().copy().trace(false))
+//                        return ws.fetch().id(id).offline().session(session.getSession().copy().silent())
 //                                .setTransitive(session.isTransitive())
 //                                .setIndexed(session.isIndexed())
 //                                .setCached(session.isCached())

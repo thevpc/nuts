@@ -131,7 +131,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession().copy().trace(false));
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession().copy().silent());
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }

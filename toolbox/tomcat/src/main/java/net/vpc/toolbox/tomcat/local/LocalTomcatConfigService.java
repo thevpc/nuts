@@ -354,7 +354,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
             NutsDefinition r = context.workspace().search().id("org.apache.catalina:apache-tomcat#" + catalinaVersion)
-                    .session(context.getSession().copy().trace(false)).latest()
+                    .session(context.getSession().copy().silent()).latest()
                     .getResultDefinitions().required();
             if (r.getInstallInformation().isInstalled()) {
                 return r;

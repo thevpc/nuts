@@ -519,9 +519,9 @@ public class NutsIdFormatHelper {
             try {
                 if (!this.i || def == null) {
                     this.defFetched = ws.fetch().id(id).session(
-                            session.trace(false)
+                            session.silent()
                     ).offline()
-                            .content(true)
+                            .content()
                             .optional(false)
                             .dependencies(this.checkDependencies)
                             .getResultDefinition();

@@ -132,7 +132,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
-                        .session(context.getSession().copy().trace(false))
+                        .session(context.getSession().copy().silent())
                         .id(options.getId()).latest().getResultDefinitions().required();
                 nid = fetched.getId().getShortNameId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -169,7 +169,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
         NutsId b = context.getWorkspace().config().getApiId();
         NutsDefinition f = context.getWorkspace().search()
-                .session(context.getSession().copy().trace(false))
+                .session(context.getSession().copy().silent())
                 .id(b).optional(false).latest().content().getResultDefinitions().required();
         Path ff = getScriptFile("nuts");
         List<NdiScriptnfo> all = new ArrayList<>();

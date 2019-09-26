@@ -20,7 +20,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
         if (ids.isEmpty()) {
             throw new NutsExecutionException(ws, "No component to undeploy", 1);
         }
-        NutsSession searchSession = getValidSession().copy().trace(false);
+        NutsSession searchSession = getValidSession().copy().silent();
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
                     .session(searchSession)

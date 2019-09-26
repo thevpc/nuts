@@ -455,7 +455,7 @@ public class NutsWorkspaceUtils {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().trace(false)).getResultPath();
+        Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().silent()).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }

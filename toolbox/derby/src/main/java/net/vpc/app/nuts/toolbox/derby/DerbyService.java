@@ -66,7 +66,7 @@ public class DerbyService {
                     LOG.log(Level.FINEST, "downloading {0} to {1}",id,targetFile);
                 }
             }else {
-                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(true).getResultPath();
+                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast().getResultPath();
                 LOG.log(Level.FINEST, "downloading {0} to {1}",id,targetFile);
             }
         } else {
@@ -82,14 +82,14 @@ public class DerbyService {
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
             NutsId java = appContext.getWorkspace().config().getPlatform();
-            NutsId best = ws.search().session(appContext.getSession().copy().trace(false)).addId("org.apache.derby:derbynet").distinct().latest()
+            NutsId best = ws.search().session(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").distinct().latest()
                     .setIdFilter((id, session) -> {
                         if(java.getVersion().compareTo("1.9")<0){
                             return id.getVersion().compareTo("10.15.1.3") < 0;
                         }
                         return true;
                     })
-                    .session(appContext.getSession().copy().trace(false))
+                    .session(appContext.getSession().copy().silent())
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }

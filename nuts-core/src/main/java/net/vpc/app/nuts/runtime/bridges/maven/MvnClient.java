@@ -26,7 +26,7 @@ public class MvnClient {
         if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         switch (status) {
             case INIT: {
                 status = Status.DIRTY;

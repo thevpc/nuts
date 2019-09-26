@@ -883,4 +883,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder platform(String[] platform) {
         return setPlatform(platform);
     }
+
+    @Override
+    public NutsDescriptorBuilder executable() {
+        return executable(true);
+    }
+
+    @Override
+    public NutsDescriptorBuilder application() {
+        return application(true);
+    }
 }

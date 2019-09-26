@@ -242,6 +242,8 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder executable(boolean executable);
 
+    NutsDescriptorBuilder executable();
+
     /**
      * set nutsApp flag
      *
@@ -251,6 +253,7 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setApplication(boolean nutsApp);
 
     NutsDescriptorBuilder application(boolean nutsApp);
+    NutsDescriptorBuilder application();
 
     /**
      * set executor flag

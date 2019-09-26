@@ -60,7 +60,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if(def!=null){
             return def;
         }
-        def = ws.fetch().id(id).session(session.copy().trace(false))
+        def = ws.fetch().id(id).session(session.copy().silent())
                 .optional(false)
                 .content()
                 .effective()
@@ -81,7 +81,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         boolean emptyCommand = true;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getValidSession();
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         PrintStream out = CoreIOUtils.resolveOut(session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
         LinkedHashMap<NutsId,Boolean> allToInstall=new LinkedHashMap<>();
@@ -157,25 +157,25 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             if(!defsToInstall.isEmpty()) {
                 out.println("The following {{new}} ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be ##installed## : "
                         + defsToInstall.keySet().stream()
-                        .map(x -> ws.id().setOmitImportedGroupId(true).value(x.getLongNameId()).format())
+                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToInstallForced.isEmpty()) {
                 out.println("The following already ##installed## ==nuts== " + (defsToInstallForced.size() > 1 ? "components are" : "component is") + " going to be [[reinstalled]] : "
                         + defsToInstallForced.keySet().stream()
-                        .map(x -> ws.id().setOmitImportedGroupId(true).value(x.getLongNameId()).format())
+                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToDefVersion.isEmpty()) {
                 out.println("The following already ##installed## ==nuts== " + (defsToDefVersion.size() > 1 ? "components are" : "component is") + " going to be **set as default** : "
                         + defsToDefVersion.keySet().stream()
-                        .map(x -> ws.id().setOmitImportedGroupId(true).value(x.getLongNameId()).format())
+                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToIgnore.isEmpty()) {
                 out.println("The following already ##installed## ==nuts== " + (defsToIgnore.size() > 1 ? "components are" : "component is") + " {{ignored}} : "
                         + defsToIgnore.keySet().stream()
-                        .map(x -> ws.id().setOmitImportedGroupId(true).value(x.getLongNameId()).format())
+                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
 

@@ -106,7 +106,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().session(getValidSession().copy().trace(false)).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().session(getValidSession().copy().silent()).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
         }
         HashSet<NutsId> regulars = new HashSet<>();
         for (NutsId id : baseRegulars) {
@@ -258,7 +258,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id) {
         NutsSession session = getValidSession();
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
             throw new NutsIllegalArgumentException(ws, id + " : Version is too restrictive. You should use fetch or install instead");
@@ -460,7 +460,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     public NutsUpdateResult checkCoreUpdate(NutsId id, String bootApiVersion, NutsSession session,String type) {
         //disable trace so that search do not write to stream
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         NutsId oldId = null;
         NutsDefinition oldFile = null;
         NutsDefinition newFile = null;

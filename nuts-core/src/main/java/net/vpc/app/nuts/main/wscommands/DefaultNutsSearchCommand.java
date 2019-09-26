@@ -244,7 +244,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
                 .session(evalSession(true));
         if (getDisplayOptions().isRequireDefinition()) {
-            t.setContent(true);
+            t.content();
         }
         return t;
     }
@@ -614,7 +614,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             Iterator<NutsId> base = getResultIdsBase(false, sort).iterator();
             NutsFetchCommand fetch = toFetch().content(content).effective(effective);
             NutsFetchCommand ofetch = toFetch().content(content).effective(effective).offline();
-            fetch.getSession().trace(false);
+            fetch.getSession().silent();
             final boolean hasRemote = fetch.getFetchStrategy()==null || Arrays.stream(fetch.getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
             Iterator<NutsDefinition> ii = new NamedIterator<NutsDefinition>("Id->Definition") {
                 private NutsDefinition n = null;

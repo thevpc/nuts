@@ -130,6 +130,13 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession trace(boolean trace);
 
     /**
+     * equivalent to {@code setTrace(false)}
+     *
+     * @return {@code this} instance
+     */
+    NutsSession silent();
+
+    /**
      * true if force flag is armed. some operations may require user
      * confirmation before performing critical operations such as overriding
      * existing values, deleting sensitive informations ; in such cases, arming

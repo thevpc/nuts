@@ -25,10 +25,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     public final NutsLogger LOG;
     public static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
-            .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
-            .setPackaging("exe")
-            .setExecutable(true)
-            .setExecutor(new DefaultNutsArtifactCall(CoreNutsUtils.parseNutsId("exec")))
+            .id(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
+            .packaging("exe")
+            .executable(true)
+            .executor(new DefaultNutsArtifactCall(CoreNutsUtils.parseNutsId("exec")))
             .build();
 
 
@@ -242,7 +242,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if(nid==null){
             throw new NutsNotFoundException(ws, commandName);
         }
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         List<NutsId> ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
                 .defaultVersions()
                 .installed().getResultIds().list();

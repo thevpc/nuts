@@ -466,7 +466,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.of(this).validateSession( session);
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         NutsDefinition nutToInstall;
         try {
             nutToInstall = search().id(id).session(searchSession).transitive(false)
@@ -772,7 +772,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default:{
-                    oldDef=search().session(session.copy().trace(false)).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
+                    oldDef=search().session(session.copy().silent()).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
                     break;
                 }
             }

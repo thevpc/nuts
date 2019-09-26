@@ -149,7 +149,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (baseNutsDescriptor == null) {
             baseNutsDescriptor = new DefaultNutsDescriptorBuilder()
                     .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
-                    .setExecutable(true)
+                    .executable()
                     .setPackaging("jar")
                     .build();
         }
@@ -157,12 +157,12 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (classes.length == 0) {
             return baseNutsDescriptor;
         } else {
-            return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
+            return baseNutsDescriptor.builder().executor(new DefaultNutsArtifactCall(JAVA, new String[]{
                 "--main-class=" + CoreStringUtils.join(":",
                 Arrays.stream(classes)
                 .map(x -> x.getName())
                 .collect(Collectors.toList())
-                )}, null)).setExecutable(true).build();
+                )}, null)).executable().build();
         }
     }
 }

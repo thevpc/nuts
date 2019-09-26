@@ -39,7 +39,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( this.getSession());
         ws.security().checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
-        NutsSession searchSession = session.copy().trace(false);
+        NutsSession searchSession = session.copy().silent();
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             List<NutsDefinition> resultDefinitions = ws.search().id(id).installed().session(searchSession)
