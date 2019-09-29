@@ -30,6 +30,8 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Command Alias definition class Config
@@ -200,4 +202,39 @@ public class NutsCommandAliasConfig implements Serializable{
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "NutsCommandAliasConfig{" +
+                "owner=" + owner +
+                ", name='" + name + '\'' +
+                ", factoryId='" + factoryId + '\'' +
+                ", command=" + Arrays.toString(command) +
+                ", executorOptions=" + Arrays.toString(executorOptions) +
+                ", helpCommand=" + Arrays.toString(helpCommand) +
+                ", helpText='" + helpText + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsCommandAliasConfig that = (NutsCommandAliasConfig) o;
+        return Objects.equals(owner, that.owner) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(factoryId, that.factoryId) &&
+                Arrays.equals(command, that.command) &&
+                Arrays.equals(executorOptions, that.executorOptions) &&
+                Arrays.equals(helpCommand, that.helpCommand) &&
+                Objects.equals(helpText, that.helpText);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(owner, name, factoryId, helpText);
+        result = 31 * result + Arrays.hashCode(command);
+        result = 31 * result + Arrays.hashCode(executorOptions);
+        result = 31 * result + Arrays.hashCode(helpCommand);
+        return result;
+    }
 }

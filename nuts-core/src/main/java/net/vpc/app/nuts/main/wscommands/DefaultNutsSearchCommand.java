@@ -362,7 +362,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsCollectionSearchResult<NutsId> a = applyVersionFlagFilters(base0, false);
         Iterator<NutsId> curr = a.iterator();
         if (isInlineDependencies()) {
-            if (!includeMain) {
+            if (!isMain()) {
                 curr = Arrays.asList(findDependencies(a.list())).iterator();
             } else {
                 List<Iterator<NutsId>> it = new ArrayList<>();

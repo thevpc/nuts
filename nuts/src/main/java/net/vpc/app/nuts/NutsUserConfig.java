@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  *
@@ -112,5 +113,38 @@ public final class NutsUserConfig implements Serializable {
 
     public void setGroups(String[] groups) {
         this.groups = groups;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsUserConfig that = (NutsUserConfig) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(credentials, that.credentials) &&
+                Arrays.equals(groups, that.groups) &&
+                Arrays.equals(permissions, that.permissions) &&
+                Objects.equals(remoteIdentity, that.remoteIdentity) &&
+                Objects.equals(remoteCredentials, that.remoteCredentials);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials);
+        result = 31 * result + Arrays.hashCode(groups);
+        result = 31 * result + Arrays.hashCode(permissions);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsUserConfig{" +
+                "user='" + user + '\'' +
+                ", credentials='" + credentials + '\'' +
+                ", groups=" + Arrays.toString(groups) +
+                ", permissions=" + Arrays.toString(permissions) +
+                ", remoteIdentity='" + remoteIdentity + '\'' +
+                ", remoteCredentials='" + remoteCredentials + '\'' +
+                '}';
     }
 }

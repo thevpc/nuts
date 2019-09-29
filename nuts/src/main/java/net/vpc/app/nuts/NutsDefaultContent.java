@@ -30,6 +30,8 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.util.Objects;
+
 import net.vpc.app.nuts.NutsContent;
 
 /**
@@ -69,4 +71,18 @@ public class NutsDefaultContent implements NutsContent {
         return "Content{" + "file=" + file + ", cached=" + cached + ", temporary=" + temporary + '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsDefaultContent that = (NutsDefaultContent) o;
+        return cached == that.cached &&
+                temporary == that.temporary &&
+                Objects.equals(file, that.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(file, cached, temporary);
+    }
 }

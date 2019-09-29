@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Objects;
+
 /**
  * Default and dummy NutsSupportLevelContext implementation
  * @author vpc
@@ -59,4 +61,24 @@ public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContex
         return constraints;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsDefaultSupportLevelContext<?> that = (NutsDefaultSupportLevelContext<?>) o;
+        return Objects.equals(ws, that.ws) &&
+                Objects.equals(constraints, that.constraints);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ws, constraints);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsDefaultSupportLevelContext{" +
+                "constraints=" + constraints +
+                '}';
+    }
 }

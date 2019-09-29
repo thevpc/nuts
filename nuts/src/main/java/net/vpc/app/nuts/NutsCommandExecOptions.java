@@ -30,7 +30,9 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -156,4 +158,33 @@ public class NutsCommandExecOptions implements Serializable {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsCommandExecOptions that = (NutsCommandExecOptions) o;
+        return failFast == that.failFast &&
+                Arrays.equals(executorOptions, that.executorOptions) &&
+                Objects.equals(env, that.env) &&
+                Objects.equals(directory, that.directory) &&
+                executionType == that.executionType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(env, directory, failFast, executionType);
+        result = 31 * result + Arrays.hashCode(executorOptions);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsCommandExecOptions{" +
+                "executorOptions=" + Arrays.toString(executorOptions) +
+                ", env=" + env +
+                ", directory='" + directory + '\'' +
+                ", failFast=" + failFast +
+                ", executionType=" + executionType +
+                '}';
+    }
 }

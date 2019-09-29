@@ -30,10 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -451,5 +448,25 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
     public String toString() {
         return getBootCommandLine();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsWorkspaceOptionsFormat that = (NutsWorkspaceOptionsFormat) o;
+        return exportedOptions == that.exportedOptions &&
+                runtimeOptions == that.runtimeOptions &&
+                createOptions == that.createOptions &&
+                shortOptions == that.shortOptions &&
+                singleArgOptions == that.singleArgOptions &&
+                omitDefaults == that.omitDefaults &&
+                Objects.equals(options, that.options);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(exportedOptions, runtimeOptions, createOptions, shortOptions, singleArgOptions, omitDefaults, options);
+    }
+
 
 }

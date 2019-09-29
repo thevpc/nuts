@@ -40,7 +40,7 @@ import java.util.logging.Level;
  * @author vpc
  * @since 0.5.5
  */
-public class NutsApplications {
+public final class NutsApplications {
 
     private static final ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
 

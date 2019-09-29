@@ -37,7 +37,7 @@ public class NutsDependencyScopeFilter implements NutsDependencyFilter {
 
     @Override
     public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
-        return scope.contains(NutsDependencyScopes.parseDependencyScope(dependency.getScope()));
+        return scope.isEmpty() || scope.contains(NutsDependencyScopes.parseDependencyScope(dependency.getScope()));
     }
 
     @Override

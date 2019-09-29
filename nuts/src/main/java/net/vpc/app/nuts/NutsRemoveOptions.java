@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Objects;
+
 /**
  *
  * @author vpc
@@ -69,4 +71,25 @@ public class NutsRemoveOptions {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsRemoveOptions that = (NutsRemoveOptions) o;
+        return erase == that.erase &&
+                Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(erase, session);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsRemoveOptions{" +
+                "erase=" + erase +
+                ", session=" + session +
+                '}';
+    }
 }

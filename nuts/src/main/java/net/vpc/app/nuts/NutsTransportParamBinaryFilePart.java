@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * Created by vpc on 1/8/17.
@@ -58,5 +59,29 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
 
     public Path getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsTransportParamBinaryFilePart that = (NutsTransportParamBinaryFilePart) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(fileName, that.fileName) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, fileName, value);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsTransportParamBinaryFilePart{" +
+                "name='" + name + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

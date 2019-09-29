@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author vpc
@@ -86,5 +87,35 @@ public class NutsSdkLocation implements Serializable {
      */
     public String getPackaging() {
         return packaging;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsSdkLocation that = (NutsSdkLocation) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(packaging, that.packaging) &&
+                Objects.equals(product, that.product) &&
+                Objects.equals(path, that.path) &&
+                Objects.equals(version, that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, packaging, product, path, version);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsSdkLocation{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", packaging='" + packaging + '\'' +
+                ", product='" + product + '\'' +
+                ", path='" + path + '\'' +
+                ", version='" + version + '\'' +
+                '}';
     }
 }
