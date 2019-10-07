@@ -153,16 +153,21 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     .setPackaging("jar")
                     .build();
         }
-        NutsExecutionEntry[] classes = parserContext.getWorkspace().io().parseExecutionEntries(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
-        if (classes.length == 0) {
+        boolean alwaysSelectAllMainClasses=false;
+        if(mainClass.get()==null || alwaysSelectAllMainClasses) {
+            NutsExecutionEntry[] classes = parserContext.getWorkspace().io().parseExecutionEntries(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
+            if (classes.length == 0) {
+                return baseNutsDescriptor;
+            } else {
+                return baseNutsDescriptor.builder().executor(new DefaultNutsArtifactCall(JAVA, new String[]{
+                        "--main-class=" + CoreStringUtils.join(":",
+                                Arrays.stream(classes)
+                                        .map(x -> x.getName())
+                                        .collect(Collectors.toList())
+                        )}, null)).executable().build();
+            }
+        }else{
             return baseNutsDescriptor;
-        } else {
-            return baseNutsDescriptor.builder().executor(new DefaultNutsArtifactCall(JAVA, new String[]{
-                "--main-class=" + CoreStringUtils.join(":",
-                Arrays.stream(classes)
-                .map(x -> x.getName())
-                .collect(Collectors.toList())
-                )}, null)).executable().build();
         }
     }
 }
