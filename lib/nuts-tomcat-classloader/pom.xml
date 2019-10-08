@@ -5,7 +5,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-tomcat-classloader</artifactId>
     <name>net.vpc.app.nuts.nuts-tomcat-classloader</name>
-    <version>n.0.5.7.0.t.8.0.21</version>
+    <version>n.0.5.8.0.t.8.0.21</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
     <description>Nuts Tomcat Classloader</description>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.7</version>
+            <version>0.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>

@@ -70,7 +70,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     public NutsSession getValidWorkspaceSession() {
         if (validSession == null) {
-            validSession = NutsWorkspaceUtils.validateSession(getRepo().getWorkspace(), getSession().getSession());
+            validSession = NutsWorkspaceUtils.of(getRepo().getWorkspace()).validateSession(getSession().getSession());
             sessionCopy = true;
         }
         return validSession;

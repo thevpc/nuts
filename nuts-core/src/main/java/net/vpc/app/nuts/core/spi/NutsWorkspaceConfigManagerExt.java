@@ -86,4 +86,6 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     NutsWorkspaceConfigRuntime getStoredConfigRuntime();
 
     NutsId createSdkId(String type, String version);
+
+    void onExtensionsPrepared();
 }

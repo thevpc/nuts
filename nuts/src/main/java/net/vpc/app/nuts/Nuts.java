@@ -62,7 +62,7 @@ public final class Nuts {
                     try {
                         version = PrivateNutsUtils.loadURLProperties(
                                 Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),
-                                null, false).getProperty("project.version", "0.0.0");
+                                null, false,new PrivateNutsLog()).getProperty("project.version", "0.0.0");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         version = "0.0.0";
@@ -197,5 +197,13 @@ public final class Nuts {
             boolean global,
             String workspaceName) {
         return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
+    }
+
+    /**
+     * default OS family, resolvable before booting nuts workspace
+     * @return default OS family, resolvable before booting nuts workspace
+     */
+    public static NutsOsFamily getPlatformOsFamily() {
+        return PrivateNutsPlatformUtils.getPlatformOsFamily();
     }
 }

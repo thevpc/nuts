@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsExecCommand;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.URLBuilder;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import static net.vpc.app.nuts.core.util.io.CoreIOUtils.createInputSource;
@@ -37,7 +38,7 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
  * @author vpc
  */
 public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
-    private static final Logger LOG=Logger.getLogger(DefaultNutsArtifactPathExecutable.class.getName());
+    private final NutsLogger LOG;
     String cmdName;
     String[] args;
     String[] executorOptions;
@@ -49,6 +50,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         super(cmdName,
                 session.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
+        LOG=session.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
@@ -114,9 +116,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType, dry);
             }finally {
                 try {
-                    CoreIOUtils.delete(tempFolder);
+                    CoreIOUtils.delete(ws,tempFolder);
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, "Unable to delete temp folder created for execution : "+tempFolder);
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Unable to delete temp folder created for execution : "+tempFolder);
                 }
             }
         }
@@ -143,7 +145,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
-                        ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        ZipUtils.zip(session.getWorkspace(),fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);
                     } else {

@@ -132,7 +132,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = NutsWorkspaceUtils.parseRequiredNutsId(null, id);
+        this.id = NutsWorkspaceUtils.parseRequiredNutsId0( id);
         return this;
     }
 

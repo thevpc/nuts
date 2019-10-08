@@ -14,7 +14,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
 
     @Override
     public NutsUndeployCommand run() {
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
 
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
         if (ids.isEmpty()) {

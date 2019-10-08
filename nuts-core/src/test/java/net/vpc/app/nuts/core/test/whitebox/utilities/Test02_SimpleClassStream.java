@@ -14,8 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+
+import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.io.SimpleClassStream;
 import org.junit.Test;
 
@@ -30,8 +33,9 @@ public class Test02_SimpleClassStream {
 
     @Test
     public void test1() throws Exception {
+        NutsWorkspace ws = Nuts.openWorkspace();
 //        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
-        parseAnyFile(Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"));
+        parseAnyFile(Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"),ws);
 //        parseAnyFile(Paths.get("/home/vpc/.m2/repository/com/ibm/icu/icu4j/2.6.1/icu4j-2.6.1.jar"));
 
         ///home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar
@@ -40,21 +44,21 @@ public class Test02_SimpleClassStream {
 //        mm(Paths.get("/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts-core/target/classes/net/vpc/app/nuts/core/util/CommonRootsHelper.class"));
     }
 
-    private static void parseAnyFile(Path file) throws IOException {
+    private static void parseAnyFile(Path file,NutsWorkspace ws) throws IOException {
         if (Files.isDirectory(file)) {
-            parseFolder(file);
+            parseFolder(file,ws);
         } else {
-            parseRegularFile(file);
+            parseRegularFile(file,ws);
         }
     }
 
-    private static void parseRegularFile(Path file) throws IOException {
+    private static void parseRegularFile(Path file,NutsWorkspace ws) throws IOException {
         long from = System.currentTimeMillis();
         if (file.getFileName().toString().endsWith(".class")) {
-            paseClassFile(file.normalize().toAbsolutePath());
+            parseClassFile(file.normalize().toAbsolutePath(),ws);
         }
         if (file.getFileName().toString().endsWith(".jar")) {
-            parseJarFile(file.normalize().toAbsolutePath());
+            parseJarFile(file.normalize().toAbsolutePath(),ws);
         }
         long to = System.currentTimeMillis();
         if (max < to - from) {
@@ -63,11 +67,11 @@ public class Test02_SimpleClassStream {
         System.out.println("### TIME [" + file + "] " + CoreCommonUtils.formatPeriodMilli(to - from) + " -- " + max);
     }
 
-    private static void parseFolder(Path file) throws IOException {
+    private static void parseFolder(Path file,NutsWorkspace ws) throws IOException {
         Files.walkFileTree(file, new FileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                parseRegularFile(file);
+                parseRegularFile(file,ws);
                 return FileVisitResult.CONTINUE;
             }
 
@@ -89,14 +93,14 @@ public class Test02_SimpleClassStream {
         );
     }
 
-    private static void parseJarFile(Path file) throws IOException {
+    private static void parseJarFile(Path file,NutsWorkspace ws) throws IOException {
         System.out.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
-            System.out.println("parse jar " + file + " :: " + Arrays.asList(CorePlatformUtils.parseJarExecutionEntries(in, file.toString())));
+            System.out.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(in, file.toString())));
         }
     }
 
-    private static void paseClassFile(Path file) throws IOException {
+    private static void parseClassFile(Path file, NutsWorkspace ws) throws IOException {
         System.out.println(file);
 
         SimpleClassStream scs = new SimpleClassStream(Files.newInputStream(file), new SimpleClassStream.Visitor() {

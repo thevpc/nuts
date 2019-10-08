@@ -69,7 +69,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
 
     @Override
     public NutsPushCommand run() {
-        NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( this.getSession());
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
@@ -94,7 +94,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHEK ME, why offline?
                 boolean ok = false;
-                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {

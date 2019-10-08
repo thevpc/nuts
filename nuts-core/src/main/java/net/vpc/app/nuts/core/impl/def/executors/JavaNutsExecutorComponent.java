@@ -53,7 +53,6 @@ import net.vpc.app.nuts.core.util.io.IProcessExecHelper;
 @NutsSingleton
 public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final Logger LOG = Logger.getLogger(JavaNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-java");
 
     @Override
@@ -186,7 +185,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                             }
                         }
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-                        CoreIOUtils.execAndWait(def,
+                        NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
                                 executionContext.getSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
@@ -212,7 +211,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         }
 
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-                        return CoreIOUtils.execAndWait(def,
+                        return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
                                 executionContext.getSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),

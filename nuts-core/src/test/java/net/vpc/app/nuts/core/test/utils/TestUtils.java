@@ -160,7 +160,7 @@ public class TestUtils {
             File[] c = new File(string).listFiles();
             if (c != null) {
                 for (File file : c) {
-                    CoreIOUtils.delete(file);
+                    CoreIOUtils.delete(null,file);
                 }
             }
         }

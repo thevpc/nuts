@@ -93,7 +93,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 
     public NutsSession getValidSession() {
         if (validSession == null) {
-            validSession = NutsWorkspaceUtils.validateSession(ws, getSession());
+            validSession = NutsWorkspaceUtils.of(ws).validateSession( getSession());
             sessionCopy = true;
         }
         return validSession;

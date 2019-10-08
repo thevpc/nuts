@@ -7,17 +7,13 @@ package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsRepository;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsSearchRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsSearchRepositoryCommand;
 
 /**
  *
@@ -25,28 +21,29 @@ import net.vpc.app.nuts.NutsSearchRepositoryCommand;
  */
 public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsSearchRepositoryCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsSearchRepositoryCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsSearchRepositoryCommand.class);
     }
 
     @Override
     public NutsSearchRepositoryCommand run() {
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), getSession());
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(null, getSession());
         try {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             if (getSession().isIndexed() && xrepo.getIndexStoreClient() != null && xrepo.getIndexStoreClient().isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = xrepo.getIndexStoreClient().search(filter, getSession());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error find operation using Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
 
                 if (o != null) {
@@ -58,12 +55,12 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
             result = xrepo.searchImpl(filter, getSession());
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.log(Level.SEVERE, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         }

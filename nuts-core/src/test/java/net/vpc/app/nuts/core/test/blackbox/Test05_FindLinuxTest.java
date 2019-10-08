@@ -142,17 +142,17 @@ public class Test05_FindLinuxTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

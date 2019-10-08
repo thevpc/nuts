@@ -31,6 +31,8 @@ package net.vpc.app.nuts.core.impl.def.repos;
 
 import net.vpc.app.nuts.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
@@ -40,10 +42,11 @@ import java.util.logging.Logger;
  */
 public class NutsFolderRepository extends NutsCachedRepository {
 
-    public static final Logger LOG = Logger.getLogger(NutsFolderRepository.class.getName());
+    public final NutsLogger LOG;
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
+        LOG=workspace.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
     }
 
@@ -54,12 +57,21 @@ public class NutsFolderRepository extends NutsCachedRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
-        return null;
+        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+        }
+        NutsId id2 = id.builder().faceDescriptor().build();
+        throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        return null;
+        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
+        }
+
+        NutsId id2 = id.builder().faceContent().build();
+        throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 
     @Override

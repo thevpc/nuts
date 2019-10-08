@@ -8,7 +8,7 @@ package net.vpc.app.nuts.core.security;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsAddUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsRemoveUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsUpdateUserCommand;
@@ -16,6 +16,7 @@ import net.vpc.app.nuts.core.impl.def.repos.DefaultNutsRepoConfigManager;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -24,7 +25,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityManager {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsRepositorySecurityManager.class.getName());
+    private final NutsLogger LOG;
 
     private final NutsRepository repo;
     private final WrapperNutsAuthenticationAgent agent;
@@ -39,6 +40,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
                 authorizations.clear();
             }
         });
+        LOG=repo.getWorkspace().log().of(DefaultNutsRepositorySecurityManager.class);
     }
 
     @Override

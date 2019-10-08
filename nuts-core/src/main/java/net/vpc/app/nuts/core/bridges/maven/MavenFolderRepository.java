@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
@@ -45,7 +46,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
@@ -57,7 +58,7 @@ import net.vpc.app.nuts.core.util.iter.IteratorUtils;
  */
 public class MavenFolderRepository extends NutsCachedRepository {
 
-    protected static final Logger LOG = Logger.getLogger(MavenFolderRepository.class.getName());
+    protected final NutsLogger LOG;
     private final AbstractMavenRepositoryHelper helper = new AbstractMavenRepositoryHelper(this) {
         @Override
         protected String getIdPath(NutsId id) {
@@ -86,6 +87,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FASTER, false, NutsConstants.RepoTypes.MAVEN);
+        LOG=workspace.log().of(MavenFolderRepository.class);
         if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
             cache.setWriteEnabled(false);
             cache.setReadEnabled(false);
@@ -111,31 +113,35 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id);
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
         }
         return helper.fetchDescriptorImpl(id, session);
     }
 
     @Override
     public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            Path f = getIdFile(id);
-            if (f != null && Files.exists(f)) {
-                if (localPath == null) {
-                    return new NutsDefaultContent(f, true, false);
-                } else {
-                    getWorkspace().io().copy()
-                            .session(session.getSession())
-                            .from(f).to(localPath).safeCopy().run();
-                    return new NutsDefaultContent(localPath, true, false);
-                }
-            }
+        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Unsupported Fetch Mode "+session.getFetchMode().id()));
         }
-        throw new NutsNotFoundException(getWorkspace(), id);
+        Path f = getIdFile(id);
+        if(f==null){
+            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Invalid id"));
+        }
+        if(!Files.exists(f)){
+            throw new NutsNotFoundException(getWorkspace(), id,new IOException("File not found : "+f));
+        }
+        if (localPath == null) {
+            return new NutsDefaultContent(f, true, false);
+        } else {
+            getWorkspace().io().copy()
+                    .session(session.getSession())
+                    .from(f).to(localPath).safeCopy().run();
+            return new NutsDefaultContent(localPath, true, false);
+        }
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
-        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
+        NutsWorkspaceUtils.of(getWorkspace()).checkSimpleNameNutsId(id);
         Path groupFolder = getLocationAsPath().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
@@ -151,7 +157,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                 if (f != null && Files.exists(f)) {
                     NutsDescriptor d = null;
                     try {
-                        d = MavenUtils.parsePomXml(f, getWorkspace(), session);
+                        d = MavenUtils.of(session.getWorkspace()).parsePomXml(f, session);
                     } catch (Exception ex) {
                         LOG.log(Level.FINE, "Failed to parse pom file " + f,ex);
                         //
@@ -222,7 +228,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return MavenUtils.parsePomXml(pathname, getWorkspace(), session);
+                return MavenUtils.of(session.getWorkspace()).parsePomXml(pathname, session);
             }
         }, maxDepth);
     }
@@ -273,17 +279,17 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics2 Not supported.");
+                    throw new UnsupportedOperationException("updateStatistics Not supported.");
                 }
             }
             );

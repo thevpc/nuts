@@ -5,22 +5,27 @@ manage nuts workspace
 manage nuts workspace
 
 ##ALIAS COMMANDS:##
-{{list aliases}}
+{{list aliases}} ...
         : list all command aliases
+          If some arguments are passed to the command, it will be processed
+          as name filter.
+          Example :
+            {{list aliases}} nb\*
+               will search for all aliases that start with *
 
 {{add alias}} <name>=<value> ...
 {{add alias}} <name> <value> ...
-        : add new command alias or aliases
+        : add one or multiple new command aliases
 
 {{remove alias}} <name> ...
-        : remove command alias or aliases
+        : remove one or multiple command aliases or aliases
 
 ##IMPORT COMMANDS:##
 {{import}} <group> ...
-        : add group to imported groups
+        : add one or multiple groups to imported groups
 
 {{unimport}} <group> ...
-        : remove group from imported groups
+        : remove one or multiple groups from imported groups
 
 {{list imports}}
         : list imported groups

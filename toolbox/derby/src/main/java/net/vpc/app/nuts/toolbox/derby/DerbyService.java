@@ -51,14 +51,23 @@ public class DerbyService {
         this.appContext = appContext;
     }
 
-    private Path download(String id, Path folder) {
+    private Path download(String id, Path folder,boolean optional) {
         final NutsId iid = appContext.getWorkspace().id().parse(id);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
-            appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
-            if (appContext.session().isPlainTrace()) {
-                appContext.getSession().out().println("downloading " + id + " to " + targetFile);
+            if(optional){
+                Path r = appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(false).getResultPath();
+                if(r!=null) {
+                    if (appContext.session().isPlainTrace()) {
+                        appContext.getSession().out().println("downloading " + id + " to " + targetFile);
+                    }
+                }
+            }else {
+                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(true).getResultPath();
+                if (appContext.session().isPlainTrace()) {
+                    appContext.getSession().out().println("downloading " + id + " to " + targetFile);
+                }
             }
         } else {
             if (appContext.session().isPlainTrace()) {
@@ -106,11 +115,11 @@ public class DerbyService {
         }
         Path derbyBinHome = ws.config().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
-        Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome);
-        Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome);
-        Path derbyoptionaltools = download("org.apache.derby:derbyoptionaltools#" + currentDerbyVersion, derbyLibHome);
-        Path derbyclient = download("org.apache.derby:derbyclient#" + currentDerbyVersion, derbyLibHome);
-        Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome);
+        Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome,false);
+        Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome,false);
+        Path derbyoptionaltools = download("org.apache.derby:derbyoptionaltools#" + currentDerbyVersion, derbyLibHome,true);
+        Path derbyclient = download("org.apache.derby:derbyclient#" + currentDerbyVersion, derbyLibHome,false);
+        Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome,false);
         Path policy = derbyBinHome.resolve("derby.policy");
         if (!Files.exists(policy)) {
             try {
@@ -127,11 +136,13 @@ public class DerbyService {
         executorOptions.add("-Djava.security.manager");
         executorOptions.add("-Djava.security.policy=" + policy.toString());
         executorOptions.add(
-                "--classpath=" + derby + ":" + derbynet + ":" + derbyclient + ":" + derbytools + ":" + derbyoptionaltools
+                "--classpath=" + derby + ":" + derbynet + ":" + derbyclient + ":" + derbytools
+                        +
+                        (derbyoptionaltools!=null ?(":" + derbyoptionaltools):"")
         );
-        if (appContext.session().isPlainTrace()) {
-            executorOptions.add("--show-command");
-        }
+//        if (appContext.session().isPlainTrace()) {
+//            executorOptions.add("--show-command");
+//        }
         executorOptions.add("--main-class=org.apache.derby.drda.NetworkServerControl");
         executorOptions.add("-Dderby.system.home=" + derbyDataHome.toString());
 

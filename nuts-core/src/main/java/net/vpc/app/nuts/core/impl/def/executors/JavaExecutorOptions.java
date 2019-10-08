@@ -19,6 +19,7 @@ public final class JavaExecutorOptions {
     private String javaHome = null;//runnerProps.getProperty("java.parseVersion");
     private String mainClass = null;
     private String dir = null;
+    private boolean javaw = false;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
     private boolean showCommand = CoreCommonUtils.getSysBoolNutsProperty("show-command", false);
@@ -42,7 +43,7 @@ public final class JavaExecutorOptions {
             }
             id = descriptor.getId();
         } else {
-            descriptor = NutsWorkspaceUtils.getEffectiveDescriptor(getWorkspace(), def);
+            descriptor = NutsWorkspaceUtils.of(getWorkspace()).getEffectiveDescriptor( def);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -99,6 +100,11 @@ public final class JavaExecutorOptions {
                     this.dir = cmdLine.nextString().getStringValue();
                     break;
                 }
+                case "--win":
+                case "--javaw": {
+                    this.javaw = cmdLine.nextBoolean().getBooleanValue();
+                    break;
+                }
                 case "--jar":
                 case "-jar": {
                     this.jar = cmdLine.nextBoolean().getBooleanValue();
@@ -120,13 +126,21 @@ public final class JavaExecutorOptions {
             }
         }
         if (getJavaHome() == null) {
-            if (!CoreStringUtils.isBlank(getJavaVersion())) {
-                javaHome = "${java#" + getJavaVersion() + "}";
-            } else {
-                javaHome = "${java}";
+            if(javaw){
+                if (!CoreStringUtils.isBlank(getJavaVersion())) {
+                    javaHome = "${javaw#" + getJavaVersion() + "}";
+                } else {
+                    javaHome = "${javaw}";
+                }
+            }else {
+                if (!CoreStringUtils.isBlank(getJavaVersion())) {
+                    javaHome = "${java#" + getJavaVersion() + "}";
+                } else {
+                    javaHome = "${java}";
+                }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.resolveJavaCommandByHome(getJavaHome(),session.workspace());
+            javaHome = NutsJavaSdkUtils.of(session.workspace()).resolveJavaCommandByHome(getJavaHome());
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();

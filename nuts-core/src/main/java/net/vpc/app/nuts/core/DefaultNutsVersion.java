@@ -73,36 +73,6 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public boolean ge(String other) {
-        return compareTo(other) >= 0;
-    }
-
-    @Override
-    public boolean gt(String other) {
-        return compareTo(other) > 0;
-    }
-
-    @Override
-    public boolean le(String other) {
-        return compareTo(other) <= 0;
-    }
-
-    @Override
-    public boolean lt(String other) {
-        return compareTo(other) < 0;
-    }
-
-    @Override
-    public boolean eq(String other) {
-        return compareTo(other) == 0;
-    }
-
-    @Override
-    public boolean ne(String other) {
-        return compareTo(other) != 0;
-    }
-
-    @Override
     public NutsVersionFilter filter() {
         return DefaultNutsVersionFilter.parse(expression);
     }
@@ -128,8 +98,8 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public NutsVersion inc(int level) {
-        return inc(level, 1);
+    public NutsVersion inc(int position) {
+        return inc(position, 1);
     }
 
     public int size() {
@@ -188,8 +158,8 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public NutsVersion inc(int level, int count) {
-        return new DefaultNutsVersion(incVersion(getValue(), level, count));
+    public NutsVersion inc(int position, int amount) {
+        return new DefaultNutsVersion(incVersion(getValue(), position, amount));
     }
 
     @Override

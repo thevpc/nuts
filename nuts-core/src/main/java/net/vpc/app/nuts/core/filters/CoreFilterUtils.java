@@ -54,7 +54,7 @@ import net.vpc.app.nuts.core.filters.descriptor.NutsDescriptorFilterOsdist;
 import net.vpc.app.nuts.core.filters.descriptor.NutsDescriptorFilterPlatform;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.core.filters.id.NutstDescriptorIdFilter;
+import net.vpc.app.nuts.core.filters.id.NutsDescriptorIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutstVersionIdFilter;
 import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterAnd;
 import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterOr;
@@ -74,7 +74,7 @@ public class CoreFilterUtils {
         if(other==null){
             return null;
         }
-        return new NutstDescriptorIdFilter(other);
+        return new NutsDescriptorIdFilter(other);
     }
 
     public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
@@ -236,7 +236,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
@@ -260,7 +260,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
@@ -284,7 +284,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0( v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
@@ -309,7 +309,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId(null, v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0( v);
                 if (y.getShortName().equals("java")) {
                     //should accept any platform !!!
                     return true;

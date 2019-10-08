@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
@@ -57,7 +58,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        CoreIOUtils.execAndWait(session.getWorkspace(), execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
+        NutsWorkspaceUtils.of(session.getWorkspace()).execAndWait(execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
                 .exec();
     }
 
@@ -68,7 +69,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        CoreIOUtils.execAndWait(session.getWorkspace(), execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
+        NutsWorkspaceUtils.of(session.getWorkspace()).execAndWait(execCommand.getCommand(), e2, session.getWorkspace().io().path(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
                 .dryExec();
     }
 

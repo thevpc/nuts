@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.NutsCommandLine;
 
@@ -23,9 +23,10 @@ import net.vpc.app.nuts.NutsCommandLine;
  * @author vpc
  */
 public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecutableCommand {
-    private static final Logger LOG= Logger.getLogger(DefaultNutsHelpInternalExecutable.class.getName());
+    private final NutsLogger LOG;
     public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
         super("help", args, session);
+        LOG=session.workspace().log().of(DefaultNutsHelpInternalExecutable.class);
     }
 
     @Override

@@ -382,7 +382,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsId resolveId(Class clazz) {
-        PomId u = PomIdResolver.resolvePomId(clazz, null);
+        PomId u = PomIdResolver.of(ws).resolvePomId(clazz, null);
         if (u == null) {
             return null;
         }
@@ -391,7 +391,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = PomIdResolver.resolvePomIds(clazz);
+        PomId[] u = PomIdResolver.of(ws).resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
         for (int i = 0; i < all.length; i++) {
             all[i] = parse(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());

@@ -195,6 +195,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -203,6 +204,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         this.name = name;
     }
 
+    @Override
     public String getUuid() {
         return uuid;
     }
@@ -212,10 +214,12 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
 
+    @Override
     public String getApiId() {
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
     }
 
+    @Override
     public Set<String> getRuntimeDependenciesSet() {
         return runtimeDependenciesSet;
     }
@@ -225,6 +229,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public Set<String> getExtensionDependenciesSet() {
         return extensionDependenciesSet;
     }
@@ -234,6 +239,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public String getJavaCommand() {
         return javaCommand;
     }
@@ -243,6 +249,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public String getJavaOptions() {
         return javaOptions;
     }
@@ -257,6 +264,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
@@ -272,6 +280,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
@@ -289,6 +298,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    @Override
     public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
@@ -302,6 +312,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT;
     }
 
+    @Override
     public String getStoreLocation(NutsStoreLocation location) {
         Map<String, String> s = storeLocations;
         if (s != null) {

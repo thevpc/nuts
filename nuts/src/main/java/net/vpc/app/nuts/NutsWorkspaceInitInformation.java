@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * workspace initialization options.
@@ -61,4 +62,26 @@ public interface NutsWorkspaceInitInformation extends Serializable {
     URL[] getClassWorldURLs();
 
     ClassLoader getClassWorldLoader();
+
+    String getName();
+
+    String getUuid();
+
+    String getApiId();
+
+    Set<String> getRuntimeDependenciesSet();
+
+    Set<String> getExtensionDependenciesSet();
+
+    String getJavaCommand();
+
+    String getJavaOptions();
+
+    NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    NutsOsFamily getStoreLocationLayout();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
+
+    String getStoreLocation(NutsStoreLocation location);
 }

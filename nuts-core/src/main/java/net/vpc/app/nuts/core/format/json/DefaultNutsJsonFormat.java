@@ -281,7 +281,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             if (s == null) {
                 return null;
             }
-            return NutsWorkspaceUtils.parseRequiredNutsId(null, s);
+            return NutsWorkspaceUtils.parseRequiredNutsId0( s);
         }
 
         @Override

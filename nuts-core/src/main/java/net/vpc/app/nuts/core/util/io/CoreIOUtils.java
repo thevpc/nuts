@@ -30,8 +30,7 @@
 package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
-import net.vpc.app.nuts.core.util.NutsJavaSdkUtils;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.core.util.common.PersistentMap;
@@ -62,9 +61,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
@@ -78,7 +75,7 @@ public class CoreIOUtils {
 
     public static String newLineString = null;
     public static final int DEFAULT_BUFFER_SIZE = 1024;
-    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
+//    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
     public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
         @Override
         public boolean accept(Path pathname) throws IOException {
@@ -91,146 +88,6 @@ public class CoreIOUtils {
         }
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
-
-    public static ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
-        NutsWorkspace workspace = session.getWorkspace();
-        NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getPath();
-        Path storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
-        HashMap<String, String> map = new HashMap<>();
-        HashMap<String, String> envmap = new HashMap<>();
-//        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-//            map.put((String) entry.getKey(), (String) entry.getValue());
-//        }
-        for (Map.Entry<String, String> entry : execProperties.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().trace(false)).getResultPath();
-        if (nutsJarFile != null) {
-            map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
-        }
-        map.put("nuts.id", id.getLongName());
-        map.put("nuts.id.version", id.getVersion().getValue());
-        map.put("nuts.id.name", id.getArtifactId());
-        map.put("nuts.id.simpleName", id.getShortName());
-        map.put("nuts.id.group", id.getGroupId());
-        map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = NutsJavaSdkUtils.resolveJavaCommandByVersion("", workspace);
-
-        map.put("nuts.java", defaultJavaCommand);
-        if (map.containsKey("nuts.jar")) {
-            map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
-        }
-        map.put("nuts.workspace", workspace.config().getWorkspaceLocation().toString());
-        map.put("nuts.version", id.getVersion().getValue());
-        map.put("nuts.name", id.getArtifactId());
-        map.put("nuts.group", id.getGroupId());
-        map.put("nuts.face", id.getFace());
-        map.put("nuts.namespace", id.getNamespace());
-        map.put("nuts.id", id.toString());
-        if (installerFile != null) {
-            map.put("nuts.installer", installerFile.toString());
-        }
-        if (storeFolder == null && installerFile != null) {
-            map.put("nuts.store", installerFile.getParent().toString());
-        } else if (storeFolder != null) {
-            map.put("nuts.store", storeFolder.toString());
-        }
-        if (env != null) {
-            map.putAll(env);
-        }
-        Function<String, String> mapper = new Function<String, String>() {
-            @Override
-            public String apply(String skey) {
-                if (skey.equals("java") || skey.startsWith("java#")) {
-                    String javaVer = skey.substring(4);
-                    if (CoreStringUtils.isBlank(javaVer)) {
-                        return defaultJavaCommand;
-                    }
-                    return NutsJavaSdkUtils.resolveJavaCommandByVersion(javaVer, workspace);
-                } else if (skey.equals("nuts")) {
-                    NutsDefinition nutsDefinition;
-                    nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API).setSession(session).getResultDefinition();
-                    if (nutsDefinition.getPath() != null) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
-                    }
-                    return null;
-                }
-                return map.get(skey);
-            }
-        };
-        for (Map.Entry<String, String> e : map.entrySet()) {
-            String k = e.getKey();
-            if (!CoreStringUtils.isBlank(k)) {
-                k = k.replace('.', '_');
-                if (!CoreStringUtils.isBlank(e.getValue())) {
-                    envmap.put(k, e.getValue());
-                }
-            }
-        }
-        List<String> args2 = new ArrayList<>();
-        for (String arg : args) {
-            String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
-            if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.commandLine().parse(s).toArray());
-            } else {
-                args2.add(s);
-            }
-        }
-        args = args2.toArray(new String[0]);
-
-        Path path = workspace.config().getWorkspaceLocation().resolve(args[0]).normalize();
-        if (Files.exists(path)) {
-            setExecutable(path);
-        }
-        Path pdirectory = null;
-        if (CoreStringUtils.isBlank(directory)) {
-            pdirectory = workspace.config().getWorkspaceLocation();
-        } else {
-            pdirectory = workspace.config().getWorkspaceLocation().resolve(directory);
-        }
-        return execAndWait(workspace, args, envmap, pdirectory, session.getTerminal(), showCommand, failFast);
-    }
-
-    public static ProcessExecHelper execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
-        PrintStream out = terminal.out();
-        PrintStream err = terminal.err();
-        InputStream in = terminal.in();
-        if (ws.io().getSystemTerminal().isStandardOutputStream(out)) {
-            out = null;
-        }
-        if (ws.io().getSystemTerminal().isStandardErrorStream(err)) {
-            err = null;
-        }
-        if (ws.io().getSystemTerminal().isStandardInputStream(in)) {
-            in = null;
-        }
-        ProcessBuilder2 pb = new ProcessBuilder2(ws)
-                .setCommand(args)
-                .setEnv(env)
-                .setIn(in)
-                .setOutput(out)
-                .setErr(err)
-                .setDirectory(directory == null ? null : directory.toFile())
-                .setFailFast(failFast);
-        if (out == null && err == null && in == null) {
-            pb.inheritIO();
-        }
-
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
-        }
-        if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
-                terminal.out().print("==[exec]== ");
-                terminal.out().println(pb.getFormattedCommandString(ws));
-            } else {
-                terminal.out().print("exec ");
-                terminal.out().printf("%s%n", pb.getCommandString());
-            }
-        }
-        return new ProcessExecHelper(pb, ws, out == null ? terminal.out() : out);
-    }
 
     public static class ProcessExecHelper implements IProcessExecHelper {
         ProcessBuilder2 pb;
@@ -800,15 +657,15 @@ public class CoreIOUtils {
         }
     }
 
-    public static InputStream monitor(URL from, InputStreamMonitor monitor) throws IOException {
-        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor);
+    public static InputStream monitor(URL from, NutsInputStreamProgressMonitor monitor, NutsSession session) throws IOException {
+        return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, InputStreamMonitor monitor) {
-        return new MonitoredInputStream(from, source, sourceName, length, monitor);
+    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, NutsInputStreamProgressMonitor monitor, NutsSession session) {
+        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
     }
 
-    public static InputStream monitor(InputStream from, Object source, InputStreamMonitor monitor) {
+    public static InputStream monitor(InputStream from, Object source, NutsInputStreamProgressMonitor monitor, NutsSession session) {
         String sourceName = null;
         long length = -1;
         if (from instanceof InputStreamMetadataAware) {
@@ -816,14 +673,21 @@ public class CoreIOUtils {
             sourceName = m.getMetaData().getName();
             length = m.getMetaData().getLength();
         }
-        return new MonitoredInputStream(from, source, sourceName, length, monitor);
+        return new MonitoredInputStream(from, source, sourceName, length, monitor,session);
     }
 
     public static void delete(File file) throws IOException {
-        delete(file.toPath());
+        delete(null,file);
+    }
+    public static void delete(NutsWorkspace ws,File file) throws IOException {
+        delete(ws,file.toPath());
     }
 
-    public static void delete(Path file) throws IOException {
+    public static void delete( Path file) throws IOException {
+        delete(null,file);
+    }
+
+    public static void delete(NutsWorkspace ws, Path file) throws IOException {
         if (!Files.exists(file)) {
             return;
         }
@@ -835,7 +699,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-
+        NutsLogger LOG=ws==null?null:ws.log().of(CoreIOUtils.class);
         Files.walkFileTree(file, new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -846,10 +710,14 @@ public class CoreIOUtils {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try {
                     Files.delete(file);
-                    LOG.log(Level.FINEST, "Delete file " + file);
+                    if(LOG!=null) {
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file " + file);
+                    }
                     deleted[0]++;
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, "Delete file Failed : " + file);
+                    if(LOG!=null) {
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file Failed : " + file);
+                    }
                     deleted[2]++;
                 }
                 return FileVisitResult.CONTINUE;
@@ -864,10 +732,14 @@ public class CoreIOUtils {
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 try {
                     Files.delete(dir);
-                    LOG.log(Level.FINEST, "Delete folder " + dir);
+                    if(LOG!=null) {
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder " + dir);
+                    }
                     deleted[1]++;
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, "Delete folder Failed : " + dir);
+                    if(LOG!=null) {
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder Failed : " + dir);
+                    }
                     deleted[2]++;
                 }
                 return FileVisitResult.CONTINUE;

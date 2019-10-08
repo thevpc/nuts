@@ -64,7 +64,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
 
     private NutsDeployCommand runDeployFile(Object content, Object descriptor0, String descSHA1) {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
         try {
             Path tempFile = null;
             InputSource contentSource;
@@ -90,7 +90,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 Path contentFile0 = contentFile2;
                 String repository = this.getTargetRepository();
 
-                NutsWorkspaceUtils.checkReadOnly(ws);
+                NutsWorkspaceUtils.of(ws).checkReadOnly();
                 Path contentFile = contentFile0;
                 Path tempFile2 = null;
                 NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true);
@@ -116,7 +116,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             if ("zip".equals(descriptor.getPackaging())) {
                                 Path zipFilePath = ws.io().path(ws.io().expandPath(contentFile.toString() + ".zip"));
                                 try {
-                                    ZipUtils.zip(contentFile.toString(), new ZipOptions(), zipFilePath.toString());
+                                    ZipUtils.zip(ws,contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                                 } catch (IOException ex) {
                                     throw new UncheckedIOException(ex);
                                 }
@@ -151,7 +151,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, NutsFetchMode.LOCAL, fetchOptions);
 
                             effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)
@@ -200,7 +200,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     characterizedFile.close();
                 }
                 if (tempFile != null) {
-                    CoreIOUtils.delete(tempFile);
+                    CoreIOUtils.delete(ws,tempFile);
                 }
             }
 
@@ -298,7 +298,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
     }
 
     private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         CharacterizedDeployFile c = new CharacterizedDeployFile();
         try {
             c.baseFile = toPathInputSource(contentFile, c.temps, ws);
@@ -326,7 +326,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
-                        ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        ZipUtils.zip(ws,fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);
                     } else {

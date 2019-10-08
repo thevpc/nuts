@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
@@ -55,7 +54,7 @@ import net.vpc.app.nuts.core.util.io.InputSource;
 
 public class NutsHttpFolderRepository extends NutsCachedRepository {
 
-    private static final Logger LOG = Logger.getLogger(NutsHttpFolderRepository.class.getName());
+    private final NutsLogger LOG;
 
     private RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
     private RemoteRepoApi findApi = RemoteRepoApi.DEFAULT;
@@ -81,15 +80,17 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
     };
 
+    public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
+        LOG=workspace.log().of(NutsHttpFolderRepository.class);
+    }
+
     private boolean isDescFile0(String pathname) {
         return pathname.equals(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
                 || pathname.endsWith("/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)
                 || pathname.endsWith(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION);
     }
 
-    public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
-    }
 
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
         String url = getDescPath(id);
@@ -124,32 +125,34 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         try (InputStream stream = getDescStream(id, session)) {
             return getWorkspace().descriptor().parse(stream);
         } catch (IOException ex) {
-            return null;
+            throw new NutsNotFoundException(getWorkspace(),id,ex);
+        } catch (UncheckedIOException ex) {
+            throw new NutsNotFoundException(getWorkspace(),id,ex);
         }
     }
 
     protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-        long startTime = System.currentTimeMillis();
-        try {
+//        long startTime = System.currentTimeMillis();
+//        try {
             InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
-            if (LOG.isLoggable(Level.FINEST)) {
-                if (CoreIOUtils.isPathHttp(path)) {
-                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-                    message += " url=" + path;
-                    traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
-                }
-            }
+//            if (LOG.isLoggable(Level.FINER)) {
+//                if (CoreIOUtils.isPathHttp(path)) {
+//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
+//                    message += " url=" + path;
+//                    traceMessage(session, Level.FINER, id, TraceResult.SUCCESS, message, startTime,null);
+//                }
+//            }
             return CoreIOUtils.createInputSource(in);
-        } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                if (CoreIOUtils.isPathHttp(path)) {
-                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
-                    message += " url=" + path;
-                    traceMessage(session, id, TraceResult.ERROR, message, startTime);
-                }
-            }
-            throw ex;
-        }
+//        } catch (RuntimeException ex) {
+//            if (LOG.isLoggable(Level.FINEST)) {
+//                if (CoreIOUtils.isPathHttp(path)) {
+//                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading" : "Open local file";
+//                    message += " url=" + path;
+//                    traceMessage(session,Level.FINEST, id, TraceResult.FAIL, message, startTime,ex.getMessage());
+//                }
+//            }
+//            throw ex;
+//        }
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {

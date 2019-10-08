@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class for Nuts Applications
@@ -43,7 +42,6 @@ import java.util.logging.Logger;
  */
 public class NutsApplications {
 
-    private static final Logger LOG = Logger.getLogger(NutsApplications.class.getName());
     private static final ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
 
     /**
@@ -87,7 +85,7 @@ public class NutsApplications {
         if(appClass==null){
             appClass=lifeCycle.getClass();
         }
-        LOG.log(Level.FINE, "Running Application {0}: {1} {2}", new Object[]{
+        ws.log().of(NutsApplications.class).log(Level.FINE, "START", "Running Application {0}: {1} {2}", new Object[]{
             inherited ? "(inherited)" : "",
             lifeCycle, ws.commandLine().create(args).toString()});
         NutsApplicationContext applicationContext = null;
@@ -174,7 +172,7 @@ public class NutsApplications {
             try {
                 showTrace = ws.config().getOptions().isDebug();
             } catch (Exception ex2) {
-                LOG.log(Level.FINE,"Unable to check if option debug",ex2);
+                ws.log().of(NutsApplications.class).log(Level.FINE,"Unable to check if option debug is enabled",ex2);
             }
         }
 //        if (showTrace) {
@@ -185,7 +183,7 @@ public class NutsApplications {
                 out = ws.io().getSystemTerminal().getOut();
                 m = "@@" + m + "@@";
             } catch (Exception ex2) {
-                LOG.log(Level.FINE,"Unable to get system terminal",ex2);
+                ws.log().of(NutsApplications.class).log(Level.FINE,"Unable to get system terminal",ex2);
                 //
             }
         }

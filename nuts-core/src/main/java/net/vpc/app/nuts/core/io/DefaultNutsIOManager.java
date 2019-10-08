@@ -1,5 +1,7 @@
 package net.vpc.app.nuts.core.io;
 
+import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.NullInputStream;
@@ -14,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.StringTokenizer;
 import java.util.function.Function;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.DefaultNutsHashCommand;
 import net.vpc.app.nuts.core.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.core.DefaultNutsWorkspaceEvent;
@@ -30,7 +32,7 @@ import net.vpc.app.nuts.core.spi.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsIOManager.class.getName());
+    private final NutsLogger LOG;
     private NutsWorkspace ws;
     private NutsTerminalFormat terminalMetrics = new DefaultNutsTerminalFormat();
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
@@ -107,6 +109,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
+        LOG=ws.log().of(DefaultNutsIOManager.class);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
     }
 
@@ -320,10 +323,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
                             return a.basePrintStream();
                         }
                         case INHERITED: {
-                            return (PrintStream) ws.extensions().createSupported(
+                            PrintStream supported = (PrintStream) ws.extensions().createSupported(
                                     NutsFormattedPrintStream.class,
                                     new DefaultNutsSupportLevelContext<>(ws, out),
                                     new Class[]{OutputStream.class}, new Object[]{out});
+                            if(supported==null){
+                                throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                            }
+                            return supported;
                         }
                         default: {
                             throw new NutsUnexpectedEnumException(ws, am);
@@ -366,10 +373,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
         } else {
             switch (mode) {
                 case FORMATTED: {
-                    return (PrintStream) ws.extensions().createSupported(
+                    PrintStream supported = (PrintStream) ws.extensions().createSupported(
                             NutsFormattedPrintStream.class,
                             new DefaultNutsSupportLevelContext<>(ws, out),
                             new Class[]{OutputStream.class}, new Object[]{out});
+                    if(supported==null){
+                        throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+                    }
+                    return supported;
                 }
                 case FILTERED: {
                     return (PrintStream) out;
@@ -393,7 +404,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
-            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "Terminal");
+            throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
         try {
             NutsSessionTerminal term = null;
@@ -625,9 +636,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
         if ("java".equals(type)) {
-            return CorePlatformUtils.parseJarExecutionEntries(inputStream, sourceName);
+            return NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(inputStream, sourceName);
         } else if ("class".equals(type)) {
-            NutsExecutionEntry u = CorePlatformUtils.parseClassExecutionEntry(inputStream, sourceName);
+            NutsExecutionEntry u = NutsWorkspaceUtils.of(ws).parseClassExecutionEntry(inputStream, sourceName);
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];

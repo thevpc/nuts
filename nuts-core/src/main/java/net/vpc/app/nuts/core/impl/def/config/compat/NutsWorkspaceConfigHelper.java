@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class NutsWorkspaceConfigHelper {
-    public static final Logger LOG = Logger.getLogger(NutsWorkspaceConfigHelper.class.getName());
     private NutsWorkspace ws;
 
     public NutsWorkspaceConfigHelper(NutsWorkspace ws) {

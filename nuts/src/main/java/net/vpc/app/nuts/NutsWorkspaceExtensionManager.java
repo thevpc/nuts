@@ -49,8 +49,26 @@ public interface NutsWorkspaceExtensionManager {
 
     <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
 
+    /**
+     * create supported extension implementation or return null.
+     * @param type extension type
+     * @param supportCriteria context
+     * @param <T> extension type class
+     * @param <V> extension context type
+     * @return valid instance or null if no extension implementation was found
+     */
     <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
 
+    /**
+     * create supported extension implementation or return null.
+     * @param type extension type
+     * @param supportCriteria context
+     * @param constructorParameterTypes constructor Parameter Types
+     * @param constructorParameters constructor Parameters
+     * @param <T> extension type class
+     * @param <V> extension context type
+     * @return valid instance or null if no extension implementation was found
+     */
     <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
     <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);

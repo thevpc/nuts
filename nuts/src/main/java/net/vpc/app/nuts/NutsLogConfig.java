@@ -40,62 +40,75 @@ import java.util.logging.Level;
 public class NutsLogConfig implements Serializable{
     private static final long serialVersionUID = 1;
 
-    private Level logLevel = null;
-    private int logSize = 0;
-    private int logCount = 0;
-    private String logName = null;
-    private String logFolder = null;
+    private Level logFileLevel = Level.OFF;
+    private Level logTermLevel = Level.OFF;
+    private int logFileSize = 0;
+    private int logFileCount = 0;
+    private String logFileName = null;
+    private String logFileBase = null;
+    @Deprecated
     private boolean logInherited = false;
 
-    public Level getLogLevel() {
-        return logLevel;
+    public Level getLogFileLevel() {
+        return logFileLevel;
     }
 
-    public NutsLogConfig setLogLevel(Level logLevel) {
-        this.logLevel = logLevel;
+    public NutsLogConfig setLogFileLevel(Level logFileLevel) {
+        this.logFileLevel = logFileLevel;
         return this;
     }
 
-    public int getLogSize() {
-        return logSize;
+    public Level getLogTermLevel() {
+        return logTermLevel;
     }
 
-    public NutsLogConfig setLogSize(int logSize) {
-        this.logSize = logSize;
+    public NutsLogConfig setLogTermLevel(Level logTermLevel) {
+        this.logTermLevel = logTermLevel;
         return this;
     }
 
-    public int getLogCount() {
-        return logCount;
+    public int getLogFileSize() {
+        return logFileSize;
     }
 
-    public NutsLogConfig setLogCount(int logCount) {
-        this.logCount = logCount;
+    public NutsLogConfig setLogFileSize(int logFileSize) {
+        this.logFileSize = logFileSize;
         return this;
     }
 
-    public String getLogName() {
-        return logName;
+    public int getLogFileCount() {
+        return logFileCount;
     }
 
-    public NutsLogConfig setLogName(String logName) {
-        this.logName = logName;
+    public NutsLogConfig setLogFileCount(int logFileCount) {
+        this.logFileCount = logFileCount;
         return this;
     }
 
-    public String getLogFolder() {
-        return logFolder;
+    public String getLogFileName() {
+        return logFileName;
     }
 
-    public NutsLogConfig setLogFolder(String logFolder) {
-        this.logFolder = logFolder;
+    public NutsLogConfig setLogFileName(String logFileName) {
+        this.logFileName = logFileName;
         return this;
     }
 
+    public String getLogFileBase() {
+        return logFileBase;
+    }
+
+    public NutsLogConfig setLogFileBase(String logFileBase) {
+        this.logFileBase = logFileBase;
+        return this;
+    }
+
+    @Deprecated
     public boolean isLogInherited() {
         return logInherited;
     }
 
+    @Deprecated
     public NutsLogConfig setLogInherited(boolean logInherited) {
         this.logInherited = logInherited;
         return this;

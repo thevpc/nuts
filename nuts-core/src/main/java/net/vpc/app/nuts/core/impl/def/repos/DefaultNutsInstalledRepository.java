@@ -239,18 +239,19 @@ public class DefaultNutsInstalledRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                Map<String, Object> m = ws.json().parse(pathname, Map.class);
-                if (m != null) {
-                    String id = (String) m.get("id");
-                    if (id != null) {
-                        return ws.fetch().id(id).offline().session(session.getSession().copy().trace(false))
-                                .setTransitive(session.isTransitive())
-                                .setIndexed(session.isIndexed())
-                                .setCached(session.isCached())
-                                .getResultDescriptor();
-                    }
-                }
-                return null;
+                return ws.descriptor().parse(pathname);
+//                Map<String, Object> m = ws.json().parse(pathname, Map.class);
+//                if (m != null) {
+//                    String id = (String) m.get("id");
+//                    if (id != null) {
+//                        return ws.fetch().id(id).offline().session(session.getSession().copy().trace(false))
+//                                .setTransitive(session.isTransitive())
+//                                .setIndexed(session.isIndexed())
+//                                .setCached(session.isCached())
+//                                .getResultDescriptor();
+//                    }
+//                }
+//                return null;
             }
         }, maxDepth);
     }
@@ -315,8 +316,8 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void uninstall(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.checkReadOnly(ws);
-        session=NutsWorkspaceUtils.validateSession(ws,session);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         if(!contains(id, NUTS_INSTALL_FILE)){
             throw new NutsNotInstalledException(ws, id);
         }
@@ -342,7 +343,7 @@ public class DefaultNutsInstalledRepository {
     public NutsInstallInformation install(NutsId id) {
         Instant now = Instant.now();
         String user = ws.security().getCurrentUsername();
-        NutsWorkspaceUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.of(ws).checkReadOnly();
         InstallInfoConfig ii;
         try {
             ii = new InstallInfoConfig();

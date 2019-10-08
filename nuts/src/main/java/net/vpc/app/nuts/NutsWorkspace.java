@@ -85,6 +85,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsIOManager io();
 
+    NutsLogManager log();
+
     ///////////////////// factory
     NutsSession createSession();
 

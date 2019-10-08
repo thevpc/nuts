@@ -49,17 +49,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import net.vpc.app.nuts.NutsContent;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.CoreNutsConstants;
-import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -73,7 +65,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  * @author vpc
  */
 public class MavenRepositoryFolderHelper {
-    private static Logger LOG=Logger.getLogger(MavenRepositoryFolderHelper.class.getName());
+    private NutsLogger LOG;
     private NutsRepository repo;
     private NutsWorkspace ws;
     private Path rootPath;
@@ -81,7 +73,11 @@ public class MavenRepositoryFolderHelper {
     public MavenRepositoryFolderHelper(NutsRepository repo, NutsWorkspace ws, Path rootPath) {
         this.repo = repo;
         this.ws = ws != null ? ws : repo == null ? null : repo.getWorkspace();
+        if(repo==null && ws==null){
+            throw new NutsIllegalArgumentException(null,"Both Ws and repo are null");
+        }
         this.rootPath = rootPath;
+        LOG=this.ws.log().of(MavenRepositoryFolderHelper.class);
     }
 
     public Path getIdLocalFile(NutsId id) {
@@ -109,7 +105,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
-        NutsWorkspaceUtils.checkSimpleNameNutsId(getWorkspace(),id);
+        NutsWorkspaceUtils.of(getWorkspace()).checkSimpleNameNutsId(id);
         Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
@@ -147,7 +143,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return MavenUtils.parsePomXml(pathname, getWorkspace(), session);
+                return MavenUtils.of(session.getWorkspace()).parsePomXml(pathname, session);
             }
         }, maxDepth);
     }
@@ -232,7 +228,7 @@ public class MavenRepositoryFolderHelper {
                             MavenMetadata old = null;
                             try {
                                 if (Files.exists(metadataxml)) {
-                                    old = MavenMetadataParser.parseMavenMetaData(metadataxml);
+                                    old = MavenMetadataParser.of(ws).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
                                 LOG.log(Level.FINE, "Failed to parse metadata xml for " + metadataxml,ex);
@@ -265,7 +261,7 @@ public class MavenRepositoryFolderHelper {
                                 m.setLastUpdated(new Date());
                             }
 //                            System.out.println(MavenMetadataParser.toXmlString(m));
-                            MavenMetadataParser.writeMavenMetaData(m, metadataxml);
+                            MavenMetadataParser.of(ws).writeMavenMetaData(m, metadataxml);
                             String md5 = CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
                             String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml).toLowerCase();

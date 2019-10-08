@@ -7,23 +7,25 @@ package net.vpc.app.nuts.core.filters.id;
 
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.bridges.maven.MavenRepositoryFolderHelper;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 /**
  *
  * @author vpc
  */
-public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
-    private static final Logger LOG = Logger.getLogger(NutstDescriptorIdFilter.class.getName());
+    private NutsLogger LOG;
     private final NutsDescriptorFilter filter;
 
-    public NutstDescriptorIdFilter(NutsDescriptorFilter filter) {
+    public NutsDescriptorIdFilter(NutsDescriptorFilter filter) {
         this.filter = filter;
     }
 
@@ -36,6 +38,9 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
     public boolean accept(NutsId id, NutsSession session) {
         if (filter == null) {
             return true;
+        }
+        if(LOG==null){
+            LOG=session.getWorkspace().log().of(MavenRepositoryFolderHelper.class);
         }
         NutsDescriptor descriptor = null;
         try {
@@ -55,7 +60,7 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.log(Level.FINER, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                LOG.log(Level.FINER, NutsLogVerb.FAIL, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
             }
             return false;
         }
@@ -83,7 +88,7 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutstDescriptorIdFilter other = (NutstDescriptorIdFilter) obj;
+        final NutsDescriptorIdFilter other = (NutsDescriptorIdFilter) obj;
         if (!Objects.equals(this.filter, other.filter)) {
             return false;
         }
@@ -99,7 +104,7 @@ public class NutstDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsI
         if (f2 == filter) {
             return this;
         }
-        return new NutstDescriptorIdFilter(f2);
+        return new NutsDescriptorIdFilter(f2);
     }
 
     @Override

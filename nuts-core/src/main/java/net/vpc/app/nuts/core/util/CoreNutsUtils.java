@@ -31,6 +31,8 @@ package net.vpc.app.nuts.core.util;
 
 import java.io.File;
 import java.io.IOException;
+
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -39,13 +41,13 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;
 
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,8 +62,6 @@ public class CoreNutsUtils {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone( ZoneId.systemDefault() )
             ;
-    private static final Logger LOG = Logger.getLogger(CoreNutsUtils.class.getName());
-//    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
@@ -499,39 +499,6 @@ public class CoreNutsUtils {
 //        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
 //        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
 //    }
-    public static void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
-        if(LOG.isLoggable(Level.FINEST)) {
-            String timeMessage = "";
-            if (startTime != 0) {
-                long time = System.currentTimeMillis() - startTime;
-                if (time > 0) {
-                    timeMessage = " (" + time + "ms)";
-                }
-            }
-            String tracePhaseString = "";
-            switch (tracePhase) {
-                case ERROR: {
-                    tracePhaseString = "[ERROR  ] ";
-                    break;
-                }
-                case SUCCESS: {
-                    tracePhaseString = "[SUCCESS] ";
-                    break;
-                }
-                case START: {
-                    tracePhaseString = "[START  ] ";
-                    break;
-                }
-                case CACHED: {
-                    tracePhaseString = "[CACHED ] ";
-                    break;
-                }
-            }
-            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.log(Level.FINEST, tracePhaseString + fetchString
-                    + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
-        }
-    }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
         NutsIdFormat idFormat = ws.id();
@@ -574,7 +541,7 @@ public class CoreNutsUtils {
         if (def.getDescriptor() != null) {
             x.put("descriptor", ws.descriptor().value(def.getDescriptor()).format());
             x.put("effective-descriptor", ws.descriptor().value(
-                    NutsWorkspaceUtils.getEffectiveDescriptor(ws, def)
+                    NutsWorkspaceUtils.of(ws).getEffectiveDescriptor(def)
             ).format());
         }
         return x;
@@ -602,7 +569,15 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(Logger log, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+    public static void traceMessage(NutsLogger log, Level lvl,String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMsg) {
+        if(!log.isLoggable(lvl)){
+            return;
+        }
+        if(extraMsg==null){
+            extraMsg="";
+        }else{
+            extraMsg=" : "+extraMsg;
+        }
         String timeMessage = "";
         if (startTime != 0) {
             long time = System.currentTimeMillis() - startTime;
@@ -610,27 +585,8 @@ public class CoreNutsUtils {
                 timeMessage = " (" + time + "ms)";
             }
         }
-        String tracePhaseString = "";
-        switch (tracePhase) {
-            case ERROR: {
-                tracePhaseString = "[ERROR  ] ";
-                break;
-            }
-            case SUCCESS: {
-                tracePhaseString = "[SUCCESS] ";
-                break;
-            }
-            case START: {
-                tracePhaseString = "[START  ] ";
-                break;
-            }
-            case CACHED: {
-                tracePhaseString = "[CACHED ] ";
-                break;
-            }
-        }
-        String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(name, 20), id == null ? "" : id.toString(), timeMessage});
+        String fetchString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
+        log.log(lvl, tracePhase.name(), "[{0}] {1} {2} {3}{4}{5}", new Object[]{fetchString, CoreStringUtils.alignLeft(name, 20), CoreStringUtils.alignLeft(title, 18), id == null ? "" : id.toString(), timeMessage,extraMsg});
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
@@ -887,4 +843,38 @@ public class CoreNutsUtils {
         return c0.equals(c1);
     }
 
+    public static String formatLogValue(Object unresolved, Object resolved) {
+        String a = desc(unresolved);
+        String b = desc(resolved);
+        if (a.equals(b)) {
+            return a;
+        } else {
+            return a + " => " + b;
+        }
+    }
+
+    public static String desc(Object s) {
+        if (s == null) {
+            return "<EMPTY>";
+        }
+        String ss
+                = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
+                : s.toString().trim();
+        return ss.isEmpty() ? "<EMPTY>" : ss;
+    }
+    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Exception ex){
+        String msg=null;
+        if(ex instanceof NutsNotFoundException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof UncheckedIOException) {
+                    ex2 = ex.getCause();
+                }
+                msg = ex2.getMessage();
+            }
+        }else{
+            msg=ex.getMessage();
+        }
+        return msg;
+    }
 }

@@ -34,10 +34,10 @@ import net.vpc.app.nuts.*;
 import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.CoreNutsConstants;
 import net.vpc.app.nuts.core.io.NamedByteArrayInputStream;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.InputSource;
@@ -47,11 +47,12 @@ import net.vpc.app.nuts.core.util.io.InputSource;
  */
 public abstract class AbstractMavenRepositoryHelper {
 
-    private static final Logger LOG = Logger.getLogger(AbstractMavenRepositoryHelper.class.getName());
+    private final NutsLogger LOG;
     private NutsRepository repository;
 
     public AbstractMavenRepositoryHelper(NutsRepository repository) {
         this.repository = repository;
+        LOG=repository.getWorkspace().log().of(AbstractMavenRepositoryHelper.class);
     }
 
     protected abstract String getIdPath(NutsId id);
@@ -111,7 +112,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 stream = getStream(idDesc, session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 name = stream.getName();
-                nutsDescriptor = MavenUtils.parsePomXml(new NamedByteArrayInputStream(bytes, name), repository.getWorkspace(), session, getIdPath(id));
+                nutsDescriptor = MavenUtils.of(session.getWorkspace()).parsePomXml(new NamedByteArrayInputStream(bytes, name), session, getIdPath(id));
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -122,7 +123,7 @@ public abstract class AbstractMavenRepositoryHelper {
         } catch (IOException ex) {
             throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
         } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
+            throw new NutsNotFoundException(repository.getWorkspace(), id, ex);
         }
     }
 

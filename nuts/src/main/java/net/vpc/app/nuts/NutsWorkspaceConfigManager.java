@@ -86,8 +86,6 @@ public interface NutsWorkspaceConfigManager {
 
     void save(NutsSession session);
 
-    void setLogLevel(Level levek, NutsUpdateOptions options);
-
     String[] getSdkTypes();
 
     boolean addSdk(NutsSdkLocation location, NutsAddOptions options);
@@ -115,8 +113,8 @@ public interface NutsWorkspaceConfigManager {
      *
      * @param sdkType sdk type
      * @param path sdk path
-     * @param preferredName
-     * @param session
+     * @param preferredName preferredName
+     * @param session session
      * @return null if not a valid jdk path
      */
     NutsSdkLocation resolveSdkLocation(String sdkType, Path path, String preferredName, NutsSession session);

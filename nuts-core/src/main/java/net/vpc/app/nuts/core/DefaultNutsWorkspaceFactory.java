@@ -29,26 +29,26 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.impl.def.DefaultNutsWorkspace;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceFactory;
 import java.lang.reflect.Modifier;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.ClassClassMap;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.ListMap;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceFactory.class.getName());
+    private final NutsLogger LOG;
 
     private final ListMap<Class, Class> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
@@ -59,6 +59,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     public DefaultNutsWorkspaceFactory(NutsWorkspace ws) {
         this.workspace = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceFactory.class);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 if (!discoveredCacheByClass.containsExactKey(type)) {
                     if (type.isInterface()
                             || (type.getModifiers() & Modifier.ABSTRACT) != 0) {
-                        LOG.log(Level.WARNING, "Abstract type {0} is defined as implementation. Ignored.", new Object[]{type.getName()});
+                        LOG.log(Level.WARNING, NutsLogVerb.WARNING, "Abstract type {0} is defined as implementation. Ignored.", new Object[]{type.getName()});
                         it.remove();
                     } else {
                         discoveredCacheByClass.add(type);
@@ -126,8 +127,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation + " for " + extensionPoint.getName());
         }
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "[BIND   ] {0} for impl instance {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName()});
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Bind    {0} for impl instance {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName()});
         }
         instances.add(extensionPoint, implementation);
     }
@@ -152,8 +153,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
             throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
         }
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.log(Level.FINEST, "[BIND   ] {0} for impl type {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName()});
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, NutsLogVerb.UPDATE, "Bind    {0} for impl type {1}", new Object[]{CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName()});
         }
         classes.add(extensionPoint, implementation);
     }
@@ -162,7 +163,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         Class registered = findRegisteredType(extensionPoint, implementation.getName());
         if (registered != null) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[UNBIND ] {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
+                LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Unbind  {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             }
             classes.remove(extensionPoint, registered);
         }
@@ -172,7 +173,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         Class registered = findRegisteredType(extensionPoint, implementation);
         if (registered != null) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[UNBIND ] Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
+                LOG.log(Level.FINEST, NutsLogVerb.UPDATE, "Unbind  Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             }
             classes.remove(extensionPoint, registered);
         }
@@ -253,15 +254,15 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.log(Level.FINEST, "[RESOLVE] {0} to  singleton {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
+                if (LOG.isLoggable(Level.CONFIG)) {
+                    LOG.log(Level.FINEST, NutsLogVerb.READ, "Resolve {0} to  singleton {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
                 }
             }
             return (T) o;
         } else {
             T o = instantiate0(type);
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[RESOLVE] {0} to  prototype {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
+            if (LOG.isLoggable(Level.CONFIG)) {
+                LOG.log(Level.FINEST, NutsLogVerb.READ, "Resolve {0} to  prototype {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
             }
             return o;
         }
@@ -293,15 +294,15 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.log(Level.FINEST, "[RESOLVE] {0} to  singleton {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
+                if (LOG.isLoggable(Level.CONFIG)) {
+                    LOG.log(Level.FINEST, NutsLogVerb.READ, "Resolve {0} to  singleton {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
                 }
             }
             return (T) o;
         } else {
             T o = instantiate0(type, argTypes, args);
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[RESOLVE] {0} to  prototype {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
+            if (LOG.isLoggable(Level.CONFIG)) {
+                LOG.log(Level.FINEST, NutsLogVerb.READ, "Resolve {0} to  prototype {1}", new Object[]{CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName()});
             }
             return o;
         }
@@ -312,8 +313,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         Object one = instances.getOne(type);
         if (one != null) {
             //if static instance found, always return it!
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[RESOLVE] {0} to singleton {1}", new Object[]{CoreStringUtils.alignLeft(type.getSimpleName(), 40), one.getClass().getName()});
+            if (LOG.isLoggable(Level.CONFIG)) {
+                LOG.log(Level.FINEST, NutsLogVerb.READ, "Resolve {0} to singleton {1}", new Object[]{CoreStringUtils.alignLeft(type.getSimpleName(), 40), one.getClass().getName()});
             }
             return (T) one;
         }
@@ -387,6 +388,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //        if(bestObj==null){
 //            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
 //        }
+//        if(bestObj==null){
+//            throw new NutsElementNotFoundException(workspace,"Missing Implementation for Extension Point "+type);
+//        }
         return bestObj;
     }
 
@@ -406,6 +410,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
 //        if(bestObj==null){
 //            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
+//        }
+//        if(bestObj==null){
+//            throw new NutsElementNotFoundException(workspace,"Missing Implementation for Extension Point "+type);
 //        }
         return bestObj;
     }

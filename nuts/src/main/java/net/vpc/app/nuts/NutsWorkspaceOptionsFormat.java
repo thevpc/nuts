@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -128,31 +126,35 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             if (!(omitDefaults && options.getTerminalMode() == null)) {
                 fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
             }
-            if (options.getLogConfig() != null) {
-                if (options.getLogConfig().getLogLevel() != null) {
-                    if (options.getLogConfig().getLogLevel() == Level.FINEST) {
-                        fillOption("--verbose", null, true, arguments, false);
-                    } else {
-                        fillOption("--log-" + options.getLogConfig().getLogLevel().toString().toLowerCase(), null, true, arguments, false);
+            NutsLogConfig logConfig = options.getLogConfig();
+            if (logConfig != null) {
+                if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel()== logConfig.getLogFileLevel()) {
+                    fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                }else {
+                    if (logConfig.getLogTermLevel() != null) {
+                        fillOption("--log-term-" + logConfig.getLogTermLevel().toString().toLowerCase(), null, true, false, arguments, false);
+                    }
+                    if (logConfig.getLogFileLevel() != null) {
+                        fillOption("--log-file-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
                     }
                 }
-                if (options.getLogConfig().getLogCount() > 0) {
-                    fillOption("--log-count", null, String.valueOf(options.getLogConfig().getLogCount()), arguments, false);
+                if (logConfig.getLogFileCount() > 0) {
+                    fillOption("--log-file-count", null, String.valueOf(logConfig.getLogFileCount()), arguments, false);
                 }
-                fillOption("--log-size", null, options.getLogConfig().getLogSize(), arguments, false);
-                fillOption("--log-folder", null, options.getLogConfig().getLogFolder(), arguments, false);
-                fillOption("--log-name", null, options.getLogConfig().getLogName(), arguments, false);
-                fillOption("--log-inherited", null, options.getLogConfig().isLogInherited(), arguments, false);
+                fillOption("--log-file-size", null, logConfig.getLogFileSize(), arguments, false);
+                fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
+                fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
+                fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
             fillOption("--exclude-extension", null, options.getExcludedExtensions(), ";", arguments, false);
             fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments, false);
             fillOption("--repository", "-r", options.getTransientRepositories(), ";", arguments, false);
-            fillOption("--global", "-g", options.isGlobal(), arguments, false);
-            fillOption("--gui", null, options.isGui(), arguments, false);
-            fillOption("--read-only", "-R", options.isReadOnly(), arguments, false);
-            fillOption("--trace", "-t", options.isTrace(), arguments, false);
-            fillOption("--skip-companions", "-k", options.isSkipCompanions(), arguments, false);
-            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), arguments, false);
+            fillOption("--global", "-g", options.isGlobal(), false, arguments, false);
+            fillOption("--gui", null, options.isGui(), false, arguments, false);
+            fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
+            fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
+            fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
+            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
             fillOption(options.getConfirm(), arguments, false);
             fillOption(options.getOutputFormat(), arguments, false);
             for (String outputFormatOption : options.getOutputFormatOptions()) {
@@ -198,9 +200,9 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
                 fillOption(options.getOpenMode(), arguments, false);
             }
             fillOption(options.getExecutionType(), arguments, false);
-            fillOption("--reset", "-Z", options.isReset(), arguments, false);
-            fillOption("--debug", "-z", options.isRecover(), arguments, false);
-            fillOption("--dry", "-D", options.isDry(), arguments, false);
+            fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
+            fillOption("--debug", "-z", options.isRecover(), false, arguments, false);
+            fillOption("--dry", "-D", options.isDry(), false, arguments, false);
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }
@@ -233,13 +235,23 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
 
     private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
         if (values != null && values.length > 0) {
-            fillOption0(selectOptionName(longName, shortName), Arrays.stream(values).collect(Collectors.joining(sep)), arguments, forceSingle);
+            fillOption0(selectOptionName(longName, shortName), String.join(sep, values), arguments, forceSingle);
         }
     }
 
-    private void fillOption(String longName, String shortName, boolean value, List<String> arguments, boolean forceSingle) {
-        if (value) {
-            arguments.add(selectOptionName(longName, shortName));
+    private void fillOption(String longName, String shortName, boolean value, boolean defaultValue, List<String> arguments, boolean forceSingle) {
+        if(defaultValue){
+            if (!value) {
+                if (shortOptions && shortName != null) {
+                    arguments.add("-!"+shortName.substring(1));
+                }else {
+                    arguments.add("--!"+longName.substring(2));
+                }
+            }
+        }else{
+            if (value) {
+                arguments.add(selectOptionName(longName, shortName));
+            }
         }
     }
 

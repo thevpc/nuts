@@ -30,14 +30,12 @@
 package net.vpc.app.nuts.core.impl.def.repocommands;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsRepository;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.repocommands.AbstractNutsDeployRepositoryCommand;
 import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsDeployRepositoryCommand;
 
 /**
  *
@@ -45,10 +43,11 @@ import net.vpc.app.nuts.NutsDeployRepositoryCommand;
  */
 public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployRepositoryCommand {
 
-    private static final Logger LOG = Logger.getLogger(DefaultNutsDeployRepositoryCommand.class.getName());
+    private final NutsLogger LOG;
 
     public DefaultNutsDeployRepositoryCommand(NutsRepository repo) {
         super(repo);
+        LOG=repo.workspace().log().of(DefaultNutsDeployRepositoryCommand.class);
     }
 
 
@@ -63,15 +62,15 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 try {
                     xrepo.getIndexStoreClient().revalidate(this.getId());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error revalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[SUCCESS] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, "[ERROR  ] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
             }
             throw ex;
         }

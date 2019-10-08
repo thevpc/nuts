@@ -1,8 +1,11 @@
 ==nuts== [[info]]
       show workspace detailed information (paths and libraries)
-       **--show-repos** : show repositories
+       **--repos** : show repositories
        **--fancy** : show paths variables in multi rows
        **--add** \<key\>=\<value\>: add extra  key=value to info list
+       **--cmd** : show command arguments
+       **--env** : show environment info (java version, os version, ...)
+       **--locations** : show workspace locations
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 

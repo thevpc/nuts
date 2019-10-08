@@ -46,7 +46,6 @@ import java.util.logging.Logger;
 public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
-    private static final Logger LOG = Logger.getLogger(DefaultHttpTransportComponent.class.getName());
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<String> url) {

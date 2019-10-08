@@ -50,7 +50,7 @@ public class Test01_InstallTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(new File(baseFolder));
+        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @AfterClass
@@ -59,7 +59,7 @@ public class Test01_InstallTest {
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily().equals("linux"));
         TestUtils.unsetNutsSystemProperties();
     }
 

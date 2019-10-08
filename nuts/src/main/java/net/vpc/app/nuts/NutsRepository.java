@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Map;
+
 /**
  * Created by vpc on 1/5/17.
  *
@@ -204,4 +206,11 @@ public interface NutsRepository {
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
+    Map<String, Object> userProperties();
+
+    void addUserPropertyListener(NutsMapListener<String, Object> listener);
+
+    void removeUserPropertyListener(NutsMapListener<String, Object> listener);
+
+    NutsMapListener<String, Object>[] getUserPropertyListeners();
 }

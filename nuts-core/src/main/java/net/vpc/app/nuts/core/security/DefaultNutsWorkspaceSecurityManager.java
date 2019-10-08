@@ -31,9 +31,11 @@ package net.vpc.app.nuts.core.security;
 
 import net.vpc.app.nuts.core.impl.def.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.impl.def.config.NutsWorkspaceConfigSecurity;
+import net.vpc.app.nuts.core.log.NutsLogVerb;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
 import javax.security.auth.Subject;
@@ -45,7 +47,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsAddUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsRemoveUserCommand;
 import net.vpc.app.nuts.core.impl.def.wscommands.DefaultNutsUpdateUserCommand;
@@ -59,7 +61,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManager {
 
-    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceSecurityManager.class.getName());
+    public final NutsLogger LOG;
     private final ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNutsWorkspace ws;
     private final WrapperNutsAuthenticationAgent agent;
@@ -67,6 +69,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     public DefaultNutsWorkspaceSecurityManager(final DefaultNutsWorkspace ws) {
         this.ws = ws;
+        LOG=ws.log().of(DefaultNutsWorkspaceSecurityManager.class);
         this.agent = new WrapperNutsAuthenticationAgent(ws, ()->ws.config().getEnv(), x -> getAuthenticationAgent(x));
         ws.addWorkspaceListener(new NutsWorkspaceListener() {
             @Override
@@ -114,7 +117,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.log(Level.CONFIG, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));

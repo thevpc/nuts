@@ -38,9 +38,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
 
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import net.vpc.app.nuts.core.security.DefaultNutsRepositorySecurityManager;
-import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 /**
@@ -50,11 +50,12 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(AbstractNutsRepositoryBase.class.getName());
+    private final NutsLogger LOG;
 
     public AbstractNutsRepositoryBase(NutsCreateRepositoryOptions options,
                                       NutsWorkspace workspace, NutsRepository parentRepository,
                                       int speed, boolean supportedMirroring, String repositoryType) {
+        LOG=workspace.log().of(AbstractNutsRepositoryBase.class);
         init(options, workspace, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
@@ -64,13 +65,13 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
-        securityManager = new DefaultNutsRepositorySecurityManager(this);
         NutsRepositoryConfig optionsConfig = options.getConfig();
         if (optionsConfig == null) {
             throw new NutsIllegalArgumentException(workspace, "Null Config");
         }
         this.workspace = workspace;
         this.parentRepository = parent;
+        securityManager = new DefaultNutsRepositorySecurityManager(this);
         if(options.getSession()==null){
             options.setSession(workspace.createSession());
         }
@@ -140,8 +141,8 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
-        CoreNutsUtils.traceMessage(LOG, config().name(), session, id, tracePhase, title, startTime);
+    protected void traceMessage(NutsRepositorySession session, Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMessage) {
+        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, id, tracePhase, title, startTime,extraMessage);
     }
 
     @Override
