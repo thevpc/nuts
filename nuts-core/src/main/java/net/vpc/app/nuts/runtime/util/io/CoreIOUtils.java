@@ -429,13 +429,24 @@ public class CoreIOUtils {
         return (session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
     }
 
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
+    /**
+     *
+     * @param localPath
+     * @param queryOptions
+     * @param parseOptions may include --all-mains to force lookup of all main classes if available
+     * @param session
+     * @return
+     */
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, String[] parseOptions, NutsSession session) {
+        if(parseOptions==null){
+            parseOptions=new String[0];
+        }
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws, null));
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, queryOptions);
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, queryOptions,parseOptions);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {

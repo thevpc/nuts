@@ -23,10 +23,25 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     protected String descSha1;
     protected String fromRepository;
     protected String toRepository;
+    protected String[] parseOptions;
     protected final List<NutsId> ids = new ArrayList<>();
 
     public AbstractNutsDeployCommand(NutsWorkspace ws) {
         super(ws, "deploy");
+    }
+
+    public String[] getParseOptions() {
+        return parseOptions;
+    }
+
+    public NutsDeployCommand setParseOptions(String[] parseOptions) {
+        this.parseOptions = parseOptions;
+        return this;
+    }
+
+    public NutsDeployCommand parseOptions(String[] parseOptions) {
+        this.parseOptions = parseOptions;
+        return this;
     }
 
     @Override

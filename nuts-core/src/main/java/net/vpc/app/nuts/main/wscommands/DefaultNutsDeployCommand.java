@@ -77,7 +77,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             try {
                 if (descriptor == null) {
                     NutsFetchCommand p = ws.fetch().transitive().session(getValidSession());
-                    characterizedFile = characterizeForDeploy(ws, contentSource, p, getValidSession());
+                    characterizedFile = characterizeForDeploy(ws, contentSource, p, getParseOptions(), getValidSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "Missing descriptor");
                     }
@@ -104,7 +104,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(
                                     CoreIOUtils.createInputSource(contentFile).multi(),
-                                    fetchOptions, getValidSession());
+                                    fetchOptions, getParseOptions(), getValidSession());
                         }
                         if (descriptor == null) {
                             descriptor = descriptor2;
@@ -130,7 +130,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     } else {
                         if (descriptor == null) {
                             descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(
-                                    CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, getValidSession());
+                                    CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, getParseOptions(), getValidSession());
                         }
                     }
                     if (descriptor == null) {
@@ -298,7 +298,10 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         return this;
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
+    private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, String[] parseOptions, NutsSession session) {
+        if(parseOptions==null){
+            parseOptions=new String[0];
+        }
         session = NutsWorkspaceUtils.of(ws).validateSession( session);
         CharacterizedDeployFile c = new CharacterizedDeployFile();
         try {
@@ -321,7 +324,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (Files.exists(ext)) {
                         c.descriptor = ws.descriptor().parse(ext);
                     } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
+                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, parseOptions, session);
                     }
                 }
                 if (c.descriptor != null) {
@@ -340,7 +343,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (ext.exists()) {
                         c.descriptor = ws.descriptor().parse(ext);
                     } else {
-                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
+                        c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, parseOptions, session);
                     }
                 }
             } else {

@@ -39,6 +39,19 @@ import java.io.InputStream;
 public interface NutsDescriptorContentParserContext {
 
     /**
+     * par exception is command line options that can be parsed to
+     * configure parsing options.
+     * A good example of it is the --all-mains option that can be passed
+     * as executor option which will be catched by parser to force resolution
+     * of all main classes even though a Main-Class attribute is visited in the MANIFEST.MF
+     * file.
+     * This array may continue any non supported options. They should be discarded by the parser.
+     * @return parser options.
+     * @since 0.5.8
+     */
+    String[] getParseOptions();
+
+    /**
      * return content header stream.
      * if the content size is less than 1Mb, then all the content is returned.
      * If not, at least 1Mb is returned.

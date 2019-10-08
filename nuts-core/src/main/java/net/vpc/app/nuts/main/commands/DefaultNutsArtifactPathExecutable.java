@@ -28,15 +28,16 @@ import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.runtime.util.io.URLBuilder;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
+
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.createInputSource;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.resolveNutsDescriptorFromFileContent;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.toPathInputSource;
+
 import net.vpc.app.nuts.runtime.util.io.InputSource;
 import net.vpc.app.nuts.runtime.util.io.ZipOptions;
 import net.vpc.app.nuts.runtime.util.io.ZipUtils;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
@@ -52,32 +53,32 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         super(cmdName,
                 session.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
-        LOG=session.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
+        LOG = session.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
         this.session = session;
         this.execCommand = execCommand;
-        List<String> executorOptionsList=new ArrayList<>();
+        List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
             NutsArgument a = session.getWorkspace().commandLine().createArgument(option);
-            if(a.getStringKey().equals("--nuts-auto-install")){
-                if(a.isKeyValue()){
+            if (a.getStringKey().equals("--nuts-auto-install")) {
+                if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
-                }else{
+                } else {
 //                    autoInstall=true;
                 }
-            }else{
+            } else {
                 executorOptionsList.add(option);
             }
         }
-        this.executorOptions=executorOptionsList.toArray(new String[0]);
+        this.executorOptions = executorOptionsList.toArray(new String[0]);
     }
 
     @Override
     public NutsId getId() {
         NutsFetchCommand p = session.getWorkspace().fetch().transitive();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -95,40 +96,40 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     public void executeHelper(boolean dry) {
         NutsWorkspace ws = session.getWorkspace();
         NutsFetchCommand p = ws.fetch().transitive();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
             Path tempFolder = ws.io().createTempFolder("exec-path-");
             NutsId _id = c.descriptor.getId();
-            NutsIdType idType=NutsWorkspaceExt.of(ws).resolveNutsIdType(_id);
+            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id);
             NutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
                     _id,
                     c.descriptor,
                     new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
-                    new DefaultNutsInstallInfo(false,false,
+                    new DefaultNutsInstallInfo(false, false,
                             tempFolder
-                            ,null,ws.security().getCurrentUsername()
-                            ),
+                            , null, ws.security().getCurrentUsername()
+                    ),
                     idType, null
             );
             try {
                 execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType, dry);
-            }finally {
+            } finally {
                 try {
-                    CoreIOUtils.delete(ws,tempFolder);
+                    CoreIOUtils.delete(ws, tempFolder);
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Unable to delete temp folder created for execution : "+tempFolder);
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Unable to delete temp folder created for execution : " + tempFolder);
                 }
             }
         }
     }
 
-    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsFetchCommand options, NutsSession session) {
-        NutsWorkspace ws=session.getWorkspace();
-        String classifier=null;//TODO how to get classifier?
+    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsFetchCommand options, NutsSession session, String[] execOptions) {
+        NutsWorkspace ws = session.getWorkspace();
+        String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile();
         try {
             c.baseFile = contentFile;
@@ -142,12 +143,12 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 if (Files.exists(ext)) {
                     c.descriptor = ws.descriptor().parse(ext);
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, execOptions, session);
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = Paths.get(ws.io().expandPath(fileSource.toString() + ".zip"));
-                        ZipUtils.zip(session.getWorkspace(),fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        ZipUtils.zip(session.getWorkspace(), fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);
                     } else {
@@ -172,8 +173,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     }
                     if (c.contentFile == null) {
                         for (NutsIdLocation location0 : c.descriptor.getLocations()) {
-                            if(CoreNutsUtils.acceptClassifier(location0,classifier)) {
-                                String location=location0.getUrl();
+                            if (CoreNutsUtils.acceptClassifier(location0, classifier)) {
+                                String location = location0.getUrl();
                                 if (CoreIOUtils.isPathHttp(location)) {
                                     try {
                                         c.contentFile = toPathInputSource(
@@ -202,7 +203,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         throw new NutsIllegalArgumentException(ws, "Unable to locale component for " + c.baseFile);
                     }
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, execOptions, session);
                     if (c.descriptor == null) {
                         c.descriptor = ws.descriptor().descriptorBuilder()
                                 .setId("temp")
@@ -242,7 +243,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
         @Override
         public void close() {
-            for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
+            for (Iterator<Path> it = temps.iterator(); it.hasNext(); ) {
                 Path temp = it.next();
                 try {
                     Files.delete(temp);
