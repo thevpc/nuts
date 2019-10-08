@@ -5,7 +5,7 @@ package and compress (archive) files
 
 package and compress (archive) filesy
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==zip== -r out.zip /another/path
    changes to another path

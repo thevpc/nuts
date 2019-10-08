@@ -6,7 +6,7 @@ show who is logged in
 shows who is logged in
 
 --all  -a   : show all information about user
-##EXAMPLES##:
+##EXAMPLES:##
 
 whoami -a
    shows all information about current user

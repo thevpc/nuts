@@ -9,7 +9,7 @@ Only [[Linux]] operating systems si supported in the current version.
 ==ndi== {{un}}|{{uninstall}} **<options>** <command> ...
     uninstall scripts/shortcuts for the given
 
-##OPTIONS##:
+##OPTIONS:##
 ==ndi== {{in}}|{{install}} **<options>** <command> ...
 
  **--embedded** | **-b**

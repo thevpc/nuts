@@ -5,7 +5,7 @@ Nuts Shell (GNU Bourne-Again SHell like)
 
  nsh  is  an  sh-compatible  command language interpreter that executes commands read from the standard input or from a file
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 
 

@@ -6,7 +6,7 @@ fetch a ==nuts==
 fetches (without installing) a ==nuts== package
 
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==fetch== ab*
    fetches all ==nuts== that starts with 'ab'

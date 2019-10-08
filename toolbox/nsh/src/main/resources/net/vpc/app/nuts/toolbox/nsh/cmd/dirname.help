@@ -4,7 +4,7 @@ strip last component from file name
 ==dirname== path
 strip last component from file name
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==dirname== /usr/bin/
     "/usr"

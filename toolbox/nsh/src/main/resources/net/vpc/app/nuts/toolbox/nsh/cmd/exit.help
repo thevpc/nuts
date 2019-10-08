@@ -5,7 +5,7 @@ End the application
 
 End the application returning code
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==exit==
     exit with code 0

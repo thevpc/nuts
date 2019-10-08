@@ -3,7 +3,7 @@
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== {{which}} **--help**
             shows this help and exit
        

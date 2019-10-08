@@ -101,7 +101,7 @@ tomcat toolbox to start, monitor and remote deploy applications
     set-port  **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**] <port>
                     :
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ##tomcat## my-instance set
    commits and @@DELETES@@ the checked out folder

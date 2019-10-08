@@ -6,7 +6,7 @@ Enable and disable builtin shell commands
     -n : disable commands
     -a : display all builtins
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==enable== ls
     enable ls builtin

@@ -5,7 +5,7 @@
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== {{help}} **--help**
             shows this help and exit
        

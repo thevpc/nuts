@@ -4,7 +4,7 @@ Run command with args suppressing the normal shell function lookup
 ==command== <command> {{args...}}
 Run command with args suppressing the normal shell function lookup.  Only builtin commands or commands found in the PATH are executed
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==command== ls
     runs nsh builtin ls command

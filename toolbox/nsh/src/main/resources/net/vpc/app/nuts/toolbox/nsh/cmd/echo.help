@@ -9,7 +9,7 @@ options :
 -n          : do not output the trailing newline
 -p          : plain text, do no use "format" escape characters
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==echo== ==hello==
    displays hello with bold format

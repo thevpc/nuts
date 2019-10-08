@@ -4,19 +4,19 @@
       runs command with the given executor options \( it will be considered an option if it 
       starts with '-' \). This is helpful to issue JVM Options to executor for instance
 
-##OPTIONS##:
- **--embedded**  or **-b**
+##OPTIONS:##
+**--embedded**  or **-b**
       when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
 
- **--external**  or **--spawn** or **-x**
+**--external**  or **--spawn** or **-x**
       when invoking a nuts artifact, it will alway be executed in a newly created process (this is the default)
 
- **--native**  or **--syscall** or **-n**
+**--native**  or **--syscall** or **-n**
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== {{exec}} **--help**
             shows this help and exit
        

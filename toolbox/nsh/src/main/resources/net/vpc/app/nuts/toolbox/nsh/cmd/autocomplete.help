@@ -4,7 +4,7 @@ auto complete command
 ==autocomplete== command args ...
 auto complete command
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==autocomplete== ls **-l** []
     auto complete ls -l command (at the cursor [] location)

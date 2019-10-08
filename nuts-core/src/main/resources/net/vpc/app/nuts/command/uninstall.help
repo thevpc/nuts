@@ -2,13 +2,13 @@
       uninstall one or more ==nuts== from repositories if installed
       If no [nuts-id] is defined an error will occur
 
-##OPTIONS##:
+##OPTIONS:##
        **-e** or **--erase** : enable erase mode to delete all of artifact\'s config data as well
        <args> ...        : provide arguments to pass to uninstaller
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== {{uninstall}} **--help**
             shows this help and exit
        

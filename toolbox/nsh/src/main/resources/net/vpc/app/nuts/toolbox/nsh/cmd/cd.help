@@ -5,7 +5,7 @@ change directory
 
 changes the working directory
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==cd== /another/path
    changes to another path

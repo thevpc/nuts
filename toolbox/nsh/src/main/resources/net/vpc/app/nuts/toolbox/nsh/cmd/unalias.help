@@ -5,7 +5,7 @@ remove existing aliases
 
 remove existing aliases
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==unalias== ll
     remove ll alias

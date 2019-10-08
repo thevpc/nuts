@@ -2,9 +2,20 @@
       install ==nuts== package \<nuts-artifact\>
        <args> ...        : provide arguments to pass to installer
 
+##SYNOPSIS:##
+==nuts== {{install}} \<options\> \<nuts-artifact\>...
+
+##OPTIONS:##
+**-c** | **--companions**
+    include companions in the install process
+**-i** | **--installed**
+    include already installed artifacts in the install process (re-install)
+**-g** | **--args** <args> ...
+    pass the given args to the install executor
+
 #!include</net/vpc/app/command/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== install **--help**
             shows this help and exit
        

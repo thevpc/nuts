@@ -7,7 +7,7 @@ jps tool - list the instrumented JVMs on the target system
 
 list the instrumented JVMs on the target system
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==jps== -l
    list local java processes

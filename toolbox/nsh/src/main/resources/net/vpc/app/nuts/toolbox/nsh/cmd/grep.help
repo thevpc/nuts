@@ -5,7 +5,7 @@ print lines matching a pattern
 
 print lines matching a pattern
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==grep== -r toto log.txt
    print all lines containing toto

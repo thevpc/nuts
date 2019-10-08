@@ -143,7 +143,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             return false;
         }
         switch (a.getStringKey()) {
-            case "--repos": {
+            case "-r":
+            case "--repos":
+                {
                 this.setShowRepositories(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
@@ -151,7 +153,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 this.setFancy(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
-            case "--lenient": {
+            case "-l":
+            case "--lenient":
+                {
                 this.setLenient(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
@@ -160,7 +164,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 extraProperties.put(r.getStringKey(), r.getStringValue());
                 return true;
             }
-            case "--locations": {
+            case "-p":
+            case "--path":
+                {
                 cmdLine.skip();
                 requests.add("nuts-workspace");
                 for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
@@ -170,7 +176,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 requests.add("user-dir");
                 return true;
             }
-            case "--env": {
+            case "-e":
+            case "--env":
+                {
                 cmdLine.skip();
                 requests.add("platform");
                 requests.add("java-version");
@@ -184,7 +192,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 requests.add("user-name");
                 return true;
             }
-            case "--cmd": {
+            case "-c":
+            case "--cmd":
+                {
                 cmdLine.skip();
                 requests.add("command-line-long");
                 requests.add("command-line-short");
@@ -193,6 +203,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 requests.add("inherited-nuts-args");
                 return true;
             }
+            case "-g":
             case "--get": {
                 String r = cmdLine.nextString().getStringValue();
                 requests.add(r);
