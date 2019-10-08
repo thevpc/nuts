@@ -4,7 +4,7 @@ run builtin nsh command
 ==builtin== <command> {{args...}}
 run builtin nsh command
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==builtin== ls
     runs nsh builtin ls command

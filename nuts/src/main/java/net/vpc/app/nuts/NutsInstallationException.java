@@ -36,6 +36,9 @@ package net.vpc.app.nuts;
  */
 public abstract class NutsInstallationException extends NutsException {
 
+    /**
+     * artifact id
+     */
     private final String id;
 
     /**

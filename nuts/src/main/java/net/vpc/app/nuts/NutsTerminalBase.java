@@ -47,8 +47,6 @@ public interface NutsTerminalBase extends NutsComponent<Object> {
 
     NutsTerminalMode getErrMode();
 
-    void install(NutsWorkspace workspace);
-
     String readLine(PrintStream out, String prompt, Object... params);
 
     char[] readPassword(PrintStream out, String prompt, Object... params);
@@ -58,8 +56,6 @@ public interface NutsTerminalBase extends NutsComponent<Object> {
     PrintStream getOut();
 
     PrintStream getErr();
-
-    void uninstall();
 
     NutsTerminalBase getParent();
 }

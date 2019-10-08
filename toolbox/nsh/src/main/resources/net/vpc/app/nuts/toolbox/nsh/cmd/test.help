@@ -81,7 +81,7 @@ check file types and compare values
         FILE exists and execute (or search) permission is granted
 
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==test== -f myfile.nsh
     return 0 if the file exists

@@ -8,6 +8,7 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,7 +41,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", ws.io().path(extraLocation), context.session())) {
+                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", Paths.get(extraLocation), context.session())) {
                             conf.addSdk(loc, null);
                         }
                     }
@@ -51,7 +52,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.next().getString()), null, context.session());
+                    NutsSdkLocation loc = conf.resolveSdkLocation("java", Paths.get(cmdLine.next().getString()), null, context.session());
                     if (loc != null) {
                         conf.addSdk(loc, null);
                     }
@@ -66,7 +67,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 String name = cmdLine.next().getString();
                 NutsSdkLocation loc = conf.findSdkByName("java", name);
                 if (loc == null) {
-                    loc = conf.findSdkByPath("java", ws.io().path(name));
+                    loc = conf.findSdkByPath("java", Paths.get(name));
                     if (loc == null) {
                         loc = conf.findSdkByVersion("java", name);
                     }

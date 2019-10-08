@@ -15,8 +15,7 @@ import java.util.Map;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
@@ -47,7 +46,7 @@ public class Test09_FindLinuxTest {
             "--skip-companions"
         });
 
-        List<NutsId> def = ws.search().id("nuts").setOptional(false).latest().failFast(false)
+        List<NutsId> def = ws.search().id("nuts").optional(false).latest().failFast(false)
 //                .repository("maven-local")
                 .defaultVersions()
                 .installed()

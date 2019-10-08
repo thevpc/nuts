@@ -4,7 +4,7 @@ return 1 (false/error value)
 ==false==
 return 1 (false/error value)
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==false==
     return 1 (false/error value)

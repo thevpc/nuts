@@ -113,7 +113,7 @@ public interface NutsRepositoryConfigManager {
 
     boolean isEnabled();
 
-    boolean subscribeIndex();
+    NutsRepositoryConfigManager subscribeIndex();
 
     NutsRepositoryConfigManager unsubscribeIndex();
 

@@ -4,7 +4,7 @@ manipulate and query json input
 ==json== [**--file** <file>] [**--xpath** <query>]
 search in xpath compatible pattern in input file. If no file is defined, consider standard input
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==json== **--xpath** /item/path **-f** file.json
     search in xpath compatible pattern file.json

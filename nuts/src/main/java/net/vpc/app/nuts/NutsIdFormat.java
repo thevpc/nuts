@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,45 +30,215 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Class responsible of manipulating  {@link NutsId} instances:
+ * <ul>
+ *     <li>formatting (in Nuts Stream Format)</li>
+ *     <li>parsing</li>
+ * </ul>
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsIdFormat extends NutsFormat {
 
+    /**
+     * return true when the namespace should not be included in formatted instance
+     * @return return true when the namespace should not be included in formatted instance
+     */
     boolean isOmitNamespace();
 
-    NutsIdFormat setOmitNamespace(boolean omitNamespace);
+    /**
+     * update omitNamespace
+     * @param value true when the namespace should not be included in formatted instance
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitNamespace(boolean value);
 
-    boolean isOmitGroup();
+    /**
+     * update omitNamespace
+     * @param value true when the namespace should not be included in formatted instance
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitNamespace(boolean value);
 
-    NutsIdFormat setOmitGroup(boolean omitGroup);
+    /**
+     * update omitNamespace to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitNamespace();
 
-    boolean isOmitImportedGroup();
+    /**
+     * return true when the groupId should not be included in formatted instance
+     * @return return true when the groupId should not be included in formatted instance
+     */
+    boolean isOmitGroupId();
 
-    NutsIdFormat setOmitImportedGroup(boolean omitImportedGroup);
+    /**
+     * update omitGroup
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitGroupId(boolean value);
+
+    /**
+     * update omitGroup
+     * @param value new value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitGroupId(boolean value);
+
+    /**
+     * update omitGroup to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitGroupId();
+
+    /**
+     * return true when the imported groupId should not be included in formatted instance
+     * @return return true when the imported groupId should not be included in formatted instance
+     */
+    boolean isOmitImportedGroupId();
+
+    /**
+     * update omitImportedGroupId
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitImportedGroupId(boolean value);
+
+    /**
+     * update omitImportedGroupId
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitImportedGroupId(boolean value);
+
+    NutsIdFormat omitImportedGroupId();
 
     boolean isOmitOtherProperties();
 
-    NutsIdFormat setOmitOtherProperties(boolean omitEnv);
+    /**
+     * update omitOtherProperties
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitOtherProperties(boolean value);
 
-    NutsIdFormat omitOtherProperties(boolean omitEnv);
+    /**
+     * update omitOtherProperties
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitOtherProperties(boolean value);
 
+    /**
+     * update omitOtherProperties to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitOtherProperties();
+
+    /**
+     * return true when the face should not be included in formatted instance
+     * @return return true when the face should not be included in formatted instance
+     */
     boolean isOmitFace();
 
-    NutsIdFormat setOmitFace(boolean omitFace);
+    /**
+     * update omitFace
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setOmitFace(boolean value);
 
-    boolean isHighlightImportedGroup();
+    /**
+     * update omitFace
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitFace(boolean value);
 
-    NutsIdFormat setHighlightImportedGroup(boolean highlightImportedGroup);
+    /**
+     * update omitFace to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat omitFace();
 
+    /**
+     * return true when the imported group should be highlighted in formatted instance
+     * @return return true when the imported group should be highlighted in formatted instance
+     */
+    boolean isHighlightImportedGroupId();
+
+    /**
+     * update highlightImportedGroupId
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setHighlightImportedGroupId(boolean value);
+
+    /**
+     * update highlightImportedGroupId
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightImportedGroupId(boolean value);
+
+    /**
+     * update highlightImportedGroupId to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightImportedGroupId();
+
+    /**
+     * return true when the scope should be highlighted in formatted instance
+     * @return return true when the scope should be highlighted in formatted instance
+     */
     boolean isHighlightScope();
 
-    NutsIdFormat setHighlightScope(boolean highlightScope);
+    /**
+     * update highlightScope
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setHighlightScope(boolean value);
 
+    /**
+     * update highlightScope
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightScope(boolean value);
+
+    /**
+     * update highlightScope to true
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightScope();
+
+    /**
+     * return true when the optional should be highlighted in formatted instance
+     * @return return true when the optional should be highlighted in formatted instance
+     */
     boolean isHighlightOptional();
 
-    NutsIdFormat setHighlightOptional(boolean highlightOptional);
+    /**
+     * update highlightOptional
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat setHighlightOptional(boolean value);
+
+    /**
+     * update highlightOptional
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightOptional(boolean value);
+
+    /**
+     * update highlightOptional tot true
+     * @return {@code this} instance
+     */
+    NutsIdFormat highlightOptional();
 
     /**
      * return true if omit scope
@@ -97,34 +267,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsIdFormat omitClassifier();
-
-//    /**
-//     * return true if omit scope
-//     * @return true if omit scope
-//     */
-//    boolean isOmitAlternative();
-//
-//    /**
-//     * if true omit (do not include) face when formatting the value
-//     * set using {@link #setValue(NutsId)} .
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsIdFormat setOmitAlternative(boolean value);
-//
-//    /**
-//     * if true omit (do not include) face when formatting the value
-//     * set using {@link #setValue(NutsId)} .
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    NutsIdFormat omitAlternative(boolean value);
-//
-//    /**
-//     * omit scope
-//     * @return {@code this} instance
-//     */
-//    NutsIdFormat omitAlternative();
 
     /**
      * query properties omitted

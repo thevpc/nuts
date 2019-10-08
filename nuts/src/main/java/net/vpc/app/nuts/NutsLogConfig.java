@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -112,5 +113,37 @@ public class NutsLogConfig implements Serializable{
     public NutsLogConfig setLogInherited(boolean logInherited) {
         this.logInherited = logInherited;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsLogConfig that = (NutsLogConfig) o;
+        return logFileSize == that.logFileSize &&
+                logFileCount == that.logFileCount &&
+                logInherited == that.logInherited &&
+                Objects.equals(logFileLevel, that.logFileLevel) &&
+                Objects.equals(logTermLevel, that.logTermLevel) &&
+                Objects.equals(logFileName, that.logFileName) &&
+                Objects.equals(logFileBase, that.logFileBase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(logFileLevel, logTermLevel, logFileSize, logFileCount, logFileName, logFileBase, logInherited);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsLogConfig{" +
+                "logFileLevel=" + logFileLevel +
+                ", logTermLevel=" + logTermLevel +
+                ", logFileSize=" + logFileSize +
+                ", logFileCount=" + logFileCount +
+                ", logFileName='" + logFileName + '\'' +
+                ", logFileBase='" + logFileBase + '\'' +
+                ", logInherited=" + logInherited +
+                '}';
     }
 }

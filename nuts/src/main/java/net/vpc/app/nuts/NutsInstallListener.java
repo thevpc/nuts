@@ -30,18 +30,35 @@
 package net.vpc.app.nuts;
 
 /**
+ * A class can implement the <code>NutsInstallListener</code> interface when it
+ * wants to be informed of install artifacts actions.
  *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsInstallListener extends NutsListener {
 
+    /**
+     * This method is called whenever the observed workspace installs an artifact.
+     *
+     * @param event event
+     */
     default void onInstall(NutsInstallEvent event) {
     }
 
+    /**
+     * This method is called whenever the observed workspace uninstalls an artifact.
+     *
+     * @param event event
+     */
     default void onUninstall(NutsInstallEvent event) {
     }
 
-    default void onUpdate(NutsInstallEvent event) {
+    /**
+     * This method is called whenever the observed workspace updates an artifact.
+     *
+     * @param event event
+     */
+    default void onUpdate(NutsUpdateEvent event) {
     }
 }

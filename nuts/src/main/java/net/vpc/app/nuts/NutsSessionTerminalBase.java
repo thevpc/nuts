@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 2/20/17.
+ * Session Terminal Base instance are special Terminal Base classes instances that handle workspace session.
  *
  * @since 0.5.4
  */

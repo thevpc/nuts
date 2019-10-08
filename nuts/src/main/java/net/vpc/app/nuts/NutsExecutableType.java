@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * executable command type returned by which internal command
+ * Executable command type returned by which internal command
  * @author vpc
  * @since 0.5.4
  */
@@ -62,6 +62,9 @@ public enum NutsExecutableType {
      */
     private final String id;
 
+    /**
+     * default constructor
+     */
     NutsExecutableType() {
         this.id = name().toLowerCase().replace('_', '-');
     }

@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -126,11 +127,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public Path getCatalinaBase() {
         LocalTomcatConfig c = getConfig();
-        Path catalinaBase = getContext().getWorkspace().io().path(c.getCatalinaBase());
+        Path catalinaBase = c.getCatalinaBase()==null?null:Paths.get(c.getCatalinaBase());
         Path catalinaHome = getCatalinaHome();
         if (TomcatUtils.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
-            catalinaBase = getContext().getWorkspace().io().path(getName());
+            catalinaBase = Paths.get(getName());
         }
         if (catalinaBase == null) {
             catalinaBase = catalinaHome;
@@ -159,7 +160,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsDefinition f = getCatalinaNutsDefinition();
             return f.getInstallInformation().getInstallFolder();
         } else {
-            return getContext().getWorkspace().io().path(h);
+            return Paths.get(h);
         }
     }
 
@@ -333,22 +334,35 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaVersion = catalinaVersion.trim();
         if (catalinaVersion.isEmpty()) {
             NutsVersion javaVersion = context.workspace().config().getPlatform().getVersion();
-            if(javaVersion.compareTo("1.8")<0) {
-                catalinaVersion = "7";
+            //  http://tomcat.apache.org/whichversion.html
+            if(javaVersion.compareTo("1.8")>=0) {
+                catalinaVersion = "[9,[";
+            }else if(javaVersion.compareTo("1.7")>=0) {
+                catalinaVersion = "[8.5,9[";
+            }else if(javaVersion.compareTo("1.6")>=0) {
+                catalinaVersion = "[7,8[";
+            }else if(javaVersion.compareTo("1.5")<0) {
+                catalinaVersion = "[6,7[";
+            }else if(javaVersion.compareTo("1.4")<0) {
+                catalinaVersion = "[5.5,6[";
+            }else if(javaVersion.compareTo("1.3")<0) {
+                catalinaVersion = "[4.1,5[";
+            }else {
+                catalinaVersion = "[3.3,4[";
             }
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            NutsDefinition r = context.workspace().search().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                    .session(context.getSession().copy().trace(false))
-                    .getResultDefinitions().first();
-            if (r != null && r.getInstallInformation().isInstalled()) {
+            NutsDefinition r = context.workspace().search().id("org.apache.catalina:apache-tomcat#" + catalinaVersion)
+                    .session(context.getSession().copy().silent()).latest()
+                    .getResultDefinitions().required();
+            if (r.getInstallInformation().isInstalled()) {
                 return r;
             } else {
                 catalinaNutsDefinition = context.workspace()
                         .install()
-                        .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
-                        .setSession(context.getSession().copy().trace().addListener(new NutsInstallListener() {
+                        .id(r.getId())
+                        .session(context.getSession().copy().trace().addListener(new NutsInstallListener() {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
                                 if (context.session().isPlainOut()) {

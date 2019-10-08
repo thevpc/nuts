@@ -30,12 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * This Exception is thrown when the repository fails to initialize.
  *
  * @since 0.5.4
  */
 public class NutsInvalidRepositoryException extends NutsRepositoryException {
 
+    /**
+     * Constructs a new NutsInvalidRepositoryException exception
+     * @param workspace  workspace
+     * @param repository repository
+     * @param message message
+     */
     public NutsInvalidRepositoryException(NutsWorkspace workspace, String repository, String message) {
         super(workspace, repository, "Invalid repository " + (repository == null ? "<null>" : repository) + " : " + message, null);
     }

@@ -43,7 +43,7 @@ VARIATIONS:
 
 ==config== (find extensions| fx)
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==config== create -i workspace ~~/example
    create a workspace at the following location ${HOME}/.nuts/example

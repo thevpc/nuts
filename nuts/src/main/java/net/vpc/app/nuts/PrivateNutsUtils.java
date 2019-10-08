@@ -46,7 +46,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,12 +108,12 @@ final class PrivateNutsUtils {
     }
 
     public static String idToPath(PrivateNutsId id) {
-        return id.getGroupId().replace('.','/')+"/"+
-                id.getArtifactId()+"/"+id.getVersion();
+        return id.getGroupId().replace('.', '/') + "/" +
+                id.getArtifactId() + "/" + id.getVersion();
     }
 
     public static String idToPath(String str) {
-        int status=0;
+        int status = 0;
 
         char[] chars = str.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -124,16 +123,16 @@ final class PrivateNutsUtils {
                     switch (c) {
                         case ':': {
                             status = 1;
-                            chars[i]='/';
+                            chars[i] = '/';
                             break;
                         }
                         case '.': {
-                            chars[i]='/';
+                            chars[i] = '/';
                             break;
                         }
                         case '#': {
                             status = 2;
-                            chars[i]='/';
+                            chars[i] = '/';
                             break;
                         }
                     }
@@ -142,7 +141,7 @@ final class PrivateNutsUtils {
                     switch (c) {
                         case '#': {
                             status = 2;
-                            chars[i]='/';
+                            chars[i] = '/';
                             break;
                         }
                     }
@@ -157,7 +156,7 @@ final class PrivateNutsUtils {
             return null;
         }
         String s = str.trim();
-        return s.length()==0?null:s;
+        return s.length() == 0 ? null : s;
     }
 
     public static List<String> split(String str, String separators, boolean trim) {
@@ -226,7 +225,7 @@ final class PrivateNutsUtils {
 //            }
 //            return true;
 //        } catch (IOException e) {
-//            LOG.log(Level.SEVERE, "[ERROR  ] Unable to store {0}", file);
+//            LOG.log(Level.SEVERE, "unable to store {0}", file);
 //        }
 //        return false;
 //    }
@@ -244,7 +243,7 @@ final class PrivateNutsUtils {
 //        return p;
 //    }
 
-    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache,PrivateNutsLog LOG) {
+    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
         InputStream inputStream = null;
@@ -255,22 +254,18 @@ final class PrivateNutsUtils {
                     try {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
-                        if(LOG!=null) {
-                            long time = System.currentTimeMillis() - startTime;
-                            LOG.log(Level.CONFIG, "[SUCCESS] Loaded cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), formatPeriodMilli(time)});
-                        }
+                        long time = System.currentTimeMillis() - startTime;
+                        LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "loaded cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), formatPeriodMilli(time)});
                         return props;
                     } catch (IOException ex) {
-                        if(LOG!=null) {
-                            LOG.log(Level.CONFIG, "[ERROR  ] Invalid cache. Ignored {0} : {1}", new Object[]{cacheFile.getPath(), ex.toString()});
-                        }
+                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "invalid cache. Ignored {0} : {1}", new Object[]{cacheFile.getPath(), ex.toString()});
                     } finally {
                         if (inputStream != null) {
                             try {
                                 inputStream.close();
                             } catch (Exception ex) {
-                                if(LOG!=null) {
-                                    LOG.log(Level.FINE, "Unable to close stream", ex);
+                                if (LOG != null) {
+                                    LOG.log(Level.FINE, "unable to close stream", ex);
                                 }
                                 //
                             }
@@ -300,24 +295,24 @@ final class PrivateNutsUtils {
                                 }
                                 boolean cachedRecovered = cacheFile.isFile();
                                 if (urlFile != null) {
-                                    copy(urlFile, cacheFile,LOG);
+                                    copy(urlFile, cacheFile, LOG);
                                 } else {
-                                    copy(url, cacheFile,LOG);
+                                    copy(url, cacheFile, LOG);
                                 }
                                 long time = System.currentTimeMillis() - startTime;
                                 if (cachedRecovered) {
-                                    LOG.log(Level.CONFIG, "[RECOV. ] Cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                    LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
                                 } else {
-                                    LOG.log(Level.CONFIG, "[CACHED ] Cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                    LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     }
                 }
             } finally {
@@ -327,9 +322,9 @@ final class PrivateNutsUtils {
             }
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
-                String.valueOf(url),
-                formatPeriodMilli(time)});
+            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
+                    String.valueOf(url),
+                    formatPeriodMilli(time)});
         }
         return props;
     }
@@ -365,7 +360,6 @@ final class PrivateNutsUtils {
         }
         return sb.toString();
     }
-
 
 
     public static String replaceDollarString(String path, Function<String, String> m) {
@@ -456,9 +450,9 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    private static class SimpleConfirmDelete implements ConfirmDelete{
+    private static class SimpleConfirmDelete implements ConfirmDelete {
         private boolean force;
-        private List<File> ignoreDeletion=new ArrayList<>();
+        private List<File> ignoreDeletion = new ArrayList<>();
 
         @Override
         public boolean isForce() {
@@ -470,15 +464,15 @@ final class PrivateNutsUtils {
             this.force = value;
         }
 
-        public void ignore(File directory){
+        public void ignore(File directory) {
             ignoreDeletion.add(directory);
         }
 
         @Override
         public boolean accept(File directory) {
             for (File ignored : ignoreDeletion) {
-                String s=ignored.getPath()+File.separatorChar;
-                if(s.startsWith(directory.getPath()+"/")){
+                String s = ignored.getPath() + File.separatorChar;
+                if (s.startsWith(directory.getPath() + "/")) {
                     return false;
                 }
             }
@@ -486,18 +480,21 @@ final class PrivateNutsUtils {
         }
     }
 
-    private interface ConfirmDelete{
+    private interface ConfirmDelete {
         boolean isForce();
+
         void setForce(boolean value);
+
         boolean accept(File directory);
+
         void ignore(File directory);
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
-        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session,LOG);
+    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
+    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
         int count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -515,7 +512,7 @@ final class PrivateNutsUtils {
                             }
                         }
                     }
-                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session,LOG)) {
+                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG)) {
                         count++;
                     }
                 }
@@ -524,7 +521,7 @@ final class PrivateNutsUtils {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session,PrivateNutsLog LOG) {
+    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
@@ -552,7 +549,7 @@ final class PrivateNutsUtils {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);
-                        LOG.log(Level.FINEST, "[SUCCESS] Deleting file   : {0}", file);
+                        LOG.log(Level.FINEST, PrivateNutsLog.WARNING, "delete file   : {0}", file);
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -563,7 +560,7 @@ final class PrivateNutsUtils {
                         return FileVisitResult.CONTINUE;
                     }
                 });
-                LOG.log(Level.FINEST, "[SUCCESS] Deleting folder : {0}", directory);
+                LOG.log(Level.FINEST, PrivateNutsLog.WARNING, "delete folder : {0}", directory);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -614,7 +611,7 @@ final class PrivateNutsUtils {
         }
         String ss
                 = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
-                        : s.toString().trim();
+                : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -692,19 +689,19 @@ final class PrivateNutsUtils {
         }
     }
 
-    public static void copy(File ff, File to,PrivateNutsLog LOG) throws IOException {
+    public static void copy(File ff, File to, PrivateNutsLog LOG) throws IOException {
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();
         }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
             throw ex;
         }
     }
 
-    public static void copy(URL url, File to,PrivateNutsLog LOG) throws IOException {
+    public static void copy(URL url, File to, PrivateNutsLog LOG) throws IOException {
         try {
             InputStream in = url.openStream();
             if (in == null) {
@@ -714,7 +711,7 @@ final class PrivateNutsUtils {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        LOG.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
+                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error creating folder {0}", new Object[]{url});
                     }
                 }
             }
@@ -722,7 +719,7 @@ final class PrivateNutsUtils {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
+            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
             throw ex;
         }
     }
@@ -785,7 +782,7 @@ final class PrivateNutsUtils {
      *
      * @param v1 version 1
      * @param v2 version 2
-     * @return 1,0 or -1
+     * @return 1, 0 or -1
      */
     public static int compareRuntimeVersion(String v1, String v2) {
         String[] a1 = v1.split("\\.");
@@ -807,11 +804,11 @@ final class PrivateNutsUtils {
         return 0;
     }
 
-    public static Set<String> parseDependencies(String s){
+    public static Set<String> parseDependencies(String s) {
         return new LinkedHashSet<>(PrivateNutsUtils.split(s, ";", false));
     }
 
-    public static class Mvn{
+    public static class Mvn {
 
         public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
             String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
@@ -845,23 +842,23 @@ final class PrivateNutsUtils {
             return mvnUrl + jarPath;
         }
 
-        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder,PrivateNutsLog LOG) {
+        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG) {
             String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
             File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
             if (cachedFile.isFile()) {
                 return cachedFile;
             }
             for (String r : repositories) {
-                LOG.log(Level.FINE, "Checking {0} jar from {1}", new Object[]{nutsId, r});
+                LOG.log(Level.FINE, PrivateNutsLog.CACHE, "checking {0} jar from {1}", new Object[]{nutsId, r});
                 String path = resolveMavenFullPath(r, nutsId, "jar");
                 File file = toFile(r);
                 if (file == null) {
                     try {
-                        copy(new URL(path), cachedFile,LOG);
-                        LOG.log(Level.CONFIG, "[CACHED ] Cache jar file {0}", new Object[]{cachedFile.getPath()});
+                        copy(new URL(path), cachedFile, LOG);
+                        LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cache jar file {0}", new Object[]{cachedFile.getPath()});
                         return cachedFile;
                     } catch (Exception ex) {
-                        LOG.log(Level.SEVERE, "[ERROR  ] Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
                         //ex.printStackTrace();
                         //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                     }
@@ -871,24 +868,24 @@ final class PrivateNutsUtils {
                     if (f.isFile()) {
                         return f;
                     } else {
-                        LOG.log(Level.SEVERE, "Unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
                     }
                 }
             }
             return null;
         }
 
-        static Deps loadDependencies(PrivateNutsId rid,PrivateNutsLog LOG) {
+        static Deps loadDependencies(PrivateNutsId rid, PrivateNutsLog LOG) {
             String urlPath = idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-            return loadDependencies(urlPath,LOG);
+            return loadDependencies(urlPath, LOG);
         }
 
-        static Deps loadDependencies(String urlPath,PrivateNutsLog LOG) {
+        static Deps loadDependencies(String urlPath, PrivateNutsLog LOG) {
             Deps depsAndRepos = null;
             if (!NO_M2) {
                 File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
                 if (mavenNutsCorePom.isFile()) {
-                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath(),LOG);
+                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath(), LOG);
                 }
             }
             if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
@@ -896,7 +893,7 @@ final class PrivateNutsUtils {
                         NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
                         NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
                 }) {
-                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath,LOG);
+                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, LOG);
                     if (!depsAndRepos.deps.isEmpty()) {
                         break;
                     }
@@ -905,7 +902,7 @@ final class PrivateNutsUtils {
             return depsAndRepos;
         }
 
-        static Deps loadDependenciesAndRepositoriesFromPomUrl(String url,PrivateNutsLog LOG) {
+        static Deps loadDependenciesAndRepositoriesFromPomUrl(String url, PrivateNutsLog LOG) {
             Deps depsAndRepos = new Deps();
             InputStream xml = null;
             try {
@@ -999,7 +996,7 @@ final class PrivateNutsUtils {
                 }
 
             } catch (Exception ex) {
-                LOG.log(Level.FINE,"Unable to loadDependenciesAndRepositoriesFromPomUrl "+url,ex);
+                LOG.log(Level.FINE, "unable to loadDependenciesAndRepositoriesFromPomUrl " + url, ex);
             } finally {
                 if (xml != null) {
                     try {
@@ -1019,8 +1016,8 @@ final class PrivateNutsUtils {
          * @param filter filter
          * @return latest runtime version
          */
-        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter,PrivateNutsLog LOG) {
-            LOG.log(Level.FINEST, "[START  ] Looking for "+zId);
+        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter, PrivateNutsLog LOG) {
+            LOG.log(Level.FINEST, PrivateNutsLog.START,"looking for " + zId);
             String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
             String bestVersion = null;
             String bestPath = null;
@@ -1042,7 +1039,7 @@ final class PrivateNutsUtils {
                                     if (filter == null || filter.test(p)) {
                                         if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
                                             bestVersion = p;
-                                            bestPath = "Local location : "+file.getPath();
+                                            bestPath = "Local location : " + file.getPath();
                                         }
                                     }
                                 }
@@ -1064,7 +1061,7 @@ final class PrivateNutsUtils {
                             = DocumentBuilderFactory.newInstance();
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     InputStream is = runtimeMetadata.openStream();
-                    LOG.log(Level.FINEST, "[SUCCESS] Parsing "+mavenMetadata);
+                    LOG.log(Level.FINEST,PrivateNutsLog.SUCCESS, "parsing " + mavenMetadata);
                     Document doc = builder.parse(is);
                     Element c = doc.getDocumentElement();
                     for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -1080,7 +1077,7 @@ final class PrivateNutsUtils {
                                             if (filter == null || filter.test(p)) {
                                                 if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
                                                     bestVersion = p;
-                                                    bestPath = "remote file "+mavenMetadata;
+                                                    bestPath = "remote file " + mavenMetadata;
                                                 }
                                             }
                                         }
@@ -1092,7 +1089,7 @@ final class PrivateNutsUtils {
                         //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                     }
                 } catch (Exception ex) {
-                    LOG.log(Level.FINE,"Unable to parse "+mavenMetadata,ex);
+                    LOG.log(Level.FINE, "unable to parse " + mavenMetadata, ex);
                     // ignore any error
                 }
                 if (found) {
@@ -1103,7 +1100,7 @@ final class PrivateNutsUtils {
                 return null;
             }
             String s = zId.getGroupId() + ":" + zId.getArtifactId() + "#" + bestVersion;
-            LOG.log(Level.FINEST,"[SUCCESS] Resolved "+s+" from "+bestPath);
+            LOG.log(Level.FINEST,PrivateNutsLog.SUCCESS, "resolved " + s + " from " + bestPath);
             return s;
         }
 

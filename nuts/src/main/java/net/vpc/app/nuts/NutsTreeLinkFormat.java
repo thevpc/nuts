@@ -30,13 +30,23 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Format class responsible of formatting prefix of a tree
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsTreeLinkFormat {
 
+    /**
+     * return prefix for node root for the given layout
+     * @param type position type
+     * @return formatted prefix
+     */
     String formatMain(NutsPositionType type);
 
+    /**
+     * return prefix for node child for the given layout
+     * @param type position type
+     * @return formatted prefix
+     */
     String formatChild(NutsPositionType type);
 }

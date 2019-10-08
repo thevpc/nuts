@@ -17,9 +17,9 @@ import java.util.Arrays;
 
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.io.SimpleClassStream;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.runtime.util.io.SimpleClassStream;
 import org.junit.Test;
 
 /**

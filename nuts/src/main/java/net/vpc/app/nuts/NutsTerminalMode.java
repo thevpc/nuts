@@ -35,8 +35,21 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  */
 public enum NutsTerminalMode {
+    /**
+     * streams in inherited mode will <strong>not process</strong> the content but delegate processing to it parents
+     */
     INHERITED,
+
+    /**
+     * streams in formatted mode will process Nuts Stream Format (** and ## special characters...)
+     * and render in a <strong>colorful</strong> way the its content.
+     */
     FORMATTED,
+
+    /**
+     * streams in filtered mode will process Nuts Stream Format (** and ## special characters...)
+     * by filtering (removing) or format characters so that the content is rendered as a <strong>plain</strong> text.
+     */
     FILTERED;
 
     /**
@@ -44,6 +57,9 @@ public enum NutsTerminalMode {
      */
     private final String id;
 
+    /**
+     * default constructor
+     */
     NutsTerminalMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }

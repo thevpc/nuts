@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Generic Add options
@@ -81,4 +82,23 @@ public class NutsAddOptions implements Serializable {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsAddOptions that = (NutsAddOptions) o;
+        return Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(session);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsAddOptions{" +
+                "session=" + session +
+                '}';
+    }
 }

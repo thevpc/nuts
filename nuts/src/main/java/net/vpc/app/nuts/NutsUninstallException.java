@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * This Exception is thrown when an artifact fails to be uninstalled
  *
  * @since 0.5.4
  */

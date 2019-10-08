@@ -65,11 +65,16 @@ public interface NutsUpdateResult {
      */
     boolean isUpdateForced();
 
+    /**
+     * return true if the update was applied
+     *
+     * @return true if the update was applied
+     */
     boolean isUpdateApplied();
 
     /**
      * return true if any update is available.
-     * equivalent to {@code isUpdateVersion() || isUpdateStatus()}
+     * equivalent to {@code isUpdateVersionAvailable() || isUpdateStatusAvailable()}
      *
      * @return true if any update is available
      */

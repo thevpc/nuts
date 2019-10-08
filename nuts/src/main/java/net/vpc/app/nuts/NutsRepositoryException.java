@@ -38,6 +38,13 @@ public abstract class NutsRepositoryException extends NutsException {
 
     private final String repository;
 
+    /**
+     * Constructs a new NutsRepositoryException exception
+     * @param workspace workspace
+     * @param repository repository
+     * @param message message
+     * @param ex exception
+     */
     public NutsRepositoryException(NutsWorkspace workspace, String repository, String message, Throwable ex) {
         super(workspace,
                 PrivateNutsUtils.isBlank(message)

@@ -38,15 +38,30 @@ public class NutsUserCancelException extends NutsExecutionException {
 
     public static final int DEFAULT_CANCEL_EXIT_CODE = 245;
 
+    /**
+     * Constructs a new NutsUserCancelException exception
+     * @param workspace workspace
+     */
     public NutsUserCancelException(NutsWorkspace workspace) {
         this(workspace, null);
     }
 
+    /**
+     * Constructs a new NutsUserCancelException exception
+     * @param workspace workspace
+     * @param message message
+     */
     public NutsUserCancelException(NutsWorkspace workspace, String message) {
         this(workspace, message, DEFAULT_CANCEL_EXIT_CODE);
     }
 
-    public NutsUserCancelException(NutsWorkspace workspace, String message, int code) {
-        super(workspace, (message == null || message.trim().isEmpty()) ? "User cancelled operation" : message, code);
+    /**
+     * Constructs a new NutsUserCancelException exception
+     * @param workspace workspace
+     * @param message message
+     * @param exitCode exit code
+     */
+    public NutsUserCancelException(NutsWorkspace workspace, String message, int exitCode) {
+        super(workspace, (message == null || message.trim().isEmpty()) ? "User cancelled operation" : message, exitCode);
     }
 }

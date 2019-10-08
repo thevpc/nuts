@@ -4,11 +4,21 @@
 ==nuts== **-v**
       show version
 
+##SYNOPSIS:##
+==nuts== ##version## \[**<options>**\]
+
+##OPTIONS:##
+ **-a** | "**--all**
+      include all versions (api, runtime, java and operating system)
+
+ "**--add** <key>\=<value>
+      include key\=value pair in the result
+
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
-        ==nuts== {{version}} **--help**
-            shows this help and exit
+##EXAMPLES:##
+        ==nuts== {{version}} **-a**
+            shows all versions
        
         ==nuts== **-v**
             show version

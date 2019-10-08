@@ -5,7 +5,7 @@ concatenate files and print on the standard output
 
 concatenate files and print on the standard output
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==cat== f - g
     Output f's contents, then standard input, then g's contents.

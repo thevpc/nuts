@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *

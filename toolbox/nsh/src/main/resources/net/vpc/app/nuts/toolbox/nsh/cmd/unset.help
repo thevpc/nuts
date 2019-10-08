@@ -4,7 +4,7 @@ delete variables
 ==unset== <varname> ...
 delete variables
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==unset== elemName
     delete var elemName

@@ -5,7 +5,7 @@ output the first part of files
 
 output the first part of files
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==head== -100 out.txt
    print first 100 lnes

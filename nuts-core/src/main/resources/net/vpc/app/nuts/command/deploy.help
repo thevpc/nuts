@@ -11,7 +11,7 @@ deploys an id from registered repository to another
 
 #!include</net/vpc/app/nuts/includes/standard-command.help>
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ##deploy## --file myjar.jar
    deploys the myjar.jar file to default local repository

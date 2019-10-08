@@ -30,16 +30,27 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
- *
+ * This exception is thrown when a repository location could no be loaded because
+ *  the repository is already registered for the actual workspace.
  * @since 0.5.4
  */
 public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryException {
 
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace  workspace
+     * @param repository repository
+     */
     public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository) {
         super(workspace, repository,"Repository Already registered " + (repository == null ? "<null>" : repository),null);
     }
 
+    /**
+     * Constructs a new NutsNotInstalledException exception
+     * @param workspace  workspace
+     * @param repository repository
+     * @param err error
+     */
     public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository, Throwable err) {
         super(workspace, repository,"Repository Already registered " + (repository == null ? "<null>" : repository), err);
     }

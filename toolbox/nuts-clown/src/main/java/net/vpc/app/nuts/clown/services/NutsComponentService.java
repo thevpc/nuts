@@ -109,7 +109,7 @@ public class NutsComponentService {
                 .setOs(os)
                 .setOsdist(osdist)
                 .setFace(face)
-                .setScope(scope)
+                .scope(scope)
 //                .setAlternative(alternative)
                 .build();
         NutsFetchCommand fetch = ws.fetch().id(id);
@@ -151,7 +151,7 @@ public class NutsComponentService {
                 .setOs(os)
                 .setOsdist(osdist)
                 .setFace(face)
-                .setScope(scope)
+                .scope(scope)
 //                .setAlternative(alternative)
                 .build();
         ws.undeploy().id(id).run();

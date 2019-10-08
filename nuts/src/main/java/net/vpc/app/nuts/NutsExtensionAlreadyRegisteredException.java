@@ -36,15 +36,31 @@ package net.vpc.app.nuts;
  */
 public class NutsExtensionAlreadyRegisteredException extends NutsExtensionException {
 
+    /**
+     * installed id
+     */
     private final String installed;
 
+    /**
+     * Constructs a new NutsExtensionAlreadyRegisteredException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param installed installed id
+     */
     public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed) {
         super(workspace, id, "Extension Already registered " + (id == null ? "<null>" + " as " + installed : id), null);
         this.installed = installed;
     }
 
-    public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed, Throwable err) {
-        super(workspace, id, "Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, err);
+    /**
+     * Constructs a new NutsExtensionAlreadyRegisteredException exception
+     * @param workspace workspace
+     * @param id artifact id
+     * @param installed installed id
+     * @param cause cause
+     */
+    public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed, Throwable cause) {
+        super(workspace, id, "Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
         this.installed = installed;
     }
 

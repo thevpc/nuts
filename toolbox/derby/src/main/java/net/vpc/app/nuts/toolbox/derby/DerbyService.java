@@ -33,8 +33,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 
@@ -46,9 +48,11 @@ public class DerbyService {
 
     NutsApplicationContext appContext;
     DerbyOptions options;
+    NutsLogger LOG;
 
     public DerbyService(NutsApplicationContext appContext) {
         this.appContext = appContext;
+        LOG = appContext.workspace().log().of(getClass());
     }
 
     private Path download(String id, Path folder,boolean optional) {
@@ -59,20 +63,14 @@ public class DerbyService {
             if(optional){
                 Path r = appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(false).getResultPath();
                 if(r!=null) {
-                    if (appContext.session().isPlainTrace()) {
-                        appContext.getSession().out().println("downloading " + id + " to " + targetFile);
-                    }
+                    LOG.log(Level.FINEST, "downloading {0} to {1}",id,targetFile);
                 }
             }else {
-                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(true).getResultPath();
-                if (appContext.session().isPlainTrace()) {
-                    appContext.getSession().out().println("downloading " + id + " to " + targetFile);
-                }
+                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast().getResultPath();
+                LOG.log(Level.FINEST, "downloading {0} to {1}",id,targetFile);
             }
         } else {
-            if (appContext.session().isPlainTrace()) {
-                appContext.getSession().out().println("using " + id + " form " + targetFile);
-            }
+            LOG.log(Level.FINEST, "using {0} form {1}",id,targetFile);
         }
         return targetFile;
     }
@@ -84,14 +82,14 @@ public class DerbyService {
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
             NutsId java = appContext.getWorkspace().config().getPlatform();
-            NutsId best = ws.search().addId("org.apache.derby:derbynet").distinct().latest()
+            NutsId best = ws.search().session(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").distinct().latest()
                     .setIdFilter((id, session) -> {
                         if(java.getVersion().compareTo("1.9")<0){
                             return id.getVersion().compareTo("10.15.1.3") < 0;
                         }
                         return true;
                     })
-                    .session(appContext.getSession().copy().trace(false))
+                    .session(appContext.getSession().copy().silent())
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }
@@ -101,7 +99,7 @@ public class DerbyService {
             derbyDataHome = appContext.getVarFolder();
         } else {
             if (options.derbyDataHomeRoot != null) {
-                derbyDataHome = ws.io().path(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()))
+                derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()))
                         .resolve("derby-db");
             } else {
                 derbyDataHome = appContext.getVarFolder().resolve("derby-db");

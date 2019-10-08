@@ -84,7 +84,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 "#\n" +
                 "NUTS_VERSION='" + wsconfig.getApiVersion() + "'\n" +
                 "NUTS_JAR='" + ws.search()
-                .session(context.getSession().copy().trace(false))
+                .session(context.getSession().copy().silent())
                 .id(wsconfig.getApiId()).getResultPaths().required() +
                 "'\n" +
                 "NUTS_WORKSPACE='" + wsconfig.getWorkspaceLocation().toString() + "'\n" +

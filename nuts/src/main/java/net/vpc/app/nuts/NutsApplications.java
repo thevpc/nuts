@@ -40,7 +40,7 @@ import java.util.logging.Level;
  * @author vpc
  * @since 0.5.5
  */
-public class NutsApplications {
+public final class NutsApplications {
 
     private static final ThreadLocal<Map<String,Object>> sharedMap=new ThreadLocal<>();
 
@@ -85,9 +85,10 @@ public class NutsApplications {
         if(appClass==null){
             appClass=lifeCycle.getClass();
         }
-        ws.log().of(NutsApplications.class).log(Level.FINE, "START", "Running Application {0}: {1} {2}", new Object[]{
-            inherited ? "(inherited)" : "",
-            lifeCycle, ws.commandLine().create(args).toString()});
+        ws.log().of(NutsApplications.class).with().level(Level.FINE).verb("START").formatted()
+                .log("Running Application {0}: {1} {2}", inherited ? "(inherited)" : "",
+                lifeCycle, new NutsString(ws.commandLine().value(ws.commandLine().create(args)).format())
+        );
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
@@ -172,7 +173,7 @@ public class NutsApplications {
             try {
                 showTrace = ws.config().getOptions().isDebug();
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).log(Level.FINE,"Unable to check if option debug is enabled",ex2);
+                ws.log().of(NutsApplications.class).log(Level.FINE,"unable to check if option debug is enabled",ex2);
             }
         }
 //        if (showTrace) {
@@ -183,7 +184,7 @@ public class NutsApplications {
                 out = ws.io().getSystemTerminal().getOut();
                 m = "@@" + m + "@@";
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).log(Level.FINE,"Unable to get system terminal",ex2);
+                ws.log().of(NutsApplications.class).log(Level.FINE,"unable to get system terminal",ex2);
                 //
             }
         }

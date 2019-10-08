@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
-public class NutsJLineTerminal implements NutsSystemTerminalBase {
+public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAware {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
@@ -82,50 +82,48 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public void install(NutsWorkspace workspace) {
-        this.workspace = workspace;
-        TerminalBuilder builder = TerminalBuilder.builder();
-        builder.streams(System.in, System.out);
-        builder.system(true);
-        builder.dumb(false);
+    public void setWorkspace(NutsWorkspace workspace) {
+        if(workspace!=null) {
+            this.workspace = workspace;
+            TerminalBuilder builder = TerminalBuilder.builder();
+            builder.streams(System.in, System.out);
+            builder.system(true);
+            builder.dumb(false);
 
-        try {
-            terminal = builder.build();
-        } catch (Throwable ex) {
-            //unable to create system terminal
-            //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UncheckedIOException(new IOException(ex));
-        }
-        reader = LineReaderBuilder.builder()
-                .completer(new NutsJLineCompleter(workspace))
-                .terminal(terminal)
-                //                .completer(completer)
-                //                .parse(parse)
-                .build();
-        reader.setVariable(LineReader.HISTORY_FILE, workspace.config().getWorkspaceLocation().resolve("history").normalize().toFile());
-        ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
-        this.out = workspace.io().createPrintStream(
-                new TransparentPrintStream(
-                        new PrintStream(reader.getTerminal().output(), true),
-                        System.out
-                ),
-                NutsTerminalMode.FORMATTED);
-        this.err = workspace.io().createPrintStream(
-                new TransparentPrintStream(
-                        new PrintStream(reader.getTerminal().output(), true),
-                        System.err
-                ),
-                NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
-        this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
-
-    }
-
-    @Override
-    public void uninstall() {
-        try {
-            reader.getTerminal().close();
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error closing terminal", ex);
+            try {
+                terminal = builder.build();
+            } catch (Throwable ex) {
+                //unable to create system terminal
+                //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+                throw new UncheckedIOException(new IOException(ex));
+            }
+            reader = LineReaderBuilder.builder()
+                    .completer(new NutsJLineCompleter(workspace))
+                    .terminal(terminal)
+                    //                .completer(completer)
+                    //                .parse(parse)
+                    .build();
+            reader.setVariable(LineReader.HISTORY_FILE, workspace.config().getWorkspaceLocation().resolve("history").normalize().toFile());
+            ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
+            this.out = workspace.io().createPrintStream(
+                    new TransparentPrintStream(
+                            new PrintStream(reader.getTerminal().output(), true),
+                            System.out
+                    ),
+                    NutsTerminalMode.FORMATTED);
+            this.err = workspace.io().createPrintStream(
+                    new TransparentPrintStream(
+                            new PrintStream(reader.getTerminal().output(), true),
+                            System.err
+                    ),
+                    NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+            this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
+        }else{
+            try {
+                reader.getTerminal().close();
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Error closing terminal", ex);
+            }
         }
     }
 

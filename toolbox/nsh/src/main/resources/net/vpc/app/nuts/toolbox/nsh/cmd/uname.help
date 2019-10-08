@@ -11,7 +11,7 @@ print system information
 -d : os distribution
 
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==uname== -a
    print system information

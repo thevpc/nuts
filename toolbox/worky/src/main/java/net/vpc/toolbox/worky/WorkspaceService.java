@@ -13,6 +13,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import net.vpc.app.nuts.NutsCommandLine;
@@ -98,7 +99,7 @@ public class WorkspaceService {
             } else {
                 String expression = cmd.next().getString();
                 if (cmd.isExecMode()) {
-                    setScanEnabled(context.getWorkspace().io().path(expression), enable);
+                    setScanEnabled(Paths.get(expression), enable);
                     count++;
                 }
             }
@@ -310,27 +311,27 @@ public class WorkspaceService {
                     }
                     switch (tf.filterText(p2.status)) {
                         case "new": {
-                            appContext.session().out().printf("\\[%N\\] %s : %N%n", status, p2.id, p2.local);
+                            appContext.session().out().printf("\\[%s\\] %s : %s%n", new NutsString(status), p2.id, new NutsString(p2.local));
                             break;
                         }
                         case "commitable": {
-                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
                             break;
                         }
                         case "old": {
-                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
                             break;
                         }
                         case "invalid": {
-                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
                             break;
                         }
                         case "uptodate": {
-                            appContext.session().out().printf("\\[%N\\] %s : %N%n", status, p2.id, p2.local);
+                            appContext.session().out().printf("\\[%s\\] %s : %s%n", new NutsString(status), p2.id, new NutsString(p2.local));
                             break;
                         }
                         default: {
-                            appContext.session().out().printf("\\[%N\\] %s : %N - %N%n", status, p2.id, p2.local, p2.remote);
+                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
                             break;
                         }
                     }

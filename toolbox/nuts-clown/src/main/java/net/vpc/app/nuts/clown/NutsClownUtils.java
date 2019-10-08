@@ -12,7 +12,7 @@ public class NutsClownUtils {
     public static Map<String, String> nutsIdToMap(NutsId id) {
         Map<String, String> entity = new HashMap<>();
         id = id.setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace())
-            .setScope(StringUtils.isEmpty(id.getScope()) ? NutsDependencyScope.API.id() : id.getScope());
+            .scope(StringUtils.isEmpty(id.getScope()) ? NutsDependencyScope.API.id() : id.getScope());
         _condPut(entity, "name", id.getName());
         _condPut(entity, "namespace", id.getNamespace());
         _condPut(entity, "group", id.getGroup());

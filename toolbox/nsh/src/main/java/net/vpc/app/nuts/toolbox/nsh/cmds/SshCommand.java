@@ -139,7 +139,7 @@ public class SshCommand extends AbstractNshBuiltin {
                         } else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
                             String bootApiFileName = "nuts-" + ws.config().getApiId() + ".jar";
-                            sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
+                            sshSession.failFast().copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {
                                 javaCmd = (o.nutsJre + FileUtils.getNativePath("/bin/java"));

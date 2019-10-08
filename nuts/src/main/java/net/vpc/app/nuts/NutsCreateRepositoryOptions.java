@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * repository creation options
@@ -313,4 +314,41 @@ public class NutsCreateRepositoryOptions implements Serializable {
         return new NutsCreateRepositoryOptions(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsCreateRepositoryOptions that = (NutsCreateRepositoryOptions) o;
+        return enabled == that.enabled &&
+                failSafe == that.failSafe &&
+                create == that.create &&
+                proxy == that.proxy &&
+                temporary == that.temporary &&
+                deployOrder == that.deployOrder &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(session, that.session) &&
+                Objects.equals(config, that.config);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, location, enabled, failSafe, create, proxy, temporary, deployOrder, session, config);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsCreateRepositoryOptions{" +
+                "name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                ", enabled=" + enabled +
+                ", failSafe=" + failSafe +
+                ", create=" + create +
+                ", proxy=" + proxy +
+                ", temporary=" + temporary +
+                ", deployOrder=" + deployOrder +
+                ", session=" + session +
+                ", config=" + config +
+                '}';
+    }
 }

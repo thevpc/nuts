@@ -243,7 +243,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @param fetchStrategy fetch strategy
      * @return {@code this} instance
      */
-    NutsFetchCommand fetchStratery(NutsFetchStrategy fetchStrategy);
+    NutsFetchCommand fetchStrategy(NutsFetchStrategy fetchStrategy);
 
     /**
      * set fetch strategy.
@@ -251,7 +251,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @param fetchStrategy fetch strategy
      * @return {@code this} instance
      */
-    NutsFetchCommand setFetchStratery(NutsFetchStrategy fetchStrategy);
+    NutsFetchCommand setFetchStrategy(NutsFetchStrategy fetchStrategy);
 
     /**
      * set or unset transitive mode

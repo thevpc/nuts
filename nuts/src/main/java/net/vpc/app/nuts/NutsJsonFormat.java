@@ -38,6 +38,7 @@ import java.nio.file.Path;
 /**
  *
  * @author vpc
+ * @since 0.5.5
  */
 public interface NutsJsonFormat extends NutsFormat {
 

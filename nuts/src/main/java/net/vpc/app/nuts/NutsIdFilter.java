@@ -30,12 +30,18 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/5/17.
+ * Class for filtering Artifact Ids
  *
  * @since 0.5.4
  */
 public interface NutsIdFilter extends NutsSearchIdFilter {
 
+    /**
+     * return true when the id is to be accepted
+     * @param id id to check
+     * @param session current workspace session
+     * @return true when the id is to be accepted
+     */
     boolean accept(NutsId id, NutsSession session);
 
     @Override

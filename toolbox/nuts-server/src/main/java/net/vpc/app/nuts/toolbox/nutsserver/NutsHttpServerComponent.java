@@ -108,7 +108,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         final HttpServer server;
         try {
-            server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
+            server = httpConfig.isTls() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -116,7 +116,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             executor = new ThreadPoolExecutor(4, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
         }
         server.setExecutor(executor);
-        if (httpConfig.isSsh()) {
+        if (httpConfig.isTls()) {
             if (httpConfig.getSslKeystorePassphrase() == null) {
                 throw new NutsIllegalArgumentException(invokerWorkspace, "Missing SslKeystorePassphrase");
             }
@@ -229,10 +229,28 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         });
         server.start();
         PrintStream out = session.out();
-        out.printf("Nuts Http Service '%s' running at %s\n", serverId, inetSocketAddress);
-        out.printf("Serving workspaces: \n");
-        for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
-            out.printf("\t%s : %s\n", entry.getKey(), entry.getValue().config().getWorkspaceLocation());
+        out.printf("Nuts Http Service '%s' running "+(
+                (httpConfig.isTls()?"##https##":"##http##")
+                )+" at %s\n", serverId, inetSocketAddress);
+        if(workspaces.size()==1){
+            out.print("Serving workspace : ");
+            for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
+                String k = entry.getKey();
+                if(k.equals("")){
+                    out.printf("%s\n", entry.getValue().config().getWorkspaceLocation());
+                }else{
+                    out.printf("%s : %s\n", k, entry.getValue().config().getWorkspaceLocation());
+                }
+            }
+        }else {
+            out.println("Serving workspaces:");
+            for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
+                String k = entry.getKey();
+                if(k.equals("")){
+                    k="<default>";
+                }
+                out.printf("\t%s : %s\n", k, entry.getValue().config().getWorkspaceLocation());
+            }
         }
         final String finalServerId = serverId;
         return new NutsServer() {

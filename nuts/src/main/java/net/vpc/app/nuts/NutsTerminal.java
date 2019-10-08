@@ -29,12 +29,13 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.IOError;
 import java.io.InputStream;
 import java.io.PrintStream;
 
 /**
- * Created by vpc on 2/20/17.
- *
+ * A Terminal handles in put stream, an output stream and an error stream to communicate
+ * with user.
  * @since 0.5.4
  */
 public interface NutsTerminal extends NutsTerminalBase {
@@ -47,27 +48,115 @@ public interface NutsTerminal extends NutsTerminalBase {
      */
     NutsTerminal setMode(NutsTerminalMode mode);
 
+    /**
+     * change terminal mode for both out and err
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
+    NutsTerminal mode(NutsTerminalMode mode);
+
+    /**
+     * change terminal mode for out
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
     @Override
     NutsTerminal setOutMode(NutsTerminalMode mode);
 
-    @Override
-    NutsTerminalMode getOutMode();
+    /**
+     * change terminal mode for out
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
+    NutsTerminal outMode(NutsTerminalMode mode);
 
+    /**
+     * change terminal mode for err
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
     @Override
     NutsTerminal setErrMode(NutsTerminalMode mode);
 
+    /**
+     * change terminal mode for out
+     *
+     * @param mode mode
+     * @return {@code this} instance
+     */
+    NutsTerminal errMode(NutsTerminalMode mode);
+
+    /**
+     * return err mode
+     *
+     * @return err mode
+     */
     @Override
     NutsTerminalMode getErrMode();
 
+    /**
+     * return out mode
+     *
+     * @return out mode
+     */
+    @Override
+    NutsTerminalMode getOutMode();
+
+    /**
+     * Reads a single line of text from the the terminal's input stream.
+     *
+     * @throws java.io.UncheckedIOException
+     *         If an I/O error occurs.
+     *
+     * @param promptFormat prompt message format (cstyle)
+     * @param params prompt message parameters
+     * @return  A string containing the line read from the terminal's input stream, not
+     *          including any line-termination characters, or <tt>null</tt>
+     *          if an end of stream has been reached.
+     */
     String readLine(String promptFormat, Object... params);
 
-    char[] readPassword(String prompt, Object... params);
+    /**
+     * Reads password as a single line of text from the terminal's input stream.
+     *
+     * @throws java.io.UncheckedIOException
+     *         If an I/O error occurs.
+     *
+     * @param promptFormat prompt message format (cstyle)
+     * @param params prompt message parameters
+     * @return  A string containing the line read from the terminal's input stream, not
+     *          including any line-termination characters, or <tt>null</tt>
+     *          if an end of stream has been reached.
+     */
+    char[] readPassword(String promptFormat, Object... params);
 
+    /**
+     * create a {@link NutsQuestion} to write a question to the terminal's output stream
+     * and read a typed value from the terminal's input stream.
+     * @param <T> type of teh value to read
+     * @return new instance of {@link NutsQuestion}
+     */
     <T> NutsQuestion<T> ask();
 
+    /**
+     * return terminal's input stream
+     * @return terminal's input stream
+     */
     InputStream in();
 
+    /**
+     * return terminal's output stream
+     * @return terminal's output stream
+     */
     PrintStream out();
 
+    /**
+     * return terminal's error stream
+     * @return terminal's error stream
+     */
     PrintStream err();
 }

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Artifact id information.
+ * Immutable Artifact id information.
  * @author vpc
  * @since 0.1.0
  */
@@ -149,7 +149,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     String getFullName();
 
     /**
-     * return a new instance of NutsId defining only group, name and version,
+     * return a string concatenation of group, name and version,
      * ignoring namespace, and queryMap values. An example of long name is
      * <code>my-group:my-artifact#my-version?alt</code>
      *

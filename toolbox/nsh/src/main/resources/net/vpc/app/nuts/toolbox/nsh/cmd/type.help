@@ -4,7 +4,7 @@ display a description of command type
 ==type== <command-name> ...
 display a description of command type
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==type== ls
     show command type

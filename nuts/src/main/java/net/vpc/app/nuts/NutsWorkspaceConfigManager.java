@@ -34,7 +34,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * @author vpc
@@ -205,7 +204,7 @@ public interface NutsWorkspaceConfigManager {
 
     Path resolveRepositoryPath(String repositoryLocation);
 
-    NutsIndexStoreClientFactory getIndexStoreClientFactory();
+    NutsIndexStoreFactory getIndexStoreClientFactory();
 
     NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 

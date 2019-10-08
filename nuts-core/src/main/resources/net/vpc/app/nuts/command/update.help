@@ -25,7 +25,7 @@
 
    update the current workspace to latest version or to the given version if provided.
 
-##EXAMPLES##:
+##EXAMPLES:##
         ==nuts== {{update}} **--help**
             show this help and exit
        

@@ -30,12 +30,9 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.app.DefaultNutsArgument;
+import net.vpc.app.nuts.runtime.app.DefaultNutsArgument;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *

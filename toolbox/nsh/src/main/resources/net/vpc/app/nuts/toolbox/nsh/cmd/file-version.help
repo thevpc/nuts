@@ -5,7 +5,7 @@ parse file version
 
 parse file version (war, jar and exe supported)
 
-##EXAMPLES##:
+##EXAMPLES:##
 
 ==file-version== app.war
    parse file version

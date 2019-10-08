@@ -1,0 +1,69 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.vpc.app.nuts.runtime.repocommands;
+
+import net.vpc.app.nuts.*;
+
+import java.util.Iterator;
+
+/**
+ *
+ * @author vpc
+ */
+public abstract class AbstractNutsSearchVersionsRepositoryCommand extends NutsRepositoryCommandBase<NutsSearchVersionsRepositoryCommand> implements NutsSearchVersionsRepositoryCommand {
+
+    protected NutsId id;
+    protected Iterator<NutsId> result;
+    protected NutsIdFilter filter;
+
+    public AbstractNutsSearchVersionsRepositoryCommand(NutsRepository repo) {
+        super(repo, "search-versions");
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine cmd) {
+        if (super.configureFirst(cmd)) {
+            return true;
+        }
+        return false;
+    }
+
+//    @Override
+//    public NutsSearchVersionsRepositoryCommand filter(NutsIdFilter id) {
+//        return setFilter(id);
+//    }
+
+    @Override
+    public NutsSearchVersionsRepositoryCommand setFilter(NutsIdFilter filter) {
+        this.filter = filter;
+        return this;
+    }
+
+    @Override
+    public NutsIdFilter getFilter() {
+        return filter;
+    }
+
+    @Override
+    public Iterator<NutsId> getResult() {
+        if (result == null) {
+            run();
+        }
+        return result;
+    }
+
+    @Override
+    public NutsSearchVersionsRepositoryCommand setId(NutsId id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public NutsId getId() {
+        return id;
+    }
+
+}
