@@ -100,8 +100,8 @@ public interface NutsJsonFormat extends NutsFormat {
     <T> T parse(URL url, Class<T> clazz);
 
     /**
-     * parse url as a valid object of the given type
-     * @param url source url
+     * parse inputStream as a valid object of the given type
+     * @param inputStream source inputStream
      * @param clazz target type
      * @param <T> target type
      * @return new instance of the given class

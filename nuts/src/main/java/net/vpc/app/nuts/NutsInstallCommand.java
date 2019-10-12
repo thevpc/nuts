@@ -249,7 +249,8 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * if true reinstall installed artifacts
-     * @return return {@code this} instance
+     * @param value flag
+     * @return {@code this} instance
      */
     NutsInstallCommand setInstalled(boolean value);
 

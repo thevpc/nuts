@@ -51,6 +51,7 @@ public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
     /**
      * uninstall artifact
      * @param executionContext execution context
+     * @param deleteData delete data after uninstall
      */
     void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 }
