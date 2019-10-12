@@ -68,9 +68,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     @Override
-    public NutsInfoFormat addProperties(Map<String,String> p) {
-        if (p != null) {
-            for (Map.Entry<String, String> e : p.entrySet()) {
+    public NutsInfoFormat addProperties(Map<String,String> customProperties) {
+        if (customProperties != null) {
+            for (Map.Entry<String, String> e : customProperties.entrySet()) {
                 addProperty(e.getKey(),e.getValue());
             }
         }

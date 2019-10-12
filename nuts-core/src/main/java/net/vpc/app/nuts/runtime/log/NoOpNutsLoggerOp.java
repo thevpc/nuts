@@ -17,7 +17,7 @@ public class NoOpNutsLoggerOp implements NutsLoggerOp {
     }
 
     @Override
-    public NutsLoggerOp error(Throwable throwable) {
+    public NutsLoggerOp error(Throwable error) {
         return null;
     }
 

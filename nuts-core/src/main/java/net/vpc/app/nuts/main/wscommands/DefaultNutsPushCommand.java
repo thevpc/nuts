@@ -92,7 +92,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             NutsDefinition file = entry.getValue();
             if (CoreStringUtils.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
-                //TODO : CHEK ME, why offline?
+                //TODO : CHECK ME, why offline?
                 boolean ok = false;
                 for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;

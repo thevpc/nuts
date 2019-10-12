@@ -483,35 +483,35 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         switch (a.getStringKey()) {
             case "--omit-env": {
-                setOmitOtherProperties(cmdLine.nextBoolean().getBooleanValue());
+                omitOtherProperties(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-face": {
-                setOmitFace(cmdLine.nextBoolean().getBooleanValue());
+                omitFace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-group": {
-                setOmitGroupId(cmdLine.nextBoolean().getBooleanValue());
+                omitGroupId(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-imported-group": {
-                setOmitImportedGroupId(cmdLine.nextBoolean().getBooleanValue());
+                omitImportedGroupId(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--omit-namespace": {
-                setOmitNamespace(cmdLine.nextBoolean().getBooleanValue());
+                omitNamespace(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-imported-group": {
-                setHighlightImportedGroupId(cmdLine.nextBoolean().getBooleanValue());
+                highlightImportedGroupId(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-optional": {
-                setHighlightOptional(cmdLine.nextBoolean().getBooleanValue());
+                highlightOptional(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "--highlight-scope": {
-                setHighlightScope(cmdLine.nextBoolean().getBooleanValue());
+                highlightScope(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
         }

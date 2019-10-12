@@ -385,7 +385,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 return IteratorUtils.concat(li);
             }
 //            case MAVEN: {
-//                //TODO : this will find only in archetype, not in full index....
+//                // this will find only in archetype, not in full index....
 //                String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
 //                try {
 //                    InputSource s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, session.getSession());

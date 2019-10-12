@@ -205,7 +205,6 @@ public class Test06_UpateTest {
                 }
 
             } catch (IOException ex) {
-                // TODO Auto-generated catch block
                 throw new UncheckedIOException(ex);
             }
             Path jar = zipFilePath.resolveSibling("nuts-" + api.to + ".jar");
@@ -248,7 +247,6 @@ public class Test06_UpateTest {
                 }
 
             } catch (IOException ex) {
-                // TODO Auto-generated catch block
                 throw new UncheckedIOException(ex);
             }
             Path jar = zipFilePath.resolveSibling("nuts-" + api.to + ".jar");

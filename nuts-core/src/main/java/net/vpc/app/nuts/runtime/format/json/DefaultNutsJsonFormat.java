@@ -155,19 +155,19 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
-    public <T> T parse(Path path, Class<T> cls) {
+    public <T> T parse(Path path, Class<T> clazz) {
         File file = path.toFile();
         try (FileReader r = new FileReader(file)) {
-            return parse(r, cls);
+            return parse(r, clazz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public <T> T parse(File file, Class<T> cls) {
+    public <T> T parse(File file, Class<T> clazz) {
         try (FileReader r = new FileReader(file)) {
-            return parse(r, cls);
+            return parse(r, clazz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

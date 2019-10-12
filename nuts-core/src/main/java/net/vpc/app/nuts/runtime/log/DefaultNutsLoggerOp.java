@@ -48,8 +48,8 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     }
 
     @Override
-    public NutsLoggerOp error(Throwable throwable) {
-        this.error = throwable;
+    public NutsLoggerOp error(Throwable error) {
+        this.error = error;
         return null;
     }
 

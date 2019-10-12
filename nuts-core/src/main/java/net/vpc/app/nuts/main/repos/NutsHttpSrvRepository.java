@@ -101,7 +101,6 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
                 new NutsTransportParamParamPart("force", String.valueOf(command.getSession().getSession().isYes()))
         );
-        //TODO should parse the parse
     }
 
     @Override

@@ -39,13 +39,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction session(NutsSession s) {
-        return setSession(s);
+    public NutsMonitorAction session(NutsSession session) {
+        return setSession(session);
     }
 
     @Override
-    public NutsMonitorAction setSession(NutsSession s) {
-        this.session = s;
+    public NutsMonitorAction setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
@@ -55,13 +55,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction name(String s) {
-        return setName(s);
+    public NutsMonitorAction name(String name) {
+        return setName(name);
     }
 
     @Override
-    public NutsMonitorAction setName(String s) {
-        this.sourceName = s;
+    public NutsMonitorAction setName(String name) {
+        this.sourceName = name;
         return this;
     }
 
@@ -71,13 +71,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction origin(Object s) {
-        return setOrigin(s);
+    public NutsMonitorAction origin(Object origin) {
+        return setOrigin(origin);
     }
 
     @Override
-    public NutsMonitorAction setOrigin(Object s) {
-        this.sourceOrigin = s;
+    public NutsMonitorAction setOrigin(Object origin) {
+        this.sourceOrigin = origin;
         return this;
     }
 
