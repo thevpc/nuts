@@ -49,11 +49,11 @@ import net.vpc.app.nuts.runtime.util.io.ProcessBuilder2;
  */
 public class CorePlatformUtils {
 
-//    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
+    //    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
     //    public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86_32", "x86_64", "itanium_32", "itanium_64"
-            , "sparc_32", "sparc_64", "arm_32","aarch_64","mips_32","mipsel_32","mips_64","mipsel_64"
-            ,"ppc_32","ppcle_32","ppc_64","ppcle_64","s390_32","s390_64"
+            , "sparc_32", "sparc_64", "arm_32", "aarch_64", "mips_32", "mipsel_32", "mips_64", "mipsel_64"
+            , "ppc_32", "ppcle_32", "ppc_64", "ppcle_64", "s390_32", "s390_64"
     ));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "macos", "sunos"
             , "freebsd", "openbsd", "netbsd", "aix", "hpux", "as400", "zos", "unknown"
@@ -102,25 +102,6 @@ public class CorePlatformUtils {
         }
         return new HashMap<>();
     }
-
-//    public static String getPlatformOsLib() {
-//        switch (CoreNutsUtils.parseNutsId(getPlatformOs()).getSimpleName()) {
-//            case "linux":
-//            case "mac":
-//            case "sunos":
-//            case "freebsd": {
-//                return "/usr/share";
-//            }
-//            case "windows": {
-//                String pf = System.getenv("ProgramFiles");
-//                if (CoreStringUtils.isEmpty(pf)) {
-//                    pf = "C:\\Program Files";
-//                }
-//                return pf;
-//            }
-//        }
-//        return "/usr/share";
-//    }
 
     /**
      * this is inspired from
@@ -347,6 +328,7 @@ public class CorePlatformUtils {
 
     /**
      * impl-note: list updated from https://github.com/trustin/os-maven-plugin
+     *
      * @return uniform platform architecture
      */
     public static String getPlatformArch() {
@@ -385,8 +367,7 @@ public class CorePlatformUtils {
                 return "arm_32";
             }
             case "arm64": //merged with aarch64
-            case "aarch64":
-                {
+            case "aarch64": {
                 return "aarch_64";
             }
             case "mips":
@@ -430,6 +411,10 @@ public class CorePlatformUtils {
             default: {
                 if (property.startsWith("ia64w") && property.length() == 6) {
                     return "itanium_64";
+                }
+                //on MacOsX arch=x86_64
+                if (SUPPORTED_OS.contains(property)) {
+                    return property;
                 }
                 return "unknown";
             }
@@ -538,8 +523,6 @@ public class CorePlatformUtils {
         Thread thread = new Thread(() -> {
             try {
                 ref.set(callable.call());
-            } catch (NutsException ex) {
-                throw ex;
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
@@ -612,8 +595,6 @@ public class CorePlatformUtils {
         final Ref<Boolean> nutsApp = new Ref<>();
         final Ref<String> className = new Ref<>();
         SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
-            String lastClass = null;
-
             @Override
             public void visitMethod(int access, String name, String desc) {
 //                System.out.println("\t::: visit method "+name);
@@ -639,44 +620,5 @@ public class CorePlatformUtils {
         }
         return null;
     }
-
-    //    /**
-//     * @param stream
-//     * @return
-//     * @throws IOException
-//     */
-//    public static int getMainClassType(InputStream stream) throws IOException {
-//        final List<Boolean> mainClass = new ArrayList<>(1);
-//        final List<Boolean> nutsApp = new ArrayList<>(1);
-//        ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
-//            String lastClass = null;
-//
-//            /**
-//             * When a method is encountered
-//             */
-//            @Override
-//            public MethodVisitor visitMethod(int access, String name,
-//                    String desc, String signature, String[] exceptions) {
-//                if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
-//                        && Modifier.isPublic(access)
-//                        && Modifier.isStatic(access)) {
-//                    mainClass.add(true);
-//                }
-//                return super.visitMethod(access, name, desc, signature, exceptions);
-//            }
-//
-//            @Override
-//            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
-//                    nutsApp.add(true);
-//                }
-//                super.visit(version, access, name, signature, superName, interfaces);
-//            }
-//        };
-//        ClassReader classReader = new ClassReader(stream);
-//        classReader.accept(cl, 0);
-//        return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
-//    }
-//
 
 }

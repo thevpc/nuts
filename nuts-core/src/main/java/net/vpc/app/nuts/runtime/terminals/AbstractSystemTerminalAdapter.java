@@ -5,6 +5,7 @@ import net.vpc.app.nuts.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import net.vpc.app.nuts.runtime.io.DefaultNutsQuestion;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.fprint.FPrint;
@@ -17,9 +18,12 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     public void setWorkspace(NutsWorkspace workspace) {
         this.ws = workspace;
         NutsSystemTerminalBase parent = getParent();
-        NutsWorkspaceUtils.of(ws).setWorkspace(parent);
+        if (ws == null) {
+            NutsWorkspaceUtils.unsetWorkspace(parent);
+        } else {
+            NutsWorkspaceUtils.of(ws).setWorkspace(parent);
+        }
     }
-
 
 
     public abstract NutsSystemTerminalBase getParent();
@@ -134,7 +138,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (out == null) {
             return true;
         }
-        if (out == System.out || out==FPrint.out()) {
+        if (out == System.out || out == FPrint.out()) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {
@@ -148,7 +152,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (out == null) {
             return true;
         }
-        if (out == System.err || out==FPrint.err()) {
+        if (out == System.err || out == FPrint.err()) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {

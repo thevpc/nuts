@@ -556,7 +556,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
         }
         if (this.systemTerminal != null) {
-            NutsWorkspaceUtils.of(ws).unsetWorkspace(this.systemTerminal);
+            NutsWorkspaceUtils.unsetWorkspace(this.systemTerminal);
         }
         NutsSystemTerminal old = this.systemTerminal;
         this.systemTerminal = syst;

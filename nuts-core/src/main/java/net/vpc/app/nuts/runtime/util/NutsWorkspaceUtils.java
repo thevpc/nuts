@@ -632,7 +632,7 @@ public class NutsWorkspaceUtils {
         }
         return false;
     }
-    public boolean unsetWorkspace(Object o){
+    public static boolean unsetWorkspace(Object o){
         if(o instanceof NutsWorkspaceAware){
             ((NutsWorkspaceAware) o).setWorkspace(null);
             return true;
