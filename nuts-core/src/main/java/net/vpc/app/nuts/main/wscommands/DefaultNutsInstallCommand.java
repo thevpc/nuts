@@ -200,7 +200,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         LinkedHashMap<NutsId, NutsDefinition> loadedDefs = new LinkedHashMap<>();
         for (NutsId id : defsToInstall.keySet().toArray(new NutsId[0])) {
             if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and it dependencies...");
+                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
             }
             NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
             defsToInstall.put(id, def);
@@ -209,7 +209,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         for (NutsId id : defsToInstallForced.keySet().toArray(new NutsId[0])) {
             if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and it dependencies...");
+                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
             }
             NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
             defsToInstallForced.put(id, def);
@@ -218,7 +218,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         for (NutsId id : defsToDefVersion.keySet().toArray(new NutsId[0])) {
             if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and it dependencies...");
+                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
             }
             NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
             defsToDefVersion.put(id,def);
