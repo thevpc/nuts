@@ -112,8 +112,16 @@ public interface NutsIdFormat extends NutsFormat {
      */
     NutsIdFormat omitImportedGroupId(boolean value);
 
+    /**
+     * update omitImportedGroupId to ture
+     * @return {@code this} instance
+     */
     NutsIdFormat omitImportedGroupId();
 
+    /**
+     * return true if omit other properties
+     * @return true if omit other properties
+     */
     boolean isOmitOtherProperties();
 
     /**

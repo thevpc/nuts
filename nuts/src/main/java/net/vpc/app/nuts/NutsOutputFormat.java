@@ -30,16 +30,39 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Formats supported by Nuts
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsOutputFormat {
+    /**
+     * json format
+     */
     JSON,
+
+    /**
+     * xml format
+     */
     XML,
+
+    /**
+     * java properties
+     */
     PROPS,
+
+    /**
+     * (terminal/ascii) table format
+     */
     TABLE,
+
+    /**
+     * (terminal/ascii) tree format
+     */
     TREE,
+
+    /**
+     * plain (no) format
+     */
     PLAIN;
 
     /**
@@ -47,6 +70,9 @@ public enum NutsOutputFormat {
      */
     private final String id;
 
+    /**
+     * private constructor
+     */
     NutsOutputFormat() {
         this.id = name().toLowerCase().replace('_', '-');
     }

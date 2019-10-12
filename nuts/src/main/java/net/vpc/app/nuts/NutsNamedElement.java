@@ -30,12 +30,20 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Named Element
  * @author vpc
  */
 public interface NutsNamedElement {
 
+    /**
+     * element name
+     * @return element name
+     */
     String getName();
 
+    /**
+     * element value
+     * @return value
+     */
     NutsElement getValue();
 }

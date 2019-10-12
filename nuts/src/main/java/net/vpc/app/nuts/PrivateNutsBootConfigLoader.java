@@ -67,7 +67,6 @@ final class PrivateNutsBootConfigLoader {
         PrivateNutsWorkspaceInitInformation c = new PrivateNutsWorkspaceInitInformation();
         String configVersion = (String) jsonObject.get("configVersion");
 
-        //TODO this supported in 0.5.4, should be removed if that version is no more supported
         if (configVersion == null) {
             configVersion = (String) jsonObject.get("createApiVersion");
         }

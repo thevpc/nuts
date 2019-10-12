@@ -68,8 +68,14 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
     REMOTE(true, NutsFetchMode.REMOTE);
 
 
+    /**
+     * when true, stop when the first result was found
+     */
     private final boolean stopFast;
 
+    /**
+     * modes array
+     */
     private NutsFetchMode[] all;
 
     /**
@@ -85,6 +91,11 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
         return id;
     }
 
+    /**
+     * private default constructor
+     * @param stopFast stopFast flag
+     * @param all modes
+     */
     NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
         this.id = name().toLowerCase().replace('_', '-');
         this.stopFast = stopFast;

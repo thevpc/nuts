@@ -34,52 +34,179 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
+ * Monitor action enables monitoring a long lasting operation such as copying a big file.
+ *
  * @author vpc
  */
 public interface NutsMonitorAction {
 
-    NutsMonitorAction session(NutsSession s);
+    /**
+     * update current session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
+    NutsMonitorAction session(NutsSession session);
 
-    NutsMonitorAction setSession(NutsSession s);
+    /**
+     * update current session
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
+    NutsMonitorAction setSession(NutsSession session);
 
+    /**
+     * return current session
+     *
+     * @return current session
+     */
     NutsSession getSession();
 
-    NutsMonitorAction name(String s);
+    /**
+     * update action name
+     *
+     * @param name action name
+     * @return {@code this} instance
+     */
+    NutsMonitorAction name(String name);
 
-    NutsMonitorAction setName(String s);
+    /**
+     * update action name
+     *
+     * @param name action name
+     * @return {@code this} instance
+     */
+    NutsMonitorAction setName(String name);
 
+    /**
+     * return action name
+     *
+     * @return action name
+     */
     String getName();
 
-    NutsMonitorAction origin(Object s);
+    /**
+     * update action source origin
+     *
+     * @param origin source origin
+     * @return {@code this} instance
+     */
+    NutsMonitorAction origin(Object origin);
 
-    NutsMonitorAction setOrigin(Object s);
+    /**
+     * update action source origin
+     *
+     * @param origin source origin
+     * @return {@code this} instance
+     */
+    NutsMonitorAction setOrigin(Object origin);
 
+    /**
+     * return source origin
+     *
+     * @return source origin
+     */
     Object getOrigin();
 
+    /**
+     * update operation length
+     *
+     * @param len operation length
+     * @return {@code this} instance
+     */
     NutsMonitorAction length(long len);
 
+    /**
+     * update operation length
+     *
+     * @param len operation length
+     * @return {@code this} instance
+     */
     NutsMonitorAction setLength(long len);
 
+    /**
+     * return operation length
+     *
+     * @return {@code this} instance
+     */
     long getLength();
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction source(String path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction source(Path path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction source(File path);
 
+    /**
+     * update operation source
+     * TODO: should this handle only streams?
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction source(InputStream path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction setSource(String path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction setSource(Path path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction setSource(File path);
 
+    /**
+     * update operation source
+     *
+     * @param path operation source
+     * @return {@code this} instance
+     */
     NutsMonitorAction setSource(InputStream path);
 
+    /**
+     * Create monitored input stream
+     *
+     * @return monitored input stream
+     */
     InputStream create();
 
+    /**
+     * return true if log progress on terminal
+     * @return true if log progress on terminal
+     */
     boolean isLogProgress();
 
     /**

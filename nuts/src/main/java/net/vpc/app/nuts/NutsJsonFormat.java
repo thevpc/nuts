@@ -36,18 +36,37 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- *
+ * Implementation of this interface will provide
+ * simple mechanism to write json text from given object.
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsJsonFormat extends NutsFormat {
 
+    /**
+     * true is compact json flag is armed
+     * @return true is compact json flag is armed
+     */
     boolean isCompact();
 
+    /**
+     * enable compact json
+     * @return {@code this} instance
+     */
     NutsJsonFormat compact();
 
+    /**
+     * enable or disable compact json
+     * @param compact enable when true
+     * @return {@code this} instance
+     */
     NutsJsonFormat compact(boolean compact);
 
+    /**
+     * enable or disable compact json
+     * @param compact enable when true
+     * @return {@code this} instance
+     */
     NutsJsonFormat setCompact(boolean compact);
 
     /**
@@ -71,17 +90,59 @@ public interface NutsJsonFormat extends NutsFormat {
      */
     NutsJsonFormat setValue(Object value);
 
+    /**
+     * parse url as a valid object of the given type
+     * @param url source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
     <T> T parse(URL url, Class<T> clazz);
 
+    /**
+     * parse url as a valid object of the given type
+     * @param url source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
     <T> T parse(InputStream inputStream, Class<T> clazz);
 
+    /**
+     * parse bytes as a valid object of the given type
+     * @param bytes source bytes
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
     <T> T parse(byte[] bytes, Class<T> clazz);
 
-    <T> T parse(Reader reader, Class<T> cls);
+    /**
+     * parse reader as a valid object of the given type
+     * @param reader source reader
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(Reader reader, Class<T> clazz);
 
-    <T> T parse(Path file, Class<T> cls);
+    /**
+     * parse file as a valid object of the given type
+     * @param file source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(Path file, Class<T> clazz);
 
-    <T> T parse(File file, Class<T> cls);
+    /**
+     * parse file as a valid object of the given type
+     * @param file source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(File file, Class<T> clazz);
 
     /**
      * update session

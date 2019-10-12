@@ -30,15 +30,27 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/7/17.
+ * Component responsible of installing other artifacts.
  *
  * @since 0.5.4
  */
 public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
 
+    /**
+     * install artifact
+     * @param executionContext execution context
+     */
     void install(NutsExecutionContext executionContext);
 
+    /**
+     * update artifact
+     * @param executionContext execution context
+     */
     void update(NutsExecutionContext executionContext);
 
+    /**
+     * uninstall artifact
+     * @param executionContext execution context
+     */
     void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 }

@@ -33,28 +33,70 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- *
+ * Classes implementing this interface are responsible of printing objects in multiple format
+ * using {@link NutsIterableFormat}.
+ * TODO : should merge with NutsIterableFormat
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsIterableOutput extends NutsConfigurable {
 
+    /**
+     * configure out stream
+     * @param out out stream
+     * @return {@code this} instance
+     */
     NutsIterableOutput out(PrintStream out);
 
+    /**
+     * configure out stream
+     * @param out out stream
+     * @return {@code this} instance
+     */
     NutsIterableOutput setOut(PrintStream out);
 
+    /**
+     * configure out stream
+     * @param out out stream
+     * @return {@code this} instance
+     */
     NutsIterableOutput out(PrintWriter out);
 
+    /**
+     * configure out c
+     * @param out out writer
+     * @return {@code this} instance
+     */
     NutsIterableOutput setOut(PrintWriter out);
 
+    /**
+     * configure session
+     * @param session session
+     * @return {@code this} instance
+     */
     NutsIterableOutput session(NutsSession session);
 
+    /**
+     * configure session
+     * @param session session
+     * @return {@code this} instance
+     */
     NutsIterableOutput setSession(NutsSession session);
 
+    /**
+     * called at the iteration start
+     */
     void start();
 
+    /**
+     * called at the each visited item
+     * @param object visited item
+     */
     void next(Object object);
 
+    /**
+     * called at the iteration completing
+     */
     void complete();
 
     /**

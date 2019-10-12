@@ -30,33 +30,99 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Mutable Table Model
  * @author vpc
  */
 public interface NutsMutableTableModel extends NutsTableModel {
 
+    /**
+     * add new row to the model
+     * @return {@code this} instance
+     */
     NutsMutableTableModel newRow();
 
+    /**
+     * clear header
+     * @return {@code this} instance
+     */
     NutsMutableTableModel clearHeader();
 
+    /**
+     *  add header cells
+     * @param values cells
+     * @return {@code this} instance
+     */
     NutsMutableTableModel addHeaderCells(Object... values);
 
+    /**
+     * add header cell
+     * @param value cell
+     * @return {@code this} instance
+     */
     NutsMutableTableModel addHeaderCell(Object value);
 
+    /**
+     * add row cells
+     * @param values row cells
+     * @return {@code this} instance
+     */
     NutsMutableTableModel addRow(Object... values);
 
+    /**
+     * add row cells
+     * @param values row cells
+     * @return {@code this} instance
+     */
     NutsMutableTableModel addCells(Object... values);
 
+    /**
+     * add row cell
+     * @param value cell
+     * @return {@code this} instance
+     */
     NutsMutableTableModel addCell(Object value);
 
+    /**
+     * update cell at the given position
+     * @param row row index
+     * @param column column index
+     * @param value cell value
+     * @return {@code this} instance
+     */
     NutsMutableTableModel setCellValue(int row, int column, Object value);
 
+    /**
+     * update cell colspan
+     * @param row row index
+     * @param column column index
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsMutableTableModel setCellColSpan(int row, int column, int value);
 
+    /**
+     * update cell rowspan
+     * @param row row index
+     * @param column column index
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsMutableTableModel setCellRowSpan(int row, int column, int value);
 
+    /**
+     * update header value
+     * @param column header column
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsMutableTableModel setHeaderValue(int column, Object value);
 
+    /**
+     * update header colspan
+     * @param column new value
+     * @param value new value
+     * @return {@code this} instance
+     */
     NutsMutableTableModel setHeaderColSpan(int column, int value);
 
 }

@@ -58,6 +58,9 @@ public enum NutsArgumentType {
      */
     private final String id;
 
+    /**
+     * Default constructor
+     */
     NutsArgumentType() {
         this.id = name().toLowerCase().replace('_', '-');
     }

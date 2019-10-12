@@ -35,7 +35,7 @@ import java.util.Objects;
 import net.vpc.app.nuts.NutsContent;
 
 /**
- *
+ * Default Content implementation.
  * @author vpc
  * @since 0.5.4
  */
@@ -45,22 +45,40 @@ public class NutsDefaultContent implements NutsContent {
     private final boolean cached;
     private final boolean temporary;
 
+    /**
+     * Default Content implementation constructor
+     * @param file content file path
+     * @param cached true if the file is cached (may be not up to date)
+     * @param temporary true if file is temporary (should be deleted later)
+     */
     public NutsDefaultContent(Path file, boolean cached, boolean temporary) {
         this.file = file;
         this.cached = cached;
         this.temporary = temporary;
     }
 
+    /**
+     * content path location
+     * @return content path location
+     */
     @Override
     public Path getPath() {
         return file;
     }
 
+    /**
+     * true if the file is cached (may be not up to date)
+     * @return true if the file is cached (may be not up to date)
+     */
     @Override
     public boolean isCached() {
         return cached;
     }
 
+    /**
+     * true if file is temporary (should be deleted later)
+     * @return true if file is temporary (should be deleted later)
+     */
     @Override
     public boolean isTemporary() {
         return temporary;

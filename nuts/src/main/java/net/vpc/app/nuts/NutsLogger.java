@@ -47,12 +47,37 @@ public interface NutsLogger {
      */
     boolean isLoggable(Level level);
 
+    /**
+     * log message using 'FAIL' verb
+     * @param level message level
+     * @param msg message
+     * @param thrown error thrown
+     */
     void log(Level level, String msg, Throwable thrown);
 
+    /**
+     * log message using the given verb and level
+     * @param level message level
+     * @param verb message verb / category
+     * @param msg message
+     */
     void log(Level level, String verb, String msg);
 
+    /**
+     * log message using the given verb and level
+     * @param level message level
+     * @param verb message verb / category
+     * @param msg message
+     * @param params message parameters
+     */
     void log(Level level, String verb, String msg, Object... params);
 
+    /**
+     * log message using the given verb and level
+     * @param level message level
+     * @param verb message verb / category
+     * @param msgSupplier message supplier
+     */
     void log(Level level, String verb, Supplier<String> msgSupplier);
 
     /**

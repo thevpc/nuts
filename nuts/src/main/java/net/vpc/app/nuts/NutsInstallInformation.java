@@ -33,22 +33,46 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 /**
- *
+ * Information about installed artifact
  * @author vpc
  * @since 0.5.5
  */
 public interface NutsInstallInformation {
 
+    /**
+     * true when the artifact is installed
+     * @return true when the artifact is installed
+     */
     boolean isInstalled();
 
+    /**
+     * installation date
+     * @return installation date
+     */
     Instant getInstallDate();
 
+    /**
+     * true when the installed artifact is default version
+     * @return true when the installed artifact is default version
+     */
     boolean isDefaultVersion();
 
+    /**
+     * installation formation path.
+     * @return installation formation path
+     */
     Path getInstallFolder();
 
+    /**
+     * true if the installation just occured in the very last operation
+     * @return true if the installation just occured in the very last operation
+     */
     boolean isJustInstalled();
 
+    /**
+     * return the user responsible of the installation
+     * @return the user responsible of the installation
+     */
     String getInstallUser();
 
 }
