@@ -6,4 +6,8 @@ public class MacosNdi extends AnyNixNdi {
     public MacosNdi(NutsApplicationContext appContext) {
         super(appContext);
     }
+
+    public String getBashrcName() {
+        return ".bash_profile";
+    }
 }

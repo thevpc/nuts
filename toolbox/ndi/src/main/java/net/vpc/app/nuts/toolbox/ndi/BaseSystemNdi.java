@@ -54,7 +54,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force) throws IOException {
         boolean found = false;
-        boolean updatedBashrc = false;
+        boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
             String fileContent = new String(Files.readAllBytes(filePath));
@@ -67,7 +67,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     i++;
                     if (i < fileRows.length) {
                         if (!fileRows[i].trim().equals(goodLine)) {
-                            updatedBashrc = true;
+                            updatedFile = true;
                         }
                     }
                     lines.add(goodLine);
@@ -83,18 +83,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (!found) {
             lines.add(toCommentLine(commentLine));
             lines.add(goodLine);
-            updatedBashrc = true;
+            updatedFile = true;
         }
-        if (force || updatedBashrc) {
+        if (force || updatedFile) {
             Files.createDirectories(filePath.getParent());
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
-        return updatedBashrc;
+        return updatedFile;
     }
 
     public boolean removeFileLine(Path filePath, String commentLine, boolean force) throws IOException {
         boolean found = false;
-        boolean updatedBashrc = false;
+        boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
             String fileContent = new String(Files.readAllBytes(filePath));
@@ -113,13 +113,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         if (found) {
-            updatedBashrc = true;
+            updatedFile = true;
         }
-        if (force || updatedBashrc) {
+        if (force || updatedFile) {
             Files.createDirectories(filePath.getParent());
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
-        return updatedBashrc;
+        return updatedFile;
     }
 
     @Override

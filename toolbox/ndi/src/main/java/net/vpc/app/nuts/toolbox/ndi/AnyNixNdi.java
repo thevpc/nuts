@@ -39,15 +39,19 @@ public class AnyNixNdi extends BaseSystemNdi {
         return "source \"" + path + "\"";
     }
 
+    public String getBashrcName() {
+        return ".bashrc";
+    }
+
     public boolean configureBashrc(NutsSession session) throws IOException {
         NutsWorkspaceConfigManager wsconfig = context.getWorkspace().config();
         Path apiAppsFolder = wsconfig.getStoreLocation(wsconfig.getApiId(), NutsStoreLocation.APPS);
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
 
         boolean force = session.isYes();
-        Path bashrcFile = Paths.get(System.getProperty("user.home")).resolve(".bashrc");
-        removeFileLine(bashrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", force);
-        if (addFileLine(bashrcFile, "net.vpc.app.nuts configuration",
+        Path sysrcFile = Paths.get(System.getProperty("user.home")).resolve(getBashrcName());
+        removeFileLine(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", force);
+        if (addFileLine(sysrcFile, "net.vpc.app.nuts configuration",
                 getCallScriptCommand(apiConfigFile.toString()),
                 force)) {
             return true;
@@ -68,7 +72,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         boolean force = session.isYes();
 
         if(configureBashrc(session)){
-            updatedNames.add("~/.bashrc");
+            updatedNames.add("~/"+getBashrcName());
         }
 
         if (addFileLine(apiConfigFile, "net.vpc.app.nuts.toolbox.ndi configuration",
@@ -105,7 +109,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                         .forBoolean(
                                 "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                                ". ~/.bashrc"
+                                ". ~/"+getBashrcName()
                         )
                         .hintMessage("")
                         .session(context.getSession())
@@ -127,12 +131,12 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
                                     PrintStream out = context.session().out();
-                                    out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", ".bashrc");
+                                    out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
                                     out.print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
-                                    out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", ".bashrc");
+                                    out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", getBashrcName());
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                    out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/.bashrc");
+                                    out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/"+getBashrcName());
                                     throw new NutsValidationException(ws, "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                     throw new NutsUserCancelException(ws);
