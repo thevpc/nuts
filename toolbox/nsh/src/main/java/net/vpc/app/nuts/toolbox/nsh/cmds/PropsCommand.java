@@ -180,7 +180,31 @@ public class PropsCommand extends AbstractNshBuiltin {
             } else if (cmdLine.next("list") != null) {
                 o.action = "list";
                 while (cmdLine.hasNext()) {
-                    cmdLine.setCommandName(getName()).unexpectedArgument();
+                    if (cmdLine.next("--xml") != null) {
+                        o.sourceFormat = Format.XML;
+                        o.sourceType = SourceType.FILE;
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+
+                    } else if (cmdLine.next("--system") != null) {
+                        o.sourceFormat = Format.PROPS;
+                        o.sourceType = SourceType.SYSTEM;
+                        o.sourceFile = null;
+
+                    } else if (cmdLine.next("--props") != null) {
+                        o.sourceFormat = Format.PROPS;
+                        o.sourceType = SourceType.FILE;
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+
+                    } else if (cmdLine.next("--file") != null) {
+                        o.sourceFormat = Format.AUTO;
+                        o.sourceType = SourceType.FILE;
+                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                    } else if (cmdLine.next("--sort") != null) {
+                        o.sort = true;
+                        context.getSession().addOutputFormatOptions("--sort");
+                    } else {
+                        cmdLine.setCommandName(getName()).unexpectedArgument();
+                    }
                 }
             } else {
                 cmdLine.setCommandName(getName()).unexpectedArgument();
@@ -201,27 +225,15 @@ public class PropsCommand extends AbstractNshBuiltin {
                 return;
             }
             case "set": {
-                switch (o.sourceType) {
-                    case FILE: {
-                        Properties p = readProperties(o, context);
-                        try {
-                            if (o.targetType == TargetType.FILE) {
-                                try (FileWriter os = new FileWriter(
-                                        o.targetFile == null ? o.targetFile : o.sourceFile
-                                )) {
-                                    p.store(os, o.comments);
-                                }
-                            } else {
-                                try (FileWriter os = new FileWriter(o.sourceFile)) {
-                                    p.store(os, o.comments);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
-                        }
+                Map<String, String> p = getProperties(o, context);
+                try {
+                    for (Map.Entry<String, String> e : o.updates.entrySet()) {
+                        p.put(e.getKey(),e.getValue());
                     }
+                    storeProperties(p,o,context);
+                } catch (Exception ex) {
+                    throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
                 }
-                action_get(context, o);
                 return;
             }
             case "list": {
@@ -239,20 +251,20 @@ public class PropsCommand extends AbstractNshBuiltin {
     }
 
     private void action_get(NshExecutionContext context, Options o) {
-        Properties p = getProperties(o, context);
-        String v = p.getProperty(o.property);
+        Map<String,String> p = getProperties(o, context);
+        String v = p.get(o.property);
         context.workspace().object().session(context.session()).value(v == null ? "" : v).print();
     }
 
-    private Properties getProperties(Options o, NshExecutionContext context) {
-        Properties p = new Properties();
+    private Map<String,String> getProperties(Options o, NshExecutionContext context) {
+        Map<String,String> p = o.sort?new TreeMap<String,String>():new HashMap<String,String>();
         switch (o.sourceType) {
             case FILE: {
-                p = readProperties(o, context);
+                p.putAll(readProperties(o, context));
                 break;
             }
             case SYSTEM: {
-                p = System.getProperties();
+                p = new TreeMap(System.getProperties());
                 break;
             }
         }
@@ -269,8 +281,8 @@ public class PropsCommand extends AbstractNshBuiltin {
         throw new NutsExecutionException(context.getWorkspace(), "Unknown file format " + file, 2);
     }
 
-    private Properties readProperties(Options o, NshExecutionContext context) {
-        Properties p = new Properties();
+    private Map<String,String> readProperties(Options o, NshExecutionContext context) {
+        Map<String,String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
         XFile filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd());
         try (InputStream is = filePath.getInputStream()) {
@@ -281,11 +293,15 @@ public class PropsCommand extends AbstractNshBuiltin {
             }
             switch (sourceFormat) {
                 case PROPS: {
-                    p.load(is);
+                    Properties pp=new Properties();
+                    pp.load(is);
+                    p.putAll((Map)pp);
                     break;
                 }
                 case XML: {
-                    p.loadFromXML(is);
+                    Properties pp=new Properties();
+                    pp.loadFromXML(is);
+                    p.putAll((Map)pp);
                     break;
                 }
             }
@@ -295,7 +311,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         return p;
     }
 
-    private void storeProperties(Properties p, Options o, NutsShellContext context) throws IOException {
+    private void storeProperties(Map<String,String> p, Options o, NshExecutionContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -321,22 +337,22 @@ public class PropsCommand extends AbstractNshBuiltin {
                     break;
                 }
                 case PROPS: {
-                    if (o.sort) {
-                        p = new SortedProperties(p);
+                    if (o.sort && !(p instanceof SortedMap)) {
+                        p = new TreeMap<String,String>(p);
                     }
-                    p.store(context.out(), o.comments);
+                    new OrderedProperties(p).store(context.out(), o.comments);
                     break;
                 }
                 case XML: {
-                    if (o.sort) {
-                        p = new SortedProperties(p);
+                    if (o.sort && !(p instanceof SortedMap)) {
+                        p = new TreeMap<String,String>(p);
                     }
-                    p.storeToXML(context.out(), o.comments);
+                    new OrderedProperties(p).storeToXML(context.out(), o.comments);
                     break;
                 }
             }
         } else {
-            XFile filePath = ShellHelper.xfileOf(targetFile, context.getCwd());
+            XFile filePath = ShellHelper.xfileOf(targetFile, context.getGlobalContext().getCwd());
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {
@@ -344,17 +360,17 @@ public class PropsCommand extends AbstractNshBuiltin {
                 }
                 switch (format) {
                     case PROPS: {
-                        if (o.sort) {
-                            p = new SortedProperties(p);
+                        if (o.sort && !(p instanceof SortedMap)) {
+                            p = new TreeMap<String,String>(p);
                         }
-                        p.store(os, o.comments);
+                        new OrderedProperties(p).store(os, o.comments);
                         break;
                     }
                     case XML: {
-                        if (o.sort) {
-                            p = new SortedProperties(p);
+                        if (o.sort && !(p instanceof SortedMap)) {
+                            p = new TreeMap<String,String>(p);
                         }
-                        p.storeToXML(os, o.comments);
+                        new OrderedProperties(p).storeToXML(os, o.comments);
                         break;
                     }
                 }
@@ -376,6 +392,17 @@ public class PropsCommand extends AbstractNshBuiltin {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>((Set) super.keySet()));
+        }
+    }
+    private static class OrderedProperties extends Properties {
+        private Map<String,String> other;
+        public OrderedProperties(Map<String,String> other) {
+            putAll(other);
+        }
+
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration((Set)other.keySet());
         }
     }
 }
