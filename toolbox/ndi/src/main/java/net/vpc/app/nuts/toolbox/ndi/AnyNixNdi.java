@@ -12,15 +12,13 @@ import java.util.logging.Logger;
 
 public class AnyNixNdi extends BaseSystemNdi {
 
-    private static final Logger LOG = Logger.getLogger(AnyNixNdi.class.getName());
-
     public AnyNixNdi(NutsApplicationContext appContext) {
         super(appContext);
     }
 
     public String createNutsScriptCommand(NutsId fnutsId, NdiScriptOptions options) {
         StringBuilder command = new StringBuilder();
-        command.append(getExecFileName("nuts")).append(" ");
+        command.append(getExecFileName("nuts")).append(" $NUTS_OPTIONS ");
         if (options.getExecType() != null) {
             command.append("--").append(options.getExecType().id());
         }
