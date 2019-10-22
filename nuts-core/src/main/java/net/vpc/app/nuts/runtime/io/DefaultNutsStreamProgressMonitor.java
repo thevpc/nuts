@@ -14,6 +14,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsProgressEvent;
 import net.vpc.app.nuts.NutsProgressMonitor;
 import net.vpc.app.nuts.runtime.util.common.BytesSizeFormat;
+import net.vpc.app.nuts.runtime.util.console.CProgressBar;
 import net.vpc.app.nuts.runtime.util.fprint.FPrintCommands;
 
 /**
@@ -25,6 +26,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private PrintStream out;
     private int minLength;
+    private CProgressBar bar;
 
     public DefaultNutsStreamProgressMonitor() {
 //        this.session = session;
@@ -37,6 +39,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
 
     @Override
     public void onStart(NutsProgressEvent event) {
+        bar=new CProgressBar(event.getSession().getWorkspace());
         this.out = event.getSession().getTerminal().out();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
@@ -68,20 +71,13 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);
             double percent = event.getPercent();
-            if (event.isIndeterminate()) {
-                percent = end ? 100 : 0;
-            }
-            int x = (int) (20.0 / 100.0 * percent);
 
             StringBuilder formattedLine = new StringBuilder();
-            formattedLine.append("\\[");
-            if (x > 0) {
-                formattedLine.append("##");
-                CoreStringUtils.fillString("\\*", x, formattedLine);
-                formattedLine.append("##");
+            String p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getPercent()));
+            if(p==null|| p.isEmpty()){
+                return false;
             }
-            CoreStringUtils.fillString(' ', 20 - x, formattedLine);
-            formattedLine.append("\\]");
+            formattedLine.append(p);
             formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
             formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {

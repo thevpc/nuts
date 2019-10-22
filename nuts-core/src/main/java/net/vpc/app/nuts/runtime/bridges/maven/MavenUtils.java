@@ -38,6 +38,7 @@ import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsDependencyScopes;
+import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
 import net.vpc.app.nuts.runtime.util.common.MapStringMapper;
 
 import java.io.*;
@@ -264,6 +265,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXml(Path path, NutsRepositorySession session) throws IOException {
         try {
+            SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(path.toString()),session.getSession());
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXml(is, session, path.toString());
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -445,6 +447,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
+        SearchTraceHelper.progressIndeterminate("load "+CoreIOUtils.compressUrl(url),ws.createSession());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;

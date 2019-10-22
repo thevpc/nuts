@@ -17,6 +17,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.CoreNutsConstants;
 import net.vpc.app.nuts.runtime.DefaultNutsVersion;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
+import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 /**
@@ -49,6 +50,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
         NutsVersion versionString= DefaultNutsVersion.valueOf("0.5.5");
         try {
+            SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(baseUrl),session);
             foldersFileStream = session.workspace().io().monitor().source(dotFilesUrl).session(session).create();
             List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {

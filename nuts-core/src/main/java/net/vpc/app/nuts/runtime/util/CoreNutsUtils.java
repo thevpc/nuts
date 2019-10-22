@@ -494,6 +494,10 @@ public class CoreNutsUtils {
         return o;
     }
 
+    public static NutsSession silent(NutsSession session) {
+        return session.isTrace()?session.copy().silent():session;
+    }
+
 //    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
 //        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
 //        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());

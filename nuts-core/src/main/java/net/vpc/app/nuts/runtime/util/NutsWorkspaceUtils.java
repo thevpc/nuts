@@ -23,7 +23,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-import net.vpc.app.nuts.runtime.format.NutsTraceIterator;
+import net.vpc.app.nuts.runtime.format.NutsPrintIterator;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.util.common.TraceResult;
@@ -89,6 +89,15 @@ public class NutsWorkspaceUtils {
             session = ws.createSession();
         }
         return session;
+    }
+
+    public NutsSession validateSilentSession(NutsSession session) {
+        if (session == null) {
+            session = ws.createSession().silent();
+            return session;
+        }else{
+            return CoreNutsUtils.silent(session);
+        }
     }
 
     public NutsId configureFetchEnv(NutsId id) {
@@ -266,9 +275,9 @@ public class NutsWorkspaceUtils {
         return f;
     }
 
-    public <T> Iterator<T> decorateTrace(Iterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
+    public <T> Iterator<T> decoratePrint(Iterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
         final PrintStream out = validateSession(session).getTerminal().getOut();
-        return new NutsTraceIterator<>(it, ws, out, displayOptions, session);
+        return new NutsPrintIterator<>(it, ws, out, displayOptions, session);
     }
 
     public NutsDescriptor getEffectiveDescriptor(NutsDefinition def) {
@@ -455,7 +464,7 @@ public class NutsWorkspaceUtils {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().nutsApi().session(session.copy().silent()).getResultPath();
+        Path nutsJarFile = workspace.fetch().nutsApi().session(CoreNutsUtils.silent(session)).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }

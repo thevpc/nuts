@@ -279,7 +279,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             NutsDependencyFilter scope = getScope().isEmpty() ? null : new NutsDependencyScopeFilter().addScopes(getScope());
                             tree = buildTreeNode(null,
                                     ws.dependency().builder().id(id).build(),
-                                    foundDefinition, new HashSet<NutsId>(), getSession().copy().silent(), scope).getChildren();
+                                    foundDefinition, new HashSet<NutsId>(), CoreNutsUtils.silent(getSession()), scope).getChildren();
                             try {
                                 cache.dependencies = tree;
                                 ws.json().setValue(cache).print(cachePath);
@@ -324,7 +324,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                     getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
                                     null//getDependencyFilter()
                             );
-                            NutsIdGraph graph = new NutsIdGraph(_session, isFailFast());
+                            NutsIdGraph graph = new NutsIdGraph(CoreNutsUtils.silent(_session), isFailFast());
                             NutsId[] pp = graph.resolveDependencies(id, _dependencyFilter);
                             list = new DefaultNutsDependency[pp.length];
                             for (int i = 0; i < list.length; i++) {

@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.runtime.filters;
 
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsIdGraph;
 import net.vpc.app.nuts.*;
 
@@ -17,7 +18,7 @@ public class NutsIdAndNutsDependencyFilterItem {
         if (effDescriptor == null) {
             effDescriptor = session.getWorkspace().fetch().id(id.id)
                     .effective()
-                    .session(session.copy().silent())
+                    .session(CoreNutsUtils.silent(session))
                     .effective().getResultDescriptor();
         }
         return effDescriptor;

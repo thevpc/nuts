@@ -35,13 +35,13 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.filters.NutsSearchIdByDescriptor;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
 
 /**
  * Created by vpc on 2/21/17.
@@ -91,6 +91,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
+                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(file.path.toString()),session.getSession());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if(Files.isDirectory(file.path)) {
@@ -131,7 +132,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession().copy().silent());
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, CoreNutsUtils.silent(session.getSession()));
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }

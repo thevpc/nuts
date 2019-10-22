@@ -179,22 +179,30 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     @Override
     public Path getStoreLocation(NutsStoreLocation folderType) {
         String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
-        switch (getStoreLocationStrategy()) {
-            case STANDALONE: {
-                if (CoreStringUtils.isBlank(n)) {
-                    n = folderType.toString().toLowerCase();
-                }
+        if(temporary){
+            if (CoreStringUtils.isBlank(n)) {
+                n = folderType.toString().toLowerCase();
                 n = n.trim();
-                return getStoreLocation().resolve(n);
             }
-            case EXPLODED: {
-                Path storeLocation = repository.getWorkspace().config().getStoreLocation(folderType);
-                //uuid is added as
-                return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
+            return getStoreLocation().resolve(n);
+        }else {
+            switch (getStoreLocationStrategy()) {
+                case STANDALONE: {
+                    if (CoreStringUtils.isBlank(n)) {
+                        n = folderType.toString().toLowerCase();
+                    }
+                    n = n.trim();
+                    return getStoreLocation().resolve(n);
+                }
+                case EXPLODED: {
+                    Path storeLocation = repository.getWorkspace().config().getStoreLocation(folderType);
+                    //uuid is added as
+                    return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
-            }
-            default: {
-                throw new NutsIllegalArgumentException(repository.getWorkspace(), "Unsupported strategy type " + getStoreLocation());
+                }
+                default: {
+                    throw new NutsIllegalArgumentException(repository.getWorkspace(), "Unsupported strategy type " + getStoreLocation());
+                }
             }
         }
     }

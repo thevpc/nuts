@@ -54,6 +54,9 @@ public class FDocNodeHelper {
                             case FPrintCommands.MOVE_LINE_START: {
                                 return new TextNodeCommand(TextFormats.MOVE_LINE_START);
                             }
+                            case FPrintCommands.LATER_RESET_LINE: {
+                                return new TextNodeCommand(TextFormats.LATER_RESET_LINE);
+                            }
                             case FPrintCommands.MOVE_UP: {
                                 return new TextNodeCommand(TextFormats.MOVE_UP);
                             }

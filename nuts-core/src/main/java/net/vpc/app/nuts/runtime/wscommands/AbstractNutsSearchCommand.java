@@ -67,15 +67,16 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected Boolean defaultVersions = null;
     protected String execType = null;
     protected String targetApiVersion = null;
+    protected boolean traceMonitor = true;
+    protected boolean printResult = false;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
         super(ws, "search");
     }
 
     /**
-     *
-     * @since 0.5.5
      * @return
+     * @since 0.5.5
      */
     @Override
     public Boolean getDefaultVersions() {
@@ -83,9 +84,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     /**
-     *
-     * @since 0.5.5
      * @return
+     * @since 0.5.5
      */
     @Override
     public NutsSearchCommand defaultVersions() {
@@ -93,10 +93,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     /**
-     *
-     * @since 0.5.5
      * @param acceptDefaultVersion
      * @return
+     * @since 0.5.5
      */
     @Override
     public NutsSearchCommand defaultVersions(Boolean acceptDefaultVersion) {
@@ -104,10 +103,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     /**
-     *
-     * @since 0.5.5
      * @param acceptDefaultVersion
      * @return
+     * @since 0.5.5
      */
     @Override
     public NutsSearchCommand setDefaultVersions(Boolean acceptDefaultVersion) {
@@ -377,6 +375,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.packaging.clear();
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
             this.repositoryFilter = o.getRepositoryFilter();
+            if (o instanceof AbstractNutsSearchCommand) {
+                AbstractNutsSearchCommand a=(AbstractNutsSearchCommand)o;
+                this.traceMonitor = a.isTraceMonitor();
+                this.printResult = a.isPrintResult();
+            }
         }
         return this;
     }
@@ -755,7 +758,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{" +
+        return getClass().getSimpleName() + "{" +
                 "failFast=" + isFailFast() +
                 ", transitive=" + isTransitive() +
                 ", cached=" + isCached() +
@@ -1015,6 +1018,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 this.addFrozenId(cmdLine.nextString().getStringValue());
                 return true;
             }
+            case "--print": {
+                this.setPrintResult(cmdLine.nextBoolean().getBooleanValue());
+                return true;
+            }
+            case "--trace-monitor": {
+                this.setTraceMonitor(cmdLine.nextBoolean().getBooleanValue());
+                return true;
+            }
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
@@ -1028,6 +1039,40 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
             }
         }
+    }
+
+    public boolean isTraceMonitor() {
+        return traceMonitor;
+    }
+
+    public NutsSearchCommand traceMonitor() {
+        return traceMonitor(true);
+    }
+
+    public NutsSearchCommand traceMonitor(boolean traceMonitor) {
+        return setTraceMonitor(traceMonitor);
+    }
+
+    public NutsSearchCommand setTraceMonitor(boolean traceMonitor) {
+        this.traceMonitor = traceMonitor;
+        return this;
+    }
+
+    public boolean isPrintResult() {
+        return printResult;
+    }
+
+    public NutsSearchCommand printResult() {
+        return printResult(true);
+    }
+
+    public NutsSearchCommand printResult(boolean printResult) {
+        return setPrintResult(printResult);
+    }
+
+    public NutsSearchCommand setPrintResult(boolean printResult) {
+        this.printResult = printResult;
+        return this;
     }
 
     @Override

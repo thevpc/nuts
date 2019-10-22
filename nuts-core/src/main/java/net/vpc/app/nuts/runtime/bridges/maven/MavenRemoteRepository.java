@@ -47,6 +47,7 @@ import java.util.logging.Level;
 
 import net.vpc.app.nuts.NutsDefaultContent;
 import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
+import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
 import net.vpc.app.nuts.runtime.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.runtime.util.RemoteRepoApi;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
@@ -74,6 +75,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
+            SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(path),session.getSession());
             long startTime = System.currentTimeMillis();
             try {
                 InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session.getSession()).create();
@@ -112,6 +114,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException {
+            SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(pathname),session.getSession());
             return MavenUtils.of(session.getWorkspace()).parsePomXml(in, session, pathname);
         }
     };
@@ -328,6 +331,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/.folders");
             String[] foldersFileContent = null;
             try {
+                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(foldersFileUrl),session.getSession());
                 foldersFileStream = helper.openStream(id, foldersFileUrl, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
                 foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
             } catch (UncheckedIOException ex) {
@@ -375,6 +379,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case MAVEN: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
+                    SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session.getSession());
                     if(root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), config().name(), config().getLocation(true), name, filter, session, Integer.MAX_VALUE, findModel));

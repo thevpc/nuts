@@ -404,6 +404,9 @@ public class CoreIOUtils {
                 loc = options.getConfig().getName();
             }
         }
+        if(options.isTemporary()){
+            return ws.io().createTempFolder("repo-"+options.getName()+"-").toString();
+        }
         return ws.io().expandPath(loc, rootFolder.toString());
     }
 
@@ -1942,5 +1945,83 @@ public class CoreIOUtils {
 
     public static Path toPath(String path){
         return CoreStringUtils.isBlank(path)?null:Paths.get(path);
+    }
+
+
+    public static String compressUrl(String path){
+        if(
+                path.startsWith("http://")
+                        || path.startsWith("https://")
+        ){
+            URL u= null;
+            try {
+                u = new URL(path);
+            } catch (MalformedURLException e) {
+                return path;
+            }
+            // pre-compute length of StringBuffer
+            int len = u.getProtocol().length() + 1;
+            if (u.getAuthority() != null && u.getAuthority().length() > 0)
+                len += 2 + u.getAuthority().length();
+            if (u.getPath() != null) {
+                len += u.getPath().length();
+            }
+            if (u.getQuery() != null) {
+                len += 1 + u.getQuery().length();
+            }
+            if (u.getRef() != null)
+                len += 1 + u.getRef().length();
+
+            StringBuffer result = new StringBuffer(len);
+            result.append(u.getProtocol());
+            result.append(":");
+            if (u.getAuthority() != null && u.getAuthority().length() > 0) {
+                result.append("//");
+                result.append(u.getAuthority());
+            }
+            if (u.getPath() != null) {
+                result.append(compressPath(u.getPath(),0,2));
+            }
+            if (u.getQuery() != null) {
+                result.append('?');
+                result.append("...");
+//                result.append(u.getQuery());
+            }
+            if (u.getRef() != null) {
+                result.append("#");
+                result.append("...");
+//                result.append(u.getRef());
+            }
+            return result.toString();
+
+
+        }else{
+            return compressPath(path);
+        }
+    }
+
+    public static String compressPath(String path){
+        return compressPath(path,2,2);
+    }
+
+    public static String compressPath(String path,int left,int right){
+        String p = System.getProperty("user.home");
+        if(path.startsWith(p + File.separator)){
+            path="~"+path.substring(p.length());
+        }
+        List<String> a=new ArrayList<>(Arrays.asList(path.split("[\\\\/]")));
+        int min=left+right+1;
+        if(a.size()>0 && a.get(0).equals("")){
+            left+=1;
+            min+=1;
+        }
+        if(a.size()>min){
+            a.add(left,"...");
+            int len = a.size() - right - left-1;
+            for (int i = 0; i < len; i++) {
+                a.remove(left+1);
+            }
+        }
+        return String.join("/",a);
     }
 }

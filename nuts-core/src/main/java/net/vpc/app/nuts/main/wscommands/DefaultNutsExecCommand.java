@@ -242,9 +242,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if(nid==null){
             throw new NutsNotFoundException(ws, commandName);
         }
-        NutsSession searchSession = session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsId> ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
                 .defaultVersions()
+                .configure(true,"--trace-monitor")
                 .installed().getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
@@ -256,7 +257,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if(!forceInstalled) {
                 //now search online
                 // this helps recovering from "invalid default parseVersion" issue
+                if(session.isPlainTrace()) {
+                    session.out().printf("##%s## is @@not installed@@, will search for it online. Type ((CTRL\\^C)) to stop...\n", commandName);
+                    session.out().flush();
+                }
                 ff = ws.search().id(nid).session(searchSession).optional(false).failFast(false).online().latest()
+                        .configure(true,"--trace-monitor")
                         .getResultIds().list();
             }
         }

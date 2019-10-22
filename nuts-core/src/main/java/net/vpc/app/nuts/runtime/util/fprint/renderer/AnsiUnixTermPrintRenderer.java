@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.runtime.util.fprint.renderer;
 
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.fprint.TextFormat;
 import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStreamRenderer;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.vpc.app.nuts.runtime.util.fprint.renderer.ansi.AnsiStyle;
 import net.vpc.app.nuts.runtime.util.fprint.renderer.ansi.AnsiStyleStyleApplier;
 import net.vpc.app.nuts.runtime.util.fprint.renderer.ansi.BackgroundStyleApplier;
@@ -66,6 +68,17 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
                 return old.addCommand("\u001b[1000D");
             }
         });
+        defineEscape(TextFormats.LATER_RESET_LINE, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                AnsiStyle e = old.addLaterCommand("\u001b[1000D"
+                                + CoreStringUtils.fillString(' ', 80)
+                        +"\u001b[1000D"
+                );
+
+                return e;
+            }
+        });
         defineEscape(TextFormats.MOVE_UP, new AnsiStyleStyleApplier() {
             @Override
             public AnsiStyle apply(AnsiStyle old) {
@@ -79,19 +92,19 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 //        defineEscape(TextFormats.REVERSED, "\u001b[7m", "\u001B[0m");
     }
 
-    @Override
-    public void startFormat(FormattedPrintStream out, TextFormat format) {
+    public AnsiStyle createStyleRenderer(TextFormat format) {
         AnsiStyleStyleApplier applier = resolveStyleApplyer(format);
-        AnsiStyle style = applier.apply(AnsiStyle.PLAIN);
-        for (String command : style.getCommands()) {
-            out.writeRaw(command);
-        }
-        out.writeRaw(style.resolveEscapeString());
+        return applier.apply(AnsiStyle.PLAIN);
     }
 
     @Override
-    public void endFormat(FormattedPrintStream out, TextFormat color) {
-        out.writeRaw("\u001B[0m");
+    public void startFormat(FormattedPrintStream out, TextFormat format) {
+        createStyleRenderer(format).startFormat(out);
+    }
+
+    @Override
+    public void endFormat(FormattedPrintStream out, TextFormat format) {
+        createStyleRenderer(format).endFormat(out);
     }
 
     private AnsiStyleStyleApplier createAnsiStyleStyleApplier(TextFormatList list) {
@@ -103,6 +116,9 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
     }
 
     private AnsiStyleStyleApplier resolveStyleApplyer(TextFormat format) {
+        if(format==null){
+            return DoNothingAnsiStyleStyleApplier.INSTANCE;
+        }
         if (format instanceof TextFormatList) {
             return createAnsiStyleStyleApplier((TextFormatList) format);
         }

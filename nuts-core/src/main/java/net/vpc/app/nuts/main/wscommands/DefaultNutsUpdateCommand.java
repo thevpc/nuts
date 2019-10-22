@@ -114,7 +114,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().session(getValidSession().copy().silent()).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getValidSession())).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
         }
         HashSet<NutsId> regulars = new HashSet<>();
         for (NutsId id : baseRegulars) {
@@ -266,7 +266,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id) {
         NutsSession session = getValidSession();
-        NutsSession searchSession = session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(session);
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
             throw new NutsIllegalArgumentException(ws, id + " : Version is too restrictive. You should use fetch or install instead");
@@ -366,14 +366,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId finalApiId = apiUpdateAvailable ? apiUpdate.getAvailable().getId() : ws.config().getApiId();
         NutsId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.getAvailable().getId() : ws.config().getRuntimeId();
         if (apiUpdateApplicable || runtimeUpdateApplicable) {
-            wcfg.prepareBootApi(finalApiId, finalRuntimeId, true);
+            wcfg.prepareBootApi(finalApiId, finalRuntimeId, true,getValidSession());
         }
         if (apiUpdateApplicable) {
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
         if (runtimeUpdateApplicable) {
-            wcfg.prepareBootRuntime(finalRuntimeId, true);
+            wcfg.prepareBootRuntime(finalRuntimeId, true,getValidSession());
         }
         if (runtimeUpdateApplicable) {
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
@@ -381,7 +381,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         for (NutsUpdateResult extension : result.getExtensions()) {
             NutsId finalExtensionId = extension.getAvailable() == null ? extension.getLocal().getId() : extension.getAvailable().getId();
-            wcfg.prepareBootExtension(finalExtensionId, true);
+            wcfg.prepareBootExtension(finalExtensionId, true,getValidSession());
         }
         NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getStoredConfigBoot().getExtensions())
                 .save();
@@ -444,8 +444,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     public NutsUpdateResult checkCoreUpdate(NutsId id, String bootApiVersion, NutsSession session,String type) {
         //disable trace so that search do not write to stream
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        NutsSession searchSession = session.copy().silent();
+        session = NutsWorkspaceUtils.of(ws).validateSilentSession(session);
         NutsId oldId = null;
         NutsDefinition oldFile = null;
         NutsDefinition newFile = null;
@@ -464,13 +463,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     v = NutsConstants.Versions.LATEST;
                 }
                 try {
-                    oldFile = fetch0().id(oldId).session(searchSession).online().getResultDefinition();
+                    oldFile = fetch0().id(oldId).session(session).online().getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     //ignore
                 }
                 try {
-                    newId = ws.search().session(searchSession).id(NutsConstants.Ids.NUTS_API + "#" + v).anyWhere().latest().getResultIds().first();
-                    newFile = newId == null ? null : latestOnlineDependencies(fetch0()).failFast(false).session(searchSession).id(newId).getResultDefinition();
+                    newId = ws.search().session(session).id(NutsConstants.Ids.NUTS_API + "#" + v).anyWhere().latest().getResultIds().first();
+                    newFile = newId == null ? null : latestOnlineDependencies(fetch0()).failFast(false).session(session).id(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     LOG.log(Level.SEVERE, "Error " + ex, ex);
                     //ignore
@@ -485,7 +484,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 if(oldId!=null) {
                     try {
-                        oldFile = fetch0().id(oldId).session(searchSession).online().getResultDefinition();
+                        oldFile = fetch0().id(oldId).session(session).online().getResultDefinition();
                     } catch (NutsNotFoundException ex) {
                         LOG.log(Level.SEVERE, "Error " + ex, ex);
                         //ignore
@@ -499,12 +498,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .frozenIds(getFrozenIds())
                             .latest()
                             .anyWhere()
-                            .session(searchSession)
+                            .session(session)
                             .sort(LATEST_VERSION_FIRST)
                             ;
                     newId = se.getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0().id(newId))
-                            .session(searchSession)
+                            .session(session)
                             .failFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
@@ -516,17 +515,17 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "companion":
             case "extension": {
                 try {
-                    oldId = ws.search().id(id).effective().session(searchSession)
+                    oldId = ws.search().id(id).effective().session(session)
                             .installed().sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
                     if (oldId != null) {
-                        oldFile = fetch0().id(oldId).session(searchSession).getResultDefinition();
+                        oldFile = fetch0().id(oldId).session(session).getResultDefinition();
                     }
                 } catch (Exception ex) {
                     LOG.log(Level.SEVERE, "Error " + ex, ex);
                     //ignore
                 }
                 try {
-                    NutsSearchCommand se = ws.search().session(searchSession).addId(id)
+                    NutsSearchCommand se = ws.search().session(session).addId(id)
                             .targetApiVersion(bootApiVersion)
                             .frozenIds(getFrozenIds())
                             .anyWhere()
@@ -540,7 +539,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     }
                     newId = se.getResultIds().first();
 
-                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().session(searchSession).id(newId))
+                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().session(session).id(newId))
                             .online()
                             .getResultDefinition();
                 } catch (Exception ex) {

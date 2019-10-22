@@ -11,6 +11,7 @@ package net.vpc.app.nuts.runtime.util.fprint;
  */
 public class FPrintCommands {
 
+    public static final String LATER_RESET_LINE = "later-reset-line";
     public static final String MOVE_LINE_START = "move-line-start";
     public static final String MOVE_UP = "move-up";
 }

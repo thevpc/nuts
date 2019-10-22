@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.main.wscommands;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsInstallCommand;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import java.io.PrintStream;
@@ -60,7 +61,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if(def!=null){
             return def;
         }
-        def = ws.fetch().id(id).session(session.copy().silent())
+        def = ws.fetch().id(id).session(CoreNutsUtils.silent(session))
                 .optional(false)
                 .content()
                 .effective()
@@ -81,7 +82,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         boolean emptyCommand = true;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getValidSession();
-        NutsSession searchSession = session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(session);
         PrintStream out = CoreIOUtils.resolveOut(session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
         LinkedHashMap<NutsId,Boolean> allToInstall=new LinkedHashMap<>();

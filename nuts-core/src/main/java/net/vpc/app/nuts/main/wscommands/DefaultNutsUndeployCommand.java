@@ -2,6 +2,7 @@ package net.vpc.app.nuts.main.wscommands;
 
 import net.vpc.app.nuts.*;
 
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsUndeployCommand;
@@ -20,7 +21,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
         if (ids.isEmpty()) {
             throw new NutsExecutionException(ws, "No component to undeploy", 1);
         }
-        NutsSession searchSession = getValidSession().copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(getValidSession());
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
                     .session(searchSession)

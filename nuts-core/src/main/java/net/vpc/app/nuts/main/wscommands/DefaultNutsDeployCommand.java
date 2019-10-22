@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.main.wscommands;
 
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsDeployCommand;
 import net.vpc.app.nuts.runtime.CoreNutsConstants;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
@@ -43,7 +44,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NutsId nutsId : ws.search().session(getSession().copy().silent()).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
+            for (NutsId nutsId : ws.search().session(
+                    CoreNutsUtils.silent(getSession())
+            ).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
                 NutsDefinition fetched = ws.fetch().content().id(nutsId).session(getSession()).getResultDefinition();
                 if (fetched.getPath() != null) {
                     runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);

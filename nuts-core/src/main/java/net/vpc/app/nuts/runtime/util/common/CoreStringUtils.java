@@ -545,12 +545,18 @@ public class CoreStringUtils {
      * @return
      */
     public static String fillString(char x, int width) {
+        if(width<=0) {
+            return "";
+        }
         char[] cc = new char[width];
         Arrays.fill(cc, x);
         return new String(cc);
     }
 
     public static String fillString(String x, int width) {
+        if(width<=0) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         fillString(x, width, sb);
         return sb.toString();

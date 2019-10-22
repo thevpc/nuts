@@ -39,6 +39,7 @@ public class TextFormats {
 
     public static final TextFormat MOVE_UP = new TextCursor("MOVE_UP");
     public static final TextFormat MOVE_LINE_START = new TextCursor("MOVE_LINE_START");
+    public static final TextFormat LATER_RESET_LINE = new TextCursor("LATER_RESET_LINE");
     public static final TextFormat UNDERLINED = new TextCursor("UNDERLINED");
     public static final TextFormat ITALIC = new TextCursor("ITALIC");
     public static final TextFormat STRIKED = new TextCursor("STRIKED");

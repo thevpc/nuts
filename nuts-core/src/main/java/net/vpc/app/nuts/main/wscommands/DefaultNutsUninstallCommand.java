@@ -9,6 +9,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.NutsExtensionListHelper;
 import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsUninstallCommand;
 import net.vpc.app.nuts.runtime.DefaultNutsInstallEvent;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
@@ -39,7 +40,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( this.getSession());
         ws.security().checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
-        NutsSession searchSession = session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             List<NutsDefinition> resultDefinitions = ws.search().id(id).installed().session(searchSession)

@@ -144,7 +144,7 @@ public final class JavaExecutorOptions {
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = getWorkspace().search().session(session.copy().silent());
+        NutsSearchCommand se = getWorkspace().search().session(CoreNutsUtils.silent(session));
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.getId());
@@ -286,7 +286,7 @@ public final class JavaExecutorOptions {
     }
 
     private void npToCp(List<String> classPath, String value) {
-        NutsSession searchSession = this.session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(this.session);
         NutsSearchCommand ns = getWorkspace().search().latest()
                 .session(searchSession);
         for (String n : CoreStringUtils.split(value, ";, ")) {

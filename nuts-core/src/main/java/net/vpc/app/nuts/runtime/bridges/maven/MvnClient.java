@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.runtime.bridges.maven;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 
 import java.util.logging.Level;
 
@@ -26,7 +27,7 @@ public class MvnClient {
         if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
-        NutsSession searchSession = session.copy().silent();
+        NutsSession searchSession = CoreNutsUtils.silent(session);
         switch (status) {
             case INIT: {
                 status = Status.DIRTY;

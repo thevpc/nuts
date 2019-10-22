@@ -207,11 +207,17 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 list.add(sdk);
             }
         }
-        removeAllRepositories(CoreNutsUtils.toRemoveOptions(options));
+        NutsRemoveOptions o0 = CoreNutsUtils.toRemoveOptions(options);
+        o0.session(options.getSession());
+        removeAllRepositories(o0);
         if (this.storeModelMain.getRepositories() != null) {
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
-                NutsRepository r = this.createRepository(CoreNutsUtils.refToOptions(ref), getRepositoriesRoot(), null);
-                addRepository(ref, r, CoreNutsUtils.toAddOptions(options));
+                NutsCreateRepositoryOptions o1 = CoreNutsUtils.refToOptions(ref);
+                o1.session(options.getSession());
+                NutsRepository r = this.createRepository(o1, getRepositoriesRoot(), null);
+                NutsAddOptions o2 = CoreNutsUtils.toAddOptions(options);
+                o2.session(options.getSession());
+                addRepository(ref, r, o2);
             }
         }
 
@@ -1149,7 +1155,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force) {
+    public void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force,NutsSession session) {
         if (apiId == null) {
             throw new NutsNotFoundException(ws, apiId);
         }
@@ -1183,11 +1189,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootRuntime(NutsId id, boolean force) {
-        prepareBootRuntimeOrExtension(id, force, true);
+    public void prepareBootRuntime(NutsId id, boolean force,NutsSession session) {
+        prepareBootRuntimeOrExtension(id, force, true,session);
     }
 
-    public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime) {
+    public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime,NutsSession session) {
         Path configFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id)).resolve(runtime ?
                         NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
@@ -1208,7 +1214,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 .scope(NutsDependencyScopePattern.RUN)
                 .content()
                 .failFast(false)
-                .session(ws.createSession().silent())
+                .session(CoreNutsUtils.silent(session))
                 .getResultDefinition();
         if (def == null) {
             //selected repositories cannot reach runtime component
@@ -1297,19 +1303,19 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootExtension(NutsId id, boolean force) {
-        prepareBootRuntimeOrExtension(id, force, false);
+    public void prepareBootExtension(NutsId id, boolean force,NutsSession session) {
+        prepareBootRuntimeOrExtension(id, force, false,session);
     }
 
     @Override
-    public void prepareBoot(boolean force) {
-        prepareBootApi(getApiId(), current().getRuntimeId(), force);
-        prepareBootRuntime(current().getRuntimeId(), force);
+    public void prepareBoot(boolean force,NutsSession session) {
+        prepareBootApi(getApiId(), current().getRuntimeId(), force,session);
+        prepareBootRuntime(current().getRuntimeId(), force,session);
         List<NutsWorkspaceConfigBoot.ExtensionConfig> extensions = getStoredConfigBoot().getExtensions();
         if (extensions != null) {
             for (NutsWorkspaceConfigBoot.ExtensionConfig extension : extensions) {
                 if (extension.isEnabled()) {
-                    prepareBootExtension(extension.getId(), force);
+                    prepareBootExtension(extension.getId(), force,session);
                 }
             }
         }
@@ -1902,11 +1908,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsCreateRepositoryOptions options = new NutsCreateRepositoryOptions();
         Path rootFolder = getRepositoriesRoot();
         options.setName(config.getName());
-        options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
         options.setConfig(config);
         options.setDeployOrder(repository.getDeployOrder());
         options.setSession(session);
         options.setTemporary(true);
+        options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
         NutsRepository r = new NutsSimpleRepositoryWrapper(options, ws, null, repository);
         addRepository(null, r, new NutsAddOptions().session(session));
         return r;

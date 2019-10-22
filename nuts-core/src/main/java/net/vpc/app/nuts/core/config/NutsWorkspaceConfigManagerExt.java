@@ -28,13 +28,13 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setEndCreateTimeMillis(long currentTimeMillis);
 
-    void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force);
+    void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force,NutsSession session);
 
-    void prepareBootRuntime(NutsId id, boolean force);
+    void prepareBootRuntime(NutsId id, boolean force,NutsSession session);
 
-    void prepareBootExtension(NutsId id, boolean force);
+    void prepareBootExtension(NutsId id, boolean force,NutsSession session);
 
-    void prepareBoot(boolean force);
+    void prepareBoot(boolean force,NutsSession session);
 
     boolean isConfigurationChanged();
 

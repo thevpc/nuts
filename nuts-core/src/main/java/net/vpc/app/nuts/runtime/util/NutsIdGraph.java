@@ -255,6 +255,7 @@ public class NutsIdGraph {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
             if (acceptVisit(curr)) {
                 if (curr.id.getVersion().isSingleValue()) {
+                    SearchTraceHelper.progressIndeterminate("search for deps of "+session.workspace().id().set(curr.id.id.getLongNameId()).format(),session);
                     NutsDescriptor effDescriptor = null;
                     try {
                         effDescriptor = curr.getEffDescriptor(session);

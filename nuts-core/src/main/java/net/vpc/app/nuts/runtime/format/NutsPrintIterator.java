@@ -15,7 +15,7 @@ import net.vpc.app.nuts.NutsIterableOutput;
  *
  * @author vpc
  */
-public class NutsTraceIterator<T> implements Iterator<T> {
+public class NutsPrintIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
@@ -24,7 +24,7 @@ public class NutsTraceIterator<T> implements Iterator<T> {
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NutsTraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsFetchDisplayOptions displayOptions, NutsSession session) {
+    public NutsPrintIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsFetchDisplayOptions displayOptions, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;

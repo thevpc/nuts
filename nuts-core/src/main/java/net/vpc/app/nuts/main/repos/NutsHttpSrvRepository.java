@@ -38,6 +38,7 @@ import net.vpc.app.nuts.runtime.util.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 
@@ -109,6 +110,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
         boolean transitive = session.isTransitive();
+        SearchTraceHelper.progressIndeterminate("Loading "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
             NutsDescriptor descriptor = getWorkspace().descriptor().parse(stream);
             if (descriptor != null) {
@@ -131,6 +133,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
+            SearchTraceHelper.progressIndeterminate("search "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
             ret = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
         } catch (UncheckedIOException e) {
             return IteratorUtils.emptyIterator();
@@ -151,6 +154,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             return null;
         }
 
+        SearchTraceHelper.progressIndeterminate("search "+ Arrays.toString(roots),session.getSession());
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth();

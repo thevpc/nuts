@@ -3,6 +3,7 @@ package net.vpc.app.nuts.runtime.util.fprint;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.runtime.util.fprint.renderer.AnsiUnixTermPrintRenderer;
+import net.vpc.app.nuts.runtime.util.fprint.renderer.StyleRenderer;
 import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 
 import java.io.*;
@@ -29,6 +30,7 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
     private OutputStream base;
     private PrintStream ps;
     private NutsWorkspace ws;
+    private byte[] later=null;
 //    private FormattedPrintStreamNodePartialParser partialParser = new FormattedPrintStreamNodePartialParser();
 
     public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
@@ -201,7 +203,7 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
             if (ok.size() == 1) {
                 return simplifyFormat(ok.get(0));
             }
-            return TextFormats.list(ok.toArray(new TextFormat[ok.size()]));
+            return TextFormats.list(ok.toArray(new TextFormat[0]));
         }
         return f;
     }
@@ -225,15 +227,20 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
 //    }
     protected FormattedPrintStream writeRaw(TextFormat format, String rawString) {
         if (isFormatEnabled() && format != null) {
-            TextFormat c = simplifyFormat(format);
+            StyleRenderer f=null;
+            f = renderer.createStyleRenderer(simplifyFormat(format));
             try {
-                renderer.startFormat(this, format);
-                writeRaw(rawString);
+                f.startFormat(this);
+                if(rawString.length()>0) {
+                    writeRaw(rawString);
+                }
             } finally {
-                renderer.endFormat(this, format);
+                f.endFormat(this);
             }
         } else {
-            writeRaw(rawString);
+            if(rawString.length()>0) {
+                writeRaw(rawString);
+            }
         }
         return this;
     }
@@ -415,8 +422,33 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
         }
     }
 
+    public final void later(byte[] later) {
+        this.later=later;
+    }
     public final void writeRaw(String rawString) {
-        byte[] b = rawString.getBytes();
+        byte[] b0 = rawString.getBytes();
+        byte[] b = later;
+        if(b!=null) {
+            later=null;
+            if (enableBuffering) {
+                if (b.length + bufferSize < buffer.length) {
+                    System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                    bufferSize += b.length;
+                } else {
+                    flushBuffer();
+                    if (b.length >= buffer.length) {
+                        super.write(b, 0, b.length);
+                    } else {
+                        System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                        bufferSize += b.length;
+                    }
+                }
+            } else {
+                super.write(b, 0, b.length);
+            }
+            //flush();
+        }
+        b=b0;
         if (enableBuffering) {
             if (b.length + bufferSize < buffer.length) {
                 System.arraycopy(b, 0, buffer, bufferSize, b.length);

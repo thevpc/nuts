@@ -539,6 +539,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal) {
+        //TODO : should pass session in method
+        return setSystemTerminal(terminal,null);
+    }
+    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal,NutsSession session) {
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
@@ -563,11 +567,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
         if (old != this.systemTerminal) {
             NutsWorkspaceEvent event = null;
-            for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
-                if (event == null) {
-                    event = new DefaultNutsWorkspaceEvent(ws.createSession(), null, "systemTerminal", old, this.systemTerminal);
+            if(session!=null) {
+                for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
+                    if (event == null) {
+                        event = new DefaultNutsWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
+                    }
+                    workspaceListener.onUpdateProperty(event);
                 }
-                workspaceListener.onUpdateProperty(event);
             }
         }
         return this;

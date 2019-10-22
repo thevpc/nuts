@@ -6,24 +6,15 @@
 package net.vpc.app.nuts.runtime.util.iter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import net.vpc.app.nuts.runtime.util.common.FileDepthFirstIterator;
 
 /**
- *
  * @author vpc
  */
 public class IteratorUtils {
@@ -117,11 +108,37 @@ public class IteratorUtils {
         return new FilteredIterator<>(from, filter);
     }
 
-    public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter,String name) {
+    public static <T> Iterator<T> name(String name, Iterator<T> from) {
+        return new NamedIterator<>(from, name);
+    }
+
+    public static <T> Iterator<T> flatten(Iterator<Collection<T>> from) {
+        if (from == null) {
+            return emptyIterator();
+        }
+        return new FlattenCollectionIterator<>(from);
+    }
+
+    public static <T> Iterator<T> supplier(Supplier<Iterator<T>> from) {
+        return new SupplierIterator<T>(from,null);
+    }
+
+    public static <T> Iterator<T> supplier(Supplier<Iterator<T>> from,String name) {
+        return new SupplierIterator<T>(from,name);
+    }
+
+    public static <T> Iterator<T> onFinish(Iterator<T> from, Runnable r) {
+        if (from == null) {
+            return emptyIterator();
+        }
+        return new OnFinishIterator<>(from, r);
+    }
+
+    public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter, String name) {
         if (isNullOrEmpty(from)) {
             return emptyIterator();
         }
-        return new ConvertedIterator<>(from, converter,name);
+        return new ConvertedIterator<>(from, converter, name);
     }
 
     public static <T> List<T> toList(Iterator<T> it) {
@@ -161,36 +178,7 @@ public class IteratorUtils {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
         }
-        return new Iterator<T>() {
-            Iterator<T> base = null;
-
-            public Iterator<T> getBase() {
-                if (base == null) {
-                    if (removeDuplicates) {
-                        base = toTreeSet(it, c).iterator();
-                    } else {
-                        List<T> a = toList(it);
-                        a.sort(c);
-                        base = a.iterator();
-                    }
-                }
-                return base;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return getBase().hasNext();
-            }
-
-            @Override
-            public T next() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-            @Override
-            public String toString() {
-                return "SortFilter";
-            }
-        };
+        return new SortIterator<>(it, c, removeDuplicates);
     }
 
     public static <T> Iterator<T> distinct(Iterator<T> it) {
@@ -208,6 +196,7 @@ public class IteratorUtils {
                 visited.add(value);
                 return true;
             }
+
             @Override
             public String toString() {
                 return "DistinctFilter";
@@ -278,6 +267,7 @@ public class IteratorUtils {
         public boolean test(T value) {
             return value != null;
         }
+
         @Override
         public String toString() {
             return "NonNullFilter";
@@ -293,9 +283,176 @@ public class IteratorUtils {
         public boolean test(String value) {
             return value != null && value.trim().length() > 0;
         }
+
         @Override
         public String toString() {
             return "NonBlankFilter";
+        }
+    }
+
+    private static class OnFinishIterator<T> implements Iterator<T> {
+        private final Iterator<T> from;
+        private final Runnable r;
+
+        public OnFinishIterator(Iterator<T> from, Runnable r) {
+            this.from = from;
+            this.r = r;
+        }
+
+        @Override
+        public boolean hasNext() {
+            boolean n = from.hasNext();
+            if (!n) {
+                r.run();
+            }
+            return n;
+        }
+
+        @Override
+        public T next() {
+            return from.next();
+        }
+    }
+
+    private static class SupplierIterator<T> implements Iterator<T> {
+        private final Supplier<Iterator<T>> from;
+        private Iterator<T> it;
+        private String name;
+
+        public SupplierIterator(Supplier<Iterator<T>> from,String name) {
+            this.from = from;
+            this.name = name;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (it == null) {
+                it = from.get();
+            }
+            return it.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return it.next();
+        }
+
+        @Override
+        public String toString() {
+            if(name==null){
+                return "supplier("+from+")";
+            }
+            return String.valueOf(name);
+        }
+    }
+
+    private static class NamedIterator<T> implements Iterator<T> {
+        private final Iterator<T> from;
+        private final String name;
+
+        public NamedIterator(Iterator<T> from, String name) {
+            this.from = from;
+            this.name = name;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return from != null && from.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return from.next();
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(name);
+        }
+    }
+
+    private static class FlattenCollectionIterator<T> implements Iterator<T> {
+        private final Iterator<Collection<T>> from;
+        Iterator<T> n;
+
+        public FlattenCollectionIterator(Iterator<Collection<T>> from) {
+            this.from = from;
+            n = null;
+        }
+
+        @Override
+        public boolean hasNext() {
+            while (true) {
+                if (n == null) {
+                    if (from.hasNext()) {
+                        Collection<T> p = from.next();
+                        if (p == null) {
+                            n = Collections.emptyIterator();
+                        } else {
+                            n = p.iterator();
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+                if (n.hasNext()) {
+                    return true;
+                }else{
+                    n=null;
+                }
+            }
+        }
+
+        @Override
+        public T next() {
+            return n.next();
+        }
+
+        @Override
+        public String toString() {
+            return "flattenCollection(" + from + ")";
+        }
+    }
+
+    private static class SortIterator<T> implements Iterator<T> {
+        private final boolean removeDuplicates;
+        private final Iterator<T> it;
+        private final Comparator<T> c;
+        Iterator<T> base;
+
+        public SortIterator(Iterator<T> it, Comparator<T> c, boolean removeDuplicates) {
+            this.removeDuplicates = removeDuplicates;
+            this.it = it;
+            this.c = c;
+            base = null;
+        }
+
+        public Iterator<T> getBase() {
+            if (base == null) {
+                if (removeDuplicates) {
+                    base = toTreeSet(it, c).iterator();
+                } else {
+                    List<T> a = toList(it);
+                    a.sort(c);
+                    base = a.iterator();
+                }
+            }
+            return base;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return getBase().hasNext();
+        }
+
+        @Override
+        public T next() {
+            return getBase().next();
+        }
+
+        @Override
+        public String toString() {
+            return "sort("+ it +")";
         }
     }
 }
