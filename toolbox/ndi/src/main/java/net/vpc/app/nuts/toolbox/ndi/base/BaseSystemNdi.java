@@ -1,6 +1,9 @@
-package net.vpc.app.nuts.toolbox.ndi;
+package net.vpc.app.nuts.toolbox.ndi.base;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.toolbox.ndi.NdiScriptOptions;
+import net.vpc.app.nuts.toolbox.ndi.NdiScriptnfo;
+import net.vpc.app.nuts.toolbox.ndi.util.NdiUtils;
 
 import java.io.*;
 import java.nio.file.Files;

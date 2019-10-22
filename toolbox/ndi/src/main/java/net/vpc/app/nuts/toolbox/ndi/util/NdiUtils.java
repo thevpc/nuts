@@ -27,7 +27,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.ndi;
+package net.vpc.app.nuts.toolbox.ndi.util;
+
+import net.vpc.app.nuts.toolbox.ndi.base.AnyNixNdi;
 
 import java.io.*;
 import java.nio.file.Files;

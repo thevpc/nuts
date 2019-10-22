@@ -2,6 +2,11 @@ package net.vpc.app.nuts.toolbox.ndi;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
+import net.vpc.app.nuts.toolbox.ndi.sys.LinuxNdi;
+import net.vpc.app.nuts.toolbox.ndi.sys.MacosNdi;
+import net.vpc.app.nuts.toolbox.ndi.sys.UnixNdi;
+import net.vpc.app.nuts.toolbox.ndi.sys.WindowsNdi;
+import net.vpc.app.nuts.toolbox.ndi.util.NdiUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -98,6 +103,7 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmdLine.next("un", "uninstall")) != null) {
                 while (cmdLine.hasNext()) {
                     if (context.configureFirst(cmdLine)) {
+                        //consumed
                     } else if (cmdLine.peek().isOption()) {
                         cmdLine.unexpectedArgument();
                     } else {
@@ -178,7 +184,7 @@ public class NdiMain extends NutsApplication {
         }
     }
 
-    protected void onInstallApplicationOrUpdate(NutsApplicationContext context, boolean update) {
+    protected void onInstallOrUpdateApplication(NutsApplicationContext context, boolean update) {
         NutsCommandLine cmd = context.commandLine();
         if (update) {
             cmd.setCommandName("ndi --nuts-exec-mode=update");
@@ -188,7 +194,7 @@ public class NdiMain extends NutsApplication {
         NutsArgument a;
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
-                //
+                // consumed
             } else if ((a = cmd.nextBoolean("--skip-init")) != null) {
                 if (a.getBooleanValue()) {
                     return;
@@ -200,24 +206,23 @@ public class NdiMain extends NutsApplication {
         SystemNdi ndi = createNdi(context);
         if (ndi != null) {
             List<String> args = new ArrayList<>();
-            args.addAll(Arrays.asList("in", "-b"));
+            args.addAll(Arrays.asList("install", "--embedded"));
             args.addAll(Arrays.asList(COMPANIONS));
             context.getSession().yes();
             run(args.toArray(new String[0]));
-
         }
     }
 
     @Override
     protected void onInstallApplication(NutsApplicationContext context) {
-        onInstallApplicationOrUpdate(context, false);
+        onInstallOrUpdateApplication(context, false);
     }
 
     @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
-        onInstallApplicationOrUpdate(applicationContext, true);
+        onInstallOrUpdateApplication(applicationContext, true);
     }
 
     @Override

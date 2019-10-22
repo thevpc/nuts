@@ -1,6 +1,8 @@
-package net.vpc.app.nuts.toolbox.ndi;
+package net.vpc.app.nuts.toolbox.ndi.base;
 
 import net.vpc.app.nuts.NutsApplicationContext;
+import net.vpc.app.nuts.toolbox.ndi.SystemNdi;
+
 import java.util.logging.Logger;
 
 public abstract class AbstractSystemNdi implements SystemNdi {

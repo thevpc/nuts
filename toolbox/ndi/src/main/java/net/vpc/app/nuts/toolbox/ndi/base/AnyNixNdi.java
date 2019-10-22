@@ -1,14 +1,15 @@
-package net.vpc.app.nuts.toolbox.ndi;
+package net.vpc.app.nuts.toolbox.ndi.base;
 
 import java.io.*;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.toolbox.ndi.NdiScriptOptions;
+import net.vpc.app.nuts.toolbox.ndi.base.BaseSystemNdi;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class AnyNixNdi extends BaseSystemNdi {
 

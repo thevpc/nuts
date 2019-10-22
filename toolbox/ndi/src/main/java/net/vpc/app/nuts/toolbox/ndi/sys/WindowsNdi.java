@@ -1,7 +1,9 @@
-package net.vpc.app.nuts.toolbox.ndi;
+package net.vpc.app.nuts.toolbox.ndi.sys;
 
 import mslinks.ShellLink;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.toolbox.ndi.base.BaseSystemNdi;
+import net.vpc.app.nuts.toolbox.ndi.NdiScriptOptions;
 
 import java.io.File;
 import java.io.IOException;
