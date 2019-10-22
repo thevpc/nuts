@@ -154,14 +154,30 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return c.getCatalinaVersion();
     }
 
+    public Path resolveCatalinaHome() {
+        NutsDefinition f = getCatalinaNutsDefinition();
+        Path u = f.getInstallInformation().getInstallFolder();
+        Path[] paths;
+        try {
+            paths = Files.list(u).filter(x -> Files.isDirectory(x)).toArray(Path[]::new);
+            if(paths.length==1 && paths[0].getFileName().toString().toLowerCase().startsWith("apache-tomcat")){
+                return paths[0];
+            }
+        } catch (Exception e) {
+            //
+        }
+        return u;
+    }
+
     public Path getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isBlank(h)) {
-            NutsDefinition f = getCatalinaNutsDefinition();
-            return f.getInstallInformation().getInstallFolder();
-        } else {
-            return Paths.get(h);
+            Path h2 = resolveCatalinaHome();
+            getConfig().setCatalinaHome(h2.toString());
+            save();
+            return h2;
         }
+        return Paths.get(h);
     }
 
     public void printStatus() {
@@ -303,7 +319,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         JpsResult jpsResult = getJpsResult();
         if (jpsResult != null) {
             if (context.session().isPlainOut()) {
-                context.session().out().printf("==[%s]== Tomcat already started.\n", getName());
+                context.session().out().printf("==[%s]== Tomcat already started on port "+getHttpConnectorPort()+".\n", getName());
             }
             return false;
         }
@@ -315,7 +331,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         ProcessBuilder2 b = invokeCatalina("start");
         if (context.session().isPlainOut()) {
-            context.session().out().printf("==[%s]== starting Tomcat. CMD=%s.\n", getName(), b.getCommand());
+            context.session().out().printf("==[%s]== starting Tomcat on port "+getHttpConnectorPort()+". CMD=%s.\n", getName(), b.getCommand());
         }
         try {
             b.waitFor();
@@ -500,13 +516,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
         AppStatus y = getStatus(domain, app);
         if (y == AppStatus.RUNNING) {
-            context.session().out().printf("==[%s]== Tomcat started.\n", getName());
+            context.session().out().printf("==[%s]== Tomcat started on port "+getHttpConnectorPort()+".\n", getName());
             return y;
         }
         if (timeout <= 0) {
             JpsResult ps = getJpsResult();
             if (ps != null) {
-                context.session().out().printf("==[%s]== Tomcat started.\n", getName());
+                context.session().out().printf("==[%s]== Tomcat started on port"+getHttpConnectorPort()+" .\n", getName());
                 return AppStatus.RUNNING;
             }
             throw new NutsExecutionException(context.getWorkspace(), "Unable to start tomcat", 2);
@@ -519,7 +535,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             y = getStatus(domain, app);
             if (y == AppStatus.RUNNING) {
-                context.session().out().printf("==[%s]== Tomcat started.\n", getName());
+                context.session().out().printf("==[%s]== Tomcat started on port "+getHttpConnectorPort()+".\n", getName());
                 return y;
             }
         }
@@ -908,6 +924,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         //
         return null;
+    }
+
+    public Integer getHttpConnectorPort() {
+        return getConnectorPort("HTTP/1.1", false);
+    }
+
+    public Integer getHttpConnectorRedirectPort() {
+        return getConnectorPort("HTTP/1.1", true);
     }
 
     public Integer getConnectorPort(String protocol, final boolean redirect) {

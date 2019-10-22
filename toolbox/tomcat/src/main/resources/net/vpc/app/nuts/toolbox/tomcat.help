@@ -23,16 +23,12 @@ tomcat toolbox to start, monitor and remote deploy applications
 
     **--name** <config>
         use tomcat instance configuration
-
     **--name** <config>.<domainOrApp>
         use domain or application configuration
-
     **--app** <config>.<app>
         use application configuration
-
     **--app** <config>.<domain>
         use domain configuration
-
 
 ##Local/Server Tomcat commands## :
     list            \[**<options>**\]
@@ -43,7 +39,6 @@ tomcat toolbox to start, monitor and remote deploy applications
                     : list all apps
         \[**--domains**\]
                     : list all domains
-
     show | describe **<what>**
                     : show instance/app/domain information
         \[**--name**\] <name>
@@ -52,58 +47,41 @@ tomcat toolbox to start, monitor and remote deploy applications
                     : select app name in the form 'name' or 'instance.name'
         \[**--domain**\]
                     : select domain name in the form 'name' or 'instance.name'
-
     add  --name   <instance-name>
                     : add new instance
-
     add  --app   <app-name>
                     : add new application
-
     add  --domain   <app-name>
                     : add new domain
-
     add  | set      **<what>**
-                    :
-
+                    : set tomcat instance property
     remove       **<what>**
-                    :
-
+                    : remove tomcat instance
     status       **<what>**
-                    :
-
+                    : write tomcat status
     install      **<what>**
-                    :
-
+                    : install tomcat instance
     reset        **<what>**
-                    :
-
+                    : reset tomcat instance
     deploy       **<what>**
-                    :
-
+                    : deploy file
     deploy-file  **<what>**
-                    :
-
+                    : deploy file
     delete-log   **<what>**
-                    :
-
+                    : delete log folder
     delete-temp  **<what>**
-                    :
-
+                    : delete temp folder
     delete-work  **<what>**
-                    :
-
+                    : delete work folder
     show-log **<what>** [**--path**] [<lines-count>]
                     :
-
     get-port | show-port **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**]
                     :
-
     set-port  **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**] <port>
-                    :
 
 ##EXAMPLES:##
 
-##tomcat## my-instance set
-   commits and @@DELETES@@ the checked out folder
+##tomcat## start
+   will start tomcat instance with the latest available version
 
 
