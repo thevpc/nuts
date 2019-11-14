@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
+import net.vpc.toolbox.tomcat.util.NamedItemNotFoundException;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.*;
@@ -13,7 +14,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
 
@@ -142,14 +142,14 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing config name", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing instance name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
             config = context.workspace().json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
-        throw new NoSuchElementException("Config not found : " + name);
+        throw new NamedItemNotFoundException("Instance not found : " + getName(),getName());
     }
 
     public RemoteTomcatConfigService remove() {

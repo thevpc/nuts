@@ -12,13 +12,14 @@ import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class NutsServerMain extends NutsApplication {
 
     public static void main(String[] args) {
         new NutsServerMain().runAndExit(args);
     }
-
+    private CountDownLatch lock =new CountDownLatch(1);
     @Override
     public void run(NutsApplicationContext context) {
         boolean autoSave = false;
@@ -82,126 +83,82 @@ public class NutsServerMain extends NutsApplication {
     private void start(NutsApplicationContext context, NutsCommandLine cmdLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
         NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
-        List<SrvInfo> servers = new ArrayList<SrvInfo>();
-        boolean readOnly = false;
-        String archetype = "server"; //default archetype for server
+        SrvInfoList servers = new SrvInfoList(context.workspace());
         NutsArgument a;
-        NutsWorkspaceOpenMode openMode = NutsWorkspaceOpenMode.OPEN_OR_CREATE;
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
-            } else if ((a = cmdLine.nextString("-o", "--open-mode")) != null) {
-                String v = a.getStringValue();
-                if (a.isEnabled()) {
-                    openMode = parseNutsWorkspaceOpenMode(v);
-                }
-            } else if ((a = cmdLine.nextBoolean("-open")) != null) {
-                if (a.isEnabled()) {
-                    openMode = NutsWorkspaceOpenMode.OPEN_EXISTING;
-                }
-            } else if ((a = cmdLine.nextBoolean("-create")) != null) {
-                if (a.isEnabled()) {
-                    openMode = NutsWorkspaceOpenMode.CREATE_NEW;
-                }
-            } else if ((a = cmdLine.nextString("-A", "--archetype")) != null) {
-                archetype = a.getStringValue();
-            } else if (cmdLine.next("-R", "--read-only") != null) {
-                readOnly = true;
+                //default options
             } else if (cmdLine.next("--http") != null) {
-                servers.add(new SrvInfo());
-                servers.get(servers.size() - 1).serverType = "http";
+                servers.add().serverType = "http";
             } else if (cmdLine.next("--https") != null) {
-                servers.add(new SrvInfo());
-                servers.get(servers.size() - 1).serverType = "https";
+                servers.add().serverType = "https";
             } else if (cmdLine.next("--admin") != null) {
-                servers.add(new SrvInfo());
-                servers.get(servers.size() - 1).serverType = "admin";
-            } else if (cmdLine.next("-n", "--name") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
+                servers.add().serverType = "admin";
+            } else if ((a=cmdLine.nextBoolean("-R", "--read-only")) != null) {
+                servers.current().readOnly = a.getBooleanValue();
+            } else if ((a=cmdLine.nextString("-n", "--name")) != null) {
+                servers.current().name = a.getStringValue();
+            } else if ((a=cmdLine.nextString("-a", "--address")) != null) {
+                servers.current().addr = a.getStringValue();
+            } else if ((a=cmdLine.nextString("-p", "--port")) != null) {
+                servers.current().port = a.getArgumentValue().getInt();
+            } else if ((a=cmdLine.nextString("-l", "--backlog")) != null) {
+                servers.current().port = a.getArgumentValue().getInt();
+            } else if ((a=cmdLine.nextString("--ssl-certificate")) != null) {
+                servers.current().sslCertificate = a.getStringValue();
+            } else if ((a=cmdLine.nextString("--ssl-passphrase")) != null) {
+                servers.current().sslPassphrase = a.getStringValue();
+            } else if ((a=cmdLine.nextString("-w", "--workspace")) != null) {
+                String ws=a.getString();
+                String serverContext="";
+                if(ws.contains("@")){
+                    serverContext=ws.substring(0,ws.indexOf('@'));
+                    ws=ws.substring(ws.indexOf('@')+1);
                 }
-                servers.get(servers.size() - 1).name = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerName")).getString();
-            } else if (cmdLine.next("-a", "--address") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
+                if (servers.current().workspaceLocations.containsKey(serverContext)) {
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Workspace context Already defined " + serverContext);
                 }
-                servers.get(servers.size() - 1).addr = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerAddress")).getString();
-
-            } else if (cmdLine.next("-p", "--port") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
-                }
-                servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerPort")).getInt();
-
-            } else if (cmdLine.next("-l", "--backlog") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
-                }
-                servers.get(servers.size() - 1).port = cmdLine.required().nextNonOption(commandLineFormat.createName("ServerBacklog")).getInt();
-            } else if (cmdLine.next("--ssl-certificate") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
-                }
-                servers.get(servers.size() - 1).sslCertificate = cmdLine.required().nextNonOption(commandLineFormat.createName("SslCertificate")).required().getString();
-            } else if (cmdLine.next("--ssl-passphrase") != null) {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
-                }
-                servers.get(servers.size() - 1).sslPassphrase = cmdLine.required().nextNonOption(commandLineFormat.createName("SslPassPhrase")).required().getString();
+                servers.current().workspaceLocations.put(serverContext, ws);
             } else {
-                if (servers.isEmpty()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Type missing");
-                }
-                NutsArgument s = cmdLine.required().nextNonOption(commandLineFormat.createName("Workspace"));
-                if (s.isKeyValue()) {
-                    String serverContext = s.getStringKey();
-                    String workspaceLocation = s.getStringValue();
-                    if (servers.get(servers.size() - 1).workspaceLocations.containsKey(serverContext)) {
-                        throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Workspace context Already defined " + serverContext);
-                    }
-                    servers.get(servers.size() - 1).workspaceLocations.put(serverContext, workspaceLocation);
-                } else {
-                    if (servers.get(servers.size() - 1).workspaceLocations.containsKey("")) {
-                        throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Server Workspace context Already defined " + "");
-                    }
-                    servers.get(servers.size() - 1).workspaceLocations.put("", s.getString());
-                }
+                cmdLine.unexpectedArgument();
             }
 
         }
         if (cmdLine.isExecMode()) {
-            if (servers.isEmpty()) {
+            if (servers.all.isEmpty()) {
                 context.session().terminal().err().println("No Server config found.");
                 throw new NutsExecutionException(context.getWorkspace(), "No Server config found", 1);
             }
-            Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
-            for (SrvInfo server : servers) {
-                Map<String, NutsWorkspace> workspaces = new HashMap<>();
+            for (SrvInfo server : servers.all) {
                 for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
                     NutsWorkspace nutsWorkspace = null;
-                    if (StringUtils.isBlank(entry.getValue())) {
+                    String wsContext = entry.getKey();
+                    String wsLocation = entry.getValue();
+                    if (StringUtils.isBlank(wsContext) || wsContext.equals(".")) {
+                        wsContext="";
+                    }
+                    if (StringUtils.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
                             throw new NutsIllegalArgumentException(context.getWorkspace(), "nuts-server: Missing workspace");
                         }
                         nutsWorkspace = context.getWorkspace();
+                        server.workspaces.put(wsContext,nutsWorkspace);
                     } else {
-                        nutsWorkspace = allWorkspaces.get(entry.getValue());
+                        nutsWorkspace = server.workspaces.get(wsContext);
                         if (nutsWorkspace == null) {
                             nutsWorkspace = Nuts.openWorkspace(
                                     new NutsDefaultWorkspaceOptions()
-                                            .setWorkspace(entry.getValue())
-                                            .setOpenMode(openMode)
-                                            .setReadOnly(readOnly)
-                                            .setArchetype(archetype)
+                                            .setWorkspace(wsLocation)
+                                            .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                            .setReadOnly(server.readOnly)
                             );
-                            allWorkspaces.put(entry.getValue(), nutsWorkspace);
+                            server.workspaces.put(wsContext, nutsWorkspace);
                         }
-
                     }
-                    workspaces.put(entry.getKey(), nutsWorkspace);
                 }
             }
             HashSet<String> visitedNames = new HashSet<>();
-            for (SrvInfo server : servers) {
+            for (SrvInfo server : servers.all) {
                 ServerConfig config0 = null;
                 switch (server.serverType) {
                     case "http":
@@ -253,16 +210,43 @@ public class NutsServerMain extends NutsApplication {
                 serverManager.startServer(config0);
             }
         }
-        final Object lock=new Object();
-        synchronized (lock){
-            try {
-                lock.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        waitAllServers();
+    }
+
+    public void stopWaiting() {
+        if(lock.getCount()>0) {
+            lock.countDown();
         }
     }
 
+    private void waitAllServers() {
+        try {
+            lock.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static class SrvInfoList {
+        List<SrvInfo> all =new ArrayList<>();
+        NutsWorkspace ws;
+
+        SrvInfoList(NutsWorkspace ws) {
+            this.ws = ws;
+        }
+
+        SrvInfo add(){
+            SrvInfo s = new SrvInfo();
+            all.add(s);
+            return s;
+        }
+        SrvInfo current(){
+            if (all.isEmpty()) {
+                throw new NutsIllegalArgumentException(ws, "nuts-server: Server Type missing");
+            }
+            return all.get(all.size() - 1);
+        }
+    }
     static class SrvInfo {
 
         String name = null;
@@ -272,8 +256,9 @@ public class NutsServerMain extends NutsApplication {
         String serverType = "http";
         String sslCertificate = null;
         String sslPassphrase = null;
-        Map<String, String> workspaceLocations = new HashMap<>();
+        Map<String,String> workspaceLocations = new LinkedHashMap<>();
         Map<String, NutsWorkspace> workspaces = new HashMap<>();
+        boolean readOnly = false;
     }
 
 

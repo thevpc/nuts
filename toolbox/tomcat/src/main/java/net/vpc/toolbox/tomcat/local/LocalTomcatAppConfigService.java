@@ -1,5 +1,6 @@
 package net.vpc.toolbox.tomcat.local;
 
+import net.vpc.app.nuts.NutsWorkspaceOpenMode;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
@@ -99,7 +100,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public Path getDeployFile() {
-        LocalTomcatDomainConfigService d = tomcat.getDomainOrCreate(getConfig().getDomain());
+        LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsWorkspaceOpenMode.OPEN_EXISTING);
         String deployName = getConfig().getDeployName();
         if (TomcatUtils.isBlank(deployName)) {
             deployName = name + ".war";

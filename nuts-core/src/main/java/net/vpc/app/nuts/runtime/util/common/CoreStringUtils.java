@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.runtime.util.common;
 
+import net.vpc.app.nuts.NutsWorkspace;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
@@ -449,6 +451,21 @@ public class CoreStringUtils {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    public static String enforceDoubleQuote(String s) {
+        if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
+            s = "\"" + s.replace("\"", "\\\"") + "\"";
+        }
+        return s;
+    }
+
+    public static String enforceDoubleQuote(String s, NutsWorkspace ws) {
+        s = ws.io().terminalFormat().escapeText(s);
+        if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
+            s = "\"" + s + "\"";
+        }
+        return s;
     }
 
     public static class MapToFunction<K, V> implements Function<K, V> {

@@ -39,7 +39,6 @@ import java.nio.file.Paths;
 public class DerbyOptions {
 
     public Command cmd = Command.start;
-    public Path derbyBinHome = Paths.get(".");
     public String derbyVersion = null;
     public String derbyDataHomeRoot = null;
     public String derbyDataHomeReplace = null;

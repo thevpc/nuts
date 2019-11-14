@@ -111,7 +111,7 @@ grant
   permission org.apache.derby.security.SystemPermission "engine", "usederbyinternals";
   // JMX: Uncomment this permission to allow the ping operation of the 
   //      NetworkServerMBean to connect to the Network Server.
-  //permission java.net.SocketPermission "*", "connect,resolve";
+  permission java.net.SocketPermission "*", "connect,resolve";
 
   //
   // Needed by sysinfo. The file permission is needed to check the

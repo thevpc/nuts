@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -31,6 +32,10 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         return "apache-tomcat";
     }
 
+    @Override
+    public String getUuid() {
+        return UUID.nameUUIDFromBytes(getName().getBytes()).toString();
+    }
 
     @Override
     public Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {

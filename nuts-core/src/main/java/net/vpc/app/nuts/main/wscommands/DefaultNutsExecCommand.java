@@ -41,9 +41,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     public NutsExecutableInformation which() {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
         NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
-        terminal.setParent(getValidSession().getTerminal());
-        terminal.setOutMode(getValidSession().getTerminal().getOutMode());
-        terminal.setErrMode(getValidSession().getTerminal().getErrMode());
+        NutsSession session = getValidSession();
+        terminal.setParent(session.getTerminal());
+        terminal.setOutMode(session.getTerminal().getOutMode());
+        terminal.setErrMode(session.getTerminal().getErrMode());
         if(isGrabOutputString()){
             terminal.setOutMode(NutsTerminalMode.INHERITED);
         }
@@ -60,7 +61,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if (this.out != null) {
                 terminal.setErr(this.out);
             } else {
-                terminal.setErr(getValidSession().getTerminal().out());
+                terminal.setErr(session.getTerminal().out());
             }
             terminal.setErrMode(terminal.getOutMode());
         }
@@ -68,14 +69,15 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         terminal.err().flush();
         String[] ts = command.toArray(new String[0]);
         NutsExecutableInformationExt exec = null;
-        NutsSession session2 = getValidSession().setTerminal(terminal);
+        NutsSession sessionCopy = session.copy();
+        sessionCopy.setTerminal(terminal);
         switch (executionType) {
             case SYSCALL: {
                 if (commandDefinition != null) {
                     throw new NutsIllegalArgumentException(ws, "Unable to run nuts as syscall");
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
-                        session2,
+                        sessionCopy,
                         this
                 );
                 break;
@@ -83,9 +85,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             case SPAWN:
             case EMBEDDED: {
                 if (commandDefinition != null) {
-                    return ws_exec0(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), env, directory, failFast, executionType, session2);
+                    return ws_exec0(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), env, directory, failFast, executionType, sessionCopy);
                 } else {
-                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), session2);
+                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), sessionCopy);
                 }
                 break;
             }

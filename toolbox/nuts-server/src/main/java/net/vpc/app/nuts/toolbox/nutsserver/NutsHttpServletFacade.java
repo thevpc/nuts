@@ -443,7 +443,11 @@ public class NutsHttpServletFacade {
         }
         FacadeCommand facadeCommand = commands.get(ii.command);
         if (facadeCommand == null) {
-            context.sendError(404, "Command Not found : " + ii.command);
+            if(ii.command.isEmpty()){
+                context.sendError(404, "Missing command");
+            }else {
+                context.sendError(404, "Command Not found : " + ii.command);
+            }
         } else {
             try {
                 try {

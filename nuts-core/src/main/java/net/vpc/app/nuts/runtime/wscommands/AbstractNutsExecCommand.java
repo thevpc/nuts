@@ -3,6 +3,8 @@ package net.vpc.app.nuts.runtime.wscommands;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.DefaultNutsExecCommandFormat;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
+import net.vpc.app.nuts.runtime.util.io.ProcessBuilder2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -19,7 +21,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsDefinition commandDefinition;
     protected List<String> command;
     protected List<String> executorOptions;
-    protected Map<String,String> env;
+    protected Map<String, String> env;
     protected NutsExecutionException result;
     protected boolean executed;
     protected String directory;
@@ -36,7 +38,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommandFormat format(){
+    public NutsExecCommandFormat format() {
         return new DefaultNutsExecCommandFormat(ws).setValue(this);
     }
 
@@ -165,7 +167,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public Map<String,String> getEnv() {
+    public Map<String, String> getEnv() {
         return env;
     }
 
@@ -176,7 +178,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand addEnv(Map<String, String> env) {
-        if(env!=null) {
+        if (env != null) {
             for (Map.Entry<String, String> entry : env.entrySet()) {
                 setEnv(entry.getKey(), entry.getValue());
             }
@@ -191,11 +193,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setEnv(String key, String value) {
-        if(value ==null){
-            if (env!= null) {
+        if (value == null) {
+            if (env != null) {
                 env.remove(key);
             }
-        }else {
+        } else {
             if (env == null) {
                 env = new LinkedHashMap<>();
             }
@@ -555,5 +557,174 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             flush();
             return new String(out.toByteArray());
         }
+    }
+
+    public String getCommandString() {
+        return getCommandString(null);
+    }
+
+    public String getCommandString(ProcessBuilder2.CommandStringFormat f) {
+        StringBuilder sb = new StringBuilder();
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k == null) {
+                    k = "";
+                }
+                if (v == null) {
+                    v = "";
+                }
+                if (f != null) {
+                    if (!f.acceptEnvName(k, v)) {
+                        continue;
+                    }
+                    String k2 = f.replaceEnvName(k, v);
+                    if (k2 != null) {
+                        k = k2;
+                    }
+                    String v2 = f.replaceEnvValue(k, v);
+                    if (v2 != null) {
+                        v = v2;
+                    }
+                }
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append(CoreStringUtils.enforceDoubleQuote(k)).append("=").append(CoreStringUtils.enforceDoubleQuote(v));
+            }
+        }
+        for (int i = 0; i < command.size(); i++) {
+            String s = command.get(i);
+            if (f != null) {
+                if (!f.acceptArgument(i, s)) {
+                    continue;
+                }
+                String k2 = f.replaceArgument(i, s);
+                if (k2 != null) {
+                    s = k2;
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(CoreStringUtils.enforceDoubleQuote(s));
+        }
+//        if (baseIO) {
+////            ProcessBuilder.Redirect r;
+//            if (f == null || f.acceptRedirectOutput()) {
+//                sb.append(" > ").append("{?}");
+////                r = base.redirectOutput();
+////                if (null == r.type()) {
+////                    sb.append(" > ").append("{?}");
+////                } else {
+////                    switch (r.type()) {
+////                        //sb.append(" > ").append("{inherited}");
+////                        case INHERIT:
+////                            break;
+////                        case PIPE:
+////                            break;
+////                        case WRITE:
+////                            sb.append(" > ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+////                            break;
+////                        case APPEND:
+////                            sb.append(" >> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+////                            break;
+////                        default:
+////                            sb.append(" > ").append("{?}");
+////                            break;
+////                    }
+////                }
+//            }
+//            if (f == null || f.acceptRedirectError()) {
+//                if (isRedirectErrorStream()) {
+//                    sb.append(" 2>&1");
+//                } else {
+//                    if (f == null || f.acceptRedirectError()) {
+//                        sb.append(" 2> ").append("{?}");
+//                    }
+////                    if (f == null || f.acceptRedirectError()) {
+////                        r = base.redirectError();
+////                        if (null == r.type()) {
+////                            sb.append(" 2> ").append("{?}");
+////                        } else {
+////                            switch (r.type()) {
+////                                //sb.append(" 2> ").append("{inherited}");
+////                                case INHERIT:
+////                                    break;
+////                                case PIPE:
+////                                    break;
+////                                case WRITE:
+////                                    sb.append(" 2> ").append(r.file().getPath());
+////                                    break;
+////                                case APPEND:
+////                                    sb.append(" 2>> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+////                                    break;
+////                                default:
+////                                    sb.append(" 2> ").append("{?}");
+////                                    break;
+////                            }
+////                        }
+////                    }
+//                }
+//            }
+//            if (f == null || f.acceptRedirectInput()) {
+//                sb.append(" < ").append("{?}");
+////                r = base.redirectInput();
+////                if (null == r.type()) {
+////                    sb.append(" < ").append("{?}");
+////                } else {
+////                    switch (r.type()) {
+////                        //sb.append(" < ").append("{inherited}");
+////                        case INHERIT:
+////                            break;
+////                        case PIPE:
+////                            break;
+////                        case READ:
+////                            sb.append(" < ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+////                            break;
+////                        default:
+////                            sb.append(" < ").append("{?}");
+////                            break;
+////                    }
+////                }
+//            }
+//        } else if (isRedirectErrorStream()) {
+        if (isRedirectErrorStream()) {
+            if (out != null) {
+                if (f == null || f.acceptRedirectOutput()) {
+                    sb.append(" > ").append("{stream}");
+                }
+                if (f == null || f.acceptRedirectError()) {
+                    sb.append(" 2>&1");
+                }
+            }
+            if (in != null) {
+                if (f == null || f.acceptRedirectInput()) {
+                    sb.append(" < ").append("{stream}");
+                }
+            }
+        } else {
+            if (out != null) {
+                if (f == null || f.acceptRedirectOutput()) {
+                    sb.append(" > ").append("{stream}");
+                }
+            }
+            if (err != null) {
+                if (f == null || f.acceptRedirectError()) {
+                    sb.append(" 2> ").append("{stream}");
+                }
+            }
+            if (in != null) {
+                if (f == null || f.acceptRedirectInput()) {
+                    sb.append(" < ").append("{stream}");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public String toString() {
+        return getCommandString();
     }
 }

@@ -46,6 +46,10 @@ public final class NutsHttpServerConfig extends ServerConfig {
     private int port;
     private int backlog;
     private Executor executor;
+    private int executorCorePoolSize=-1;
+    private int executorMaximumPoolSize=-1;
+    private int executorQueueSize=-1;
+    private int executorIdleTimeSeconds=-1;
     private boolean tls;
     private byte[] sslKeystoreCertificate;
     private char[] sslKeystorePassphrase;
@@ -129,6 +133,42 @@ public final class NutsHttpServerConfig extends ServerConfig {
 
     public NutsHttpServerConfig setExecutor(Executor executor) {
         this.executor = executor;
+        return this;
+    }
+
+    public int getExecutorCorePoolSize() {
+        return executorCorePoolSize;
+    }
+
+    public NutsHttpServerConfig setExecutorCorePoolSize(int executorCorePoolSize) {
+        this.executorCorePoolSize = executorCorePoolSize;
+        return this;
+    }
+
+    public int getExecutorMaximumPoolSize() {
+        return executorMaximumPoolSize;
+    }
+
+    public NutsHttpServerConfig setExecutorMaximumPoolSize(int executorMaximumPoolSize) {
+        this.executorMaximumPoolSize = executorMaximumPoolSize;
+        return this;
+    }
+
+    public int getExecutorQueueSize() {
+        return executorQueueSize;
+    }
+
+    public NutsHttpServerConfig setExecutorQueueSize(int executorQueueSize) {
+        this.executorQueueSize = executorQueueSize;
+        return this;
+    }
+
+    public int getExecutorIdleTimeSeconds() {
+        return executorIdleTimeSeconds;
+    }
+
+    public NutsHttpServerConfig setExecutorIdleTimeSeconds(int executorIdleTimeSeconds) {
+        this.executorIdleTimeSeconds = executorIdleTimeSeconds;
         return this;
     }
 }

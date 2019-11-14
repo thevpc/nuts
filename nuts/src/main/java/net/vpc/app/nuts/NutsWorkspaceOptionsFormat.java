@@ -116,7 +116,17 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
-            fillOption("--workspace", "-w", PrivateNutsUtils.isBlank(options.getWorkspace()) ? "" : PrivateNutsUtils.getAbsolutePath(options.getWorkspace()), arguments, false);
+            String wsString = options.getWorkspace();
+            if(PrivateNutsUtils.isBlank(wsString)){
+                //default workspace name
+                wsString="";
+            }else if(wsString.contains("/") || wsString.contains("\\")){
+                //workspace path
+                wsString=PrivateNutsUtils.getAbsolutePath(wsString);
+            }else{
+                //workspace name
+            }
+            fillOption("--workspace", "-w", wsString, arguments, false);
             fillOption("--user", "-u", options.getUserName(), arguments, false);
             fillOption("--password", "-p", options.getCredentials(), arguments, false);
             fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);

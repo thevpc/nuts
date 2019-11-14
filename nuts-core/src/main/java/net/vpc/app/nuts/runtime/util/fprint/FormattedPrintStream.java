@@ -425,8 +425,8 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
     public final void later(byte[] later) {
         this.later=later;
     }
-    public final void writeRaw(String rawString) {
-        byte[] b0 = rawString.getBytes();
+
+    public final void flushLater() {
         byte[] b = later;
         if(b!=null) {
             later=null;
@@ -448,7 +448,10 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
             }
             //flush();
         }
-        b=b0;
+    }
+    public final void writeRaw(String rawString) {
+        flushLater();
+        byte[] b = rawString.getBytes();
         if (enableBuffering) {
             if (b.length + bufferSize < buffer.length) {
                 System.arraycopy(b, 0, buffer, bufferSize, b.length);
@@ -487,6 +490,7 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
 
     @Override
     public void flush() {
+        //flushLater();
         flushBuffer();
         super.flush();
         try {
@@ -494,6 +498,8 @@ public abstract class FormattedPrintStream extends PrintStream implements NutsPr
         } catch (Exception ex) {
             //
         }
+        flushLater();
+        flushBuffer();
         super.flush();
     }
 

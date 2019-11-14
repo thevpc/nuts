@@ -43,6 +43,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.runtime.util.io.IProcessExecHelper;
@@ -169,7 +172,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 xargs.addAll(joptions.getApp());
                 args.addAll(joptions.getApp());
-                return new IProcessExecHelper() {
+                return new AbstractSyncIProcessExecHelper() {
                     @Override
                     public void dryExec() {
                         PrintStream out = executionContext.getSession().out();
@@ -193,8 +196,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         ).dryExec();
                     }
 
-                    @Override
-                    public int exec() {
+                    private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                             PrintStream out = executionContext.getSession().out();
                             out.println("==[nuts-exec]== ");
@@ -209,14 +211,23 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                                 }
                             }
                         }
-
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
                         return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
                                 executionContext.getSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
                                 osEnv, directory, joptions.isShowCommand(), true
-                        ).exec();
+                        );
+                    }
+
+                    @Override
+                    public Future<Integer> execAsync() {
+                        return preExec().execAsync();
+                    }
+
+                    @Override
+                    public int exec() {
+                        return preExec().exec();
                     }
                 };
 
@@ -224,7 +235,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
     }
 
-    static class EmbeddedProcessExecHelper implements IProcessExecHelper {
+    static class EmbeddedProcessExecHelper extends AbstractSyncIProcessExecHelper {
         private NutsWorkspace ws;
         private NutsDefinition def;
         private JavaExecutorOptions joptions;
@@ -255,6 +266,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 );
             }
         }
+
+
 
         @Override
         public int exec()  {

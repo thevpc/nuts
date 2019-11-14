@@ -1,13 +1,12 @@
 package net.vpc.toolbox.tomcat.util;
 
-import net.vpc.app.nuts.NutsIOManager;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 public class TomcatUtils {
 
@@ -31,7 +30,7 @@ public class TomcatUtils {
         return appName == null ? "" : appName.trim();
     }
 
-//    public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
+    //    public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
 //        NutsIOManager jsonSerializer = ws.io();
 //        PrintWriter w = new PrintWriter(out);
 //        jsonSerializer.json().write(config, new PrintWriter(out));
@@ -89,5 +88,77 @@ public class TomcatUtils {
             return Arrays.toString((Object[]) o);
         }
         return "\"" + o.toString().replace("\"", "\\\"") + "\"";
+    }
+
+    public static boolean deleteDir(Path src) {
+        if (Files.isDirectory(src)) {
+            try {
+                Files.walk(src)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean copyDir(Path src, Path dest, boolean force) {
+        boolean[] ref = new boolean[1];
+        try {
+            if (!Files.exists(dest)) {
+                ref[0] = true;
+                Files.createDirectories(dest);
+            }
+            Files.walk(src)
+                    .forEach(source -> {
+                        try {
+                            Path to = dest.resolve(src.relativize(source));
+                            if (force || !Files.exists(to)) {
+                                ref[0] = true;
+                                Files.copy(source, to,
+                                        StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return ref[0];
+    }
+
+    public static String getFolderCatalinaHomeVersion(Path h) {
+        File file = new File(h.toFile(), "RELEASE-NOTES");
+        if (file.exists()) {
+            try (BufferedReader r = new BufferedReader(new FileReader(file))) {
+                String line = null;
+                while ((line = r.readLine()) != null) {
+                    line = line.trim();
+                    if (line.startsWith("Apache Tomcat Version")) {
+                        String v = line.substring("Apache Tomcat Version".length()).trim();
+                        if (!isBlank(v)) {
+                            return v;
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return null;
+    }
+
+    public static RunningTomcat[] getRunningInstances(NutsApplicationContext context) {
+        try {
+            return Arrays.stream(JpsUtils.getRunningJava(context, "org.apache.catalina.startup.Bootstrap"))
+                    .map(x -> new RunningTomcat(x, context.workspace())).toArray(RunningTomcat[]::new);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            throw new UncheckedIOException(ex);
+        }
     }
 }

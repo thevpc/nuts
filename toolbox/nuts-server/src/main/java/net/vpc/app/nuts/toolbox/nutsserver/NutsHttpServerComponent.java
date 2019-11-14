@@ -113,7 +113,29 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             throw new UncheckedIOException(e);
         }
         if (executor == null) {
-            executor = new ThreadPoolExecutor(4, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
+            int corePoolSize=httpConfig.getExecutorCorePoolSize();
+            if(corePoolSize<=0){
+                corePoolSize=4;
+            }
+            int maxPoolSize=httpConfig.getExecutorMaximumPoolSize();
+            if(maxPoolSize<=0){
+                maxPoolSize=100;
+            }
+            if(maxPoolSize<=corePoolSize){
+                maxPoolSize=corePoolSize;
+            }
+            int idleSeconds=httpConfig.getExecutorIdleTimeSeconds();
+            if(idleSeconds<=0){
+                idleSeconds=30;
+            }
+            int queueSize=httpConfig.getExecutorQueueSize();
+            if(queueSize<=0){
+                queueSize=maxPoolSize;
+            }
+            if(queueSize>1000){
+                queueSize=1000;
+            }
+            executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, idleSeconds, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
         }
         server.setExecutor(executor);
         if (httpConfig.isTls()) {

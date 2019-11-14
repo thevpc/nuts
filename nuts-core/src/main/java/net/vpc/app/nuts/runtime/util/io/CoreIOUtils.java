@@ -63,6 +63,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.runtime.io.DefaultHttpTransportComponent;
@@ -112,9 +114,19 @@ public class CoreIOUtils {
             }
         }
 
+        public Future<Integer> execAsync() {
+            try {
+                ProcessBuilder2 p = pb.start();
+                return new FutureTask<Integer>(()->p.waitFor().getResult());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+
         public int exec() {
             try {
-                return pb.start().waitFor().getResult();
+                ProcessBuilder2 p = pb.start();
+                return p.waitFor().getResult();
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

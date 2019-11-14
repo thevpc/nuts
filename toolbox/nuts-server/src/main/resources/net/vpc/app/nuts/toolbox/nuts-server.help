@@ -11,12 +11,14 @@ manage nuts server instances
 
 
     start options are :
-        **-n** | **--name**  <VALUE>       : server name
-        **-a** | **--address**  <VALUE>    : server address
-        **-a** | **--port**  <VALUE>       : server port
-        **-l** | **--backlog**  <VALUE>    : socket backlog size
-        **-ssl-certificate**  <VALUE>      : ssl certificate file path
-        **-ssl-passphrase**  <VALUE>       : ssl certificate passphrase
+        **-n** | **--name**    <VALUE>    : server name
+        **-a** | **--address** <VALUE>    : server address
+        **-a** | **--port**    <VALUE>    : server port
+        **-l** | **--backlog** <VALUE>    : socket backlog size
+        **-ssl-certificate**   <VALUE>    : ssl certificate file path
+        **-ssl-passphrase**    <VALUE>    : ssl certificate passphrase
+
+        **-w** | **--workspace**  \[<ALIAS>\]\@<VALUE>    : register workspace with alias
 
 ==nuts-server== {{stop}} \<name\> ...
     stop servers named
@@ -27,3 +29,13 @@ manage nuts server instances
 
 
 ##EXAMPLES:##
+
+nuts-server start --http
+
+nuts-server start --http -w .
+
+nuts-server start --http -w /home/me/mt-workspace
+
+nuts-server start --http -p 8080 -w default@/home/me/mt-workspace
+
+nuts-server start --http -p 8080 -w default@/home/me/mt-workspace -w other@other-workspace

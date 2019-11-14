@@ -37,6 +37,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.app.DefaultNutsArgument;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 public class ProcessBuilder2 {
 
@@ -537,7 +538,7 @@ public class ProcessBuilder2 {
                 if (sb.length() > 0) {
                     sb.append(" ");
                 }
-                sb.append(enforceDoubleQuote(k)).append("=").append(enforceDoubleQuote(v));
+                sb.append(CoreStringUtils.enforceDoubleQuote(k)).append("=").append(CoreStringUtils.enforceDoubleQuote(v));
             }
         }
         for (int i = 0; i < command.size(); i++) {
@@ -554,7 +555,7 @@ public class ProcessBuilder2 {
             if (sb.length() > 0) {
                 sb.append(" ");
             }
-            sb.append(enforceDoubleQuote(s));
+            sb.append(CoreStringUtils.enforceDoubleQuote(s));
         }
         if (baseIO) {
             ProcessBuilder.Redirect r;
@@ -570,10 +571,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" > ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" >> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
                             sb.append(" > ").append("{?}");
@@ -600,7 +601,7 @@ public class ProcessBuilder2 {
                                     sb.append(" 2> ").append(r.file().getPath());
                                     break;
                                 case APPEND:
-                                    sb.append(" 2>> ").append(enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" 2>> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
                                     sb.append(" 2> ").append("{?}");
@@ -622,7 +623,7 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" < ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
                             sb.append(" < ").append("{?}");
@@ -680,7 +681,7 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        sb.append("cwd=@@").append(enforceDoubleQuote(ff.getPath(), ws)).append("@@");
+        sb.append("cwd=@@").append(CoreStringUtils.enforceDoubleQuote(ff.getPath(), ws)).append("@@");
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -707,7 +708,7 @@ public class ProcessBuilder2 {
                 if (sb.length() > 0) {
                     sb.append(" ");
                 }
-                sb.append("==").append(enforceDoubleQuote(k, ws)).append("==").append("\\=").append(enforceDoubleQuote(v, ws));
+                sb.append("==").append(CoreStringUtils.enforceDoubleQuote(k, ws)).append("==").append("\\=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
             }
         }
         boolean commandFirstTokenVisited = false;
@@ -727,7 +728,7 @@ public class ProcessBuilder2 {
             }
             if (!commandFirstTokenVisited) {
                 commandFirstTokenVisited = true;
-                sb.append("@@").append(enforceDoubleQuote(s, ws)).append("@@");
+                sb.append("@@").append(CoreStringUtils.enforceDoubleQuote(s, ws)).append("@@");
             } else {
                 sb.append(formatArg(s, ws));
             }
@@ -746,10 +747,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("<<").append(tf.escapeText(" > ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append("<<").append(tf.escapeText(" > ")).append(">>").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("<<").append(tf.escapeText(" >> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append("<<").append(tf.escapeText(" >> ")).append(">>").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
                             sb.append("<<").append(tf.escapeText(" > ")).append(">>").append("{?}");
@@ -773,10 +774,10 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("<<").append(tf.escapeText(" 2>> ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("<<").append(tf.escapeText(" 2>> ")).append(">>").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
                                     sb.append("<<").append(tf.escapeText(" 2> ")).append(">>").append("{?}");
@@ -798,7 +799,7 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append("<<").append(tf.escapeText(" < ")).append(">>").append(enforceDoubleQuote(r.file().getPath()));
+                            sb.append("<<").append(tf.escapeText(" < ")).append(">>").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
                             sb.append("<<").append(tf.escapeText(" < ")).append(">>").append("{?}");
@@ -845,37 +846,22 @@ public class ProcessBuilder2 {
         StringBuilder sb = new StringBuilder();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append("{{").append(enforceDoubleQuote(a.getStringKey(), ws)).append("}}");
+                sb.append("{{").append(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws)).append("}}");
                 sb.append("\\=");
-                sb.append(enforceDoubleQuote(a.getStringValue(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             } else {
-                sb.append("((").append(enforceDoubleQuote(a.getStringKey(), ws)).append("))");
+                sb.append("((").append(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws)).append("))");
                 sb.append("\\=");
-                sb.append(enforceDoubleQuote(a.getStringValue(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             }
         } else {
             if (a.isOption()) {
-                sb.append("{{").append(enforceDoubleQuote(a.getString(), ws)).append("}}");
+                sb.append("{{").append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws)).append("}}");
             } else {
-                sb.append(enforceDoubleQuote(a.getString(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws));
             }
         }
         return sb.toString();
-    }
-
-    private static String enforceDoubleQuote(String s) {
-        if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
-            s = "\"" + s.replace("\"", "\\\"") + "\"";
-        }
-        return s;
-    }
-
-    private static String enforceDoubleQuote(String s, NutsWorkspace ws) {
-        s = ws.io().terminalFormat().escapeText(s);
-        if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
-            s = "\"" + s + "\"";
-        }
-        return s;
     }
 
     public boolean isFailFast() {

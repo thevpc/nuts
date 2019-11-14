@@ -12,6 +12,7 @@ public class LocalTomcatConfig {
     private String catalinaHome;
     private String archiveFolder;
     private String runningFolder;
+    private boolean dev=false;
     private String startupMessage;
     private String shutdownMessage;
     private String logFile;
@@ -22,6 +23,16 @@ public class LocalTomcatConfig {
     private boolean kill = true;
     private Map<String, LocalTomcatAppConfig> apps = new HashMap<>();
     private Map<String, LocalTomcatDomainConfig> domains = new HashMap<>();
+
+
+    public boolean isDev() {
+        return dev;
+    }
+
+    public LocalTomcatConfig setDev(boolean dev) {
+        this.dev = dev;
+        return this;
+    }
 
     public String getCatalinaVersion() {
         return catalinaVersion;
