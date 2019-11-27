@@ -46,11 +46,10 @@ public class Test05_FindLinuxTest {
                     //            "--skip-companions",
                     "--verbose"
             });
-            Assert.assertTrue(false);
         }catch (NutsInvalidWorkspaceException ex){
-            Assert.assertTrue(true);
+            Assert.fail();
         }catch (NutsNotFoundException ex){
-            Assert.assertTrue(true);
+            Assert.fail();
         }
     }
 
@@ -142,6 +141,7 @@ public class Test05_FindLinuxTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

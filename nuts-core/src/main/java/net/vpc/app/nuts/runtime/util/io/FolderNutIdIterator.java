@@ -41,6 +41,8 @@ import java.util.logging.Level;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.filters.NutsSearchIdByDescriptor;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
 
 /**
@@ -71,6 +73,10 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private int maxDepth;
+
+    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model, int maxDepth) {
+        this(workspace,repository,folder, filter,NutsWorkspaceHelper.createNoRepositorySession(session),model,maxDepth);
+    }
 
     public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, int maxDepth) {
         this.repository = repository;

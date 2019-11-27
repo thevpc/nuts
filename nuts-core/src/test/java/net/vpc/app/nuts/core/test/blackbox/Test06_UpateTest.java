@@ -261,6 +261,7 @@ public class Test06_UpateTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

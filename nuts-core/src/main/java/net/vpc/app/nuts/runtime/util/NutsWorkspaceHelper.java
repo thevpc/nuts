@@ -40,6 +40,10 @@ import net.vpc.app.nuts.runtime.repos.DefaultNutsRepositorySession;
  */
 public class NutsWorkspaceHelper {
 
+    public static NutsRepositorySession createNoRepositorySession(NutsSession session) {
+        return createNoRepositorySession(session,NutsFetchMode.LOCAL, new DefaultNutsFetchCommand(session.getWorkspace()));
+    }
+
     public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
         return new DefaultNutsRepositorySession(null,session)
                 .setTransitive(options.isTransitive())

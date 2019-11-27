@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.test.blackboxinteractive;
 
+import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class Test01_InstallTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass
@@ -58,7 +60,7 @@ public class Test01_InstallTest {
 
     @Before
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily().equals("linux"));
+        Assume.assumeTrue(Nuts.getPlatformOsFamily().equals(NutsOsFamily.LINUX));
         TestUtils.unsetNutsSystemProperties();
     }
 

@@ -209,7 +209,7 @@ public class NdiMain extends NutsApplication {
             args.addAll(Arrays.asList("install", "--embedded"));
             args.addAll(Arrays.asList(COMPANIONS));
             context.getSession().yes();
-            run(args.toArray(new String[0]));
+            run(context.getWorkspace(),args.toArray(new String[0]));
         }
     }
 

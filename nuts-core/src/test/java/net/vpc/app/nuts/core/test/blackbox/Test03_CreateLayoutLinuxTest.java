@@ -233,6 +233,7 @@ public class Test03_CreateLayoutLinuxTest {
     @BeforeClass
     public static void setUpClass() throws IOException {
         TestUtils.stashLinuxFolders();
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

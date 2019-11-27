@@ -230,9 +230,10 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().id(), 7) + "] ";
+            NutsRepository repository = session.getRepository();
             LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
                     .log("{0}{1} parse pom    {2}", fetchString
-                            , CoreStringUtils.alignLeft(session.getRepository().config().name(), 20)
+                            , CoreStringUtils.alignLeft(repository==null?"<no-repo>":repository.config().name(), 20)
                             ,urlDesc
                     );
 

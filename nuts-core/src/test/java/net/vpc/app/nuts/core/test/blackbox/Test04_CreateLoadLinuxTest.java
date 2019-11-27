@@ -152,6 +152,7 @@ public class Test04_CreateLoadLinuxTest {
     @AfterClass
     public static void tearUpClass() throws IOException {
         TestUtils.unstashLinuxFolders();
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @Before

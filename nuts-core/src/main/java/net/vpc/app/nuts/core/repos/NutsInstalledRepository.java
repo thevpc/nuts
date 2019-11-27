@@ -15,13 +15,15 @@ public interface NutsInstalledRepository {
 
     boolean isInstalled(NutsId id);
 
-    Iterator<NutsId> findAll(NutsIdFilter all, NutsRepositorySession session);
+    Iterator<NutsId> findAll(NutsIdFilter all, NutsSession session);
 
-    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
+    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter filter, NutsSession session);
 
-    NutsId[] findInstalledVersions(NutsId id, NutsRepositorySession session);
+    NutsId[] findInstalledVersions(NutsId id, NutsSession session);
 
     void uninstall(NutsId id, NutsSession session);
 
-    NutsInstallInformation install(NutsId id);
+    NutsId[] findDeployedVersions(NutsId id, NutsSession session);
+
+    NutsInstallInformation install(NutsDefinition id, NutsSession session);
 }

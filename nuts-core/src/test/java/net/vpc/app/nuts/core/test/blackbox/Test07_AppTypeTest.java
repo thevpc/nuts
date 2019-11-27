@@ -45,13 +45,13 @@ public class Test07_AppTypeTest {
                 "--skip-companions"
         );
         NutsDefinition u = uws.search().id("netbeans-launcher").getResultDefinitions().required();
-        System.out.println(u.getDescriptor().isExecutable() ? "executable" : "non-executable");
-        System.out.println(u.getDescriptor().isApplication() ? "app" : "non-app");
+        System.out.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
+        System.out.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         org.junit.Assert.assertTrue(u.getDescriptor().isExecutable());
-        org.junit.Assert.assertFalse(u.getDescriptor().isApplication());
+        org.junit.Assert.assertTrue(u.getDescriptor().isApplication());
         u = uws.search().id("nsh").getResultDefinitions().required();
-        System.out.println(u.getDescriptor().isExecutable() ? "executable" : "non-executable");
-        System.out.println(u.getDescriptor().isApplication() ? "app" : "non-app");
+        System.out.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
+        System.out.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         org.junit.Assert.assertTrue(u.getDescriptor().isExecutable());
         org.junit.Assert.assertTrue(u.getDescriptor().isApplication());
     }
@@ -60,6 +60,7 @@ public class Test07_AppTypeTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
+        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

@@ -286,9 +286,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            Node je = (Node) o;
-            if (je instanceof NutsId) {
-                NutsId def = (NutsId) je;
+            if (o instanceof NutsId) {
+                NutsId def = (NutsId) o;
                 return context.toElement(def.toString());
             }
             throw new IllegalArgumentException("Unsupported");
