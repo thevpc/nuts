@@ -85,13 +85,13 @@ public class NutsHomeLocationsMap {
         if (location != null) {
             if (CoreStringUtils.isBlank(value)) {
                 if (locations != null) {
-                    locations.remove(location.id());
+                    locations.remove(NutsDefaultWorkspaceOptions.createHomeLocationKey(osFamily, location));
                 }
             } else {
                 if (locations == null) {
                     locations = new HashMap<>();
                 }
-                locations.put(location.id(), value);
+                locations.put(NutsDefaultWorkspaceOptions.createHomeLocationKey(osFamily, location), value);
             }
         }
         return this;

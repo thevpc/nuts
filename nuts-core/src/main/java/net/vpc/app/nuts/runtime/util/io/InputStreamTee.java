@@ -13,11 +13,12 @@ import java.io.OutputStream;
  *
  * @author vpc
  */
-public class InputStreamTee extends InputStream implements InputStreamMetadataAware {
+public class InputStreamTee extends InputStream implements InputStreamMetadataAware,Interruptible {
 
     private InputStream in;
     private OutputStream out;
     private Runnable onClose;
+    private boolean interrupted;
 
     public InputStreamTee(InputStream in, OutputStream out, Runnable onClose) {
         this.in = in;
@@ -26,7 +27,15 @@ public class InputStreamTee extends InputStream implements InputStreamMetadataAw
     }
 
     @Override
+    public void interrupt() throws InterruptException {
+        this.interrupted=true;
+    }
+
+    @Override
     public int read() throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         int x = in.read();
         if (x >= 0) {
             out.write(x);
@@ -36,6 +45,9 @@ public class InputStreamTee extends InputStream implements InputStreamMetadataAw
 
     @Override
     public void close() throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         in.close();
         out.close();
         if (onClose != null) {
@@ -45,11 +57,17 @@ public class InputStreamTee extends InputStream implements InputStreamMetadataAw
 
     @Override
     public int available() throws IOException {
-        return in.available(); //To change body of generated methods, choose Tools | Templates.
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
+        return in.available();
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         final int p = in.read(b, off, len);
         if (p > 0) {
             out.write(b, off, p);

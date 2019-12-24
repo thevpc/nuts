@@ -2,8 +2,8 @@ package net.vpc.app.nuts.toolbox.derby;
 
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsProcessInfo;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.io.JpsResult;
 
 import java.util.Objects;
 
@@ -12,10 +12,10 @@ public class RunningDerby {
     private String home;
     private String argsLine;
 
-    public RunningDerby(JpsResult r, NutsWorkspace ws) {
+    public RunningDerby(NutsProcessInfo r, NutsWorkspace ws) {
         pid =r.getPid();
-        argsLine=r.getArgsLine();
-        NutsCommandLine cmdline = ws.commandLine().parse(r.getArgsLine());
+        argsLine=r.getCommandLine();
+        NutsCommandLine cmdline = ws.commandLine().parse(r.getCommandLine());
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dderby.system.home"))!=null) {

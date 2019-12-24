@@ -88,7 +88,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         if (c != null) {
             if (cache.isWriteEnabled()) {
-                NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(c, new DefaultNutsFetchCommand(getWorkspace()).session(session.getSession()));
+                NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(c, session.getSession());
                 if (!id0.getLongName().equals(c.getId().getLongName())) {
                     c = c.builder().setId(id0).build();
                 }
@@ -131,7 +131,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         List<String> rootStrings=new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
-            if (cache.isReadEnabled()) {
+            if (cache.isReadEnabled() && session.getSession().isCached()) {
                 li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
             if(root.isDeep()){

@@ -497,6 +497,14 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "-P":
+                    case "--progress": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setProgressOptions(a.getStringValue());
+                        }
+                        break;
+                    }
 
                     case "--dry":
                     case "-D": {
@@ -667,6 +675,78 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setConfirm(NutsConfirmationMode.ASK);
+                        }
+                        break;
+                    }
+                    case "--cached": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setCached(a.getBooleanValue());
+                        }
+                        break;
+                    }
+                    case "--indexed": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setIndexed(a.getBooleanValue());
+                        }
+                        break;
+                    }
+                    case "--transitive": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setTransitive(a.getBooleanValue());
+                        }
+                        break;
+                    }
+                    case "-f":
+                    case "--fetch": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue().toUpperCase().replace("-", "_")));
+                        }
+                        break;
+                    }
+                    case "-a":
+                    case "--anywhere":
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+                        }
+                        break;
+                    }
+                    case "-i":
+                    case "--installed":
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setFetchStrategy(NutsFetchStrategy.INSTALLED);
+                        }
+                        break;
+                    }
+                    case "-F":
+                    case "--offline":
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setFetchStrategy(NutsFetchStrategy.OFFLINE);
+                        }
+                        break;
+                    }
+                    case "--online":
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setFetchStrategy(NutsFetchStrategy.ONLINE);
+                        }
+                        break;
+                    }
+                    case "--remote":
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setFetchStrategy(NutsFetchStrategy.REMOTE);
                         }
                         break;
                     }

@@ -153,12 +153,8 @@ public class TomcatUtils {
     }
 
     public static RunningTomcat[] getRunningInstances(NutsApplicationContext context) {
-        try {
-            return Arrays.stream(JpsUtils.getRunningJava(context, "org.apache.catalina.startup.Bootstrap"))
-                    .map(x -> new RunningTomcat(x, context.workspace())).toArray(RunningTomcat[]::new);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new UncheckedIOException(ex);
-        }
+        return context.getWorkspace().io().ps().type("java").getResultList()
+                .stream().filter((p) -> p.getName().equals("org.apache.catalina.startup.Bootstrap"))
+                .map(x -> new RunningTomcat(x, context.workspace())).toArray(RunningTomcat[]::new);
     }
 }

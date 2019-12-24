@@ -10,6 +10,8 @@ import net.vpc.app.nuts.NutsTerminalFormat;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsProgressEvent;
 import net.vpc.app.nuts.NutsProgressMonitor;
@@ -27,6 +29,8 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     private PrintStream out;
     private int minLength;
     private CProgressBar bar;
+    private boolean optionsProcessed=false;
+    private boolean optionNewline=false;
 
     public DefaultNutsStreamProgressMonitor() {
 //        this.session = session;
@@ -39,7 +43,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
 
     @Override
     public void onStart(NutsProgressEvent event) {
-        bar=new CProgressBar(event.getSession().getWorkspace());
+        bar=new CProgressBar(event.getSession());
         this.out = event.getSession().getTerminal().out();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
@@ -63,10 +67,18 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
+        if(!optionsProcessed) {
+            optionsProcessed=true;
+            optionNewline= NutsWorkspaceUtils.parseProgressOptions(event.getSession()).contains("newline");
+        }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
             NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().getTerminalFormat();
-            out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
+            if(!optionNewline) {
+                out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
+            }else{
+                out.print("\n");
+            }
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);

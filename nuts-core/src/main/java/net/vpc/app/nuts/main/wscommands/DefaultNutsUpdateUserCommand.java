@@ -73,7 +73,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 }
                 fillNutsUserConfig(u);
 
-                NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u, new NutsUpdateOptions().session(getValidSession()));
+                NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u, new NutsUpdateOptions().session(getSession()));
 
             } else {
 
@@ -83,7 +83,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 }
 
                 fillNutsUserConfig(u);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, new NutsUpdateOptions().session(getValidSession()));
+                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, new NutsUpdateOptions().session(getSession()));
             }
         }
         return this;

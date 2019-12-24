@@ -76,6 +76,16 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
+    public String getName() {
+        return config().getName();
+    }
+
+    @Override
+    public String name() {
+        return getName();
+    }
+
+    @Override
     public Map<String, Object> userProperties() {
         return userProperties;
     }

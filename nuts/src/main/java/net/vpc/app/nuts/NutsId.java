@@ -116,8 +116,8 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     String getArch();
 
     /**
-     * properties in the the url query form
-     * @return properties in the the url query form.
+     * properties in the url query form
+     * @return properties in the url query form.
      */
     String getPropertiesQuery();
 

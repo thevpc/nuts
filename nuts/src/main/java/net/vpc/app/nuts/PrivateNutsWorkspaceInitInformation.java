@@ -309,7 +309,11 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     public String getCacheBoot() {
-        return getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.BOOT;
+        return getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID;
+    }
+
+    public String getLib() {
+        return getStoreLocation(NutsStoreLocation.LIB)+ File.separator + NutsConstants.Folders.ID;
     }
 
     @Override

@@ -18,9 +18,7 @@ import net.vpc.app.nuts.NutsCommandLine;
 public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> implements NutsWorkspaceCommand {
 
     protected NutsWorkspace ws;
-    private NutsSession session;
-    private NutsSession validSession;
-    private boolean sessionCopy = false;
+    protected NutsSession session;
     private final String commandName;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws, String commandName) {
@@ -35,22 +33,15 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     //@Override
     protected T copyFromWorkspaceCommandBase(NutsWorkspaceCommandBase other) {
         if (other != null) {
-            this.session = other.getSession();
+            setSession(other.getSession());
         }
         return (T) this;
     }
 
     //@Override
     public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsSession getSession(boolean autoCreate) {
-        if (session != null) {
-            return session;
-        }
-        if (autoCreate) {
-            session = ws.createSession();
+        if(session==null){
+            session=ws.createSession();
         }
         return session;
     }
@@ -74,29 +65,17 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public T setSession(NutsSession session) {
-        this.session = session;
+        if(this.session==null) {
+            this.session = ws.createSession();
+        }
+        if(session!=null) {
+            this.session.copyFrom(session);
+        }
         return (T) this;
     }
 
     protected void invalidateResult() {
 
-    }
-
-    public NutsSession getValidSessionCopy() {
-        NutsSession s = getValidSession();
-        if (!sessionCopy) {
-            s = validSession = s.copy();
-            sessionCopy = true;
-        }
-        return s;
-    }
-
-    public NutsSession getValidSession() {
-        if (validSession == null) {
-            validSession = NutsWorkspaceUtils.of(ws).validateSession( getSession());
-            sessionCopy = true;
-        }
-        return validSession;
     }
 
     protected NutsWorkspace getWorkspace() {
@@ -117,7 +96,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 //        switch (a.getStringKey()) {
 //        }
 
-        if (getValidSessionCopy().configureFirst(cmdLine)) {
+        if (getSession().configureFirst(cmdLine)) {
             return true;
         }
         return false;

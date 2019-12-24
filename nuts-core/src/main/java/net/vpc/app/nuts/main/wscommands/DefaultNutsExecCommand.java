@@ -41,7 +41,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     public NutsExecutableInformation which() {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
         NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
-        NutsSession session = getValidSession();
+        NutsSession session = getSession();
         terminal.setParent(session.getTerminal());
         terminal.setOutMode(session.getTerminal().getOutMode());
         terminal.setErrMode(session.getTerminal().getErrMode());
@@ -212,7 +212,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
         }
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, getValidSession(), this);
+            return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, getSession(), this);
         } else if (cmdName.contains(":")) {
             boolean forceInstalled=false;
             if(cmdName.endsWith("!")){
@@ -247,7 +247,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsId> ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
                 .defaultVersions()
-                .configure(true,"--trace-monitor")
+//                .configure(true,"--trace-monitor")
                 .installed().getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
@@ -264,7 +264,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     session.out().flush();
                 }
                 ff = ws.search().id(nid).session(searchSession).optional(false).failFast(false).online().latest()
-                        .configure(true,"--trace-monitor")
+//                        .configure(true,"--trace-monitor")
                         .getResultIds().list();
             }
         }

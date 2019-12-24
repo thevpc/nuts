@@ -67,7 +67,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected Boolean defaultVersions = null;
     protected String execType = null;
     protected String targetApiVersion = null;
-    protected boolean traceMonitor = true;
     protected boolean printResult = false;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
@@ -377,7 +376,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.repositoryFilter = o.getRepositoryFilter();
             if (o instanceof AbstractNutsSearchCommand) {
                 AbstractNutsSearchCommand a=(AbstractNutsSearchCommand)o;
-                this.traceMonitor = a.isTraceMonitor();
                 this.printResult = a.isPrintResult();
             }
         }
@@ -760,10 +758,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public String toString() {
         return getClass().getSimpleName() + "{" +
                 "failFast=" + isFailFast() +
-                ", transitive=" + isTransitive() +
-                ", cached=" + isCached() +
-                ", indexed=" + getIndexed() +
-                ", fetchStrategy=" + getFetchStrategy() +
                 ", optional=" + getOptional() +
                 ", scope=" + getScope() +
                 ", content=" + isContent() +
@@ -1022,10 +1016,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 this.setPrintResult(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
-            case "--trace-monitor": {
-                this.setTraceMonitor(cmdLine.nextBoolean().getBooleanValue());
-                return true;
-            }
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
@@ -1039,23 +1029,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
             }
         }
-    }
-
-    public boolean isTraceMonitor() {
-        return traceMonitor;
-    }
-
-    public NutsSearchCommand traceMonitor() {
-        return traceMonitor(true);
-    }
-
-    public NutsSearchCommand traceMonitor(boolean traceMonitor) {
-        return setTraceMonitor(traceMonitor);
-    }
-
-    public NutsSearchCommand setTraceMonitor(boolean traceMonitor) {
-        this.traceMonitor = traceMonitor;
-        return this;
     }
 
     public boolean isPrintResult() {

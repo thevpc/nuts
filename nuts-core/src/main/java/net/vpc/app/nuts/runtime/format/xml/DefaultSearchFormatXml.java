@@ -32,17 +32,19 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getWriter().println("<" + rootName + ">");
+        getWriter().println("\\<?xml version=\"1.0\" encoding=\"UTF-8\"?\\>");
+        getWriter().println("\\<" + rootName + "\\>");
     }
 
     @Override
     public void next(Object object, long index) {
-        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, getWorkspace());
+        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
     }
 
     @Override
     public void complete(long count) {
-        getWriter().println("</" + rootName + ">");
+        getWriter().println("\\</" + rootName + "\\>");
+        getWriter().flush();
     }
 
     @Override

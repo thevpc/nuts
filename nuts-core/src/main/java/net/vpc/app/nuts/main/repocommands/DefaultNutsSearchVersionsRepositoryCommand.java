@@ -40,7 +40,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
         NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSimpleNameNutsId(id);
         xrepo.checkAllowedFetch(id, getSession());
         try {
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 List<NutsId> d = null;
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, getSession());

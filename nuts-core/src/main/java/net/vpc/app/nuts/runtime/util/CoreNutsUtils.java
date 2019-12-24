@@ -50,6 +50,7 @@ import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -64,14 +65,21 @@ public class CoreNutsUtils {
     public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-            .withZone( ZoneId.systemDefault() )
-            ;
+            .withZone(ZoneId.systemDefault());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
+    public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
+            "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
+            "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
+            "Crimson", "Salmon", "Moccasin", "PeachPuff", "Khaki", "Cornsilk", "Bisque", "Wheat", "Tan", "Peru", "Chocolate", "Sienna", "Snow", "Azure", "Ivory", "Linen", "Silver", "Gray"
+    )).toArray(new String[0]);
+
+    public static final int LOCK_TIME=3;
+    public static final TimeUnit LOCK_TIME_UNIT=TimeUnit.SECONDS;
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
@@ -152,44 +160,47 @@ public class CoreNutsUtils {
         }
     };
 
-//    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
+    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
     public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
             = new DefaultNutsDescriptorBuilder()
-                    .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
+            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
 //                    .setAlternative("suse")
-                    .setName("Application Full Name")
-                    .setDescription("Application Description")
-                    .setExecutable(true)
-                    .setPackaging("jar")
-                    //                    .setExt("exe")
-                    .setArch(new String[]{"64bit"})
-                    .setOs(new String[]{"linux#4.6"})
-                    .setOsdist(new String[]{"opensuse#42"})
-                    .setPlatform(new String[]{"java#1.8"})
-                    .setExecutor(new DefaultNutsArtifactCall(
-                            new DefaultNutsId(null, null, "java", "1.8", (String) null),
-                            new String[]{"-jar"}
-                    ))
-                    .setInstaller(new DefaultNutsArtifactCall(
-                            new DefaultNutsId(null, null, "java", "1.8", (String) null),
-                            new String[]{"-jar"}
-                    ))
-                    .setLocations(new NutsIdLocation[]{
-                new DefaultNutsIdLocation("http://server/somelink",null,null)
+            .setName("Application Full Name")
+            .setDescription("Application Description")
+            .setExecutable(true)
+            .setPackaging("jar")
+            //                    .setExt("exe")
+            .setArch(new String[]{"64bit"})
+            .setOs(new String[]{"linux#4.6"})
+            .setOsdist(new String[]{"opensuse#42"})
+            .setPlatform(new String[]{"java#1.8"})
+            .setExecutor(new DefaultNutsArtifactCall(
+                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+                    new String[]{"-jar"}
+            ))
+            .setInstaller(new DefaultNutsArtifactCall(
+                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+                    new String[]{"-jar"}
+            ))
+            .setLocations(new NutsIdLocation[]{
+                    new DefaultNutsIdLocation("http://server/somelink", null, null)
             })
-                    .setDependencies(
-                            new NutsDependency[]{
-                                 new DefaultNutsDependencyBuilder()
+            .setDependencies(
+                    new NutsDependency[]{
+                            new DefaultNutsDependencyBuilder()
                                     .namespace("namespace")
                                     .groupId("group")
                                     .artifactId("name")
                                     .version("version")
                                     .optional("false").build()
-                            }
-                    )
-                    .build();
+                    }
+            )
+            .build();
 
 
+    public static String randomColorName() {
+        return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
+    }
 
     public static NutsId findNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
         if (all != null) {
@@ -307,7 +318,7 @@ public class CoreNutsUtils {
         return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
     }
 
-//    public static String applyStringProperties(String child, Function<String,String> properties) {
+    //    public static String applyStringProperties(String child, Function<String,String> properties) {
 //        if (CoreStringUtils.isEmpty(child)) {
 //            return null;
 //        }
@@ -495,7 +506,7 @@ public class CoreNutsUtils {
     }
 
     public static NutsSession silent(NutsSession session) {
-        return session.isTrace()?session.copy().silent():session;
+        return session.isTrace() ? session.copy().silent() : session;
     }
 
 //    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
@@ -577,23 +588,23 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(NutsLogger log, Level lvl,String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMsg) {
-        if(!log.isLoggable(lvl)){
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime, String extraMsg) {
+        if (!log.isLoggable(lvl)) {
             return;
         }
-        if(extraMsg==null){
-            extraMsg="";
-        }else{
-            extraMsg=" : "+extraMsg;
+        if (extraMsg == null) {
+            extraMsg = "";
+        } else {
+            extraMsg = " : " + extraMsg;
         }
-        long time = (startTime != 0)?(System.currentTimeMillis() - startTime):0;
+        long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
         log.with().level(lvl).verb(tracePhase.name()).time(time).formatted()
-                .log("[{0}] {1} {2}"+(id == null ? "" : (" "+(session.getWorkspace().id().set(id).format())))+" {3}",
-                modeString,
-                CoreStringUtils.alignLeft(name, 20),
-                CoreStringUtils.alignLeft(title, 18),
-                extraMsg);
+                .log("[{0}] {1} {2}" + (id == null ? "" : (" " + (session.getWorkspace().id().set(id).format()))) + " {3}",
+                        modeString,
+                        CoreStringUtils.alignLeft(name, 20),
+                        CoreStringUtils.alignLeft(title, 18),
+                        extraMsg);
     }
 
     public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
@@ -767,82 +778,85 @@ public class CoreNutsUtils {
         }
     }
 
-    public static NutsUpdateOptions validate(NutsUpdateOptions o,NutsWorkspace ws){
-        if(o==null){
-            o=new NutsUpdateOptions();
+    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
+        if (o == null) {
+            o = new NutsUpdateOptions();
         }
-        if(o.getSession()==null){
-            o.session(ws.createSession());
-        }
-        return o;
-    }
-    
-    public static NutsAddOptions validate(NutsAddOptions o,NutsWorkspace ws){
-        if(o==null){
-            o=new NutsAddOptions();
-        }
-        if(o.getSession()==null){
+        if (o.getSession() == null) {
             o.session(ws.createSession());
         }
         return o;
     }
 
-    public static NutsRemoveOptions validate(NutsRemoveOptions o,NutsWorkspace ws){
-        if(o==null){
-            o=new NutsRemoveOptions();
+    public static NutsAddOptions validate(NutsAddOptions o, NutsWorkspace ws) {
+        if (o == null) {
+            o = new NutsAddOptions();
         }
-        if(o.getSession()==null){
+        if (o.getSession() == null) {
             o.session(ws.createSession());
         }
         return o;
     }
 
-    public static NutsAddOptions toAddOptions(NutsUpdateOptions o){
+    public static NutsRemoveOptions validate(NutsRemoveOptions o, NutsWorkspace ws) {
+        if (o == null) {
+            o = new NutsRemoveOptions();
+        }
+        if (o.getSession() == null) {
+            o.session(ws.createSession());
+        }
+        return o;
+    }
+
+    public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
         return new NutsAddOptions().session(o.getSession());
     }
-    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o){
+
+    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o) {
         return new NutsRemoveOptions().session(o.getSession());
     }
 
-    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o){
-        return new NutsUpdateOptions().session(o.getSession());
-    }
-    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o){
+    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o) {
         return new NutsUpdateOptions().session(o.getSession());
     }
 
-    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o){
+    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o) {
+        return new NutsUpdateOptions().session(o.getSession());
+    }
+
+    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o) {
         return new NutsRemoveOptions().session(o.getSession());
     }
-    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o){
+
+    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
         return new NutsRemoveOptions().session(o.getSession());
     }
 
     public static String idToPath(NutsId id) {
-        return id.getGroupId().replace('.','/')+"/"+
-                id.getArtifactId()+"/"+id.getVersion();
+        return id.getGroupId().replace('.', '/') + "/" +
+                id.getArtifactId() + "/" + id.getVersion();
     }
 
-    public static Properties copyOfNonNull(Properties p){
-        if(p==null){
+    public static Properties copyOfNonNull(Properties p) {
+        if (p == null) {
             return new Properties();
         }
-        Properties p2=new Properties();
+        Properties p2 = new Properties();
         p2.putAll(p);
         return p2;
     }
 
-    public static Properties copyOfOrNull(Properties p){
-        if(p==null){
+    public static Properties copyOfOrNull(Properties p) {
+        if (p == null) {
             return null;
         }
-        Properties p2=new Properties();
+        Properties p2 = new Properties();
         p2.putAll(p);
         return p2;
     }
 
-    public static boolean acceptClassifier(NutsIdLocation location,String classifier){
-        if(location==null){
+    public static boolean acceptClassifier(NutsIdLocation location, String classifier) {
+        if (location == null) {
             return false;
         }
         String c0 = CoreStringUtils.trim(classifier);
@@ -870,12 +884,12 @@ public class CoreNutsUtils {
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
-    public static boolean isUnsupportedFetchModeException(Throwable ex){
-        String msg=null;
-        if(ex instanceof NutsFetchModeNotSupportedException) {
+    public static boolean isUnsupportedFetchModeException(Throwable ex) {
+        String msg = null;
+        if (ex instanceof NutsFetchModeNotSupportedException) {
             return true;
         }
-        if(ex instanceof NutsNotFoundException) {
+        if (ex instanceof NutsNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof NutsFetchModeNotSupportedException) {
@@ -886,9 +900,9 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Throwable ex){
-        String msg=null;
-        if(ex instanceof NutsNotFoundException) {
+    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Throwable ex) {
+        String msg = null;
+        if (ex instanceof NutsNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
@@ -896,13 +910,21 @@ public class CoreNutsUtils {
                 }
                 msg = ex2.getMessage();
             }
-        }else{
-            msg=ex.getMessage();
+        } else {
+            msg = ex.getMessage();
         }
         return msg;
     }
 
     public static boolean acceptMonitoring(NutsSession session) {
+        // DefaultNutsStreamProgressMonitor is enable only if plain output
+        // so it is disable in json, xml, table, ...
+        if(!session.isPlainOut()){
+            return false;
+        }
+        if(NutsWorkspaceUtils.parseProgressOptions(session).contains("false")){
+            return false;
+        }
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
@@ -915,13 +937,10 @@ public class CoreNutsUtils {
         if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
             monitorable = false;
         }
-        if(ws instanceof DefaultNutsWorkspace){
+        if (ws instanceof DefaultNutsWorkspace) {
             if (!((DefaultNutsWorkspace) ws).LOG.isLoggable(Level.INFO)) {
                 monitorable = false;
             }
-        }
-        if (!session.isPlainOut()) {
-            monitorable = false;
         }
         return monitorable;
     }

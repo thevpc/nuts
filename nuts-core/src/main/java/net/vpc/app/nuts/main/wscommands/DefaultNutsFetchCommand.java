@@ -70,7 +70,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         try {
             NutsDefinition def = fetchDefinition(getId(), this,false,false);
             if (isEffective()) {
-                return NutsWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor(), this);
+                return NutsWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor(), getSession());
             }
             return def.getId();
         } catch (NutsNotFoundException ex) {
@@ -146,10 +146,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         return b;
     }
 
-    protected DefaultNutsDefinition fetchDefinitionBase(NutsId id, NutsFetchCommand options) {
+    protected DefaultNutsDefinition fetchDefinitionBase(NutsId id, NutsSession session) {
         long startTime = System.currentTimeMillis();
         DefaultNutsDefinition result = null;
-        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
+        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(session.getFetchStrategy());
         Path cachePath = null;
         {
             cachePath = ws.config().getStoreLocation(id, NutsStoreLocation.CACHE)
@@ -175,7 +175,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         }
         for (NutsFetchMode mode : nutsFetchModes) {
             try {
-                result = fetchDescriptorAsDefinition(id, options, mode);
+                result = fetchDescriptorAsDefinition(id, session, mode);
                 if (result != null) {
                     break;
                 }
@@ -190,16 +190,15 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         }
         if (result == null
                 && nutsFetchModes == NutsFetchStrategy.INSTALLED
-                && NutsWorkspaceExt.of(ws).getInstalledRepository().isInstalled(id)
+                && NutsWorkspaceExt.of(ws).getInstalledRepository().isInstalled(id, session)
         ) {
             //this happens if a component is installed but the
             // corresponding file was removed for any reason...
             //that said, will search remote!
             for (NutsFetchMode mode : NutsFetchStrategy.REMOTE) {
-                NutsSession session = NutsWorkspaceUtils.of(ws).validateSession( options.getSession());
-                options.session(session.copy().yes());
+                NutsSession s2=session.copy().yes();
                 try {
-                    result = fetchDescriptorAsDefinition(id, options, mode);
+                    result = fetchDescriptorAsDefinition(id, s2, mode);
                     if (result != null) {
                         break;
                     }
@@ -210,8 +209,6 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     if (LOG.isLoggable(Level.FINEST)) {
                         NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
                     }
-                } finally {
-                    options.session(session);
                 }
             }
         }
@@ -230,13 +227,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsWorkspaceUtils.of(ws).checkLongNameNutsId( id);
         options = NutsWorkspaceUtils.of(ws).validateSession( options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
+        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getSession().getFetchStrategy());
         NutsId effectiveId = null;
         DefaultNutsDefinition foundDefinition = null;
         try {
             //add env parameters to fetch adequate nuts
             id = NutsWorkspaceUtils.of(ws).configureFetchEnv( id);
-            foundDefinition = fetchDefinitionBase(id, options);
+            foundDefinition = fetchDefinitionBase(id, options.getSession());
             if (foundDefinition != null) {
                 if (options.isEffective()) {
                     try {
@@ -254,7 +251,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         cache.optional = getOptional();
 
                         if (effectiveId == null) {
-                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), ws.fetch().session(options.getSession()));
+                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), options.getSession());
                         }
                         NutsDependencyTreeNode[] tree = null;
                         Path cachePath = null;
@@ -294,7 +291,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         dependencyScopeCache.scopes = getScope().toArray(new NutsDependencyScope[0]);
                         dependencyScopeCache.optional = getOptional();
                         if (effectiveId == null) {
-                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), ws.fetch().session(options.getSession()));
+                            effectiveId = dws.resolveEffectiveId(foundDefinition.getDescriptor(), options.getSession());
                         }
                         DefaultNutsDependency[] list = null;
                         Path cachePath = null;
@@ -359,7 +356,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 NutsContent content = repo.fetchContent()
                                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                                         .setLocalPath(copyTo)
-                                        .setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options))
+                                        .setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode))
                                         .run().getResult();
                                 if (content != null) {
                                     foundDefinition.setContent(content);
@@ -377,7 +374,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     }
                     if (foundDefinition != null && includeInstallInfo) {
                         //will always load install information
-                        NutsInstallInformation ii = dws.getInstalledRepository().getInstallInfo(id);
+                        NutsInstallInformation ii = dws.getInstalledRepository().getInstallInformation(id, session);
                         if (ii != null) {
                             foundDefinition.setInstallInformation(ii);
                         } else {
@@ -394,9 +391,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             throw ex;
         }
         if (foundDefinition != null) {
-            if (getValidSession().isTrace()) {
-                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getValidSession())
-                        .session(getValidSession());
+            if (getSession().isTrace()) {
+                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getSession())
+                        .session(getSession());
                 ff.start();
                 ff.next(foundDefinition);
                 ff.complete();
@@ -494,13 +491,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         return nutsDescriptor;
     }
 
-    protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsFetchCommand options, NutsFetchMode mode) {
-        options = NutsWorkspaceUtils.of(ws).validateSession( options);
+    protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsSession session, NutsFetchMode mode) {
+        session = NutsWorkspaceUtils.of(ws).validateSession( session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsRepositoryFilter repositoryFilter = new DefaultNutsRepositoryFilter(Arrays.asList(getRepositories())).simplify();
         if (mode == NutsFetchMode.INSTALLED) {
             if (id.getVersion().isBlank()) {
-                String v = dws.getInstalledRepository().getDefaultVersion(id);
+                String v = dws.getInstalledRepository().getDefaultVersion(id, session);
                 if (v != null) {
                     id = id.builder().setVersion(v).build();
                 } else {
@@ -508,9 +505,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
             NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().filter();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), null, NutsFetchMode.INSTALLED, new DefaultNutsFetchCommand(ws));
-            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, CoreFilterUtils.idFilterOf(versionFilter), rsession))
-                    .convert(NutsId::getVersion,"version").list();
+            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository()
+                    .searchVersions().setId(id).setFilter( CoreFilterUtils.idFilterOf(versionFilter))
+                    .setSession(NutsWorkspaceHelper.createRepositorySession(getSession(),dws.getInstalledRepository(),NutsFetchMode.INSTALLED)).getResult()
+            ).convert(NutsId::getVersion,"version").list();
             if (all.size() > 0) {
                 all.sort(null);
                 id = id.builder().setVersion(all.get(all.size() - 1)).build();
@@ -519,14 +517,12 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 throw new NutsNotFoundException(ws, id);
             }
         }
-        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, options)) {
+        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, session)) {
             try {
-                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
-                        options
+                NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, mode
                 )).run().getResult();
                 if (descriptor != null) {
-                    NutsId nutsId = dws.resolveEffectiveId(descriptor,
-                            options);
+                    NutsId nutsId = dws.resolveEffectiveId(descriptor,session);
                     NutsIdBuilder newIdBuilder = nutsId.builder();
                     if (CoreStringUtils.isBlank(newIdBuilder.getNamespace())) {
                         newIdBuilder.setNamespace(repo.config().getName());

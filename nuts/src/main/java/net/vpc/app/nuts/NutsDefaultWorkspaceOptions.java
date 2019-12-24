@@ -164,6 +164,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     /**
      * option-type : exported (inherited in child workspaces)
      */
+    private String progressOptions = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
     private NutsLogConfig logConfig;
 
     /**
@@ -272,6 +277,23 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
      * exported nor promoted to runtime)
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private NutsFetchStrategy fetchStrategy = NutsFetchStrategy.ONLINE;
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private boolean cached=true;
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private boolean indexed=true;
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private boolean transitive=true;
 
     /**
      * parse arguments
@@ -544,6 +566,15 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
      */
     public NutsDefaultWorkspaceOptions setTrace(boolean trace) {
         this.trace = trace;
+        return this;
+    }
+
+    public String getProgressOptions() {
+        return progressOptions;
+    }
+
+    public NutsDefaultWorkspaceOptions setProgressOptions(String progressOptions) {
+        this.progressOptions = progressOptions;
         return this;
     }
 
@@ -932,4 +963,39 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         return format().getBootCommandLine();
     }
 
+    public NutsFetchStrategy getFetchStrategy() {
+        return fetchStrategy;
+    }
+
+    public NutsDefaultWorkspaceOptions setFetchStrategy(NutsFetchStrategy fetchStrategy) {
+        this.fetchStrategy = fetchStrategy==null?NutsFetchStrategy.ONLINE : fetchStrategy;
+        return this;
+    }
+
+    public boolean isCached() {
+        return cached;
+    }
+
+    public NutsDefaultWorkspaceOptions setCached(boolean cached) {
+        this.cached = cached;
+        return this;
+    }
+
+    public boolean isIndexed() {
+        return indexed;
+    }
+
+    public NutsDefaultWorkspaceOptions setIndexed(boolean indexed) {
+        this.indexed = indexed;
+        return this;
+    }
+
+    public boolean isTransitive() {
+        return transitive;
+    }
+
+    public NutsDefaultWorkspaceOptions setTransitive(boolean transitive) {
+        this.transitive = transitive;
+        return this;
+    }
 }

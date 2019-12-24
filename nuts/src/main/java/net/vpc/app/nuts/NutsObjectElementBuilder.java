@@ -32,16 +32,31 @@ package net.vpc.app.nuts;
 import java.util.Collection;
 
 /**
- *
+ * Builder for manipulating {@link NutsObjectElement} instances
  * @author vpc
  */
 public interface NutsObjectElementBuilder {
 
-    NutsObjectElementBuilder set(String name, NutsElement e);
+    /**
+     * set value for property {@code name}
+     * @param name property name
+     * @param value property value. should not be null
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder set(String name, NutsElement value);
 
+    /**
+     * remove all properties
+     * @return this {@code this} instance
+     */
     NutsObjectElementBuilder clear();
-    
-    NutsObjectElementBuilder remove(String s);
+
+    /**
+     * remove property
+     * @param name property name
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder remove(String name);
 
     /**
      * return value for name or null.
@@ -63,13 +78,42 @@ public interface NutsObjectElementBuilder {
      */
     int size();
 
+    /**
+     * set all properties from the given {@code other} instance.
+     * all properties not found in {@code other} will be removed.
+     * @param other other instance
+     * @return this {@code this} instance
+     */
     NutsObjectElementBuilder set(NutsObjectElement other);
 
+    /**
+     * set all properties from the given {@code other} instance.
+     * all properties not found in {@code other} will be removed.
+     * @param other other instance
+     * @return this {@code this} instance
+     */
     NutsObjectElementBuilder set(NutsObjectElementBuilder other);
 
+    /**
+     * set all properties from the given {@code other} instance.
+     * all properties not found in {@code other} will be retained.
+     * @param other other instance
+     * @return this {@code this} instance
+     */
     NutsObjectElementBuilder add(NutsObjectElement other);
 
+    /**
+     * set all properties from the given {@code other} instance.
+     * all properties not found in {@code other} will be retained.
+     * @param other other instance
+     * @return this {@code this} instance
+     */
     NutsObjectElementBuilder add(NutsObjectElementBuilder other);
 
+    /**
+     * create a immutable instance of {@link NutsObjectElement} representing
+     * this builder.
+     * @return new instance of {@link NutsObjectElement}
+     */
     NutsObjectElement build();
 }

@@ -8,10 +8,7 @@ package net.vpc.app.nuts.core.test.blackbox;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,15 +32,24 @@ public class Test06_UpateTest {
     private static String baseFolder;
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdateApi() throws Exception {
+        testUpdate(false,TestUtils.getCallerMethodName());
+    }
+
+    @Test
+    public void testUpdateImpl() throws Exception {
+        testUpdate(true,TestUtils.getCallerMethodName());
+    }
+
+    private void testUpdate(boolean implOnly,String callerName) throws Exception {
         CoreIOUtils.delete(null,new File(baseFolder));
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        final String workpacePath = baseFolder + "/" + TestUtils.getCallerMethodName();
+        final String workspacePath = baseFolder + "/" + callerName;
 
         NutsWorkspace uws = Nuts.openWorkspace(
-                "--workspace", workpacePath + "-update",
+                "--workspace", workspacePath + "-update",
                 "--archetype", "minimal",
                 "--standalone",
                 "--standalone-repositories",
@@ -56,7 +62,7 @@ public class Test06_UpateTest {
         uws.info().println();
         System.out.println("\n------------------------------------------");
         NutsWorkspace nws = Nuts.openWorkspace(
-                "--workspace", workpacePath,
+                "--workspace", workspacePath,
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
@@ -72,17 +78,20 @@ public class Test06_UpateTest {
         NutsDefinition api = nws.fetch().content().nutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().content().nutsRuntime().getResultDefinition();
 
-        NutsVersion apiv2 = api.getId().getVersion().inc(-1, 10);
+        NutsVersion apiv1 = api.getId().getVersion();
+        NutsVersion apiv2 = implOnly?apiv1:apiv1.inc(-1, 10);
+        FromTo fromToAPI = new FromTo(apiv1.toString(), apiv2.toString());
+
         NutsVersion rtv2 = rt.getId().getVersion().inc(-1, 10);
-        FromTo fromToAPI = new FromTo(api.getId().getVersion().toString(), apiv2.toString());
         FromTo fromToImpl = new FromTo(rt.getId().getVersion().toString(), rtv2.toString());
 
-        uws.deploy()
-                .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
-                .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
-                //                        .setRepository("local")
-                .run();
-
+        if(!fromToAPI.isIdentity()) {
+            uws.deploy()
+                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
+                    .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
+                    //                        .setRepository("local")
+                    .run();
+        }
         uws.deploy()
                 .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws))
                 .setDescriptor(
@@ -132,16 +141,16 @@ public class Test06_UpateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        Path bootCacheFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.BOOT);
+        Path bootCacheFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
         Path configFolder=nws.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
-        Assert.assertEquals(true, Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assert.assertEquals(true, Files.exists(configFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertTrue(Files.exists(configFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME)
         ));
 
-        Assert.assertEquals(true, Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
+        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts-core/").resolve(newRuntimeVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
         ));
 //        try {
@@ -152,17 +161,21 @@ public class Test06_UpateTest {
 //            Assert.assertTrue(true);
 //        }
         NutsBootWorkspace b = new NutsBootWorkspace(
-                "--workspace", workpacePath,
+                "--workspace", workspacePath,
+                "--boot-version="+newApiVersion,
                 "--color=never",
+                "--skip-companions",
                 "--version",
                 "--json"
         );
         System.out.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
-        ProcessBuilder2 cb = new ProcessBuilder2(uws).setCommand(b.createProcessCommandLine());
-        String ss = cb.setRedirectErrorStream().grabOutputString().start().waitFor().getOutputString();
+
+        String ss = uws.exec().syscall().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         System.out.println("================");
         System.out.println(ss);
-        Assert.assertTrue(true);
+        Map m = uws.json().parse(ss, Map.class);
+        Assert.assertEquals(newApiVersion,m.get("nuts-api-version"));
+        Assert.assertEquals(newRuntimeVersion,m.get("nuts-runtime-version"));
     }
 
     public static class FromTo {
@@ -174,7 +187,9 @@ public class Test06_UpateTest {
             this.from = from;
             this.to = to;
         }
-
+        public boolean isIdentity(){
+            return from.equals(to);
+        }
     }
 
     private Path replaceAPIJar(Path p, FromTo api, NutsWorkspace ws) {
@@ -224,8 +239,10 @@ public class Test06_UpateTest {
                 Path fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts-core/pom.properties");
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath))
-                            .replace("project.version=" + impl.from, "project.version=" + impl.to)
-                            .replace("net.vpc.app.nuts:nuts:" + api.from, "net.vpc.app.nuts:nuts:" + api.to);
+                            .replace("project.version=" + impl.from, "project.version=" + impl.to);
+                    if(!api.isIdentity()) {
+                        ss = ss.replace("net.vpc.app.nuts:nuts:" + api.from, "net.vpc.app.nuts:nuts:" + api.to);
+                    }
 //                    Files.write(fileInsideZipPath, ss.getBytes());
                     Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -233,17 +250,21 @@ public class Test06_UpateTest {
                 fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts-core/pom.xml");
                 if (Files.exists(fileInsideZipPath)) {
                     String ss = new String(Files.readAllBytes(fileInsideZipPath))
-                            .replace(">" + api.from + "<", ">" + api.to + "<")
                             .replace(">" + impl.from + "<", ">" + impl.to + "<");
+                    if(!api.isIdentity()) {
+                        ss=ss.replace(">" + api.from + "<", ">" + api.to + "<");
+                    }
 //                    Files.write(fileInsideZipPath, ss.getBytes());
                     Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                 }
 
-                fileInsideZipPath = fs.getPath("/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties");
-                if (Files.exists(fileInsideZipPath)) {
-                    String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
+                if(!api.isIdentity()) {
+                    fileInsideZipPath = fs.getPath("/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties");
+                    if (Files.exists(fileInsideZipPath)) {
+                        String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
-                    Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
+                    }
                 }
 
             } catch (IOException ex) {
@@ -266,7 +287,7 @@ public class Test06_UpateTest {
 
     @AfterClass
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
+        //CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @Before

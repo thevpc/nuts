@@ -55,13 +55,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return false;
     }
 
-    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force) throws IOException {
+    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace) throws IOException {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
             String fileContent = new String(Files.readAllBytes(filePath));
             String[] fileRows = fileContent.split("\n");
+            if (ensureHeader != null) {
+                if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
+                    lines.add(headerReplace);
+                }
+            }
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
                 if (row.trim().equals(toCommentLine(commentLine))) {
@@ -84,6 +89,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         if (!found) {
+            if (ensureHeader != null && headerReplace != null) {
+                lines.add(headerReplace);
+            }
             lines.add(toCommentLine(commentLine));
             lines.add(goodLine);
             updatedFile = true;
@@ -106,7 +114,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 String row = fileRows[i];
                 if (row.trim().equals(toCommentLine(commentLine))) {
                     found = true;
-                    i+=2;
+                    i += 2;
                     for (; i < fileRows.length; i++) {
                         lines.add(fileRows[i]);
                     }
@@ -212,7 +220,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         case "NUTS_ID":
                             return "BOOT : " + f.getId().toString();
                         case "BODY": {
-                            return getCallScriptCommand(NdiUtils.replaceFilePrefix(ff.toString(), ff2.toString(),""));
+                            return getCallScriptCommand(NdiUtils.replaceFilePrefix(ff.toString(), ff2.toString(), ""));
                         }
                     }
                     return null;

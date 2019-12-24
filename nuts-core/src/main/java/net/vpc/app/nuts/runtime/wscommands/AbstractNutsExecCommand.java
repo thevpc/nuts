@@ -275,7 +275,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand grabErrorString() {
-        // DO NOT CALL setOut :: setErr(new SPrintStream());
+        // DO NOT CALL setErr :: setErr(new SPrintStream());
         this.err = new SPrintStream();
         return this;
     }
@@ -289,7 +289,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabOutputString");
     }
 
     @Override
@@ -304,7 +304,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabErrorString");
     }
 
     @Override

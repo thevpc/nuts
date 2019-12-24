@@ -81,7 +81,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     public NutsInstallCommand run() {
         boolean emptyCommand = true;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = getValidSession();
+        NutsSession session = getSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
         PrintStream out = CoreIOUtils.resolveOut(session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
@@ -135,13 +135,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         for (Map.Entry<NutsId, Boolean> nutsIdBooleanEntry : allToInstall.entrySet()) {
             emptyCommand = false;
             NutsId nid=nutsIdBooleanEntry.getKey();
-            boolean installed = dws.getInstalledRepository().isInstalled(nid);
-            boolean defVer = dws.getInstalledRepository().isDefaultVersion(nid);
+            boolean installed = dws.getInstalledRepository().isInstalled(nid, session);
+            boolean defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
 
             boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
             //must load dependencies because will be run later!!
             if(installed){
-                if (nForced || getValidSession().isYes()){
+                if (nForced || getSession().isYes()){
                     defsToInstallForced.put(nid,null);
                 }else if(!defVer){
                     //installed, we only need to make it default!
@@ -154,7 +154,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 defsToInstall.put(nid,null);
             }
         }
-        if (getValidSession().isPlainTrace() || (!defsToInstall.isEmpty() && getValidSession().getConfirm()==NutsConfirmationMode.ASK)) {
+        if (getSession().isPlainTrace() || (!defsToInstall.isEmpty() && getSession().getConfirm()==NutsConfirmationMode.ASK)) {
             if(!defsToInstall.isEmpty()) {
                 out.println("The following {{new}} ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be ##installed## : "
                         + defsToInstall.keySet().stream()

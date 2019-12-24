@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2019 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -117,13 +117,13 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
-            if(PrivateNutsUtils.isBlank(wsString)){
+            if (PrivateNutsUtils.isBlank(wsString)) {
                 //default workspace name
-                wsString="";
-            }else if(wsString.contains("/") || wsString.contains("\\")){
+                wsString = "";
+            } else if (wsString.contains("/") || wsString.contains("\\")) {
                 //workspace path
-                wsString=PrivateNutsUtils.getAbsolutePath(wsString);
-            }else{
+                wsString = PrivateNutsUtils.getAbsolutePath(wsString);
+            } else {
                 //workspace name
             }
             fillOption("--workspace", "-w", wsString, arguments, false);
@@ -135,9 +135,9 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             }
             NutsLogConfig logConfig = options.getLogConfig();
             if (logConfig != null) {
-                if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel()== logConfig.getLogFileLevel()) {
+                if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel() == logConfig.getLogFileLevel()) {
                     fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
-                }else {
+                } else {
                     if (logConfig.getLogTermLevel() != null) {
                         fillOption("--log-term-" + logConfig.getLogTermLevel().toString().toLowerCase(), null, true, false, arguments, false);
                     }
@@ -160,8 +160,15 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--gui", null, options.isGui(), false, arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
             fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
+            fillOption("--progress", "-P", options.getProgressOptions(),arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
+            fillOption("--cached", null, options.isCached(), true, arguments, false);
+            fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
+            fillOption("--transitive", null, options.isTransitive(), true, arguments, false);
+            if(options.getFetchStrategy()!=null && options.getFetchStrategy()!=NutsFetchStrategy.ONLINE) {
+                fillOption("--fetch", "-f", options.getFetchStrategy(), NutsFetchStrategy.class, arguments, false);
+            }
             fillOption(options.getConfirm(), arguments, false);
             fillOption(options.getOutputFormat(), arguments, false);
             for (String outputFormatOption : options.getOutputFormatOptions()) {
@@ -247,15 +254,15 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
     }
 
     private void fillOption(String longName, String shortName, boolean value, boolean defaultValue, List<String> arguments, boolean forceSingle) {
-        if(defaultValue){
+        if (defaultValue) {
             if (!value) {
                 if (shortOptions && shortName != null) {
-                    arguments.add("-!"+shortName.substring(1));
-                }else {
-                    arguments.add("--!"+longName.substring(2));
+                    arguments.add("-!" + shortName.substring(1));
+                } else {
+                    arguments.add("--!" + longName.substring(2));
                 }
             }
-        }else{
+        } else {
             if (value) {
                 arguments.add(selectOptionName(longName, shortName));
             }
@@ -353,7 +360,7 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
                             return true;
                         }
                         case CREATE_NEW: {
-                            fillOption0("-p", "w", arguments, forceSingle);
+                            fillOption0("-o", "w", arguments, forceSingle);
                             return true;
                         }
                         case OPEN_OR_CREATE: {

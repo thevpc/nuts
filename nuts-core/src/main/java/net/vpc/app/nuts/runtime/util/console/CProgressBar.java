@@ -1,6 +1,9 @@
 package net.vpc.app.nuts.runtime.util.console;
 
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.fprint.FPrintCommands;
 
@@ -12,35 +15,25 @@ public class CProgressBar {
     private int size = 10;
     private int maxMessage = 0;
     private float indeterminateSize = 0.3f;
-    private NutsWorkspace ws;
+    private NutsSession session;
     private int columns = 3;
     private int maxColumns = 133;
     private int moveLineStart = 1;
     private long lastPrint = 0;
     private long minPeriod = 300;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
+    private boolean optionNewline;
 
-    public static void main(String[] args) {
-        CProgressBar rr = new CProgressBar(null);
-        for (int i = 0; i < 12; i++) {
-            int finalI = i;
-            rr.setIndeterminatePosition(new IndeterminatePosition() {
-                @Override
-                public int evalIndeterminatePos(CProgressBar bar, int size) {
-                    return finalI % size;
-                }
-            });
-            System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
+    public CProgressBar(NutsSession session) {
+        this.session = session;
+        formatted = session != null;
+        if(session!=null){
+            optionNewline= NutsWorkspaceUtils.parseProgressOptions(session).contains("newline");
         }
     }
 
-    public CProgressBar(NutsWorkspace ws) {
-        this.ws = ws;
-        formatted = ws != null;
-    }
-
-    public CProgressBar(NutsWorkspace ws, int size) {
-        this.ws = ws;
+    public CProgressBar(NutsSession ws, int size) {
+        this.session = session;
         setSize(size);
     }
 
@@ -218,9 +211,16 @@ public class CProgressBar {
         }
         int s2 = 0;
         if (formatted) {
-            s2 = ws.io().terminalFormat().textLength(msg);
+            if(msg==null){
+                msg="";
+            }
+            s2 = session==null? msg.length():session.workspace().io().terminalFormat().textLength(msg);
             if (isPrefixMoveLineStart()) {
-                sb.append("`" + FPrintCommands.MOVE_LINE_START + "`");
+                if(optionNewline){
+                    sb.append("\n");
+                }else {
+                    sb.append("`" + FPrintCommands.MOVE_LINE_START + "`");
+                }
             }
             String p = progress(percent);
             if(p==null|| p.isEmpty()){
@@ -237,7 +237,11 @@ public class CProgressBar {
 //            sb.append(" ");
 //            sb.append(maxMessage);
             if (isSuffixMoveLineStart()) {
-                sb.append("`" + FPrintCommands.LATER_RESET_LINE + "`");
+                if(optionNewline) {
+                    sb.append("\n");
+                }else {
+                    sb.append("`" + FPrintCommands.LATER_RESET_LINE + "`");
+                }
             }
         } else {
             s2 = msg.length();

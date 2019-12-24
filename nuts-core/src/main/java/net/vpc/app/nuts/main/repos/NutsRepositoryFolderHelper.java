@@ -81,15 +81,24 @@ public class NutsRepositoryFolderHelper {
 
     public Path getLongNameIdLocalFolder(NutsId id) {
         CoreNutsUtils.checkId_GNV(id);
+        if (repo == null) {
+            return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id));
+        }
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id));
     }
 
     public Path getLongNameIdLocalFile(NutsId id) {
+        if (repo == null) {
+            return getLongNameIdLocalFolder(id).resolve(getWorkspace().config().getDefaultIdFilename(id));
+        }
         return getLongNameIdLocalFolder(id).resolve(NutsRepositoryExt.of(repo).getIdFilename(id));
     }
 
     public Path getShortNameIdLocalFolder(NutsId id) {
         CoreNutsUtils.checkId_GN(id);
+        if (repo == null) {
+            return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id.builder().setVersion("").build()));
+        }
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
 
@@ -247,8 +256,11 @@ public class NutsRepositoryFolderHelper {
         }
         if (folder != null) {
             folder = rootPath.resolve(folder);
+        }else{
+            folder = rootPath;
+
         }
-        if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
+        if (!Files.exists(folder) || !Files.isDirectory(folder)) {
             //            return IteratorUtils.emptyIterator();
             return null;
         }
@@ -256,7 +268,7 @@ public class NutsRepositoryFolderHelper {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 if (repo == null) {
-                    NutsRepositoryFolderHelper.this.undeploy(new DefaultNutsRepositoryUndeployCommand(repo).setId(id).setSession(session)
+                    NutsRepositoryFolderHelper.this.undeploy(new DefaultNutsRepositoryUndeployCommand(ws).setId(id).setSession(session)
                     );
                 } else {
                     repo.undeploy().setId(id).setSession(session).run();
@@ -311,9 +323,10 @@ public class NutsRepositoryFolderHelper {
         NutsId id = deployment.getId();
         NutsWorkspaceUtils.of(getWorkspace()).checkNutsId(id);
         deployDescriptor(id, deployment.getDescriptor(), deployment.getSession());
-        Path pckFile = deployContent(id, deployment.getContent(), deployment.getSession());
-        deployContent(id, deployment.getContent(), deployment.getSession());
-        NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, deployment.getSession().getSession(), repo));
+        Path pckFile = deployContent(id, deployment.getContent(), deployment.getDescriptor(), deployment.getSession());
+        if (repo != null) {
+            NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, deployment.getSession().getSession(), repo));
+        }
         return true;
     }
 
@@ -337,12 +350,12 @@ public class NutsRepositoryFolderHelper {
         return descFile;
     }
 
-    public Path deployContent(NutsId id, Object content, NutsRepositorySession session) {
+    public Path deployContent(NutsId id, Object content, NutsDescriptor descriptor, NutsRepositorySession session) {
         if (!isWriteEnabled()) {
             return null;
         }
         NutsWorkspaceUtils.of(getWorkspace()).checkNutsId(id);
-        Path pckFile = getLongNameIdLocalFile(id);
+        Path pckFile = getLongNameIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
         if (Files.exists(pckFile) && !session.getSession().isYes()) {
             throw new NutsAlreadyDeployedException(ws, id.toString());
         }
@@ -367,7 +380,9 @@ public class NutsRepositoryFolderHelper {
         if (localFolder != null && Files.exists(localFolder)) {
             try {
                 CoreIOUtils.delete(ws, localFolder);
-                NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(localFolder, options, options.getSession().getSession(), repo));
+                if (repo != null) {
+                    NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(localFolder, options, options.getSession().getSession(), repo));
+                }
                 return false;
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);

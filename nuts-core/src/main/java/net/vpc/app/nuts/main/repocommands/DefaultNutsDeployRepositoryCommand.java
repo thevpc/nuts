@@ -58,19 +58,19 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);
             xrepo.deployImpl(this);
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error revalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error revalidating Indexer for {0} : {1}", getRepo().config().getName(), ex);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
             throw ex;
         }

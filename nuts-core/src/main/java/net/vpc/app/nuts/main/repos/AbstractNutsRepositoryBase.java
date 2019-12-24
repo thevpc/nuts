@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.main.repos;
 
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
+import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.main.repocommands.*;
 import net.vpc.app.nuts.runtime.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.runtime.util.common.TraceResult;
@@ -46,9 +47,10 @@ import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository {
+public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository implements NutsRepositoryExt {
 
     private static final long serialVersionUID = 1L;
+    protected NutsIndexStore nutsIndexStore;
 
     private final NutsLogger LOG;
 

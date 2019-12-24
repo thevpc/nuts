@@ -1,7 +1,6 @@
 package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.IOUtils;
 import net.vpc.common.mvn.Pom;
 import net.vpc.common.mvn.PomXmlParser;
 import net.vpc.common.strings.StringUtils;
@@ -84,7 +83,7 @@ public class ProjectService {
                             && !g.getArtifactId().contains("$")
                             && !g.getVersion().contains("$")) {
 
-                        String s = IOUtils.loadString(new File(f, "pom.xml"));
+                        String s = new String(Files.readAllBytes(new File(f, "pom.xml").toPath()));
                         //check if the s
                         int ok = 0;
                         if (s.contains("<artifactId>site-maven-plugin</artifactId>")) {
@@ -96,7 +95,7 @@ public class ProjectService {
                         if (ok > 0) {
 
                             if (p2.getId() == null) {
-                                p2.setId(g.getGroupId()+ ":" + g.getArtifactId());
+                                p2.setId(g.getGroupId() + ":" + g.getArtifactId());
                             }
                             if (new File(f, "src/main").isDirectory()) {
                                 p2.getTechnologies().add("maven");
@@ -121,6 +120,28 @@ public class ProjectService {
         return p2;
     }
 
+    public File detectLocalVersionFile(String sid) {
+        NutsId id = context.workspace().id().parse(sid);
+        if (config.getTechnologies().contains("maven")) {
+            File f = new File(System.getProperty("user.home"), ".m2/repository/"
+                    + id.getGroupId().replace('.', File.separatorChar)
+                    + File.separatorChar
+                    + id.getArtifactId()
+                    + File.separatorChar
+                    + id.getVersion()
+                    + File.separatorChar
+                    + id.getArtifactId()
+                    + "-"
+                    + id.getVersion()
+                    + ".jar"
+            );
+            if (f.exists()) {
+                return f;
+            }
+        }
+        return null;
+    }
+
     public String detectLocalVersion() {
         if (config.getTechnologies().contains("maven")) {
             File f = new File(config.getPath());
@@ -133,6 +154,46 @@ public class ProjectService {
                         throw new IllegalArgumentException(e);
                     }
                 }
+            }
+        }
+        return null;
+    }
+
+    public File detectRemoteVersionFile(String sid) {
+        NutsId id = context.workspace().id().parse(sid);
+        if (config.getTechnologies().contains("maven")) {
+            RepositoryAddress a = config.getAddress();
+            if (a == null) {
+                a = defaultRepositoryAddress;
+            }
+            if (a == null) {
+                a = new RepositoryAddress();
+            }
+            String nutsRepository = a.getNutsRepository();
+            if (StringUtils.isBlank(nutsRepository)) {
+                throw new NutsExecutionException(context.getWorkspace(), "Missing Repository. try 'worky set -r vpc-public-maven' or something like that", 2);
+            }
+            try {
+                NutsWorkspace ws2 = Nuts.openWorkspace(
+                        new NutsDefaultWorkspaceOptions()
+                                .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                .setReadOnly(true)
+                                .setWorkspace(a.getNutsWorkspace())
+                );
+                NutsSession s = ws2.createSession().silent();
+                List<NutsDefinition> found = ws2.search()
+                        .id(sid)
+                        .repository(nutsRepository)
+                        .latest().session(s).content().getResultDefinitions().list();
+                if (found.size() > 0) {
+                    Path p = found.get(0).getContent().getPath();
+                    if (p == null) {
+                        return null;
+                    }
+                    return p.toFile();
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
             }
         }
         return null;
@@ -152,17 +213,24 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isBlank(nutsRepository)) {
-                        throw new NutsExecutionException(context.getWorkspace(), "Missing Repository", 2);
+                        throw new NutsExecutionException(context.getWorkspace(), "Missing Repository. try 'worky set -r vpc-public-maven' or something like that", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
-                        NutsWorkspace ws2 = Nuts.openWorkspace(
-                                new NutsDefaultWorkspaceOptions()
-                                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
-                                        .setReadOnly(true)
-                                        .setWorkspace(a.getNutsWorkspace())
-                        );
-                        NutsSession s = ws2.createSession().silent();
+                        NutsWorkspace ws2 = null;
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
+                            ws2 = Nuts.openWorkspace(
+                                    new NutsDefaultWorkspaceOptions()
+                                            .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                            .setReadOnly(true)
+                                            .setWorkspace(a.getNutsWorkspace())
+                            );
+                        }else{
+                            ws2=context.getWorkspace();
+                        }
+                        NutsSession s = ws2.createSession();
+                        s.copyFrom(context.getSession());
+                        s.silent();
                         List<NutsId> found = ws2.search()
                                 .id(g.getGroupId() + ":" + g.getArtifactId())
                                 .repository(nutsRepository)

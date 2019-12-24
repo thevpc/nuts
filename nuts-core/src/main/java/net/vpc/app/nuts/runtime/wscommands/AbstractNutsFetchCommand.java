@@ -106,10 +106,6 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     public String toString() {
         return getClass().getSimpleName()+"{" +
                 "failFast=" + isFailFast() +
-                ", transitive=" + isTransitive() +
-                ", cached=" + isCached() +
-                ", indexed=" + getIndexed() +
-                ", fetchStrategy=" + getFetchStrategy() +
                 ", optional=" + getOptional() +
                 ", scope=" + getScope() +
                 ", content=" + isContent() +
@@ -121,5 +117,6 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 ", repos=" + Arrays.toString(getRepositories()) +
                 ", displayOptions=" + getDisplayOptions() +
                 ", id=" + getId() +
+                ", session=" + getSession() +
                 '}';
     }}

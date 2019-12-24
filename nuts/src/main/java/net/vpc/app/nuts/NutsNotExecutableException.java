@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Exception thrown when a non executable nuts id is requested to run.
  *
  * @since 0.5.4
  */

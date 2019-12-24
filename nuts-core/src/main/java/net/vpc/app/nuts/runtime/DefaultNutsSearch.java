@@ -8,20 +8,20 @@ public class DefaultNutsSearch {
     private final NutsIdFilter idFilter;
     private final NutsDescriptorFilter descriptorFilter;
     private final String[] ids;
-    private final NutsFetchCommand options;
+    private final NutsSession session;
 
     public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsIdFilter idFilter,
             NutsDescriptorFilter descriptorFilter,
-            NutsFetchCommand options) {
+                             NutsSession session) {
         this.ids = ids;
-        this.options = options;
+        this.session = session;
         this.repositoryFilter = repositoryFilter;
         this.idFilter = idFilter;
         this.descriptorFilter = descriptorFilter;
     }
 
-    public NutsFetchCommand getOptions() {
-        return options;
+    public NutsSession getSession() {
+        return session;
     }
 
     public NutsRepositoryFilter getRepositoryFilter() {

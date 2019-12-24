@@ -76,7 +76,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
             try {
-                NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false);
+                NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false,true);
             } catch (TransformerException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }
@@ -85,7 +85,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 Element elem = (org.w3c.dom.Element) value;
                 Document doc = NutsXmlUtils.createDocument();
                 doc.appendChild(doc.importNode(elem, true));
-                NutsXmlUtils.writeDocument(doc, new StreamResult(w), false);
+                NutsXmlUtils.writeDocument(doc, new StreamResult(w), false,false);
             } catch (TransformerException|ParserConfigurationException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }

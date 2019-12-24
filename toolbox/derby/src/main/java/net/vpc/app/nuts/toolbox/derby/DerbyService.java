@@ -84,7 +84,6 @@ public class DerbyService {
                     }
                     return true;
                 })
-                .session(appContext.getSession().copy().silent())
                 .getResultIds().stream().map(x -> x.getVersion().toString()).collect(Collectors.toList());
         TreeSet<String> lastFirst = new TreeSet<>(new Comparator<String>() {
             @Override

@@ -513,6 +513,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public NutsIOProcessAction ps() {
+        return new DefaultNutsIOProcessAction(ws);
+    }
+
+    @Override
     public NutsIODeleteAction delete() {
         return new DefaultNutsIODeleteAction(ws);
     }

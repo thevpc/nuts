@@ -460,7 +460,7 @@ public final class NutsConstants {
         /**
          * nuts command alias file extension
          */
-        public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
+        public static final String NUTS_COMMAND_FILE_EXTENSION = ".cmd-alias.json";
 
         /**
          * nuts artifact descriptor file name

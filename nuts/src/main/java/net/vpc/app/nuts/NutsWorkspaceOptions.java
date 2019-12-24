@@ -408,4 +408,46 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     boolean isTrace();
 
+    /**
+     * return progress options string.
+     * progress options configures how progress monitors are processed.
+     * 'no' value means that progress is disabled.
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  when true, extra trace user-friendly information is written to standard output.
+     */
+    String getProgressOptions();
+
+    /**
+     * when true, use cache
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  use cache when true
+     */
+    boolean isCached();
+
+    /**
+     * when true, use index
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  use index when true
+     */
+    boolean isIndexed();
+
+    /**
+     * when true, use transitive repositories
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  use transitive repositories when true
+     */
+    boolean isTransitive();
+
+    /**
+     * default fetch strategy
+     * <p>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return  use transitive repositories when true
+     */
+    NutsFetchStrategy getFetchStrategy();
+
 }

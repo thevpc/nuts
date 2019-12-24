@@ -1,6 +1,8 @@
 package net.vpc.app.nuts.main.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.NutsHomeLocationsMap;
+import net.vpc.app.nuts.runtime.NutsStoreLocationsMap;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 
@@ -178,7 +180,10 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     @Override
     public Path getStoreLocation(NutsStoreLocation folderType) {
-        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
+        NutsStoreLocationsMap hlm = new NutsStoreLocationsMap(config.getStoreLocations());
+
+//        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
+        String n = hlm.get(folderType);
         if(temporary){
             if (CoreStringUtils.isBlank(n)) {
                 n = folderType.toString().toLowerCase();

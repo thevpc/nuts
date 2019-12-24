@@ -48,7 +48,7 @@ public class NutsRepositoryConfig implements Serializable {
     private String name;
     private String type;
     private String location;
-    private String[] storeLocations = null;
+    private Map<String, String> storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
     private Map<String,String> env;
@@ -167,12 +167,13 @@ public class NutsRepositoryConfig implements Serializable {
         this.configVersion = configVersion;
     }
 
-    public String[] getStoreLocations() {
+    public Map<String, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public void setStoreLocations(String[] storeLocations) {
+    public NutsRepositoryConfig setStoreLocations(Map<String, String> storeLocations) {
         this.storeLocations = storeLocations;
+        return this;
     }
 
     @Override
@@ -183,7 +184,7 @@ public class NutsRepositoryConfig implements Serializable {
         hash = 53 * hash + Objects.hashCode(this.name);
         hash = 53 * hash + Objects.hashCode(this.type);
         hash = 53 * hash + Objects.hashCode(this.location);
-        hash = 53 * hash + Arrays.deepHashCode(this.storeLocations);
+        hash = 53 * hash + Objects.hashCode(this.storeLocations);
         hash = 53 * hash + Objects.hashCode(this.storeLocationStrategy);
         hash = 53 * hash + Objects.hashCode(this.groups);
         hash = 53 * hash + Objects.hashCode(this.env);
@@ -230,7 +231,7 @@ public class NutsRepositoryConfig implements Serializable {
         if (!Objects.equals(this.authenticationAgent, other.authenticationAgent)) {
             return false;
         }
-        if (!Arrays.deepEquals(this.storeLocations, other.storeLocations)) {
+        if (!Objects.equals(this.storeLocations, other.storeLocations)) {
             return false;
         }
         if (this.storeLocationStrategy != other.storeLocationStrategy) {
@@ -250,7 +251,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "configVersion=" + configVersion + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + (storeLocations==null?"null":Arrays.toString(storeLocations)) + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + "configVersion=" + configVersion + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + (storeLocations==null?"null":storeLocations.toString()) + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
 }

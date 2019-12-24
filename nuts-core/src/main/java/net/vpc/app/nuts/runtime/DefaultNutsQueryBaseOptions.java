@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,15 +15,9 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsFetchStrategy;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsWorkspaceCommand;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsDependencyScopePattern;
 import net.vpc.app.nuts.runtime.util.NutsDependencyScopes;
 import net.vpc.app.nuts.runtime.wscommands.NutsWorkspaceCommandBase;
 
@@ -34,10 +29,6 @@ import net.vpc.app.nuts.runtime.wscommands.NutsWorkspaceCommandBase;
 public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
 
     private boolean failFast = false;
-    private boolean transitive = true;
-    private boolean cached = true;
-    private Boolean indexed = null;
-    private NutsFetchStrategy fetchStrategy = null;
     private Boolean optional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean content = false;
@@ -49,8 +40,14 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
 
+//    private Boolean transitive = true;
+//    private Boolean cached = true;
+//    private Boolean indexed = null;
+//    private NutsFetchStrategy fetchStrategy = null;
+
     public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
         super(ws, name);
+        this.session=ws.createSession();
         displayOptions = new NutsFetchDisplayOptions(ws);
     }
 
@@ -60,26 +57,27 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             super.copyFromWorkspaceCommandBase(other);
             this.optional = other.getOptional();
             this.failFast = other.isFailFast();
-            this.fetchStrategy = other.getFetchStrategy();
-            this.indexed = other.getIndexed();
+//            this.fetchStrategy = other.getFetchStrategy();
+//            this.indexed = other.getIndexed();
+//            this.transitive = other.isTransitive();
+//            this.cached = other.isCached();
             this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
             this.dependencies = other.isDependencies();
             this.dependenciesTree = other.isDependenciesTree();
             this.effective = other.isEffective();
             this.scope = EnumSet.copyOf(other.getScope());
-            this.transitive = other.isTransitive();
-            this.cached = other.isCached();
             this.location = other.getLocation();
             this.repos.clear();
             this.repos.addAll(Arrays.asList(other.getRepositories()));
+
         }
         return (T) this;
     }
 
     //@Override
     public boolean isCached() {
-        return cached;
+        return getSession().isCached();
     }
 
     //@Override
@@ -94,18 +92,18 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setCached(boolean cached) {
-        this.cached = cached;
+        getSession().setCached(cached);
         return (T) this;
     }
 
     //@Override
     public boolean isTransitive() {
-        return transitive;
+        return getSession().isTransitive();
     }
 
     //@Override
     public T setTransitive(boolean transitive) {
-        this.transitive = transitive;
+        getSession().setTransitive(transitive);
         return (T) this;
     }
 
@@ -126,7 +124,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setFetchStrategy(NutsFetchStrategy mode) {
-        this.fetchStrategy = mode;
+        getSession().setFetchStrategy(mode);
         return (T) this;
     }
 
@@ -157,17 +155,12 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public NutsFetchStrategy getFetchStrategy() {
-        return fetchStrategy;
-    }
-
-    //@Override
-    public Boolean getIndexed() {
-        return indexed;
+        return getSession().getFetchStrategy();
     }
 
     //@Override
     public boolean isIndexed() {
-        return indexed == null || indexed;
+        return getSession().isIndexed();
     }
 
     public T indexed(Boolean indexEnabled) {
@@ -176,7 +169,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setIndexed(Boolean indexEnabled) {
-        this.indexed = indexEnabled;
+        getSession().setIndexed(indexEnabled);
         return (T) this;
     }
 
@@ -603,10 +596,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public String toString() {
         return getClass().getSimpleName()+"(" +
                 "failFast=" + failFast +
-                ", transitive=" + transitive +
-                ", cached=" + cached +
-                ", indexed=" + indexed +
-                ", fetchStrategy=" + fetchStrategy +
                 ", optional=" + optional +
                 ", scope=" + scope +
                 ", content=" + content +
@@ -617,6 +606,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 ", location=" + location +
                 ", repos=" + repos +
                 ", displayOptions=" + displayOptions +
+                ", session=" + getSession() +
                 ')';
     }
 }

@@ -25,7 +25,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getWriter().println("[");
+        getWriter().println("\\[");
     }
 
     @Override
@@ -61,7 +61,8 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        getWriter().println("]");
+        getWriter().println("\\]");
+        getWriter().flush();
     }
 
 }

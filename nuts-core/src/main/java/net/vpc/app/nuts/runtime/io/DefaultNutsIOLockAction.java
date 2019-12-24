@@ -1,12 +1,12 @@
 package net.vpc.app.nuts.runtime.io;
 
-import net.vpc.app.nuts.NutsLock;
-import net.vpc.app.nuts.NutsLockException;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     public DefaultNutsIOLockAction(NutsWorkspace ws) {
@@ -14,9 +14,55 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     }
 
     @Override
+    public <T> T run(Callable<T> runnable, long time, TimeUnit unit){
+        NutsLock lock = create();
+        boolean b = false;
+        try {
+            b=lock.tryLock(time, unit);
+        } catch (InterruptedException e) {
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        if(!b){
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        T value=null;
+        try{
+            value=runnable.call();
+        } catch (Exception e) {
+            if(e instanceof NutsException){
+                throw (NutsException) e;
+            }
+            throw new NutsException(getWs(),e);
+        } finally {
+            lock.unlock();
+        }
+        return value;
+    }
+
+    @Override
+    public <T> T run(Callable<T> runnable){
+        NutsLock lock = create();
+        if(!lock.tryLock()){
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        T value=null;
+        try{
+            value=runnable.call();
+        } catch (Exception e) {
+            if(e instanceof NutsException){
+                throw (NutsException) e;
+            }
+            throw new NutsException(getWs(),e);
+        }finally {
+            lock.unlock();
+        }
+        return value;
+    }
+
+    @Override
     public NutsLock create() {
         Object s = getSource();
-        Object lr = getLockResource();
+        Object lr = getResource();
         Path lrPath=null;
         if(lr==null){
             if(s==null){
@@ -37,7 +83,9 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     }
 
     private Path toPath(Object lockedObject) {
-        if (lockedObject instanceof Path) {
+        if (lockedObject instanceof NutsId) {
+            return getWs().config().getStoreLocation((NutsId) lockedObject,NutsStoreLocation.RUN).resolve("lock");
+        }else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
         } else if (lockedObject instanceof File) {
             return ((File) lockedObject).toPath();

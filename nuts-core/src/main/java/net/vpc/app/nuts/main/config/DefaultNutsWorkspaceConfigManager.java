@@ -617,7 +617,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         if (force || storeModelRuntimeChanged) {
             Path runtimeVersionSpecificLocation = getStoreLocation(NutsStoreLocation.CACHE)
-                    .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(getRuntimeId()));
+                    .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(getRuntimeId()));
             Path afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
             ws.json().value(storeModelRuntime).print(afile);
@@ -1120,13 +1120,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (storeLocation == null) {
             return null;
         }
-        switch (folderType) {
-            case CACHE:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
-            case CONFIG:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
-        }
-        return storeLocation.resolve(getDefaultIdBasedir(id));
+        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+//        switch (folderType) {
+//            case CACHE:
+//                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+//            case CONFIG:
+//                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+//        }
+//        return storeLocation.resolve(getDefaultIdBasedir(id));
     }
 
     @Override
@@ -1195,12 +1196,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime,NutsSession session) {
         Path configFile = getStoreLocation(NutsStoreLocation.CACHE)
-                .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id)).resolve(runtime ?
+                .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).resolve(runtime ?
                         NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
                         : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
                 );
-        Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
-                .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
+        Path jarFile = getStoreLocation(NutsStoreLocation.LIB)
+                .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id))
                 .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
         if (!force && (Files.isRegularFile(configFile) && Files.isRegularFile(jarFile))) {
             return;
@@ -1254,8 +1255,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     private void downloadId(NutsId id, boolean force, Path path, boolean fetch) {
-        Path jarFile = getStoreLocation(NutsStoreLocation.CACHE)
-                .resolve(NutsConstants.Folders.BOOT).resolve(getDefaultIdBasedir(id))
+        Path jarFile = getStoreLocation(NutsStoreLocation.LIB)
+                .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id))
                 .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
         if (force || !Files.isRegularFile(jarFile)) {
             if (path != null) {

@@ -64,15 +64,15 @@ import org.w3c.dom.Element;
  */
 public class NutsXmlUtils {
 
-    public static void print(String name, Object object, Writer out, boolean compact, NutsWorkspace ws) {
-        print(name, object, (Object) out, compact, ws);
+    public static void print(String name, Object object, Writer out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+        print(name, object, (Object) out, compact, headerDeclaration, ws);
     }
 
-    public static void print(String name, Object object, PrintStream out, boolean compact, NutsWorkspace ws) {
-        print(name, object, (Object) out, compact, ws);
+    public static void print(String name, Object object, PrintStream out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+        print(name, object, (Object) out, compact, headerDeclaration, ws);
     }
 
-    private static void print(String name, Object object, Object out, boolean compact, NutsWorkspace ws) {
+    private static void print(String name, Object object, Object out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
         try {
             Document document = NutsXmlUtils.createDocument();
             String rootName = name;
@@ -83,7 +83,7 @@ public class NutsXmlUtils {
             } else {
                 streamResult = new StreamResult((Writer) out);
             }
-            NutsXmlUtils.writeDocument(document, streamResult, compact);
+            NutsXmlUtils.writeDocument(document, streamResult, compact,headerDeclaration);
             if (out instanceof PrintStream) {
                 ((PrintStream) out).flush();
             } else {
@@ -255,7 +255,7 @@ public class NutsXmlUtils {
     public static String documentToString(Document document) {
         try {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
-            writeDocument(document, new StreamResult(b), true);
+            writeDocument(document, new StreamResult(b), true,true);
             return new String(b.toByteArray());
         } catch (TransformerException ex) {
             throw new RuntimeException(ex);
@@ -268,22 +268,25 @@ public class NutsXmlUtils {
             Document d = createDocument();
             elem = (Element) d.importNode(elem, true);
             d.appendChild(elem);
-            writeDocument(d, new StreamResult(b), true);
+            writeDocument(d, new StreamResult(b), true,false);
             return new String(b.toByteArray());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public static void writeDocument(Document document, StreamResult writer, boolean compact) throws TransformerException {
+    public static void writeDocument(Document document, StreamResult writer, boolean compact,boolean headerDeclaration) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (!compact) {
-            document.setXmlStandalone(true);
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.STANDALONE, "false");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        }
+        document.setXmlStandalone(false);
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+        if(!headerDeclaration) {
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         }
         DOMSource domSource = new DOMSource(document);
         transformer.transform(domSource, writer);

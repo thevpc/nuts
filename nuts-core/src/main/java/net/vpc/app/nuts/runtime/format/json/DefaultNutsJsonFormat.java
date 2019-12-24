@@ -15,15 +15,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
@@ -49,7 +42,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> implements NutsJsonFormat {
@@ -145,6 +137,11 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
+    public <T> T parse(String jsonString, Class<T> clazz) {
+        return parse(new StringReader(jsonString), clazz);
+    }
+
+    @Override
     public <T> T parse(byte[] bytes, Class<T> clazz) {
         return parse(new ByteArrayInputStream(bytes), clazz);
     }
@@ -201,9 +198,8 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             case BOOLEAN: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getBoolean());
             }
-            case INTEGER: 
-            case FLOAT: 
-            {
+            case INTEGER:
+            case FLOAT: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getNumber());
             }
             case STRING: {
@@ -236,7 +232,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
                 return a;
             }
             default: {
-                throw new IllegalArgumentException("Unsupported "+o.type());
+                throw new IllegalArgumentException("Unsupported " + o.type());
             }
         }
     }
@@ -284,7 +280,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             if (s == null) {
                 return null;
             }
-            return NutsWorkspaceUtils.parseRequiredNutsId0( s);
+            return NutsWorkspaceUtils.parseRequiredNutsId0(s);
         }
 
         @Override
@@ -356,7 +352,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         @Override
         public NutsDependency deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             String b = context.deserialize(json, String.class);
-            return CoreNutsUtils.parseNutsDependency(null,b);
+            return CoreNutsUtils.parseNutsDependency(null, b);
         }
 
         @Override

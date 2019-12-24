@@ -21,7 +21,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     @Override
     public void lockInterruptibly() throws InterruptedException {
-        lock();
+        tryLock(0,TimeUnit.DAYS);
     }
 
     public void checkFree() {
@@ -62,8 +62,70 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     @Override
-    public boolean tryLock(long time, TimeUnit unit) {
-        return tryLockImmediately();
+    public synchronized boolean tryLock(long time, TimeUnit unit) {
+        if (unit == null) {
+            throw new NutsIllegalArgumentException(ws, "Missing unit");
+        }
+        long now = System.currentTimeMillis();
+        long timeMs = 0;
+        if (time <= 0) {
+            timeMs = Long.MAX_VALUE;
+        } else {
+            switch (unit) {
+                case NANOSECONDS: {
+                    timeMs = time / 1000000;
+                    if (timeMs <= 0) {
+                        timeMs = 1;
+                    }
+                    break;
+                }
+                case MICROSECONDS: {
+                    timeMs = time / 1000;
+                    if (timeMs <= 0) {
+                        timeMs = 1;
+                    }
+                    break;
+                }
+                case MILLISECONDS: {
+                    timeMs = time;
+                    break;
+                }
+                case SECONDS: {
+                    timeMs = time * 1000;
+                    break;
+                }
+                case MINUTES: {
+                    timeMs = time * 1000 * 60;
+                    break;
+                }
+                case HOURS: {
+                    timeMs = time * 1000 * 3600;
+                    break;
+                }
+                case DAYS: {
+                    timeMs = time * 1000 * 3600 * 24;
+                    break;
+                }
+            }
+        }
+        long minTimeToSleep=timeMs/10;
+        if(timeMs<200){
+            timeMs=200;
+        }
+        do{
+            if(tryLockImmediately()){
+                return true;
+            }
+            if(System.currentTimeMillis()-now>timeMs){
+                break;
+            }
+            try {
+                Thread.sleep(minTimeToSleep);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }while(true);
+        return false;
     }
 
     public boolean tryLockImmediately() {

@@ -842,35 +842,59 @@ final class PrivateNutsUtils {
             return mvnUrl + jarPath;
         }
 
-        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG) {
+        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG,boolean includeDesc) {
+            includeDesc=false;
+            String descPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "pom");
             String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
-            File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
-            if (cachedFile.isFile()) {
-                return cachedFile;
+            File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
+            File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
+            if (cachedJarFile.isFile()) {
+                return cachedJarFile;
             }
             for (String r : repositories) {
-                LOG.log(Level.FINE, PrivateNutsLog.CACHE, "checking {0} jar from {1}", new Object[]{nutsId, r});
-                String path = resolveMavenFullPath(r, nutsId, "jar");
+                LOG.log(Level.FINE, PrivateNutsLog.CACHE, "checking {0} from {1}", new Object[]{nutsId, r});
                 File file = toFile(r);
-                if (file == null) {
+                if(includeDesc){
+                    String path = resolveMavenFullPath(r, nutsId, "pom");
+//                    if (file == null) {
+                        try {
+                            copy(new URL(path), cachedPomFile, LOG);
+                        } catch (Exception ex) {
+                            LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                            continue;
+                            //ex.printStackTrace();
+                            //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
+                        }
+//                    } else {
+//                        //file
+//                        File f = new File(r, descPath);
+//                        if (f.isFile()) {
+//                            return f;
+//                        } else {
+//                            LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+//                        }
+//                    }
+                }
+                String path = resolveMavenFullPath(r, nutsId, "jar");
+//                if (file == null) {
                     try {
-                        copy(new URL(path), cachedFile, LOG);
-                        LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cache jar file {0}", new Object[]{cachedFile.getPath()});
-                        return cachedFile;
+                        copy(new URL(path), cachedJarFile, LOG);
+                        LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
+                        return cachedJarFile;
                     } catch (Exception ex) {
                         LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
                         //ex.printStackTrace();
                         //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                     }
-                } else {
-                    //file
-                    File f = new File(r, jarPath);
-                    if (f.isFile()) {
-                        return f;
-                    } else {
-                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
-                    }
-                }
+//                } else {
+//                    //file
+//                    File f = new File(r, jarPath);
+//                    if (f.isFile()) {
+//                        return f;
+//                    } else {
+//                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+//                    }
+//                }
             }
             return null;
         }

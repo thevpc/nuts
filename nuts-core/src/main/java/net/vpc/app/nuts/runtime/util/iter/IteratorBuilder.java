@@ -47,6 +47,14 @@ public class IteratorBuilder<T> {
         return new IteratorBuilder<>(t);
     }
 
+    public static <T> IteratorBuilder<T> ofLazyNamed(String name,Iterable<T> t) {
+        return ofLazy(new NamedIterable<T>(name) {
+            @Override
+            public Iterator<T> iterator() {
+                return t.iterator();
+            }
+        });
+    }
     public static <T> IteratorBuilder<T> ofLazy(Iterable<T> t) {
         return new IteratorBuilder<>(
                 new LazyIterator(t)

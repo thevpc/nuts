@@ -94,11 +94,11 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setRemoteIdentity(String remoteIdentity);
 
-    String getLogin();
+    String getUsername();
 
-    NutsUpdateUserCommand login(String login);
+    NutsUpdateUserCommand username(String login);
 
-    NutsUpdateUserCommand setLogin(String login);
+    NutsUpdateUserCommand setUsername(String login);
 
     boolean isResetPermissions();
 

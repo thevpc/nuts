@@ -47,7 +47,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     protected Iterator<NutsId> searchVersionsImpl_appendMirrors(Iterator<NutsId> namedNutIdIterator, NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
-        if (!session.isTransitive()) {
+        if (!session.getSession().isTransitive()) {
             return namedNutIdIterator;
         }
         List<Iterator<NutsId>> list = new ArrayList<>();
@@ -56,7 +56,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository repo : repo.config().getMirrors()) {
                 int sup = 0;
                 try {
-                    sup = repo.config().getSupportLevel(NutsRepositorySupportedAction.SEARCH, id, session.getFetchMode(), session.isTransitive());
+                    sup = repo.config().getSupportLevel(NutsRepositorySupportedAction.SEARCH, id, session.getFetchMode(), session.getSession().isTransitive());
                 } catch (Exception ex) {
                     //                errors.append(ex.toString()).append("\n");
                 }
@@ -75,7 +75,7 @@ public class NutsRepositoryMirroringHelper {
 
     protected NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         Path cacheContent = cache.getLongNameIdLocalFile(id);
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
+        if (session.getSession().isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository mirror : repo.config().getMirrors()) {
                 try {
                     NutsContent c = mirror.fetchContent().setId(id).setDescriptor(descriptor).setLocalPath(cacheContent).setSession(session).run().getResult();
@@ -107,7 +107,7 @@ public class NutsRepositoryMirroringHelper {
     protected NutsDescriptor fetchDescriptorImplInMirrors(NutsId id, NutsRepositorySession session) {
         String idFilename = getIdFilename(id);
         Path versionFolder = cache.getLongNameIdLocalFolder(id);
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
+        if (session.getSession().isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository remote : repo.config().getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
@@ -133,7 +133,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     public Iterator<NutsId> search(Iterator<NutsId> li, NutsIdFilter filter, NutsRepositorySession session) {
-        if (!session.isTransitive() || !repo.config().isSupportedMirroring()) {
+        if (!session.getSession().isTransitive() || !repo.config().isSupportedMirroring()) {
             return li;
         }
         List<Iterator<NutsId>> all = new ArrayList<>();
@@ -157,7 +157,8 @@ public class NutsRepositoryMirroringHelper {
         NutsWorkspaceUtils.of(getWorkspace()).checkSession( session);
         NutsId id = cmd.getId();
         String repository = cmd.getRepository();
-        NutsRepositorySession nonTransitiveSession = session.copy().setTransitive(false);
+        NutsRepositorySession nonTransitiveSession = session.copy();
+        nonTransitiveSession.setSession(nonTransitiveSession.getSession().setTransitive(false));
         NutsDescriptor desc = repo.fetchDescriptor().setId(id).setSession(nonTransitiveSession).run().getResult();
         NutsContent local = repo.fetchContent().setId(id).setSession(nonTransitiveSession).run().getResult();
         if (local == null) {
@@ -206,7 +207,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     public NutsId searchLatestVersion(NutsId bestId, NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
+        if (session.getSession().isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository remote : repo.config().getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
@@ -217,12 +218,7 @@ public class NutsRepositoryMirroringHelper {
                 if (nutsDescriptor != null) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                     NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
-                    NutsId id2 = dws.resolveEffectiveId(nutsDescriptor,
-                            getWorkspace().fetch()
-                                    .cached(session.isCached())
-                                    .session(session.getSession())
-                                    .transitive(session.isTransitive())
-                                    .indexed(session.isIndexed())).builder().setFaceDescriptor().build();
+                    NutsId id2 = dws.resolveEffectiveId(nutsDescriptor,session.getSession()).builder().setFaceDescriptor().build();
                     Path localNutFile = cache.getLongNameIdLocalFile(id2);
                     getWorkspace().descriptor().value(nutsDescriptor).print(localNutFile);
                     if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {

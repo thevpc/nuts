@@ -30,15 +30,30 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Supported Operating System Families
  * @author vpc
  * @since 0.5.4
  */
 public enum NutsOsFamily {
+    /**
+     * Microsoft Window Operating system Family
+     */
     WINDOWS,
+    /**
+     * Linux Distribution Operating system Family
+     */
     LINUX,
+    /**
+     * Apple MacOS Operating system Family
+     */
     MACOS,
+    /**
+     * Generic Unix Operating system Family
+     */
     UNIX,
+    /**
+     * Uncategorized Operating system Family
+     */
     UNKNOWN;
 
     /**

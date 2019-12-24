@@ -30,16 +30,32 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Object format is responsible of formatting to terminal
+ * a given object. Multiple implementation should be available
+ * to support tables, trees, json, xml,...
  * @author vpc
  */
 public interface NutsObjectFormat extends NutsFormat {
 
+    /**
+     * return value to format
+     * @return value to format
+     */
     Object getValue();
 
-    NutsObjectFormat setValue(Object obj);
+    /**
+     * set value to format
+     * @param value value to format
+     * @return {@code this} instance
+     */
+    NutsObjectFormat setValue(Object value);
 
-    NutsObjectFormat value(Object obj);
+    /**
+     * set value to format
+     * @param value value to format
+     * @return {@code this} instance
+     */
+    NutsObjectFormat value(Object value);
 
     /**
      * update session

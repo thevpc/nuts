@@ -33,6 +33,7 @@ import net.vpc.app.nuts.runtime.io.DefaultNutsInputStreamProgressFactory;
 import net.vpc.app.nuts.runtime.io.DefaultNutsProgressFactory;
 import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.runtime.util.common.PersistentMap;
@@ -117,7 +118,7 @@ public class CoreIOUtils {
         public Future<Integer> execAsync() {
             try {
                 ProcessBuilder2 p = pb.start();
-                return new FutureTask<Integer>(()->p.waitFor().getResult());
+                return new FutureTask<Integer>(() -> p.waitFor().getResult());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -408,16 +409,37 @@ public class CoreIOUtils {
 
     public static String resolveRepositoryPath(NutsCreateRepositoryOptions options, Path rootFolder, NutsWorkspace ws) {
         String loc = options.getLocation();
-        if (CoreStringUtils.isBlank(loc)) {
-            loc = options.getName();
+        String goodName=options.getName();
+        if (CoreStringUtils.isBlank(goodName)) {
+            goodName = options.getConfig().getName();
         }
-        if (options.getConfig() != null) {
-            if (CoreStringUtils.isBlank(loc)) {
-                loc = options.getConfig().getName();
+        if (CoreStringUtils.isBlank(goodName)) {
+            goodName = options.getName();
+        }
+        if (CoreStringUtils.isBlank(goodName)) {
+            if (options.isTemporary()) {
+                goodName="temp-"+UUID.randomUUID().toString();
+            }else{
+                goodName="repo-"+UUID.randomUUID().toString();
             }
         }
-        if(options.isTemporary()){
-            return ws.io().createTempFolder("repo-"+options.getName()+"-").toString();
+        if (CoreStringUtils.isBlank(loc)) {
+            if (options.isTemporary()) {
+                if (CoreStringUtils.isBlank(goodName)) {
+                    goodName="temp";
+                }
+                if(goodName.length()<3){
+                    goodName=goodName+"-repo";
+                }
+                loc = ws.io().createTempFolder(goodName + "-").toString();
+            } else {
+                if (CoreStringUtils.isBlank(loc)) {
+                    if (CoreStringUtils.isBlank(goodName)) {
+                        goodName= CoreNutsUtils.randomColorName()+"-repo";
+                    }
+                    loc=goodName;
+                }
+            }
         }
         return ws.io().expandPath(loc, rootFolder.toString());
     }
@@ -445,23 +467,21 @@ public class CoreIOUtils {
     }
 
     /**
-     *
      * @param localPath
-     * @param queryOptions
      * @param parseOptions may include --all-mains to force lookup of all main classes if available
      * @param session
      * @return
      */
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, NutsFetchCommand queryOptions, String[] parseOptions, NutsSession session) {
-        if(parseOptions==null){
-            parseOptions=new String[0];
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(InputSource localPath, String[] parseOptions, NutsSession session) {
+        if (parseOptions == null) {
+            parseOptions = new String[0];
         }
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws, null));
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, queryOptions,parseOptions);
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {
@@ -510,8 +530,8 @@ public class CoreIOUtils {
      * @param out sortie
      * @throws IOException when IO error
      */
-    public static void copy(InputStream in, OutputStream out) throws IOException {
-        copy(in, out, DEFAULT_BUFFER_SIZE);
+    public static long copy(InputStream in, OutputStream out) throws IOException {
+        return copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
     /**
@@ -522,14 +542,16 @@ public class CoreIOUtils {
      * @param bufferSize
      * @throws IOException when IO error
      */
-    public static void copy(InputStream in, OutputStream out, int bufferSize) throws IOException {
+    public static long copy(InputStream in, OutputStream out, int bufferSize) throws IOException {
         byte[] buffer = new byte[bufferSize];
         int len;
+        long count = 0;
 
         while ((len = in.read(buffer)) > 0) {
+            count += len;
             out.write(buffer, 0, len);
         }
-
+        return len;
     }
 
     /**
@@ -1940,7 +1962,7 @@ public class CoreIOUtils {
     public static NutsProgressMonitor createProgressMonitor(MonitorType mt, Object source, Object sourceOrigin, NutsSession session, boolean logProgress, NutsProgressFactory progressFactory) {
         NutsProgressMonitor m0 = null;
         NutsProgressMonitor m1 = null;
-        if(logProgress){
+        if (logProgress) {
             m0 = createLogProgressMonitorFactory(mt).create(source, sourceOrigin, session);
         }
         if (progressFactory != null) {
@@ -1955,17 +1977,17 @@ public class CoreIOUtils {
         return new NutsProgressMonitorList(new NutsProgressMonitor[]{m0, m1});
     }
 
-    public static Path toPath(String path){
-        return CoreStringUtils.isBlank(path)?null:Paths.get(path);
+    public static Path toPath(String path) {
+        return CoreStringUtils.isBlank(path) ? null : Paths.get(path);
     }
 
 
-    public static String compressUrl(String path){
-        if(
+    public static String compressUrl(String path) {
+        if (
                 path.startsWith("http://")
                         || path.startsWith("https://")
-        ){
-            URL u= null;
+        ) {
+            URL u = null;
             try {
                 u = new URL(path);
             } catch (MalformedURLException e) {
@@ -1992,7 +2014,7 @@ public class CoreIOUtils {
                 result.append(u.getAuthority());
             }
             if (u.getPath() != null) {
-                result.append(compressPath(u.getPath(),0,2));
+                result.append(compressPath(u.getPath(), 0, 2));
             }
             if (u.getQuery() != null) {
                 result.append('?');
@@ -2007,33 +2029,43 @@ public class CoreIOUtils {
             return result.toString();
 
 
-        }else{
+        } else {
             return compressPath(path);
         }
     }
 
-    public static String compressPath(String path){
-        return compressPath(path,2,2);
+    public static String compressPath(String path) {
+        return compressPath(path, 2, 2);
     }
 
-    public static String compressPath(String path,int left,int right){
+    public static String compressPath(String path, int left, int right) {
         String p = System.getProperty("user.home");
-        if(path.startsWith(p + File.separator)){
-            path="~"+path.substring(p.length());
+        if (path.startsWith(p + File.separator)) {
+            path = "~" + path.substring(p.length());
         }
-        List<String> a=new ArrayList<>(Arrays.asList(path.split("[\\\\/]")));
-        int min=left+right+1;
-        if(a.size()>0 && a.get(0).equals("")){
-            left+=1;
-            min+=1;
+        List<String> a = new ArrayList<>(Arrays.asList(path.split("[\\\\/]")));
+        int min = left + right + 1;
+        if (a.size() > 0 && a.get(0).equals("")) {
+            left += 1;
+            min += 1;
         }
-        if(a.size()>min){
-            a.add(left,"...");
-            int len = a.size() - right - left-1;
+        if (a.size() > min) {
+            a.add(left, "...");
+            int len = a.size() - right - left - 1;
             for (int i = 0; i < len; i++) {
-                a.remove(left+1);
+                a.remove(left + 1);
             }
         }
-        return String.join("/",a);
+        return String.join("/", a);
+    }
+
+    public static InputStream interruptible(InputStream in) {
+        if (in == null) {
+            return in;
+        }
+        if (in instanceof Interruptible) {
+            return in;
+        }
+        return new InputStreamExt(in, null);
     }
 }

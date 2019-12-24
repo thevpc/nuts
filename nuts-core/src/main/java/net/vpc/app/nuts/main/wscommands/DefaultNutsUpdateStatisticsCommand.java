@@ -28,12 +28,12 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
     @Override
     public NutsUpdateStatisticsCommand run() {
         boolean processed = false;
-        NutsSession session = getValidSession();
+        NutsSession session = getSession();
         for (String repository : getRepositrories()) {
             processed = true;
             NutsRepository repo = ws.config().getRepository(repository, true);
             repo.updateStatistics()
-                    .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL, null)
+                    .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL)
                     )
                     .run();
         }
@@ -84,7 +84,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                     session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().config().getWorkspaceLocation(), repo);
                 }
                 repo.updateStatistics()
-                        .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL, null)
+                        .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL)
                         )
                         .run();
             }

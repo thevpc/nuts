@@ -30,6 +30,8 @@
 package net.vpc.app.nuts.runtime;
 
 import java.io.PrintStream;
+
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.runtime.util.NutsPropertiesHolder;
 import net.vpc.app.nuts.*;
@@ -37,6 +39,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
 import net.vpc.app.nuts.runtime.format.CustomNutsIncrementalOutputFormat;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
@@ -56,10 +59,48 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     protected NutsIterableOutput iterFormat = null;
     protected NutsWorkspace ws = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
+    private NutsFetchStrategy fetchStrategy = null;
+    private Boolean cached;
+    private Boolean indexed;
+    private Boolean transitive;
+    private String progressOptions;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
         this.trace = ws.config().options().isTrace();
+        this.progressOptions = ws.config().options().getProgressOptions();
+    }
+
+    @Override
+    public NutsSession copyFrom(NutsSession other) {
+        this.terminal = other.getTerminal();
+        Map<String, Object> properties = other.getProperties();
+        this.properties.setProperties(properties == null ? null : new LinkedHashMap<>(properties));
+        this.listeners.clear();
+        for (NutsListener listener : other.getListeners()) {
+            addListener(listener);
+        }
+        this.trace = other.isTrace();
+        this.force = other.isForce();
+        this.confirm = other.getConfirm();
+        if (other instanceof DefaultNutsSession) {
+            this.outputFormat = ((DefaultNutsSession) other).getPreferredOutputFormat();
+            this.fetchStrategy = ((DefaultNutsSession) other).fetchStrategy;
+            this.cached = ((DefaultNutsSession) other).cached;
+            this.indexed = ((DefaultNutsSession) other).indexed;
+            this.transitive = ((DefaultNutsSession) other).transitive;
+        } else {
+            this.outputFormat = other.getOutputFormat();
+            this.fetchStrategy = other.getFetchStrategy();
+            this.cached = other.isCached();
+            this.indexed = other.isIndexed();
+            this.transitive = other.isTransitive();
+        }
+        this.iterFormat = null;
+        this.outputFormatOptions.clear();
+        this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
+        this.progressOptions = other.getProgressOptions();
+        return this;
     }
 
     @Override
@@ -81,14 +122,55 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsSession fetchStrategy(NutsFetchStrategy mode) {
+        return setFetchStrategy(mode);
+    }
+
+    @Override
+    public NutsSession setFetchStrategy(NutsFetchStrategy mode) {
+        this.fetchStrategy = mode;
+        return this;
+    }
+
+    @Override
+    public NutsSession fetchRemote() {
+        return setFetchStrategy(NutsFetchStrategy.REMOTE);
+    }
+
+    @Override
+    public NutsSession fetchOffline() {
+        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
+    }
+
+    @Override
+    public NutsSession fetchOnline() {
+        return setFetchStrategy(NutsFetchStrategy.ONLINE);
+    }
+
+    @Override
+    public NutsSession fetchInstalled() {
+        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
+    }
+
+    @Override
+    public NutsSession fetchAnyWhere() {
+        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+    }
+
+    @Override
+    public NutsFetchStrategy getFetchStrategy() {
+        return fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+    }
+
+    @Override
     public NutsSession addListener(NutsListener listener) {
         if (listener != null) {
             boolean ok = false;
             for (Class cls : new Class[]{
-                NutsWorkspaceListener.class,
-                NutsRepositoryListener.class,
-                NutsInstallListener.class,
-                NutsMapListener.class
+                    NutsWorkspaceListener.class,
+                    NutsRepositoryListener.class,
+                    NutsInstallListener.class,
+                    NutsMapListener.class
             }) {
                 if (cls.isInstance(listener)) {
                     if (listeners == null) {
@@ -278,8 +360,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
+     *                        silently
+     * @param commandLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override
@@ -371,7 +453,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "-f":
-                case "--force":{
+                case "--force": {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
                         this.force(a.getBooleanValue());
@@ -379,7 +461,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "-y":
-                case "--yes":{
+                case "--yes": {
                     if (enabled) {
                         this.confirm(NutsConfirmationMode.YES);
                     }
@@ -394,7 +476,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     return true;
                 }
                 case "-n":
-                case "--no":{
+                case "--no": {
                     if (enabled) {
                         this.confirm(NutsConfirmationMode.NO);
                     }
@@ -412,6 +494,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     NutsArgument v = cmdLine.nextBoolean();
                     if (enabled) {
                         this.trace(v.getBooleanValue());
+                    }
+                    return true;
+                }
+                case "--progress": {
+                    NutsArgument v = cmdLine.nextString();
+                    if (enabled) {
+                        this.progressOptions(v.getStringValue());
                     }
                     return true;
                 }
@@ -476,6 +565,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return false;
     }
 
+    //    @Override
+    public NutsOutputFormat getPreferredOutputFormat() {
+        return this.outputFormat;
+    }
+
     @Override
     public NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue) {
         NutsIterableFormat f = getIterableFormat();
@@ -497,21 +591,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsOutputFormat getOutputFormat() {
-        NutsIterableFormat f = getIterableFormat();
-        if (f != null) {
-            NutsOutputFormat o = f.getOutputFormat();
-            if (o != null) {
-                return o;
-            }
-        }
-        if (this.outputFormat != null) {
-            return this.outputFormat;
-        }
-        NutsOutputFormat o = ws.config().options().getOutputFormat();
-        if (o != null) {
-            return o;
-        }
-        return NutsOutputFormat.PLAIN;
+        return getOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
@@ -593,7 +673,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsSession setForce(boolean force) {
-        this.force=force;
+        this.force = force;
         return this;
     }
 
@@ -716,5 +796,94 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public PrintStream err() {
         return terminal.err();
+    }
+
+    @Override
+    public boolean isCached() {
+        if (cached != null) {
+            return cached;
+        }
+        return ws.config().options().isCached();
+    }
+
+    @Override
+    public NutsSession setCached(Boolean value) {
+        this.cached = value;
+        return this;
+    }
+
+    @Override
+    public boolean isIndexed() {
+        if (indexed != null) {
+            return indexed;
+        }
+        return ws.config().options().isIndexed();
+    }
+
+    @Override
+    public NutsSession setIndexed(Boolean value) {
+        this.indexed = value;
+        return this;
+    }
+
+    @Override
+    public boolean isTransitive() {
+        if (transitive != null) {
+            return transitive;
+        }
+        return ws.config().options().isTransitive();
+    }
+
+    @Override
+    public NutsSession setTransitive(Boolean value) {
+        this.transitive = value;
+        return this;
+    }
+
+    @Override
+    public NutsSession transitive(Boolean value) {
+        return setTrace(value);
+    }
+
+    @Override
+    public NutsSession transitive() {
+        return transitive(true);
+    }
+
+    @Override
+    public NutsSession cached(Boolean value) {
+        return setCached(value);
+    }
+
+    @Override
+    public NutsSession cached() {
+        return cached(true);
+    }
+
+    @Override
+    public NutsSession indexed(Boolean value) {
+        return setIndexed(value);
+    }
+
+    @Override
+    public NutsSession indexed() {
+        return indexed(true);
+    }
+
+    @Override
+    public String getProgressOptions() {
+        return progressOptions;
+    }
+
+    @Override
+    public NutsSession setProgressOptions(String progressOptions) {
+        this.progressOptions = progressOptions;
+        return this;
+    }
+
+    @Override
+    public NutsSession progressOptions(String progressOptions) {
+        this.progressOptions = progressOptions;
+        return this;
     }
 }

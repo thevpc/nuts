@@ -134,11 +134,11 @@ public class NutsWorkspaceUtils {
         return repos;
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsFetchCommand options) {
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession options) {
         return filterRepositories(fmode, id, repositoryFilter, true, null, mode, options);
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsFetchCommand options) {
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession options) {
 
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
@@ -191,6 +191,19 @@ public class NutsWorkspaceUtils {
         if (registered.contains(repositoryName)) {
             throw new NutsRepositoryAlreadyRegisteredException(ws, repositoryName);
         }
+    }
+
+    public static Set<String> parseProgressOptions(NutsSession session) {
+        LinkedHashSet<String> set=new LinkedHashSet<>();
+        for (String s : CoreStringUtils.split(session.getProgressOptions(), ",; ")) {
+            Boolean n = CoreCommonUtils.parseBoolean(s, null);
+            if (n == null) {
+                set.add(s);
+            } else {
+                set.add(n.toString());
+            }
+        }
+        return set;
     }
 
     public static NutsId parseRequiredNutsId0(String nutFormat) {

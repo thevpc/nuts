@@ -133,15 +133,15 @@ public interface NutsDependency extends Serializable{
     NutsId[] getExclusions();
 
     /**
-     * properties in the the url query form
-     * @return properties in the the url query form.
+     * properties in the url query form
+     * @return properties in the url query form.
      * @since 0.5.7
      */
     String getPropertiesQuery();
 
     /**
-     * properties in the the url query form
-     * @return properties in the the url query form.
+     * properties in the url query form
+     * @return properties in the url query form.
      * @since 0.5.7
      */
     Map<String, String> getProperties();

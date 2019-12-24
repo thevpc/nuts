@@ -38,7 +38,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = xrepo.getIndexStore().search(filter, getSession());

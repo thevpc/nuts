@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepository implements NutsRepository, NutsRepositoryExt {
+public abstract class AbstractNutsRepository implements NutsRepository{
 
     private static final long serialVersionUID = 1L;
 
@@ -49,18 +49,13 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected NutsRepository parentRepository;
     protected NutsWorkspace workspace;
     protected NutsRepositorySecurityManager securityManager;
-    protected DefaultNutsRepoConfigManager configManager;
-    protected NutsIndexStore nutsIndexStore;
+    protected NutsRepositoryConfigManager configManager;
     protected ObservableMap<String, Object> userProperties;
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
     }
 
-    @Override
-    public NutsIndexStore getIndexStore() {
-        return nutsIndexStore;
-    }
 
     @Override
     public NutsRepository getParentRepository() {
@@ -77,14 +72,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return securityManager;
     }
 
-    @Override
-    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
-        String groups = config().getGroups();
-        if (CoreStringUtils.isBlank(groups)) {
-            return true;
-        }
-        return id.getGroupId().matches(CoreStringUtils.simpexpToRegexp(groups));
-    }
+
 
     @Override
     public String getRepositoryType() {
@@ -138,7 +126,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return getWorkspace().config().getDefaultIdExtension(id);
     }
 
-    @Override
     public String getIdBasedir(NutsId id) {
         return getWorkspace().config().getDefaultIdBasedir(id);
     }
@@ -169,6 +156,16 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     @Override
     public String uuid() {
         return getUuid();
+    }
+
+    @Override
+    public String getName() {
+        return config().getName();
+    }
+
+    @Override
+    public String name() {
+        return getName();
     }
 
     @Override

@@ -36,12 +36,12 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
         try {
             NutsRepositoryExt.of(getRepo()).pushImpl(this);
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Push {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), getId());
             }
         } catch (RuntimeException ex) {
 
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Push {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), getId());
             }
         }
         return this;

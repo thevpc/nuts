@@ -15,9 +15,6 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
 
     private NutsSession session;
     private NutsFetchMode fetchMode;
-    private boolean cached;
-    private boolean indexed;
-    private boolean transitive;
     private NutsRepository repository;
 
     public DefaultNutsRepositorySession(NutsRepository repository,NutsSession session) {
@@ -57,38 +54,7 @@ public class DefaultNutsRepositorySession implements NutsRepositorySession, Clon
         return this;
     }
 
-    @Override
-    public boolean isCached() {
-        return cached;
-    }
 
-    @Override
-    public NutsRepositorySession setCached(boolean enabledCache) {
-        this.cached = enabledCache;
-        return this;
-    }
-
-    @Override
-    public boolean isIndexed() {
-        return indexed;
-    }
-
-    @Override
-    public NutsRepositorySession setIndexed(boolean enabledCache) {
-        this.indexed = enabledCache;
-        return this;
-    }
-
-    @Override
-    public boolean isTransitive() {
-        return transitive;
-    }
-
-    @Override
-    public NutsRepositorySession setTransitive(boolean transitive) {
-        this.transitive = transitive;
-        return this;
-    }
 
     @Override
     public NutsRepositorySession copy() {

@@ -12,7 +12,7 @@ public class SearchTraceHelper {
     public static CProgressBar resolveCProgressBar(NutsSession s) {
         Stack<CProgressBar> tt = resolve(s);
         if (tt.isEmpty()) {
-            CProgressBar p = new CProgressBar(s.getWorkspace()).setSuffixMoveLineStart();
+            CProgressBar p = new CProgressBar(s).setSuffixMoveLineStart();
             tt.push(p);
             return p;
         } else {
@@ -30,7 +30,7 @@ public class SearchTraceHelper {
     }
 
     public static void start(NutsSession s) {
-        resolve(s).push(new CProgressBar(s.getWorkspace()));
+        resolve(s).push(new CProgressBar(s));
     }
 
     public static void progress(int percent, String msg, NutsSession s) {
@@ -54,14 +54,10 @@ public class SearchTraceHelper {
         if (!s.isPlainOut()) {
             return false;
         }
-        Object p = s.getProperty("traceMonitor");
-        if (p instanceof Boolean && ((Boolean) p).booleanValue()) {
-            return true;
+        if (NutsWorkspaceUtils.parseProgressOptions(s).contains("false")) {
+            return false;
         }
-        if (p instanceof String && Boolean.parseBoolean(p.toString())) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     public static void end(NutsSession s) {

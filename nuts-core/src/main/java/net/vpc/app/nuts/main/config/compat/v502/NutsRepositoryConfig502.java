@@ -31,10 +31,10 @@ package net.vpc.app.nuts.main.config.compat.v502;
 
 import java.io.Serializable;
 import java.util.*;
-import net.vpc.app.nuts.NutsRepositoryConfig;
-import net.vpc.app.nuts.NutsRepositoryRef;
-import net.vpc.app.nuts.NutsStoreLocationStrategy;
-import net.vpc.app.nuts.NutsUserConfig;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.NutsHomeLocationsMap;
+import net.vpc.app.nuts.runtime.NutsStoreLocationsMap;
 
 /**
  *
@@ -387,16 +387,17 @@ public class NutsRepositoryConfig502 implements Serializable {
         c.setName(name);
         c.setStoreLocationStrategy(storeLocationStrategy);
         c.setType(type);
-        c.setStoreLocations(new String[]{
-            programsStoreLocation,
-            configStoreLocation,
-            varStoreLocation,
-            logStoreLocation,
-            tempStoreLocation,
-            cacheStoreLocation,
-            libStoreLocation,
-            null
-        });
+        c.setStoreLocations(
+                new NutsStoreLocationsMap(null)
+                        .set(NutsStoreLocation.APPS, programsStoreLocation)
+                        .set(NutsStoreLocation.CONFIG, configStoreLocation)
+                        .set(NutsStoreLocation.VAR, varStoreLocation)
+                        .set(NutsStoreLocation.LOG, logStoreLocation)
+                        .set(NutsStoreLocation.TEMP, tempStoreLocation)
+                        .set(NutsStoreLocation.CACHE, cacheStoreLocation)
+                        .set(NutsStoreLocation.LIB, libStoreLocation)
+                .toMap()
+        );
         return c;
     }
 }

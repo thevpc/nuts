@@ -107,7 +107,7 @@ public interface NutsTerminal extends NutsTerminalBase {
     NutsTerminalMode getOutMode();
 
     /**
-     * Reads a single line of text from the the terminal's input stream.
+     * Reads a single line of text from the terminal's input stream.
      *
      * @throws java.io.UncheckedIOException
      *         If an I/O error occurs.

@@ -26,16 +26,7 @@ public interface NutsWorkspaceExt {
 
     String resolveDefaultHelp(Class clazz);
 
-    NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsFetchCommand options);
-
-    /**
-     * return installed version
-     *
-     * @param id id
-     * @param session session
-     * @return installed version
-     */
-    String[] getInstalledVersions(NutsId id, NutsSession session);
+    NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession options);
 
     NutsIdType resolveNutsIdType(NutsId id);
 

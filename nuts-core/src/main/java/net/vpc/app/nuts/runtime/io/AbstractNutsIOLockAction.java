@@ -23,7 +23,7 @@ public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     }
 
     @Override
-    public Object getLockResource() {
+    public Object getResource() {
         return resource;
     }
 

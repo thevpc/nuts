@@ -393,4 +393,23 @@ public interface NutsIOCopyAction {
      */
     boolean isSkipRoot();
 
+
+    /**
+     * return true created stream should be marked as interruptible
+     * @return {@code this} instance
+     */
+    boolean isInterruptible();
+
+    /**
+     * mark created stream as interruptible so that one can call {@link #interrupt()}
+     * @param interruptible new value
+     * @return {@code this} instance
+     */
+    NutsIOCopyAction setInterruptible(boolean interruptible);
+
+    /**
+     * interrupt last created stream. An exception is throws when the stream is read.
+     * @return {@code this} instance
+     */
+    NutsIOCopyAction interrupt();
 }

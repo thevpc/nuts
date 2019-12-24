@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 /**
- * Created by vpc on 1/5/17.
+ * Nuts repository manages a set of packages
  *
  * @since 0.5.4
  */
@@ -99,6 +99,20 @@ public interface NutsRepository {
      * @return repository unique identifier
      */
     String uuid();
+
+    /**
+     * return repository name.
+     * equivalent to config().name()
+     * @return repository name
+     */
+    String getName();
+
+    /**
+     * return repository name.
+     * equivalent to config().name()
+     * @return repository name
+     */
+    String name();
 
     /**
      * return parent workspace
@@ -206,11 +220,27 @@ public interface NutsRepository {
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
+    /**
+     * return mutable instance of user properties
+     * @return mutable instance of user properties
+     */
     Map<String, Object> userProperties();
 
+    /**
+     * add listener to user properties
+     * @param listener listener
+     */
     void addUserPropertyListener(NutsMapListener<String, Object> listener);
 
+    /**
+     * remove listener from user properties
+     * @param listener listener
+     */
     void removeUserPropertyListener(NutsMapListener<String, Object> listener);
 
+    /**
+     * return array of registered user properties listeners
+     * @return array of registered user properties listeners
+     */
     NutsMapListener<String, Object>[] getUserPropertyListeners();
 }

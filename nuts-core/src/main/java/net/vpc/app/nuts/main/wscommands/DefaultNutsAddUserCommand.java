@@ -61,14 +61,14 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null)));
-            NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security, new NutsUpdateOptions().session(getValidSession()));
+            NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security, new NutsUpdateOptions().session(getSession()));
         } else {
             NutsUserConfig security = new NutsUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, null)));
-            NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security, new NutsUpdateOptions().session(getValidSession()));
+            NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security, new NutsUpdateOptions().session(getSession()));
         }
         return this;
     }

@@ -673,7 +673,7 @@ public class PomXmlParser {
     }
 
     public static void writeDocument(Document doc, StreamResult result) throws TransformerException {
-        NutsXmlUtils.writeDocument(doc, result, false);
+        NutsXmlUtils.writeDocument(doc, result, false,true);
     }
 
     public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement) {

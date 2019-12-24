@@ -30,16 +30,31 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Remove User Command
  * @author vpc
  */
 public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
 
-    String getLogin();
+    /**
+     * username of user to remove
+     * @return user name
+     */
+    String getUsername();
 
-    NutsRemoveUserCommand login(String login);
 
-    NutsRemoveUserCommand setLogin(String login);
+    /**
+     * set username of user to remove
+     * @param username user name
+     * @return {@code this} instance
+     */
+    NutsRemoveUserCommand username(String username);
+
+    /**
+     * set username of user to remove
+     * @param username user name
+     * @return {@code this} instance
+     */
+    NutsRemoveUserCommand setUsername(String username);
 
     /**
      * update session

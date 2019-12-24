@@ -503,9 +503,9 @@ public class NutsIdFormatHelper {
             built = true;
             NutsWorkspace ws = session.getWorkspace();
             NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
-            this.i = rr.isInstalled(id);
-            this.d = rr.isDefaultVersion(id);
-            NutsInstallInformation iif = rr.getInstallInfo(id);
+            this.i = rr.isInstalled(id, session);
+            this.d = rr.isDefaultVersion(id, session);
+            NutsInstallInformation iif = rr.getInstallInformation(id, session);
             this.dte = iif == null ? null : iif.getInstallDate();
             this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;

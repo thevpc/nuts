@@ -333,8 +333,8 @@ public interface NutsIdBuilder extends Serializable {
     NutsIdBuilder setPackaging(String packaging);
 
     /**
-     * properties in the the url query form
-     * @return properties in the the url query form.
+     * properties in the url query form
+     * @return properties in the url query form.
      */
     String getPropertiesQuery();
 

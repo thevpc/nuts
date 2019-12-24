@@ -22,7 +22,7 @@
  * </p>
  * <p>
  * <strong>nuts</strong> is a swiss army knife tool as it acts like (and supports) maven build tool to have an abstract
- * view of the the  artifacts dependency and like  <i>zypper</i>/<i>apt-get</i>/<i>pip</i>/<i>npm</i>  package manager tools
+ * view of the  artifacts dependency and like  <i>zypper</i>/<i>apt-get</i>/<i>pip</i>/<i>npm</i>  package manager tools
  * to install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
  * </p>
  *

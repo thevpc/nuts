@@ -121,7 +121,7 @@ public class WindowsNdi extends BaseSystemNdi {
         List<String> updatedNames = new ArrayList<>();
         if (addFileLine(apiConfigFile, "net.vpc.app.nuts.toolbox.ndi configuration",
                 getCallScriptCommand(ndiConfigFile.toString()),
-                session.isYes())) {
+                session.isYes(),null,null)) {
             updatedNames.add(apiConfigFile.getFileName().toString());
         }
 

@@ -38,7 +38,7 @@ import java.io.InputStream;
 /**
  * @author vpc
  */
-public class MonitoredInputStream extends InputStream implements InputStreamMetadataAware {
+public class MonitoredInputStream extends InputStream implements InputStreamMetadataAware ,Interruptible{
 
     private final InputStream base;
     private long count;
@@ -50,6 +50,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     private final Object source;
     private final String sourceName;
     private boolean completed = false;
+    private boolean interrupted = false;
     private NutsSession session;
 
     public MonitoredInputStream(InputStream base, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -65,7 +66,15 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     }
 
     @Override
+    public void interrupt() throws InterruptException {
+        interrupted=true;
+    }
+
+    @Override
     public int read() throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         try {
             onBeforeRead();
             int r = this.base.read();
@@ -110,6 +119,9 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     @Override
     public int available() throws IOException {
         try {
+            if(interrupted){
+                throw new IOException(new InterruptException("Interrupted"));
+            }
             return base.available();
         } catch (IOException ex) {
             onComplete(ex);
@@ -120,6 +132,9 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     @Override
     public long skip(long n) throws IOException {
         try {
+            if(interrupted){
+                throw new IOException(new InterruptException("Interrupted"));
+            }
             onBeforeRead();
             long r = base.skip(n);
             onAfterRead(r);
@@ -133,6 +148,9 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         try {
+            if(interrupted){
+                throw new IOException(new InterruptException("Interrupted"));
+            }
             onBeforeRead();
             int r = base.read(b, off, len);
             onAfterRead(r);
@@ -146,6 +164,9 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     @Override
     public int read(byte[] b) throws IOException {
         try {
+            if(interrupted){
+                throw new IOException(new InterruptException("Interrupted"));
+            }
             onBeforeRead();
             int r = base.read(b);
             onAfterRead(r);

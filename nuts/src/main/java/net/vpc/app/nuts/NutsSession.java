@@ -358,6 +358,66 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession copy();
 
     /**
+     * copy into this instance from the given value
+     *
+     * @param other other session to copy from
+     * @return return {@code this} instance
+     */
+     NutsSession copyFrom(NutsSession other);
+
+    /**
+     * change fetch strategy
+     * @param mode new strategy or null
+     * @return {@code this} instance
+     */
+    NutsSession fetchStrategy(NutsFetchStrategy mode);
+
+    /**
+     * change fetch strategy
+     * @param mode new strategy or null
+     * @return {@code this} instance
+     */
+    NutsSession setFetchStrategy(NutsFetchStrategy mode);
+
+    /**
+     * change fetch strategy to REMOTE
+     * @return {@code this} instance
+     */
+    NutsSession fetchRemote();
+
+    /**
+     * change fetch strategy to OFFLINE
+     * @return {@code this} instance
+     */
+    NutsSession fetchOffline();
+
+    /**
+     * change fetch strategy to ONLINE
+     * @return {@code this} instance
+     */
+    NutsSession fetchOnline();
+
+    /**
+     * change fetch strategy to INSTALLED
+     * @return {@code this} instance
+     */
+    NutsSession fetchInstalled();
+
+    /**
+     * change fetch strategy to ANYWHERE
+     * @return {@code this} instance
+     */
+    NutsSession fetchAnyWhere();
+
+    /**
+     * return current fetch strategy.
+     * When no strategy (or null strategy) was set, return workspace
+     * strategy default strategy. When none defines use ONLINE
+     * @return {@code this} instance
+     */
+    NutsFetchStrategy getFetchStrategy();
+
+    /**
      * add session listener. supported listeners are instances of:
      * <ul>
      * <li>{@link NutsWorkspaceListener}</li>
@@ -565,4 +625,102 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsWorkspace workspace();
 
+
+    /**
+     * true when considering transitive repositories.
+     * @return true when considering transitive repositories
+     */
+    boolean isTransitive();
+
+    /**
+     * consider transitive repositories
+     * @param value nullable value
+     * @return {@code this} instance
+     */
+    NutsSession setTransitive(Boolean value);
+
+    /**
+     * consider transitive repositories
+     * @param value nullable value
+     * @return {@code this} instance
+     */
+    NutsSession transitive(Boolean value);
+
+    /**
+     * consider transitive repositories
+     * @return {@code this} instance
+     */
+    NutsSession transitive();
+
+    /**
+     * true when using cache
+     * @return true when using cache
+     */
+    boolean isCached();
+
+    /**
+     * use cache
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsSession setCached(Boolean value);
+
+    /**
+     * use cache
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsSession cached(Boolean value);
+
+    /**
+     * use cache
+     * @return {@code this} instance
+     */
+    NutsSession cached();
+
+    /**
+     * true when using indexes
+     * @return true when using indexes
+     */
+    boolean isIndexed();
+
+    /**
+     * use index
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsSession setIndexed(Boolean value);
+
+    /**
+     * use index
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsSession indexed(Boolean value);
+
+    /**
+     * use index
+     * @return {@code this} instance
+     */
+    NutsSession indexed();
+
+    /**
+     * return progress options
+     * @return progress options
+     */
+    String getProgressOptions();
+
+    /**
+     * change progress options
+     * @param progressOptions options
+     * @return {@code this} instance
+     */
+    NutsSession setProgressOptions(String progressOptions);
+
+    /**
+     * change progress options
+     * @param progressOptions options
+     * @return {@code this} instance
+     */
+    NutsSession progressOptions(String progressOptions);
 }

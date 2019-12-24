@@ -539,7 +539,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
     public void print(Writer out) {
         Document doc = toXmlDocument(value);
         try {
-            NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact);
+            NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact,true);
         } catch (TransformerException ex) {
             throw new NutsException(getWorkspace(), ex.getMessage(), ex);
         }

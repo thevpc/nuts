@@ -233,6 +233,12 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     NutsIOCopyAction copy();
 
     /**
+     * create new {@link NutsIOProcessAction} instance
+     * @return create new {@link NutsIOProcessAction} instance
+     */
+    NutsIOProcessAction ps();
+
+    /**
      * create new {@link NutsIOCompressAction} instance
      * @return create new {@link NutsIOCompressAction} instance
      */

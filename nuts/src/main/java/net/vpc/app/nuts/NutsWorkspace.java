@@ -52,6 +52,20 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      */
     String uuid();
 
+    /**
+     * Workspace name
+     *
+     * @return uuid
+     */
+    String getName();
+
+    /**
+     * equivalent to {@link #getName()}
+     *
+     * @return workspace name
+     */
+    String name();
+
     //COMMANDS
     NutsSearchCommand search();
 
@@ -120,112 +134,112 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     /**
      * create json format instance
      *
-     * @since 0.5.5
      * @return json format
+     * @since 0.5.5
      */
     NutsJsonFormat json();
 
     /**
      * create xml format instance
      *
-     * @since 0.5.5
      * @return xml format
+     * @since 0.5.5
      */
     NutsXmlFormat xml();
 
     /**
      * create element format instance
      *
-     * @since 0.5.5
      * @return element format
+     * @since 0.5.5
      */
     NutsElementFormat element();
 
     /**
      * create id format instance
      *
-     * @since 0.5.5
      * @return id format
+     * @since 0.5.5
      */
     NutsIdFormat id();
 
     /**
      * create string format instance
      *
-     * @since 0.5.5
      * @return string format
+     * @since 0.5.5
      */
     NutsStringFormat str();
 
     /**
      * create version format instance
      *
-     * @since 0.5.5
      * @return version format
+     * @since 0.5.5
      */
     NutsVersionFormat version();
 
     /**
      * create info format instance
      *
-     * @since 0.5.5
      * @return info format
+     * @since 0.5.5
      */
     NutsInfoFormat info();
 
     /**
      * create descriptor format instance
      *
-     * @since 0.5.5
      * @return descriptor format
+     * @since 0.5.5
      */
     NutsDescriptorFormat descriptor();
 
     /**
      * create dependency format instance
      *
-     * @since 0.5.5
      * @return dependency format
+     * @since 0.5.5
      */
     NutsDependencyFormat dependency();
 
     /**
      * create tree format instance
      *
-     * @since 0.5.5
      * @return tree format
+     * @since 0.5.5
      */
     NutsTreeFormat tree();
 
     /**
      * create table format instance
      *
-     * @since 0.5.5
      * @return json table
+     * @since 0.5.5
      */
     NutsTableFormat table();
 
     /**
      * create properties format instance
      *
-     * @since 0.5.5
      * @return properties format
+     * @since 0.5.5
      */
     NutsPropertiesFormat props();
 
     /**
      * create object format instance
      *
-     * @since 0.5.5
      * @return object format
+     * @since 0.5.5
      */
     NutsObjectFormat object();
 
     /**
      * create iterable format instance
      *
-     * @since 0.5.6
      * @return iterable format
+     * @since 0.5.6
      */
     NutsIterableOutput iter();
 }

@@ -33,10 +33,11 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NonBlockingInputStreamAdapter extends FilterInputStream implements NonBlockingInputStream {
+public class NonBlockingInputStreamAdapter extends FilterInputStream implements NonBlockingInputStream,Interruptible {
 
     private boolean hasMoreBytes = true;
     private boolean closed = false;
+    private boolean interrupted = false;
     private String name;
 
     public NonBlockingInputStreamAdapter(String name, InputStream in) {
@@ -45,7 +46,15 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
     }
 
     @Override
+    public void interrupt() throws InterruptException {
+        this.interrupted=true;
+    }
+
+    @Override
     public int read() throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         if (closed) {
             return -1;
         }
@@ -61,6 +70,9 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public int read(byte[] b) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         if (available() == 0 && !hasMoreBytes()) {
             return -1;
         }
@@ -73,6 +85,9 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         if (available() == 0 && !hasMoreBytes()) {
             return -1;
         }
@@ -94,6 +109,9 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public long skip(long n) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         if (available() == 0 && !hasMoreBytes()) {
             return 0;
         }
@@ -102,6 +120,9 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public int available() throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         if (closed) {
             return -1;
         }
@@ -134,11 +155,17 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public int readNonBlocking(byte[] b, int off, int len, long timeout) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         long now = System.currentTimeMillis();
         long then = now + timeout;
         long tic = 100;
 //        int read=0;
         while (true) {
+            if(interrupted){
+                throw new IOException(new InterruptException("Interrupted"));
+            }
             if (closed) {
                 break;
             }
@@ -171,6 +198,9 @@ public class NonBlockingInputStreamAdapter extends FilterInputStream implements 
 
     @Override
     public int readNonBlocking(byte[] b, int off, int len) throws IOException {
+        if(interrupted){
+            throw new IOException(new InterruptException("Interrupted"));
+        }
         int available = available();
         if (available < 0) {
             hasMoreBytes = false;

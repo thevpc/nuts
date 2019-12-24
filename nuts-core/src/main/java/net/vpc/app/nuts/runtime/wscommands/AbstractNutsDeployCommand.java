@@ -282,8 +282,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             result = new ArrayList<>();
         }
         result.add(nid);
-        if (getValidSession().isPlainTrace()) {
-            getValidSession().getTerminal().out().printf("Nuts %s deployed successfully to ==%s==%n", new NutsString(ws.id().value(nid).format()), toRepository == null ? "<default-repo>" : toRepository);
+        if (getSession().isPlainTrace()) {
+            getSession().getTerminal().out().printf("Nuts %s deployed successfully to ==%s==%n", new NutsString(ws.id().value(nid).format()), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 

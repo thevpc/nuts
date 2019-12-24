@@ -95,10 +95,4 @@ public interface NutsDescriptorContentParserContext {
      */
     NutsSession getSession();
 
-    /**
-     * return query options
-     * @return query options
-     */
-    NutsFetchCommand getFetchOptions();
-
 }

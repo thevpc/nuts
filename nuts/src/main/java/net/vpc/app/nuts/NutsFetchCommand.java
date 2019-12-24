@@ -449,12 +449,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setIndexed(Boolean enable);
 
     /**
-     * return index filter status
-     * @return index filter status
-     */
-    Boolean getIndexed();
-
-    /**
      * return  {@code getIndexed() == null || getIndexed()}
      * @return  {@code getIndexed() == null || getIndexed()}
      */

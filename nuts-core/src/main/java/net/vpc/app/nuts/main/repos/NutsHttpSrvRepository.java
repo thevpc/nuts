@@ -109,7 +109,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
-        boolean transitive = session.isTransitive();
+        boolean transitive = session.getSession().isTransitive();
         SearchTraceHelper.progressIndeterminate("Loading "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
             NutsDescriptor descriptor = getWorkspace().descriptor().parse(stream);
@@ -130,7 +130,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
-        boolean transitive = session.isTransitive();
+        boolean transitive = session.getSession().isTransitive();
         InputStream ret = null;
         try {
             SearchTraceHelper.progressIndeterminate("search "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
@@ -155,7 +155,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         SearchTraceHelper.progressIndeterminate("search "+ Arrays.toString(roots),session.getSession());
-        boolean transitive = session.isTransitive();
+        boolean transitive = session.getSession().isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth();
         if (filter instanceof NutsScriptAwareIdFilter) {
@@ -190,7 +190,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
-        boolean transitive = session.isTransitive();
+        boolean transitive = session.getSession().isTransitive();
         boolean temp = false;
         if (localPath == null) {
             temp = true;

@@ -77,8 +77,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        NutsFetchCommand p = session.getWorkspace().fetch().transitive();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), session, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -95,8 +94,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public void executeHelper(boolean dry) {
         NutsWorkspace ws = session.getWorkspace();
-        NutsFetchCommand p = ws.fetch().transitive();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), p, session, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), session, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
@@ -127,7 +125,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         }
     }
 
-    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsFetchCommand options, NutsSession session, String[] execOptions) {
+    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsSession session, String[] execOptions) {
         NutsWorkspace ws = session.getWorkspace();
         String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile();
@@ -143,7 +141,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 if (Files.exists(ext)) {
                     c.descriptor = ws.descriptor().parse(ext);
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, execOptions, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
@@ -203,7 +201,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         throw new NutsIllegalArgumentException(ws, "Unable to locale component for " + c.baseFile);
                     }
                 } else {
-                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, options, execOptions, session);
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                     if (c.descriptor == null) {
                         c.descriptor = ws.descriptor().descriptorBuilder()
                                 .setId("temp")

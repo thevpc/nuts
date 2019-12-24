@@ -1,15 +1,15 @@
 package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.IOUtils;
+import net.vpc.common.diff.jar.Diff;
+import net.vpc.common.diff.jar.DiffItem;
+import net.vpc.common.diff.jar.DiffResult;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.worky.config.ProjectConfig;
 import net.vpc.toolbox.worky.config.RepositoryAddress;
 import net.vpc.toolbox.worky.config.WorkspaceConfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -168,7 +168,9 @@ public class WorkspaceService {
 
     public void status(NutsCommandLine cmd, NutsApplicationContext appContext) {
         boolean progress = true;
+        boolean verbose = false;
         Boolean commitable = null;
+        Boolean dirty = null;
         Boolean newP = null;
         Boolean uptodate = null;
         Boolean old = null;
@@ -184,6 +186,8 @@ public class WorkspaceService {
                 //consumed
             } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
                 commitable = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-d", "--dirty")) != null) {
+                dirty = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-w", "--new")) != null) {
                 newP = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-o", "--old")) != null) {
@@ -194,6 +198,8 @@ public class WorkspaceService {
                 invalid = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-p", "--progress")) != null) {
                 progress = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("-v", "--verbose")) != null) {
+                verbose = a.getBooleanValue();
             } else if (cmd.peek().isOption()) {
                 cmd.setCommandName("worky check").unexpectedArgument();
             } else {
@@ -201,19 +207,20 @@ public class WorkspaceService {
             }
         }
 
-        Boolean[] b = new Boolean[]{commitable, newP, uptodate, old, invalid};
+        Boolean[] b = new Boolean[]{commitable, newP, uptodate, old, invalid,dirty};
         updateBools(b, true);
         commitable = b[0];
         newP = b[1];
         uptodate = b[2];
         old = b[3];
         invalid = b[4];
+        dirty = b[5];
 
         List<DataRow> ddd = new ArrayList<>();
 
         List<ProjectService> all = findProjectServices();
         all.sort((x, y) -> x.getConfig().getId().compareTo(y.getConfig().getId()));
-        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
+        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
             ProjectService projectService = iterator.next();
             if (!matches(projectService.getConfig().getId(), filters)) {
                 iterator.remove();
@@ -249,14 +256,29 @@ public class WorkspaceService {
                 } else if (t < 0) {
                     d.status = "old";
                 } else {
-                    d.status = "uptodate";
+                    File l=projectService.detectLocalVersionFile(d.id+"#"+d.local);
+                    File r=projectService.detectRemoteVersionFile(d.id+"#"+d.remote);
+                    if(l!=null && r!=null){
+                        DiffResult result = Diff.of(l,r).verbose(verbose).eval();
+                        if(result.hasChanges()) {
+                            d.status = "dirty";
+                            if(verbose){
+                                d.details=result.all();
+                            }
+                        }else{
+                            d.status = "uptodate";
+                        }
+                    }else {
+                        //
+                        d.status = "uptodate";
+                    }
                 }
             }
             ddd.add(d);
         }
 
         Collections.sort(ddd);
-        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext();) {
+        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext(); ) {
             DataRow d = iterator.next();
             switch (d.status) {
                 case "invalid": {
@@ -269,24 +291,24 @@ public class WorkspaceService {
                     if (!newP) {
                         iterator.remove();
                     }
-                    d.status = "{{new}}";
-                    d.local = "[[" + d.local + "]]";
                     break;
                 }
                 case "commitable": {
                     if (!commitable) {
                         iterator.remove();
                     }
-                    d.status = "[[commitable]]";
-                    d.local = "[[" + d.local + "]]";
+                    break;
+                }
+                case "dirty": {
+                    if (!dirty) {
+                        iterator.remove();
+                    }
                     break;
                 }
                 case "old": {
                     if (!old) {
                         iterator.remove();
                     }
-                    d.status = "{{old}}";
-                    d.local = "@@" + d.local + "@@";
                     break;
                 }
                 case "uptodate": {
@@ -311,27 +333,32 @@ public class WorkspaceService {
                     }
                     switch (tf.filterText(p2.status)) {
                         case "new": {
-                            appContext.session().out().printf("\\[%s\\] %s : %s%n", new NutsString(status), p2.id, new NutsString(p2.local));
+                            appContext.session().out().printf("\\[{{new}}\\] %s : [[%s]]%n", p2.id, p2.local);
                             break;
                         }
                         case "commitable": {
-                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
+                            appContext.session().out().printf("\\[[[commitable]]\\] %s : [[%s]] - %s%n", p2.id, p2.local, p2.remote);
+                            break;
+                        }
+                        case "dirty": {
+                            appContext.session().out().printf("\\[@@dirty@@\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
+                            printDiffResults("  ",appContext.session().out(),p2.details);
                             break;
                         }
                         case "old": {
-                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
+                            appContext.session().out().printf("\\[{{old}}\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "invalid": {
-                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
+                            appContext.session().out().printf("\\[@@invalid@@\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "uptodate": {
-                            appContext.session().out().printf("\\[%s\\] %s : %s%n", new NutsString(status), p2.id, new NutsString(p2.local));
+                            appContext.session().out().printf("\\[uptodate\\] %s : %s%n", p2.id, p2.local);
                             break;
                         }
                         default: {
-                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", new NutsString(status), p2.id, new NutsString(p2.local), new NutsString(p2.remote));
+                            appContext.session().out().printf("\\[%s\\] %s : %s - %s%n", status, p2.id, p2.local, p2.remote);
                             break;
                         }
                     }
@@ -340,6 +367,14 @@ public class WorkspaceService {
                 appContext.workspace().object()
                         .session(appContext.session())
                         .value(ddd).println();
+            }
+        }
+    }
+    private void printDiffResults(String prefix, PrintStream out, List<DiffItem> result){
+        if(result!=null) {
+            for (DiffItem diffItem : result) {
+                out.printf("%s%s%n", prefix, diffItem);
+                printDiffResults(prefix + "  ", out, diffItem.children());
             }
         }
     }
@@ -458,12 +493,12 @@ public class WorkspaceService {
 
     public void setScanEnabled(Path folder, boolean enable) {
         Path ni = folder.resolve(".nuts-info");
-        Properties p = null;
+        Map p = null;
         boolean scan = true;
         if (Files.isRegularFile(ni)) {
             try {
-                p = IOUtils.loadProperties(ni);
-                String v = p.getProperty(SCAN);
+                p = appContext.workspace().json().parse(ni,Map.class);
+                String v = p.get(SCAN)==null?null:String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
                 }
@@ -476,23 +511,19 @@ public class WorkspaceService {
             if (p == null) {
                 p = new Properties();
             }
-            p.setProperty(SCAN, String.valueOf(enable));
-            try {
-                IOUtils.saveProperties(p, "", ni);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            p.put(SCAN, enable);
+            appContext.workspace().json().value(p).print(ni);
         }
     }
 
     public boolean isScanEnabled(File folder) {
         boolean scan = true;
         File ni = new File(folder, ".nuts-info");
-        Properties p = null;
+        Map p = null;
         if (ni.isFile()) {
             try {
-                p = IOUtils.loadProperties(ni);
-                String v = p.getProperty(SCAN);
+                p = appContext.workspace().json().parse(ni,Map.class);
+                String v = p.get(SCAN)==null?null:String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
                 }
@@ -564,6 +595,7 @@ public class WorkspaceService {
         String local;
         String remote;
         String status;
+        List<DiffItem> details;
 
         @Override
         public int compareTo(DataRow o) {

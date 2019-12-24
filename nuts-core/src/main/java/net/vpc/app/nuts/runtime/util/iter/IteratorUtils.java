@@ -48,7 +48,10 @@ public class IteratorUtils {
     }
 
     public static <T> Iterator<T> nonNull(Iterator<T> t) {
-        return filter(t, NON_NULL);
+        if (t == null) {
+            return emptyIterator();
+        }
+        return t;
     }
 
     public static <T> Iterator<T> concat(List<Iterator<T>> all) {

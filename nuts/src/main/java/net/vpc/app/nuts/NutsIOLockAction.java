@@ -31,7 +31,10 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Supplier;
 
 /**
  * Lock builder to create mainly File based Locks
@@ -52,7 +55,7 @@ public interface NutsIOLockAction {
      * In most cases this will be the lock file.
      * @return lock resource
      */
-    Object getLockResource();
+    Object getResource();
 
     /**
      * update source
@@ -114,4 +117,22 @@ public interface NutsIOLockAction {
      * @return new {@link Lock} instance
      */
     NutsLock create();
+
+    /**
+     * create lock object for the given source and resource
+     * @param runnable runnable
+     * @param <T> result type
+     * @return result
+     */
+    <T> T run(Callable<T> runnable);
+
+    /**
+     * create lock object for the given source and resource
+     * @param runnable runnable
+     * @param <T> result type
+     * @param time time
+     * @param unit unit
+     * @return result
+     */
+    <T> T run(Callable<T> runnable, long time, TimeUnit unit);
 }

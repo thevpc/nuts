@@ -97,7 +97,7 @@ public interface NutsIndexStore {
     NutsIndexStore revalidate(NutsId id);
 
     /**
-     * subscribe the current repository so the the indexing
+     * subscribe the current repository so the indexing
      * is processed.
      * @return {@code this} instance
      */

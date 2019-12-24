@@ -109,6 +109,15 @@ public interface NutsJsonFormat extends NutsFormat {
     <T> T parse(InputStream inputStream, Class<T> clazz);
 
     /**
+     * parse inputStream as a valid object of the given type
+     * @param jsonString source as json string
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(String jsonString, Class<T> clazz);
+
+    /**
      * parse bytes as a valid object of the given type
      * @param bytes source bytes
      * @param clazz target type

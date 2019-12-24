@@ -296,6 +296,10 @@ Java         Version: **${java.version} (${java.vm.name})**
  **-t**
       apply trace mode which allows a more verbose output
 
+ **--progress**[=**<options>**]
+ **-P**[=<options>]
+      configure progress monitor. valid values include [[no]]|[[false]]|[[n]]
+
  **--plain**[=**<format-options>**]
       define plain text format as default output format (this is default)
 

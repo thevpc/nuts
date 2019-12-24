@@ -63,18 +63,18 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     }
 
     @Override
-    public NutsObjectElementBuilder set(String s, NutsElement e) {
-        if (e == null) {
+    public NutsObjectElementBuilder set(String s, NutsElement value) {
+        if (value == null) {
             throw new NullPointerException();
         }
-        values.put(s, e);
+        values.put(s, value);
         return this;
     }
 
 
     @Override
-    public NutsObjectElementBuilder remove(String s) {
-        values.remove(s);
+    public NutsObjectElementBuilder remove(String name) {
+        values.remove(name);
         return this;
     }
 

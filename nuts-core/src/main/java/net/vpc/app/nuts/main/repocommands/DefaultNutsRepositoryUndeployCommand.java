@@ -26,6 +26,10 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
         super(repo);
         LOG=repo.workspace().log().of(DefaultNutsRepositoryUndeployCommand.class);
     }
+    public DefaultNutsRepositoryUndeployCommand(NutsWorkspace ws) {
+        super(null);
+        LOG=ws.log().of(DefaultNutsRepositoryUndeployCommand.class);
+    }
 
     @Override
     public NutsRepositoryUndeployCommand run() {
@@ -34,19 +38,19 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().invalidate(this.getId());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error invalidating Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error invalidating Indexer for {0} : {1}", getRepo().config().getName(), ex);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Undeploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Undeploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
         }
         return this;

@@ -48,17 +48,5 @@ public interface NutsRepositorySession {
 
     NutsSession getSession();
 
-    boolean isTransitive();
-
-    NutsRepositorySession setTransitive(boolean transitive);
-
-    boolean isCached();
-
-    NutsRepositorySession setCached(boolean enabledCache);
-
-    boolean isIndexed();
-
-    NutsRepositorySession setIndexed(boolean enabledCache);
-
     NutsRepositorySession copy();
 }

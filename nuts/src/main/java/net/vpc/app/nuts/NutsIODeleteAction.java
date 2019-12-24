@@ -108,6 +108,12 @@ public interface NutsIODeleteAction {
     boolean isFailFast();
 
     /**
+     * set fail fast flag
+     * @return {@code this} instance
+     */
+    NutsIODeleteAction failFast();
+
+    /**
      * update fail fast flag
      * @param failFast value
      * @return {@code this} instance

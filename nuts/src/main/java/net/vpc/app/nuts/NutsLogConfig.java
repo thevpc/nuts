@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- *
+ * log configuration for running nuts
  * @author vpc
  * @since 0.5.4
  */

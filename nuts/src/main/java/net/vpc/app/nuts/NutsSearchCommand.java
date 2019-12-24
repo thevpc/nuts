@@ -1045,8 +1045,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     NutsFetchStrategy getFetchStrategy();
 
-    Boolean getIndexed();
-
     boolean isIndexed();
 
     Set<NutsDependencyScope> getScope();

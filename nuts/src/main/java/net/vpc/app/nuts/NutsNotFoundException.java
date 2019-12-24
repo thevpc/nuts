@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Exception thrown when the package could not be resolved
  *
  * @since 0.5.4
  */

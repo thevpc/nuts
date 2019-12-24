@@ -155,7 +155,8 @@ public final class NutsBootWorkspace {
         ));
         File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
-                workspaceInformation.getCacheBoot(), LOG
+                workspaceInformation.getLib(), LOG,
+                true
         );
         if (file == null) {
             errors.append("Unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
@@ -566,7 +567,7 @@ public final class NutsBootWorkspace {
 
             LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
 
-            String workspaceBootLibFolder = workspaceInformation.getCacheBoot();
+            String workspaceBootLibFolder = workspaceInformation.getLib();
 
             String[] repositories = PrivateNutsUtils.splitUrlStrings(workspaceInformation.getBootRepositories()).toArray(new String[0]);
 
@@ -966,11 +967,6 @@ public final class NutsBootWorkspace {
             for (NutsStoreLocation value : locations) {
                 String p = storeLocations.get(value.id());
                 if (p != null) {
-                    if (value == NutsStoreLocation.CACHE) {
-                        folders.add(new File(p, NutsConstants.Folders.BOOT));
-                        folders.add(new File(p, NutsConstants.Folders.REPOSITORIES));
-                        folders.add(new File(p, NutsConstants.Folders.ID));
-                    }
                     folders.add(new File(p));
                 }
             }
@@ -1008,6 +1004,7 @@ public final class NutsBootWorkspace {
         System.err.printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-read-only                 : %s%n", options.isReadOnly());
         System.err.printf("  option-trace                     : %s%n", options.isTrace());
+        System.err.printf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
         System.err.printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s%n", "<none>");

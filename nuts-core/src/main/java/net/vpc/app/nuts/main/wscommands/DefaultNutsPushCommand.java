@@ -40,7 +40,6 @@ import java.util.Set;
 
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
@@ -82,7 +81,6 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             }
             toProcess.put(id, file);
         }
-        NutsFetchCommand fetchOptions = ws.fetch().transitive().session(session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
             throw new NutsIllegalArgumentException(ws, "Missing component to push");
@@ -94,9 +92,9 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
-                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, session)) {
                     NutsDescriptor descr = null;
-                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE);
                     try {
                         descr = repo.fetchDescriptor().setSession(rsession).setId(file.getId()).run().getResult();
                     } catch (Exception e) {
@@ -104,8 +102,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr,
-                                ws.fetch().transitive().session(session)), descr);
+                        NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr,session), descr);
                         try {
 
                             repo.push().id(id2)
@@ -127,8 +124,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 }
             } else {
                 NutsRepository repo = ws.config().getRepository(this.getRepository(), true);
-                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
-                        fetchOptions
+                NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE
                 );
 
                 if (!repo.config().isEnabled()) {

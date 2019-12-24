@@ -34,18 +34,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.vpc.app.nuts.NutsConfirmationMode;
-import net.vpc.app.nuts.NutsDefaultWorkspaceOptions;
-import net.vpc.app.nuts.NutsExecutionType;
-import net.vpc.app.nuts.NutsLogConfig;
-import net.vpc.app.nuts.NutsOsFamily;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsStoreLocation;
-import net.vpc.app.nuts.NutsStoreLocationStrategy;
-import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.NutsWorkspaceOpenMode;
-import net.vpc.app.nuts.NutsWorkspaceOptions;
-import net.vpc.app.nuts.NutsWorkspaceOptionsFormat;
+import net.vpc.app.nuts.*;
 
 /**
  *
@@ -276,4 +265,28 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
         return options.isTrace();
     }
 
+    @Override
+    public String getProgressOptions() {
+        return options.getProgressOptions();
+    }
+
+    @Override
+    public boolean isCached() {
+        return options.isCached();
+    }
+
+    @Override
+    public boolean isIndexed() {
+        return options.isIndexed();
+    }
+
+    @Override
+    public boolean isTransitive() {
+        return options.isTransitive();
+    }
+
+    @Override
+    public NutsFetchStrategy getFetchStrategy() {
+        return options.getFetchStrategy();
+    }
 }

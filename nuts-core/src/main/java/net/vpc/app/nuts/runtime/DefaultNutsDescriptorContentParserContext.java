@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
-import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.io.InputSource;
@@ -52,15 +51,13 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private final String fileExtension;
     private final String mimeType;
     private byte[] bytes;
-    private final NutsFetchCommand options;
     private final String[] parseOptions;
 
-    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String mimeType, NutsFetchCommand options, String[] parseOptions) {
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String mimeType, String[] parseOptions) {
         this.file = file.multi();
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;
-        this.options = options;
         this.parseOptions = parseOptions;
     }
 
@@ -111,11 +108,6 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     @Override
     public String getName() {
         return file.getName();
-    }
-
-    @Override
-    public NutsFetchCommand getFetchOptions() {
-        return options;
     }
 
 }

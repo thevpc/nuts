@@ -78,6 +78,11 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
     }
 
     @Override
+    public NutsIODeleteAction failFast() {
+        return failFast(true);
+    }
+
+    @Override
     public NutsIODeleteAction setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;

@@ -2,8 +2,8 @@ package net.vpc.toolbox.tomcat.util;
 
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsProcessInfo;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.io.JpsResult;
 
 import java.util.Objects;
 
@@ -13,10 +13,10 @@ public class RunningTomcat {
     private String base;
     private String argsLine;
 
-    public RunningTomcat(JpsResult r, NutsWorkspace ws) {
+    public RunningTomcat(NutsProcessInfo r, NutsWorkspace ws) {
         pid =r.getPid();
-        argsLine=r.getArgsLine();
-        NutsCommandLine cmdline = ws.commandLine().parse(r.getArgsLine());
+        argsLine=r.getCommandLine();
+        NutsCommandLine cmdline = ws.commandLine().parse(r.getCommandLine());
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dcatalina.home"))!=null) {
