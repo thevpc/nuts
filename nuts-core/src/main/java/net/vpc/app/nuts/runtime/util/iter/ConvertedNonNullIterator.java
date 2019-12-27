@@ -27,55 +27,59 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.runtime;
+package net.vpc.app.nuts.runtime.util.iter;
 
-import net.vpc.app.nuts.NutsInstallInformation;
-import net.vpc.app.nuts.NutsInstallStatus;
-
-import java.nio.file.Path;
-import java.time.Instant;
+import java.util.Iterator;
+import java.util.function.Function;
 
 /**
+ * Created by vpc on 1/9/17.
  *
- * @author vpc
- * @since 0.5.5
+ * @param <F>
+ * @param <T>
  */
-public class NutsNoInstallInfo implements NutsInstallInformation {
-    public static final NutsInstallInformation NOT_INSTALLED =new NutsNoInstallInfo();
-    private NutsNoInstallInfo() {
-    }
+public class ConvertedNonNullIterator<F, T> implements Iterator<T> {
 
-    public NutsInstallStatus getInstallStatus() {
-        return NutsInstallStatus.NOT_INSTALLED;
-    }
+    private final Iterator<F> base;
+    private final Function<F, T> converter;
+    private final String convertName;
+    private T lastVal;
 
-    @Override
-    public String getInstallUser() {
-        return null;
-    }
-
-    @Override
-    public Instant getInstallDate() {
-        return null;
+    public ConvertedNonNullIterator(Iterator<F> base, Function<F, T> converter, String convertName) {
+        this.base = base;
+        this.converter = converter;
+        if (convertName == null) {
+            convertName = this.converter.toString();
+        }
+        this.convertName = convertName;
     }
 
     @Override
-    public boolean isDefaultVersion() {
-        return false;
+    public boolean hasNext() {
+        while (base.hasNext()) {
+            F i = base.next();
+            if (i != null) {
+                lastVal=converter.apply(i);
+                if(lastVal!=null){
+                    break;
+                }
+            }
+        }
+        return lastVal != null;
     }
 
     @Override
-    public Path getInstallFolder() {
-        return null;
+    public T next() {
+        return lastVal;
     }
 
     @Override
-    public boolean isJustInstalled() {
-        return false;
+    public void remove() {
+        throw new IllegalArgumentException("Unsupported remove");
     }
 
     @Override
-    public boolean isInstalled() {
-        return false;
+    public String toString() {
+        return "ConvertedNonNullIterator(" + base + "," + convertName + ")";
     }
 }

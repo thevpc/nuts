@@ -134,7 +134,7 @@ public class CoreIOUtils {
             NutsWorkspaceUtils.of(ws).setWorkspace(y);
             return y;
         }
-        PrintStreamExt s = new PrintStreamExt(os);
+        PrintStreamExt s = new PrintStreamExt(os,true);
         NutsWorkspaceUtils.of(ws).setWorkspace(s);
         return s;
     }

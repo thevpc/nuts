@@ -32,17 +32,22 @@ package net.vpc.app.nuts.toolbox.nsh.test;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.toolbox.nsh.NutsJavaShell;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
  * @author vpc
  */
 public class CommandsTest {
+    private static String baseFolder;
 
     @Test
     public void testDiname() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"}, null, out, err);
@@ -57,7 +62,7 @@ public class CommandsTest {
 
     @Test
     public void testBasename() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
@@ -72,7 +77,7 @@ public class CommandsTest {
 
     @Test
     public void testEnv() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
@@ -91,7 +96,7 @@ public class CommandsTest {
 
     @Test
     public void testCheck() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace());
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
@@ -106,5 +111,11 @@ public class CommandsTest {
             Assert.assertEquals("", out.toString());
             Assert.assertEquals("", err.toString());
         }
+    }
+    @BeforeClass
+    public static void setUpClass() throws IOException {
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        TestUtils.delete(null,new File(baseFolder));
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 }

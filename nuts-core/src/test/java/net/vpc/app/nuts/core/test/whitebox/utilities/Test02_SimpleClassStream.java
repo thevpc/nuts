@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core.test.whitebox.utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -20,7 +21,9 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.io.SimpleClassStream;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -28,13 +31,14 @@ import org.junit.Test;
  * @author vpc
  */
 public class Test02_SimpleClassStream {
+    private static String baseFolder;
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(Test02_SimpleClassStream.class.getName());
     private static long max = 0;
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
 //        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
         parseAnyFile(Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"),ws);
 //        parseAnyFile(Paths.get("/home/vpc/.m2/repository/com/ibm/icu/icu4j/2.6.1/icu4j-2.6.1.jar"));
@@ -127,5 +131,10 @@ public class Test02_SimpleClassStream {
         }
         );
     }
-
+    @BeforeClass
+    public static void setUpClass() throws IOException {
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        CoreIOUtils.delete(null,new File(baseFolder));
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+    }
 }

@@ -578,6 +578,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
             Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
             storeModelBoot.setConfigVersion(current().getApiVersion());
+            if(storeModelBoot.getExtensions()!=null) {
+                for (NutsWorkspaceConfigBoot.ExtensionConfig extension : storeModelBoot.getExtensions()) {
+                    //inherited
+                    extension.setConfigVersion(null);
+                }
+            }
             ws.json().value(storeModelBoot).print(file);
             storeModelBootChanged = false;
             ok = true;
@@ -589,6 +595,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
             Path file = configVersionSpecificLocation.resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
             storeModelSecurity.setConfigVersion(current().getApiVersion());
+            if(storeModelSecurity.getUsers()!=null) {
+                for (NutsUserConfig extension : storeModelSecurity.getUsers()) {
+                    //inherited
+                    extension.setConfigVersion(null);
+                }
+            }
             ws.json().value(storeModelSecurity).print(file);
             storeModelSecurityChanged = false;
             ok = true;
@@ -604,6 +616,24 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
             Path file = configVersionSpecificLocation.resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
             storeModelMain.setConfigVersion(current().getApiVersion());
+            if(storeModelMain.getCommandFactories()!=null) {
+                for (NutsCommandAliasFactoryConfig item : storeModelMain.getCommandFactories()) {
+                    //inherited
+                    item.setConfigVersion(null);
+                }
+            }
+            if(storeModelMain.getRepositories()!=null) {
+                for (NutsRepositoryRef item : storeModelMain.getRepositories()) {
+                    //inherited
+                    item.setConfigVersion(null);
+                }
+            }
+            if(storeModelMain.getSdk()!=null) {
+                for (NutsSdkLocation item : storeModelMain.getSdk()) {
+                    //inherited
+                    item.setConfigVersion(null);
+                }
+            }
             ws.json().value(storeModelMain).print(file);
             storeModelMainChanged = false;
             ok = true;
@@ -612,6 +642,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || storeModelApiChanged) {
             Path afile = apiVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
             storeModelApi.setConfigVersion(current().getApiVersion());
+            if(storeModelSecurity.getUsers()!=null) {
+                for (NutsUserConfig item : storeModelSecurity.getUsers()) {
+                    //inherited
+                    item.setConfigVersion(null);
+                }
+            }
             ws.json().value(storeModelApi).print(afile);
             storeModelApiChanged = false;
             ok = true;

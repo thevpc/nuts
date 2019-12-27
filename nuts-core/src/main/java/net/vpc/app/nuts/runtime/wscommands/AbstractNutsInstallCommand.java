@@ -268,7 +268,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-i":
             case "--installed": {
-                this.setInstalled(cmdLine.nextBoolean().getBooleanValue());
+                this.installed(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
             case "-g":

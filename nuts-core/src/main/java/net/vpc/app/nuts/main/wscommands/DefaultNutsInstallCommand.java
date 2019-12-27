@@ -30,7 +30,9 @@
 package net.vpc.app.nuts.main.wscommands;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsInstallCommand;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import java.io.PrintStream;
@@ -117,6 +119,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 }
             }
         }
+        Map<NutsId,NutsDefinition> defsAll = new LinkedHashMap<>();
+        Map<NutsId,NutsDefinition> defsToInstall = new LinkedHashMap<>();
+        Map<NutsId,NutsDefinition> defsToInstallForced = new LinkedHashMap<>();
+        Map<NutsId,NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
+        Map<NutsId,NutsDefinition> defsToIgnore = new LinkedHashMap<>();
         if(isInstalled()){
             for (NutsId resultId : ws.search().session(searchSession).installed().getResultIds()) {
                 emptyCommand = false;
@@ -125,19 +132,29 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     visited.add(resultId.getLongName());
                 }
             }
+            // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
+            NutsInstalledRepository ir = dws.getInstalledRepository();
+            for (NutsInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation(session))) {
+                if(y!=null && y.getInstallStatus()==NutsInstallStatus.INSTALLED && y.getId()!=null) {
+                    NutsId resultId=y.getId();
+                    if(!visited.contains(resultId.getLongName())) {
+                        NutsId newId = resultId.builder().setNamespace(null).build();
+                        allToInstall.put(newId, true);
+                        visited.add(resultId.getLongName());
+                        defsToInstallForced.put(newId,null);
+                    }
+                }
+            }
         }
 
-        Map<NutsId,NutsDefinition> defsAll = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToInstall = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToInstallForced = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToIgnore = new LinkedHashMap<>();
         for (Map.Entry<NutsId, Boolean> nutsIdBooleanEntry : allToInstall.entrySet()) {
             emptyCommand = false;
             NutsId nid=nutsIdBooleanEntry.getKey();
-            boolean installed = !Boolean.TRUE.equals(dws.getInstalledRepository().getInstallStatus(nid, session));
+            boolean installed = dws.getInstalledRepository().getInstallStatus(nid, session)==NutsInstallStatus.INSTALLED;
             boolean defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
-
+            if(defsToInstallForced.containsKey(nid)){
+                installed=true;
+            }
             boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
             //must load dependencies because will be run later!!
             if(installed){

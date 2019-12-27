@@ -60,7 +60,7 @@ public class Test03_CreateLayoutLinuxTest {
                         "--yes", "--trace",
                         "info"
                 ));
-        NutsId ndiId = ws.search().installedPrimary().id("ndi").getResultIds().singleton();
+        NutsId ndiId = ws.search().installed().id("ndi").getResultIds().singleton();
         Assert.assertTrue(ndiId.getVersion().getValue().startsWith(NUTS_VERSION + "."));
 
         Assert.assertEquals(
@@ -110,7 +110,7 @@ public class Test03_CreateLayoutLinuxTest {
                 //            "--verbose",
                 "--yes", "--trace",
                 "info"));
-        NutsId ndiId = ws2.search().installedPrimary().id("ndi").getResultIds().singleton();
+        NutsId ndiId = ws2.search().installed().id("ndi").getResultIds().singleton();
         Assert.assertTrue(ndiId.getVersion().getValue().startsWith(NUTS_VERSION + "."));
 
         Assert.assertEquals(
@@ -149,9 +149,9 @@ public class Test03_CreateLayoutLinuxTest {
         NutsWorkspace ws = Nuts.openWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info");
         NutsId ndiId=null;
         try {
-            ndiId = ws.search().installedPrimary().id("ndi").getResultIds().singleton();
+            ndiId = ws.search().installed().id("ndi").getResultIds().singleton();
         }catch (Exception ex){
-            ndiId = ws.search().installedPrimary().id("ndi").getResultIds().singleton();
+            ndiId = ws.search().installed().id("ndi").getResultIds().singleton();
         }
         Assert.assertTrue(ndiId.getVersion().getValue().startsWith(NUTS_VERSION + "."));
         Path c = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);

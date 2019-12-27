@@ -71,4 +71,10 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
         }
         throw new IllegalArgumentException("Unsupported");
     }
+
+    @Override
+    public void flush() throws IOException {
+        h.flush();
+        super.flush();
+    }
 }

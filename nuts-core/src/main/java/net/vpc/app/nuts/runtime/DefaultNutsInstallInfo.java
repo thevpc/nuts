@@ -32,6 +32,7 @@ package net.vpc.app.nuts.runtime;
 import java.nio.file.Path;
 import java.time.Instant;
 
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallInformation;
 import net.vpc.app.nuts.NutsInstallStatus;
 
@@ -41,6 +42,7 @@ import net.vpc.app.nuts.NutsInstallStatus;
  */
 public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
+    private final NutsId id;
     private final NutsInstallStatus installStatus;
     private boolean justInstalled;
     private boolean defaultVersion;
@@ -48,7 +50,8 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private String installUser;
     private final Path installFolder;
 
-    public DefaultNutsInstallInfo(NutsInstallStatus installStatus, boolean defaultVersion, Path installFolder, Instant installDate, String installUser) {
+    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, boolean defaultVersion, Path installFolder, Instant installDate, String installUser) {
+        this.id = id;
         this.installStatus = installStatus;
         this.installFolder = installFolder;
         this.defaultVersion = defaultVersion;
@@ -56,13 +59,28 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         this.installUser = installUser;
     }
 
+    public static DefaultNutsInstallInfo notInstalled(NutsId id) {
+        return new DefaultNutsInstallInfo(null,
+                NutsInstallStatus.NOT_INSTALLED,
+                false,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public NutsId getId() {
+        return id;
+    }
+
     public NutsInstallStatus getInstallStatus() {
         return installStatus;
     }
 
     @Override
-    public boolean isInstalled() {
-        return installStatus == NutsInstallStatus.INSTALLED_DEPENDENCY || installStatus == NutsInstallStatus.INSTALLED_PRIMARY;
+    public boolean isInstalledOrIncluded() {
+        return installStatus == NutsInstallStatus.INCLUDED || installStatus == NutsInstallStatus.INSTALLED;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package net.vpc.app.nuts.main.config;
 
+import net.vpc.app.nuts.NutsConfigItem;
+
 import java.io.Serializable;
 
-public class NutsWorkspaceConfigApi implements Serializable {
-    private static final long serialVersionUID = 2;
-
-    private String configVersion = null;
+public class NutsWorkspaceConfigApi extends NutsConfigItem {
+    private static final long serialVersionUID = 3;
 
     private String apiVersion = null;
     /**
@@ -34,15 +34,6 @@ public class NutsWorkspaceConfigApi implements Serializable {
 
     public NutsWorkspaceConfigApi setRuntimeId(String runtimeId) {
         this.runtimeId = runtimeId;
-        return this;
-    }
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public NutsWorkspaceConfigApi setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
         return this;
     }
 

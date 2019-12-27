@@ -56,7 +56,11 @@ search for artifacts/==nuts==
 **--anywhere**|**-a**
     equivalent to **--fetch**=[[anywhere]]
 **--installed**|**-i**
-    equivalent to **--fetch**=[[installed]]
+    search for installed only packages
+**--ready**
+    search for installed and included packages
+**--included**
+    search for included packages in other installations
 **--remote**|**-R**
     equivalent to **--fetch**=[[remote]]
 **--optional**

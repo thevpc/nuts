@@ -48,21 +48,7 @@ public class XmlUtils {
         return new Iterable<Node>() {
             @Override
             public Iterator<Node> iterator() {
-                return new Iterator<Node>() {
-                    int i = 0;
-
-                    @Override
-                    public boolean hasNext() {
-                        return i < list.getLength();
-                    }
-
-                    @Override
-                    public Node next() {
-                        Node x = list.item(i);
-                        i++;
-                        return x;
-                    }
-                };
+                return new NodeListIterator(list);
             }
         };
     }
@@ -210,6 +196,28 @@ public class XmlUtils {
             return sw.toString();
         } catch (TransformerException ex) {
             throw new IOException(ex);
+        }
+    }
+
+    private static class NodeListIterator implements Iterator<Node> {
+        private final NodeList list;
+        int i;
+
+        public NodeListIterator(NodeList list) {
+            this.list = list;
+            i = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return i < list.getLength();
+        }
+
+        @Override
+        public Node next() {
+            Node x = list.item(i);
+            i++;
+            return x;
         }
     }
 }

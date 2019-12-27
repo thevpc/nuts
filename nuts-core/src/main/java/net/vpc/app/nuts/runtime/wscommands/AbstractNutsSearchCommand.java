@@ -57,7 +57,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected NutsRepositoryFilter repositoryFilter;
     protected boolean latest = false;
     protected boolean distinct = false;
-    protected boolean includeMain = true;
+    protected boolean includeBasePackage = true;
     protected boolean sorted = false;
     protected NutsInstallStatus installStatus = null;
     protected final List<String> arch = new ArrayList<>();
@@ -206,12 +206,12 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand frozenIds(String... values) {
-        return addFrozenIds(values);
+    public NutsSearchCommand lockedIds(String... values) {
+        return addLockedIds(values);
     }
 
     @Override
-    public NutsSearchCommand addFrozenIds(String... values) {
+    public NutsSearchCommand addLockedIds(String... values) {
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
@@ -223,14 +223,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand frozenIds(NutsId... values) {
-        return addFrozenIds(values);
+    public NutsSearchCommand lockedIds(NutsId... values) {
+        return addLockedIds(values);
     }
 
     @Override
-    public NutsSearchCommand addFrozenIds(NutsId... value) {
-        if (value != null) {
-            for (NutsId s : value) {
+    public NutsSearchCommand addLockedIds(NutsId... values) {
+        if (values != null) {
+            for (NutsId s : values) {
                 if (s != null) {
                     frozenIds.add(s);
                 }
@@ -240,7 +240,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand clearFrozenIds() {
+    public NutsSearchCommand clearLockedIds() {
         frozenIds.clear();
         return this;
     }
@@ -265,8 +265,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand archs(Collection<String> value) {
-        return addArchs(value);
+    public NutsSearchCommand archs(Collection<String> values) {
+        return addArchs(values);
     }
 
     @Override
@@ -276,22 +276,22 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand addArchs(Collection<String> value) {
-        if (value != null) {
-            addArchs(value.toArray(new String[0]));
+    public NutsSearchCommand addArchs(Collection<String> values) {
+        if (values != null) {
+            addArchs(values.toArray(new String[0]));
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand archs(String... value) {
+    public NutsSearchCommand archs(String... values) {
         return addArchs(arch);
     }
 
     @Override
-    public NutsSearchCommand addArchs(String... value) {
-        if (value != null) {
-            arch.addAll(Arrays.asList(value));
+    public NutsSearchCommand addArchs(String... values) {
+        if (values != null) {
+            arch.addAll(Arrays.asList(values));
         }
         return this;
     }
@@ -322,27 +322,27 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand addPackagings(Collection<String> value) {
-        if (value != null) {
-            addPackagings(value.toArray(new String[0]));
+    public NutsSearchCommand addPackagings(Collection<String> values) {
+        if (values != null) {
+            addPackagings(values.toArray(new String[0]));
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand packagings(Collection<String> value) {
-        return addPackagings(value);
+    public NutsSearchCommand packagings(Collection<String> values) {
+        return addPackagings(values);
     }
 
     @Override
-    public NutsSearchCommand packagings(String... value) {
-        return addPackagings(value);
+    public NutsSearchCommand packagings(String... values) {
+        return addPackagings(values);
     }
 
     @Override
-    public NutsSearchCommand addPackagings(String... value) {
-        if (value != null) {
-            this.packaging.addAll(Arrays.asList(value));
+    public NutsSearchCommand addPackagings(String... values) {
+        if (values != null) {
+            this.packaging.addAll(Arrays.asList(values));
         }
         return this;
     }
@@ -364,7 +364,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.idFilter = o.getIdFilter();
             this.latest = o.isLatest();
             this.distinct(o.isDistinct());
-            this.includeMain = o.isMain();
+            this.includeBasePackage = o.isBasePackage();
             this.sorted = o.isSorted();
             this.arch.clear();
             this.arch.addAll(Arrays.asList(o.getArch()));
@@ -603,39 +603,39 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
 
     @Override
-    public NutsSearchCommand frozenId(NutsId id) {
+    public NutsSearchCommand lockedId(NutsId id) {
         return addId(id);
     }
 
     @Override
-    public NutsSearchCommand addFrozenId(NutsId id) {
+    public NutsSearchCommand addLockedId(NutsId id) {
         if (id != null) {
-            addFrozenId(id.toString());
+            addLockedId(id.toString());
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand removeFrozenId(NutsId id) {
+    public NutsSearchCommand removeLockedId(NutsId id) {
         if (id != null) {
-            removeFrozenId(id.toString());
+            removeLockedId(id.toString());
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand frozenId(String id) {
-        return addFrozenId(id);
+    public NutsSearchCommand lockedId(String id) {
+        return addLockedId(id);
     }
 
     @Override
-    public NutsSearchCommand removeFrozenId(String id) {
+    public NutsSearchCommand removeLockedId(String id) {
         frozenIds.remove(ws.id().parse(id));
         return this;
     }
 
     @Override
-    public NutsSearchCommand addFrozenId(String id) {
+    public NutsSearchCommand addLockedId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
             frozenIds.add(ws.id().parseRequired(id));
         }
@@ -643,7 +643,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsId[] getFrozenIds() {
+    public NutsId[] getLockedIds() {
         return this.frozenIds.toArray(new NutsId[0]);
     }
 
@@ -773,11 +773,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 ", repositoryFilter=" + getRepositoryFilter() +
                 ", latest=" + isLatest() +
                 ", distinct=" + isDistinct() +
-                ", includeMain=" + isMain() +
+                ", includeMain=" + isBasePackage() +
                 ", sorted=" + isSorted() +
                 ", arch=" + Arrays.toString(getArch()) +
                 ", ids=" + Arrays.toString(getIds()) +
-                ", frozenIds=" + Arrays.toString(getFrozenIds()) +
+                ", frozenIds=" + Arrays.toString(getLockedIds()) +
                 ", scripts=" + Arrays.toString(getScripts()) +
                 ", packaging=" + Arrays.toString(getPackaging()) +
                 ", defaultVersions=" + getDefaultVersions() +
@@ -878,24 +878,24 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public boolean isMain() {
-        return includeMain;
+    public boolean isBasePackage() {
+        return includeBasePackage;
     }
 
     @Override
-    public NutsSearchCommand setMain(boolean includeMain) {
-        this.includeMain = includeMain;
+    public NutsSearchCommand setBasePackage(boolean includeBasePackage) {
+        this.includeBasePackage = includeBasePackage;
         return this;
     }
 
     @Override
-    public NutsSearchCommand main(boolean includeMain) {
-        return setMain(includeMain);
+    public NutsSearchCommand basePackage(boolean includeBasePackage) {
+        return setBasePackage(includeBasePackage);
     }
 
     @Override
-    public NutsSearchCommand main() {
-        return main(true);
+    public NutsSearchCommand basePackage() {
+        return basePackage(true);
     }
 
     @Override
@@ -953,8 +953,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 this.sort(cmdLine.nextBoolean().getBooleanValue());
                 return true;
             }
-            case "--main": {
-                this.includeMain = cmdLine.nextBoolean().getBooleanValue();
+            case "--base": {
+                this.includeBasePackage = cmdLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "--libs": {
@@ -1007,11 +1007,27 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--frozen-id": {
-                this.addFrozenId(cmdLine.nextString().getStringValue());
+                this.addLockedId(cmdLine.nextString().getStringValue());
                 return true;
             }
             case "--print": {
                 this.setPrintResult(cmdLine.nextBoolean().getBooleanValue());
+                return true;
+            }
+            case "--installed-or-included": {
+                cmdLine.skip();
+                this.installedOrIncluded();
+                return true;
+            }
+            case "-i":
+            case "--installed": {
+                cmdLine.skip();
+                this.installed();
+                return true;
+            }
+            case "--included": {
+                cmdLine.skip();
+                this.included();
                 return true;
             }
             default: {
@@ -1098,18 +1114,18 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand installedPrimary() {
-        return installStatus(NutsInstallStatus.INSTALLED_PRIMARY);
-    }
-
-    @Override
-    public NutsSearchCommand installedDependency() {
-        return installStatus(NutsInstallStatus.INSTALLED_DEPENDENCY);
-    }
-
-    @Override
     public NutsSearchCommand installed() {
         return installStatus(NutsInstallStatus.INSTALLED);
+    }
+
+    @Override
+    public NutsSearchCommand included() {
+        return installStatus(NutsInstallStatus.INCLUDED);
+    }
+
+    @Override
+    public NutsSearchCommand installedOrIncluded() {
+        return installStatus(NutsInstallStatus.INSTALLED_OR_INCLUDED);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class Test09_FindLinuxTest {
         List<NutsId> def = ws.search().id("nuts").optional(false).latest().failFast(false)
 //                .repository("maven-local")
                 .defaultVersions()
-                .installed()
+                .installedOrIncluded()
                 .getResultIds().list();
                 
         TestUtils.println(def);

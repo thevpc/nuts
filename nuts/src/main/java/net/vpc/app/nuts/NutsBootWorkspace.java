@@ -685,7 +685,7 @@ public final class NutsBootWorkspace {
         PrivateNutsId vid = PrivateNutsId.parse(id);
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid);
+            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid+" from repositories "+Arrays.asList(repositories));
         }
         return f;
     }

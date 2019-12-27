@@ -426,14 +426,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             NutsSearchCommand searchLatestCommand = context.workspace().search().id("org.apache.catalina:apache-tomcat#" + cv)
                     .session(context.getSession().copy().silent()).latest();
-            NutsDefinition r = searchLatestCommand.installed().getResultDefinitions().first();
+            NutsDefinition r = searchLatestCommand.installedOrIncluded().getResultDefinitions().first();
             if (r == null) {
                 r = searchLatestCommand.offline().getResultDefinitions().first();
             }
             if (r == null) {
                 r = searchLatestCommand.online().getResultDefinitions().required();
             }
-            if (r.getInstallInformation().isInstalled()) {
+            if (r.getInstallInformation().isInstalledOrIncluded()) {
                 return r;
             } else {
                 catalinaNutsDefinition = context.workspace()

@@ -38,7 +38,7 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCommandAliasConfig implements Serializable{
+public class NutsCommandAliasConfig extends NutsConfigItem{
     private static final long serialVersionUID = 1;
 
     /**

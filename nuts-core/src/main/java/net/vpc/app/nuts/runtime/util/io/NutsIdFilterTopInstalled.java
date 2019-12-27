@@ -31,8 +31,8 @@ public class NutsIdFilterTopInstalled implements NutsIdFilter {
             return true;
         }
         switch (installStatus) {
-            case INSTALLED: {
-                return status == NutsInstallStatus.INSTALLED_PRIMARY || status == NutsInstallStatus.INSTALLED_DEPENDENCY;
+            case INSTALLED_OR_INCLUDED: {
+                return status == NutsInstallStatus.INSTALLED || status == NutsInstallStatus.INCLUDED;
             }
         }
         return status==installStatus;

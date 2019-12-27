@@ -107,10 +107,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     _id,
                     c.descriptor,
                     new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
-                    new DefaultNutsInstallInfo(NutsInstallStatus.NOT_INSTALLED, false,
-                            tempFolder
-                            , null, ws.security().getCurrentUsername()
-                    ),
+                    DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null
             );
             try {

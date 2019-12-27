@@ -137,7 +137,7 @@ public class DataService {
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
             List<NutsId> allDependencies = ws.search()
-                    .main(false)
+                    .basePackage(false)
                     .inlineDependencies()
                     .addId(id)
                     .failFast(false)

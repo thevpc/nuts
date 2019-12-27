@@ -35,25 +35,25 @@ package net.vpc.app.nuts;
 public enum NutsInstallStatus {
 
     /**
-     * package is not installed
+     * package is not installed , neither included
      */
     NOT_INSTALLED,
 
     /**
      * package installed as primary
      */
-    INSTALLED_PRIMARY,
+    INSTALLED,
 
     /**
      * package installed as a dependency for a primary package
      */
-    INSTALLED_DEPENDENCY,
+    INCLUDED,
 
     /**
-     * this is a meta value including equivalent to (INSTALLED_DEPENDENCY or INSTALLED_PRIMARY).
-     * This Value should not be used unless as a filter.
+     * this is a meta value including equivalent to (INSTALLED_DEPENDENCY or INSTALLED).
+     * This Value should not be used but as a filter.
      */
-    INSTALLED;
+    INSTALLED_OR_INCLUDED;
 
     /**
      * lower-cased identifier for the enum entry

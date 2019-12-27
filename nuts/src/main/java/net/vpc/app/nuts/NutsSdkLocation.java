@@ -33,12 +33,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * SDK location
  * @author vpc
  * @since 0.5.4
  */
-public class NutsSdkLocation implements Serializable {
+public class NutsSdkLocation extends NutsConfigItem {
 
-    public static final long serialVersionUID = 1;
+    public static final long serialVersionUID = 2;
     private final NutsId id;
     private final String name;
     private final String packaging;
@@ -46,6 +47,15 @@ public class NutsSdkLocation implements Serializable {
     private final String path;
     private final String version;
 
+    /**
+     * default constructor
+     * @param id id
+     * @param product sdk product. In java this is Oracle JDK or OpenJDK.
+     * @param name sdk name
+     * @param path sdk path
+     * @param version sdk version
+     * @param packaging sdk packaging. for Java SDK this is room to set JRE or JDK.
+     */
     public NutsSdkLocation(NutsId id, String product, String name, String path, String version, String packaging) {
         this.id = id;
         this.product = product;
@@ -60,7 +70,8 @@ public class NutsSdkLocation implements Serializable {
     }
 
     /**
-     * Oracle JDK or OpenJDK for Java
+     * sdk product. In java this is
+     * Oracle JDK or OpenJDK.
      *
      * @return product name
      */
@@ -68,20 +79,33 @@ public class NutsSdkLocation implements Serializable {
         return product;
     }
 
+    /**
+     * sdk version
+     * @return sdk version
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * sdk name
+     * @return sdk name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * sdk path
+     * @return
+     */
     public String getPath() {
         return path;
     }
 
     /**
-     * JRE or JDK for java
+     * sdk packaging. for Java SDK this
+     * is room to set JRE or JDK.
      *
      * @return packaging name
      */

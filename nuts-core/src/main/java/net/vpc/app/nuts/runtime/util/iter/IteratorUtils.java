@@ -144,6 +144,13 @@ public class IteratorUtils {
         return new ConvertedIterator<>(from, converter, name);
     }
 
+    public static <F, T> Iterator<T> convertNonNull(Iterator<F> from, Function<F, T> converter, String name) {
+        if (isNullOrEmpty(from)) {
+            return emptyIterator();
+        }
+        return new ConvertedNonNullIterator<>(from, converter, name);
+    }
+
     public static <T> List<T> toList(Iterator<T> it) {
         if (isNullOrEmpty(it)) {
             return Collections.emptyList();

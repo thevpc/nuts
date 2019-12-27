@@ -39,13 +39,9 @@ import java.util.*;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsWorkspaceConfigMain implements Serializable {
+public final class NutsWorkspaceConfigMain extends NutsConfigItem {
 
-    private static final long serialVersionUID = 2;
-    /**
-     * Api version having created the config
-     */
-    private String configVersion = null;
+    private static final long serialVersionUID = 3;
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsCommandAliasFactoryConfig> commandFactories;
@@ -95,15 +91,6 @@ public final class NutsWorkspaceConfigMain implements Serializable {
 
     public List<NutsSdkLocation> getSdk() {
         return sdk;
-    }
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public NutsWorkspaceConfigMain setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
-        return this;
     }
 
     public List<NutsCommandAliasFactoryConfig> getCommandFactories() {

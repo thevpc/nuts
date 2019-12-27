@@ -72,7 +72,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void execute() {
-        if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED_PRIMARY) {
+        if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED) {
             session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
                 session.getWorkspace().install().id(def.getId()).run();
         }
@@ -81,7 +81,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void dryExecute() {
-        if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED_PRIMARY) {
+        if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED) {
             session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             PrintStream out = session.out();
             out.printf("[dry] ==install== %s%n",def.getId().getLongName());

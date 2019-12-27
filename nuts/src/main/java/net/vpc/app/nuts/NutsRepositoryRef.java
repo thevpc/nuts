@@ -37,7 +37,7 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsRepositoryRef implements Serializable {
+public class NutsRepositoryRef extends NutsConfigItem {
 
     private static final long serialVersionUID = 1;
 
@@ -159,5 +159,4 @@ public class NutsRepositoryRef implements Serializable {
     public String toString() {
         return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + ", deployPriority=" + deployOrder + '}';
     }
-
 }

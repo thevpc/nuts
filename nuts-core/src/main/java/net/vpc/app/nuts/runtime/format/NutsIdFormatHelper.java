@@ -503,7 +503,7 @@ public class NutsIdFormatHelper {
             built = true;
             NutsWorkspace ws = session.getWorkspace();
             NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
-            NutsInstallStatus installStatus = rr.getInstallStatus(id, session);
+            this.installStatus = rr.getInstallStatus(id, session);
             this.defaultVersion = rr.isDefaultVersion(id, session);
             NutsInstallInformation iif = rr.getInstallInformation(id, session);
             this.dte = iif == null ? null : iif.getInstallDate();
@@ -543,7 +543,7 @@ public class NutsIdFormatHelper {
                 this.executable = desc.isExecutable();
                 this.executableApp = desc.isApplication();
             }
-            this.status_f = (this.installStatus==NutsInstallStatus.INSTALLED_PRIMARY) && this.defaultVersion ? 'I' : (this.installStatus==NutsInstallStatus.INSTALLED_PRIMARY) ? 'i' : (this.installStatus==NutsInstallStatus.INSTALLED_DEPENDENCY) ? 'd' : this.fetched ? 'f' : 'r';
+            this.status_f = (this.installStatus==NutsInstallStatus.INSTALLED) && this.defaultVersion ? 'I' : (this.installStatus==NutsInstallStatus.INSTALLED) ? 'i' : (this.installStatus==NutsInstallStatus.INCLUDED) ? 'd' : this.fetched ? 'f' : 'r';
             if (def != null) {
                 switch (def.getType()){
                     case API:{

@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.core.test.whitebox;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.Nuts;
@@ -38,7 +40,9 @@ import net.vpc.app.nuts.NutsElementFormat;
 import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -46,10 +50,11 @@ import org.junit.Test;
  * @author vpc
  */
 public class Test10_ElementPath {
+    private static String baseFolder;
 
     @Test
     public void test1() {
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
         NutsElementFormat e = ws.element();
         NutsElementBuilder b = e.builder();
         NutsElement p
@@ -273,6 +278,13 @@ public class Test10_ElementPath {
             ss.value(filtered1).println();
             Assert.assertEquals(tt.expected.get(0), ss.format());
         }
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws IOException {
+        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
+        CoreIOUtils.delete(null,new File(baseFolder));
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
 }

@@ -1,11 +1,9 @@
 package net.vpc.app.nuts.main.config;
 
-import java.io.Serializable;
+import net.vpc.app.nuts.NutsConfigItem;
 
-public class NutsWorkspaceConfigRuntime implements Serializable {
+public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
     private static final long serialVersionUID = 2;
-
-    private String configVersion = null;
 
     /**
      * boot component Id in long format (as defined in
@@ -25,14 +23,6 @@ public class NutsWorkspaceConfigRuntime implements Serializable {
      * @see net.vpc.app.nuts.NutsId#getLongNameId()
      */
     private String dependencies = null;
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public void setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
-    }
 
     public String getId() {
         return id;

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.main.config;
 
+import net.vpc.app.nuts.NutsConfigItem;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsOsFamily;
 import net.vpc.app.nuts.NutsStoreLocationStrategy;
@@ -40,14 +41,9 @@ import java.util.*;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsWorkspaceConfigBoot implements Serializable {
+public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
 
-    private static final long serialVersionUID = 507;
-    /**
-     * Api version having created the config
-     */
-    private String configVersion = null;
-
+    private static final long serialVersionUID = 600;
     private String uuid = null;
     private boolean global;
     private String name = null;
@@ -97,15 +93,6 @@ public final class NutsWorkspaceConfigBoot implements Serializable {
         return this;
     }
 
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public NutsWorkspaceConfigBoot setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
-        return this;
-    }
 
     public String getBootRepositories() {
         return bootRepositories;
@@ -179,7 +166,7 @@ public final class NutsWorkspaceConfigBoot implements Serializable {
         return this;
     }
 
-    public static class ExtensionConfig {
+    public static class ExtensionConfig extends NutsConfigItem{
         private NutsId id;
         private boolean enabled;
 

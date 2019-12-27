@@ -70,7 +70,6 @@ import net.vpc.app.nuts.main.wscommands.*;
 public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsWorkspaceExt {
 
     public NutsLogger LOG;
-    public static final NutsInstallInformation NOT_INSTALLED = NutsNoInstallInfo.NOT_INSTALLED;
     private DefaultNutsInstalledRepository installedRepository;
     private NutsLogManager logCmd;
 
@@ -508,7 +507,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             nutToInstall = search().id(id).session(session).transitive(false)
                     .inlineDependencies(checkDependencies)
-                    .installed()
+                    .installedOrIncluded()
                     .optional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
@@ -795,12 +794,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default: {
-                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
+                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installedOrIncluded().failFast(false).getResultDefinitions().first();
                     break;
                 }
             }
         }
-        boolean reinstall = def.getInstallInformation().getInstallStatus()==NutsInstallStatus.INSTALLED_PRIMARY;
+        boolean reinstall = def.getInstallInformation().getInstallStatus()==NutsInstallStatus.INSTALLED;
         PrintStream out = session.out();
         out.flush();
         switch (def.getType()) {
@@ -909,7 +908,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (updateDefaultVersion) {
                 setAsDefaultString = " set as ##default##.";
             }
-            if (def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED_PRIMARY) {
+            if (def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {

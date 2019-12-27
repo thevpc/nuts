@@ -3,8 +3,12 @@ package net.vpc.app.nuts.core.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsInstallStatus;
 
+import java.util.Iterator;
+
 public interface NutsInstalledRepository extends NutsRepository {
     boolean isDefaultVersion(NutsId id, NutsSession session);
+
+    Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session);
 
     String getDefaultVersion(NutsId id, NutsSession session);
 

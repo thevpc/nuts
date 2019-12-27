@@ -361,7 +361,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsCollectionSearchResult<NutsId> a = applyVersionFlagFilters(base0, false);
         Iterator<NutsId> curr = a.iterator();
         if (isInlineDependencies()) {
-            if (!isMain()) {
+            if (!isBasePackage()) {
                 curr = Arrays.asList(findDependencies(a.list())).iterator();
             } else {
                 List<Iterator<NutsId>> it = new ArrayList<>();
@@ -691,9 +691,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             NutsInstallStatus nutsInstallStatusFilter = CoreFilterUtils.getTopLevelFilterInstallStatus(filter);
                             for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, session,
                                     nutsInstallStatusFilter!=NutsInstallStatus.NOT_INSTALLED,
-                                    nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED&&
-                                    nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_DEPENDENCY&&
-                                    nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_PRIMARY
+                                    nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_OR_INCLUDED &&
+                                    nutsInstallStatusFilter!=NutsInstallStatus.INCLUDED &&
+                                    nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED
                             )) {
                                 if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
                                     all.add(IteratorBuilder.ofLazyNamed("searchVersions(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + finalSession + ")", () ->
@@ -730,9 +730,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             for (NutsFetchMode mode : fetchMode) {
                 List<Iterator<NutsId>> all = new ArrayList<>();
                 for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, session, nutsInstallStatusFilter!=NutsInstallStatus.NOT_INSTALLED,
-                        nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED&&
-                                nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_DEPENDENCY&&
-                                nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_PRIMARY)) {
+                        nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_OR_INCLUDED &&
+                                nutsInstallStatusFilter!=NutsInstallStatus.INCLUDED &&
+                                nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED)) {
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, mode);
                     all.add(
                             IteratorBuilder.ofLazyNamed("search(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + session + ")",

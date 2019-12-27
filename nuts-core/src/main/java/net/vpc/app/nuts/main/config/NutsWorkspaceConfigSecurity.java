@@ -1,26 +1,16 @@
 package net.vpc.app.nuts.main.config;
 
+import net.vpc.app.nuts.NutsConfigItem;
 import net.vpc.app.nuts.NutsUserConfig;
 
 import java.io.Serializable;
 
-public class NutsWorkspaceConfigSecurity implements Serializable {
+public class NutsWorkspaceConfigSecurity extends NutsConfigItem {
     private static final long serialVersionUID = 2;
-
-    private String configVersion = null;
 
     private boolean secure = false;
     private String authenticationAgent;
     private NutsUserConfig[] users;
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public NutsWorkspaceConfigSecurity setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
-        return this;
-    }
 
     public boolean isSecure() {
         return secure;

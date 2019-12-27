@@ -39,19 +39,14 @@ import java.util.*;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsWorkspaceConfigBoot506 implements Serializable {
+public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
 
-    private static final long serialVersionUID = 2;
+    private static final long serialVersionUID = 3;
     private String uuid = null;
     private boolean global;
     private String name = null;
     private String workspace = null;
     private String apiVersion = null;
-
-    /**
-     * Api version having created the config
-     */
-    private String configVersion = null;
 
     /**
      * boot component Id in long format (as defined in
@@ -201,15 +196,6 @@ public final class NutsWorkspaceConfigBoot506 implements Serializable {
 
     public NutsWorkspaceConfigBoot506 setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
-        return this;
-    }
-
-    public String getConfigVersion() {
-        return configVersion;
-    }
-
-    public NutsWorkspaceConfigBoot506 setConfigVersion(String configVersion) {
-        this.configVersion = configVersion;
         return this;
     }
 

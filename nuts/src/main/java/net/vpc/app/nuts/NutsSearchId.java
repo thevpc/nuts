@@ -30,15 +30,30 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Search id defines a uniform interface to ids, versions and descriptors
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsSearchId {
 
+    /**
+     * return version
+     * @param session session
+     * @return version
+     */
     NutsVersion getVersion(NutsSession session);
 
+    /**
+     * return id
+     * @param session session
+     * @return id
+     */
     NutsId getId(NutsSession session);
 
+    /**
+     * return descriptor
+     * @param session session
+     * @return descriptor
+     */
     NutsDescriptor getDescriptor(NutsSession session);
 }

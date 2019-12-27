@@ -38,9 +38,9 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-public final class NutsUserConfig implements Serializable {
+public final class NutsUserConfig extends NutsConfigItem {
 
-    private static transient final long serialVersionUID = 1;
+    private static final long serialVersionUID = 2;
     private String user;
     private String credentials;
     private String[] groups;

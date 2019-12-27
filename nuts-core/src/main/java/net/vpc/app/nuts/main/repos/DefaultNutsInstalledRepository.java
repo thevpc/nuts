@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
@@ -51,6 +52,7 @@ import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.io.FolderObjectIterator;
 import net.vpc.app.nuts.runtime.util.io.NutsIdFilterTopInstalled;
 import net.vpc.app.nuts.runtime.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
@@ -62,9 +64,9 @@ import net.vpc.app.nuts.runtime.DefaultNutsInstallInfo;
  * @author vpc
  */
 public class DefaultNutsInstalledRepository extends AbstractNutsRepository implements NutsInstalledRepository, NutsRepositoryExt0 {
-    public static final String INSTALLED_REPO_UUID = "<installed>";
+    public static final String INSTALLED_REPO_UUID = "<main>";
 
-    public static class InstallInfoConfig {
+    public static class InstallInfoConfig extends NutsConfigItem {
 
         private NutsId id;
         private boolean installed;
@@ -143,216 +145,13 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     private final NutsRepositoryFolderHelper deployments;
     private final Map<NutsId, String> cachedDefaultVersions = new LRUMap<>(200);
+    private final NutsLogger LOG;
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.workspace = ws;
         deployments = new NutsRepositoryFolderHelper(this, ws, Paths.get(info.getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID));
-        configManager = new NutsRepositoryConfigManager() {
-            @Override
-            public String getUuid() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public String uuid() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public String getName() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public String name() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public String getGlobalName() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public Map<String, String> getEnv() {
-                return Collections.emptyMap();
-            }
-
-            @Override
-            public String getEnv(String property, String defaultValue) {
-                return null;
-            }
-
-            @Override
-            public String getType() {
-                return INSTALLED_REPO_UUID;
-            }
-
-            @Override
-            public String getGroups() {
-                return null;
-            }
-
-            @Override
-            public int getSpeed() {
-                return 0;
-            }
-
-            @Override
-            public int getSpeed(boolean transitive) {
-                return 0;
-            }
-
-            @Override
-            public void setEnv(String property, String value, NutsUpdateOptions options) {
-                //
-            }
-
-            @Override
-            public boolean isTemporary() {
-                return false;
-            }
-
-            @Override
-            public boolean isIndexSubscribed() {
-                return false;
-            }
-
-            @Override
-            public String getLocation(boolean expand) {
-                return null;
-            }
-
-            @Override
-            public Path getStoreLocation() {
-                return null;
-            }
-
-            @Override
-            public Path getStoreLocation(NutsStoreLocation folderType) {
-                return null;
-            }
-
-            @Override
-            public boolean save(boolean force, NutsSession session) {
-                return false;
-            }
-
-            @Override
-            public void save(NutsSession session) {
-
-            }
-
-            @Override
-            public Map<String, String> getEnv(boolean inherit) {
-                return Collections.emptyMap();
-            }
-
-            @Override
-            public String getEnv(String key, String defaultValue, boolean inherit) {
-                return null;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options) {
-                return this;
-            }
-
-            @Override
-            public boolean isIndexEnabled() {
-                return false;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled, NutsUpdateOptions options) {
-                return this;
-            }
-
-            @Override
-            public int getDeployOrder() {
-                return Integer.MAX_VALUE;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager setEnabled(boolean enabled, NutsUpdateOptions options) {
-                return this;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager setTemporary(boolean enabled, NutsUpdateOptions options) {
-                return this;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return false;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager subscribeIndex() {
-                return this;
-            }
-
-            @Override
-            public NutsRepositoryConfigManager unsubscribeIndex() {
-                return this;
-            }
-
-            @Override
-            public boolean isSupportedMirroring() {
-                return false;
-            }
-
-            @Override
-            public NutsRepository findMirrorById(String repositoryNameOrId, boolean transitive) {
-                return null;
-            }
-
-            @Override
-            public NutsRepository findMirrorByName(String repositoryNameOrId, boolean transitive) {
-                return null;
-            }
-
-            @Override
-            public NutsRepository[] getMirrors() {
-                return new NutsRepository[0];
-            }
-
-            @Override
-            public NutsRepository getMirror(String repositoryIdOrName, boolean transitive) {
-                return null;
-            }
-
-            @Override
-            public NutsRepository findMirror(String repositoryIdOrName, boolean transitive) {
-                return null;
-            }
-
-            @Override
-            public NutsRepository addMirror(NutsRepositoryDefinition definition) {
-                throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
-            }
-
-            @Override
-            public NutsRepository addMirror(NutsCreateRepositoryOptions options) {
-                throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
-            }
-
-            @Override
-            public NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options) {
-                throw new NutsIllegalArgumentException(ws, "Not supported : removeMirror");
-            }
-
-            @Override
-            public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
-                return 0;
-            }
-
-            @Override
-            public NutsStoreLocationStrategy getStoreLocationStrategy() {
-                return ws.config().getRepositoryStoreLocationStrategy();
-            }
-        };
+        configManager = new InstalledRepositoryConfigManager(ws);
+        LOG = workspace.log().of(DefaultNutsInstalledRepository.class);
     }
 
     public Set<NutsId> getChildrenDependencies(NutsId id, NutsSession session) {
@@ -431,36 +230,121 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
     }
 
-    public InstallInfoConfig getInstallInfoConfig(NutsId id, NutsSession session) {
-        Path p = getPath(id, NUTS_INSTALL_FILE);
-        if (Files.isRegularFile(p)) {
-            return workspace.io().lock().source(id).session(session).run(
-                    () -> readJson(id, NUTS_INSTALL_FILE, InstallInfoConfig.class)
+    public NutsId pathToId(Path path) {
+        Path rootFolder = workspace.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        String p = path.toString().substring(rootFolder.toString().length());
+        List<String> split = CoreStringUtils.split(p, "/\\");
+        if (split.size() >= 4) {
+            return workspace.id().builder().artifactId(split.get(split.size() - 3))
+                    .groupId(CoreStringUtils.join(".", split.subList(0, split.size() - 3)))
+                    .version(split.get(split.size() - 2)).build();
+
+        }
+        return null;
+    }
+
+    public InstallInfoConfig getInstallInfoConfig(NutsId id, Path path, NutsSession session) {
+        if (id == null && path == null) {
+            throw new IllegalArgumentException("Missing id or path");
+        }
+        if (path == null) {
+            path = getPath(id, NUTS_INSTALL_FILE);
+        }
+        if (id == null) {
+            path = getPath(id, NUTS_INSTALL_FILE);
+        }
+        Path finalPath = path;
+        if (Files.isRegularFile(path)) {
+            InstallInfoConfig c = workspace.io().lock().source(path).session(session).run(
+                    () -> workspace.json().parse(finalPath, InstallInfoConfig.class)
                     , CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
+            if (c != null) {
+                boolean changeStatus=false;
+                NutsVersion v = workspace.version().parse(c.getConfigVersion());
+                if (v.isBlank()) {
+                    c.setInstalled(true);
+                    c.setDependencyCounter(0);
+                    c.setConfigVersion("0.5.8"); //last version before 0.6
+                    changeStatus = true;
+                }
+                NutsId idOk = c.getId();
+                if (idOk == null) {
+                    if (id != null) {
+                        c.setId(id);
+                        changeStatus = true;
+                    } else {
+                        NutsId idOk2 = pathToId(path);
+                        if (idOk2 != null) {
+                            c.setId(idOk2);
+                            changeStatus = true;
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+                if (changeStatus && !workspace.config().isReadOnly()) {
+                    workspace.io().lock().source(path).session(session).run(
+                            () -> {
+                                LOG.with().level(Level.CONFIG).log("Upgraded %s%n",finalPath.toString());
+                                c.setConfigVersion(workspace.config().getApiVersion());
+                                workspace.json().value(c).print(finalPath);
+                                return null;
+                            }
+                            , CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
+                    );
+                }
+            }
+            return c;
         }
         return null;
     }
 
     @Override
+    public Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
+        Path rootFolder = workspace.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        return new FolderObjectIterator<NutsInstallInformation>(
+                rootFolder,
+                null, -1, session, new FolderObjectIterator.FolderIteratorModel<NutsInstallInformation>() {
+            @Override
+            public boolean isObjectFile(Path pathname) {
+                return pathname.getFileName().toString().equals(NUTS_INSTALL_FILE);
+            }
+
+            @Override
+            public NutsInstallInformation parseObject(Path path, NutsSession session) throws IOException {
+                try {
+                    InstallInfoConfig c = getInstallInfoConfig(null, path, session);
+                    if (c != null) {
+                        return getInstallInformation(c, session);
+                    }
+                } catch (Exception ex) {
+                    LOG.with().error(ex).log("Unable to parse %s", path);
+                }
+                return null;
+            }
+        }
+        );
+    }
+
+    @Override
     public NutsInstallInformation getInstallInformation(NutsId id, NutsSession session) {
-        return getInstallInformation(getInstallInfoConfig(id, session), session);
+        InstallInfoConfig c = getInstallInfoConfig(id, null, session);
+        return c != null ? getInstallInformation(c, session) : DefaultNutsInstallInfo.notInstalled(id);
     }
 
     public NutsInstallInformation getInstallInformation(InstallInfoConfig ii, NutsSession session) {
-        if (ii != null) {
-            boolean defaultVersion = false;
-            if (ii.isInstalled()) {
-                defaultVersion = isDefaultVersion(ii.getId(), session);
-            }
-            return new DefaultNutsInstallInfo(ii.isInstalled() ? NutsInstallStatus.INSTALLED_PRIMARY : NutsInstallStatus.INSTALLED_DEPENDENCY,
-                    defaultVersion,
-                    workspace.config().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
-                    ii.getInstallDate(),
-                    ii.getInstallUser()
-            );
+        boolean defaultVersion = false;
+        if (ii.isInstalled()) {
+            defaultVersion = isDefaultVersion(ii.getId(), session);
         }
-        return DefaultNutsWorkspace.NOT_INSTALLED;
+        return new DefaultNutsInstallInfo(ii.getId(),
+                ii.isInstalled() ? NutsInstallStatus.INSTALLED : NutsInstallStatus.INCLUDED,
+                defaultVersion,
+                workspace.config().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
+                ii.getInstallDate(),
+                ii.getInstallUser()
+        );
     }
 
     @Override
@@ -477,7 +361,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         NutsWorkspaceUtils.of(workspace).checkReadOnly();
         session = NutsWorkspaceUtils.of(workspace).validateSession(session);
         NutsInstallStatus installStatus = getInstallStatus(id, session);
-        if (installStatus != NutsInstallStatus.INSTALLED_PRIMARY) {
+        if (installStatus != NutsInstallStatus.INSTALLED) {
             throw new NutsNotInstalledException(workspace, id);
         }
         try {
@@ -485,7 +369,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             String v = getDefaultVersion(id, session);
             if (v != null && v.equals(id.getVersion().getValue())) {
                 Iterator<NutsId> versions = searchVersions().setId(id)
-                        .setFilter(new NutsIdFilterTopInstalled(NutsInstallStatus.INSTALLED_PRIMARY)) //search only in installed, ignore deployed!
+                        .setFilter(new NutsIdFilterTopInstalled(NutsInstallStatus.INSTALLED)) //search only in installed, ignore deployed!
                         .setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.LOCAL)).getResult();
                 List<NutsId> nutsIds = CoreCommonUtils.toList(versions == null ? Collections.emptyIterator() : versions);
                 nutsIds.sort(null);
@@ -526,7 +410,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public NutsInstallInformation install(NutsDefinition def, NutsId forId, NutsSession session) {
-        InstallInfoConfig ii = getInstallInfoConfig(def.getId(), session);
+        InstallInfoConfig ii = getInstallInfoConfig(def.getId(), null, session);
         if (ii == null) {
 //            for (NutsDependency dependency : def.getDependencies()) {
 //                Iterator<NutsId> it = searchVersions().setId(dependency.getId()).setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.DEPLOYED)).getResult();
@@ -558,12 +442,22 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
             return getInstallInformation(ii, session);
         } else {
-            if (forId != null) {
-                ii.setDependencyCounter(ii.getDependencyCounter() + 1);
+            if (ii.isInstalled()) {
+                //already installed, will deploy only
+                this.deploy()
+                        .setId(def.getId())
+                        .setContent(def.getPath())
+                        .setSession(NutsWorkspaceHelper.createNoRepositorySession(session, NutsFetchMode.LOCAL))
+                        .setDescriptor(def.getDescriptor())
+                        .run();
             } else {
-                ii.setInstalled(true);
+                if (forId != null) {
+                    ii.setDependencyCounter(ii.getDependencyCounter() + 1);
+                } else {
+                    ii.setInstalled(true);
+                }
+                printJson(ii.getId(), NUTS_INSTALL_FILE, ii);
             }
-            printJson(ii.getId(), NUTS_INSTALL_FILE, ii);
             return getInstallInformation(ii, session);
         }
     }
@@ -581,6 +475,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value) {
+        value.setConfigVersion(workspace.config().getApiVersion());
         workspace.json().value(value).print(getPath(id, name));
     }
 
@@ -740,4 +635,216 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
 
+    private static class InstalledRepositoryConfigManager implements NutsRepositoryConfigManager {
+        private final NutsWorkspace ws;
+
+        public InstalledRepositoryConfigManager(NutsWorkspace ws) {
+            this.ws = ws;
+        }
+
+        @Override
+        public String getUuid() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public String uuid() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public String getName() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public String name() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public String getGlobalName() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public Map<String, String> getEnv() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public String getEnv(String property, String defaultValue) {
+            return null;
+        }
+
+        @Override
+        public String getType() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
+        public String getGroups() {
+            return null;
+        }
+
+        @Override
+        public int getSpeed() {
+            return 0;
+        }
+
+        @Override
+        public int getSpeed(boolean transitive) {
+            return 0;
+        }
+
+        @Override
+        public void setEnv(String property, String value, NutsUpdateOptions options) {
+            //
+        }
+
+        @Override
+        public boolean isTemporary() {
+            return false;
+        }
+
+        @Override
+        public boolean isIndexSubscribed() {
+            return false;
+        }
+
+        @Override
+        public String getLocation(boolean expand) {
+            return null;
+        }
+
+        @Override
+        public Path getStoreLocation() {
+            return null;
+        }
+
+        @Override
+        public Path getStoreLocation(NutsStoreLocation folderType) {
+            return null;
+        }
+
+        @Override
+        public boolean save(boolean force, NutsSession session) {
+            return false;
+        }
+
+        @Override
+        public void save(NutsSession session) {
+
+        }
+
+        @Override
+        public Map<String, String> getEnv(boolean inherit) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public String getEnv(String key, String defaultValue, boolean inherit) {
+            return null;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options) {
+            return this;
+        }
+
+        @Override
+        public boolean isIndexEnabled() {
+            return false;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled, NutsUpdateOptions options) {
+            return this;
+        }
+
+        @Override
+        public int getDeployOrder() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager setEnabled(boolean enabled, NutsUpdateOptions options) {
+            return this;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager setTemporary(boolean enabled, NutsUpdateOptions options) {
+            return this;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager subscribeIndex() {
+            return this;
+        }
+
+        @Override
+        public NutsRepositoryConfigManager unsubscribeIndex() {
+            return this;
+        }
+
+        @Override
+        public boolean isSupportedMirroring() {
+            return false;
+        }
+
+        @Override
+        public NutsRepository findMirrorById(String repositoryNameOrId, boolean transitive) {
+            return null;
+        }
+
+        @Override
+        public NutsRepository findMirrorByName(String repositoryNameOrId, boolean transitive) {
+            return null;
+        }
+
+        @Override
+        public NutsRepository[] getMirrors() {
+            return new NutsRepository[0];
+        }
+
+        @Override
+        public NutsRepository getMirror(String repositoryIdOrName, boolean transitive) {
+            return null;
+        }
+
+        @Override
+        public NutsRepository findMirror(String repositoryIdOrName, boolean transitive) {
+            return null;
+        }
+
+        @Override
+        public NutsRepository addMirror(NutsRepositoryDefinition definition) {
+            throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
+        }
+
+        @Override
+        public NutsRepository addMirror(NutsCreateRepositoryOptions options) {
+            throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
+        }
+
+        @Override
+        public NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options) {
+            throw new NutsIllegalArgumentException(ws, "Not supported : removeMirror");
+        }
+
+        @Override
+        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
+            return 0;
+        }
+
+        @Override
+        public NutsStoreLocationStrategy getStoreLocationStrategy() {
+            return ws.config().getRepositoryStoreLocationStrategy();
+        }
+    }
 }

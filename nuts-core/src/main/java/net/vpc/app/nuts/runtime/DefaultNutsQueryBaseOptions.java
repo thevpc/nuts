@@ -439,17 +439,17 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return setFailFast(enable);
     }
 
-    public T repositories(Collection<String> value) {
-        return addRepositories(value);
+    public T repositories(Collection<String> values) {
+        return addRepositories(values);
     }
 
     public T repositories(String... values) {
         return addRepositories(values);
     }
 
-    public T addRepositories(Collection<String> value) {
-        if (value != null) {
-            addRepositories(value.toArray(new String[0]));
+    public T addRepositories(Collection<String> values) {
+        if (values != null) {
+            addRepositories(values.toArray(new String[0]));
         }
         return (T) this;
     }
@@ -459,9 +459,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    public T addRepositories(String... value) {
-        if (value != null) {
-            repos.addAll(Arrays.asList(value));
+    public T addRepositories(String... values) {
+        if (values != null) {
+            repos.addAll(Arrays.asList(values));
         }
         return (T) this;
     }

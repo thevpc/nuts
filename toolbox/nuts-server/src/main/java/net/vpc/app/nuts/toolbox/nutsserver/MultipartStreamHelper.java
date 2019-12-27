@@ -67,41 +67,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
     }
 
     public Iterator<ItemStreamInfo> iterator() {
-        return new Iterator<ItemStreamInfo>() {
-            boolean first = true;
-            boolean nextPart = false;
-
-            @Override
-            public boolean hasNext() {
-                try {
-                    if (first) {
-                        first = false;
-                        nextPart = stream.skipPreamble();
-                    } else {
-                        nextPart = stream.readBoundary();
-                    }
-                    return nextPart;
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new NutsException(null, e);
-                }
-            }
-
-            @Override
-            public ItemStreamInfo next() {
-                try {
-                    return newInputStreamSplitted();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-
-            @Override
-            public void remove() {
-                throw new NutsUnsupportedOperationException(null, "remove not supported");
-            }
-        };
+        return new MultipartStream2Iterator();
     }
 
     private ItemStreamInfo newInputStreamSplitted() throws IOException {
@@ -144,4 +110,39 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
         }
     }
 
+    private class MultipartStream2Iterator implements Iterator<ItemStreamInfo> {
+        boolean first = true;
+        boolean nextPart = false;
+
+        @Override
+        public boolean hasNext() {
+            try {
+                if (first) {
+                    first = false;
+                    nextPart = stream.skipPreamble();
+                } else {
+                    nextPart = stream.readBoundary();
+                }
+                return nextPart;
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new NutsException(null, e);
+            }
+        }
+
+        @Override
+        public ItemStreamInfo next() {
+            try {
+                return newInputStreamSplitted();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new NutsUnsupportedOperationException(null, "remove not supported");
+        }
+    }
 }

@@ -4,6 +4,7 @@ import java.io.UncheckedIOException;
 
 import net.vpc.app.nuts.main.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.runtime.DefaultNutsDefinition;
+import net.vpc.app.nuts.runtime.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDependency;
 import net.vpc.app.nuts.runtime.DefaultNutsDependencyTreeNode;
 import net.vpc.app.nuts.runtime.DefaultNutsQueryBaseOptions;
@@ -384,7 +385,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         if (ii != null) {
                             foundDefinition.setInstallInformation(ii);
                         } else {
-                            foundDefinition.setInstallInformation(DefaultNutsWorkspace.NOT_INSTALLED);
+                            foundDefinition.setInstallInformation(DefaultNutsInstallInfo.notInstalled(id));
                         }
                     }
                 }
@@ -397,13 +398,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             throw ex;
         }
         if (foundDefinition != null) {
-            if (getSession().isTrace()) {
-                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getSession())
-                        .session(getSession());
-                ff.start();
-                ff.next(foundDefinition);
-                ff.complete();
-            }
+//            if (getSession().isTrace()) {
+//                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getSession())
+//                        .session(getSession());
+//                ff.start();
+//                ff.next(foundDefinition);
+//                ff.complete();
+//            }
             return foundDefinition;
         }
         throw new NutsNotFoundException(ws, id);

@@ -42,6 +42,12 @@ public interface NutsInstallInformation {
      * installation date
      * @return installation date
      */
+    NutsId getId();
+
+    /**
+     * installation date
+     * @return installation date
+     */
     Instant getInstallDate();
 
     /**
@@ -78,6 +84,6 @@ public interface NutsInstallInformation {
      * return true if installed primary or dependency
      * @return true if installed primary or dependency
      */
-    boolean isInstalled();
+    boolean isInstalledOrIncluded();
 
 }
