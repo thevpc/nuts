@@ -57,7 +57,9 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
         checkParameters();
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);
-            xrepo.deployImpl(this);
+            NutsDescriptor rep = xrepo.deployImpl(this);
+            this.setDescriptor(rep);
+            this.setId(rep.getId());
             if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());

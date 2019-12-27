@@ -35,6 +35,8 @@ import java.io.PrintWriter;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *
@@ -44,7 +46,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
 
     private NutsWorkspace ws;
     private NutsSession session;
-    private PrintWriter out;
+    private PrintStream out;
     private NutsFetchDisplayOptions displayOptions;
     private long index;
     private NutsIterableFormat format;
@@ -97,12 +99,11 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         }
     }
 
-    public PrintWriter getValidOut() {
+    public PrintStream getValidOut() {
         if (out == null) {
-            PrintStream out = NutsWorkspaceUtils.of(ws).validateSession( getValidSession()).getTerminal().getOut();
-            this.out = ws.io().getTerminalFormat().prepare(new PrintWriter(out));
+            out = NutsWorkspaceUtils.of(ws).validateSession( getValidSession()).getTerminal().getOut();
         }
-        this.out = ws.io().getTerminalFormat().prepare(out);
+//        this.out = ws.io().getTerminalFormat().prepare(out);
         return out;
     }
 
@@ -170,7 +171,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
             }
             this.out = null;
         } else {
-            this.out = new PrintWriter(out);
+            this.out = out;
         }
         return this;
     }
@@ -188,18 +189,20 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
             }
             this.out = null;
         } else {
-            this.out = out;
+            this.out = CoreIOUtils.toPrintStream(out,getWorkspace());
         }
         return this;
     }
 
-    public PrintWriter getValidPrintWriter() {
-        if (out == null) {
-            out = new PrintWriter(getValidSession().getTerminal().getOut());
-        }
-        PrintWriter pout = (out instanceof PrintWriter) ? ((PrintWriter) out) : new PrintWriter(out);
-        return ws.io().getTerminalFormat().prepare(pout);
-    }
+//    public PrintWriter getValidPrintWriter() {
+//        if (out == null) {
+//            out = getValidSession().getTerminal().getOut();
+//        }
+//        return out;
+////        PrintWriter pout = (out instanceof PrintWriter) ? ((PrintWriter) out) : new ExtendedFormatAwarePrintWriter(out);
+////        NutsWorkspaceUtils.of(ws).setWorkspace(pout);
+////        return ws.io().getTerminalFormat().prepare(pout);
+//    }
 
     public PrintStream getValidPrintStream(PrintStream out) {
         if (out == null) {

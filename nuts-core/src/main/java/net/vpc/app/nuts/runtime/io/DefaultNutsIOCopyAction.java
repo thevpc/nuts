@@ -561,7 +561,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                         }
                     }
                 } finally {
-                    if (temp != null) {
+                    if (temp != null && Files.exists(temp)) {
                         Files.delete(temp);
                     }
                 }

@@ -1,9 +1,11 @@
 package net.vpc.app.nuts.runtime.util.fprint.renderer;
 
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.runtime.util.fprint.RenderedRawStream;
+
+import java.io.IOException;
 
 public interface StyleRenderer {
-    void startFormat(FormattedPrintStream out);
+    void startFormat(RenderedRawStream out) throws IOException;
 
-    void endFormat(FormattedPrintStream out);
+    void endFormat(RenderedRawStream out) throws IOException;
 }

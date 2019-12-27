@@ -121,7 +121,7 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         StringBuilder sb = new StringBuilder();
         NutsExecCommand ec = getValue();
         PrintStream _out = ec.out();
@@ -200,11 +200,7 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
                 }
             }
         }
-        try {
-            out.write(sb.toString());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        out.print(sb.toString());
     }
 
     private static class DefaultEnvEntry implements EnvEntry{

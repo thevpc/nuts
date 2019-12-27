@@ -2,6 +2,7 @@ package net.vpc.app.nuts.main.wscommands;
 
 import java.io.UncheckedIOException;
 
+import net.vpc.app.nuts.main.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.runtime.DefaultNutsDefinition;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDependency;
 import net.vpc.app.nuts.runtime.DefaultNutsDependencyTreeNode;
@@ -27,7 +28,6 @@ import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.runtime.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.runtime.util.common.TraceResult;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsFetchCommand;
 
@@ -188,30 +188,30 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
         }
-        if (result == null
-                && nutsFetchModes == NutsFetchStrategy.INSTALLED
-                && NutsWorkspaceExt.of(ws).getInstalledRepository().isInstalled(id, session)
-        ) {
-            //this happens if a component is installed but the
-            // corresponding file was removed for any reason...
-            //that said, will search remote!
-            for (NutsFetchMode mode : NutsFetchStrategy.REMOTE) {
-                NutsSession s2=session.copy().yes();
-                try {
-                    result = fetchDescriptorAsDefinition(id, s2, mode);
-                    if (result != null) {
-                        break;
-                    }
-                } catch (NutsNotFoundException | UncheckedIOException ex) {
-                    //ignore
-                } catch (Exception ex) {
-                    //ignore
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
-                    }
-                }
-            }
-        }
+//        if (result == null
+//                && nutsFetchModes == NutsFetchStrategy.INSTALLED
+//                && NutsWorkspaceExt.of(ws).getInstalledRepository().getInstallStatus(id, session)
+//        ) {
+//            //this happens if a component is installed but the
+//            // corresponding file was removed for any reason...
+//            //that said, will search remote!
+//            for (NutsFetchMode mode : NutsFetchStrategy.REMOTE) {
+//                NutsSession s2=session.copy().yes();
+//                try {
+//                    result = fetchDescriptorAsDefinition(id, s2, mode);
+//                    if (result != null) {
+//                        break;
+//                    }
+//                } catch (NutsNotFoundException | UncheckedIOException ex) {
+//                    //ignore
+//                } catch (Exception ex) {
+//                    //ignore
+//                    if (LOG.isLoggable(Level.FINEST)) {
+//                        NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
+//                    }
+//                }
+//            }
+//        }
         if (result != null) {
             try {
                 ws.json().value(result).print(cachePath);
@@ -352,7 +352,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 if(mode==NutsFetchMode.REMOTE){
                                     includedRemote=true;
                                 }
-                                NutsRepository repo = ws.config().getRepository(foundDefinition.getRepositoryUuid(), true);
+                                String repositoryUuid = foundDefinition.getRepositoryUuid();
+                                NutsRepository repo=null;
+                                if(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryUuid)){
+                                    repo = NutsWorkspaceExt.of(ws).getInstalledRepository();
+                                }else {
+                                    repo = ws.config().getRepository(repositoryUuid, true);
+                                }
                                 NutsContent content = repo.fetchContent()
                                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                                         .setLocalPath(copyTo)
@@ -495,29 +501,29 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         session = NutsWorkspaceUtils.of(ws).validateSession( session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsRepositoryFilter repositoryFilter = new DefaultNutsRepositoryFilter(Arrays.asList(getRepositories())).simplify();
-        if (mode == NutsFetchMode.INSTALLED) {
-            if (id.getVersion().isBlank()) {
-                String v = dws.getInstalledRepository().getDefaultVersion(id, session);
-                if (v != null) {
-                    id = id.builder().setVersion(v).build();
-                } else {
-                    id = id.builder().setVersion("").build();
-                }
-            }
-            NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().filter();
-            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository()
-                    .searchVersions().setId(id).setFilter( CoreFilterUtils.idFilterOf(versionFilter))
-                    .setSession(NutsWorkspaceHelper.createRepositorySession(getSession(),dws.getInstalledRepository(),NutsFetchMode.INSTALLED)).getResult()
-            ).convert(NutsId::getVersion,"version").list();
-            if (all.size() > 0) {
-                all.sort(null);
-                id = id.builder().setVersion(all.get(all.size() - 1)).build();
-                mode = NutsFetchMode.LOCAL;
-            } else {
-                throw new NutsNotFoundException(ws, id);
-            }
-        }
-        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, session)) {
+//        if (mode == NutsFetchMode.INSTALLED) {
+//            if (id.getVersion().isBlank()) {
+//                String v = dws.getInstalledRepository().getDefaultVersion(id, session);
+//                if (v != null) {
+//                    id = id.builder().setVersion(v).build();
+//                } else {
+//                    id = id.builder().setVersion("").build();
+//                }
+//            }
+//            NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().filter();
+//            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository()
+//                    .searchVersions().setId(id).setFilter( CoreFilterUtils.idFilterOf(versionFilter))
+//                    .setSession(NutsWorkspaceHelper.createRepositorySession(getSession(),dws.getInstalledRepository(),NutsFetchMode.INSTALLED)).getResult()
+//            ).convert(NutsId::getVersion,"version").list();
+//            if (all.size() > 0) {
+//                all.sort(null);
+//                id = id.builder().setVersion(all.get(all.size() - 1)).build();
+//                mode = NutsFetchMode.LOCAL;
+//            } else {
+//                throw new NutsNotFoundException(ws, id);
+//            }
+//        }
+        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories( NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, session, installedOrNot==null || installedOrNot, installedOrNot==null || !installedOrNot)) {
             try {
                 NutsDescriptor descriptor = repo.fetchDescriptor().setId(id).setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, mode
                 )).run().getResult();

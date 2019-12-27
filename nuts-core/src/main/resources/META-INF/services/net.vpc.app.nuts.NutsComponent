@@ -4,7 +4,6 @@ net.vpc.app.nuts.main.repos.DefaultNutsRepoFactoryComponent
 
 
 net.vpc.app.nuts.runtime.terminals.DefaultNutsSessionTerminal
-net.vpc.app.nuts.runtime.terminals.NutsPrintStreamFormattedUnixAnsi
 net.vpc.app.nuts.runtime.terminals.DefaultNutsSystemTerminalBase
 
 net.vpc.app.nuts.main.archetypes.ServerNutsWorkspaceArchetypeComponent

@@ -1,0 +1,74 @@
+package net.vpc.app.nuts.runtime.util.fprint;
+
+import net.vpc.app.nuts.runtime.io.NutsTerminalModeOp;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
+
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class FormatOutputStream extends FilterOutputStream implements ExtendedFormatAware {
+    FormatNodeHelper h;
+
+    public FormatOutputStream(OutputStream out) {
+        super(out);
+        NutsTerminalModeOp op = CoreIOUtils.resolveNutsTerminalModeOp(out);
+        if (op != NutsTerminalModeOp.NOP) {
+            throw new IllegalArgumentException("Expected Raw");
+        }
+        h = new FormatNodeHelper(FPrint.RENDERER_ANSI);
+        h.setRawer(new FormatNodeHelper.Rower() {
+            @Override
+            public void writeRaw(byte[] buf, int off, int len) throws IOException {
+                write0(buf, off, len);
+            }
+        });
+    }
+
+    private void write0(byte[] b, int off, int len) throws IOException {
+        out.write(b, off, len);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        h.processBytes(b, off, len);
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        h.processByte(b);
+    }
+
+    @Override
+    public NutsTerminalModeOp getModeOp() {
+        return NutsTerminalModeOp.FORMAT;
+    }
+
+    @Override
+    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+        if (other == null || other == getModeOp()) {
+            return this;
+        }
+        switch (other) {
+            case NOP: {
+                if (out instanceof ExtendedFormatAware) {
+                    return (ExtendedFormatAware) out;
+                }
+                return new RawOutputStream(out);
+            }
+            case FORMAT: {
+                return this;
+            }
+            case FILTER: {
+                return new FilterFormatOutputStream(out);
+            }
+            case ESCAPE: {
+                return new EscapeOutputStream(this);
+            }
+            case UNESCAPE: {
+                return new UnescapeOutputStream(this);
+            }
+        }
+        throw new IllegalArgumentException("Unsupported");
+    }
+}

@@ -137,20 +137,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return new String(out.toByteArray());
     }
 
-    @Override
-    public void print(PrintStream out) {
-        OutputStreamWriter w = new OutputStreamWriter(out);
-        print(w);
-        try {
-            w.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public void print(Writer w) {
-        PrintWriter out = getValidPrintWriter(w);
+     @Override
+    public void print(PrintStream w) {
+        PrintStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild();
         if (rows.size() > 0) {
@@ -171,7 +160,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
-                out.write(line.trim().newLine().toString());
+                out.print(line.trim().newLine().toString());
                 out.flush();
                 line.clear();
             }
@@ -193,7 +182,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
-                        out.write(line.trim().newLine().toString());
+                        out.print(line.trim().newLine().toString());
                         out.flush();
                         line.clear();
                     }
@@ -213,7 +202,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 line.write(getSeparator(Separator.ROW_END));
 
-                out.write(line.trim().newLine().toString());
+                out.print(line.trim().newLine().toString());
                 out.flush();
                 line.clear();
             }
@@ -236,7 +225,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }
         }
-        out.write(line.trim().toString());
+        out.print(line.trim().toString());
         out.flush();
         line.clear();
     }

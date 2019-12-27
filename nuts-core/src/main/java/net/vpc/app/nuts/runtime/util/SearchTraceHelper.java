@@ -42,7 +42,8 @@ public class SearchTraceHelper {
                 return;
             }
             s.out().print(p);
-            s.out().flush();
+            //Do not flush as this will clear line...
+//            s.out().flush();
         }
     }
 

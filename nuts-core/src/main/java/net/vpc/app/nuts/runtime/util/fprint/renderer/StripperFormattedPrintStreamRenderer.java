@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.runtime.util.fprint.renderer;
 
+import net.vpc.app.nuts.runtime.util.fprint.RenderedRawStream;
 import net.vpc.app.nuts.runtime.util.fprint.TextFormat;
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStreamRenderer;
 
 public class StripperFormattedPrintStreamRenderer implements FormattedPrintStreamRenderer {
@@ -10,12 +10,12 @@ public class StripperFormattedPrintStreamRenderer implements FormattedPrintStrea
     public static final MyStyleRenderer EMPTY_STYLE_RENDERER = new MyStyleRenderer();
 
     @Override
-    public void startFormat(FormattedPrintStream out, TextFormat format) {
+    public void startFormat(RenderedRawStream out, TextFormat format) {
         //do nothing
     }
 
     @Override
-    public void endFormat(FormattedPrintStream out, TextFormat color) {
+    public void endFormat(RenderedRawStream out, TextFormat color) {
         //
     }
 
@@ -26,12 +26,12 @@ public class StripperFormattedPrintStreamRenderer implements FormattedPrintStrea
 
     private static class MyStyleRenderer implements StyleRenderer {
         @Override
-        public void startFormat(FormattedPrintStream out) {
+        public void startFormat(RenderedRawStream out) {
 
         }
 
         @Override
-        public void endFormat(FormattedPrintStream out) {
+        public void endFormat(RenderedRawStream out) {
 
         }
     }

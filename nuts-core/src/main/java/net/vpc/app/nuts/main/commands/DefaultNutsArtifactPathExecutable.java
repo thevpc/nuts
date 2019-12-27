@@ -107,7 +107,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     _id,
                     c.descriptor,
                     new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
-                    new DefaultNutsInstallInfo(false, false,
+                    new DefaultNutsInstallInfo(NutsInstallStatus.NOT_INSTALLED, false,
                             tempFolder
                             , null, ws.security().getCurrentUsername()
                     ),
@@ -125,7 +125,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         }
     }
 
-    private static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsSession session, String[] execOptions) {
+    public static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsSession session, String[] execOptions) {
         NutsWorkspace ws = session.getWorkspace();
         String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile();
@@ -223,7 +223,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         return "NUTS " + cmdName + " " + session.getWorkspace().commandLine().create(args).toString();
     }
 
-    private static class CharacterizedExecFile implements AutoCloseable {
+    public static class CharacterizedExecFile implements AutoCloseable {
 
         public InputSource contentFile;
         public InputSource baseFile;

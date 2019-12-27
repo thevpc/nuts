@@ -15,7 +15,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
+//import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.NutsCommandLine;
 
 /**
@@ -80,7 +80,6 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         }
                         if (w != null) {
                             fout.println(arg + " :");
-                            FormattedPrintStream t = (FormattedPrintStream) fout;
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {

@@ -263,7 +263,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     if (installation.getInstallFolder() != null) {
                         x.put("install-folder", installation.getInstallFolder().toString());
                     }
-                    x.put("installed", installation.isInstalled());
+                    x.put("install-status", installation.getInstallStatus().id());
                     x.put("just-installed", installation.isJustInstalled());
                 }
                 if (def.getRepositoryName() != null) {

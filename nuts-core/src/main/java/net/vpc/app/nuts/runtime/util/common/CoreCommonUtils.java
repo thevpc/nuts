@@ -58,7 +58,25 @@ import java.util.stream.Collectors;
 import net.vpc.app.nuts.runtime.app.DefaultNutsArgument;
 
 public class CoreCommonUtils {
-
+    public static String indexToString(int x) {
+        if(x<0){
+            return "-"+indexToString(-x);
+        }
+        StringBuilder sb=new StringBuilder();
+        while(x>0){
+            int y=x%10;
+            if(y==0) {
+                sb.insert(0, '0');
+            }else{
+                sb.insert(0, ((char) ('A' + (y-1))));
+            }
+            x=x/10;
+        }
+        if(sb.length()==0){
+            return "A";
+        }
+        return sb.toString();
+    }
     public static String[] toArraySet(String[] values0, String[]... values) {
         Set<String> set = toSet(values0);
         if (values != null) {

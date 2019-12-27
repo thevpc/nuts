@@ -29,9 +29,10 @@
  */
 package net.vpc.app.nuts.runtime.util.io;
 
-import net.vpc.app.nuts.runtime.io.DefaultNutsInputStreamProgressFactory;
-import net.vpc.app.nuts.runtime.io.DefaultNutsProgressFactory;
-import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
+import net.vpc.app.nuts.core.io.NutsFormattedPrintStream;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.fprint.*;
+import net.vpc.app.nuts.runtime.io.*;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -68,10 +69,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 
-import net.vpc.app.nuts.runtime.io.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.runtime.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.runtime.DefaultNutsSupportLevelContext;
-import net.vpc.app.nuts.runtime.io.DefaultNutsURLHeader;
 
 /**
  * Created by vpc on 5/16/17.
@@ -93,6 +92,83 @@ public class CoreIOUtils {
         }
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
+
+    public static PrintWriter toPrintWriter(Writer writer,NutsWorkspace ws) {
+        if(writer==null){
+            return null;
+        }
+        if(writer instanceof ExtendedFormatAware){
+            if(writer instanceof PrintWriter){
+                return (PrintWriter) writer;
+            }
+        }
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
+        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        return s;
+    }
+
+    public static PrintWriter toPrintWriter(OutputStream writer,NutsWorkspace ws) {
+        if(writer==null){
+            return null;
+        }
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
+        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        return s;
+    }
+
+    public static PrintStream toPrintStream(Writer writer,NutsWorkspace ws) {
+        if(writer==null){
+            return null;
+        }
+        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer);
+        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        return toPrintStream(s,ws);
+    }
+
+    public static PrintStream toPrintStream(OutputStream os,NutsWorkspace ws) {
+        if (os == null) {
+            return null;
+        }
+        if (os instanceof PrintStream) {
+            PrintStream y = (PrintStream) os;
+            NutsWorkspaceUtils.of(ws).setWorkspace(y);
+            return y;
+        }
+        PrintStreamExt s = new PrintStreamExt(os);
+        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        return s;
+    }
+
+    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsWorkspace ws) {
+        ExtendedFormatAware a=convertOutputStreamToExtendedFormatAware(out,expected,ws);
+        return (OutputStream) a;
+    }
+
+    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsWorkspace ws) {
+        if (out == null) {
+            return null;
+        }
+        ExtendedFormatAware aw=null;
+        if (out instanceof ExtendedFormatAware) {
+            aw=(ExtendedFormatAware) out;
+        }else{
+            aw=new RawOutputStream(out);
+        }
+        switch (expected){
+            case INHERITED:{
+                return aw.convert(NutsTerminalModeOp.NOP);
+            }
+            case FORMATTED:{
+                return aw.convert(NutsTerminalModeOp.FORMAT);
+            }
+            case FILTERED:{
+                return aw.convert(NutsTerminalModeOp.FILTER);
+            }
+            default:{
+                throw new IllegalArgumentException("Unsupported "+expected);
+            }
+        }
+    }
 
     public static class ProcessExecHelper implements IProcessExecHelper {
         ProcessBuilder2 pb;
@@ -153,12 +229,12 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            final String f = conn.getHeaderField("Last-Modified");
             final DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
             info.setContentType(conn.getContentType());
             info.setContentEncoding(conn.getContentEncoding());
             info.setContentLength(conn.getContentLengthLong());
-            long m = conn.getLastModified();
+            String hf = conn.getHeaderField("last-modified");
+            long m = (hf==null)?0:conn.getLastModified();
             info.setLastModified(m == 0 ? null : Instant.ofEpochMilli(m));
             return info;
         } finally {
@@ -409,7 +485,7 @@ public class CoreIOUtils {
 
     public static String resolveRepositoryPath(NutsCreateRepositoryOptions options, Path rootFolder, NutsWorkspace ws) {
         String loc = options.getLocation();
-        String goodName=options.getName();
+        String goodName = options.getName();
         if (CoreStringUtils.isBlank(goodName)) {
             goodName = options.getConfig().getName();
         }
@@ -418,26 +494,26 @@ public class CoreIOUtils {
         }
         if (CoreStringUtils.isBlank(goodName)) {
             if (options.isTemporary()) {
-                goodName="temp-"+UUID.randomUUID().toString();
-            }else{
-                goodName="repo-"+UUID.randomUUID().toString();
+                goodName = "temp-" + UUID.randomUUID().toString();
+            } else {
+                goodName = "repo-" + UUID.randomUUID().toString();
             }
         }
         if (CoreStringUtils.isBlank(loc)) {
             if (options.isTemporary()) {
                 if (CoreStringUtils.isBlank(goodName)) {
-                    goodName="temp";
+                    goodName = "temp";
                 }
-                if(goodName.length()<3){
-                    goodName=goodName+"-repo";
+                if (goodName.length() < 3) {
+                    goodName = goodName + "-repo";
                 }
                 loc = ws.io().createTempFolder(goodName + "-").toString();
             } else {
                 if (CoreStringUtils.isBlank(loc)) {
                     if (CoreStringUtils.isBlank(goodName)) {
-                        goodName= CoreNutsUtils.randomColorName()+"-repo";
+                        goodName = CoreNutsUtils.randomColorName() + "-repo";
                     }
-                    loc=goodName;
+                    loc = goodName;
                 }
             }
         }
@@ -2068,4 +2144,205 @@ public class CoreIOUtils {
         }
         return new InputStreamExt(in, null);
     }
+
+//    public static OutputStream resolveBaseOutputStream(OutputStream out) {
+//        if (out == null) {
+//            return null;
+//        }
+//        if (out instanceof NutsOutputStreamExt) {
+//            NutsOutputStreamExt a = (NutsOutputStreamExt) out;
+//            return a.baseOutputStream();
+//        }
+//        if (out instanceof NutsFormattedPrintStream) {
+//            return ((NutsFormattedPrintStream) out).getUnformattedInstance();
+//        }
+//        return out;
+//    }
+
+//    public static NutsTerminalMode resolveTerminalMode(OutputStream out) {
+//        if (out == null) {
+//            return NutsTerminalMode.INHERITED;
+//        }
+//        if (out instanceof NutsOutputStreamExt) {
+//            NutsOutputStreamExt a = (NutsOutputStreamExt) out;
+//            return a.getMode();
+//        }
+//        if (out instanceof NutsFormattedPrintStream) {
+//            return NutsTerminalMode.FORMATTED;
+//        }
+//        return NutsTerminalMode.INHERITED;
+//    }
+
+    public static NutsTerminalModeOp resolveNutsTerminalModeOp(OutputStream out) {
+        if (out == null) {
+            return NutsTerminalModeOp.NOP;
+        }
+        if (out instanceof ExtendedFormatAware) {
+            ExtendedFormatAware a = (ExtendedFormatAware) out;
+            return a.getModeOp();
+        }
+        if (out instanceof NutsFormattedPrintStream) {
+            return NutsTerminalModeOp.FORMAT;
+        }
+        return NutsTerminalModeOp.NOP;
+    }
+
+//    public static PrintStream createFormattedPrintStream(OutputStream out, NutsWorkspace ws) {
+//        PrintStream supported = (PrintStream) ws.extensions().createSupported(
+//                NutsFormattedPrintStream.class,
+//                new DefaultNutsSupportLevelContext<>(ws, out),
+//                new Class[]{OutputStream.class}, new Object[]{out});
+//        if (supported == null) {
+//            throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
+//        }
+//        NutsWorkspaceUtils.of(ws).setWorkspace(supported);
+//        return supported;
+//    }
+//
+//    public static PrintStream createFilteredPrintStream(OutputStream out, NutsWorkspace ws) {
+//        return new NutsPrintStreamFiltered(out);
+//    }
+
+//    public static PrintStream convertPrintStream(OutputStream out, NutsTerminalMode m, NutsWorkspace ws) {
+//        if (out == null) {
+//            return null;
+//        }
+//        if (out instanceof NutsPrintStreamExt) {
+//            NutsPrintStreamExt a = (NutsPrintStreamExt) out;
+//            NutsTerminalMode am = a.getMode();
+//            switch (m) {
+//                case FORMATTED: {
+//                    switch (am) {
+//                        case FORMATTED: {
+//                            return (PrintStream) a;
+//                        }
+//                        case FILTERED: {
+//                            return a.basePrintStream();
+//                        }
+//                        case INHERITED: {
+//                            return new NutsPrintStreamFormattedUnixAnsi(out);
+//                        }
+//                        default: {
+//                            throw new NutsUnsupportedEnumException(ws, am);
+//                        }
+//                    }
+//                }
+//                case FILTERED: {
+//                    switch (am) {
+//                        case FORMATTED: {
+//                            return (PrintStream) a;
+//                        }
+//                        case FILTERED: {
+//                            return a.basePrintStream();
+//                        }
+//                        case INHERITED: {
+//                            return new NutsPrintStreamFormattedUnixAnsi(out);
+//                        }
+//                        default: {
+//                            throw new NutsUnsupportedEnumException(ws, am);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        if (out instanceof PrintStream) {
+//            while (out != null) {
+//                if (out instanceof NutsPrintStreamExt) {
+//                    PrintStream p = ((NutsPrintStreamExt) out).basePrintStream();
+//                    if (p == null || p == out) {
+//                        return (PrintStream) out;
+//                    }
+//                    out = p;
+//                } else {
+//                    return (PrintStream) out;
+//                }
+//            }
+//        } else {
+//            return CoreIOUtils.toPrintStream(out);
+//        }
+//        return CoreIOUtils.toPrintStream(out);
+//    }
+
+    //    public static PrintStream compress(PrintStream out) {
+//        if (out == null) {
+//            return null;
+//        }
+//        if (out instanceof NutsPrintStreamExt) {
+//            NutsPrintStreamExt a = (NutsPrintStreamExt) out;
+//            PrintStream out2 = a.basePrintStream();
+//            if (out2 instanceof NutsPrintStreamExt) {
+//                NutsPrintStreamExt b = (NutsPrintStreamExt) out2;
+//                switch (a.getMode()) {
+//                    case FILTERED: {
+//                        switch (b.getMode()) {
+//                            case FORMATTED: {
+//                                return compress(b.basePrintStream());
+//                            }
+//                            case FILTERED: {
+//                                return compress(out2);
+//                            }
+//                            case INHERITED: {
+//                                return out;
+//                            }
+//                            default: {
+//                                throw new IllegalArgumentException("Unexpected " + b.getMode());
+//                            }
+//                        }
+//                    }
+//                    case FORMATTED: {
+//                        switch (b.getMode()) {
+//                            case FORMATTED: {
+//                                return compress(out2);
+//                            }
+//                            case FILTERED: {
+//                                return compress(b.basePrintStream());
+//                            }
+//                            case INHERITED: {
+//                                return out;
+//                            }
+//                            default: {
+//                                throw new IllegalArgumentException("Unexpected " + b.getMode());
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        if (out instanceof PrintStream) {
+//            while (out != null) {
+//                if (out instanceof NutsPrintStreamExt) {
+//                    PrintStream p = ((NutsPrintStreamExt) out).basePrintStream();
+//                    if (p == null || p == out) {
+//                        return (PrintStream) out;
+//                    }
+//                    out = p;
+//                } else {
+//                    return (PrintStream) out;
+//                }
+//            }
+//        } else {
+//            return CoreIOUtils.toPrintStream(out);
+//        }
+//        return CoreIOUtils.toPrintStream(out);
+//    }
+
+
+    public static PrintStream out(NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        PrintStream out = io.getCurrentStdout();
+        return out == null ? System.out : out;
+    }
+
+    public static PrintStream err(NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        PrintStream err = io.getCurrentStderr();
+        return err == null ? System.err : err;
+    }
+
+    public static InputStream in(NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        InputStream in = io.getCurrentStdin();
+        return in == null ? System.in : in;
+    }
+
 }

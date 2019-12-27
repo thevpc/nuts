@@ -54,8 +54,8 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 public class NutsIdFormatHelper {
     private NutsLogger LOG;
     NutsId id;
-    boolean i;
-    boolean d;
+    NutsInstallStatus installStatus=NutsInstallStatus.NOT_INSTALLED;
+    boolean defaultVersion;
     Boolean executable = null;
     Boolean executableApp = null;
     boolean fetched = false;
@@ -503,8 +503,8 @@ public class NutsIdFormatHelper {
             built = true;
             NutsWorkspace ws = session.getWorkspace();
             NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
-            this.i = rr.isInstalled(id, session);
-            this.d = rr.isDefaultVersion(id, session);
+            NutsInstallStatus installStatus = rr.getInstallStatus(id, session);
+            this.defaultVersion = rr.isDefaultVersion(id, session);
             NutsInstallInformation iif = rr.getInstallInformation(id, session);
             this.dte = iif == null ? null : iif.getInstallDate();
             this.usr = iif == null ? null : iif.getInstallUser();
@@ -517,7 +517,7 @@ public class NutsIdFormatHelper {
             this.defFetched = null;
 
             try {
-                if (!this.i || def == null) {
+                if (this.installStatus==NutsInstallStatus.NOT_INSTALLED || def == null) {
                     this.defFetched = ws.fetch().id(id).session(
                             session.silent()
                     ).offline()
@@ -543,7 +543,7 @@ public class NutsIdFormatHelper {
                 this.executable = desc.isExecutable();
                 this.executableApp = desc.isApplication();
             }
-            this.status_f = this.i && this.d ? 'I' : this.i ? 'i' : this.fetched ? 'f' : 'r';
+            this.status_f = (this.installStatus==NutsInstallStatus.INSTALLED_PRIMARY) && this.defaultVersion ? 'I' : (this.installStatus==NutsInstallStatus.INSTALLED_PRIMARY) ? 'i' : (this.installStatus==NutsInstallStatus.INSTALLED_DEPENDENCY) ? 'd' : this.fetched ? 'f' : 'r';
             if (def != null) {
                 switch (def.getType()){
                     case API:{

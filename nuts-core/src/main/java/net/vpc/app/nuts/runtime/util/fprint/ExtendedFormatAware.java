@@ -5,10 +5,16 @@
  */
 package net.vpc.app.nuts.runtime.util.fprint;
 
+import net.vpc.app.nuts.NutsTerminalMode;
+import net.vpc.app.nuts.runtime.io.NutsTerminalModeOp;
+
+import java.io.OutputStream;
+
 /**
  *
  * @author vpc
  */
 public interface ExtendedFormatAware {
-
+    NutsTerminalModeOp getModeOp();
+    ExtendedFormatAware convert(NutsTerminalModeOp other);
 }

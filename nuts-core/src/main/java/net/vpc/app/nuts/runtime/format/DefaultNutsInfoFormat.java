@@ -3,6 +3,7 @@ package net.vpc.app.nuts.runtime.format;
 import net.vpc.app.nuts.*;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -89,7 +90,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     @Override
-    public void print(Writer w) {
+    public void print(PrintStream w) {
         NutsObjectFormat m = ws.object().session(getValidSession());
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");

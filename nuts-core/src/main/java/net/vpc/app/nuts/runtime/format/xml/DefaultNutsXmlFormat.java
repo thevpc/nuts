@@ -29,15 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.format.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -536,7 +528,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         Document doc = toXmlDocument(value);
         try {
             NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact,true);

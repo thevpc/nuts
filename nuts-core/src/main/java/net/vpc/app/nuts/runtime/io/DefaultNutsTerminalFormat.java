@@ -15,12 +15,10 @@ import net.vpc.app.nuts.NutsTextFormatStyle;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceAware;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.fprint.*;
 import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 import net.vpc.app.nuts.NutsTerminalFormat;
-import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAware;
-import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintStream;
-import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  * @author vpc
@@ -78,31 +76,19 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorksp
 
     @Override
     public PrintStream prepare(PrintStream out) {
-        if (out instanceof ExtendedFormatAware) {
-            return out;
-        }
-        ExtendedFormatAwarePrintStream s = new ExtendedFormatAwarePrintStream(out);
-        NutsWorkspaceUtils.of(ws).setWorkspace(s);
-        return s;
+        return CoreIOUtils.toPrintStream(out,ws);
     }
 
     @Override
     public PrintWriter prepare(PrintWriter out) {
-        if (out instanceof ExtendedFormatAware) {
-            return out;
-        }
-        ExtendedFormatAwarePrintWriter w = new ExtendedFormatAwarePrintWriter(out);
-        NutsWorkspaceUtils.of(ws).setWorkspace(w);
-        return w;
+        return CoreIOUtils.toPrintWriter(out,ws);
     }
 
     @Override
     public boolean isFormatted(OutputStream out) {
         if (out instanceof ExtendedFormatAware) {
-            return true;
-        }
-        if (out instanceof FormattedPrintStream) {
-            return true;
+            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+            return op!=NutsTerminalModeOp.NOP;
         }
         return false;
     }
@@ -110,7 +96,8 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorksp
     @Override
     public boolean isFormatted(Writer out) {
         if (out instanceof ExtendedFormatAware) {
-            return true;
+            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+            return op!=NutsTerminalModeOp.NOP;
         }
         return false;
     }

@@ -37,6 +37,7 @@ import net.vpc.app.nuts.NutsElementBuilder;
 import net.vpc.app.nuts.NutsElementFormat;
 import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -266,8 +267,8 @@ public class Test10_ElementPath {
 "  \"second name\"\n" +
 "]")
         }) {
-            System.out.println("=====================================");
-            System.out.println("CHECKING : '" + tt.path+"'");
+            TestUtils.println("=====================================");
+            TestUtils.println("CHECKING : '" + tt.path+"'");
             List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.value(filtered1).println();
             Assert.assertEquals(tt.expected.get(0), ss.format());

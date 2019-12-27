@@ -23,6 +23,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.repos.NutsRepositoryExt0;
+import net.vpc.app.nuts.main.commands.DefaultNutsArtifactPathExecutable;
 import net.vpc.app.nuts.main.wscommands.DefaultNutsFetchCommand;
 import net.vpc.app.nuts.runtime.CoreNutsConstants;
 import net.vpc.app.nuts.main.repocommands.DefaultNutsFetchContentRepositoryCommand;
@@ -40,6 +42,7 @@ import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
 import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
 import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.io.InputSource;
 
 /**
  * @author vpc
@@ -84,14 +87,14 @@ public class NutsRepositoryFolderHelper {
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id));
         }
-        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id));
+        return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id));
     }
 
     public Path getLongNameIdLocalFile(NutsId id) {
         if (repo == null) {
             return getLongNameIdLocalFolder(id).resolve(getWorkspace().config().getDefaultIdFilename(id));
         }
-        return getLongNameIdLocalFolder(id).resolve(NutsRepositoryExt.of(repo).getIdFilename(id));
+        return getLongNameIdLocalFolder(id).resolve(NutsRepositoryExt0.of(repo).getIdFilename(id));
     }
 
     public Path getShortNameIdLocalFolder(NutsId id) {
@@ -99,7 +102,7 @@ public class NutsRepositoryFolderHelper {
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
-        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id.builder().setVersion("").build()));
+        return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -118,7 +121,7 @@ public class NutsRepositoryFolderHelper {
         if (repo == null) {
             return ws.config().getDefaultIdFilename(id);
         }
-        return NutsRepositoryExt.of(repo).getIdFilename(id);
+        return NutsRepositoryExt0.of(repo).getIdFilename(id);
     }
 
     public Path getGoodPath(NutsId id) {
@@ -131,7 +134,7 @@ public class NutsRepositoryFolderHelper {
         if (!isReadEnabled()) {
             return null;
         }
-        String idFilename = getIdFilename(id);
+        String idFilename = getIdFilename(id.builder().setFaceDescriptor().build());
         Path goodFile = null;
         Path versionFolder = getLongNameIdLocalFolder(id);
         goodFile = versionFolder.resolve(idFilename);
@@ -256,13 +259,8 @@ public class NutsRepositoryFolderHelper {
         }
         if (folder != null) {
             folder = rootPath.resolve(folder);
-        }else{
+        } else {
             folder = rootPath;
-
-        }
-        if (!Files.exists(folder) || !Files.isDirectory(folder)) {
-            //            return IteratorUtils.emptyIterator();
-            return null;
         }
         return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
@@ -316,18 +314,36 @@ public class NutsRepositoryFolderHelper {
         return bestId;
     }
 
-    public boolean deploy(NutsDeployRepositoryCommand deployment) {
+    public NutsDescriptor deploy(NutsDeployRepositoryCommand deployment) {
         if (!isWriteEnabled()) {
-            return false;
+            throw new IllegalArgumentException("Read only Repository");
+        }
+        if (deployment.getContent() == null) {
+            throw new IllegalArgumentException("Invalid deployment. Missing content");
+        }
+        NutsDescriptor descriptor = deployment.getDescriptor();
+        InputSource inputSource = CoreIOUtils.createInputSource(deployment.getContent()).multi();
+        if (descriptor == null) {
+            try (final DefaultNutsArtifactPathExecutable.CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource,
+                    deployment.getSession().getSession(), null)) {
+                if (c.descriptor == null) {
+                    throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + deployment.getContent(), null);
+                }
+                descriptor = c.descriptor;
+            }
         }
         NutsId id = deployment.getId();
+        if (id == null) {
+            id = descriptor.getId();
+        }
+
         NutsWorkspaceUtils.of(getWorkspace()).checkNutsId(id);
-        deployDescriptor(id, deployment.getDescriptor(), deployment.getSession());
-        Path pckFile = deployContent(id, deployment.getContent(), deployment.getDescriptor(), deployment.getSession());
+        deployDescriptor(id, descriptor, deployment.getSession());
+        Path pckFile = deployContent(id, inputSource, descriptor, deployment.getSession());
         if (repo != null) {
             NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, deployment.getSession().getSession(), repo));
         }
-        return true;
+        return descriptor.builder().setId(id.getLongNameId()).build();
     }
 
     public Path deployDescriptor(NutsId id, NutsDescriptor desc, NutsRepositorySession session) {

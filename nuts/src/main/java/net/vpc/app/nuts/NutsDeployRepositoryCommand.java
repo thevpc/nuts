@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -43,7 +46,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
      * content to deploy
      * @return content to deploy
      */
-    Path getContent();
+    Object getContent();
 
     /**
      * descriptor to deploy
@@ -64,6 +67,27 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     NutsDeployRepositoryCommand setContent(Path content);
+
+    /**
+     * set content to deploy
+     * @param content content to deploy
+     * @return {@code this} instance
+     */
+    NutsDeployRepositoryCommand setContent(URL content);
+
+    /**
+     * set content to deploy
+     * @param content content to deploy
+     * @return {@code this} instance
+     */
+    NutsDeployRepositoryCommand setContent(File content);
+
+    /**
+     * set content to deploy
+     * @param content content to deploy
+     * @return {@code this} instance
+     */
+    NutsDeployRepositoryCommand setContent(InputStream content) ;
 
     /**
      * set descriptor to deploy

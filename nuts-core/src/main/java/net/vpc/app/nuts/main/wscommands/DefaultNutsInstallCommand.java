@@ -118,7 +118,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if(isInstalled()){
-            for (NutsId resultId : ws.search().session(searchSession).installed().getResultIds()) {
+            for (NutsId resultId : ws.search().session(searchSession).installStatus(NutsInstallStatus.INSTALLED).getResultIds()) {
                 emptyCommand = false;
                 if(!visited.contains(resultId.getLongName())) {
                     allToInstall.put(resultId.builder().setNamespace(null).build(), true);
@@ -135,7 +135,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         for (Map.Entry<NutsId, Boolean> nutsIdBooleanEntry : allToInstall.entrySet()) {
             emptyCommand = false;
             NutsId nid=nutsIdBooleanEntry.getKey();
-            boolean installed = dws.getInstalledRepository().isInstalled(nid, session);
+            boolean installed = !Boolean.TRUE.equals(dws.getInstalledRepository().getInstallStatus(nid, session));
             boolean defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
 
             boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
@@ -225,20 +225,20 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             defsToDefVersion.put(id,def);
             defsAll.put(id,def);
         }
-
+        NutsId forId=null;//always null? may be should remove this!
         if (!defsToInstall.isEmpty()) {
             if(session.isForce()){
                 session=session.copy().yes();
             }
             for (NutsDefinition def : defsToInstall.values()) {
-                dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session, isDefaultVersion());
+                dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session, isDefaultVersion(), forId);
             }
         }
         if(session.isForce()){
             session=session.copy().yes();
         }
         for (NutsDefinition def : defsToInstallForced.values()) {
-            dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session.copy().yes(), isDefaultVersion());
+            dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session.copy().yes(), isDefaultVersion(), forId);
         }
         for (NutsDefinition def : defsToDefVersion.values()) {
             dws.getInstalledRepository().setDefaultVersion(def.getId(), session);

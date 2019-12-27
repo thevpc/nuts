@@ -9,6 +9,7 @@ import java.util.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.format.DefaultFormatBase;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
 
@@ -125,7 +126,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(b);
+        PrintStream out = CoreIOUtils.toPrintStream(b,getWorkspace());
         print("", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
         return b.toString();
@@ -133,13 +134,6 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 
     @Override
     public void print(PrintStream out) {
-        print("", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
-        out.flush();
-    }
-
-    @Override
-    public void print(Writer w) {
-        PrintWriter out = getValidPrintWriter(w);
         print("", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
         out.flush();
     }

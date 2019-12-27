@@ -107,13 +107,9 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         getGson(compact).toJson(value, out);
-        try {
-            out.flush();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        out.flush();
     }
 
     @Override

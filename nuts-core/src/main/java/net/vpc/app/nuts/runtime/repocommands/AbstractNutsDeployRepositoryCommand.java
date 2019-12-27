@@ -32,6 +32,9 @@ package net.vpc.app.nuts.runtime.repocommands;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -41,7 +44,7 @@ import java.nio.file.Path;
 public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepositoryCommandBase<NutsDeployRepositoryCommand> implements NutsDeployRepositoryCommand {
 
     private NutsId id;
-    private Path content;
+    private Object content;
     private NutsDescriptor descriptor;
 
     public AbstractNutsDeployRepositoryCommand(NutsRepository repo) {
@@ -68,12 +71,30 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     }
 
     @Override
-    public Path getContent() {
+    public Object getContent() {
         return content;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(Path content) {
+        this.content = content;
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(URL content) {
+        this.content = content;
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(File content) {
+        this.content = content;
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(InputStream content) {
         this.content = content;
         return this;
     }

@@ -14,7 +14,7 @@ import net.vpc.app.nuts.runtime.NutsURLClassLoader;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.core.NutsWorkspaceFactory;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.terminals.NutsPrintStreamFormattedNull;
+//import net.vpc.app.nuts.runtime.util.fprint.NutsPrintStreamFormattedNull;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -43,7 +43,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private final NutsLogger LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(//order is important!!because autowiring should follow this very order
-                    NutsPrintStreamFormattedNull.class,
+//                    NutsPrintStreamFormattedNull.class,
                     NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
                     NutsSystemTerminalBase.class,

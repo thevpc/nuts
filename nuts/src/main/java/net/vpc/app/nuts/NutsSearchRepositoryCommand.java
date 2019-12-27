@@ -41,12 +41,23 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
 
     NutsIdFilter getFilter();
 
+    /**
+     * this method should return immediately after initializing a valid iterator to be
+     * retrieved by {@code getResult()}
+     * @return {@code this} instance
+     */
     @Override
     NutsSearchRepositoryCommand run();
 
     @Override
     NutsSearchRepositoryCommand setSession(NutsRepositorySession session);
 
+    /**
+     * this method should return immediately and returns valid iterator.
+     * visiting iterator may be blocking but not this method call.
+     * If {@code run()} method has not been called yet, it will be called.
+     * @return {@code this} instance
+     */
     Iterator<NutsId> getResult();
 
 }

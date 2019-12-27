@@ -95,7 +95,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         NutsId _appId = (NutsId)NutsApplications.getSharedMap().get("nuts.embedded.application.id");
         if(_appId!=null) {
-            //System.out.println("=== Inherited "+_appId);
+            //("=== Inherited "+_appId);
         }else {
             _appId=workspace.id().resolveId(appClass);
         }

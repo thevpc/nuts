@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.io.SimpleClassStream;
@@ -64,7 +65,7 @@ public class Test02_SimpleClassStream {
         if (max < to - from) {
             max = to - from;
         }
-        System.out.println("### TIME [" + file + "] " + CoreCommonUtils.formatPeriodMilli(to - from) + " -- " + max);
+        TestUtils.println("### TIME [" + file + "] " + CoreCommonUtils.formatPeriodMilli(to - from) + " -- " + max);
     }
 
     private static void parseFolder(Path file,NutsWorkspace ws) throws IOException {
@@ -94,33 +95,33 @@ public class Test02_SimpleClassStream {
     }
 
     private static void parseJarFile(Path file,NutsWorkspace ws) throws IOException {
-        System.out.println("parse jar " + file + " ... ");
+        TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
-            System.out.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(in, file.toString())));
+            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(in, file.toString())));
         }
     }
 
     private static void parseClassFile(Path file, NutsWorkspace ws) throws IOException {
-        System.out.println(file);
+        TestUtils.println(file);
 
         SimpleClassStream scs = new SimpleClassStream(Files.newInputStream(file), new SimpleClassStream.Visitor() {
             @Override
             public void visitVersion(int major, int minor) {
-                System.out.println("\t" + major + "." + minor);
+                TestUtils.println("\t" + major + "." + minor);
             }
 
             public void visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
-                System.out.println("\tclass " + accessFlags + " " + thisClass + " extends " + superClass + " implements " + Arrays.asList(interfaces));
+                TestUtils.println("\tclass " + accessFlags + " " + thisClass + " extends " + superClass + " implements " + Arrays.asList(interfaces));
             }
 
             @Override
             public void visitMethod(int accessFlags, String name, String descriptor) {
-                System.out.println("\t\tmethod " + accessFlags + " " + name + " " + descriptor);
+                TestUtils.println("\t\tmethod " + accessFlags + " " + name + " " + descriptor);
             }
 
             @Override
             public void visitField(int accessFlags, String name, String descriptor) {
-                System.out.println("\t\tfield " + accessFlags + " " + name + " " + descriptor);
+                TestUtils.println("\t\tfield " + accessFlags + " " + name + " " + descriptor);
             }
 
         }

@@ -6,6 +6,8 @@
 package net.vpc.app.nuts.runtime.format.xml;
 
 import net.vpc.app.nuts.*;
+
+import java.io.PrintStream;
 import java.io.Writer;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,7 +50,7 @@ public class NutsObjectFormatXml extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(Writer w) {
+    public void print(PrintStream w) {
         try {
             Document document = NutsXmlUtils.createDocument();
             document.appendChild(ws.xml().toXmlElement(getValue(), document));

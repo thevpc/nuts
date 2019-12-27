@@ -279,7 +279,7 @@ public final class NutsConstants {
          * apache maven2 repository. contains mainly standard (community) java
          * artifacts.
          */
-        public static final String REMOTE_MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/";
+        public static final String REMOTE_MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2";
 
         /**
          * vpc-public-maven git repository contains mainly nuts author non java
@@ -460,7 +460,7 @@ public final class NutsConstants {
         /**
          * nuts command alias file extension
          */
-        public static final String NUTS_COMMAND_FILE_EXTENSION = ".cmd-alias.json";
+        public static final String NUTS_COMMAND_FILE_EXTENSION = ".nuts-cmd-alias.json";
 
         /**
          * nuts artifact descriptor file name

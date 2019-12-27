@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime.format.tree;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 
     private Object lastObject;
 
-    public DefaultSearchFormatTree(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatTree(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.TREE,options);
     }
 

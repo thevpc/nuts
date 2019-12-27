@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import net.vpc.app.nuts.runtime.io.DefaultNutsQuestion;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.fprint.FPrint;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
 
@@ -138,7 +139,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (out == null) {
             return true;
         }
-        if (out == System.out || out == FPrint.out()) {
+        if (out == System.out || out == CoreIOUtils.out(ws)) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {
@@ -152,7 +153,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (out == null) {
             return true;
         }
-        if (out == System.err || out == FPrint.err()) {
+        if (out == System.err || out == CoreIOUtils.err(ws)) {
             return true;
         }
         if (out instanceof NutsOutputStreamTransparentAdapter) {
@@ -166,7 +167,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (in == null) {
             return true;
         }
-        if (in == System.in) {
+        if (in == System.in || in==CoreIOUtils.in(ws)) {
             return true;
         }
         if (in instanceof NutsInputStreamTransparentAdapter) {

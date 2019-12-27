@@ -24,8 +24,7 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().search().session(getSession().copy().trace())
-                .configure(false,"--print")//,"--trace-monitor=false"
+        getSession().getWorkspace().search().session(getSession()).printResult()
                 .configure(false, args).run();
     }
 

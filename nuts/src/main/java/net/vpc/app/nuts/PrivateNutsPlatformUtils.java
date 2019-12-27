@@ -60,9 +60,20 @@ final class PrivateNutsPlatformUtils {
     }
 
     public static String getPlatformGlobalHomeFolder(NutsStoreLocation location, String workspaceName) {
+        String s = null;
+        String locationName = location.id();
+        NutsOsFamily platformOsFamily = getPlatformOsFamily();
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
+        if (!s.isEmpty()) {
+            return s + "/" + workspaceName;
+        }
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
+        if (!s.isEmpty()) {
+            return s.trim() + "/" + workspaceName;
+        }
         switch (location) {
             case APPS: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -80,7 +91,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case LIB: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -98,7 +109,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case CONFIG: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -116,7 +127,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case LOG: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -134,7 +145,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case CACHE: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -152,7 +163,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case VAR: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -170,7 +181,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case TEMP: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -188,7 +199,7 @@ final class PrivateNutsPlatformUtils {
                 break;
             }
             case RUN: {
-                switch (getPlatformOsFamily()) {
+                switch (platformOsFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX:
@@ -216,75 +227,75 @@ final class PrivateNutsPlatformUtils {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param folderType folder type to resolve home for
-     * @param storeLocationLayout location layout to resolve home for
+     * @param location folder type to resolve home for
+     * @param platformOsFamily location layout to resolve home for
      * @param homeLocations workspace home locations
      * @param global global workspace
      * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
      */
     public static String getPlatformHomeFolder(
-            NutsOsFamily storeLocationLayout,
-            NutsStoreLocation folderType,
+            NutsOsFamily platformOsFamily,
+            NutsStoreLocation location,
             Map<String, String> homeLocations,
             boolean global,
             String workspaceName) {
-        NutsStoreLocation folderType0 = folderType;
-        if (folderType == null) {
-            folderType = NutsStoreLocation.CONFIG;
+        NutsStoreLocation folderType0 = location;
+        if (location == null) {
+            location = NutsStoreLocation.CONFIG;
         }
         if (workspaceName == null || workspaceName.isEmpty()) {
             workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         boolean wasSystem = false;
-        if (storeLocationLayout == null) {
-            storeLocationLayout = PrivateNutsPlatformUtils.getPlatformOsFamily();
+        if (platformOsFamily == null) {
+            platformOsFamily = PrivateNutsPlatformUtils.getPlatformOsFamily();
         }
         String s = null;
-        String folderTypeName = folderType.id();
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.home." + folderTypeName + "." + storeLocationLayout.id()));
+        String locationName = location.id();
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s + "/" + workspaceName;
         }
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home." + folderTypeName + "." + storeLocationLayout.id()));
+        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        String key = NutsDefaultWorkspaceOptions.createHomeLocationKey(storeLocationLayout, folderType);
+        String key = NutsDefaultWorkspaceOptions.createHomeLocationKey(platformOsFamily, location);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        key = NutsDefaultWorkspaceOptions.createHomeLocationKey(null, folderType);
+        key = NutsDefaultWorkspaceOptions.createHomeLocationKey(null, location);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         } else if (global) {
-            return getPlatformGlobalHomeFolder(folderType, workspaceName);
+            return getPlatformGlobalHomeFolder(location, workspaceName);
         } else {
-            switch (folderType) {
+            switch (location) {
                 case VAR:
                 case APPS:
                 case LIB: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + folderTypeName + "/" + workspaceName);
+                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
                             String val = PrivateNutsUtils.trim(System.getenv("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
-                                return val + "/nuts/" + folderTypeName + "/" + workspaceName;
+                                return val + "/nuts/" + locationName + "/" + workspaceName;
                             }
-                            return System.getProperty("user.home") + "/.local/share/nuts/" + folderTypeName + "/" + workspaceName;
+                            return System.getProperty("user.home") + "/.local/share/nuts/" + locationName + "/" + workspaceName;
                         }
                     }
                     break;
                 }
                 case LOG: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/LocalLow/nuts/" + folderTypeName + "/" + workspaceName);
+                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -298,9 +309,9 @@ final class PrivateNutsPlatformUtils {
                     break;
                 }
                 case RUN: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/" + folderTypeName + "/" + workspaceName);
+                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -314,9 +325,9 @@ final class PrivateNutsPlatformUtils {
                     break;
                 }
                 case CONFIG: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + folderTypeName + "/" + workspaceName
+                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName
                                     + (folderType0 == null ? "" : "/config")
                             );
                         }
@@ -332,7 +343,7 @@ final class PrivateNutsPlatformUtils {
                     break;
                 }
                 case CACHE: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS: {
                             return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/cache/" + workspaceName);
                         }
@@ -348,7 +359,7 @@ final class PrivateNutsPlatformUtils {
                     break;
                 }
                 case TEMP: {
-                    switch (storeLocationLayout) {
+                    switch (platformOsFamily) {
                         case WINDOWS:
                             return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/log/" + workspaceName);
                         case MACOS:
@@ -359,7 +370,7 @@ final class PrivateNutsPlatformUtils {
                 }
             }
         }
-        throw new NutsIllegalArgumentException(null, "Unsupported " + storeLocationLayout + "/" + folderType + " for " + workspaceName);
+        throw new NutsIllegalArgumentException(null, "Unsupported " + platformOsFamily + "/" + location + " for " + workspaceName);
     }
 
 }

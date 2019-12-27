@@ -54,17 +54,19 @@ public class Test06_UpateTest {
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
+                "--progress=newline",
                 "--skip-companions"
         );
         NutsRepository updateRepo1 = uws.config().getRepository("local", false);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
-        System.out.println(updateRepo1.config().getStoreLocationStrategy());
+        TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
         uws.info().println();
-        System.out.println("\n------------------------------------------");
+        TestUtils.println("\n------------------------------------------");
         NutsWorkspace nws = Nuts.openWorkspace(
                 "--workspace", workspacePath,
                 "--standalone",
                 "--standalone-repositories",
+                "--progress=newline",
                 "--yes",
                 "--skip-companions"
         );
@@ -72,7 +74,7 @@ public class Test06_UpateTest {
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
         nws.info().showRepositories().println();
-        System.out.println("\n------------------------------------------");
+        TestUtils.println("\n------------------------------------------");
 
         NutsRepository r = nws.config().getRepository("temp", false);
         NutsDefinition api = nws.fetch().content().nutsApi().getResultDefinition();
@@ -106,35 +108,35 @@ public class Test06_UpateTest {
                 )
                 .run();
 
-        System.out.println("[LOCAL]");
-        System.out.println(uws.config().getRepository("local", false).config().getStoreLocationStrategy());
-        System.out.println(uws.config().getRepository("local", false).config().getStoreLocation());
-        System.out.println(uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB));
+        TestUtils.println("[LOCAL]");
+        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocationStrategy());
+        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocation());
+        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB));
 
-        System.out.println("[TEMP]");
-        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocationStrategy());
-        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocation());
-        System.out.println(nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
+        TestUtils.println("[TEMP]");
+        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocationStrategy());
+        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocation());
+        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
         Assert.assertEquals(
                 uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
 
-        System.out.println(uws.search().id(api.getId().getShortNameId()).getResultIds().list());
-        System.out.println(uws.search().id(rt.getId().getShortNameId()).getResultIds().list());
-        Assert.assertEquals(1, uws.search().id(api.getId().getShortNameId()).getResultIds().list().size());
-        Assert.assertEquals(1, uws.search().id(rt.getId().getShortNameId()).getResultIds().list().size());
-        System.out.println("========================");
-        System.out.println(nws.search().id(api.getId().getShortNameId()).setRepository("temp").getResultIds().list());
-        System.out.println(nws.search().id(rt.getId().getShortNameId()).setRepository("temp").getResultIds().list());
-        System.out.println(nws.search().id(api.getId().getShortNameId()).getResultIds().list());
-        System.out.println(nws.search().id(rt.getId().getShortNameId()).getResultIds().list());
+        TestUtils.println(uws.search().id(api.getId().getShortNameId()).getResultIds().list());
+        TestUtils.println(uws.search().id(rt.getId().getShortNameId()).getResultIds().list());
+        Assert.assertEquals(implOnly?1:2, uws.search().id(api.getId().getShortNameId()).getResultIds().list().size());
+        Assert.assertEquals(2, uws.search().id(rt.getId().getShortNameId()).getResultIds().list().size());
+        TestUtils.println("========================");
+        TestUtils.println(nws.search().id(api.getId().getShortNameId()).setRepository("temp").getResultIds().list());
+        TestUtils.println(nws.search().id(rt.getId().getShortNameId()).setRepository("temp").getResultIds().list());
+        TestUtils.println(nws.search().id(api.getId().getShortNameId()).getResultIds().list());
+        TestUtils.println(nws.search().id(rt.getId().getShortNameId()).getResultIds().list());
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().all().checkUpdates();
         for (NutsUpdateResult u : foundUpdates.getResult().getAllUpdates()) {
-            System.out.println(u.getAvailable());
+            TestUtils.println(u.getAvailable());
         }
-        Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getResultCount());
+        Assert.assertEquals(implOnly?1:2, foundUpdates.getResultCount());
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
@@ -142,8 +144,9 @@ public class Test06_UpateTest {
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
         Path bootCacheFolder=nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
+        Path libFolder=nws.config().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
         Path configFolder=nws.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
-        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertTrue(Files.exists(libFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
         Assert.assertTrue(Files.exists(configFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
@@ -168,11 +171,11 @@ public class Test06_UpateTest {
                 "--version",
                 "--json"
         );
-        System.out.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
+        TestUtils.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
 
         String ss = uws.exec().syscall().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
-        System.out.println("================");
-        System.out.println(ss);
+        TestUtils.println("================");
+        TestUtils.println(ss);
         Map m = uws.json().parse(ss, Map.class);
         Assert.assertEquals(newApiVersion,m.get("nuts-api-version"));
         Assert.assertEquals(newRuntimeVersion,m.get("nuts-runtime-version"));
@@ -282,7 +285,7 @@ public class Test06_UpateTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

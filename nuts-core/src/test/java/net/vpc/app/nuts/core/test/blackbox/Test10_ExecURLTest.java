@@ -31,19 +31,17 @@ public class Test10_ExecURLTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions"
-        });
-        System.out.println(ws.version().format());
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
+        TestUtils.println(ws.version().format());
         String result = ws.exec().command(
                 "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
                 "--version"
         ).redirectErrorStream().grabOutputString().failFast().getOutputString();
-        System.out.println("Result:");
-        System.out.println(result);
+        TestUtils.println("Result:");
+        TestUtils.println(result);
         Assert.assertFalse("Message should not contain terminal format",result.contains("[0m"));
     }
 
@@ -51,7 +49,7 @@ public class Test10_ExecURLTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

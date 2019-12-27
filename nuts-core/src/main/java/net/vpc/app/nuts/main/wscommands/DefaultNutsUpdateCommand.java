@@ -113,7 +113,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getSession())).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getSession())).installStatus(NutsInstallStatus.INSTALLED_PRIMARY).getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
         }
         HashSet<NutsId> regulars = new HashSet<>();
         for (NutsId id : baseRegulars) {
@@ -274,11 +274,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
-        NutsId d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).defaultVersions()
+        NutsId d0Id = ws.search().id(id).session(searchSession).installStatus(NutsInstallStatus.INSTALLED).optional(false).failFast(false).defaultVersions()
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
-            d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).latest()
+            d0Id = ws.search().id(id).session(searchSession).installStatus(NutsInstallStatus.INSTALLED).optional(false).failFast(false).latest()
                     .getResultIds().first();
             if (d0Id != null) {
                 shouldUpdateDefault = true;
@@ -515,7 +515,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "extension": {
                 try {
                     oldId = ws.search().id(id).effective().session(session)
-                            .installed().sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
+                            .installStatus(NutsInstallStatus.INSTALLED).sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
                     if (oldId != null) {
                         oldFile = fetch0().id(oldId).session(session).getResultDefinition();
                     }
@@ -580,9 +580,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
+        NutsId forId=null;//should remove me
         if (d0 == null) {
             ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-            dws.updateImpl(d1, new String[0], null, getSession(), true);
+            dws.updateImpl(d1, new String[0], null, getSession(), true, forId);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -593,7 +594,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 //no update needed!
                 if (getSession().isYes()) {
                     ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                    dws.updateImpl(d1, new String[0], null, getSession(), true);
+                    dws.updateImpl(d1, new String[0], null, getSession(), true, forId);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                 } else {
@@ -601,7 +602,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
             } else {
                 ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                dws.updateImpl(d1, new String[0], null, getSession(), true);
+                dws.updateImpl(d1, new String[0], null, getSession(), true, forId);
                 r.setUpdateApplied(true);
             }
         }

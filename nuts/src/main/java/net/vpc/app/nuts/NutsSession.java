@@ -397,11 +397,11 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession fetchOnline();
 
-    /**
-     * change fetch strategy to INSTALLED
-     * @return {@code this} instance
-     */
-    NutsSession fetchInstalled();
+//    /**
+//     * change fetch strategy to INSTALLED
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchInstalled();
 
     /**
      * change fetch strategy to ANYWHERE

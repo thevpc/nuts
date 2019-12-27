@@ -12,6 +12,9 @@ import java.io.Writer;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *
@@ -33,11 +36,10 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
     }
 
     public PrintWriter getValidPrintWriter(Writer out) {
-        if (out == null) {
-            out = new PrintWriter(getValidSession().getTerminal().getOut());
-        }
-        PrintWriter pout = (out instanceof PrintWriter) ? ((PrintWriter) out) : new PrintWriter(out);
-        return ws.io().getTerminalFormat().prepare(pout);
+        return (out == null) ?
+                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getWorkspace())
+                :
+                CoreIOUtils.toPrintWriter(out, getWorkspace());
     }
 
     public PrintWriter getValidPrintWriter() {

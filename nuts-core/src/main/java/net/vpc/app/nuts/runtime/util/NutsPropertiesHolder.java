@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *
  * @author vpc
  */
 public class NutsPropertiesHolder {
@@ -49,4 +48,12 @@ public class NutsPropertiesHolder {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(properties);
+    }
+
+    public int size() {
+        return properties.size();
+    }
 }

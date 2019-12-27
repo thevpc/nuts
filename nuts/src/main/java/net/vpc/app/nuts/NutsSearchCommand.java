@@ -681,12 +681,12 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand online();
 
-    /**
-     * only installed artifacts
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand installed();
+//    /**
+//     * only installed artifacts
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand installed();
 
     /**
      * all artifacts (local and remote). If local result found will any way
@@ -1194,4 +1194,40 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return result as archs
      */
     NutsSearchResult<String> getResultArchs();
+
+    /**
+     * enable print search result
+     *
+     * @return {@code this} instance
+     */
+    NutsSearchCommand printResult();
+
+    /**
+     * enable print search result
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
+    NutsSearchCommand printResult(boolean enable);
+
+    /**
+     * enable print search result
+     *
+     * @param enable lib filter
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setPrintResult(boolean enable);
+
+    /**
+     * true when print result
+     *
+     * @return lib filter
+     */
+    boolean isPrintResult();
+
+    NutsInstallStatus getInstallStatus();
+
+    NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus);
+
+    NutsSearchCommand installStatus(NutsInstallStatus installStatus);
 }

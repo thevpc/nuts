@@ -38,13 +38,6 @@ import java.time.Instant;
  * @since 0.5.5
  */
 public interface NutsInstallInformation {
-
-    /**
-     * true when the artifact is installed
-     * @return true when the artifact is installed
-     */
-    boolean isInstalled();
-
     /**
      * installation date
      * @return installation date
@@ -64,8 +57,8 @@ public interface NutsInstallInformation {
     Path getInstallFolder();
 
     /**
-     * true if the installation just occured in the very last operation
-     * @return true if the installation just occured in the very last operation
+     * true if the installation just occurred in the very last operation
+     * @return true if the installation just occurred in the very last operation
      */
     boolean isJustInstalled();
 
@@ -74,5 +67,11 @@ public interface NutsInstallInformation {
      * @return the user responsible of the installation
      */
     String getInstallUser();
+
+    /**
+     * return install status
+     * @return install status
+     */
+    NutsInstallStatus getInstallStatus();
 
 }

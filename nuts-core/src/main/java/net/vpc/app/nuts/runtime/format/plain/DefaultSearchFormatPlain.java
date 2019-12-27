@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime.format.plain;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.format.NutsIdFormatHelper;
@@ -19,7 +20,7 @@ import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatPlain(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.PLAIN,options);
     }
 

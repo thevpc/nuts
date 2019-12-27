@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2019 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -34,16 +34,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyFilter;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsExtensionInformation;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsRepositoryFilter;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsVersionFilter;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyFilterAnd;
 import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyFilterOr;
 import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterAnd;
@@ -63,15 +55,15 @@ import net.vpc.app.nuts.runtime.filters.version.NutsVersionFilterOr;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
+import net.vpc.app.nuts.runtime.util.io.NutsIdFilterTopInstalled;
 
 /**
- *
  * @author vpc
  */
 public class CoreFilterUtils {
 
     public static NutsIdFilter idFilterOf(NutsDescriptorFilter other) {
-        if(other==null){
+        if (other == null) {
             return null;
         }
         return new NutsDescriptorIdFilter(other);
@@ -79,6 +71,27 @@ public class CoreFilterUtils {
 
     public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
         return new NutstVersionIdFilter(other);
+    }
+
+    public static NutsInstallStatus getTopLevelFilterInstallStatus(NutsIdFilter idFilter) {
+        NutsIdFilterTopInstalled z = (NutsIdFilterTopInstalled) getTopLevelFilterByType(idFilter, NutsIdFilterTopInstalled.class);
+        return z == null ? null : z.getInstallStatus();
+    }
+
+    public static NutsIdFilter getTopLevelFilterByType(NutsIdFilter idFilter, Class clazz) {
+        if (clazz.isInstance(idFilter)) {
+            return idFilter;
+        }
+        if (idFilter instanceof NutsIdFilterAnd) {
+            for (NutsIdFilter child : ((NutsIdFilterAnd) idFilter).getChildren()) {
+                if (clazz.isInstance(child)) {
+                    return child;
+                } else if (child instanceof NutsIdFilterAnd) {
+                    return getTopLevelFilterByType(child, clazz);
+                }
+            }
+        }
+        return null;
     }
 
     public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter) {
@@ -284,7 +297,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0( v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().accept(_v.getVersion(), session)) {
                         return true;
@@ -309,7 +322,7 @@ public class CoreFilterUtils {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0( v);
+                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.getShortName().equals("java")) {
                     //should accept any platform !!!
                     return true;

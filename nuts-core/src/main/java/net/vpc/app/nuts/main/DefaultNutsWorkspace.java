@@ -50,6 +50,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.*;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -69,7 +70,7 @@ import net.vpc.app.nuts.main.wscommands.*;
 public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsWorkspaceExt {
 
     public NutsLogger LOG;
-    public static final NutsInstallInformation NOT_INSTALLED = new DefaultNutsInstallInfo(false, false, null, null, null);
+    public static final NutsInstallInformation NOT_INSTALLED = NutsNoInstallInfo.NOT_INSTALLED;
     private DefaultNutsInstalledRepository installedRepository;
     private NutsLogManager logCmd;
 
@@ -94,7 +95,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         logCmd = new DefaultNutsLogManager(this, info);
         LOG = logCmd.of(DefaultNutsWorkspace.class);
         ((DefaultNutsLogger) LOG).suspendTerminal();
-        installedRepository = new DefaultNutsInstalledRepository(this,info);
+        installedRepository = new DefaultNutsInstalledRepository(this, info);
         ioManager = new DefaultNutsIOManager(this);
         configManager = new DefaultNutsWorkspaceConfigManager(this, info);
         NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted();
@@ -355,17 +356,59 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public void reconfigurePostInstall(NutsSession session) {
         String nutsVersion = config().getRuntimeId().getVersion().toString();
         session = NutsWorkspaceUtils.of(this).validateSession(session);
+        //should install default
+        if (session.isPlainTrace()) {
+            PrintStream out = session.out();
+
+            StringBuilder version = new StringBuilder(nutsVersion);
+            CoreStringUtils.fillString(' ', 25 - version.length(), version);
+            out.println(io().loadFormattedString("/net/vpc/app/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
+            out.println("{{/------------------------------------------------------------------------------\\\\}}");
+            out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
+            out.println("{{\\\\------------------------------------------------------------------------------/}}");
+            out.println();
+        }
+//        NutsSession finalSession = session;
+//        MavenUtils mvn = MavenUtils.of(DefaultNutsWorkspace.this);
+        for (URL bootClassWorldURL : config().getBootClassWorldURLs()) {
+            NutsDeployRepositoryCommand desc = getInstalledRepository().deploy()
+                    .setContent(bootClassWorldURL).setSession(
+                            NutsWorkspaceHelper.createRepositorySession(session, getInstalledRepository(), NutsFetchMode.LOCAL))
+                    .run();
+            if (
+                    desc.getId().getLongNameId().equals(config().getApiId().getLongNameId())
+                            || desc.getId().getLongNameId().equals(config().getRuntimeId().getLongNameId())
+            ) {
+                getInstalledRepository().install(desc.getId(), session, null);
+            } else {
+                getInstalledRepository().install(desc.getId(), session, config().getRuntimeId());
+            }
+
+//            try (InputStream is=bootClassWorldURL.openStream()){
+//                ZipUtils.visitZipStream(is, new Predicate<String>() {
+//                    @Override
+//                    public boolean test(String path) {
+//                        return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
+//                    }
+//                }, new InputStreamVisitor() {
+//                    @Override
+//                    public boolean visit(String path, InputStream inputStream) throws IOException {
+//                        NutsDescriptor desc = mvn.parsePomXml(inputStream, NutsWorkspaceHelper.createNoRepositorySession(finalSession, NutsFetchMode.REMOTE), path);
+//                        getInstalledRepository().deploy()
+//                                .setDescriptor(desc)
+//                                .setId(desc.getId())
+//                                .setContent().setSession(finalSession)
+//                                .run()
+//                        return false;
+//                    }
+//                });
+//            } catch (IOException ex) {
+//                throw new UncheckedIOException(ex);
+//            }
+        }
         if (!config().options().isSkipCompanions()) {
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
-
-                StringBuilder version = new StringBuilder(nutsVersion);
-                CoreStringUtils.fillString(' ', 25 - version.length(), version);
-                out.println(io().loadFormattedString("/net/vpc/app/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
-                out.println("{{/------------------------------------------------------------------------------\\\\}}");
-                out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
-                out.println("{{\\\\------------------------------------------------------------------------------/}}");
-                out.println();
                 String[] companionIds = getCompanionIds();
                 out.println("looking for recommended companion tools to install... detected : " + Arrays.stream(companionIds)
                         .map(x -> id().set(id().parse(x)).format()).collect(Collectors.toList())
@@ -374,7 +417,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             try {
                 install().companions().session(session).run();
             } catch (Exception ex) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Unable to install companions", ex);
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("Unable to install companions");
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
                     out.printf("@@Unable to install companion tools@@. This happens when none of the following repositories are able to locate them : %s\n",
@@ -459,25 +502,25 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
+    public NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.of(this).validateSilentSession(session);
         NutsDefinition nutToInstall;
         try {
             nutToInstall = search().id(id).session(session).transitive(false)
                     .inlineDependencies(checkDependencies)
-                    .installed()
+                    .installStatus(NutsInstallStatus.INSTALLED)
                     .optional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
-                return false;
+                return NutsInstallStatus.NOT_INSTALLED;
             }
         } catch (NutsNotFoundException e) {
-            return false;
+            return NutsInstallStatus.NOT_INSTALLED;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error", e);
-            return false;
+            return NutsInstallStatus.NOT_INSTALLED;
         }
-        return getInstalledRepository().isInstalled(nutToInstall.getId(), session);
+        return getInstalledRepository().getInstallStatus(nutToInstall.getId(), session);
     }
 
     @Override
@@ -563,7 +606,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         } else {
-            //System.out.println("Why");
+            //
         }
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
         if (eff == null) {
@@ -707,16 +750,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, false);
+    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion, NutsId forId) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, false, forId);
     }
 
     @Override
-    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, true);
+    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion, NutsId forId) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, true, forId);
     }
 
-    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean updateDefaultVersion, boolean isUpdate) {
+    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean updateDefaultVersion, boolean isUpdate, NutsId forId) {
         if (def == null) {
             return;
         }
@@ -752,12 +795,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default: {
-                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
+                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installStatus(NutsInstallStatus.INSTALLED).failFast(false).getResultDefinitions().first();
                     break;
                 }
             }
         }
-        boolean reinstall = def.getInstallInformation().isInstalled();
+        boolean reinstall = def.getInstallInformation().getInstallStatus()==NutsInstallStatus.INSTALLED_PRIMARY;
         PrintStream out = session.out();
         out.flush();
         switch (def.getType()) {
@@ -784,7 +827,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (ndf == null || ndf.accept(def.getId(), dependency, session)) {
                     if (!getInstalledRepository().
                             searchVersions().setId(dependency.getId())
-                            .setSession(NutsWorkspaceHelper.createRepositorySession(session, getInstalledRepository(), NutsFetchMode.INSTALLED)).getResult()
+                            .setSession(NutsWorkspaceHelper.createRepositorySession(session, getInstalledRepository(), NutsFetchMode.LOCAL)).getResult()
                             .hasNext()
                     ) {
                         NutsDefinition dd = search().id(dependency.getId()).content().latest().getResultDefinitions().first();
@@ -796,11 +839,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .setDescriptor(dd.getDescriptor())
                                     .run()
                             ;
+                            getInstalledRepository().install(dd, executionContext.getDefinition().getId(), session);
                         }
                     }
                 }
             }
-            getInstalledRepository().install(executionContext.getDefinition(), session);
+            getInstalledRepository().install(executionContext.getDefinition(), forId, session);
             if (isUpdate) {
                 if (installerComponent != null) {
                     try {
@@ -843,7 +887,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } else {
             NutsWorkspaceUtils.of(this).events().fireOnInstall(new DefaultNutsInstallEvent(def, session, reinstall));
         }
-        ((DefaultNutsInstallInfo) def.getInstallInformation()).setJustInstalled(true);
+        if(def.getInstallInformation() instanceof DefaultNutsInstallInfo) {
+            ((DefaultNutsInstallInfo) def.getInstallInformation()).setJustInstalled(true);
+        }
         if (updateDefaultVersion) {
             getInstalledRepository().setDefaultVersion(def.getId(), session);
         }
@@ -863,7 +909,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (updateDefaultVersion) {
                 setAsDefaultString = " set as ##default##.";
             }
-            if (!def.getInstallInformation().isInstalled()) {
+            if (def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED_PRIMARY) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
                         if (session.isPlainTrace()) {

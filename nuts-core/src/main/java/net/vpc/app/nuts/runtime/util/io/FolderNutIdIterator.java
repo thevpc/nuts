@@ -73,6 +73,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private int maxDepth;
+    private Path rootFolder;
 
     public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model, int maxDepth) {
         this(workspace,repository,folder, filter,NutsWorkspaceHelper.createNoRepositorySession(session),model,maxDepth);
@@ -88,7 +89,10 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         if (folder == null) {
             throw new NullPointerException("Could not iterate over null folder");
         }
-        stack.push(new PathAndDepth(folder, 0));
+        this.rootFolder=folder;
+        if (Files.exists(folder) && Files.isDirectory(folder)) {
+            stack.push(new PathAndDepth(folder, 0));
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.format;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import net.vpc.app.nuts.*;
@@ -42,10 +43,10 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
 
     private final NutsFetchDisplayOptions displayOptions;
     private final NutsSession session;
-    private final PrintWriter writer;
+    private final PrintStream writer;
     private final NutsOutputFormat format;
 
-    public DefaultSearchFormatBase(NutsSession session, PrintWriter writer, NutsOutputFormat format,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatBase(NutsSession session, PrintStream writer, NutsOutputFormat format,NutsFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
         this.session = session;
@@ -98,7 +99,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
         return session;
     }
 
-    public PrintWriter getWriter() {
+    public PrintStream getWriter() {
         return writer;
     }
 

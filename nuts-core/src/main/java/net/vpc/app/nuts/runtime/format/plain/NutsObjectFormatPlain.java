@@ -5,13 +5,11 @@
  */
 package net.vpc.app.nuts.runtime.format.plain;
 
-import java.io.IOException;
+import java.io.*;
+
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -66,7 +64,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(Writer w) {
+    public void print(PrintStream w) {
         Object value = getValue();
         if (value instanceof NutsTableModel) {
             ws.table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
@@ -94,8 +92,8 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         }
     }
 
-    public void printElement(Writer w, NutsElement value) {
-        PrintWriter out = getValidPrintWriter(w);
+    public void printElement(PrintStream w, NutsElement value) {
+        PrintStream out = getValidPrintStream(w);
         switch (value.type()) {
             case STRING: {
                 out.print(value.primitive().getString());

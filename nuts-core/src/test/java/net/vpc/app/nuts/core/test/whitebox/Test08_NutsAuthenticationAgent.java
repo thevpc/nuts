@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.NutsAuthenticationAgent;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import net.vpc.app.nuts.runtime.security.DefaultNutsAuthenticationAgent;
 import net.vpc.app.nuts.runtime.security.PlainNutsAuthenticationAgent;
 import org.junit.Assert;
@@ -48,7 +49,7 @@ public class Test08_NutsAuthenticationAgent {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider));
-        System.out.println(withAllowRetreiveId);
+        TestUtils.println(withAllowRetreiveId);
         Assert.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
         a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider);
         try {
@@ -60,7 +61,7 @@ public class Test08_NutsAuthenticationAgent {
         Assert.assertEquals(mySecret, new String(a.getCredentials(withAllowRetreiveId.toCharArray(), envProvider)));
 
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
-        System.out.println(withoutAllowRetreiveId);
+        TestUtils.println(withoutAllowRetreiveId);
         Assert.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
     }
 
@@ -68,7 +69,7 @@ public class Test08_NutsAuthenticationAgent {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
-        System.out.println(withoutAllowRetreiveId);
+        TestUtils.println(withoutAllowRetreiveId);
         Assert.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
         a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider);
         try {

@@ -46,31 +46,27 @@ public class Test04_CreateLoadLinuxTest {
         clearUpExtraSystemProperties = extraProperties;
 
         CoreIOUtils.delete(base);
-        Nuts.runWorkspace(new String[]{
-            "--reset",
-            "--system-apps-home", new File(base, "system.apps").getPath(),
-            "--system-config-home", new File(base, "system.config").getPath(),
-            "--system-var-home", new File(base, "system.var").getPath(),
-            "--system-log-home", new File(base, "system.log").getPath(),
-            "--system-temp-home", new File(base, "system.temp").getPath(),
-            "--system-cache-home", new File(base, "system.cache").getPath(),
-            "--system-lib-home", new File(base, "system.lib").getPath(),
-            "--system-run-home", new File(base, "system.run").getPath(),
-            //            "--verbose", 
-            "--skip-companions",
-            "--yes",
-            "info"
-        });
+        Nuts.runWorkspace("--reset",
+                "--system-apps-home", new File(base, "system.apps").getPath(),
+                "--system-config-home", new File(base, "system.config").getPath(),
+                "--system-var-home", new File(base, "system.var").getPath(),
+                "--system-log-home", new File(base, "system.log").getPath(),
+                "--system-temp-home", new File(base, "system.temp").getPath(),
+                "--system-cache-home", new File(base, "system.cache").getPath(),
+                "--system-lib-home", new File(base, "system.lib").getPath(),
+                "--system-run-home", new File(base, "system.run").getPath(),
+                //            "--verbose",
+                "--skip-companions",
+                "--yes",
+                "info");
 
-        NutsWorkspace w = Nuts.openWorkspace(new String[]{
-            "--system-config-home", new File(base, "system.config").getPath(),
-            "-y","info"
-        });
-        System.out.println("==========================");
+        NutsWorkspace w = Nuts.openWorkspace("--system-config-home", new File(base, "system.config").getPath(),
+                "-y","info");
+        TestUtils.println("==========================");
         w.info().println();
-        System.out.println("==========================");
-        System.out.println(new File(base, "system.apps").getPath());
-        System.out.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
+        TestUtils.println("==========================");
+        TestUtils.println(new File(base, "system.apps").getPath());
+        TestUtils.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
         Assert.assertEquals(
                 new File(base, "system.apps/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.APPS).toString()
@@ -104,12 +100,10 @@ public class Test04_CreateLoadLinuxTest {
                 w.config().getStoreLocation(NutsStoreLocation.RUN).toString()
         );
 
-        w = Nuts.openWorkspace(new String[]{
-//            "--workspace", "default-workspace",
+        w = Nuts.openWorkspace(//            "--workspace", "default-workspace",
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
-            "info"
-        });
-        System.out.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
+                "info");
+        TestUtils.println(w.config().getStoreLocation(NutsStoreLocation.APPS));
         Assert.assertEquals(
                 new File(base, "system.apps/default-workspace").getPath(),
                 w.config().getStoreLocation(NutsStoreLocation.APPS).toString()
@@ -152,7 +146,7 @@ public class Test04_CreateLoadLinuxTest {
     @AfterClass
     public static void tearUpClass() throws IOException {
         TestUtils.unstashLinuxFolders();
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @Before

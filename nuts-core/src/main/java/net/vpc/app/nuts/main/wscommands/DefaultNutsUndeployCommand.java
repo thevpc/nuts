@@ -2,6 +2,7 @@ package net.vpc.app.nuts.main.wscommands;
 
 import net.vpc.app.nuts.*;
 
+import net.vpc.app.nuts.main.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
@@ -27,6 +28,8 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .repositories(getRepository())
                     .transitive(isTransitive())
                     .fetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
+                    //skip 'installed' repository
+                    .repositoryFilter(repository -> ! DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repository.getUuid()))
                     .distinct()
                     .failFast()
                     .getResultDefinitions().required();

@@ -260,7 +260,7 @@ public class MavenRepositoryFolderHelper {
                             if (m.getLastUpdated() == null) {
                                 m.setLastUpdated(new Date());
                             }
-//                            System.out.println(MavenMetadataParser.toXmlString(m));
+//                            println(MavenMetadataParser.toXmlString(m));
                             MavenMetadataParser.of(ws).writeMavenMetaData(m, metadataxml);
                             String md5 = CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());

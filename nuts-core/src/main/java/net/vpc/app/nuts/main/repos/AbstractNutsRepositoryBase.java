@@ -190,19 +190,6 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return getWorkspace().config().getDefaultIdBasedir(id);
     }
 
-    @Override
-    public String getIdFilename(NutsId id) {
-        //return getWorkspace().config().getDefaultIdFilename(id);
-        String classifier = "";
-        String ext = getIdExtension(id);
-        if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
-            String c = id.getClassifier();
-            if (!CoreStringUtils.isBlank(c)) {
-                classifier = "-" + c;
-            }
-        }
-        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
-    }
 
 
     protected String getIdRemotePath(NutsId id) {

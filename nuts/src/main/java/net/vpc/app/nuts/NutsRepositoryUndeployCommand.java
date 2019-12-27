@@ -39,6 +39,10 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
     @Override
     NutsRepositoryUndeployCommand setSession(NutsRepositorySession session);
 
+    /**
+     * run this command and return {@code this} instance
+     * @return {@code this} instance
+     */
     @Override
     NutsRepositoryUndeployCommand run();
 

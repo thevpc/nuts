@@ -7,6 +7,7 @@ import java.util.*;
 
 public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
     private NutsId id;
+    protected Boolean installedOrNot;
 
     public AbstractNutsFetchCommand(NutsWorkspace ws) {
         super(ws, "fetch");
@@ -64,6 +65,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (other != null) {
             NutsFetchCommand o = other;
             this.id = o.getId();
+            this.installedOrNot = ((AbstractNutsFetchCommand)o).installedOrNot;
         }
         return this;
     }
@@ -83,6 +85,17 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (value != null) {
             addRepositories(value.toArray(new String[0]));
         }
+        return this;
+    }
+
+    @Override
+    public NutsFetchCommand installed() {
+        installedOrNot=true;
+        return this;
+    }
+
+    public NutsFetchCommand installed(Boolean enable) {
+        installedOrNot=enable;
         return this;
     }
 
@@ -119,4 +132,5 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 ", id=" + getId() +
                 ", session=" + getSession() +
                 '}';
-    }}
+    }
+}

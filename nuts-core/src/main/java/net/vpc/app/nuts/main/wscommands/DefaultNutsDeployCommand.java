@@ -154,7 +154,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, getSession())) {
+                        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, getSession(), false, true)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getSession(), repo, NutsFetchMode.LOCAL);
 
                             effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)

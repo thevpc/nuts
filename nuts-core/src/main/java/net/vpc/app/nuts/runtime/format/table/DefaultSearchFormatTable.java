@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime.format.table;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
@@ -24,7 +25,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     private NutsTableFormat table;
     private NutsMutableTableModel model;
 
-    public DefaultSearchFormatTable(NutsSession session, PrintWriter writer, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatTable(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.TABLE, options);
     }
 

@@ -38,6 +38,7 @@ package net.vpc.app.nuts;
 public interface NutsIOProcessAction {
     /**
      * process type to consider. Supported 'java'
+     *
      * @return process type to consider. Supported 'java'
      */
     String getType();
@@ -45,6 +46,7 @@ public interface NutsIOProcessAction {
     /**
      * set process type to consider.
      * Supported 'java' or 'java#version'
+     *
      * @param processType new type
      * @return return {@code this} instance
      */
@@ -53,6 +55,7 @@ public interface NutsIOProcessAction {
     /**
      * set process type to consider.
      * Supported 'java' or 'java#version'
+     *
      * @param processType new type
      * @return return {@code this} instance
      */
@@ -60,6 +63,7 @@ public interface NutsIOProcessAction {
 
     /**
      * list all processes of type {@link #getType()}
+     *
      * @return list all processes of type {@link #getType()}
      */
     NutsSearchResult<NutsProcessInfo> getResultList();

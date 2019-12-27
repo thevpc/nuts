@@ -1,6 +1,8 @@
 package net.vpc.app.nuts.runtime.format.elem;
 
 import net.vpc.app.nuts.NutsElementBuilder;
+
+import java.io.PrintStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +91,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         getWorkspace().json().value(value).print(out);
     }
 

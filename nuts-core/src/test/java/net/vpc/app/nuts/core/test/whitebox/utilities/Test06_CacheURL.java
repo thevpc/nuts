@@ -40,24 +40,22 @@ public class Test06_CacheURL {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", wsPath,
-            "--standalone",
-            "--archetype", "minimal",
-            //            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+                "--standalone",
+                "--archetype", "minimal",
+                //            "--verbose",
+                "--yes",
+                "--skip-companions");
         NutsSession session = ws.createSession();
         final String url = "http://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputSource j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
         ws.io().copy().session(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
-        System.out.println(j1);
+        TestUtils.println(j1);
         InputSource j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
         ws.io().copy().session(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
-        System.out.println(j2);
+        TestUtils.println(j2);
     }
 
     @BeforeClass

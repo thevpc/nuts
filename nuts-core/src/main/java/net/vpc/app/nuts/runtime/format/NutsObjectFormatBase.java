@@ -7,10 +7,12 @@ package net.vpc.app.nuts.runtime.format;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 import net.vpc.app.nuts.NutsObjectFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
 
 /**
  *
@@ -46,9 +48,9 @@ public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectF
         return false;
     }
 
-    @Override
-    public void print(PrintStream w) {
-        PrintWriter pw = new PrintWriter(w);
-        print(pw);
-    }
+//    @Override
+//    public void print(PrintStream w) {
+//        PrintWriter pw = new ExtendedFormatAwarePrintWriter(w);
+//        print(pw);
+//    }
 }

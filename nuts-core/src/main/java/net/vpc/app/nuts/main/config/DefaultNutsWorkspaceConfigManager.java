@@ -55,6 +55,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -851,24 +852,33 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session) {
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(ws, session);
+            try {
+                return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocationsFuture(session).get();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
         return new NutsSdkLocation[0];
     }
 
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, NutsSession session) {
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(ws, path, session);
+            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session);
         }
         return new NutsSdkLocation[0];
     }
 
     @Override
     public NutsSdkLocation resolveSdkLocation(String sdkType, Path path, String preferredName, NutsSession session) {
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         if ("java".equals(sdkType)) {
-            return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(ws, path, null);
+            return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, null, session);
         }
         return null;
     }
@@ -1156,7 +1166,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force,NutsSession session) {
+    public void prepareBootApi(NutsId apiId, NutsId runtimeId, boolean force, NutsSession session) {
         if (apiId == null) {
             throw new NutsNotFoundException(ws, apiId);
         }
@@ -1190,11 +1200,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootRuntime(NutsId id, boolean force,NutsSession session) {
-        prepareBootRuntimeOrExtension(id, force, true,session);
+    public void prepareBootRuntime(NutsId id, boolean force, NutsSession session) {
+        prepareBootRuntimeOrExtension(id, force, true, session);
     }
 
-    public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime,NutsSession session) {
+    public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime, NutsSession session) {
         Path configFile = getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).resolve(runtime ?
                         NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
@@ -1255,9 +1265,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     private void downloadId(NutsId id, boolean force, Path path, boolean fetch) {
+        String idFileName = ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
         Path jarFile = getStoreLocation(NutsStoreLocation.LIB)
                 .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
+                .resolve(idFileName);
         if (force || !Files.isRegularFile(jarFile)) {
             if (path != null) {
                 ws.io().copy().from(path).to(jarFile).run();
@@ -1281,7 +1292,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
                     if (CoreIOUtils.isPathHttp(pp)) {
                         try {
-                            ws.io().copy().from(pp + "/" + ws.config().getDefaultIdBasedir(id) + "/" + ws.config().getDefaultIdFilename(id)).to(jarFile).run();
+                            if(!pp.endsWith("/")){
+                                pp+="/";
+                            }
+                            ws.io().copy().from(pp + ws.config().getDefaultIdBasedir(id) + "/" + idFileName).to(jarFile).run();
                             return;
                         } catch (Exception ex) {
                             //ignore
@@ -1290,7 +1304,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         try {
                             ws.io().copy().from(Paths.get(pp)
                                     .resolve(ws.config().getDefaultIdBasedir(id))
-                                    .resolve(ws.config().getDefaultIdFilename(id))
+                                    .resolve(idFileName)
                             ).to(jarFile).run();
                             return;
                         } catch (Exception ex) {
@@ -1304,19 +1318,19 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void prepareBootExtension(NutsId id, boolean force,NutsSession session) {
-        prepareBootRuntimeOrExtension(id, force, false,session);
+    public void prepareBootExtension(NutsId id, boolean force, NutsSession session) {
+        prepareBootRuntimeOrExtension(id, force, false, session);
     }
 
     @Override
-    public void prepareBoot(boolean force,NutsSession session) {
-        prepareBootApi(getApiId(), current().getRuntimeId(), force,session);
-        prepareBootRuntime(current().getRuntimeId(), force,session);
+    public void prepareBoot(boolean force, NutsSession session) {
+        prepareBootApi(getApiId(), current().getRuntimeId(), force, session);
+        prepareBootRuntime(current().getRuntimeId(), force, session);
         List<NutsWorkspaceConfigBoot.ExtensionConfig> extensions = getStoredConfigBoot().getExtensions();
         if (extensions != null) {
             for (NutsWorkspaceConfigBoot.ExtensionConfig extension : extensions) {
                 if (extension.isEnabled()) {
-                    prepareBootExtension(extension.getId(), force,session);
+                    prepareBootExtension(extension.getId(), force, session);
                 }
             }
         }

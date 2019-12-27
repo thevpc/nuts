@@ -36,8 +36,8 @@ public class Test01_InstallTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
         NutsWorkspace ws = Nuts.openWorkspace("-y","-w="+wsPath,"--standalone","--embedded");
-        System.out.println(ws.config().getWorkspaceLocation());
-        System.out.println(ws.exec().embedded().command("ls").which());
+        TestUtils.println(ws.config().getWorkspaceLocation());
+        TestUtils.println(ws.exec().embedded().command("ls").which());
 
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,
@@ -51,7 +51,7 @@ public class Test01_InstallTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

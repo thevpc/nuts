@@ -5,16 +5,14 @@
  */
 package net.vpc.app.nuts.core.test.blackbox;
 
-import net.vpc.app.nuts.NutsOsFamily;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,28 +36,26 @@ public class Test09_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions"
-        });
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         List<NutsId> def = ws.search().id("nuts").optional(false).latest().failFast(false)
 //                .repository("maven-local")
                 .defaultVersions()
-                .installed()
+                .installStatus(NutsInstallStatus.INSTALLED)
                 .getResultIds().list();
                 
-        System.out.println(def);
+        TestUtils.println(def);
     }
 
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

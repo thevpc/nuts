@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime.format.props;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatProps(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.PROPS,options);
     }
 

@@ -62,7 +62,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         ws.json().compact(isCompact()).value(desc).print(out);
     }
 

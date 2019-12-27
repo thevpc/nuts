@@ -5,20 +5,18 @@
  */
 package net.vpc.app.nuts.runtime.format;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
+import net.vpc.app.nuts.runtime.util.fprint.SimpleWriterOutputStream;
 import net.vpc.app.nuts.runtime.util.io.ByteArrayPrintStream;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
- *
  * @author vpc
  */
 public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFormatBase0<T> implements NutsFormat {
@@ -29,11 +27,10 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public PrintWriter getValidPrintWriter(Writer out) {
-        if (out == null) {
-            out = new PrintWriter(getValidSession().getTerminal().getOut());
-        }
-        PrintWriter pout = (out instanceof PrintWriter) ? ((PrintWriter) out) : new PrintWriter(out);
-        return ws.io().getTerminalFormat().prepare(pout);
+        return (out == null) ?
+                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getWorkspace())
+                :
+                CoreIOUtils.toPrintWriter(out, getWorkspace());
     }
 
     @Override
@@ -73,12 +70,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(NutsTerminal terminal) {
-        print(terminal==null?getValidSession().getTerminal().out():terminal.out());
+        print(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
     }
 
     @Override
     public void println(NutsTerminal terminal) {
-        println(terminal==null?getValidSession().getTerminal().out():terminal.out());
+        println(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
     }
 
     @Override
@@ -117,27 +114,57 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void print(PrintStream out) {
-        PrintWriter p = new PrintWriter(out);
+    public abstract void print(PrintStream out);
+
+    //    @Override
+//    public void print(PrintStream out) {
+//        PrintWriter p = out == null ? null : new ExtendedFormatAwarePrintWriter(out);
+//        print(p);
+//        if (p != null) {
+//            p.flush();
+//        }
+//    }
+    @Override
+    public void print(Writer out) {
+        if (out == null) {
+            PrintStream pout = getValidPrintStream();
+            print(pout);
+            pout.flush();
+        } else {
+            PrintStream pout = CoreIOUtils.toPrintStream(out, ws);
+            print(pout);
+            pout.flush();
+        }
+    }
+
+    @Override
+    public void print(OutputStream out) {
+        PrintStream p = CoreIOUtils.toPrintStream(out, ws);
+        if (p == null) {
+            p = getValidPrintStream();
+        }
         print(p);
         p.flush();
     }
 
     @Override
     public void println(PrintStream out) {
-        PrintWriter p = new PrintWriter(out);
-        println(p);
+        PrintStream p = getValidPrintStream(out);
+        print(out);
+        p.println();
         p.flush();
     }
 
     @Override
     public void println(Writer w) {
-        print(w);
-        try {
-            w.write("\n");
-            w.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+        if (w == null) {
+            PrintStream pout = getValidPrintStream();
+            println(pout);
+            pout.flush();
+        } else {
+            PrintStream pout = CoreIOUtils.toPrintStream(w, ws);
+            println(pout);
+            pout.flush();
         }
     }
 
@@ -146,7 +173,5 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         return format();
     }
 
-    @Override
-    public abstract void print(Writer out);
 
 }

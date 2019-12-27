@@ -45,6 +45,10 @@ public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryComma
 
     NutsId getId();
 
+    /**
+     * run this command and return {@code this} instance
+     * @return {@code this} instance
+     */
     @Override
     NutsSearchVersionsRepositoryCommand run();
 

@@ -147,10 +147,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return setFetchStrategy(NutsFetchStrategy.ONLINE);
     }
 
-    @Override
-    public NutsSession fetchInstalled() {
-        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
-    }
+//    @Override
+//    public NutsSession fetchInstalled() {
+//        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
+//    }
 
     @Override
     public NutsSession fetchAnyWhere() {
@@ -785,7 +785,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public String toString() {
-        return "NutsSession(properties=" + properties + '}';
+        StringBuilder sb=new StringBuilder("NutsSession(");
+        if(properties.size()>0){
+            sb.append("properties=").append(properties);
+        }
+        sb.append(")");
+        return  sb.toString();
     }
 
     @Override

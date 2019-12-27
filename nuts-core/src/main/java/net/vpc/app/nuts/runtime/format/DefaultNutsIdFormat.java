@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.runtime.format;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import net.vpc.app.nuts.*;
@@ -368,12 +369,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public void print(Writer out) {
-        try {
-            out.write(format());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public void print(PrintStream out) {
+            out.print(format());
     }
 
     @Override

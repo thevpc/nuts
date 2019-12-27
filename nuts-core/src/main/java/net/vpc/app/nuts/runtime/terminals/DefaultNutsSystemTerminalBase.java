@@ -5,8 +5,9 @@ import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.NutsWorkspaceAware;
-import net.vpc.app.nuts.runtime.util.fprint.AnsiPrintStreamSupport;
 import net.vpc.app.nuts.runtime.util.fprint.FPrint;
+import net.vpc.app.nuts.runtime.util.fprint.NutsSystemOutputStream;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -23,9 +24,11 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private PrintStream out;
     private PrintStream err;
     private InputStream in;
+    private NutsWorkspace workspace;
 
     @Override
     public void setWorkspace(NutsWorkspace workspace) {
+        this.workspace=workspace;
         if(workspace!=null) {
             LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
@@ -36,28 +39,13 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             setOutMode(terminalMode);
             setErrMode(terminalMode);
             NutsIOManager ioManager = workspace.io();
-            this.out = ioManager.createPrintStream(FPrint.out(), NutsTerminalMode.FORMATTED);
-            this.err = ioManager.createPrintStream(FPrint.err(), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
-            this.in = System.in;
+            this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED);
+            this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+            this.in = CoreIOUtils.in(workspace);
             this.scanner = new Scanner(this.in);
         }else{
             //on uninstall do nothing
         }
-    }
-
-    private AnsiPrintStreamSupport.Type convertMode(NutsTerminalMode outMode) {
-        switch (outMode) {
-            case INHERITED: {
-                return (AnsiPrintStreamSupport.Type.INHERIT);
-            }
-            case FILTERED: {
-                return (AnsiPrintStreamSupport.Type.STRIP);
-            }
-            case FORMATTED: {
-                return (AnsiPrintStreamSupport.Type.ANSI);
-            }
-        }
-        return AnsiPrintStreamSupport.Type.ANSI;
     }
 
     @Override
@@ -73,7 +61,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if(LOG!=null) {
             LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : ##{0}##", mode.id());
         }
-        FPrint.installStdOut(convertMode(this.outMode = mode));
+        FPrint.installStdOut(this.outMode = mode,this.workspace);
         return this;
     }
 
@@ -85,7 +73,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if(LOG!=null) {
             LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : ##{0}##", mode.id());
         }
-        FPrint.installStdErr(convertMode(this.errMode = mode));
+        FPrint.installStdErr(this.errMode = mode,this.workspace);
         return this;
     }
 
@@ -115,7 +103,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             out = getOut();
         }
         if (out == null) {
-            out = FPrint.out();
+            out = CoreIOUtils.out(workspace);
         }
         out.printf(prompt, params);
         out.flush();
@@ -128,7 +116,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             out = getOut();
         }
         if (out == null) {
-            out = FPrint.out();
+            out = CoreIOUtils.out(workspace);
         }
         out.printf(prompt, params);
         return scanner.nextLine().toCharArray();

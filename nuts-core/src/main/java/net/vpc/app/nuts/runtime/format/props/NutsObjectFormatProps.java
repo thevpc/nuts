@@ -8,6 +8,7 @@ package net.vpc.app.nuts.runtime.format.props;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.*;
@@ -62,8 +63,8 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(Writer w) {
-        PrintWriter out = getValidPrintWriter(w);
+    public void print(PrintStream w) {
+        PrintStream out = getValidPrintStream(w);
         NutsPropertiesFormat ff = ws.props().model(toMap());
         ff.configure(true, getExtraConfigArray());
         ff.configure(true, "--escape-text=false");

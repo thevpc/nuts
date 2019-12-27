@@ -8,6 +8,7 @@ package net.vpc.app.nuts.runtime.format.table;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
+import java.io.PrintStream;
 import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
@@ -59,7 +60,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(Writer w) {
+    public void print(PrintStream w) {
         print(w, getValue());
     }
 
@@ -83,7 +84,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
         }
     }
 
-    public void print(Writer w, NutsElement value) {
+    public void print(PrintStream w, NutsElement value) {
         switch (value.type()) {
             case BOOLEAN:
             case DATE:

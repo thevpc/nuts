@@ -4,27 +4,41 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsSearchId;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.core.NutsWorkspaceExt;
+import net.vpc.app.nuts.NutsInstallStatus;
 
 public class NutsIdFilterTopInstalled implements NutsIdFilter {
-    private NutsIdFilter base;
+    private NutsInstallStatus installStatus;
 
-    public NutsIdFilterTopInstalled(NutsIdFilter base) {
-        this.base = base;
+    public NutsIdFilterTopInstalled(NutsInstallStatus installStatus) {
+        this.installStatus = installStatus;
     }
 
     @Override
     public boolean accept(NutsId id, NutsSession session) {
-        if(base==null){
-            return true;
-        }
-        return base.accept(id,session);
+        NutsInstallStatus is = NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().getInstallStatus(id, session);
+        return accept(is);
     }
 
     @Override
     public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
-        if(base==null){
+        NutsInstallStatus is = NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().getInstallStatus(sid.getId(session), session);
+        return accept(is);
+    }
+
+    private boolean accept(NutsInstallStatus status) {
+        if (installStatus == null) {
             return true;
         }
-        return base.acceptSearchId(sid,session);
+        switch (installStatus) {
+            case INSTALLED: {
+                return status == NutsInstallStatus.INSTALLED_PRIMARY || status == NutsInstallStatus.INSTALLED_DEPENDENCY;
+            }
+        }
+        return status==installStatus;
+    }
+
+    public NutsInstallStatus getInstallStatus() {
+        return installStatus;
     }
 }

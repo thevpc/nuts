@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import net.vpc.app.nuts.runtime.DefaultNutsVersion;
 import net.vpc.app.nuts.runtime.filters.version.DefaultNutsVersionFilter;
 import org.junit.Assert;
@@ -57,11 +58,11 @@ public class Test09_VersionIntervals {
         NutsVersionFilter u = DefaultNutsVersionFilter.parse(a);
         String b2 = u.toString();
         Assert.assertEquals(b, b2);
-        System.out.println(a + " ==> " + b);
+        TestUtils.println(a + " ==> " + b);
     }
 
     @Test
     public void test2(){
-        System.out.println(DefaultNutsVersion.valueOf("").inc(-1).getValue());
+        TestUtils.println(DefaultNutsVersion.valueOf("").inc(-1).getValue());
     }
 }

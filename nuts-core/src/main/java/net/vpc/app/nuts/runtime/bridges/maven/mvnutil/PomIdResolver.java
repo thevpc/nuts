@@ -153,7 +153,7 @@ public class PomIdResolver {
         URL url = clazz.getClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
-            System.out.println("== " + url);
+//            System.out.println("== " + url);
             Properties p = new Properties();
             try {
                 p.load(url.openStream());
@@ -162,10 +162,10 @@ public class PomIdResolver {
             }
             String version = p.getProperty("version");
             if (version != null && version.trim().length() != 0) {
-                System.out.println("\t found!!");
+//                System.out.println("\t found!!");
                 return version;
             }
-            System.out.println("\t not found");
+//            System.out.println("\t not found");
         }
         return defaultValue;
     }

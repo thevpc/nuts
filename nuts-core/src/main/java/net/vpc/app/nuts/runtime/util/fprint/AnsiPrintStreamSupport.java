@@ -1,16 +1,13 @@
 package net.vpc.app.nuts.runtime.util.fprint;
 
-import org.fusesource.jansi.AnsiOutputStream;
-import org.fusesource.jansi.WindowsAnsiPrintStream;
-import org.fusesource.jansi.internal.CLibrary;
+import net.vpc.app.nuts.NutsTerminalMode;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.runtime.io.DefaultNutsIOManager;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Locale;
 
-public class AnsiPrintStreamSupport extends PrintStream {
+public final class AnsiPrintStreamSupport {
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
@@ -24,136 +21,46 @@ public class AnsiPrintStreamSupport extends PrintStream {
             && System.getenv("MSYSTEM").startsWith("MINGW")
             && "xterm".equals(System.getenv("TERM"));
 
-    public enum Type {
-        STRIP,
-        INHERIT,
-        ANSI,
+    private AnsiPrintStreamSupport() {
     }
 
-    public static void uninstall() {
-        uninstallStdOut();
-        uninstallStdErr();
+    public static void uninstall(NutsWorkspace ws) {
+        uninstallStdOut(ws);
+        uninstallStdErr(ws);
     }
 
-    public static void install(Type type) {
-        installStdOut(type);
-        installStdErr(type);
+    public static void install(NutsTerminalMode type, NutsWorkspace ws) {
+        installStdOut(type,ws);
+        installStdErr(type,ws);
     }
 
-    public static void installStdOut(Type type) {
-        PrintStream out = FPrint.out;
-        if (out instanceof AnsiPrintStreamSupport) {
-            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-            ((MyOutputStream) pout.out).setType(type);
+    public static void installStdOut(NutsTerminalMode type, NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        PrintStream out = io.getCurrentStdout();
+        if (out instanceof PrintStreamExt && ((PrintStreamExt) out).getOut() instanceof NutsSystemOutputStream) {
+            ((NutsSystemOutputStream) ((PrintStreamExt) out).getOut()).setType(type);
         } else {
-            FPrint.out=(new AnsiPrintStreamSupport(System.out, CLibrary.STDOUT_FILENO, type));
+            io.setCurrentStdout(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStdout(true), type,ws), true));
         }
-//        PrintStream out = System.out;
-//        if (out instanceof AnsiPrintStreamSupport) {
-//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-//            ((MyOutputStream) pout.out).setType(type);
-//        } else {
-//            System.setOut(new AnsiPrintStreamSupport(out, CLibrary.STDOUT_FILENO, type));
-//        }
     }
 
-    public static void uninstallStdOut() {
-        FPrint.out=null;
-//        PrintStream out = System.out;
-//        if (out instanceof AnsiPrintStreamSupport) {
-//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-//            System.setOut((PrintStream) ((MyOutputStream) pout.out).base);
-//        } else {
-//            //
-//        }
+    public static void uninstallStdOut(NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        io.setCurrentStdout(null);
     }
 
-    public static void installStdErr(Type type) {
-        PrintStream err = FPrint.err;
-        if (err instanceof AnsiPrintStreamSupport) {
-            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) err;
-            ((MyOutputStream) pout.out).setType(type);
+    public static void installStdErr(NutsTerminalMode type, NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        PrintStream err = io.getCurrentStderr();
+        if (err instanceof PrintStreamExt && ((PrintStreamExt) err).getOut() instanceof NutsSystemOutputStream) {
+            ((NutsSystemOutputStream) ((PrintStreamExt) err).getOut()).setType(type);
         } else {
-            FPrint.err=(new AnsiPrintStreamSupport(System.err, CLibrary.STDERR_FILENO, type));
+            io.setCurrentStderr(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStderr(true), type,ws), true));
         }
-//        PrintStream err = System.err;
-//        if (err instanceof AnsiPrintStreamSupport) {
-//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) err;
-//            ((MyOutputStream) pout.out).setType(type);
-//        } else {
-//            System.setErr(new AnsiPrintStreamSupport(System.err, CLibrary.STDERR_FILENO, type));
-//        }
     }
 
-    public static void uninstallStdErr() {
-        FPrint.err=null;
-//        PrintStream out = System.err;
-//        if (out instanceof AnsiPrintStreamSupport) {
-//            AnsiPrintStreamSupport pout = (AnsiPrintStreamSupport) out;
-//            System.setErr((PrintStream) ((MyOutputStream) pout.out).base);
-//        } else {
-//            //
-//        }
-    }
-
-    public AnsiPrintStreamSupport(OutputStream out, int fileno, Type type) {
-        super(new MyOutputStream(out, fileno, type), true);
-    }
-
-    private static class MyOutputStream extends FilterOutputStream {
-
-        private int fileno;
-        private Type type;
-        private OutputStream base;
-        private OutputStream baseStripped;
-        private OutputStream ansi;
-
-        public MyOutputStream(OutputStream base, int fileno, Type type) {
-            super(base);
-            this.fileno = fileno;
-            this.type = type;
-            this.base = base;
-            this.baseStripped = new AnsiOutputStream(base);
-            if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
-                // On windows we know the console does not interpret ANSI codes..
-                try {
-                    this.ansi = new WindowsAnsiPrintStream((base instanceof PrintStream) ? (PrintStream) base : (new PrintStream(base)));
-                } catch (Throwable ignore) {
-                    this.ansi = new AnsiOutputStream(base);
-                }
-            } else {
-                ansi = new FilterOutputStream(base) {
-                    @Override
-                    public void close() throws IOException {
-                        write(AnsiOutputStream.RESET_CODE);
-                        flush();
-                        super.close();
-                    }
-                };
-            }
-            setType(type);
-        }
-
-        public void setType(Type type) {
-            if (type == null) {
-                type = Type.ANSI;
-            }
-            this.type = type;
-            switch (type) {
-                case INHERIT: {
-                    super.out = base;
-                    break;
-                }
-                case ANSI: {
-                    super.out = ansi;
-                    break;
-                }
-                case STRIP: {
-                    super.out = baseStripped;
-                    break;
-                }
-            }
-        }
-
+    public static void uninstallStdErr(NutsWorkspace ws) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        io.setCurrentStderr(null);
     }
 }

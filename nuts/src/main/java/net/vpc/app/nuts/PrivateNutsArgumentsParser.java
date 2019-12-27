@@ -716,15 +716,15 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "-i":
-                    case "--installed":
-                    {
-                        a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            options.setFetchStrategy(NutsFetchStrategy.INSTALLED);
-                        }
-                        break;
-                    }
+//                    case "-i":
+//                    case "--installed":
+//                    {
+//                        a = cmdLine.nextBoolean();
+//                        if (enabled && a.getBooleanValue()) {
+//                            options.setFetchStrategy(NutsFetchStrategy.INSTALLED);
+//                        }
+//                        break;
+//                    }
                     case "-F":
                     case "--offline":
                     {

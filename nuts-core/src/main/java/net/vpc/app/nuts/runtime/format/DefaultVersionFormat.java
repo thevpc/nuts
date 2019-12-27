@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.runtime.format;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -96,14 +97,14 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
-    public void print(Writer out) {
+    public void print(PrintStream out) {
         if (getValidSession().isPlainOut() && !all) {
             if (isWorkspaceVersion()) {
-                PrintWriter pout = getValidPrintWriter(out);
+                PrintStream pout = getValidPrintStream(out);
                 NutsWorkspaceConfigManager rtcontext = ws.config();
                 pout.printf("%s/%s", rtcontext.getApiVersion(), rtcontext.getRuntimeId().getVersion());
             } else {
-                PrintWriter pout = getValidPrintWriter(out);
+                PrintStream pout = getValidPrintStream(out);
                 pout.printf("%s", getVersion());
             }
         } else {

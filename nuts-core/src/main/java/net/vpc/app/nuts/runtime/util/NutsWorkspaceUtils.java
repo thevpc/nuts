@@ -87,6 +87,10 @@ public class NutsWorkspaceUtils {
     public NutsSession validateSession(NutsSession session) {
         if (session == null) {
             session = ws.createSession();
+        } else {
+            if (session.getWorkspace() != ws) {
+                throw new IllegalArgumentException("Session was created with a different Workspace");
+            }
         }
         return session;
     }
@@ -95,7 +99,7 @@ public class NutsWorkspaceUtils {
         if (session == null) {
             session = ws.createSession().silent();
             return session;
-        }else{
+        } else {
             return CoreNutsUtils.silent(session);
         }
     }
@@ -134,31 +138,36 @@ public class NutsWorkspaceUtils {
         return repos;
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession options) {
-        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, options);
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession options, boolean includeInstalledRepository, boolean includeOtherRepositories) {
+        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, options,includeInstalledRepository,includeOtherRepositories);
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession options) {
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession options, boolean includeInstalledRepository, boolean includeOtherRepositories) {
 
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
-        for (NutsRepository repository : ws.config().getRepositories()) {
-            if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
-                int t = 0;
-                try {
-                    t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
-                } catch (Exception e) {
-                    LOG.log(Level.FINE, "Unable to resolve support level for : " + repository.config().name(), e);
-                }
-                if (t > 0) {
-                    repos2.add(new RepoAndLevel(repository, t, postComp));
+        if (includeOtherRepositories) {
+            for (NutsRepository repository : ws.config().getRepositories()) {
+                if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
+                    int t = 0;
+                    try {
+                        t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
+                    } catch (Exception e) {
+                        LOG.log(Level.FINE, "Unable to resolve support level for : " + repository.config().name(), e);
+                    }
+                    if (t > 0) {
+                        repos2.add(new RepoAndLevel(repository, t, postComp));
+                    }
                 }
             }
-        }
-        if (sortByLevelDesc || postComp != null) {
-            Collections.sort(repos2);
+            if (sortByLevelDesc || postComp != null) {
+                Collections.sort(repos2);
+            }
         }
         List<NutsRepository> ret = new ArrayList<>();
+        if (fmode == NutsRepositorySupportedAction.SEARCH && includeInstalledRepository) {
+            ret.add(NutsWorkspaceExt.of(ws).getInstalledRepository());
+        }
         for (RepoAndLevel repoAndLevel : repos2) {
             ret.add(repoAndLevel.r);
         }
@@ -194,7 +203,7 @@ public class NutsWorkspaceUtils {
     }
 
     public static Set<String> parseProgressOptions(NutsSession session) {
-        LinkedHashSet<String> set=new LinkedHashSet<>();
+        LinkedHashSet<String> set = new LinkedHashSet<>();
         for (String s : CoreStringUtils.split(session.getProgressOptions(), ",; ")) {
             Boolean n = CoreCommonUtils.parseBoolean(s, null);
             if (n == null) {
@@ -647,15 +656,16 @@ public class NutsWorkspaceUtils {
         return entries.toArray(new NutsExecutionEntry[0]);
     }
 
-    public boolean setWorkspace(Object o){
-        if(o instanceof NutsWorkspaceAware){
+    public boolean setWorkspace(Object o) {
+        if (o instanceof NutsWorkspaceAware) {
             ((NutsWorkspaceAware) o).setWorkspace(ws);
             return true;
         }
         return false;
     }
-    public static boolean unsetWorkspace(Object o){
-        if(o instanceof NutsWorkspaceAware){
+
+    public static boolean unsetWorkspace(Object o) {
+        if (o instanceof NutsWorkspaceAware) {
             ((NutsWorkspaceAware) o).setWorkspace(null);
             return true;
         }

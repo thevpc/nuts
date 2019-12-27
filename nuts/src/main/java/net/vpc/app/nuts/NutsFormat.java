@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -81,6 +82,13 @@ public interface NutsFormat extends NutsConfigurable {
      * @param out recipient writer
      */
     void print(Writer out);
+
+    /**
+     * format current value and write result to {@code out}
+     *
+     * @param out recipient writer
+     */
+    void print(OutputStream out);
 
     /**
      * format current value and write result to {@code out}

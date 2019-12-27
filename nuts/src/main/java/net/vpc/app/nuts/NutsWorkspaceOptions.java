@@ -29,8 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 /**
@@ -450,4 +453,44 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     NutsFetchStrategy getFetchStrategy();
 
+
+    /**
+     * default standard input. when null, use {@code System.in}
+     * this option cannot be defined via arguments.
+     *
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  default standard input or null
+     */
+    InputStream getStdin();
+
+    /**
+     * default standard output. when null, use {@code System.out}
+     * this option cannot be defined via arguments.
+     *
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  default standard output or null
+     */
+    PrintStream getStdout();
+
+    /**
+     * default standard error. when null, use {@code System.err}
+     * this option cannot be defined via arguments.
+     *
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  default standard error or null
+     */
+    PrintStream getStderr();
+
+    /**
+     * executor service used to create worker threads. when null, use default.
+     * this option cannot be defined via arguments.
+     *
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  executor service used to create worker threads. when null, use default.
+     */
+    ExecutorService getExecutorService();
 }

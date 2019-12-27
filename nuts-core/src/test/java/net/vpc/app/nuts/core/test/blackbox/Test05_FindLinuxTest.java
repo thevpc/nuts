@@ -39,13 +39,11 @@ public class Test05_FindLinuxTest {
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         try {
-            NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-                    "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+            NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                     "--archetype", "minimal",
                     "--yes",
                     //            "--skip-companions",
-                    "--verbose"
-            });
+                    "--verbose");
         }catch (NutsInvalidWorkspaceException ex){
             Assert.fail();
         }catch (NutsNotFoundException ex){
@@ -61,16 +59,15 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "minimal",
-            "--yes",
-            "--skip-companions", //            "--verbose"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "minimal",
+                "--yes",
+                "--skip-companions" //            "--verbose"
+        );
 
         NutsSearchResult<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
-        //There is no result because only "local" repository is registered (minimal archetype)
-        Assert.assertEquals(0, result.count());
+        //There is one result because nuts id is always installed
+        Assert.assertEquals(1, result.count());
     }
 
     @Test()
@@ -81,11 +78,10 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions",});
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         int count = 0;
         NutsSearchResult<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
@@ -100,16 +96,15 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions",});
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         List<NutsId> result1 = ws.search().latest().id("nuts-core").getResultIds().list();
         List<NutsId> result2 = ws.search().latest(false).id("nuts-core").getResultIds().list();
-        System.out.println(result1);
-        System.out.println(result2);
+        TestUtils.println(result1);
+        TestUtils.println(result2);
         Assert.assertTrue(result1.size() > 0);
     }
 
@@ -121,19 +116,18 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions",});
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         List<NutsId> result1 = ws.search().configure(false, "nuts-core").getResultIds().list();
         List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-core").getResultIds().list();
-        System.out.println("=====================");
-        System.out.println(result1);
-        System.out.println("=====================");
-        System.out.println(result2);
-        System.out.println("=====================");
+        TestUtils.println("=====================");
+        TestUtils.println(result1);
+        TestUtils.println("=====================");
+        TestUtils.println(result2);
+        TestUtils.println("=====================");
         Assert.assertTrue(result1.size() > 0);
     }
 
@@ -141,7 +135,7 @@ public class Test05_FindLinuxTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

@@ -31,10 +31,12 @@ package net.vpc.app.nuts;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
 
 /**
  * I/O Manager supports a set of operations to manipulate terminals and files in a
  * handy manner that is monitorable and Workspace aware.
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -42,6 +44,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * expand path to Workspace Location
+     *
      * @param path path to expand
      * @return expanded path
      */
@@ -51,7 +54,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      * expand path to {@code baseFolder}.
      * Expansion mechanism supports '~' prefix (linux like) and will expand path to {@code baseFolder}
      * if it was resolved as a relative path.
-     * @param path path to expand
+     *
+     * @param path       path to expand
      * @param baseFolder base folder to expand relative paths to
      * @return expanded path
      */
@@ -59,7 +63,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * load resource as a formatted string to be used mostly as a help string.
-     * @param reader resource reader
+     *
+     * @param reader      resource reader
      * @param classLoader class loader
      * @return formatted string (in Nuts Stream Format)
      */
@@ -67,8 +72,9 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * load resource as a formatted string to be used mostly as a help string.
+     *
      * @param resourcePath resource path
-     * @param classLoader class loader
+     * @param classLoader  class loader
      * @param defaultValue default value if the loading fails
      * @return formatted string (in Nuts Stream Format)
      */
@@ -76,12 +82,14 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create a null input stream instance
+     *
      * @return null input stream instance
      */
     InputStream nullInputStream();
 
     /**
      * create a null print stream instance
+     *
      * @return null print stream instance
      */
     PrintStream nullPrintStream();
@@ -90,7 +98,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      * create print stream that supports the given {@code mode}.
      * If the given {@code out} is a PrintStream that supports {@code mode}, it should be
      * returned without modification.
-     * @param out stream to wrap
+     *
+     * @param out  stream to wrap
      * @param mode mode to support
      * @return {@code mode} supporting PrintStream
      */
@@ -98,12 +107,14 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * return new terminal bound to system terminal
+     *
      * @return new terminal
      */
     NutsSessionTerminal createTerminal();
 
     /**
      * return new terminal bound to the given {@code parent}
+     *
      * @param parent parent terminal or null
      * @return new terminal
      */
@@ -111,6 +122,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create temp file in the workspace's temp folder
+     *
      * @param name file name
      * @return new file path
      */
@@ -118,7 +130,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create temp file in the repository's temp folder
-     * @param name file name
+     *
+     * @param name       file name
      * @param repository repository
      * @return new file path
      */
@@ -126,6 +139,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create temp folder in the workspace's temp folder
+     *
      * @param name folder name
      * @return new folder path
      */
@@ -133,7 +147,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create temp folder in the repository's temp folder
-     * @param name folder name
+     *
+     * @param name       folder name
      * @param repository repository
      * @return new folder path
      */
@@ -142,9 +157,10 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * create a new instance of {@link NutsApplicationContext}
-     * @param args application arguments
-     * @param appClass application class
-     * @param storeId application store id or null
+     *
+     * @param args            application arguments
+     * @param appClass        application class
+     * @param storeId         application store id or null
      * @param startTimeMillis application start time
      * @return new instance of {@link NutsApplicationContext}
      */
@@ -152,42 +168,49 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * return terminal format that handles metrics and format/escape methods
+     *
      * @return terminal format that handles metrics and format/escape methods
      */
     NutsTerminalFormat terminalFormat();
 
     /**
      * return terminal format that handles metrics and format/escape methods.
+     *
      * @return terminal format that handles metrics and format/escape methods
      */
     NutsTerminalFormat getTerminalFormat();
 
     /**
      * return terminal format that handles metrics and format/escape methods.
+     *
      * @return terminal format that handles metrics and format/escape methods
      */
     NutsSystemTerminal systemTerminal();
 
     /**
      * return workspace system terminal.
+     *
      * @return workspace system terminal
      */
     NutsSystemTerminal getSystemTerminal();
 
     /**
      * return workspace default terminal
+     *
      * @return workspace default terminal
      */
     NutsSessionTerminal terminal();
 
     /**
      * return workspace default terminal
+     *
      * @return workspace default terminal
      */
     NutsSessionTerminal getTerminal();
 
     /**
      * update workspace wide system terminal
+     *
      * @param terminal system terminal
      * @return {@code this} instance
      */
@@ -195,6 +218,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     /**
      * update workspace wide terminal
+     *
      * @param terminal terminal
      * @return {@code this} instance
      */
@@ -220,44 +244,50 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      * parse Execution Entries
      *
      * @param inputStream stream
-     * @param type stream type
-     * @param sourceName stream source name (optional)
+     * @param type        stream type
+     * @param sourceName  stream source name (optional)
      * @return execution entries (class names with main method)
      */
     NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
 
     /**
      * create new {@link NutsIOCopyAction} instance
+     *
      * @return create new {@link NutsIOCopyAction} instance
      */
     NutsIOCopyAction copy();
 
     /**
      * create new {@link NutsIOProcessAction} instance
+     *
      * @return create new {@link NutsIOProcessAction} instance
      */
     NutsIOProcessAction ps();
 
     /**
      * create new {@link NutsIOCompressAction} instance
+     *
      * @return create new {@link NutsIOCompressAction} instance
      */
     NutsIOCompressAction compress();
 
     /**
      * create new {@link NutsIOUncompressAction} instance
+     *
      * @return create new {@link NutsIOUncompressAction} instance
      */
     NutsIOUncompressAction uncompress();
 
     /**
      * create new {@link NutsIODeleteAction} instance
+     *
      * @return create new {@link NutsIODeleteAction} instance
      */
     NutsIODeleteAction delete();
 
     /**
      * create new {@link NutsIOLockAction} instance
+     *
      * @return create new {@link NutsIOLockAction} instance
      */
     NutsIOLockAction lock();
@@ -265,6 +295,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     /**
      * create new {@link NutsMonitorAction} instance that helps
      * monitoring streams.
+     *
      * @return create new {@link NutsIOLockAction} instance
      */
     NutsMonitorAction monitor();
@@ -272,8 +303,15 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     /**
      * create new {@link NutsIOHashAction} instance that helps
      * hashing streams and files.
+     *
      * @return create new {@link NutsIOHashAction} instance
      */
     NutsIOHashAction hash();
 
+    /**
+     * return non null executor service
+     *
+     * @return non null executor service
+     */
+    ExecutorService executorService();
 }

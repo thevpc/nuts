@@ -35,14 +35,12 @@ public class Test01_CreateTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", wsPath,
-            "--standalone",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+                "--standalone",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/local/"+ws.config().getRepositories()[0].uuid(), 
                 ws.config().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
@@ -54,14 +52,12 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--standalone",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--standalone",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
     }
 
     @Test
@@ -70,14 +66,12 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--exploded",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--exploded",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
     }
 
     @Test
@@ -87,14 +81,12 @@ public class Test01_CreateTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", wsPath,
-            "--exploded",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+                "--exploded",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
         org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
                 ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(
@@ -111,14 +103,12 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--exploded",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--exploded",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
     }
 
     @Test
@@ -127,21 +117,19 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--exploded",
-            "--archetype", "minimal",
-            "--verbose",
-            "--yes",
-            "--skip-companions"
-        });
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--exploded",
+                "--archetype", "minimal",
+                "--verbose",
+                "--yes",
+                "--skip-companions");
     }
 
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

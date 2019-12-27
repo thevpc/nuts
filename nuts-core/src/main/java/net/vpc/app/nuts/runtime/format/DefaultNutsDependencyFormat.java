@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.runtime.format;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.HashSet;
@@ -18,12 +19,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     private boolean omitGroup;
     private boolean omitImportedGroup;
     private boolean omitQuery = false;
-//    private boolean omitFace = true;
+    //    private boolean omitFace = true;
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;
     private NutsDependency value;
-    private Set<String> queryPropertiesOmitted=new HashSet<>();
+    private Set<String> queryPropertiesOmitted = new HashSet<>();
 
     public DefaultNutsDependencyFormat(NutsWorkspace ws) {
         super(ws, "id-format");
@@ -191,7 +192,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat setOmitClassifier(boolean value) {
-        return setOmitQueryProperty(NutsConstants.IdProperties.CLASSIFIER,value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.CLASSIFIER, value);
     }
 
     @Override
@@ -212,7 +213,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat setOmitOptional(boolean value) {
-        return setOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL,value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL, value);
     }
 
     @Override
@@ -233,7 +234,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat setOmitExclusions(boolean value) {
-        return setOmitQueryProperty(NutsConstants.IdProperties.EXCLUSIONS,value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.EXCLUSIONS, value);
     }
 
     @Override
@@ -253,7 +254,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat setOmitScope(boolean value) {
-        return setOmitQueryProperty(NutsConstants.IdProperties.SCOPE,value);
+        return setOmitQueryProperty(NutsConstants.IdProperties.SCOPE, value);
     }
 
     @Override
@@ -298,9 +299,9 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat setOmitQueryProperty(String name, boolean value) {
-        if(value){
+        if (value) {
             queryPropertiesOmitted.add(name);
-        }else{
+        } else {
             queryPropertiesOmitted.remove(name);
         }
         return this;
@@ -308,12 +309,12 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependencyFormat omitQueryProperty(String name, boolean value) {
-        return setOmitQueryProperty(name,true);
+        return setOmitQueryProperty(name, true);
     }
 
     @Override
     public NutsDependencyFormat omitQueryProperty(String name) {
-        return omitQueryProperty(name,true);
+        return omitQueryProperty(name, true);
     }
 
     @Override
@@ -367,12 +368,8 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public void print(Writer out) {
-        try {
-            out.write(format());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public void print(PrintStream out) {
+        out.print(format());
     }
 
     @Override

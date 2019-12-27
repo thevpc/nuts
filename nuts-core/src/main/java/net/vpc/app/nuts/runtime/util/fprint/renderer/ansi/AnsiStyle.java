@@ -5,10 +5,11 @@
  */
 package net.vpc.app.nuts.runtime.util.fprint.renderer.ansi;
 
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.runtime.util.fprint.RenderedRawStream;
 import net.vpc.app.nuts.runtime.util.fprint.renderer.StyleRenderer;
 import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -277,31 +278,35 @@ public class AnsiStyle implements StyleRenderer {
     }
 
     @Override
-    public void startFormat(FormattedPrintStream out) {
+    public void startFormat(RenderedRawStream out)  throws IOException {
         for (String command : startCommands) {
-            out.writeRaw(command);
+            byte[] bytes = command.getBytes();
+            out.writeRaw(bytes,0,bytes.length);
         }
         String s = this.resolveStartEscapeString();
         if (s != null && s.length()>0) {
-            out.writeRaw(s);
+            byte[] bytes = s.getBytes();
+            out.writeRaw(bytes,0,bytes.length);
         }
     }
 
     @Override
-    public void endFormat(FormattedPrintStream out) {
+    public void endFormat(RenderedRawStream out) throws IOException {
         String s = this.resolveEndEscapeString();
         if (s != null && s.length()>0) {
-            out.writeRaw(s);
+            byte[] bytes = s.getBytes();
+            out.writeRaw(bytes,0,bytes.length);
         }
         for (String command : endCommands) {
-            out.writeRaw(command);
+            byte[] bytes = command.getBytes();
+            out.writeRaw(bytes,0,bytes.length);
         }
         if (!laterCommands.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (String laterCommand : laterCommands) {
                 sb.append(laterCommand);
             }
-            out.later(sb.toString().getBytes());
+            out.writeLater(sb.toString().getBytes());
         }
     }
 }

@@ -34,9 +34,9 @@ public interface NutsWorkspaceExt {
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
-    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
+    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion, NutsId forId);
 
-    void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
+    void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion, NutsId forId);
 
     /**
      * true when core extension is required for running this workspace. A
@@ -55,7 +55,7 @@ public interface NutsWorkspaceExt {
 
     NutsInstalledRepository getInstalledRepository();
 
-    boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session);
+    NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session);
 
     NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
 

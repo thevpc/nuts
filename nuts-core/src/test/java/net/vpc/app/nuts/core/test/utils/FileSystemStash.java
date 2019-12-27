@@ -24,7 +24,7 @@ public class FileSystemStash {
 
 //    static {
 //        stash = new File(System.getProperty("user.home"), "stash/nuts");
-//        System.out.println("creating stash at " + stash.getPath());
+//        TestUtils.println("creating stash at " + stash.getPath());
 //        stash.mkdirs();
 //    }
     public FileSystemStash() {

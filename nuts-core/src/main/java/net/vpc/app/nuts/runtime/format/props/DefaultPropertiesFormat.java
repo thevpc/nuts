@@ -10,6 +10,7 @@ import net.vpc.app.nuts.NutsPropertiesFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.format.DefaultFormatBase;
@@ -119,13 +120,9 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return this;
     }
 
-    public void print(PrintStream out) {
-        print(new PrintWriter(out));
-    }
-
     @Override
-    public void print(Writer w) {
-        PrintWriter out = getValidPrintWriter(w);
+    public void print(PrintStream w) {
+        PrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         if (sort) {
             mm = new LinkedHashMap<>();
@@ -167,7 +164,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return sb.toString();
 //    }
-    private void printMap(PrintWriter out, String prefix, Map<Object, Object> props) {
+    private void printMap(PrintStream out, String prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
             int x = ws.io().getTerminalFormat().textLength(stringValue(extraKey));
@@ -195,11 +192,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return sep;
     }
 
-    private void printKeyValue(PrintWriter out, String prefix, int len, String key, String value) {
+    private void printKeyValue(PrintStream out, String prefix, int len, String key, String value) {
         printKeyValue(out, prefix, len, getMultilineSeparator(key), key, value);
     }
 
-    private void printKeyValue(PrintWriter out, String prefix, int len, String fancySep, String key, String value) {
+    private void printKeyValue(PrintStream out, String prefix, int len, String fancySep, String key, String value) {
         if (prefix == null) {
             prefix = "";
         }

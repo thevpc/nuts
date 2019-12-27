@@ -27,62 +27,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.io;
+package net.vpc.app.nuts.runtime.util.fprint;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.core.io.NutsPrintStreamExt;
+import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 
 /**
  *
  * @author vpc
  */
-public class NutsPrintStreamIdentity extends PrintStream
-        implements NutsPrintStreamExt {
-    private final OutputStream base;
-    private PrintStream ps;
-    public NutsPrintStreamIdentity(OutputStream out) {
-        super(out);
-        this.base=out;
-    }
-
-    public NutsPrintStreamIdentity(OutputStream out, boolean autoFlush) {
-        super(out, autoFlush);
-        this.base=out;
-    }
-
-    public NutsPrintStreamIdentity(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
-        super(out, autoFlush, encoding);
-        this.base=out;
-    }
-
-    @Override
-    public NutsTerminalMode getMode() {
-        return NutsTerminalMode.INHERITED;
-    }
-
-    @Override
-    public NutsTerminalMode getBaseMode() {
-        return NutsTerminalMode.INHERITED;
-    }
-
-    @Override
-    public PrintStream basePrintStream() {
-        OutputStream b = baseOutputStream();
-        if (b instanceof PrintStream) {
-            return (PrintStream) b;
-        }
-        if (ps == null) {
-            ps = new PrintStream(b);
-        }
-        return ps;
-    }
-
-    @Override
-    public OutputStream baseOutputStream() {
-        return base;
-    }
-    
+public interface NutsPrintStreamExt extends NutsOutputStreamTransparentAdapter, ExtendedFormatAware {
+    PrintStream basePrintStream();
 }

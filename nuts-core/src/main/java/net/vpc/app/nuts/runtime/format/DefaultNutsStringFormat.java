@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class DefaultNutsStringFormat extends DefaultFormatBase<NutsStringFormat>
 
     @Override
     public NutsStringFormat addParameters(Object... parameters) {
-        if(parameters!=null && parameters.length>0) {
+        if (parameters != null && parameters.length > 0) {
             this.parameters.addAll(Arrays.asList(parameters));
         }
         return this;
@@ -52,7 +53,7 @@ public class DefaultNutsStringFormat extends DefaultFormatBase<NutsStringFormat>
     @Override
     public NutsStringFormat setParameters(Object... parameters) {
         this.parameters = new ArrayList<>();
-        if(parameters!=null){
+        if (parameters != null) {
             this.parameters.addAll(Arrays.asList(parameters));
         }
         return this;
@@ -61,7 +62,7 @@ public class DefaultNutsStringFormat extends DefaultFormatBase<NutsStringFormat>
     @Override
     public NutsStringFormat setParameters(List<Object> parameters) {
         this.parameters = new ArrayList<>();
-        if(parameters!=null){
+        if (parameters != null) {
             this.parameters.addAll(parameters);
         }
         return this;
@@ -114,12 +115,8 @@ public class DefaultNutsStringFormat extends DefaultFormatBase<NutsStringFormat>
     }
 
     @Override
-    public void print(Writer out) {
-        try {
-            out.write(format0());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    public void print(PrintStream out) {
+        out.print(format0());
     }
 
     @Override

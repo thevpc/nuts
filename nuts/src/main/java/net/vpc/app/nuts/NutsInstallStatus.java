@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2019 Taha BEN SALAH
+ * Copyright (C) 2016-2017 Taha BEN SALAH
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,51 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core.io;
-
-import java.io.PrintStream;
-import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
-import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAware;
+package net.vpc.app.nuts;
 
 /**
- *
- * @author vpc
+ * Package installation status
  */
-public interface NutsPrintStreamExt extends NutsOutputStreamTransparentAdapter,ExtendedFormatAware{
+public enum NutsInstallStatus {
 
-    NutsTerminalMode getMode();
+    /**
+     * package is not installed
+     */
+    NOT_INSTALLED,
 
-    NutsTerminalMode getBaseMode();
+    /**
+     * package installed as primary
+     */
+    INSTALLED_PRIMARY,
 
-    PrintStream basePrintStream();
+    /**
+     * package installed as a dependency for a primary package
+     */
+    INSTALLED_DEPENDENCY,
+
+    /**
+     * this is a meta value including equivalent to (INSTALLED_DEPENDENCY or INSTALLED_PRIMARY).
+     * This Value should not be used unless as a filter.
+     */
+    INSTALLED;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    /**
+     * default constructor
+     */
+    NutsInstallStatus() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
 }

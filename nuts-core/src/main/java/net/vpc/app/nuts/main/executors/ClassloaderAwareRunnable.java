@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.main.executors;
 
+import net.vpc.app.nuts.NutsSession;
+
 /**
  *
  * @author vpc
@@ -39,9 +41,15 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
     ClassLoader initialClassLoader;
     ClassLoader classLoader;
     Throwable error;
+    NutsSession session;
 
-    public ClassloaderAwareRunnable(ClassLoader classLoader) {
+    public ClassloaderAwareRunnable(NutsSession session,ClassLoader classLoader) {
         this.classLoader = classLoader;
+        this.session = session;
+    }
+
+    public NutsSession getSession() {
+        return session;
     }
 
     public abstract Object runWithContext() throws Throwable;
@@ -75,10 +83,8 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
     }
 
     public void runAndWaitFor() throws Throwable {
-        Thread t = new Thread(this);
-        t.start();
         try {
-            t.join();
+            getSession().getWorkspace().io().executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }

@@ -6,6 +6,7 @@ import net.vpc.app.nuts.runtime.io.DefaultNutsQuestion;
 import java.io.*;
 import java.util.Scanner;
 import net.vpc.app.nuts.runtime.util.fprint.FPrint;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 @NutsPrototype
 public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
@@ -144,7 +145,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             out = out();
         }
         if (out == null) {
-            out = FPrint.out();
+            out = CoreIOUtils.out(ws);
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -190,7 +191,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             out = out();
         }
         if (out == null) {
-            out = FPrint.out();
+            out = CoreIOUtils.out(ws);
         }
 
         if (this.in == null && parent != null) {
@@ -205,9 +206,9 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = System.in;
+            in = CoreIOUtils.in(ws);
         }
-        if (in == System.in && ((cons = System.console()) != null)) {
+        if ((in == System.in || in==CoreIOUtils.in(ws)) && ((cons = System.console()) != null)) {
             if ((passwd = cons.readPassword(prompt, params)) != null) {
                 return passwd;
             } else {
@@ -291,7 +292,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             if (session.parent != null) {
                 return typeOut ? session.parent.getOut() : session.parent.getErr();
             }
-            _out = typeOut ? FPrint.out() : FPrint.err();
+            _out = typeOut ? CoreIOUtils.out(session.ws) : CoreIOUtils.err(session.ws);
             if (_out != null) {
                 return _out;
             }
@@ -329,7 +330,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
                 case FILTERED:
                     return filtered();
             }
-            return base;
+            return base();
         }
     }
 }

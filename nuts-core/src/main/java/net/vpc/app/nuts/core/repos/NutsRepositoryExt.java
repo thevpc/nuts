@@ -24,21 +24,17 @@ import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
  *
  * @author vpc
  */
-public interface NutsRepositoryExt {
+public interface NutsRepositoryExt extends NutsRepositoryExt0{
 
     static NutsRepositoryExt of(NutsRepository repo) {
         return (NutsRepositoryExt) repo;
     }
 
-    String getIdBasedir(NutsId id);
-
-    String getIdFilename(NutsId id);
-
     NutsIndexStore getIndexStore();
 
     void pushImpl(NutsPushRepositoryCommand command);
 
-    void deployImpl(NutsDeployRepositoryCommand command);
+    NutsDescriptor deployImpl(NutsDeployRepositoryCommand command);
 
     void undeployImpl(NutsRepositoryUndeployCommand command);
 

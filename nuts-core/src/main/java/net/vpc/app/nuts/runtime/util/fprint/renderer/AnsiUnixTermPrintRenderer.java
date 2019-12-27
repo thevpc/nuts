@@ -1,12 +1,9 @@
 package net.vpc.app.nuts.runtime.util.fprint.renderer;
 
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.fprint.TextFormat;
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStream;
-import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStreamRenderer;
-import net.vpc.app.nuts.runtime.util.fprint.TextFormatList;
-import net.vpc.app.nuts.runtime.util.fprint.TextFormats;
+import net.vpc.app.nuts.runtime.util.fprint.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,12 +95,12 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
     }
 
     @Override
-    public void startFormat(FormattedPrintStream out, TextFormat format) {
+    public void startFormat(RenderedRawStream out, TextFormat format)  throws IOException {
         createStyleRenderer(format).startFormat(out);
     }
 
     @Override
-    public void endFormat(FormattedPrintStream out, TextFormat format) {
+    public void endFormat(RenderedRawStream out, TextFormat format) throws IOException {
         createStyleRenderer(format).endFormat(out);
     }
 

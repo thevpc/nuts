@@ -5,11 +5,14 @@
  */
 package net.vpc.app.nuts.runtime.format.json;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.DefaultSearchFormatBase;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
+import net.vpc.app.nuts.runtime.io.NutsTerminalModeOp;
+import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
 
 /**
  *
@@ -19,7 +22,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    public DefaultSearchFormatJson(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatJson(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.JSON,options);
     }
 

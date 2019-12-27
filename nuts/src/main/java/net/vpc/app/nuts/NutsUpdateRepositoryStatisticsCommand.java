@@ -51,6 +51,10 @@ public interface NutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCom
     @Override
     NutsUpdateRepositoryStatisticsCommand configure(boolean skipUnsupported, String... args);
 
+    /**
+     * run this command and return {@code this} instance
+     * @return {@code this} instance
+     */
     @Override
     NutsUpdateRepositoryStatisticsCommand run();
 }

@@ -75,7 +75,7 @@ package net.vpc.app.nuts.core.test.whitebox.utilities;
 //        if(max<to-from){
 //            max=to-from;
 //        }
-//        System.out.println("### TIME ["+file+"] "+CoreCommonUtils.formatPeriodMilli(to-from)+" -- "+max);
+//        TestUtils.println("### TIME ["+file+"] "+CoreCommonUtils.formatPeriodMilli(to-from)+" -- "+max);
 //    }
 //
 //    private static void parseFolder(Path file) throws IOException {
@@ -105,32 +105,32 @@ package net.vpc.app.nuts.core.test.whitebox.utilities;
 //    }
 //
 //    private static void parseJarFile(Path file) throws IOException {
-//        System.out.println("parse jar " + file + " ... ");
+//        TestUtils.println("parse jar " + file + " ... ");
 //        try (InputStream in = Files.newInputStream(file)) {
-//            System.out.println("parse jar " + file + " :: " + Arrays.asList(parseMainClasses(in, file.toString())));
+//            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(parseMainClasses(in, file.toString())));
 //        }
 //    }
 //
 //    private static void paseClassFile(Path file) throws IOException {
-//        System.out.println(file);
+//        TestUtils.println(file);
 //
 //        ClassReader scs = new ClassReader(Files.newInputStream(file));
 //        scs.accept(new ClassVisitor(Opcodes.ASM4) {
 //            @Override
 //            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-//                System.out.println("\t\tmethod " + access + " " + name + " " + desc);
+//                TestUtils.println("\t\tmethod " + access + " " + name + " " + desc);
 //                return null;
 //            }
 //
 //            @Override
 //            public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-//                System.out.println("\t\tfield " + access + " " + name + " " + desc);
+//                TestUtils.println("\t\tfield " + access + " " + name + " " + desc);
 //                return null;
 //            }
 //
 //            @Override
 //            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                System.out.println("\tclass " + access + " " + name + " " + signature + " extends " + superName + " implements " + Arrays.asList(interfaces));
+//                TestUtils.println("\tclass " + access + " " + name + " " + signature + " extends " + superName + " implements " + Arrays.asList(interfaces));
 //            }
 //
 //        }, 0
@@ -140,25 +140,25 @@ package net.vpc.app.nuts.core.test.whitebox.utilities;
 //
 //    public void test2() throws Exception {
 //        String file = "/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts-core/target/classes/net/vpc/app/nuts/core/util/CommonRootsHelper.class";
-//        System.out.println(file);
+//        TestUtils.println(file);
 //        ClassReader classReader = new ClassReader(Files.newInputStream(Paths.get(file)));
 //        classReader.accept(new ClassVisitor(Opcodes.ASM4) {
 //
 //            @Override
 //            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-//                System.out.println("\t\tmethod " + access + " " + name + " " + desc);
+//                TestUtils.println("\t\tmethod " + access + " " + name + " " + desc);
 //                return null;
 //            }
 //
 //            @Override
 //            public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-//                System.out.println("\t\tfield " + access + " " + name + " " + desc);
+//                TestUtils.println("\t\tfield " + access + " " + name + " " + desc);
 //                return null;
 //            }
 //
 //            @Override
 //            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                System.out.println("\tclass " + access + " " + name + " " + signature + " extends " + superName + " implements " + Arrays.asList(interfaces));
+//                TestUtils.println("\tclass " + access + " " + name + " " + signature + " extends " + superName + " implements " + Arrays.asList(interfaces));
 //            }
 //
 //        }, 0);

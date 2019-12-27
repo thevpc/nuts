@@ -1,6 +1,6 @@
 package net.vpc.app.nuts.runtime.io;
 
-import net.vpc.app.nuts.core.io.NutsFormattedPrintStream;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -15,9 +15,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import net.vpc.app.nuts.runtime.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.runtime.DefaultNutsWorkspaceEvent;
 
 import net.vpc.app.nuts.runtime.terminals.DefaultNutsSessionTerminal;
@@ -25,14 +28,13 @@ import net.vpc.app.nuts.runtime.app.DefaultNutsApplicationContext;
 import net.vpc.app.nuts.runtime.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.runtime.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.runtime.terminals.UnmodifiableTerminal;
-import net.vpc.app.nuts.NutsUnsupportedEnumException;
-import net.vpc.app.nuts.core.io.NutsPrintStreamExt;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
     //    private final NutsLogger LOG;
     private NutsWorkspace ws;
     private NutsTerminalFormat terminalMetrics = new DefaultNutsTerminalFormat();
+    private ExecutorService executorService;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -104,6 +106,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
     private WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
+    private InputStream bootStdin =null;
+    private PrintStream bootStdout =null;
+    private PrintStream bootStderr =null;
+
+    private InputStream currentStdin =null;
+    private PrintStream currentStdout =null;
+    private PrintStream currentStderr =null;
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
@@ -289,103 +298,23 @@ public class DefaultNutsIOManager implements NutsIOManager {
 //        }
 //    }
 
-    @Override
-    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode) {
-        if (mode == null) {
-            mode = NutsTerminalMode.INHERITED;
-        }
-        if (mode == NutsTerminalMode.FORMATTED) {
-            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
-                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode each time
-                mode = NutsTerminalMode.FILTERED;
-            }
-        }
 
+
+    @Override
+    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode) {
         if (out == null) {
             return null;
         }
-        if (out instanceof NutsPrintStreamExt) {
-            NutsPrintStreamExt a = (NutsPrintStreamExt) out;
-            NutsTerminalMode am = a.getMode();
-            switch (mode) {
-                case FORMATTED: {
-                    switch (am) {
-                        case FORMATTED: {
-                            return (PrintStream) a;
-                        }
-                        case FILTERED: {
-                            return a.basePrintStream();
-                        }
-                        case INHERITED: {
-                            PrintStream supported = (PrintStream) ws.extensions().createSupported(
-                                    NutsFormattedPrintStream.class,
-                                    new DefaultNutsSupportLevelContext<>(ws, out),
-                                    new Class[]{OutputStream.class}, new Object[]{out});
-                            if (supported == null) {
-                                throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
-                            }
-                            NutsWorkspaceUtils.of(ws).setWorkspace(supported);
-                            return supported;
-                        }
-                        default: {
-                            throw new NutsUnsupportedEnumException(ws, am);
-                        }
-                    }
-                }
-                case FILTERED: {
-                    switch (am) {
-                        case FORMATTED: {
-                            return a.basePrintStream();
-                        }
-                        case FILTERED: {
-                            return (PrintStream) a;
-                        }
-                        case INHERITED: {
-                            return (PrintStream) a;
-                        }
-                        default: {
-                            throw new NutsUnsupportedEnumException(ws, am);
-                        }
-                    }
-                }
-                default: {
-                    throw new NutsUnsupportedEnumException(ws, mode);
-                }
-            }
-        } else if (out instanceof NutsFormattedPrintStream) {
-            NutsFormattedPrintStream a = (NutsFormattedPrintStream) out;
-            switch (mode) {
-                case FORMATTED: {
-                    return (PrintStream) a;
-                }
-                case FILTERED: {
-                    return a.getUnformattedInstance();
-                }
-                default: {
-                    throw new NutsUnsupportedEnumException(ws, mode);
-                }
-            }
-        } else {
-            switch (mode) {
-                case FORMATTED: {
-                    PrintStream supported = (PrintStream) ws.extensions().createSupported(
-                            NutsFormattedPrintStream.class,
-                            new DefaultNutsSupportLevelContext<>(ws, out),
-                            new Class[]{OutputStream.class}, new Object[]{out});
-                    if (supported == null) {
-                        throw new NutsExtensionNotFoundException(ws, NutsFormattedPrintStream.class, "FormattedPrintStream");
-                    }
-                    NutsWorkspaceUtils.of(ws).setWorkspace(supported);
-                    return supported;
-                }
-                case FILTERED: {
-                    return (PrintStream) out;
-                }
-                default: {
-                    throw new NutsUnsupportedEnumException(ws, mode);
-                }
+        if (expectedMode == null) {
+            expectedMode = ws.config().options().getTerminalMode();
+        }
+        if (expectedMode == NutsTerminalMode.FORMATTED) {
+            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
+                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode each time
+                expectedMode = NutsTerminalMode.FILTERED;
             }
         }
+        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out,expectedMode,ws),ws);
     }
 
     @Override
@@ -545,9 +474,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal) {
         //TODO : should pass session in method
-        return setSystemTerminal(terminal,null);
+        return setSystemTerminal(terminal, null);
     }
-    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal,NutsSession session) {
+
+    public NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session) {
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
@@ -572,7 +502,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
         if (old != this.systemTerminal) {
             NutsWorkspaceEvent event = null;
-            if(session!=null) {
+            if (session != null) {
                 for (NutsWorkspaceListener workspaceListener : getWorkspace().getWorkspaceListeners()) {
                     if (event == null) {
                         event = new DefaultNutsWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
@@ -696,4 +626,75 @@ public class DefaultNutsIOManager implements NutsIOManager {
 //        }
 //    }
 
+
+    @Override
+    public ExecutorService executorService() {
+        if (executorService == null) {
+            synchronized (this) {
+                if (executorService == null) {
+                    executorService=ws.config().options().getExecutorService();
+                    if(executorService==null) {
+                        ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
+                        executorService2.setKeepAliveTime(60, TimeUnit.SECONDS);
+                        executorService2.setMaximumPoolSize(60);
+                        executorService = executorService2;
+                    }
+                }
+            }
+        }
+        return executorService;
+    }
+
+//    @Override
+//    public NutsIOManager executorService(ExecutorService executor) {
+//        if (executor == null) {
+//            throw new IllegalArgumentException("Unable to set null executor");
+//        }
+//        return this;
+//    }
+
+    public InputStream getBootStdin(boolean nonnull) {
+        if(bootStdin !=null){
+            return bootStdin;
+        }
+        return nonnull?System.in:null;
+    }
+
+    public PrintStream getBootStdout(boolean nonnull) {
+        if(bootStdout !=null){
+            return bootStdout;
+        }
+        return nonnull?System.out:null;
+    }
+
+    public PrintStream getBootStderr(boolean nonnull) {
+        if(bootStderr !=null){
+            return bootStderr;
+        }
+        return nonnull?System.err:null;
+    }
+
+    public InputStream getCurrentStdin() {
+        return currentStdin;
+    }
+
+    public void setCurrentStdin(InputStream currentStdin) {
+        this.currentStdin = currentStdin;
+    }
+
+    public PrintStream getCurrentStdout() {
+        return currentStdout;
+    }
+
+    public void setCurrentStdout(PrintStream currentStdout) {
+        this.currentStdout = currentStdout;
+    }
+
+    public PrintStream getCurrentStderr() {
+        return currentStderr;
+    }
+
+    public void setCurrentStderr(PrintStream currentStderr) {
+        this.currentStderr = currentStderr;
+    }
 }

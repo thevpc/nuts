@@ -42,8 +42,8 @@ public class Test12_CopyTest {
 
         Path from = ws.io().createTempFolder("source");
         Path to = ws.io().createTempFolder("target");
-        System.out.println("from="+from);
-        System.out.println("to="+to);
+        TestUtils.println("from="+from);
+        TestUtils.println("to="+to);
         long collect = Files.list(from).collect(Collectors.counting());
         Assert.assertEquals(0L,collect);
         for (String s : new String[]{
@@ -60,24 +60,24 @@ public class Test12_CopyTest {
                 }
             }
         }
-        System.out.println("start-----------");
+        TestUtils.println("start-----------");
 
         ws.io().copy().from(from).to(to)
                 .logProgress()
                 .progressMonitor(new NutsProgressMonitor() {
             @Override
             public void onStart(NutsProgressEvent event) {
-                System.out.println(event.getPercent());
+                TestUtils.println(event.getPercent());
             }
 
             @Override
             public void onComplete(NutsProgressEvent event) {
-                System.out.println(event.getPercent());
+                TestUtils.println(event.getPercent());
             }
 
             @Override
             public boolean onProgress(NutsProgressEvent event) {
-                System.out.println(event.getPercent());
+                TestUtils.println(event.getPercent());
                 return true;
             }
         }).run();
@@ -87,7 +87,7 @@ public class Test12_CopyTest {
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

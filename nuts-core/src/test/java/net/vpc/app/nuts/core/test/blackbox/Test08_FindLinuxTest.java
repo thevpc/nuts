@@ -36,15 +36,14 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions",});
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         NutsDefinition def = ws.search().id("netbeans-launcher#1.1.0")
                 .optional(false).inlineDependencies().failFast().online().latest().getResultDefinitions().required();
-        System.out.println(def);
+        TestUtils.println(def);
     }
 
     @Test
@@ -55,22 +54,21 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
-            "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-            "--archetype", "default",
-            "--yes",
-            "--skip-companions",});
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--archetype", "default",
+                "--yes",
+                "--skip-companions");
 
         NutsSearchResult<NutsId> resultIds = ws.search().session(ws.createSession().silent()).id("net.vpc.scholar.doovos.kernel:doovos-kernel-core")
                 .latest().inlineDependencies().getResultIds();
-        System.out.println(resultIds.list());
+        TestUtils.println(resultIds.list());
     }
 
     @BeforeClass
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
-        System.out.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterClass

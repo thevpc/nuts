@@ -8,19 +8,16 @@ package net.vpc.app.nuts.core.test.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
- *
  * @author vpc
  */
 public class TestUtils {
@@ -35,12 +32,51 @@ public class TestUtils {
 
     public static FileSystemStash STASH = new FileSystemStash();
 
+    public static void main(String[] args) {
+        if (System.console() != null && System.getenv().get("TERM") != null) {
+            TestUtils.println("\u001B[36m"+"Coloured Menu option"+"\u001B[0m");
+        } else {
+            TestUtils.println("Menu option");
+        }
+    }
     public static Set<String> createNamesSet(String... names) {
         return new HashSet<String>(Arrays.asList(names));
     }
 
     public static int count(File d, FileFilter f) {
         return list(d, f).length;
+    }
+
+    public static String[] sarr(String[] s, String... a) {
+        return concat(s, sarr(a));
+    }
+
+    public static String[] sarr(String[] s1, String[] s2, String... a) {
+        return concat(s1, s2, sarr(a));
+    }
+
+    public static String[] sarr(String... a) {
+        return a;
+    }
+
+    public static String[] concat(String[]... a) {
+        return Stream.of(a).flatMap(Stream::of)
+                .toArray(String[]::new);
+    }
+
+    public static String[] createSysDirs(File base) {
+        return new String[]{
+                "--system-apps-home", new File(base, "system.apps").getPath(),
+                "--system-config-home", new File(base, "system.config").getPath(),
+                "--system-var-home", new File(base, "system.var").getPath(),
+                "--system-log-home", new File(base, "system.log").getPath(),
+                "--system-temp-home", new File(base, "system.temp").getPath(),
+                "--system-cache-home", new File(base, "system.cache").getPath(),
+                "--system-lib-home", new File(base, "system.lib").getPath(),
+                "--system-run-home", new File(base, "system.run").getPath()
+        };
+//        Stream.concat(Arrays.stream(a), Arrays.stream(b))
+//                .toArray(String[]::new)
     }
 
     public static Set<String> listNamesSet(File d, FileFilter f) {
@@ -68,10 +104,10 @@ public class TestUtils {
         for (Object k : new HashSet(props.keySet())) {
             String ks = String.valueOf(k);
             if (ks.startsWith("nuts.")) {
-                System.out.println("## removed " + ks + "=" + props.getProperty(ks));
+                TestUtils.println("## removed " + ks + "=" + props.getProperty(ks));
                 props.remove(ks);
             } else if (ks.startsWith("nuts_")) {
-                System.out.println("## removed " + ks + "=" + props.getProperty(ks));
+                TestUtils.println("## removed " + ks + "=" + props.getProperty(ks));
                 props.remove(ks);
             }
         }
@@ -136,14 +172,14 @@ public class TestUtils {
         return getCallerStackTraceElement0(3);
     }
 
-    public static void unstashLinuxFolders(){
+    public static void unstashLinuxFolders() {
         try {
             STASH.restoreAll();
         } catch (IOException ex) {
             Logger.getLogger(TestUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void stashLinuxFolders() throws IOException {
         for (String string : NUTS_STD_FOLDERS) {
             File[] c = new File(string).listFiles();
@@ -160,7 +196,7 @@ public class TestUtils {
             File[] c = new File(string).listFiles();
             if (c != null) {
                 for (File file : c) {
-                    CoreIOUtils.delete(null,file);
+                    CoreIOUtils.delete(null, file);
                 }
             }
         }
@@ -171,4 +207,10 @@ public class TestUtils {
         return s[index];
     }
 
+    public static void println(Object any) {
+        System.out.println("[TEST] "+any);
+    }
+    public static void print(Object any) {
+        System.out.print("[TEST] "+any);
+    }
 }

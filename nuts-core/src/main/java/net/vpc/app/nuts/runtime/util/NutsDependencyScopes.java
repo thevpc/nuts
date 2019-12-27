@@ -102,8 +102,9 @@ public class NutsDependencyScopes {
 
     public static int getScopesPriority(String s1) {
         switch (normalizeScope(s1)) {
-            case "api":
             case "implementation":
+                return 6;
+            case "api":
             case "compile":
                 return 5;
             case "runtime":

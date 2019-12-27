@@ -81,9 +81,8 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().json().value(getConfig()).print(new PrintWriter(out));
-        w.flush();
+        context.getWorkspace().json().value(getConfig()).print(out);
+        out.flush();
         return this;
     }
 

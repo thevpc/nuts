@@ -29,8 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 import net.vpc.app.nuts.runtime.*;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
@@ -45,12 +44,12 @@ import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.filters.dependency.*;
 
-import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -66,7 +65,7 @@ public class CoreNutsUtils {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<installed>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
@@ -197,6 +196,45 @@ public class CoreNutsUtils {
             )
             .build();
 
+    public static class NutsDefaultThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        NutsDefaultThreadFactory(String namePattern) {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() :
+                    Thread.currentThread().getThreadGroup();
+            namePrefix = namePattern+"-" +
+                    CoreCommonUtils.indexToString(poolNumber.getAndIncrement()) +
+                    "-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
+    }
+    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory=new NutsDefaultThreadFactory("nuts-pool");
+    private static ExecutorService executorService= _createExecutorService();
+
+    private static ExecutorService _createExecutorService(){
+        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool(nutsDefaultThreadFactory);
+        executorService.setKeepAliveTime(60,TimeUnit.SECONDS);
+        executorService.setMaximumPoolSize(60);
+        return executorService;
+    }
+
+    public static ExecutorService getExecutorService(NutsSession session) {
+        return executorService;
+    }
 
     public static String randomColorName() {
         return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
@@ -548,7 +586,7 @@ public class CoreNutsUtils {
             if (def.getInstallInformation().getInstallFolder() != null) {
                 x.put("install-folder", def.getInstallInformation().getInstallFolder().toString());
             }
-            x.put("installed", def.getInstallInformation().isInstalled());
+            x.put("install-status", def.getInstallInformation().getInstallStatus().id());
             x.put("just-installed", def.getInstallInformation().isJustInstalled());
         }
         if (def.getRepositoryName() != null) {
@@ -784,6 +822,8 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
+        }else{
+            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
     }
@@ -794,6 +834,8 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
+        }else{
+            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
     }
@@ -804,6 +846,8 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
+        }else{
+            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
     }
@@ -944,4 +988,5 @@ public class CoreNutsUtils {
         }
         return monitorable;
     }
+
 }

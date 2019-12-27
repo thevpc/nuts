@@ -50,7 +50,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     @Override
     public NutsLoggerOp error(Throwable error) {
         this.error = error;
-        return null;
+        return this;
     }
 
     @Override

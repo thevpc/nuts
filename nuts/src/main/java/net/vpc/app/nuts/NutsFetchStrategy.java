@@ -39,11 +39,6 @@ import java.util.Iterator;
  */
 public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
     /**
-     * enable search in installed only artifacts (in the pseudo-repository 'installed')
-     */
-    INSTALLED(true, NutsFetchMode.INSTALLED),
-
-    /**
      * enables search within local only artifacts (where installed or not).
      * Local artifacts include local folder based repositories and cached (fetched) repositories (whether or
      * not they are physically remote)

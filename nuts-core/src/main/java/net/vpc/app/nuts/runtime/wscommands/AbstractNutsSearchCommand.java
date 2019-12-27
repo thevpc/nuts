@@ -59,6 +59,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected boolean distinct = false;
     protected boolean includeMain = true;
     protected boolean sorted = false;
+    protected NutsInstallStatus installStatus = null;
     protected final List<String> arch = new ArrayList<>();
     protected final List<NutsId> ids = new ArrayList<>();
     protected final List<NutsId> frozenIds = new ArrayList<>();
@@ -374,10 +375,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.packaging.clear();
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
             this.repositoryFilter = o.getRepositoryFilter();
-            if (o instanceof AbstractNutsSearchCommand) {
-                AbstractNutsSearchCommand a=(AbstractNutsSearchCommand)o;
-                this.printResult = a.isPrintResult();
-            }
+            this.printResult = o.isPrintResult();
         }
         return this;
     }
@@ -1083,4 +1081,19 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return setIdFilter(filter);
     }
 
+    @Override
+    public NutsInstallStatus getInstallStatus() {
+        return installStatus;
+    }
+
+    @Override
+    public NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus) {
+        this.installStatus = installStatus;
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand installStatus(NutsInstallStatus installStatus) {
+        return setInstallStatus(installStatus);
+    }
 }

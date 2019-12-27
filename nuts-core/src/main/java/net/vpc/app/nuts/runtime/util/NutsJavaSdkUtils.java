@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 
 public class NutsJavaSdkUtils {
@@ -35,7 +36,7 @@ public class NutsJavaSdkUtils {
 
     private NutsJavaSdkUtils(NutsWorkspace ws) {
         this.ws = ws;
-        LOG=ws.log().of(NutsJavaSdkUtils.class);
+        LOG = ws.log().of(NutsJavaSdkUtils.class);
     }
 
     public NutsSdkLocation resolveJdkLocation(NutsWorkspace ws, String requestedJavaVersion) {
@@ -76,9 +77,9 @@ public class NutsJavaSdkUtils {
         return bestJava;
     }
 
-    public NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, NutsSession session) {
+    public NutsSdkLocation[] searchJdkLocations(NutsSession session) {
         String[] conf = {};
-        switch (ws.config().getOsFamily()) {
+        switch (session.workspace().config().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -96,17 +97,54 @@ public class NutsJavaSdkUtils {
         }
         List<NutsSdkLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(ws, Paths.get(s), session)));
+            all.addAll(Arrays.asList(searchJdkLocations(Paths.get(s), session)));
         }
         return all.toArray(new NutsSdkLocation[0]);
     }
 
-    public NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, Path s, NutsSession session) {
+    public Future<NutsSdkLocation[]> searchJdkLocationsFuture(NutsSession session) {
+        String[] conf = {};
+        switch (ws.config().getOsFamily()) {
+            case LINUX:
+            case UNIX:
+            case UNKNOWN: {
+                conf = new String[]{"/usr/java", "/usr/lib64/jvm", "/usr/lib/jvm"};
+                break;
+            }
+            case WINDOWS: {
+                conf = new String[]{CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java", CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"};
+                break;
+            }
+            case MACOS: {
+                conf = new String[]{"/Library/Java/JavaVirtualMachines", "/System/Library/Frameworks/JavaVM.framework"};
+                break;
+            }
+        }
+        List<Future<NutsSdkLocation[]>> all = new ArrayList<>();
+        for (String s : conf) {
+            all.add(searchJdkLocationsFuture(Paths.get(s), session));
+        }
+        return session.getWorkspace().io().executorService().submit(new Callable<NutsSdkLocation[]>() {
+            @Override
+            public NutsSdkLocation[] call() throws Exception {
+                List<NutsSdkLocation> locs = new ArrayList<>();
+                for (Future<NutsSdkLocation[]> nutsSdkLocationFuture : all) {
+                    NutsSdkLocation[] e = nutsSdkLocationFuture.get();
+                    if(e!=null) {
+                        locs.addAll(Arrays.asList(e));
+                    }
+                }
+                return locs.toArray(new NutsSdkLocation[0]);
+            }
+        });
+    }
+
+    public NutsSdkLocation[] searchJdkLocations(Path s, NutsSession session) {
         List<NutsSdkLocation> all = new ArrayList<>();
         if (Files.isDirectory(s)) {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
-                    NutsSdkLocation r = resolveJdkLocation(ws, d, null);
+                    NutsSdkLocation r = resolveJdkLocation(d, null, session);
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
@@ -121,11 +159,58 @@ public class NutsJavaSdkUtils {
         return all.toArray(new NutsSdkLocation[0]);
     }
 
-    public NutsSdkLocation resolveJdkLocation(NutsWorkspace ws, Path path, String preferredName) {
-        if (path == null) {
-            throw new NutsException(ws, "Missing path");
+    public Future<NutsSdkLocation[]> searchJdkLocationsFuture(Path s, NutsSession session) {
+        if (session == null) {
+            throw new IllegalArgumentException("Session cannot be null");
         }
-        String appSuffix = ws.config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
+        List<Future<NutsSdkLocation>> all = new ArrayList<>();
+        if (Files.isDirectory(s)) {
+            try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
+                for (Path d : it) {
+                    all.add(
+                            session.getWorkspace().io().executorService().submit(new Callable<NutsSdkLocation>() {
+                                @Override
+                                public NutsSdkLocation call() throws Exception {
+                                    NutsSdkLocation r=null;
+                                    try {
+                                        r = resolveJdkLocation(d, null, session);
+                                        if (session.isPlainTrace()) {
+                                            synchronized (session.getWorkspace()) {
+                                                session.out().printf("detected java %s [[%s]] at ==%s==%n", r.getPackaging(), r.getVersion(), r.getPath());
+                                            }
+                                        }
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    return r;
+                                }
+                            })
+                    );
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        return session.getWorkspace().io().executorService().submit(new Callable<NutsSdkLocation[]>() {
+            @Override
+            public NutsSdkLocation[] call() throws Exception {
+                List<NutsSdkLocation> locs = new ArrayList<>();
+                for (Future<NutsSdkLocation> nutsSdkLocationFuture : all) {
+                    NutsSdkLocation e = nutsSdkLocationFuture.get();
+                    if (e != null) {
+                        locs.add(e);
+                    }
+                }
+                return locs.toArray(new NutsSdkLocation[0]);
+            }
+        });
+    }
+
+    public NutsSdkLocation resolveJdkLocation(Path path, String preferredName, NutsSession session) {
+        if (path == null) {
+            throw new NutsException(session.workspace(), "Missing path");
+        }
+        String appSuffix = session.workspace().config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = path.resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
         if (!Files.isRegularFile(javaExePath)) {
@@ -134,7 +219,7 @@ public class NutsJavaSdkUtils {
         String product = null;
         String jdkVersion = null;
         try {
-            String s = ws.exec().syscall().command(javaExePath.toString(), "-version")
+            String s = session.workspace().exec().syscall().command(javaExePath.toString(), "-version")
                     .redirectErrorStream()
                     .grabOutputString().failFast().run().getOutputString();
             if (s.length() > 0) {
@@ -178,7 +263,7 @@ public class NutsJavaSdkUtils {
             preferredName = CoreStringUtils.trim(preferredName);
         }
         return new NutsSdkLocation(
-                NutsWorkspaceUtils.of(ws).createSdkId( "java", jdkVersion),
+                NutsWorkspaceUtils.of(ws).createSdkId("java", jdkVersion),
                 product,
                 preferredName,
                 path.toString(),

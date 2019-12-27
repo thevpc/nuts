@@ -35,6 +35,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.common.ObservableMap;
 
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -87,7 +88,8 @@ public abstract class AbstractNutsRepository implements NutsRepository{
         String loc = config().getLocation(false);
         String impl = getClass().getSimpleName();
         if (c != null) {
-            storePath = c.getStoreLocation().toAbsolutePath().toString();
+            Path storeLocation = c.getStoreLocation();
+            storePath = storeLocation==null?null:storeLocation.toAbsolutePath().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {
@@ -128,6 +130,19 @@ public abstract class AbstractNutsRepository implements NutsRepository{
 
     public String getIdBasedir(NutsId id) {
         return getWorkspace().config().getDefaultIdBasedir(id);
+    }
+
+    public String getIdFilename(NutsId id) {
+        //return getWorkspace().config().getDefaultIdFilename(id);
+        String classifier = "";
+        String ext = getIdExtension(id);
+        if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
+            String c = id.getClassifier();
+            if (!CoreStringUtils.isBlank(c)) {
+                classifier = "-" + c;
+            }
+        }
+        return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
     }
 
     protected void checkSession(NutsSession session) {

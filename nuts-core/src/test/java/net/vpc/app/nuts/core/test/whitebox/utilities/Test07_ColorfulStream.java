@@ -5,9 +5,12 @@
  */
 package net.vpc.app.nuts.core.test.whitebox.utilities;
 
-import net.vpc.app.nuts.runtime.terminals.NutsPrintStreamFormattedUnixAnsi;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
+import net.vpc.app.nuts.runtime.util.fprint.FormatOutputStream;
 import net.vpc.app.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
 import org.junit.Test;
+
+import java.io.PrintStream;
 
 /**
  *
@@ -39,23 +42,22 @@ public class Test07_ColorfulStream {
     public void test2() {
 //        String msg="x{{\\?}}x";
 
-        NutsPrintStreamFormattedUnixAnsi out = new NutsPrintStreamFormattedUnixAnsi(System.out);
+        PrintStream out = new PrintStream(new FormatOutputStream(System.out));
         for (String msg : new String[]{
             "[]", "<>",
             "\"\"",
             "''", "{}"
         }) {
             out.println(msg);
-            System.out.println(FormattedPrintStreamUtils.filterText(msg));
+            TestUtils.println(FormattedPrintStreamUtils.filterText(msg));
         }
-        out.print(out);
     }
 
     @Test
     public void test3() {
 //        String msg="x{{\\?}}x";
 
-        NutsPrintStreamFormattedUnixAnsi out = new NutsPrintStreamFormattedUnixAnsi(System.out);
+        PrintStream out = new PrintStream(new FormatOutputStream(System.out));
         out.println("==value             == \\= me");
     }
 }

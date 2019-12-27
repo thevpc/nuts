@@ -30,15 +30,28 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Root class for all Repository commands.
  * @author vpc
  */
 public interface NutsRepositoryCommand extends NutsConfigurable {
 
+    /**
+     * set session
+     * @param session session
+     * @return {@code this} instance
+     */
     NutsRepositoryCommand setSession(NutsRepositorySession session);
 
+    /**
+     * return session
+     * @return {@code this} instance
+     */
     NutsRepositorySession getSession();
 
+    /**
+     * run this command and return {@code this} instance
+     * @return {@code this} instance
+     */
     NutsRepositoryCommand run();
 
     /**

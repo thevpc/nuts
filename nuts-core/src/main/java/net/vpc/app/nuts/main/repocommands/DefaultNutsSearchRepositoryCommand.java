@@ -5,7 +5,9 @@
  */
 package net.vpc.app.nuts.main.repocommands;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
@@ -14,6 +16,7 @@ import net.vpc.app.nuts.runtime.repocommands.AbstractNutsSearchRepositoryCommand
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
+import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 
 /**
  *
@@ -35,6 +38,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(null, getSession());
         try {
+            List<Iterator<NutsId>> resultIterList=new ArrayList<>();
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }

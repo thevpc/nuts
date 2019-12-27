@@ -86,7 +86,7 @@ public class NdiMain extends NutsApplication {
                         executorOptions.add(a.getStringValue());
                     } else if ((a = cmdLine.nextString("-i", "--installed")) != null) {
                         forceAll = true;
-                        for (NutsId resultId : context.getWorkspace().search().installed().getResultIds()) {
+                        for (NutsId resultId : context.getWorkspace().search().installStatus(NutsInstallStatus.INSTALLED_PRIMARY).getResultIds()) {
                             idsToInstall.add(resultId.getLongName());
                         }
                     } else if ((a = cmdLine.nextString("-c", "--companions")) != null) {

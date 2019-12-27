@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.test.whitebox;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import net.vpc.app.nuts.runtime.app.DefaultNutsArgument;
 import org.junit.Assert;
 import org.junit.Test;
@@ -180,7 +181,7 @@ public class Test11_DefaultNutsArgument {
         Assert.assertEquals("StringOptionName:"+a.getString(),optionName,a.getStringOptionName());
         Assert.assertEquals("StringOptionPrefix:"+a.getString(),optionPrefix,a.getStringOptionPrefix());
         Assert.assertEquals("KeyValueSeparator:"+a.getString(),eq,a.getKeyValueSeparator());
-        System.out.println("OK : "+a.getString());
+        TestUtils.println("OK : "+a.getString());
     }
 
 }

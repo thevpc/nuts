@@ -143,10 +143,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return setFetchStrategy(NutsFetchStrategy.ONLINE);
     }
 
-    //@Override
-    public T installed() {
-        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
-    }
+//    //@Override
+//    public T installed() {
+//        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
+//    }
 
     //@Override
     public T anyWhere() {
@@ -534,13 +534,13 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
                 return true;
             }
-            case "-i": 
-            case "--installed": 
-            {
-                cmdLine.skip();
-                this.setFetchStrategy(NutsFetchStrategy.INSTALLED);
-                return true;
-            }
+//            case "-i":
+//            case "--installed":
+//            {
+//                cmdLine.skip();
+//                this.setFetchStrategy(NutsFetchStrategy.INSTALLED);
+//                return true;
+//            }
             case "-F":
             case "--offline":
             {

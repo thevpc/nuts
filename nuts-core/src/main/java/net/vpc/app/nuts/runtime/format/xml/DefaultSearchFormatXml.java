@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.runtime.format.xml;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
@@ -22,7 +23,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private boolean compact;
     private String rootName = "root";
 
-    public DefaultSearchFormatXml(NutsSession session, PrintWriter writer,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatXml(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsOutputFormat.XML,options);
     }
 
