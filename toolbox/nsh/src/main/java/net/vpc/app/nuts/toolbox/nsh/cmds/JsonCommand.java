@@ -101,9 +101,9 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                context.setPrintOutObject(context.getWorkspace().json().value(inputDocument).format());
+                context.setPrintlnOutObject(context.getWorkspace().json().value(inputDocument).format());
             } else {
-                context.setPrintOutObject(inputDocument);
+                context.setPrintlnOutObject(inputDocument);
             }
         } else {
             switch (options.queryType) {

@@ -92,7 +92,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 if (!id0.getLongName().equals(c.getId().getLongName())) {
                     c = c.builder().setId(id0).build();
                 }
-                cache.deployDescriptor(c.getId(), c, session);
+                cache.deployDescriptor(c.getId(), c, session.copy().setSession(session.getSession().yes()));
             }
             return c;
         }

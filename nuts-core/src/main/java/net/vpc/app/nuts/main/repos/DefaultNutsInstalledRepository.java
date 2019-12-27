@@ -45,7 +45,6 @@ import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
 import net.vpc.app.nuts.NutsInstallStatus;
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt0;
-import net.vpc.app.nuts.main.DefaultNutsWorkspace;
 import net.vpc.app.nuts.runtime.repocommands.*;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
@@ -418,12 +417,23 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //                    throw new IllegalArgumentException("Unable to install " + def.getId() + " as dependencies are missing.");
 //                }
 //            }
-            this.deploy()
-                    .setId(def.getId())
-                    .setContent(def.getPath())
-                    .setSession(NutsWorkspaceHelper.createNoRepositorySession(session, NutsFetchMode.LOCAL))
-                    .setDescriptor(def.getDescriptor())
-                    .run();
+            if(forId!=null) {
+                if(!deployments.isDeployed(def.getId(),def.getDescriptor())) {
+                    this.deploy()
+                            .setId(def.getId())
+                            .setContent(def.getPath())
+                            .setSession(NutsWorkspaceHelper.createNoRepositorySession(session.copy().yes(), NutsFetchMode.LOCAL))
+                            .setDescriptor(def.getDescriptor())
+                            .run();
+                }
+            }else{
+                this.deploy()
+                        .setId(def.getId())
+                        .setContent(def.getPath())
+                        .setSession(NutsWorkspaceHelper.createNoRepositorySession(session.copy().yes(), NutsFetchMode.LOCAL))
+                        .setDescriptor(def.getDescriptor())
+                        .run();
+            }
             NutsId id = def.getId();
             Instant now = Instant.now();
             String user = workspace.security().getCurrentUsername();

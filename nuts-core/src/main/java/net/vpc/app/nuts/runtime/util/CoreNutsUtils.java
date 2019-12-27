@@ -65,7 +65,7 @@ public class CoreNutsUtils {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<installed>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<main>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
@@ -77,8 +77,9 @@ public class CoreNutsUtils {
             "Crimson", "Salmon", "Moccasin", "PeachPuff", "Khaki", "Cornsilk", "Bisque", "Wheat", "Tan", "Peru", "Chocolate", "Sienna", "Snow", "Azure", "Ivory", "Linen", "Silver", "Gray"
     )).toArray(new String[0]);
 
-    public static final int LOCK_TIME=3;
-    public static final TimeUnit LOCK_TIME_UNIT=TimeUnit.SECONDS;
+    public static final int LOCK_TIME = 3;
+    public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;
+
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
@@ -201,12 +202,14 @@ public class CoreNutsUtils {
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
+        private final boolean daemon;
 
-        NutsDefaultThreadFactory(String namePattern) {
+        NutsDefaultThreadFactory(String namePattern, boolean daemon) {
+            this.daemon = daemon;
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() :
                     Thread.currentThread().getThreadGroup();
-            namePrefix = namePattern+"-" +
+            namePrefix = namePattern + "-" +
                     CoreCommonUtils.indexToString(poolNumber.getAndIncrement()) +
                     "-";
         }
@@ -215,26 +218,14 @@ public class CoreNutsUtils {
             Thread t = new Thread(group, r,
                     namePrefix + threadNumber.getAndIncrement(),
                     0);
-            if (t.isDaemon())
-                t.setDaemon(false);
+            t.setDaemon(this.daemon);
             if (t.getPriority() != Thread.NORM_PRIORITY)
                 t.setPriority(Thread.NORM_PRIORITY);
             return t;
         }
     }
-    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory=new NutsDefaultThreadFactory("nuts-pool");
-    private static ExecutorService executorService= _createExecutorService();
 
-    private static ExecutorService _createExecutorService(){
-        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool(nutsDefaultThreadFactory);
-        executorService.setKeepAliveTime(60,TimeUnit.SECONDS);
-        executorService.setMaximumPoolSize(60);
-        return executorService;
-    }
-
-    public static ExecutorService getExecutorService(NutsSession session) {
-        return executorService;
-    }
+    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool",true);
 
     public static String randomColorName() {
         return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
@@ -822,7 +813,7 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
-        }else{
+        } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
@@ -834,7 +825,7 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
-        }else{
+        } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
@@ -846,7 +837,7 @@ public class CoreNutsUtils {
         }
         if (o.getSession() == null) {
             o.session(ws.createSession());
-        }else{
+        } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
         return o;
@@ -963,10 +954,10 @@ public class CoreNutsUtils {
     public static boolean acceptMonitoring(NutsSession session) {
         // DefaultNutsStreamProgressMonitor is enable only if plain output
         // so it is disable in json, xml, table, ...
-        if(!session.isPlainOut()){
+        if (!session.isPlainOut()) {
             return false;
         }
-        if(NutsWorkspaceUtils.parseProgressOptions(session).contains("false")){
+        if (NutsWorkspaceUtils.parseProgressOptions(session).contains("false")) {
             return false;
         }
         Object o = session.getProperty("monitor-allowed");

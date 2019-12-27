@@ -173,25 +173,25 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         if (getSession().isPlainTrace() || (!defsToInstall.isEmpty() && getSession().getConfirm()==NutsConfirmationMode.ASK)) {
             if(!defsToInstall.isEmpty()) {
-                out.println("The following {{new}} ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be ##installed## : "
+                out.println("the following {{new}} ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be ##installed## : "
                         + defsToInstall.keySet().stream()
                         .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToInstallForced.isEmpty()) {
-                out.println("The following already ##installed## ==nuts== " + (defsToInstallForced.size() > 1 ? "components are" : "component is") + " going to be [[reinstalled]] : "
+                out.println("the following already ##installed## ==nuts== " + (defsToInstallForced.size() > 1 ? "components are" : "component is") + " going to be [[reinstalled]] : "
                         + defsToInstallForced.keySet().stream()
                         .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToDefVersion.isEmpty()) {
-                out.println("The following already ##installed## ==nuts== " + (defsToDefVersion.size() > 1 ? "components are" : "component is") + " going to be **set as default** : "
+                out.println("the following already ##installed## ==nuts== " + (defsToDefVersion.size() > 1 ? "components are" : "component is") + " going to be **set as default** : "
                         + defsToDefVersion.keySet().stream()
                         .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
             if(!defsToIgnore.isEmpty()) {
-                out.println("The following already ##installed## ==nuts== " + (defsToIgnore.size() > 1 ? "components are" : "component is") + " {{ignored}} : "
+                out.println("the following already ##installed## ==nuts== " + (defsToIgnore.size() > 1 ? "components are" : "component is") + " {{ignored}} : "
                         + defsToIgnore.keySet().stream()
                         .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));

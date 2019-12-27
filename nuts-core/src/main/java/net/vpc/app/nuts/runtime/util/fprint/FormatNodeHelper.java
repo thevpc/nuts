@@ -101,17 +101,21 @@ public class FormatNodeHelper {
         }
     }
 
-    public void consumeNodes(boolean greedy) throws IOException{
+    public boolean consumeNodes(boolean greedy) throws IOException{
+        boolean some=false;
         TextNode n = null;
         while ((n = parser.consumeNode()) != null) {
             print(n);
+            some=true;
         }
         if (greedy) {
             parser.forceEnding();
             while ((n = parser.consumeNode()) != null) {
                 print(n);
+                some=true;
             }
         }
+        return some;
     }
 
     public void print(TextNode node) throws IOException{
@@ -253,22 +257,27 @@ public class FormatNodeHelper {
         }
     }
 
-    private final void flushBuffer() throws IOException{
+    private final boolean flushBuffer() throws IOException{
         if (bufferSize > 0) {
             rawer.writeRaw(buffer, 0, bufferSize);
             bufferSize = 0;
+            return true;
         }
+        return false;
     }
 
     public void flush() throws IOException{
         //flushLater();
-        flushBuffer();
+        boolean some=false;
+        some|=flushBuffer();
         try {
-            consumeNodes(true);
+            some|=consumeNodes(true);
         } catch (Exception ex) {
             //
         }
-        flushLater();
+//        if(!some) {
+//            flushLater();
+//        }
         flushBuffer();
     }
 }

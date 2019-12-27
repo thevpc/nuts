@@ -372,7 +372,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         for (URL bootClassWorldURL : config().getBootClassWorldURLs()) {
             NutsDeployRepositoryCommand desc = getInstalledRepository().deploy()
                     .setContent(bootClassWorldURL).setSession(
-                            NutsWorkspaceHelper.createRepositorySession(session, getInstalledRepository(), NutsFetchMode.LOCAL))
+                            NutsWorkspaceHelper.createRepositorySession(session.copy().copy().yes(), getInstalledRepository(), NutsFetchMode.LOCAL))
                     .run();
             if (
                     desc.getId().getLongNameId().equals(config().getApiId().getLongNameId())
@@ -537,6 +537,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        if (CoreNutsUtils.isEffectiveId(thisId)) {
 //            return thisId.setAlternative(descriptor.getAlternative());
 //        }
+        String a = thisId.getArtifactId();
         String g = thisId.getGroupId();
         String v = thisId.getVersion().getValue();
         if ((CoreStringUtils.isBlank(g)) || (CoreStringUtils.isBlank(v))) {
@@ -557,13 +558,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 throw new NutsNotFoundException(this, thisId, "Unable to fetchEffective for " + thisId + ". Best Result is " + thisId.toString(), null);
             }
         }
-        if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v)) {
+        if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v)  || CoreStringUtils.containsVars(a)) {
             Map<String, String> p = descriptor.getProperties();
             NutsId bestId = new DefaultNutsId(null, g, thisId.getArtifactId(), v, "");
             bestId = bestId.builder().apply(new MapStringMapper(p)).build();
-//            if (CoreNutsUtils.isEffectiveId(bestId)) {
-//                return bestId.setAlternative(descriptor.getAlternative());
-//            }
+            if (CoreNutsUtils.isEffectiveId(bestId)) {
+                return bestId;
+            }
             Stack<NutsId> all = new Stack<>();
             NutsId[] parents = descriptor.getParents();
             all.addAll(Arrays.asList(parents));
@@ -571,9 +572,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsId parent = all.pop();
                 NutsDescriptor dd = fetch().session(session).id(parent).effective().getResultDescriptor();
                 bestId = bestId.builder().apply(new MapStringMapper(dd.getProperties())).build();
-//                if (CoreNutsUtils.isEffectiveId(bestId)) {
-//                    return bestId.setAlternative(descriptor.getAlternative());
-//                }
+                if (CoreNutsUtils.isEffectiveId(bestId)) {
+                    return bestId;
+                }
                 all.addAll(Arrays.asList(dd.getParents()));
             }
             throw new NutsNotFoundException(this, bestId.toString(), "Unable to fetchEffective for " + thisId + ". Best Result is " + bestId.toString(), null);

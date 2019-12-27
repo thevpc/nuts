@@ -366,6 +366,18 @@ public class NutsRepositoryFolderHelper {
         return descFile;
     }
 
+    public boolean isDeployed(NutsId id, NutsDescriptor descriptor) {
+        Path pckFile = getLongNameIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
+        if (!Files.exists(pckFile)) {
+            return false;
+        }
+        Path descFile = getLongNameIdLocalFile(id.builder().setFaceDescriptor().build());
+        if (!Files.exists(descFile)) {
+            return false;
+        }
+        return false;
+    }
+
     public Path deployContent(NutsId id, Object content, NutsDescriptor descriptor, NutsRepositorySession session) {
         if (!isWriteEnabled()) {
             return null;
