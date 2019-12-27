@@ -118,7 +118,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if(isInstalled()){
-            for (NutsId resultId : ws.search().session(searchSession).installStatus(NutsInstallStatus.INSTALLED).getResultIds()) {
+            for (NutsId resultId : ws.search().session(searchSession).installed().getResultIds()) {
                 emptyCommand = false;
                 if(!visited.contains(resultId.getLongName())) {
                     allToInstall.put(resultId.builder().setNamespace(null).build(), true);

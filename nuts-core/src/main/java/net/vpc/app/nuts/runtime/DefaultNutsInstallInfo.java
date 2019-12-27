@@ -36,7 +36,6 @@ import net.vpc.app.nuts.NutsInstallInformation;
 import net.vpc.app.nuts.NutsInstallStatus;
 
 /**
- *
  * @author vpc
  * @since 0.5.5
  */
@@ -59,6 +58,11 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     public NutsInstallStatus getInstallStatus() {
         return installStatus;
+    }
+
+    @Override
+    public boolean isInstalled() {
+        return installStatus == NutsInstallStatus.INSTALLED_DEPENDENCY || installStatus == NutsInstallStatus.INSTALLED_PRIMARY;
     }
 
     @Override

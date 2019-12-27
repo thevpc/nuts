@@ -43,12 +43,12 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
-            List<NutsDefinition> resultDefinitions = ws.search().id(id).installStatus(NutsInstallStatus.INSTALLED_PRIMARY).session(searchSession.copy())
+            List<NutsDefinition> resultDefinitions = ws.search().id(id).installedPrimary().session(searchSession.copy())
                     .transitive(false).optional(false)
                     .getResultDefinitions().list();
             for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
                 NutsDefinition resultDefinition = it.next();
-                if (resultDefinition.getInstallInformation().getInstallStatus()==NutsInstallStatus.NOT_INSTALLED) {
+                if (!resultDefinition.getInstallInformation().isInstalled()) {
                     it.remove();
                 }
             }

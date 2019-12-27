@@ -74,4 +74,8 @@ public class NutsNoInstallInfo implements NutsInstallInformation {
         return false;
     }
 
+    @Override
+    public boolean isInstalled() {
+        return false;
+    }
 }

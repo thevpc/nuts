@@ -508,7 +508,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             nutToInstall = search().id(id).session(session).transitive(false)
                     .inlineDependencies(checkDependencies)
-                    .installStatus(NutsInstallStatus.INSTALLED)
+                    .installed()
                     .optional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
@@ -795,7 +795,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default: {
-                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installStatus(NutsInstallStatus.INSTALLED).failFast(false).getResultDefinitions().first();
+                    oldDef = search().session(CoreNutsUtils.silent(session)).id(def.getId().getShortNameId()).installed().failFast(false).getResultDefinitions().first();
                     break;
                 }
             }

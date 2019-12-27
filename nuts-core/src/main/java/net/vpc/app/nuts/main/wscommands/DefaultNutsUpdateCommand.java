@@ -113,7 +113,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getSession())).installStatus(NutsInstallStatus.INSTALLED_PRIMARY).getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getSession())).installedPrimary().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
         }
         HashSet<NutsId> regulars = new HashSet<>();
         for (NutsId id : baseRegulars) {
@@ -274,11 +274,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
-        NutsId d0Id = ws.search().id(id).session(searchSession).installStatus(NutsInstallStatus.INSTALLED).optional(false).failFast(false).defaultVersions()
+        NutsId d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).defaultVersions()
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
-            d0Id = ws.search().id(id).session(searchSession).installStatus(NutsInstallStatus.INSTALLED).optional(false).failFast(false).latest()
+            d0Id = ws.search().id(id).session(searchSession).installed().optional(false).failFast(false).latest()
                     .getResultIds().first();
             if (d0Id != null) {
                 shouldUpdateDefault = true;
@@ -515,7 +515,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "extension": {
                 try {
                     oldId = ws.search().id(id).effective().session(session)
-                            .installStatus(NutsInstallStatus.INSTALLED).sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
+                            .installed().sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
                     if (oldId != null) {
                         oldFile = fetch0().id(oldId).session(session).getResultDefinition();
                     }

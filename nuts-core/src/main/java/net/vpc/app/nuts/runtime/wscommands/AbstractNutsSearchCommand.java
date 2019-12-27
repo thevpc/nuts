@@ -1096,4 +1096,24 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand installStatus(NutsInstallStatus installStatus) {
         return setInstallStatus(installStatus);
     }
+
+    @Override
+    public NutsSearchCommand installedPrimary() {
+        return installStatus(NutsInstallStatus.INSTALLED_PRIMARY);
+    }
+
+    @Override
+    public NutsSearchCommand installedDependency() {
+        return installStatus(NutsInstallStatus.INSTALLED_DEPENDENCY);
+    }
+
+    @Override
+    public NutsSearchCommand installed() {
+        return installStatus(NutsInstallStatus.INSTALLED);
+    }
+
+    @Override
+    public NutsSearchCommand notInstalled() {
+        return installStatus(NutsInstallStatus.NOT_INSTALLED);
+    }
 }
