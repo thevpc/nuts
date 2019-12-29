@@ -41,13 +41,11 @@ public class Test13_Color {
                 "--log-info",
                 "--skip-companions");
 
-//        for (NutsTerminalMode sysMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
-//            for (NutsTerminalMode sessionMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
-//                testMode(ws,sysMode,sessionMode);
-//            }
-//        }
-//        testMode(ws,NutsTerminalMode.INHERITED,NutsTerminalMode.INHERITED);
-        testMode(ws,NutsTerminalMode.FILTERED,NutsTerminalMode.FORMATTED);
+        for (NutsTerminalMode sysMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
+            for (NutsTerminalMode sessionMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
+                testMode(ws,sysMode,sessionMode);
+            }
+        }
     }
 
     public static void testMode(NutsWorkspace ws,NutsTerminalMode systemMode,NutsTerminalMode sessionMode) {
@@ -62,7 +60,9 @@ public class Test13_Color {
         }
         TestUtils.print("      ");
         PrintStream out = session.getTerminal().out();
-        out.println("**aa**");
+        out.print("{**aa");
+        out.print("aa**}");
+        out.println();
     }
 
     @BeforeClass

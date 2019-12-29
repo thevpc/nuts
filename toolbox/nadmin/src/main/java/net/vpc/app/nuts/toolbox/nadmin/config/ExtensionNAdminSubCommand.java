@@ -35,8 +35,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                                     .toArray(String[]::new);
                     all.add(a);
                 }
-                context.getWorkspace().object().session(context.getSession())
-                        .value(all).println();
+                context.getSession().formatObject(all).println();
             }
             return true;
         }

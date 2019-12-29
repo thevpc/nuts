@@ -101,8 +101,8 @@ public class Test10_ElementPath {
                         .build()
                         ).build())
                 .build();
-        NutsObjectFormat ss = ws.object().session(ws.createSession().json());
-        ss.value(p).println();
+        NutsObjectFormat ss = ws.createSession().json().formatObject(p);
+        ss.println();
         String json = ss.format();
         Assert.assertEquals("[\n"
                 + "  {\n"

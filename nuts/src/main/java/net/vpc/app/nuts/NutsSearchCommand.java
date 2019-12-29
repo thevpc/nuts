@@ -1638,6 +1638,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *     <li>cache-folder</li>
      *     <li>apps-folder</li>
      * </ul>
+     * @param columns columns to return
      * @return query result
      */
     NutsResultList<String[]> getResultStrings(String[] columns);
@@ -1729,12 +1730,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * search for non packages with the given {@code installStatus}
+     * @param installStatus new status
      * @return {@code this} instance
      */
     NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus);
 
     /**
      * search for non packages with the given {@code installStatus}
+     * @param installStatus new status
      * @return {@code this} instance
      */
     NutsSearchCommand installStatus(NutsInstallStatus installStatus);

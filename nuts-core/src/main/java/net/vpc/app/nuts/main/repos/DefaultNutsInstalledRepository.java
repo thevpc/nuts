@@ -410,6 +410,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     @Override
     public NutsInstallInformation install(NutsDefinition def, NutsId forId, NutsSession session) {
         InstallInfoConfig ii = getInstallInfoConfig(def.getId(), null, session);
+        boolean alreadyInstalled=false;
         if (ii == null) {
 //            for (NutsDependency dependency : def.getDependencies()) {
 //                Iterator<NutsId> it = searchVersions().setId(dependency.getId()).setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.DEPLOYED)).getResult();
@@ -450,9 +451,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
                         + id.builder().setNamespace(null).build() + " : " + ex.getMessage(), ex);
             }
-            return getInstallInformation(ii, session);
+            DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo)getInstallInformation(ii, session);
+            uu.setJustInstalled(true);
+            return uu;
         } else {
-            if (ii.isInstalled()) {
+            alreadyInstalled=ii.isInstalled();
+            if (alreadyInstalled) {
                 //already installed, will deploy only
                 this.deploy()
                         .setId(def.getId())
@@ -468,7 +472,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 }
                 printJson(ii.getId(), NUTS_INSTALL_FILE, ii);
             }
-            return getInstallInformation(ii, session);
+            DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo)getInstallInformation(ii, session);
+            uu.setJustInstalled(true);
+            uu.setJustReInstalled(alreadyInstalled);
+            return uu;
         }
     }
 

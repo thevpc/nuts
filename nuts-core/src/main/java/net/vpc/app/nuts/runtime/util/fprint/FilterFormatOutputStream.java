@@ -12,21 +12,29 @@ public class FilterFormatOutputStream extends FilterOutputStream implements Exte
     public FilterFormatOutputStream(OutputStream out) {
         super(out);
         h = new FormatNodeHelper(FPrint.RENDERER_ANSI_STRIPPER);
-        h.setRawer(new FormatNodeHelper.Rower() {
+        h.setRawer(new FormatNodeHelper.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
-                write0(buf, off, len);
+                writeRaw0(buf, off, len);
+            }
+
+            @Override
+            public void flushRaw() throws IOException {
+                flushRaw0();
             }
         });
     }
 
-    private void write0(byte[] b, int off, int len) throws IOException {
+    private void writeRaw0(byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
+    }
+    private void flushRaw0() throws IOException {
+        out.flush();
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        h.processBytes(b,off,len);
+        h.processBytes(b, off, len);
     }
 
     @Override
@@ -68,4 +76,5 @@ public class FilterFormatOutputStream extends FilterOutputStream implements Exte
         }
         throw new IllegalArgumentException("Unsupported");
     }
+
 }

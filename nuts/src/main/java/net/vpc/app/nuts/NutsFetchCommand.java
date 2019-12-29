@@ -722,12 +722,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * search for installed/non installed packages
+     * @param value new value
      * @return {@code this} instance
      */
     NutsFetchCommand installed(Boolean value);
 
     /**
      * search for installed/non installed packages
+     * @param value new value
      * @return {@code this} instance
      */
     NutsFetchCommand setInstalled(Boolean value);

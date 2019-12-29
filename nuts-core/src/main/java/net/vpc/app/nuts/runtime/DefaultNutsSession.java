@@ -785,12 +785,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public String toString() {
-        StringBuilder sb=new StringBuilder("NutsSession(");
-        if(properties.size()>0){
+        StringBuilder sb = new StringBuilder("NutsSession(");
+        if (properties.size() > 0) {
             sb.append("properties=").append(properties);
         }
         sb.append(")");
-        return  sb.toString();
+        return sb.toString();
     }
 
     @Override
@@ -890,5 +890,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession progressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
+    }
+
+    @Override
+    public NutsObjectFormat formatObject(Object any) {
+        return getWorkspace().object().session(this).value(any);
     }
 }

@@ -210,8 +210,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         } else {
             if (trace && context.getSession().isPlainTrace()) {
-                context.session().out().printf("installing" +
-                        (Files.exists(ff2) ? " (with override)" : "") +
+                context.session().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
                         " script ==%s== %n", NdiUtils.betterPath(ff2.toString()));
             }
             try (BufferedWriter w = Files.newBufferedWriter(ff2)) {

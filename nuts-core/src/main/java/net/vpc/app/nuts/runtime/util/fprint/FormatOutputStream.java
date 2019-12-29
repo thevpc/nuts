@@ -17,16 +17,23 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
             throw new IllegalArgumentException("Expected Raw");
         }
         h = new FormatNodeHelper(FPrint.RENDERER_ANSI);
-        h.setRawer(new FormatNodeHelper.Rower() {
+        h.setRawer(new FormatNodeHelper.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
-                write0(buf, off, len);
+                writeRaw0(buf, off, len);
+            }
+            @Override
+            public void flushRaw() throws IOException {
+                flushRaw0();
             }
         });
     }
 
-    private void write0(byte[] b, int off, int len) throws IOException {
+    private void writeRaw0(byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
+    }
+    public void flushRaw0() throws IOException {
+        out.flush();
     }
 
     @Override

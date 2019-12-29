@@ -183,8 +183,7 @@ public class DerbyMain extends NutsApplication {
                     }
                 }
             } else {
-                appContext.workspace().object().session(session)
-                        .setValue(DerbyUtils.getRunningInstances(appContext))
+                session.formatObject(DerbyUtils.getRunningInstances(appContext))
                         .println();
             }
         }
@@ -202,7 +201,7 @@ public class DerbyMain extends NutsApplication {
         }
         if (args.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
-            appContext.workspace().object().session(appContext.getSession()).value(srv.findVersions()).println();
+            appContext.getSession().formatObject(srv.findVersions()).println();
         }
     }
 

@@ -48,7 +48,10 @@ public class Test07_ColorfulStream {
             "\"\"",
             "''", "{}"
         }) {
-            out.println(msg);
+            for (char c : msg.toCharArray()) {
+                out.print(c);
+            }
+            out.println();
             TestUtils.println(FormattedPrintStreamUtils.filterText(msg));
         }
     }

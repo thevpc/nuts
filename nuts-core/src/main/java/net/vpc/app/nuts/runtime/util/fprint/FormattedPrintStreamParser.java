@@ -13,5 +13,5 @@ public interface FormattedPrintStreamParser {
 
     TextNode consumeNode();
 
-    void forceEnding();
+    boolean forceEnding();
 }

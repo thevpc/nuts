@@ -13,7 +13,7 @@
 //
 //    private FormatNodeHelper formatNodeHelper = new FormatNodeHelper();
 //    private PrintStream ps;
-//    private FormatNodeHelper.Rower rawer = new FormatNodeHelper.Rower() {
+//    private FormatNodeHelper.RawOutputStream rawer = new FormatNodeHelper.RawOutputStream() {
 //        @Override
 //        public void writeRaw(byte[] buf, int off, int len) {
 //            writeRaw0(buf, off, len);

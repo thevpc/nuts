@@ -69,6 +69,12 @@ public interface NutsInstallInformation {
     boolean isJustInstalled();
 
     /**
+     * true if the re-installation just occurred in the very last operation
+     * @return true if the installation just occurred in the very last operation
+     */
+    boolean isJustReInstalled();
+
+    /**
      * return the user responsible of the installation
      * @return the user responsible of the installation
      */

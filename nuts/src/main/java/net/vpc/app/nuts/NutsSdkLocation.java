@@ -97,7 +97,7 @@ public class NutsSdkLocation extends NutsConfigItem {
 
     /**
      * sdk path
-     * @return
+     * @return sdk path
      */
     public String getPath() {
         return path;

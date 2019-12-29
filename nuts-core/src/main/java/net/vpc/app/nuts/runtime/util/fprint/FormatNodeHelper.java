@@ -15,7 +15,7 @@ public class FormatNodeHelper {
     private boolean enableBuffering = false;
     private FormattedPrintStreamParser parser=new FormattedPrintStreamNodePartialParser();
     private FormattedPrintStreamRenderer renderer=AnsiUnixTermPrintRenderer.ANSI_RENDERER;
-    private FormatNodeHelper.Rower rawer;
+    private RawOutputStream rawer;
     private RenderedRawStream renderedRawStream =new RenderedRawStream() {
         @Override
         public void writeRaw(byte[] buf, int off, int len)throws IOException {
@@ -55,11 +55,11 @@ public class FormatNodeHelper {
         return parser;
     }
 
-    public Rower getRawer() {
+    public RawOutputStream getRawer() {
         return rawer;
     }
 
-    public void setRawer(Rower rawer) {
+    public void setRawer(RawOutputStream rawer) {
         this.rawer = rawer;
     }
 
@@ -69,9 +69,11 @@ public class FormatNodeHelper {
 //        println();
 //    }
 
-   public interface Rower{
+   public interface RawOutputStream {
         void writeRaw(byte[] buf, int off, int len)  throws IOException;
-    }
+
+       void flushRaw() throws IOException;
+   }
 
     public boolean isFormatEnabled() {
         return formatEnabled;
@@ -109,10 +111,11 @@ public class FormatNodeHelper {
             some=true;
         }
         if (greedy) {
-            parser.forceEnding();
-            while ((n = parser.consumeNode()) != null) {
-                print(n);
-                some=true;
+            if(parser.forceEnding()) {
+                while ((n = parser.consumeNode()) != null) {
+                    print(n);
+                    some = true;
+                }
             }
         }
         return some;
@@ -230,6 +233,7 @@ public class FormatNodeHelper {
                 }
             } else {
                 rawer.writeRaw(b, 0, b.length);
+                rawer.flushRaw();
             }
             //flush();
         }
@@ -266,12 +270,25 @@ public class FormatNodeHelper {
         return false;
     }
 
+    public void reset() throws IOException{
+        boolean some=false;
+        some|=flushBuffer();
+        try {
+            some|=consumeNodes(true);
+        } catch (Exception ex) {
+            //
+        }
+//        if(!some) {
+//            flushLater();
+//        }
+        flushBuffer();
+    }
     public void flush() throws IOException{
         //flushLater();
         boolean some=false;
         some|=flushBuffer();
         try {
-            some|=consumeNodes(true);
+            some|=consumeNodes(false);
         } catch (Exception ex) {
             //
         }

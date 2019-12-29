@@ -169,7 +169,7 @@ public class NdiMain extends NutsApplication {
                         }
 
                     } else {
-                        context.workspace().object().session(context.session()).value(result).println();
+                        context.session().formatObject(result).println();
                     }
                 }
             }

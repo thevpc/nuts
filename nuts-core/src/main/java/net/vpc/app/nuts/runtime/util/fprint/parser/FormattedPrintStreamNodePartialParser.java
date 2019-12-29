@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStreamParser;
 
 /**
- *
  * @author vpc
  */
 public class FormattedPrintStreamNodePartialParser implements FormattedPrintStreamParser {
@@ -42,9 +42,26 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     public TextNode consumeNode() {
         ParseAction s = root().available.poll();
         if (s == null) {
-            return null;
+            while (!statusStack.isEmpty()) {
+                ParseAction s2 = statusStack.peek();
+                if (!(s2 instanceof AllParseAction)) {
+                    if (s2 != null && s2.isComplete()) {
+                        ParseAction tt = statusStack.pop();
+                        ParseAction parent = statusStack.peek();
+                        parent.appendChild(tt);
+                    } else if (s2 == null) {
+                        ParseAction tt = statusStack.pop();
+                        //do nothing
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            s = root().available.poll();
         }
-        return FDocNodeHelper.convert(s.toFDocNode());
+        return s == null ? null : FDocNodeHelper.convert(s.toFDocNode());
     }
 
     private AllParseAction root() {
@@ -56,20 +73,27 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     }
 
     @Override
-    public void forceEnding() {
+    public boolean forceEnding() {
+        boolean ok = false;
         while (true) {
             ParseAction s = statusStack.peek();
             if (!(s instanceof AllParseAction)) {
                 if (s != null) {
-                    s.forceEnding();
+                    if(s.isComplete()){
+
+                    }else {
+                        s.forceEnding();
+                    }
                 }
                 ParseAction tt = statusStack.pop();
                 ParseAction parent = statusStack.peek();
                 parent.appendChild(tt);
+                ok = true;
             } else {
                 break;
             }
         }
+        return ok;
     }
 
     static abstract class ParseAction {
@@ -81,6 +105,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         abstract FDocNode toFDocNode();
 
         abstract void forceEnding();
+
+        abstract boolean isComplete();
+
     }
 
     static class AllParseAction extends ParseAction {
@@ -119,6 +146,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         }
 
+        public boolean isComplete() {
+            return true;
+        }
     }
 
     static class QuotedParseAction extends ParseAction {
@@ -236,6 +266,10 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             return sb.toString();
         }
 
+        public boolean isComplete() {
+            return status == 2 && end.length() == start.length();
+        }
+
         @Override
         void forceEnding() {
             while (end.length() < start.length()) {
@@ -325,6 +359,10 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             }
             sb.append(end);
             return sb.toString();
+        }
+
+        public boolean isComplete() {
+            return started && end.length() == start.length();
         }
 
         @Override
@@ -473,6 +511,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 }
             }
         }
+
+        public boolean isComplete() {
+            return true;
+        }
+
 
         @Override
         public String toString() {

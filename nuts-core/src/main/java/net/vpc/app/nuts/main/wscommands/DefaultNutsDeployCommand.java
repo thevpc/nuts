@@ -57,7 +57,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             throw new NutsIllegalArgumentException(ws, "Missing component to Deploy");
         }
         if (getSession().isTrace()) {
-            ws.object().session(getSession()).value(result).println();
+            getSession().formatObject(result).println();
         }
         return this;
     }

@@ -363,10 +363,11 @@ public interface NutsSession extends NutsConfigurable {
      * @param other other session to copy from
      * @return return {@code this} instance
      */
-     NutsSession copyFrom(NutsSession other);
+    NutsSession copyFrom(NutsSession other);
 
     /**
      * change fetch strategy
+     *
      * @param mode new strategy or null
      * @return {@code this} instance
      */
@@ -374,6 +375,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * change fetch strategy
+     *
      * @param mode new strategy or null
      * @return {@code this} instance
      */
@@ -381,18 +383,21 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * change fetch strategy to REMOTE
+     *
      * @return {@code this} instance
      */
     NutsSession fetchRemote();
 
     /**
      * change fetch strategy to OFFLINE
+     *
      * @return {@code this} instance
      */
     NutsSession fetchOffline();
 
     /**
      * change fetch strategy to ONLINE
+     *
      * @return {@code this} instance
      */
     NutsSession fetchOnline();
@@ -405,6 +410,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * change fetch strategy to ANYWHERE
+     *
      * @return {@code this} instance
      */
     NutsSession fetchAnyWhere();
@@ -413,6 +419,7 @@ public interface NutsSession extends NutsConfigurable {
      * return current fetch strategy.
      * When no strategy (or null strategy) was set, return workspace
      * strategy default strategy. When none defines use ONLINE
+     *
      * @return {@code this} instance
      */
     NutsFetchStrategy getFetchStrategy();
@@ -454,7 +461,7 @@ public interface NutsSession extends NutsConfigurable {
      * <li>{@link NutsRepositoryListener}</li>
      * </ul>
      *
-     * @param <T> listener type
+     * @param <T>  listener type
      * @param type listener type class
      * @return registered listeners
      */
@@ -478,7 +485,7 @@ public interface NutsSession extends NutsConfigurable {
     /**
      * set session property
      *
-     * @param key property key
+     * @param key   property key
      * @param value property value
      * @return {@code this} instance
      */
@@ -628,12 +635,14 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * true when considering transitive repositories.
+     *
      * @return true when considering transitive repositories
      */
     boolean isTransitive();
 
     /**
      * consider transitive repositories
+     *
      * @param value nullable value
      * @return {@code this} instance
      */
@@ -641,6 +650,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * consider transitive repositories
+     *
      * @param value nullable value
      * @return {@code this} instance
      */
@@ -648,18 +658,21 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * consider transitive repositories
+     *
      * @return {@code this} instance
      */
     NutsSession transitive();
 
     /**
      * true when using cache
+     *
      * @return true when using cache
      */
     boolean isCached();
 
     /**
      * use cache
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -667,6 +680,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * use cache
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -674,18 +688,21 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * use cache
+     *
      * @return {@code this} instance
      */
     NutsSession cached();
 
     /**
      * true when using indexes
+     *
      * @return true when using indexes
      */
     boolean isIndexed();
 
     /**
      * use index
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -693,6 +710,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * use index
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -700,18 +718,21 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * use index
+     *
      * @return {@code this} instance
      */
     NutsSession indexed();
 
     /**
      * return progress options
+     *
      * @return progress options
      */
     String getProgressOptions();
 
     /**
      * change progress options
+     *
      * @param progressOptions options
      * @return {@code this} instance
      */
@@ -719,8 +740,22 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * change progress options
+     *
      * @param progressOptions options
      * @return {@code this} instance
      */
     NutsSession progressOptions(String progressOptions);
+
+    /**
+     * This is a helper method to create and Object format initialized with this
+     * session instance and the given object to print.
+     * {@code thisSession.getWorkspace().object().session(thisSession).value(any)}
+     * <p>
+     * Using this method is recommended to print objects to default format (json, xml,...)
+     *
+     * @param any any object to print in the configured/default format
+     * @return new instance of {@link NutsObjectFormat}
+     * @since 0.6.0
+     */
+    NutsObjectFormat formatObject(Object any);
 }

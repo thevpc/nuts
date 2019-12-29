@@ -45,6 +45,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private final NutsId id;
     private final NutsInstallStatus installStatus;
     private boolean justInstalled;
+    private boolean justReInstalled;
     private boolean defaultVersion;
     private Instant installDate;
     private String installUser;
@@ -118,6 +119,15 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     @Override
     public boolean isJustInstalled() {
         return justInstalled;
+    }
+
+    @Override
+    public boolean isJustReInstalled() {
+        return justReInstalled;
+    }
+
+    public void setJustReInstalled(boolean justReInstalled) {
+        this.justReInstalled = justReInstalled;
     }
 
     public void setJustInstalled(boolean justInstalled) {

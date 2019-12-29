@@ -126,7 +126,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                             ))
                             ).println();
                 } else {
-                    context.workspace().object().session(context.session()).value(
+                    context.session().formatObject(
                             r.stream().map(x -> new AliasInfo(x, context.getWorkspace())).collect(Collectors.toList())
                     ).println();
                 }

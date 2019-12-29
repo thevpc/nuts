@@ -98,8 +98,7 @@ public class RemoteMysql {
                     break;
                 }
                 default: {
-                    context.workspace().object().session(context.session())
-                            .value(result).println();
+                    context.session().formatObject(result).println();
                 }
             }
         }

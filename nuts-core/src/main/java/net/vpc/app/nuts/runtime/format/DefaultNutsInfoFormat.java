@@ -91,7 +91,6 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     @Override
     public void print(PrintStream w) {
-        NutsObjectFormat m = ws.object().session(getValidSession());
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
@@ -104,29 +103,27 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             args.add("--multiline-property=java-class-path=" + File.pathSeparator);
             args.add("--multiline-property=java.library.path=" + File.pathSeparator);
         }
-        m.configure(true, args.toArray(new String[0]));
-
-        Map<String, Object> r = null;
+        Object result = null;
         if (requests.isEmpty()) {
-            r = buildWorkspaceMap(isShowRepositories());
+            result = buildWorkspaceMap(isShowRepositories());
         } else if(requests.size()==1){
             final Map<String, Object> t = buildWorkspaceMap(true);
             String key = requests.get(0);
             Object v = t.get(key);
             if(v!=null){
-                m.value(v).print(w);
+                result=v;
             }else{
                 if(!isLenient()) {
                     throw new NutsIllegalArgumentException(ws, "Property not found : " + key);
                 }
             }
-            return;
         } else {
             final Map<String, Object> t = buildWorkspaceMap(true);
-            r = new LinkedHashMap<>();
+            Map<String, Object> e=new LinkedHashMap<>();
+            result = e;
             for (String request : requests) {
                 if (t.containsKey(request)) {
-                    r.put(request, t.get(request));
+                    e.put(request, t.get(request));
                 }else{
                     if(!isLenient()) {
                         throw new NutsIllegalArgumentException(ws, "Property not found : " + request);
@@ -134,7 +131,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        m.value(r).print(w);
+        getValidSession().formatObject(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override

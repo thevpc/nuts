@@ -109,9 +109,9 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             }
         } else {
             if (isWorkspaceVersion()) {
-                ws.object().session(getValidSession()).value(buildProps()).print(out);
+                getValidSession().formatObject(buildProps()).print(out);
             } else {
-                ws.object().session(getValidSession()).value(getVersion()).print(out);
+                getValidSession().formatObject(getVersion()).print(out);
             }
         }
     }
